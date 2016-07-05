@@ -1,0 +1,36 @@
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+	<S11:Header>
+		<eb:Messaging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/
+http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd"
+			xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ebbpsig="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0">
+			<eb:SignalMessage>
+				<eb:MessageInfo>
+					<eb:Timestamp>2006-07-01T13:42:37.429Z</eb:Timestamp>
+					<eb:MessageId>uiwtoruiopwr2543890@b.example.com</eb:MessageId>
+					<eb:RefToMessageId>uiopfdsmnf4898965563434@a.example.com</eb:RefToMessageId>
+				</eb:MessageInfo>
+				<eb:Receipt>
+					<ebbpsig:NonRepudiationInformation>
+						<ebbpsig:MessagePartNRInformation>
+							<ebbpsig:MessagePartIdentifier></ebbpsig:MessagePartIdentifier>
+							<ds:Reference URI="http://b.example.com/doc45/#b">
+								<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+								<ds:DigestValue>fX/iNylcUHNLV4lCE0eC7aEGP28=</ds:DigestValue>
+							</ds:Reference>
+						</ebbpsig:MessagePartNRInformation>
+						<ebbpsig:MessagePartNRInformation>
+							<ebbpsig:MessagePartIdentifier></ebbpsig:MessagePartIdentifier>
+							<ds:Reference URI="http:/a.example.com/doc23/#a">
+								<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+								<ds:DigestValue>fX/iNylcUHNLV4lCE0eC7aEGP28=</ds:DigestValue>
+							</ds:Reference>
+						</ebbpsig:MessagePartNRInformation>
+					</ebbpsig:NonRepudiationInformation>
+				</eb:Receipt>
+			</eb:SignalMessage>
+		</eb:Messaging>
+	</S11:Header>
+	<S11:Body />
+</S11:Envelope> 

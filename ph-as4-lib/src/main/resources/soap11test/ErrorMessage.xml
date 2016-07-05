@@ -1,0 +1,27 @@
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+	<S11:Header>
+		<eb:Messaging S11:mustUnderstand="1"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/
+http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
+			<eb:SignalMessage>
+				<eb:MessageInfo>
+					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
+					<eb:MessageId>UUID-2@receiver.example.com</eb:MessageId>
+				</eb:MessageInfo>
+				<eb:Error origin="ebMS" category="Content" errorCode="EBMS:0001"
+					severity="failure" refToMessageInError="UUID-1@sender.example.com">
+					<eb:Description xml:lang="en">Value not recognized
+					</eb:Description>
+				</eb:Error>
+				<eb:Error origin="Security" category="Processing"
+					errorCode="0101" severity="failure" refToMessageInError="UUID-23@esender.fxample.com">
+					<eb:Description xml:lang="en">Failed Authentication
+					</eb:Description>
+				</eb:Error>
+			</eb:SignalMessage>
+		</eb:Messaging>
+	</S11:Header>
+	<S11:Body />
+</S11:Envelope> 

@@ -1,0 +1,18 @@
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+	<S11:Header>
+		<eb:Messaging S11:mustUnderstand="1"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/
+http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
+			<eb:SignalMessage>
+				<eb:MessageInfo>
+					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
+					<eb:MessageId>UUID-2@initiator.example.com</eb:MessageId>
+				</eb:MessageInfo>
+				<eb:PullRequest mpc="http://msh.example.com/mpc123" />
+			</eb:SignalMessage>
+		</eb:Messaging>
+	</S11:Header>
+	<S11:Body />
+</S11:Envelope> 
