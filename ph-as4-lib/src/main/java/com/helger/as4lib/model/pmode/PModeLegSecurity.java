@@ -16,17 +16,26 @@
  */
 package com.helger.as4lib.model.pmode;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
+import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ETriState;
 
 /**
  * Security part.
- * 
+ *
  * @author Philip Helger
  */
 public class PModeLegSecurity
 {
+  // TODO SET DEFAULT VALUES
+  public static final boolean DEFAULT_USERNAME_TOKEN_DIGEST = false;
+  public static final boolean DEFAULT_USERNAME_TOKEN_NONCE = false;
+  public static final boolean DEFAULT_USERNAME_TOKEN_CREATED = false;
+  public static final boolean DEFAULT_PMODE_AUTHORIZE = false;
+  public static final boolean DEFAULT_SEND_RECEIPT = false;
+
   /**
    * This parameter has two possible values, 1.0 and 1.1. The value of this
    * parameter represents the version of WS-Security to be used.
@@ -42,7 +51,7 @@ public class PModeLegSecurity
    * belongs). An element within the Attachment[] list is identified by the
    * Content-Id.
    */
-  private List <String> m_aX509Sign;
+  private ICommonsList <String> m_aX509Sign;
   /**
    * The value of this parameter identifies the public certificate to use when
    * verifying signed data.
@@ -67,7 +76,7 @@ public class PModeLegSecurity
    * extend this parameter: Encrypt.Element[] and Encrypt.Attachment[]. An
    * element within these lists is identified as in Security.X509.Sign lists.
    */
-  private List <String> m_aX509EncryptionEncrypt;
+  private ICommonsList <String> m_aX509EncryptionEncrypt;
   /**
    * The value of this parameter identifies the public certificate to use when
    * encrypting data.
@@ -101,17 +110,17 @@ public class PModeLegSecurity
    * The Boolean value of this parameter indicates whether a password digest
    * should be included in the WSS UsernameToken element.
    */
-  private ETriState m_eUsernameTokenDigest;
+  private ETriState m_eUsernameTokenDigest = ETriState.UNDEFINED;
   /**
    * The Boolean value of this parameter indicates whether the WSS UsernameToken
    * element should contain a Nonce element.
    */
-  private ETriState m_eUsernameTokenNonce;
+  private ETriState m_eUsernameTokenNonce = ETriState.UNDEFINED;
   /**
    * The Boolean value of this parameter indicates whether the WSS UsernameToken
    * element should have a Created timestamp element.
    */
-  private ETriState m_eUsernameTokenCreated;
+  private ETriState m_eUsernameTokenCreated = ETriState.UNDEFINED;
   /**
    * The Boolean value of this parameter indicates whether messages on this MEP
    * leg must be authorized for processing under this P-Mode. If the parameter
@@ -125,16 +134,216 @@ public class PModeLegSecurity
    * for the pulled message , and (b) the signal contains the right credentials
    * (e.g. username/password).
    */
-  private ETriState m_ePModeAuthorize;
+  private ETriState m_ePModeAuthorize = ETriState.UNDEFINED;
   /**
    * The Boolean value of this parameter indicates whether a signed receipt
    * (Receipt ebMS signal) containing a digest of the message must be sent back.
    */
-  private ETriState m_eSendReceipt;
+  private ETriState m_eSendReceipt = ETriState.UNDEFINED;
   /**
    * This parameter indicates whether the Receipt signal is to be sent as a
    * callback (value "callback"), or synchronously in the back-channel response
    * (value "response"). If not present, any pattern may be used.
    */
   private String m_sSendReceiptReplyPattern;
+
+  public String getWSSVersion ()
+  {
+    return m_sWSSVersion;
+  }
+
+  public void setWSSVersion (final String sWSSVersion)
+  {
+    m_sWSSVersion = sWSSVersion;
+  }
+
+  public ICommonsList <String> getX509Sign ()
+  {
+    return m_aX509Sign;
+  }
+
+  public void setX509Sign (final ICommonsList <String> aX509Sign)
+  {
+    m_aX509Sign = aX509Sign;
+  }
+
+  public String getX509SignatureCertificate ()
+  {
+    return m_sX509SignatureCertificate;
+  }
+
+  public void setX509SignatureCertificate (final String sX509SignatureCertificate)
+  {
+    m_sX509SignatureCertificate = sX509SignatureCertificate;
+  }
+
+  public String getX509SignatureHashFunction ()
+  {
+    return m_sX509SignatureHashFunction;
+  }
+
+  public void setX509SignatureHashFunction (final String sX509SignatureHashFunction)
+  {
+    m_sX509SignatureHashFunction = sX509SignatureHashFunction;
+  }
+
+  public String getX509SignatureAlgorithm ()
+  {
+    return m_sX509SignatureAlgorithm;
+  }
+
+  public void setX509SignatureAlgorithm (final String sX509SignatureAlgorithm)
+  {
+    m_sX509SignatureAlgorithm = sX509SignatureAlgorithm;
+  }
+
+  public ICommonsList <String> getX509EncryptionEncrypt ()
+  {
+    return m_aX509EncryptionEncrypt;
+  }
+
+  public void setX509EncryptionEncrypt (final ICommonsList <String> aX509EncryptionEncrypt)
+  {
+    m_aX509EncryptionEncrypt = aX509EncryptionEncrypt;
+  }
+
+  public String getX509EncryptionCertificate ()
+  {
+    return m_sX509EncryptionCertificate;
+  }
+
+  public void setX509EncryptionCertificate (final String sX509EncryptionCertificate)
+  {
+    m_sX509EncryptionCertificate = sX509EncryptionCertificate;
+  }
+
+  public String getX509EncryptionAlgorithm ()
+  {
+    return m_sX509EncryptionAlgorithm;
+  }
+
+  public void setX509EncryptionAlgorithm (final String sX509EncryptionAlgorithm)
+  {
+    m_sX509EncryptionAlgorithm = sX509EncryptionAlgorithm;
+  }
+
+  public Integer getX509EncryptionMinimumStrength ()
+  {
+    return m_aX509EncryptionMinimumStrength;
+  }
+
+  public void setX509EncryptionMinimumStrength (final Integer aX509EncryptionMinimumStrength)
+  {
+    m_aX509EncryptionMinimumStrength = aX509EncryptionMinimumStrength;
+  }
+
+  public String getUsernameTokenUsername ()
+  {
+    return m_sUsernameTokenUsername;
+  }
+
+  public void setUsernameTokenUsername (final String sUsernameTokenUsername)
+  {
+    m_sUsernameTokenUsername = sUsernameTokenUsername;
+  }
+
+  public String getUsernameTokenPassword ()
+  {
+    return m_sUsernameTokenPassword;
+  }
+
+  public void setUsernameTokenPassword (final String sUsernameTokenPassword)
+  {
+    m_sUsernameTokenPassword = sUsernameTokenPassword;
+  }
+
+  public String getSendReceiptReplyPattern ()
+  {
+    return m_sSendReceiptReplyPattern;
+  }
+
+  public void setSendReceiptReplyPattern (final String sSendReceiptReplyPattern)
+  {
+    m_sSendReceiptReplyPattern = sSendReceiptReplyPattern;
+  }
+
+  public boolean getUsernameTokenDigest ()
+  {
+    return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
+  }
+
+  public void setUsernameTokenDigest (final boolean bUsernameTokenDigest)
+  {
+    setUsernameTokenDigest (ETriState.valueOf (bUsernameTokenDigest));
+  }
+
+  public void setUsernameTokenDigest (@Nonnull final ETriState eUsernameTokenDigest)
+  {
+    ValueEnforcer.notNull (eUsernameTokenDigest, "UsernameTokenDigest");
+    m_eUsernameTokenDigest = eUsernameTokenDigest;
+  }
+
+  public boolean getUsernameTokenNonce ()
+  {
+    return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
+  }
+
+  public void setUsernameTokenNonce (final boolean bUsernameTokenNonce)
+  {
+    setUsernameTokenNonce (ETriState.valueOf (bUsernameTokenNonce));
+  }
+
+  public void setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
+  {
+    ValueEnforcer.notNull (eUsernameTokenNonce, "UsernameTokenNonce ");
+    m_eUsernameTokenNonce = eUsernameTokenNonce;
+  }
+
+  public boolean getUsernameTokenCreated ()
+  {
+    return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
+  }
+
+  public void setUsernameTokenCreated (final boolean bUsernameTokenCreated)
+  {
+    setUsernameTokenCreated (ETriState.valueOf (bUsernameTokenCreated));
+  }
+
+  public void setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
+  {
+    ValueEnforcer.notNull (eUsernameTokenCreated, "UsernameTokenCreated ");
+    m_eUsernameTokenCreated = eUsernameTokenCreated;
+  }
+
+  public boolean getPModeAuthorize ()
+  {
+    return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
+  }
+
+  public void setPModeAuthorize (final boolean bPModeAuthorize)
+  {
+    setPModeAuthorize (ETriState.valueOf (bPModeAuthorize));
+  }
+
+  public void setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
+  {
+    ValueEnforcer.notNull (ePModeAuthorize, "PModeAuthorize ");
+    m_ePModeAuthorize = ePModeAuthorize;
+  }
+
+  public boolean getSendReceipt ()
+  {
+    return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
+  }
+
+  public void setSendReceipt (final boolean bSendReceipt)
+  {
+    setSendReceipt (ETriState.valueOf (bSendReceipt));
+  }
+
+  public void setSendReceipt (@Nonnull final ETriState eSendReceipt)
+  {
+    ValueEnforcer.notNull (eSendReceipt, "SendReceipt ");
+    m_eSendReceipt = eSendReceipt;
+  }
 }

@@ -16,11 +16,12 @@
  */
 package com.helger.as4lib.model.pmode;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.commons.collection.ext.CommonsLinkedHashMap;
+import com.helger.commons.collection.ext.ICommonsOrderedMap;
 
 public class PMode
 {
@@ -98,5 +99,29 @@ public class PMode
    */
   private PModeParty m_aResponder;
 
-  private final Map <String, PModeLeg> m_aLegs = new LinkedHashMap <String, PModeLeg> ();
+  private final ICommonsOrderedMap <String, PModeLeg> m_aLegs = new CommonsLinkedHashMap<> ();
+
+  @Nullable
+  public PModeParty getInitiator ()
+  {
+    return m_aInitiator;
+  }
+
+  @Nullable
+  public PModeParty getResponder ()
+  {
+    return m_aResponder;
+  }
+
+  @Nullable
+  public String getID ()
+  {
+    return m_sID;
+  }
+
+  public void setID (final String sID)
+  {
+    this.m_sID = sID;
+  }
+
 }
