@@ -1,0 +1,72 @@
+<S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-
+1.0.xsd"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-
+1.0.xsd">
+	<S12:Header>
+		<eb3:Messaging S12:mustUnderstand="true" id='_ebmessaging'>
+			<eb3:SignalMessage>
+				<eb3:MessageInfo>
+					<eb3:Timestamp>2011-02-19T11:30:11.320Z</eb3:Timestamp>
+					<eb3:MessageId>msg123@smallco.example.com</eb3:MessageId>
+				</eb3:MessageInfo>
+				<eb3:PullRequest mpc="http://as4.bigco.example.com/queues/q_456" />
+			</eb3:SignalMessage>
+		</eb3:Messaging>
+		<wsse:Security S12:role="ebms" S12:mustUnderstand="true"
+			wsu:Id="_pullauthorization">
+			<wsse:UsernameToken>
+				<wsse:Username>smallcoAS4</wsse:Username>
+				<wsse:Password
+					Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-tokenprofile-1.0#PasswordDigest">
+					B5twk47KwSrjeg==</wsse:Password>
+				<wsu:Created>2011-02-19T11:30:11.327Z</wsu:Created>
+			</wsse:UsernameToken>
+		</wsse:Security>
+		<wsse:Security S12:mustUnderStand="true">
+			<wsse:BinarySecurityToken wsu:Id="_smallco_cert">
+				<!-- details omitted -->
+			</wsse:BinarySecurityToken>
+			<ds:Signature>
+				<ds:SignedInfo>
+					<ds:CanonicalizationMethod
+						Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+					<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+					<ds:Reference URI="#_ebmessaging">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>KshAH7QFFAw2sV5LQBOUOSSrCaI=</ds:DigestValue>
+					</ds:Reference>
+					<ds:Reference URI="#_pullauthorization">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>PreCqm0ESZqmITjf1qzrLFuOEYg=</ds:DigestValue>
+					</ds:Reference>
+					<ds:Reference URI="#_soapbody">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>FkwnI8mmXh71J5qcwO404ZnlXpg=</ds:DigestValue>
+					</ds:Reference>
+				</ds:SignedInfo>
+				<ds:SignatureValue>
+					<!-- details omitted -->
+				</ds:SignatureValue>
+				<ds:KeyInfo>
+					<wsse:SecurityTokenReference>
+						<wsse:Reference URI="#_smallco_cert"
+							ValueType="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wssx509-token-profile-1.0#X509v3" />
+					</wsse:SecurityTokenReference>
+				</ds:KeyInfo>
+			</ds:Signature>
+		</wsse:Security>
+	</S12:Header>
+	<S12:Body wsu:Id="_soapbody" />
+</S12:Envelope>

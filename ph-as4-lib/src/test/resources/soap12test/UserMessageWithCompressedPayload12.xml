@@ -1,0 +1,69 @@
+
+Content-Type: Multipart/Related; boundary=MIME_boundary;
+type=application/soap+xml;
+start="
+<as4msg @ example.com>
+	"
+	--MIME_boundary
+	Content-Type: application/soap+xml; charset=UTF-8
+	Content-Transfer-Encoding: 8bit
+	Content-ID:
+	<as4msg @ example.com>
+<?xml version="1.0" encoding="UTF-8"?>
+		<S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope"
+			xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+			xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+			xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+			<S12:Header>
+				<eb:Messaging S12:mustUnderstand="true"
+					id="_9ecb9d3c-cef8-4006-ac18-f425c5c7ae3d">
+					<eb:UserMessage>
+						<eb:MessageInfo>
+							<eb:Timestamp>2011-04-03T14:49:28.886Z</eb:Timestamp>
+							<eb:MessageId>2011-921@5209999001264.example.com</eb:MessageId>
+						</eb:MessageInfo>
+						<eb:PartyInfo>
+							<eb:From>
+								<eb:PartyId
+									type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:0088">5209999001264</eb:PartyId>
+								<eb:Role>Seller</eb:Role>
+							</eb:From>
+							<eb:To>
+								<eb:PartyId
+									type="urn:oasis:names:tc:ebcore:partyid-type:iso6523:0088">5209999001295</eb:PartyId>
+								<eb:Role>Buyer</eb:Role>
+							</eb:To>
+						</eb:PartyInfo>
+						<eb:CollaborationInfo>
+							<eb:Service>http://docs.oasis-open.org/ebxml-msg/as4/200902/service</eb:Service>
+							<eb:Action>http://docs.oasis-open.org/ebxml-msg/as4/200902/action</eb:Action>
+							<eb:ConversationId>2011-921</eb:ConversationId>
+						</eb:CollaborationInfo>
+						<eb:PayloadInfo>
+							<eb:PartInfo href="cid:attachment1234@example.com">
+								<eb:PartProperties>
+									<eb:Property name="MimeType">
+										application/xml
+										<eb:Property>
+											<eb:Property name="CharacterSet">utf-8</eb:Property>
+											<eb:Property name="CompressionType">application/gzip</eb:Property>
+								</eb:PartProperties>
+							</eb:PartInfo>
+						</eb:PayloadInfo>
+					</eb:UserMessage>
+				</eb:Messaging>
+				<wsse:Security S12:mustUnderStand="true">
+					<!-- Content omitted -->
+				</wsse:Security>
+			</S12:Header>
+			<S12:Body wsu:Id="_f8aa8b55-b31c-4364-94d0-3615ca65aa40" />
+		</S12:Envelope>
+		--MIME_boundary
+		Content-Type: application/gzip
+		Content-ID:
+		<attachment1234 @ example.com>
+			Content-Description: Compressed XML payload
+			Content-Disposition: attachment; filename=invoice.xml
+			Content-Transfer-Encoding: binary
+			#‹##ºB.O#ÿ <!-- remaining binary content omitted -->
+			--MIME_boundary
