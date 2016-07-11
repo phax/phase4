@@ -1,11 +1,18 @@
 package com.helger.as4lib.error;
 
-public enum EErrorText
+import java.util.Locale;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.helger.commons.text.display.IHasDisplayText;
+
+public enum EErrorText implements IHasDisplayText
 {
   VALUE_NOT_RECOGNIZED ("Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by th MSH."),
   FEATURE_NOT_SUPPORTED ("Although the message document is well formed and schema valid, some element/attribute value cannot be processed as expected because the related feature is not supported by the MSH."),
   VALUE_INCONSISTENT ("Although the message document is well formed and schema valid, some element/attribute value is inconsistent either with the content of other element/attribute, or with the processing mode of the MSH, or with the normative requirements of the ebMS specification."),
-  OTHER (""),
+  OTHER ("An undefined error occurred."),
   CONNECTION_FAIlURE ("The MSH is expieriencing temporary or permanent failure in trying to open a transport connection with a remote MSH."),
   EMPTY_MESSAGE_PARTITION_CHANNEL ("There is no message available for pulling from this MPC at this moment."),
   MIME_INCONSISTENCY ("The use of MIME is not consistent with the required usage in this specification"),
@@ -21,21 +28,17 @@ public enum EErrorText
   MISSING_RECEIPT ("A Receipt has not been received  for a message that was previously sent by the MSH generating this error."),
   INVALID_RECEIPT ("A Receipt has been received  for a message that was previously sent by the MSH generating this error, but the content does not match the message content (e.g. some part has not been acknowledged, or the digest associated does not match the signature digest, for NRR)."),
   DECOMPRESSION_FAILURE ("An error occurred during the decompression.");
-  private String m_sErrorText;
 
-  private EErrorText (final String sErrorText)
+  private final String m_sErrorText;
+
+  private EErrorText (@Nonnull final String sErrorText)
   {
     m_sErrorText = sErrorText;
   }
 
-  public String getErrorText ()
+  @Nullable
+  public String getDisplayText (@Nonnull final Locale aContentLocale)
   {
     return m_sErrorText;
   }
-
-  public void setErrorText (final String sErrorText)
-  {
-    m_sErrorText = sErrorText;
-  }
-
 }

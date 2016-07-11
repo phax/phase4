@@ -1,58 +1,54 @@
 package com.helger.as4lib.error;
 
+import java.io.Serializable;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.ebms3header.Ebms3Description;
+import com.helger.commons.text.display.IHasDisplayText;
 
-public interface IEbmsError
+public interface IEbmsError extends Serializable
 {
   /**
-   * Gets the value of the description property.
+   * Gets the value of the errorCode property.
    *
-   * @return possible object is {@link Ebms3Description }
+   * @return possible object is {@link String }
    */
-  @Nullable
-  public Ebms3Description getDescription ();
+  @Nonnull
+  String getErrorCode ();
 
   /**
-   * Sets the value of the description property.
+   * Gets the value of the severity property.
    *
-   * @param value
-   *        allowed object is {@link Ebms3Description }
+   * @return possible object is {@link String }
    */
-  public void setDescription (@Nullable final Ebms3Description value);
+  @Nonnull
+  EErrorSeverity getSeverity ();
+
+  /**
+   * Gets the value of the shortDescription property.
+   *
+   * @return possible object is {@link String }
+   */
+  @Nonnull
+  String getShortDescription ();
 
   /**
    * Gets the value of the errorDetail property.
    *
    * @return possible object is {@link String }
    */
-  @Nullable
-  public String getErrorDetail ();
-
-  /**
-   * Sets the value of the errorDetail property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setErrorDetail (@Nullable final String value);
+  @Nonnull
+  IHasDisplayText getErrorDetail ();
 
   /**
    * Gets the value of the category property.
    *
-   * @return possible object is {@link String }
+   * @return possible object is {@link EErrorCategory }
    */
-  @Nullable
-  public String getCategory ();
-
-  /**
-   * Sets the value of the category property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setCategory (@Nullable final String value);
+  @Nonnull
+  EErrorCategory getCategory ();
 
   /**
    * Gets the value of the refToMessageInError property.
@@ -60,31 +56,7 @@ public interface IEbmsError
    * @return possible object is {@link String }
    */
   @Nullable
-  public String getRefToMessageInError ();
-
-  /**
-   * Sets the value of the refToMessageInError property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setRefToMessageInError (@Nullable final String value);
-
-  /**
-   * Gets the value of the errorCode property.
-   *
-   * @return possible object is {@link String }
-   */
-  @Nullable
-  public String getErrorCode ();
-
-  /**
-   * Sets the value of the errorCode property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setErrorCode (@Nullable final String value);
+  String getRefToMessageInError ();
 
   /**
    * Gets the value of the origin property.
@@ -92,45 +64,13 @@ public interface IEbmsError
    * @return possible object is {@link String }
    */
   @Nullable
-  public String getOrigin ();
+  String getOrigin ();
 
   /**
-   * Sets the value of the origin property.
+   * Gets the value of the description property.
    *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setOrigin (@Nullable final String value);
-
-  /**
-   * Gets the value of the severity property.
-   *
-   * @return possible object is {@link String }
+   * @return possible object is {@link Ebms3Description }
    */
   @Nullable
-  public String getSeverity ();
-
-  /**
-   * Sets the value of the severity property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setSeverity (@Nullable final String value);
-
-  /**
-   * Gets the value of the shortDescription property.
-   *
-   * @return possible object is {@link String }
-   */
-  @Nullable
-  public String getShortDescription ();
-
-  /**
-   * Sets the value of the shortDescription property.
-   *
-   * @param value
-   *        allowed object is {@link String }
-   */
-  public void setShortDescription (@Nullable final String value);
+  Ebms3Description getDescription ();
 }

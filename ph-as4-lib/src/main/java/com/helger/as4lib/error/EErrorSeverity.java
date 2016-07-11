@@ -21,5 +21,4 @@ public enum EErrorSeverity
   {
     m_sSeverity = sSeverity;
   }
-
 }

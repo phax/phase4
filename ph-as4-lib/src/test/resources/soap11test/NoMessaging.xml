@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:S12="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" />
