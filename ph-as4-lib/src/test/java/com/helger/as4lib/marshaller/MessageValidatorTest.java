@@ -1,8 +1,9 @@
 package com.helger.as4lib.marshaller;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -24,42 +25,104 @@ import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.soap11.Soap11Body;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap11.Soap11Header;
+import com.helger.as4lib.testfiles.CAS4TestFiles;
 import com.helger.as4lib.validator.MessageValidator;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 
 public class MessageValidatorTest
 {
 
-  private MessageValidator mv;
+  private MessageValidator aMessageValidator;
+
+  private StringBuilder m_aFailedDocuments;
+  private File m_aTMPFile;
 
   @Before
   public void setUp ()
   {
-    mv = new MessageValidator ();
+    aMessageValidator = new MessageValidator ();
+    m_aFailedDocuments = new StringBuilder ();
   }
 
   @Test
-  public void messageValidatorXMLSuccess ()
+  public void messageValidatorXMLSuccessSOAP11 ()
   {
-    assertTrue (mv.validateXML (new ClassPathResource ("/soap11test/UserMessage.xml").getAsFile ()));
+    final ICommonsList <String> aGoodFiles = CAS4TestFiles.getTestFilesSOAP11ValidXML ();
+
+    for (final String aFilePath : aGoodFiles)
+    {
+      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath).getAsFile ();
+
+      if (!aMessageValidator.validateXML (m_aTMPFile))
+      {
+        m_aFailedDocuments.append (aFilePath);
+        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
+      }
+
+    }
+
+    _failedTestsCheck ();
   }
 
   @Test
-  public void messageValidatorXMLImaginaryTimestamp ()
+  public void messageValidatorXMLSuccessSOAP12 ()
   {
-    assertFalse (mv.validateXML (new ClassPathResource ("/soap11test/MessageInfoImaginaryTimestamp.xml").getAsFile ()));
-  }
+    final ICommonsList <String> aGoodFiles = CAS4TestFiles.getTestFilesSOAP12ValidXML ();
 
-  @Test (expected = NullPointerException.class)
-  public void messageValidatorXMLNoMessaging ()
-  {
-    mv.validateXML (new ClassPathResource ("/soap11test/NoMessaging.xml").getAsFile ());
+    for (final String aFilePath : aGoodFiles)
+    {
+      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath).getAsFile ();
+
+      if (!aMessageValidator.validateXML (m_aTMPFile))
+      {
+        m_aFailedDocuments.append (aFilePath);
+        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
+      }
+
+    }
+
+    _failedTestsCheck ();
   }
 
   @Test
-  public void messageValidatorXMLEmptyMessaging ()
+  public void messageValidatorXMLInvalidSOAP11 ()
   {
-    assertTrue (mv.validateXML (new ClassPathResource ("/soap11test/EmptyMessaging.xml").getAsFile ()));
+    final ICommonsList <String> aInvalidFiles = CAS4TestFiles.getTestFilesSOAP11InvalidXML ();
+
+    for (final String aFilePath : aInvalidFiles)
+    {
+      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath).getAsFile ();
+
+      if (aMessageValidator.validateXML (m_aTMPFile))
+      {
+        m_aFailedDocuments.append (aFilePath);
+        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
+      }
+
+    }
+
+    _failedTestsCheck ();
+  }
+
+  @Test
+  public void messageValidatorXMLInvalidSOAP12 ()
+  {
+    final ICommonsList <String> aInvalidFiles = CAS4TestFiles.getTestFilesSOAP12InvalidXML ();
+
+    for (final String aFilePath : aInvalidFiles)
+    {
+      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath).getAsFile ();
+
+      if (aMessageValidator.validateXML (m_aTMPFile))
+      {
+        m_aFailedDocuments.append (aFilePath);
+        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
+      }
+
+    }
+
+    _failedTestsCheck ();
   }
 
   @Test
@@ -73,7 +136,7 @@ public class MessageValidatorTest
     aSignalMessage.setMessageInfo (aMessageInfo);
     aSignalMessages.add (aSignalMessage);
     aMessage.addSignalMessage (aSignalMessage);
-    assertFalse (mv.validatePOJO (aMessage));
+    assertFalse (aMessageValidator.validatePOJO (aMessage));
   }
 
   @Test
@@ -114,5 +177,13 @@ public class MessageValidatorTest
     aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
 
     System.out.println (Ebms3WriterBuilder.soap11 ().getAsString (aSoapEnv));
+  }
+
+  private void _failedTestsCheck ()
+  {
+    if (!m_aFailedDocuments.toString ().isEmpty ())
+    {
+      fail ("Documents who did not pass: " + m_aFailedDocuments.toString ());
+    }
   }
 }

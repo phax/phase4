@@ -7,6 +7,8 @@ import java.util.Locale;
 
 import javax.xml.bind.JAXBException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.as4lib.ebms3header.Ebms3Error;
@@ -24,26 +26,37 @@ import com.helger.jaxb.validation.CollectingValidationEventHandler;
 
 public class MessageValidator
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (MessageValidator.class);
+
   // TODO Check P-Modes they should define which SOAP Version should be used for
   // the conversation
   public Document getSoapEnvelope (final File aXML)
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ().setValidationEventHandler (aCVEH).read (aXML);
+    final CollectingExceptionCallback <JAXBException> aExHdl = new CollectingExceptionCallback<> ();
+    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
+                                                  .setExceptionHandler (aExHdl)
+                                                  .setValidationEventHandler (aCVEH)
+                                                  .read (aXML);
+    if (aExHdl.hasException ())
+    {
+      final String sCause = aExHdl.getException ().getCause ().toString ();
+      if (!sCause.contains ("S12:Envelope"))
+      {
+        s_aLogger.info (sCause);
+      }
+    }
     // If the document can not be read by the soap11 Reader, try soap12 Reader
     if (aCVEH.getResourceErrors ().containsAtLeastOneError ())
     {
-      while (aCVEH.getResourceErrors ().iterator ().hasNext ())
+      final IResourceError aError = aCVEH.getResourceErrors ().iterator ().next ();
+      if (aError.getDisplayText (Locale.getDefault ()).contains ("S12:Envelope"))
       {
-        final IResourceError aError = aCVEH.getResourceErrors ().iterator ().next ();
-        if (aError.getDisplayText (Locale.getDefault ()).contains ("S12:Envelope"))
-        {
-          final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ().setValidationEventHandler (aCVEH).read (aXML);
-          return Ebms3WriterBuilder.soap12 ().getAsDocument (aEnv12);
-        }
+        final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ().setValidationEventHandler (aCVEH).read (aXML);
+        return Ebms3WriterBuilder.soap12 ().getAsDocument (aEnv12);
       }
     }
-    return Ebms3WriterBuilder.soap11 ().getAsDocument (aEnv);
+    return aEnv != null ? Ebms3WriterBuilder.soap11 ().getAsDocument (aEnv) : null;
 
   }
 
@@ -55,7 +68,7 @@ public class MessageValidator
     if (aDocument != null)
     {
       final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-      for (int i = 0; i < getSoapEnvelope (aXML).getChildNodes ().getLength (); i++)
+      for (int i = 0; i < aDocument.getChildNodes ().getLength (); i++)
       {
         final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
                                                           .setValidationEventHandler (aCVEH)

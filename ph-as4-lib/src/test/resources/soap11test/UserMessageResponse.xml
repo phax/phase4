@@ -42,5 +42,5 @@ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
 			</eb:UserMessage>
 		</eb:Messaging>
 	</S11:Header>
-	<S11:Body>
+	<S11:Body></S11:Body>
 </S11:Envelope>  
