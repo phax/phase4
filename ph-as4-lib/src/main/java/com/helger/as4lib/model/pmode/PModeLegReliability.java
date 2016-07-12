@@ -16,6 +16,9 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -132,16 +135,16 @@ public class PModeLegReliability
 
   }
 
-  public PModeLegReliability (final ICommonsList <String> aCorrelation,
-                              final ETriState eAtLeastOnceAckOnDelivery,
-                              final ETriState eAtLeastOnceContract,
-                              final ETriState eAtLeastOnceContractAckResponse,
-                              final String eAtLeastOnceReplyPattern,
-                              final ETriState eAtMostOnceContract,
-                              final ETriState eInOrderContract,
-                              final ETriState eStartGroup,
-                              final ETriState eTerminateGroup,
-                              final String sAtLeastOnceContractAcksTo)
+  public PModeLegReliability (@Nullable final ICommonsList <String> aCorrelation,
+                              @Nonnull final ETriState eAtLeastOnceAckOnDelivery,
+                              @Nonnull final ETriState eAtLeastOnceContract,
+                              @Nonnull final ETriState eAtLeastOnceContractAckResponse,
+                              @Nullable final String eAtLeastOnceReplyPattern,
+                              @Nonnull final ETriState eAtMostOnceContract,
+                              @Nonnull final ETriState eInOrderContract,
+                              @Nonnull final ETriState eStartGroup,
+                              @Nonnull final ETriState eTerminateGroup,
+                              @Nullable final String sAtLeastOnceContractAcksTo)
   {
     super ();
     m_eAtLeastOnceContract = eAtLeastOnceContract;
@@ -156,7 +159,13 @@ public class PModeLegReliability
     m_eTerminateGroup = eTerminateGroup;
   }
 
-  public boolean getAtLeastOnceContract ()
+  public boolean isAtLeastOnceContractDefined ()
+  {
+    return m_eAtLeastOnceContract.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isAtLeastOnceContract ()
   {
     return m_eAtLeastOnceContract.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT);
   }
@@ -172,7 +181,13 @@ public class PModeLegReliability
     m_eAtLeastOnceContract = eAtLeastOnceContract;
   }
 
-  public boolean getAtLeastOnceAckOnDelivery ()
+  public boolean isAtLeastOnceAckOnDeliveryDefined ()
+  {
+    return m_eAtLeastOnceAckOnDelivery.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isAtLeastOnceAckOnDelivery ()
   {
     return m_eAtLeastOnceAckOnDelivery.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_ACK_ON_DELIVERY);
   }
@@ -188,6 +203,7 @@ public class PModeLegReliability
     m_eAtLeastOnceAckOnDelivery = eAtLeastOnceAckOnDelivery;
   }
 
+  @Nullable
   public String getAtLeastOnceContractAcksTo ()
   {
     return m_sAtLeastOnceContractAcksTo;
@@ -198,7 +214,13 @@ public class PModeLegReliability
     m_sAtLeastOnceContractAcksTo = sAtLeastOnceContractAcksTo;
   }
 
-  public boolean getAtLeastOnceContractAckResponse ()
+  public boolean isAtLeastOnceContractAckResponseDefined ()
+  {
+    return m_eAtLeastOnceContractAckResponse.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isAtLeastOnceContractAckResponse ()
   {
     return m_eAtLeastOnceContractAckResponse.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE);
   }
@@ -214,6 +236,7 @@ public class PModeLegReliability
     m_eAtLeastOnceContractAckResponse = eAtLeastOnceContractAckResponse;
   }
 
+  @Nullable
   public String getAtLeastOnceReplyPattern ()
   {
     return m_eAtLeastOnceReplyPattern;
@@ -224,7 +247,13 @@ public class PModeLegReliability
     m_eAtLeastOnceReplyPattern = eAtLeastOnceReplyPattern;
   }
 
-  public boolean getAtMostOnceContract ()
+  @Nonnull
+  public boolean isAtMostOnceContractDefined ()
+  {
+    return m_eAtMostOnceContract.isDefined ();
+  }
+
+  public boolean isAtMostOnceContract ()
   {
     return m_eAtMostOnceContract.getAsBooleanValue (DEFAULT_AT_MOST_ONCE_CONTRACT);
   }
@@ -240,7 +269,13 @@ public class PModeLegReliability
     m_eAtMostOnceContract = eAtMostOnceContract;
   }
 
-  public boolean getInOrderContract ()
+  public boolean isInOrderContractDefined ()
+  {
+    return m_eInOrderContract.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isInOrderContract ()
   {
     return m_eInOrderContract.getAsBooleanValue (DEFAULT_IN_ORDER_CONTACT);
   }
@@ -256,7 +291,13 @@ public class PModeLegReliability
     m_eInOrderContract = eInOrderContract;
   }
 
-  public boolean getStartGroup ()
+  public boolean isStartGroupDefined ()
+  {
+    return m_eStartGroup.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isStartGroup ()
   {
     return m_eStartGroup.getAsBooleanValue (DEFAULT_START_GROUP);
   }
@@ -272,6 +313,7 @@ public class PModeLegReliability
     m_eStartGroup = eStartGroup;
   }
 
+  @Nullable
   public ICommonsList <String> getCorrelation ()
   {
     return m_aCorrelation;
@@ -282,7 +324,13 @@ public class PModeLegReliability
     m_aCorrelation = aCorrelation;
   }
 
-  public boolean getTerminateGroup ()
+  public boolean isTerminateGroupDefined ()
+  {
+    return m_eTerminateGroup.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isTerminateGroup ()
   {
     return m_eTerminateGroup.getAsBooleanValue (DEFAULT_TERMINATE_GROUP);
   }

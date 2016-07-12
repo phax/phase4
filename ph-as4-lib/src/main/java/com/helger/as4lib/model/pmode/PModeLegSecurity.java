@@ -190,6 +190,7 @@ public class PModeLegSecurity
     this.m_sX509SignatureHashFunction = m_sX509SignatureHashFunction;
   }
 
+  @Nullable
   public String getWSSVersion ()
   {
     return m_sWSSVersion;
@@ -200,6 +201,7 @@ public class PModeLegSecurity
     m_sWSSVersion = sWSSVersion;
   }
 
+  @Nullable
   public ICommonsList <String> getX509Sign ()
   {
     return m_aX509Sign;
@@ -210,6 +212,7 @@ public class PModeLegSecurity
     m_aX509Sign = aX509Sign;
   }
 
+  @Nullable
   public String getX509SignatureCertificate ()
   {
     return m_sX509SignatureCertificate;
@@ -220,6 +223,7 @@ public class PModeLegSecurity
     m_sX509SignatureCertificate = sX509SignatureCertificate;
   }
 
+  @Nullable
   public String getX509SignatureHashFunction ()
   {
     return m_sX509SignatureHashFunction;
@@ -230,6 +234,7 @@ public class PModeLegSecurity
     m_sX509SignatureHashFunction = sX509SignatureHashFunction;
   }
 
+  @Nullable
   public String getX509SignatureAlgorithm ()
   {
     return m_sX509SignatureAlgorithm;
@@ -240,6 +245,7 @@ public class PModeLegSecurity
     m_sX509SignatureAlgorithm = sX509SignatureAlgorithm;
   }
 
+  @Nullable
   public ICommonsList <String> getX509EncryptionEncrypt ()
   {
     return m_aX509EncryptionEncrypt;
@@ -250,6 +256,7 @@ public class PModeLegSecurity
     m_aX509EncryptionEncrypt = aX509EncryptionEncrypt;
   }
 
+  @Nullable
   public String getX509EncryptionCertificate ()
   {
     return m_sX509EncryptionCertificate;
@@ -260,6 +267,7 @@ public class PModeLegSecurity
     m_sX509EncryptionCertificate = sX509EncryptionCertificate;
   }
 
+  @Nullable
   public String getX509EncryptionAlgorithm ()
   {
     return m_sX509EncryptionAlgorithm;
@@ -286,6 +294,7 @@ public class PModeLegSecurity
     m_aX509EncryptionMinimumStrength = aX509EncryptionMinimumStrength;
   }
 
+  @Nullable
   public String getUsernameTokenUsername ()
   {
     return m_sUsernameTokenUsername;
@@ -296,6 +305,7 @@ public class PModeLegSecurity
     m_sUsernameTokenUsername = sUsernameTokenUsername;
   }
 
+  @Nullable
   public String getUsernameTokenPassword ()
   {
     return m_sUsernameTokenPassword;
@@ -306,6 +316,7 @@ public class PModeLegSecurity
     m_sUsernameTokenPassword = sUsernameTokenPassword;
   }
 
+  @Nullable
   public String getSendReceiptReplyPattern ()
   {
     return m_sSendReceiptReplyPattern;
@@ -321,6 +332,7 @@ public class PModeLegSecurity
     return m_eUsernameTokenDigest.isDefined ();
   }
 
+  @Nonnull
   public boolean isUsernameTokenDigest ()
   {
     return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
@@ -342,6 +354,7 @@ public class PModeLegSecurity
     return m_eUsernameTokenNonce.isDefined ();
   }
 
+  @Nonnull
   public boolean isUsernameTokenNonce ()
   {
     return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
@@ -363,6 +376,7 @@ public class PModeLegSecurity
     return m_eUsernameTokenCreated.isDefined ();
   }
 
+  @Nonnull
   public boolean isUsernameTokenCreated ()
   {
     return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
@@ -384,6 +398,7 @@ public class PModeLegSecurity
     return m_ePModeAuthorize.isDefined ();
   }
 
+  @Nonnull
   public boolean isPModeAuthorize ()
   {
     return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
@@ -405,6 +420,7 @@ public class PModeLegSecurity
     return m_eSendReceipt.isDefined ();
   }
 
+  @Nonnull
   public boolean isSendReceipt ()
   {
     return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);

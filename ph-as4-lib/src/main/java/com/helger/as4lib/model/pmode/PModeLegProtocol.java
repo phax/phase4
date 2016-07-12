@@ -51,6 +51,13 @@ public class PModeLegProtocol
   public PModeLegProtocol ()
   {}
 
+  public PModeLegProtocol (@Nullable final String sAddress, @Nullable final String sSOAPVersion)
+  {
+    super ();
+    m_sAddress = sAddress;
+    m_sSOAPVersion = sSOAPVersion;
+  }
+
   @Nullable
   public String getAddress ()
   {

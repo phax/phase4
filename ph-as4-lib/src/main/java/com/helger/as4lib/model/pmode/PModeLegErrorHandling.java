@@ -76,4 +76,64 @@ public class PModeLegErrorHandling
    * by the Receiving MSH.
    */
   private ETriState m_eReportDeliveryFailuresNotifyProducer;
+
+  public PModeAddressList getReportSenderErrorsTo ()
+  {
+    return m_aReportSenderErrorsTo;
+  }
+
+  public void setReportSenderErrorsTo (final PModeAddressList aReportSenderErrorsTo)
+  {
+    m_aReportSenderErrorsTo = aReportSenderErrorsTo;
+  }
+
+  public PModeAddressList getReportReceiverErrorsTo ()
+  {
+    return m_aReportReceiverErrorsTo;
+  }
+
+  public void setReportReceiverErrorsTo (final PModeAddressList aReportReceiverErrorsTo)
+  {
+    m_aReportReceiverErrorsTo = aReportReceiverErrorsTo;
+  }
+
+  public ETriState getReportAsResponse ()
+  {
+    return m_eReportAsResponse;
+  }
+
+  public void setReportAsResponse (final ETriState eReportAsResponse)
+  {
+    m_eReportAsResponse = eReportAsResponse;
+  }
+
+  public ETriState getReportProcessErrorNotifyConsumer ()
+  {
+    return m_eReportProcessErrorNotifyConsumer;
+  }
+
+  public void setReportProcessErrorNotifyConsumer (final ETriState eReportProcessErrorNotifyConsumer)
+  {
+    m_eReportProcessErrorNotifyConsumer = eReportProcessErrorNotifyConsumer;
+  }
+
+  public ETriState getReportProcessErrorNotifyProducer ()
+  {
+    return m_eReportProcessErrorNotifyProducer;
+  }
+
+  public void setReportProcessErrorNotifyProducer (final ETriState eReportProcessErrorNotifyProducer)
+  {
+    m_eReportProcessErrorNotifyProducer = eReportProcessErrorNotifyProducer;
+  }
+
+  public ETriState getReportDeliveryFailuresNotifyProducer ()
+  {
+    return m_eReportDeliveryFailuresNotifyProducer;
+  }
+
+  public void setReportDeliveryFailuresNotifyProducer (final ETriState eReportDeliveryFailuresNotifyProducer)
+  {
+    m_eReportDeliveryFailuresNotifyProducer = eReportDeliveryFailuresNotifyProducer;
+  }
 }
