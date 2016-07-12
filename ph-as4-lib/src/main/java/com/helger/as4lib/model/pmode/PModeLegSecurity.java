@@ -17,6 +17,7 @@
 package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -147,6 +148,48 @@ public class PModeLegSecurity
    */
   private String m_sSendReceiptReplyPattern;
 
+  public PModeLegSecurity ()
+  {
+
+  }
+
+  public PModeLegSecurity (@Nullable final ICommonsList <String> m_aX509EncryptionEncrypt,
+                           @Nullable final Integer m_aX509EncryptionMinimumStrength,
+                           @Nullable final ICommonsList <String> m_aX509Sign,
+                           @Nonnull final ETriState m_ePModeAuthorize,
+                           @Nonnull final ETriState m_eSendReceipt,
+                           @Nonnull final ETriState m_eUsernameTokenCreated,
+                           @Nonnull final ETriState m_eUsernameTokenDigest,
+                           @Nonnull final ETriState m_eUsernameTokenNonce,
+                           @Nullable final String m_sSendReceiptReplyPattern,
+                           @Nullable final String m_sUsernameTokenPassword,
+                           @Nullable final String m_sUsernameTokenUsername,
+                           @Nullable final String m_sWSSVersion,
+                           @Nullable final String m_sX509EncryptionAlgorithm,
+                           @Nullable final String m_sX509EncryptionCertificate,
+                           @Nullable final String m_sX509SignatureAlgorithm,
+                           @Nullable final String m_sX509SignatureCertificate,
+                           @Nullable final String m_sX509SignatureHashFunction)
+  {
+    this.m_aX509EncryptionEncrypt = m_aX509EncryptionEncrypt;
+    this.m_aX509EncryptionMinimumStrength = m_aX509EncryptionMinimumStrength;
+    this.m_aX509Sign = m_aX509Sign;
+    this.m_ePModeAuthorize = m_ePModeAuthorize;
+    this.m_eSendReceipt = m_eSendReceipt;
+    this.m_eUsernameTokenCreated = m_eUsernameTokenCreated;
+    this.m_eUsernameTokenDigest = m_eUsernameTokenDigest;
+    this.m_eUsernameTokenNonce = m_eUsernameTokenNonce;
+    this.m_sSendReceiptReplyPattern = m_sSendReceiptReplyPattern;
+    this.m_sUsernameTokenPassword = m_sUsernameTokenPassword;
+    this.m_sUsernameTokenUsername = m_sUsernameTokenUsername;
+    this.m_sWSSVersion = m_sWSSVersion;
+    this.m_sX509EncryptionAlgorithm = m_sX509EncryptionAlgorithm;
+    this.m_sX509EncryptionCertificate = m_sX509EncryptionCertificate;
+    this.m_sX509SignatureAlgorithm = m_sX509SignatureAlgorithm;
+    this.m_sX509SignatureCertificate = m_sX509SignatureCertificate;
+    this.m_sX509SignatureHashFunction = m_sX509SignatureHashFunction;
+  }
+
   public String getWSSVersion ()
   {
     return m_sWSSVersion;
@@ -227,12 +270,18 @@ public class PModeLegSecurity
     m_sX509EncryptionAlgorithm = sX509EncryptionAlgorithm;
   }
 
+  public boolean hasX509EncryptionMinimumStrength ()
+  {
+    return m_aX509EncryptionMinimumStrength != null;
+  }
+
+  @Nullable
   public Integer getX509EncryptionMinimumStrength ()
   {
     return m_aX509EncryptionMinimumStrength;
   }
 
-  public void setX509EncryptionMinimumStrength (final Integer aX509EncryptionMinimumStrength)
+  public void setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
   {
     m_aX509EncryptionMinimumStrength = aX509EncryptionMinimumStrength;
   }
@@ -267,7 +316,12 @@ public class PModeLegSecurity
     m_sSendReceiptReplyPattern = sSendReceiptReplyPattern;
   }
 
-  public boolean getUsernameTokenDigest ()
+  public boolean isUsernameTokenDigestDefined ()
+  {
+    return m_eUsernameTokenDigest.isDefined ();
+  }
+
+  public boolean isUsernameTokenDigest ()
   {
     return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
   }
@@ -283,7 +337,12 @@ public class PModeLegSecurity
     m_eUsernameTokenDigest = eUsernameTokenDigest;
   }
 
-  public boolean getUsernameTokenNonce ()
+  public boolean isUsernameTokenNonceDefined ()
+  {
+    return m_eUsernameTokenNonce.isDefined ();
+  }
+
+  public boolean isUsernameTokenNonce ()
   {
     return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
   }
@@ -299,7 +358,12 @@ public class PModeLegSecurity
     m_eUsernameTokenNonce = eUsernameTokenNonce;
   }
 
-  public boolean getUsernameTokenCreated ()
+  public boolean isUsernameTokenCreatedDefined ()
+  {
+    return m_eUsernameTokenCreated.isDefined ();
+  }
+
+  public boolean isUsernameTokenCreated ()
   {
     return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
   }
@@ -315,7 +379,12 @@ public class PModeLegSecurity
     m_eUsernameTokenCreated = eUsernameTokenCreated;
   }
 
-  public boolean getPModeAuthorize ()
+  public boolean isPModeAuthorizeDefined ()
+  {
+    return m_ePModeAuthorize.isDefined ();
+  }
+
+  public boolean isPModeAuthorize ()
   {
     return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
   }
@@ -331,7 +400,12 @@ public class PModeLegSecurity
     m_ePModeAuthorize = ePModeAuthorize;
   }
 
-  public boolean getSendReceipt ()
+  public boolean isSendReceiptDefined ()
+  {
+    return m_eSendReceipt.isDefined ();
+  }
+
+  public boolean isSendReceipt ()
   {
     return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
