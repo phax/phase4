@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 
 public class PModeParty
 {
@@ -82,5 +84,31 @@ public class PModeParty
   public String getPassword ()
   {
     return m_sPassword;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeParty rhs = (PModeParty) o;
+    return m_sIDType.equals (rhs.m_sIDType) &&
+           EqualsHelper.equals (m_sIDValue, rhs.m_sIDValue) &&
+           EqualsHelper.equals (m_sPassword, rhs.m_sPassword) &&
+           EqualsHelper.equals (m_sRole, rhs.m_sRole) &&
+           EqualsHelper.equals (m_sUserName, rhs.m_sUserName);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_sIDType)
+                                       .append (m_sIDValue)
+                                       .append (m_sPassword)
+                                       .append (m_sRole)
+                                       .append (m_sUserName)
+                                       .getHashCode ();
   }
 }

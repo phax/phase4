@@ -22,6 +22,8 @@ import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 
 public class PMode
 {
@@ -184,6 +186,36 @@ public class PMode
   public void setResponder (final PModeParty aResponder)
   {
     m_aResponder = aResponder;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PMode rhs = (PMode) o;
+    return m_aInitiator.equals (rhs.m_aInitiator) &&
+           EqualsHelper.equals (m_aLegs, rhs.m_aLegs) &&
+           EqualsHelper.equals (m_aResponder, rhs.m_aResponder) &&
+           EqualsHelper.equals (m_eMEP, rhs.m_eMEP) &&
+           EqualsHelper.equals (m_eMEPBinding, rhs.m_eMEPBinding) &&
+           EqualsHelper.equals (m_sAgreement, rhs.m_sAgreement) &&
+           EqualsHelper.equals (m_sID, rhs.m_sID);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aInitiator)
+                                       .append (m_aLegs)
+                                       .append (m_aResponder)
+                                       .append (m_eMEP)
+                                       .append (m_eMEPBinding)
+                                       .append (m_sAgreement)
+                                       .append (m_sID)
+                                       .getHashCode ();
   }
 
 }

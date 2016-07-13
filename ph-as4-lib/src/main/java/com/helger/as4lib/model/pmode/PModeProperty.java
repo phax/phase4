@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.name.IHasName;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
@@ -96,5 +98,29 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   public boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeProperty rhs = (PModeProperty) o;
+    return m_eMandatory.equals (rhs.m_eMandatory) &&
+           EqualsHelper.equals (m_sDataType, rhs.m_sDataType) &&
+           EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
+           EqualsHelper.equals (m_sName, rhs.m_sName);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_eMandatory)
+                                       .append (m_sDataType)
+                                       .append (m_sDescription)
+                                       .append (m_sName)
+                                       .getHashCode ();
   }
 }

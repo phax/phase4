@@ -16,12 +16,17 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import java.util.function.Consumer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 
 /**
  * Business information - This set of parameters only applies to user messages.
@@ -47,13 +52,13 @@ public class PModeLegBusinessInformation
   /**
    * The value of this parameter is a list of properties.
    */
-  private ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
+  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying some constraint or profile on the
    * payload. It specifies a list of payload parts.
    */
-  private ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfile = new CommonsLinkedHashMap<> ();
+  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying a maximum size in kilobytes for the
@@ -68,34 +73,28 @@ public class PModeLegBusinessInformation
    */
   private String m_sMPCID;
 
-  public PModeLegBusinessInformation (final String sService,
-                                      final String sAction,
-                                      final Integer nPayloadProfileMaxKB,
-                                      final String sMPCID)
+  public PModeLegBusinessInformation (@Nullable final String sService,
+                                      @Nullable final String sAction,
+                                      @Nullable final Integer nPayloadProfileMaxKB,
+                                      @Nullable final String sMPCID)
   {
-    m_sService = sService;
-    m_sAction = sAction;
-    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
-    m_sMPCID = sMPCID;
+    this (sService, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
-  public PModeLegBusinessInformation (final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfile,
-                                      final ICommonsOrderedMap <String, PModeProperty> aProperties,
-                                      final Integer nPayloadProfileMaxKB,
-                                      final String sAction,
-                                      final String sMPCID,
-                                      final String sService)
+  PModeLegBusinessInformation (@Nullable final String sService,
+                               @Nullable final String sAction,
+                               @Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties,
+                               @Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles,
+                               @Nullable final Integer nPayloadProfileMaxKB,
+                               @Nullable final String sMPCID)
   {
-    m_sService = sService;
-    m_sAction = sAction;
-    m_aProperties = aProperties;
-    m_aPayloadProfile = aPayloadProfile;
-    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
-    m_sMPCID = sMPCID;
+    setService (sService);
+    setAction (sAction);
+    setAllProperties (aProperties);
+    setAllPayloadProfiles (aPayloadProfiles);
+    setPayloadProfileMaxKB (nPayloadProfileMaxKB);
+    setMPCID (sMPCID);
   }
-
-  public PModeLegBusinessInformation ()
-  {}
 
   @Nullable
   public String getService ()
@@ -119,44 +118,21 @@ public class PModeLegBusinessInformation
     m_sAction = sAction;
   }
 
-  public ICommonsOrderedMap <String, PModeProperty> getProperties ()
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsOrderedMap <String, PModeProperty> getAllProperties ()
   {
-    return m_aProperties;
+    return m_aProperties.getClone ();
   }
 
-  public void setProperties (final ICommonsOrderedMap <String, PModeProperty> aProperties)
+  public void forAllProperties (@Nonnull final Consumer <? super PModeProperty> aConsumer)
   {
-    m_aProperties = aProperties;
+    m_aProperties.forEachValue (aConsumer);
   }
 
-  public ICommonsOrderedMap <String, PModePayloadProfile> getPayloadProfile ()
+  public void setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
   {
-    return m_aPayloadProfile;
-  }
-
-  public void setPayloadProfile (final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfile)
-  {
-    m_aPayloadProfile = aPayloadProfile;
-  }
-
-  public Integer getPayloadProfileMaxKB ()
-  {
-    return m_nPayloadProfileMaxKB;
-  }
-
-  public void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
-  {
-    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
-  }
-
-  public String getMPCID ()
-  {
-    return m_sMPCID;
-  }
-
-  public void setMPCID (final String sMPCID)
-  {
-    m_sMPCID = sMPCID;
+    m_aProperties.setAll (aProperties);
   }
 
   public void addProperty (@Nonnull final PModeProperty aProperty)
@@ -168,12 +144,79 @@ public class PModeLegBusinessInformation
     m_aProperties.put (sKey, aProperty);
   }
 
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsOrderedMap <String, PModePayloadProfile> getAllPayloadProfiles ()
+  {
+    return m_aPayloadProfiles.getClone ();
+  }
+
+  public void forAllPayloadProfiles (@Nonnull final Consumer <? super PModePayloadProfile> aConsumer)
+  {
+    m_aPayloadProfiles.forEachValue (aConsumer);
+  }
+
+  public void setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
+  {
+    m_aPayloadProfiles.setAll (aPayloadProfiles);
+  }
+
   public void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
   {
     ValueEnforcer.notNull (aPayloadProfile, "PayloadProfile");
     final String sKey = aPayloadProfile.getName ();
-    if (m_aPayloadProfile.containsKey (sKey))
+    if (m_aPayloadProfiles.containsKey (sKey))
       throw new IllegalArgumentException ("A payload profile with the name '" + sKey + "' is already registered!");
-    m_aPayloadProfile.put (sKey, aPayloadProfile);
+    m_aPayloadProfiles.put (sKey, aPayloadProfile);
+  }
+
+  @Nullable
+  public Integer getPayloadProfileMaxKB ()
+  {
+    return m_nPayloadProfileMaxKB;
+  }
+
+  public void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
+  {
+    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
+  }
+
+  @Nullable
+  public String getMPCID ()
+  {
+    return m_sMPCID;
+  }
+
+  public void setMPCID (@Nullable final String sMPCID)
+  {
+    m_sMPCID = sMPCID;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLegBusinessInformation rhs = (PModeLegBusinessInformation) o;
+    return m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
+           EqualsHelper.equals (m_aProperties, rhs.m_aProperties) &&
+           EqualsHelper.equals (m_nPayloadProfileMaxKB, rhs.m_nPayloadProfileMaxKB) &&
+           EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
+           EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID) &&
+           EqualsHelper.equals (m_sService, rhs.m_sService);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aPayloadProfiles)
+                                       .append (m_aProperties)
+                                       .append (m_nPayloadProfileMaxKB)
+                                       .append (m_sAction)
+                                       .append (m_sMPCID)
+                                       .append (m_sService)
+                                       .getHashCode ();
   }
 }

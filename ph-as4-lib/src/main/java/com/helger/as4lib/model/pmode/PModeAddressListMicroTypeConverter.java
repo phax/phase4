@@ -11,9 +11,9 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
-    final PModeLegSecurity aValue = (PModeLegSecurity) aObject;
+    final PModeAddressList aValue = (PModeAddressList) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    for (final String sEncrypt : aValue.getX509EncryptionEncrypt ())
+    for (final String sEncrypt : aValue.getAllAddresses ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_ADDRESSES).appendText (sEncrypt);
     }

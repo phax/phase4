@@ -3,7 +3,6 @@ package com.helger.as4lib.marshaller;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -29,6 +28,7 @@ import com.helger.as4lib.testfiles.CAS4TestFiles;
 import com.helger.as4lib.validator.MessageValidator;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.io.resource.IReadableResource;
 
 public class MessageValidatorTest
 {
@@ -36,7 +36,6 @@ public class MessageValidatorTest
   private MessageValidator aMessageValidator;
 
   private StringBuilder m_aFailedDocuments;
-  private File m_aTMPFile;
 
   @Before
   public void setUp ()
@@ -52,9 +51,9 @@ public class MessageValidatorTest
 
     for (final String aFilePath : aGoodFiles)
     {
-      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath).getAsFile ();
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath);
 
-      if (!aMessageValidator.validateXML (m_aTMPFile))
+      if (!aMessageValidator.validateXML (aTMPFile))
       {
         m_aFailedDocuments.append (aFilePath);
         m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
@@ -72,9 +71,9 @@ public class MessageValidatorTest
 
     for (final String aFilePath : aGoodFiles)
     {
-      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath).getAsFile ();
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath);
 
-      if (!aMessageValidator.validateXML (m_aTMPFile))
+      if (!aMessageValidator.validateXML (aTMPFile))
       {
         m_aFailedDocuments.append (aFilePath);
         m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
@@ -92,9 +91,9 @@ public class MessageValidatorTest
 
     for (final String aFilePath : aInvalidFiles)
     {
-      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath).getAsFile ();
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath);
 
-      if (aMessageValidator.validateXML (m_aTMPFile))
+      if (aMessageValidator.validateXML (aTMPFile))
       {
         m_aFailedDocuments.append (aFilePath);
         m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
@@ -112,14 +111,13 @@ public class MessageValidatorTest
 
     for (final String aFilePath : aInvalidFiles)
     {
-      m_aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath).getAsFile ();
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath);
 
-      if (aMessageValidator.validateXML (m_aTMPFile))
+      if (aMessageValidator.validateXML (aTMPFile))
       {
         m_aFailedDocuments.append (aFilePath);
         m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
       }
-
     }
 
     _failedTestsCheck ();

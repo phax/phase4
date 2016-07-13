@@ -1,6 +1,5 @@
 package com.helger.as4lib.validator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +21,7 @@ import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.commons.callback.exception.CollectingExceptionCallback;
 import com.helger.commons.error.IResourceError;
+import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 
 public class MessageValidator
@@ -30,7 +30,7 @@ public class MessageValidator
 
   // TODO Check P-Modes they should define which SOAP Version should be used for
   // the conversation
-  public Document getSoapEnvelope (final File aXML)
+  public Document getSoapEnvelope (final IReadableResource aXML)
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final CollectingExceptionCallback <JAXBException> aExHdl = new CollectingExceptionCallback<> ();
@@ -62,7 +62,7 @@ public class MessageValidator
 
   // TODO Split Message and SOAP CHECK? SOAP currently treated the same as xml
   // error
-  public boolean validateXML (final File aXML)
+  public boolean validateXML (final IReadableResource aXML)
   {
     final Document aDocument = getSoapEnvelope (aXML);
     if (aDocument != null)

@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.ETriState;
 
 /**
@@ -435,5 +437,55 @@ public class PModeLegSecurity
   {
     ValueEnforcer.notNull (eSendReceipt, "SendReceipt ");
     m_eSendReceipt = eSendReceipt;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLegSecurity rhs = (PModeLegSecurity) o;
+    return m_aX509EncryptionEncrypt.equals (rhs.m_aX509EncryptionEncrypt) &&
+           EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
+           EqualsHelper.equals (m_aX509Sign, rhs.m_aX509Sign) &&
+           EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
+           EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
+           EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
+           EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
+           EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
+           EqualsHelper.equals (m_sSendReceiptReplyPattern, rhs.m_sSendReceiptReplyPattern) &&
+           EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
+           EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
+           EqualsHelper.equals (m_sWSSVersion, rhs.m_sWSSVersion) &&
+           EqualsHelper.equals (m_sX509EncryptionAlgorithm, rhs.m_sX509EncryptionAlgorithm) &&
+           EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
+           EqualsHelper.equals (m_sX509SignatureAlgorithm, rhs.m_sX509SignatureAlgorithm) &&
+           EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
+           EqualsHelper.equals (m_sX509SignatureHashFunction, rhs.m_sX509SignatureHashFunction);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aX509EncryptionEncrypt)
+                                       .append (m_aX509EncryptionMinimumStrength)
+                                       .append (m_aX509Sign)
+                                       .append (m_ePModeAuthorize)
+                                       .append (m_eSendReceipt)
+                                       .append (m_eUsernameTokenCreated)
+                                       .append (m_eUsernameTokenDigest)
+                                       .append (m_eUsernameTokenNonce)
+                                       .append (m_sSendReceiptReplyPattern)
+                                       .append (m_sUsernameTokenPassword)
+                                       .append (m_sUsernameTokenUsername)
+                                       .append (m_sWSSVersion)
+                                       .append (m_sX509EncryptionAlgorithm)
+                                       .append (m_sX509EncryptionCertificate)
+                                       .append (m_sX509SignatureAlgorithm)
+                                       .append (m_sX509SignatureCertificate)
+                                       .append (m_sX509SignatureHashFunction)
+                                       .getHashCode ();
   }
 }

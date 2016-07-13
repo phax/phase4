@@ -13,27 +13,35 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
+import com.helger.xml.mock.XMLTestHelper;
 
 public class PModeMicroTypeConverterTest
 {
+  private PMode m_aPmode;
 
   @Before
   public void setUp ()
   {
-    final PMode aPmode = new PMode ();
-    aPmode.setAgreement ("Agreement");
-    aPmode.setID ("id");
-    aPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aPmode.setLegs (_generatePModeLeg ());
-    aPmode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
-    aPmode.setMEPBinding (ETransportChannelBinding.SYNC);
-    aPmode.setResponder (_generateInitiatorOrResponder (false));
+    m_aPmode = new PMode ();
+    m_aPmode.setAgreement ("Agreement");
+    m_aPmode.setID ("id");
+    m_aPmode.setInitiator (_generateInitiatorOrResponder (true));
+    m_aPmode.setLegs (_generatePModeLeg ());
+    m_aPmode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
+    m_aPmode.setMEPBinding (ETransportChannelBinding.SYNC);
+    m_aPmode.setResponder (_generateInitiatorOrResponder (false));
+  }
+
+  @Test
+  public void mandatory ()
+  {
+    System.out.println (EMandatory.valueOf (true));
   }
 
   @Test
   public void testNativToMicroElementConversion ()
   {
-    // XMLTestHelper.testMicroTypeConversion (aObj);
+    XMLTestHelper.testMicroTypeConversion (m_aPmode);
   }
 
   private PModeParty _generateInitiatorOrResponder (final boolean bChoose)
@@ -45,24 +53,21 @@ public class PModeMicroTypeConverterTest
 
   private ICommonsList <PModeLeg> _generatePModeLeg ()
   {
-    final ICommonsList <PModeLeg> aPModeLegs = new CommonsArrayList<> ();
-    final PModeLeg aPmodeLeg = new PModeLeg (_generatePModeLegBusinessInformation (),
-                                             _generatePModeLegErrorHandling (),
-                                             _generatePModeLegProtocol (),
-                                             _generatePModeLegReliability (),
-                                             _generatePModeLegSecurity ());
-    aPModeLegs.add (aPmodeLeg);
-    return aPModeLegs;
+    return new CommonsArrayList<> (new PModeLeg (_generatePModeLegProtocol (),
+                                                 _generatePModeLegBusinessInformation (),
+                                                 _generatePModeLegErrorHandling (),
+                                                 _generatePModeLegReliability (),
+                                                 _generatePModeLegSecurity ()));
   }
 
   private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (_generatePModePayloadProfile (),
+    return new PModeLegBusinessInformation ("action1",
+                                            "service",
                                             _generatePModeProperties (),
+                                            _generatePModePayloadProfile (),
                                             20000,
-                                            "action1",
-                                            "mpcexample",
-                                            "service");
+                                            "mpcexample");
   }
 
   private ICommonsOrderedMap <String, PModePayloadProfile> _generatePModePayloadProfile ()
@@ -108,8 +113,7 @@ public class PModeMicroTypeConverterTest
 
   private PModeLegReliability _generatePModeLegReliability ()
   {
-    final ICommonsList <String> aCorrelation = new CommonsArrayList<> ();
-    aCorrelation.add ("correlation");
+    final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation");
     return new PModeLegReliability (aCorrelation,
                                     ETriState.TRUE,
                                     ETriState.TRUE,
@@ -125,10 +129,8 @@ public class PModeMicroTypeConverterTest
 
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ();
-    aX509EncryptionEncrypt.add ("X509EncryptionEncrypt");
-    final ICommonsList <String> aX509Sign = new CommonsArrayList<> ();
-    aX509Sign.add ("X509Sign");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt");
+    final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign");
     return new PModeLegSecurity (aX509EncryptionEncrypt,
                                  1,
                                  aX509Sign,

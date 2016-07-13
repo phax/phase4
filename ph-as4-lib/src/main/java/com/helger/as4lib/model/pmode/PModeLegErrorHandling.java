@@ -19,6 +19,8 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.ETriState;
 
 /**
@@ -208,5 +210,33 @@ public class PModeLegErrorHandling
   {
     ValueEnforcer.notNull (eReportDeliveryFailuresNotifyProducer, "ReportDeliveryFailuresNotifyProducer");
     m_eReportDeliveryFailuresNotifyProducer = eReportDeliveryFailuresNotifyProducer;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLegErrorHandling rhs = (PModeLegErrorHandling) o;
+    return m_aReportReceiverErrorsTo.equals (rhs.m_aReportReceiverErrorsTo) &&
+           EqualsHelper.equals (m_aReportSenderErrorsTo, rhs.m_aReportSenderErrorsTo) &&
+           EqualsHelper.equals (m_eReportAsResponse, rhs.m_eReportAsResponse) &&
+           EqualsHelper.equals (m_eReportDeliveryFailuresNotifyProducer, rhs.m_eReportDeliveryFailuresNotifyProducer) &&
+           EqualsHelper.equals (m_eReportProcessErrorNotifyConsumer, rhs.m_eReportProcessErrorNotifyConsumer) &&
+           EqualsHelper.equals (m_eReportProcessErrorNotifyProducer, rhs.m_eReportProcessErrorNotifyProducer);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aReportReceiverErrorsTo)
+                                       .append (m_aReportSenderErrorsTo)
+                                       .append (m_eReportAsResponse)
+                                       .append (m_eReportDeliveryFailuresNotifyProducer)
+                                       .append (m_eReportProcessErrorNotifyConsumer)
+                                       .append (m_eReportProcessErrorNotifyProducer)
+                                       .getHashCode ();
   }
 }

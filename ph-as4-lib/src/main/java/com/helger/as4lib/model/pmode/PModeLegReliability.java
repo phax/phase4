@@ -22,6 +22,8 @@ import javax.annotation.Nullable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.ETriState;
 
 public class PModeLegReliability
@@ -346,4 +348,39 @@ public class PModeLegReliability
     m_eTerminateGroup = eTerminateGroup;
   }
 
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLegReliability rhs = (PModeLegReliability) o;
+    return m_aCorrelation.equals (rhs.m_aCorrelation) &&
+           EqualsHelper.equals (m_eAtLeastOnceAckOnDelivery, rhs.m_eAtLeastOnceAckOnDelivery) &&
+           EqualsHelper.equals (m_eAtLeastOnceContract, rhs.m_eAtLeastOnceContract) &&
+           EqualsHelper.equals (m_eAtLeastOnceContractAckResponse, rhs.m_eAtLeastOnceContractAckResponse) &&
+           EqualsHelper.equals (m_eAtLeastOnceReplyPattern, rhs.m_eAtLeastOnceReplyPattern) &&
+           EqualsHelper.equals (m_eAtMostOnceContract, rhs.m_eAtMostOnceContract) &&
+           EqualsHelper.equals (m_eInOrderContract, rhs.m_eInOrderContract) &&
+           EqualsHelper.equals (m_eStartGroup, rhs.m_eStartGroup) &&
+           EqualsHelper.equals (m_eTerminateGroup, rhs.m_eTerminateGroup) &&
+           EqualsHelper.equals (m_sAtLeastOnceContractAcksTo, rhs.m_sAtLeastOnceContractAcksTo);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aCorrelation)
+                                       .append (m_eAtLeastOnceAckOnDelivery)
+                                       .append (m_eAtLeastOnceContract)
+                                       .append (m_eAtLeastOnceContractAckResponse)
+                                       .append (m_eAtLeastOnceReplyPattern)
+                                       .append (m_eAtMostOnceContract)
+                                       .append (m_eInOrderContract)
+                                       .append (m_eStartGroup)
+                                       .append (m_eTerminateGroup)
+                                       .append (m_sAtLeastOnceContractAcksTo)
+                                       .getHashCode ();
+  }
 }

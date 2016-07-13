@@ -13,12 +13,12 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
-    final PModeLegReliability aValue = (PModeLegReliability) aObject;
+    final PModeProperty aValue = (PModeProperty) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.setAttribute (ATTR_NAME, aValue.getAtLeastOnceReplyPattern ());
-    ret.setAttribute (ATTR_DESCRIPTION, aValue.isAtMostOnceContract ());
-    ret.setAttribute (ATTR_DATA_TYPE, aValue.isAtLeastOnceAckOnDelivery ());
-    ret.setAttribute (ATTR_MANDATORY, aValue.isAtLeastOnceContractAckResponse ());
+    ret.setAttribute (ATTR_NAME, aValue.getName ());
+    ret.setAttribute (ATTR_DESCRIPTION, aValue.getDescription ());
+    ret.setAttribute (ATTR_DATA_TYPE, aValue.getDataType ());
+    ret.setAttribute (ATTR_MANDATORY, aValue.isMandatory ());
     return ret;
   }
 

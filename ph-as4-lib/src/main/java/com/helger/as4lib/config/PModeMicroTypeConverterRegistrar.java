@@ -20,9 +20,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeAddressList;
+import com.helger.as4lib.model.pmode.PModeAddressListMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLeg;
+import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
+import com.helger.as4lib.model.pmode.PModeLegBusinessInformationMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
+import com.helger.as4lib.model.pmode.PModeLegErrorHandlingMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLegMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLegProtocol;
+import com.helger.as4lib.model.pmode.PModeLegProtocolMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLegReliability;
+import com.helger.as4lib.model.pmode.PModeLegReliabilityMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeLegSecurity;
+import com.helger.as4lib.model.pmode.PModeLegSecurityMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PModeMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.model.pmode.PModePartyMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModePayloadProfile;
+import com.helger.as4lib.model.pmode.PModePayloadProfileMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeProperty;
+import com.helger.as4lib.model.pmode.PModePropertyMicroTypeConverter;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
@@ -36,5 +54,18 @@ public final class PModeMicroTypeConverterRegistrar implements IMicroTypeConvert
     // Register all MicroTypeConverter
     aRegistry.registerMicroElementTypeConverter (PModeParty.class, new PModePartyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PMode.class, new PModeMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegBusinessInformation.class,
+                                                 new PModeLegBusinessInformationMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegErrorHandling.class,
+                                                 new PModeLegErrorHandlingMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLeg.class, new PModeLegMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegProtocol.class, new PModeLegProtocolMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegReliability.class,
+                                                 new PModeLegReliabilityMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeLegSecurity.class, new PModeLegSecurityMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModePayloadProfile.class,
+                                                 new PModePayloadProfileMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeProperty.class, new PModePropertyMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeAddressList.class, new PModeAddressListMicroTypeConverter ());
   }
 }

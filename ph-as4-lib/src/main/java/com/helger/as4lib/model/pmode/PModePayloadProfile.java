@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.name.IHasName;
 import com.helger.commons.state.EMandatory;
@@ -102,5 +104,31 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator
   public boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModePayloadProfile rhs = (PModePayloadProfile) o;
+    return m_aMaxSizeKB.equals (rhs.m_aMaxSizeKB) &&
+           EqualsHelper.equals (m_aMimeType, rhs.m_aMimeType) &&
+           EqualsHelper.equals (m_eMandatory, rhs.m_eMandatory) &&
+           EqualsHelper.equals (m_sName, rhs.m_sName) &&
+           EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aMaxSizeKB)
+                                       .append (m_aMimeType)
+                                       .append (m_eMandatory)
+                                       .append (m_sName)
+                                       .append (m_sXSDFilename)
+                                       .getHashCode ();
   }
 }

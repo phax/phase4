@@ -19,17 +19,20 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
+
 public class PModeLeg
 {
   private PModeLegProtocol m_aProtocol = new PModeLegProtocol ();
-  private PModeLegBusinessInformation m_aBusinessInfo;
-  private PModeLegErrorHandling m_aErrorHandling;
-  private PModeLegReliability m_aReliability;
-  private PModeLegSecurity m_aSecurity;
+  private final PModeLegBusinessInformation m_aBusinessInfo;
+  private final PModeLegErrorHandling m_aErrorHandling;
+  private final PModeLegReliability m_aReliability;
+  private final PModeLegSecurity m_aSecurity;
 
-  public PModeLeg (final PModeLegBusinessInformation aBusinessInfo,
+  public PModeLeg (final PModeLegProtocol aProtocol,
+                   final PModeLegBusinessInformation aBusinessInfo,
                    final PModeLegErrorHandling aErrorHandling,
-                   final PModeLegProtocol aProtocol,
                    final PModeLegReliability aReliability,
                    final PModeLegSecurity aSecurity)
   {
@@ -52,26 +55,10 @@ public class PModeLeg
     return m_aBusinessInfo;
   }
 
-  @Nonnull
-  public PModeLegBusinessInformation getOrCreateBusinessInfo ()
-  {
-    if (m_aBusinessInfo == null)
-      m_aBusinessInfo = new PModeLegBusinessInformation ();
-    return getBusinessInfo ();
-  }
-
   @Nullable
   public PModeLegErrorHandling getErrorHandling ()
   {
     return m_aErrorHandling;
-  }
-
-  @Nonnull
-  public PModeLegErrorHandling getOrCreateErrorHandling ()
-  {
-    if (m_aErrorHandling == null)
-      m_aErrorHandling = new PModeLegErrorHandling ();
-    return getErrorHandling ();
   }
 
   @Nullable
@@ -80,25 +67,35 @@ public class PModeLeg
     return m_aReliability;
   }
 
-  @Nonnull
-  public PModeLegReliability getOrCreateReliability ()
-  {
-    if (m_aReliability == null)
-      m_aReliability = new PModeLegReliability ();
-    return getReliability ();
-  }
-
   @Nullable
   public PModeLegSecurity getSecurity ()
   {
     return m_aSecurity;
   }
 
-  @Nonnull
-  public PModeLegSecurity getOrCreateSecurity ()
+  @Override
+  public boolean equals (final Object o)
   {
-    if (m_aSecurity == null)
-      m_aSecurity = new PModeLegSecurity ();
-    return getSecurity ();
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLeg rhs = (PModeLeg) o;
+    return m_aProtocol.equals (rhs.m_aProtocol) &&
+           EqualsHelper.equals (m_aBusinessInfo, rhs.m_aBusinessInfo) &&
+           EqualsHelper.equals (m_aErrorHandling, rhs.m_aErrorHandling) &&
+           EqualsHelper.equals (m_aReliability, rhs.m_aReliability) &&
+           EqualsHelper.equals (m_aSecurity, rhs.m_aSecurity);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aProtocol)
+                                       .append (m_aBusinessInfo)
+                                       .append (m_aErrorHandling)
+                                       .append (m_aReliability)
+                                       .append (m_aSecurity)
+                                       .getHashCode ();
   }
 }

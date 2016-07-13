@@ -27,6 +27,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.StringHelper;
 
 public class PModeAddressList
@@ -100,5 +101,22 @@ public class PModeAddressList
   {
     final ICommonsList <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);
     return new PModeAddressList (aAddresses);
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeAddressList rhs = (PModeAddressList) o;
+    return m_aAddresses.equals (rhs.m_aAddresses);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_aAddresses).getHashCode ();
   }
 }

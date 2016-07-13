@@ -10,10 +10,10 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
-    final PModeLegReliability aValue = (PModeLegReliability) aObject;
+    final PModeLegProtocol aValue = (PModeLegProtocol) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.setAttribute (ATTR_ADDRESS, aValue.isAtLeastOnceAckOnDelivery ());
-    ret.setAttribute (ATTR_SOAP_VERSION, aValue.isAtLeastOnceContract ());
+    ret.setAttribute (ATTR_ADDRESS, aValue.getAddress ());
+    ret.setAttribute (ATTR_SOAP_VERSION, aValue.getSOAPVersion ());
     return ret;
   }
 

@@ -18,6 +18,9 @@ package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nullable;
 
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.hashcode.HashCodeGenerator;
+
 /**
  * PMode leg protocol parameters.
  *
@@ -78,5 +81,22 @@ public class PModeLegProtocol
   public void setSOAPVersion (@Nullable final String sSOAPVersion)
   {
     m_sSOAPVersion = sSOAPVersion;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PModeLegProtocol rhs = (PModeLegProtocol) o;
+    return EqualsHelper.equals (m_sAddress, rhs.m_sAddress) && EqualsHelper.equals (m_sSOAPVersion, rhs.m_sSOAPVersion);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_sAddress).append (m_sSOAPVersion).getHashCode ();
   }
 }
