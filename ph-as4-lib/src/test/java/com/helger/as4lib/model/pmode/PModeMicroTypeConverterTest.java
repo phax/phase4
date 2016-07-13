@@ -33,12 +33,6 @@ public class PModeMicroTypeConverterTest
   }
 
   @Test
-  public void mandatory ()
-  {
-    System.out.println (EMandatory.valueOf (true));
-  }
-
-  @Test
   public void testNativToMicroElementConversion ()
   {
     XMLTestHelper.testMicroTypeConversion (m_aPmode);
