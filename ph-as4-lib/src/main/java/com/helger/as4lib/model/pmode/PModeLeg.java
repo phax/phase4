@@ -21,11 +21,24 @@ import javax.annotation.Nullable;
 
 public class PModeLeg
 {
-  private final PModeLegProtocol m_aProtocol = new PModeLegProtocol ();
+  private PModeLegProtocol m_aProtocol = new PModeLegProtocol ();
   private PModeLegBusinessInformation m_aBusinessInfo;
   private PModeLegErrorHandling m_aErrorHandling;
   private PModeLegReliability m_aReliability;
   private PModeLegSecurity m_aSecurity;
+
+  public PModeLeg (final PModeLegBusinessInformation aBusinessInfo,
+                   final PModeLegErrorHandling aErrorHandling,
+                   final PModeLegProtocol aProtocol,
+                   final PModeLegReliability aReliability,
+                   final PModeLegSecurity aSecurity)
+  {
+    m_aBusinessInfo = aBusinessInfo;
+    m_aErrorHandling = aErrorHandling;
+    m_aProtocol = aProtocol;
+    m_aReliability = aReliability;
+    m_aSecurity = aSecurity;
+  }
 
   @Nonnull
   public PModeLegProtocol getProtocol ()

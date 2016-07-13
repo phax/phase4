@@ -47,13 +47,13 @@ public class PModeLegBusinessInformation
   /**
    * The value of this parameter is a list of properties.
    */
-  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
+  private ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying some constraint or profile on the
    * payload. It specifies a list of payload parts.
    */
-  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfile = new CommonsLinkedHashMap<> ();
+  private ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfile = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying a maximum size in kilobytes for the
@@ -67,6 +67,35 @@ public class PModeLegBusinessInformation
    * <code>eb:Messaging/eb:UserMessage/@mpc</code>.
    */
   private String m_sMPCID;
+
+  public PModeLegBusinessInformation (final String sService,
+                                      final String sAction,
+                                      final Integer nPayloadProfileMaxKB,
+                                      final String sMPCID)
+  {
+    m_sService = sService;
+    m_sAction = sAction;
+    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
+    m_sMPCID = sMPCID;
+  }
+
+  public PModeLegBusinessInformation (final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfile,
+                                      final ICommonsOrderedMap <String, PModeProperty> aProperties,
+                                      final Integer nPayloadProfileMaxKB,
+                                      final String sAction,
+                                      final String sMPCID,
+                                      final String sService)
+  {
+    m_sService = sService;
+    m_sAction = sAction;
+    m_aProperties = aProperties;
+    m_aPayloadProfile = aPayloadProfile;
+    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
+    m_sMPCID = sMPCID;
+  }
+
+  public PModeLegBusinessInformation ()
+  {}
 
   @Nullable
   public String getService ()
@@ -90,6 +119,46 @@ public class PModeLegBusinessInformation
     m_sAction = sAction;
   }
 
+  public ICommonsOrderedMap <String, PModeProperty> getProperties ()
+  {
+    return m_aProperties;
+  }
+
+  public void setProperties (final ICommonsOrderedMap <String, PModeProperty> aProperties)
+  {
+    m_aProperties = aProperties;
+  }
+
+  public ICommonsOrderedMap <String, PModePayloadProfile> getPayloadProfile ()
+  {
+    return m_aPayloadProfile;
+  }
+
+  public void setPayloadProfile (final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfile)
+  {
+    m_aPayloadProfile = aPayloadProfile;
+  }
+
+  public Integer getPayloadProfileMaxKB ()
+  {
+    return m_nPayloadProfileMaxKB;
+  }
+
+  public void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
+  {
+    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
+  }
+
+  public String getMPCID ()
+  {
+    return m_sMPCID;
+  }
+
+  public void setMPCID (final String sMPCID)
+  {
+    m_sMPCID = sMPCID;
+  }
+
   public void addProperty (@Nonnull final PModeProperty aProperty)
   {
     ValueEnforcer.notNull (aProperty, "Property");
@@ -97,5 +166,14 @@ public class PModeLegBusinessInformation
     if (m_aProperties.containsKey (sKey))
       throw new IllegalArgumentException ("A property with the name '" + sKey + "' is already registered!");
     m_aProperties.put (sKey, aProperty);
+  }
+
+  public void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
+  {
+    ValueEnforcer.notNull (aPayloadProfile, "PayloadProfile");
+    final String sKey = aPayloadProfile.getName ();
+    if (m_aPayloadProfile.containsKey (sKey))
+      throw new IllegalArgumentException ("A payload profile with the name '" + sKey + "' is already registered!");
+    m_aPayloadProfile.put (sKey, aPayloadProfile);
   }
 }

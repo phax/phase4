@@ -20,8 +20,8 @@ import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
-import com.helger.commons.collection.ext.ICommonsOrderedMap;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 
 public class PMode
 {
@@ -98,8 +98,10 @@ public class PMode
    * successfully on receiver side � here by Initiator MSH.
    */
   private PModeParty m_aResponder;
-
-  private final ICommonsOrderedMap <String, PModeLeg> m_aLegs = new CommonsLinkedHashMap<> ();
+  // TODO ASK WHY MAP?
+  // private ICommonsOrderedMap <String, PModeLeg> m_aLegs = new
+  // CommonsLinkedHashMap<> ();
+  private ICommonsList <PModeLeg> m_aLegs = new CommonsArrayList<> ();
 
   @Nullable
   public PModeParty getInitiator ()
@@ -121,7 +123,67 @@ public class PMode
 
   public void setID (final String sID)
   {
-    this.m_sID = sID;
+    m_sID = sID;
+  }
+
+  public String getAgreement ()
+  {
+    return m_sAgreement;
+  }
+
+  public void setAgreement (final String sAgreement)
+  {
+    m_sAgreement = sAgreement;
+  }
+
+  public EMEP getMEP ()
+  {
+    return m_eMEP;
+  }
+
+  public void setMEP (final EMEP eMEP)
+  {
+    m_eMEP = eMEP;
+  }
+
+  public ETransportChannelBinding getMEPBinding ()
+  {
+    return m_eMEPBinding;
+  }
+
+  public void setMEPBinding (final ETransportChannelBinding eMEPBinding)
+  {
+    m_eMEPBinding = eMEPBinding;
+  }
+
+  // public ICommonsOrderedMap <String, PModeLeg> getLegs ()
+  // {
+  // return m_aLegs;
+  // }
+  //
+  // public void setLegs (final ICommonsOrderedMap <String, PModeLeg> aLegs)
+  // {
+  // m_aLegs = aLegs;
+  // }
+
+  public ICommonsList <PModeLeg> getLegs ()
+  {
+    return m_aLegs;
+  }
+
+  public void setLegs (final ICommonsList <PModeLeg> aLegs)
+  {
+    m_aLegs = aLegs;
+  }
+
+  public void setInitiator (final PModeParty aInitiator)
+  {
+    m_aInitiator = aInitiator;
+  }
+
+  public void setResponder (final PModeParty aResponder)
+  {
+    m_aResponder = aResponder;
   }
 
 }
