@@ -11,13 +11,13 @@ import com.helger.xml.microdom.convert.MicroTypeConverter;
 
 public class PModeMicroTypeConverter implements IMicroTypeConverter
 {
-  private static final String ATTR_ID = "id";
+  private static final String ATTR_ID = "ID";
   private static final String ATTR_AGREEMENT = "Agreement";
   private static final String ELEMENT_MEP = "MEP";
   private static final String ELEMENT_MEP_BINDING = "MEPBinding";
-  private static final String ELEMENT_INITIATOR = "initiator";
-  private static final String ELEMENT_RESPONDER = "responder";
-  private static final String ELEMENT_LEGS = "Legs";
+  private static final String ELEMENT_INITIATOR = "Initiator";
+  private static final String ELEMENT_RESPONDER = "Responder";
+  private static final String ELEMENT_LEG = "Leg";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -36,7 +36,7 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
                                                                ELEMENT_RESPONDER));
     for (final PModeLeg aPModeLeg : aValue.getLegs ())
     {
-      ret.appendChild (MicroTypeConverter.convertToMicroElement (aPModeLeg, sNamespaceURI, ELEMENT_LEGS));
+      ret.appendChild (MicroTypeConverter.convertToMicroElement (aPModeLeg, sNamespaceURI, ELEMENT_LEG));
     }
 
     return ret;
@@ -50,7 +50,7 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
                                                           PModeParty.class));
 
     final ICommonsList <PModeLeg> aPModeLegs = new CommonsArrayList<> ();
-    for (final IMicroElement aPModeElement : aElement.getAllChildElements (ELEMENT_LEGS))
+    for (final IMicroElement aPModeElement : aElement.getAllChildElements (ELEMENT_LEG))
     {
       aPModeLegs.add (MicroTypeConverter.convertToNative (aPModeElement, PModeLeg.class));
     }

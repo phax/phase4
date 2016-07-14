@@ -8,7 +8,7 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter
 {
   private static final String ELEMENT_PROTOCOL = "Protocol";
   private static final String ELEMENT_BUSINESS_INFORMATION = "BusinessInfo";
-  private static final String ELEMENT_ERROR_HANDLING = "mErrorHandling";
+  private static final String ELEMENT_ERROR_HANDLING = "ErrorHandling";
   private static final String ELEMENT_RELIABILITY = "Reliability";
   private static final String ELEMENT_SECURITY = "Security";
 
