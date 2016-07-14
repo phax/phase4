@@ -30,11 +30,11 @@ public class PModeLeg
   private final PModeLegReliability m_aReliability;
   private final PModeLegSecurity m_aSecurity;
 
-  public PModeLeg (final PModeLegProtocol aProtocol,
-                   final PModeLegBusinessInformation aBusinessInfo,
-                   final PModeLegErrorHandling aErrorHandling,
-                   final PModeLegReliability aReliability,
-                   final PModeLegSecurity aSecurity)
+  public PModeLeg (@Nullable final PModeLegProtocol aProtocol,
+                   @Nullable final PModeLegBusinessInformation aBusinessInfo,
+                   @Nullable final PModeLegErrorHandling aErrorHandling,
+                   @Nullable final PModeLegReliability aReliability,
+                   @Nullable final PModeLegSecurity aSecurity)
   {
     m_aBusinessInfo = aBusinessInfo;
     m_aErrorHandling = aErrorHandling;

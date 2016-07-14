@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -315,9 +316,10 @@ public class PModeLegReliability
   }
 
   @Nullable
+  @ReturnsMutableCopy
   public ICommonsList <String> getCorrelation ()
   {
-    return m_aCorrelation;
+    return m_aCorrelation.getClone ();
   }
 
   public void setCorrelation (final ICommonsList <String> aCorrelation)

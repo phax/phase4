@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -126,6 +127,7 @@ public class PMode
     m_sID = sID;
   }
 
+  @Nullable
   public String getAgreement ()
   {
     return m_sAgreement;
@@ -136,6 +138,7 @@ public class PMode
     m_sAgreement = sAgreement;
   }
 
+  @Nullable
   public EMEP getMEP ()
   {
     return m_eMEP;
@@ -146,6 +149,7 @@ public class PMode
     m_eMEP = eMEP;
   }
 
+  @Nullable
   public ETransportChannelBinding getMEPBinding ()
   {
     return m_eMEPBinding;
@@ -156,9 +160,11 @@ public class PMode
     m_eMEPBinding = eMEPBinding;
   }
 
+  @Nullable
+  @ReturnsMutableCopy
   public ICommonsList <PModeLeg> getLegs ()
   {
-    return m_aLegs;
+    return m_aLegs.getClone ();
   }
 
   public void setLegs (final ICommonsList <PModeLeg> aLegs)

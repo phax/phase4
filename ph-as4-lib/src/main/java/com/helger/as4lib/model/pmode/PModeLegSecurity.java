@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
@@ -204,9 +205,10 @@ public class PModeLegSecurity
   }
 
   @Nullable
+  @ReturnsMutableCopy
   public ICommonsList <String> getX509Sign ()
   {
-    return m_aX509Sign;
+    return m_aX509Sign.getClone ();
   }
 
   public void setX509Sign (final ICommonsList <String> aX509Sign)

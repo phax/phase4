@@ -17,6 +17,7 @@
 package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.equals.EqualsHelper;
@@ -86,12 +87,12 @@ public class PModeLegErrorHandling
    */
   private ETriState m_eReportDeliveryFailuresNotifyProducer;
 
-  public PModeLegErrorHandling (final PModeAddressList aReportSenderErrorsTo,
-                                final PModeAddressList aReportReceiverErrorsTo,
-                                final ETriState eReportAsResponse,
-                                final ETriState eReportProcessErrorNotifyConsumer,
-                                final ETriState eReportProcessErrorNotifyProducer,
-                                final ETriState eReportDeliveryFailuresNotifyProducer)
+  public PModeLegErrorHandling (@Nullable final PModeAddressList aReportSenderErrorsTo,
+                                @Nullable final PModeAddressList aReportReceiverErrorsTo,
+                                @Nonnull final ETriState eReportAsResponse,
+                                @Nonnull final ETriState eReportProcessErrorNotifyConsumer,
+                                @Nonnull final ETriState eReportProcessErrorNotifyProducer,
+                                @Nonnull final ETriState eReportDeliveryFailuresNotifyProducer)
   {
     m_aReportSenderErrorsTo = aReportSenderErrorsTo;
     m_aReportReceiverErrorsTo = aReportReceiverErrorsTo;
@@ -104,6 +105,7 @@ public class PModeLegErrorHandling
   public PModeLegErrorHandling ()
   {}
 
+  @Nullable
   public PModeAddressList getReportSenderErrorsTo ()
   {
     return m_aReportSenderErrorsTo;
@@ -114,6 +116,7 @@ public class PModeLegErrorHandling
     m_aReportSenderErrorsTo = aReportSenderErrorsTo;
   }
 
+  @Nullable
   public PModeAddressList getReportReceiverErrorsTo ()
   {
     return m_aReportReceiverErrorsTo;
