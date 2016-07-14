@@ -11,23 +11,24 @@ import com.helger.xml.microdom.MicroElement;
 
 public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTypeConverter
 {
-  private static final String ATTR_MAX_SIZE_KB = "MaxSizeKB";
-  private static final String ATTR_MIME_TYPE = "MimeType";
-  private static final String ATTR_MANDATORY = "Mandatory";
   private static final String ATTR_NAME = "Name";
+  private static final String ATTR_MIME_TYPE = "MimeType";
   private static final String ATTR_XSD_FILENAME = "XSDFilename";
+  private static final String ATTR_MAX_SIZE_KB = "MaxSizeKB";
+  private static final String ATTR_MANDATORY = "Mandatory";
 
   @Nonnull
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
     final PModePayloadProfile aValue = (PModePayloadProfile) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
+
+    ret.setAttribute (ATTR_NAME, aValue.getName ());
+    ret.setAttribute (ATTR_MIME_TYPE, aValue.getMimeType ().getAsString ());
+    ret.setAttribute (ATTR_XSD_FILENAME, aValue.getXSDFilename ());
     if (aValue.hasMaxSizeKB ())
       ret.setAttribute (ATTR_MAX_SIZE_KB, aValue.getMaxSizeKB ());
-    ret.setAttribute (ATTR_MIME_TYPE, aValue.getMimeType ().getAsString ());
     ret.setAttribute (ATTR_MANDATORY, aValue.isMandatory ());
-    ret.setAttribute (ATTR_NAME, aValue.getName ());
-    ret.setAttribute (ATTR_XSD_FILENAME, aValue.getXSDFilename ());
     return ret;
   }
 

@@ -10,9 +10,9 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
   private static final String ELEMENT_REPORT_RECEIVER_ERRORS_TO = "ReportReceiverErrorsTo";
   private static final String ELEMENT_REPORT_SENDER_ERRORS_TO = "ReportSenderErrorsTo";
   private static final String ATTR_REPORT_AS_RESPONSE = "ReportAsResponse";
-  private static final String ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = "ReportDeliveryFailuresNotifyProducer";
   private static final String ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER = "ReportProcessErrorNotifyConsumer";
   private static final String ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = "ReportProcessErrorNotifyProducer";
+  private static final String ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = "ReportDeliveryFailuresNotifyProducer";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -26,12 +26,12 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
                                                                ELEMENT_REPORT_SENDER_ERRORS_TO));
     if (aValue.isReportAsResponseDefined ())
       ret.setAttribute (ATTR_REPORT_AS_RESPONSE, aValue.isReportAsResponse ());
-    if (aValue.isReportDeliveryFailuresNotifyProducerDefined ())
-      ret.setAttribute (ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER, aValue.isReportDeliveryFailuresNotifyProducer ());
     if (aValue.isReportProcessErrorNotifyConsumerDefined ())
       ret.setAttribute (ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER, aValue.isReportProcessErrorNotifyConsumer ());
     if (aValue.isReportProcessErrorNotifyProducerDefined ())
       ret.setAttribute (ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER, aValue.isReportProcessErrorNotifyProducer ());
+    if (aValue.isReportDeliveryFailuresNotifyProducerDefined ())
+      ret.setAttribute (ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER, aValue.isReportDeliveryFailuresNotifyProducer ());
     return ret;
   }
 
@@ -45,18 +45,19 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
 
     final ETriState eReportAsResponse = getTriState (aElement.getAttributeValue (ATTR_REPORT_AS_RESPONSE),
                                                      PModeLegSecurity.DEFAULT_PMODE_AUTHORIZE);
-    final ETriState eReportDeliveryFailuresNotifyProducer = getTriState (aElement.getAttributeValue (ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER),
-                                                                         PModeLegSecurity.DEFAULT_SEND_RECEIPT);
+
     final ETriState eReportProcessErrorNotifyConsumer = getTriState (aElement.getAttributeValue (ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER),
                                                                      PModeLegSecurity.DEFAULT_USERNAME_TOKEN_CREATED);
     final ETriState eReportProcessErrorNotifyProducer = getTriState (aElement.getAttributeValue (ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER),
                                                                      PModeLegSecurity.DEFAULT_USERNAME_TOKEN_DIGEST);
+    final ETriState eReportDeliveryFailuresNotifyProducer = getTriState (aElement.getAttributeValue (ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER),
+                                                                         PModeLegSecurity.DEFAULT_SEND_RECEIPT);
     return new PModeLegErrorHandling (aReceiverAddresses,
                                       aSenderAddresses,
                                       eReportAsResponse,
-                                      eReportDeliveryFailuresNotifyProducer,
                                       eReportProcessErrorNotifyConsumer,
-                                      eReportProcessErrorNotifyProducer);
+                                      eReportProcessErrorNotifyProducer,
+                                      eReportDeliveryFailuresNotifyProducer);
   }
 
 }

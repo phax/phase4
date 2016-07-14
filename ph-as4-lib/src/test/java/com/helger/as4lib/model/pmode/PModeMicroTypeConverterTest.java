@@ -108,16 +108,16 @@ public class PModeMicroTypeConverterTest
   private PModeLegReliability _generatePModeLegReliability ()
   {
     final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation");
-    return new PModeLegReliability (aCorrelation,
+    return new PModeLegReliability (ETriState.TRUE,
                                     ETriState.TRUE,
-                                    ETriState.TRUE,
+                                    "ack",
                                     ETriState.TRUE,
                                     "replyPattern",
                                     ETriState.TRUE,
                                     ETriState.TRUE,
                                     ETriState.TRUE,
-                                    ETriState.TRUE,
-                                    "ack");
+                                    aCorrelation,
+                                    ETriState.TRUE);
 
   }
 
@@ -125,22 +125,22 @@ public class PModeMicroTypeConverterTest
   {
     final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt");
     final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign");
-    return new PModeLegSecurity (aX509EncryptionEncrypt,
-                                 1,
+    return new PModeLegSecurity ("wssversion",
                                  aX509Sign,
-                                 ETriState.TRUE,
-                                 ETriState.TRUE,
-                                 ETriState.TRUE,
-                                 ETriState.TRUE,
-                                 ETriState.TRUE,
-                                 "replyPattern",
-                                 "usernametokenpassword",
-                                 "usernametokenusername",
-                                 "wssversion",
-                                 "X509EncryptionAlgorithm",
-                                 "X509EncryptionCertificate",
-                                 "X509SignatureAlgorithm",
                                  "X509SignatureCertificate",
-                                 "X509SignatureHashFunction");
+                                 "X509SignatureHashFunction",
+                                 "X509SignatureAlgorithm",
+                                 aX509EncryptionEncrypt,
+                                 "X509EncryptionCertificate",
+                                 "X509EncryptionAlgorithm",
+                                 1,
+                                 "usernametokenusername",
+                                 "usernametokenpassword",
+                                 ETriState.TRUE,
+                                 ETriState.TRUE,
+                                 ETriState.TRUE,
+                                 ETriState.TRUE,
+                                 ETriState.TRUE,
+                                 "replyPattern");
   }
 }

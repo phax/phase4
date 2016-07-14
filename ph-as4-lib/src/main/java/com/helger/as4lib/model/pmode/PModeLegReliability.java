@@ -137,18 +137,17 @@ public class PModeLegReliability
 
   }
 
-  public PModeLegReliability (@Nullable final ICommonsList <String> aCorrelation,
+  public PModeLegReliability (@Nonnull final ETriState eAtLeastOnceContract,
                               @Nonnull final ETriState eAtLeastOnceAckOnDelivery,
-                              @Nonnull final ETriState eAtLeastOnceContract,
+                              @Nullable final String sAtLeastOnceContractAcksTo,
                               @Nonnull final ETriState eAtLeastOnceContractAckResponse,
                               @Nullable final String eAtLeastOnceReplyPattern,
                               @Nonnull final ETriState eAtMostOnceContract,
                               @Nonnull final ETriState eInOrderContract,
                               @Nonnull final ETriState eStartGroup,
-                              @Nonnull final ETriState eTerminateGroup,
-                              @Nullable final String sAtLeastOnceContractAcksTo)
+                              @Nullable final ICommonsList <String> aCorrelation,
+                              @Nonnull final ETriState eTerminateGroup)
   {
-    super ();
     m_eAtLeastOnceContract = eAtLeastOnceContract;
     m_eAtLeastOnceAckOnDelivery = eAtLeastOnceAckOnDelivery;
     m_sAtLeastOnceContractAcksTo = sAtLeastOnceContractAcksTo;

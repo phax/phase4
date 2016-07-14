@@ -12,31 +12,32 @@ import com.helger.xml.microdom.convert.MicroTypeConverter;
 public class PModeMicroTypeConverter implements IMicroTypeConverter
 {
   private static final String ATTR_ID = "id";
-  private static final String ELEMENT_INITIATOR = "initiator";
-  private static final String ELEMENT_LEGS = "Legs";
-  private static final String ELEMENT_RESPONDER = "responder";
+  private static final String ATTR_AGREEMENT = "Agreement";
   private static final String ELEMENT_MEP = "MEP";
   private static final String ELEMENT_MEP_BINDING = "MEPBinding";
-  private static final String ATTR_AGREEMENT = "Agreement";
+  private static final String ELEMENT_INITIATOR = "initiator";
+  private static final String ELEMENT_RESPONDER = "responder";
+  private static final String ELEMENT_LEGS = "Legs";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
     final PMode aValue = (PMode) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ID, aValue.getID ());
+    ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
+    ret.appendElement (ELEMENT_MEP).appendText (aValue.getMEP ().getURI ());
+    ret.appendElement (ELEMENT_MEP_BINDING).appendText (aValue.getMEPBinding ().getURI ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
                                                                sNamespaceURI,
                                                                ELEMENT_INITIATOR));
+
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_RESPONDER));
     for (final PModeLeg aPModeLeg : aValue.getLegs ())
     {
       ret.appendChild (MicroTypeConverter.convertToMicroElement (aPModeLeg, sNamespaceURI, ELEMENT_LEGS));
     }
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_RESPONDER));
-    ret.appendElement (ELEMENT_MEP).appendText (aValue.getMEP ().getURI ());
-    ret.appendElement (ELEMENT_MEP_BINDING).appendText (aValue.getMEPBinding ().getURI ());
-    ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
 
     return ret;
   }

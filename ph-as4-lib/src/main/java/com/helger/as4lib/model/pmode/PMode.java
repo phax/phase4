@@ -100,9 +100,7 @@ public class PMode
    * successfully on receiver side � here by Initiator MSH.
    */
   private PModeParty m_aResponder;
-  // TODO ASK WHY MAP?
-  // private ICommonsOrderedMap <String, PModeLeg> m_aLegs = new
-  // CommonsLinkedHashMap<> ();
+
   private ICommonsList <PModeLeg> m_aLegs = new CommonsArrayList<> ();
 
   @Nullable
@@ -157,16 +155,6 @@ public class PMode
   {
     m_eMEPBinding = eMEPBinding;
   }
-
-  // public ICommonsOrderedMap <String, PModeLeg> getLegs ()
-  // {
-  // return m_aLegs;
-  // }
-  //
-  // public void setLegs (final ICommonsOrderedMap <String, PModeLeg> aLegs)
-  // {
-  // m_aLegs = aLegs;
-  // }
 
   public ICommonsList <PModeLeg> getLegs ()
   {

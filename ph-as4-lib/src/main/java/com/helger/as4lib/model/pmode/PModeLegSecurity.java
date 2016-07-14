@@ -155,23 +155,23 @@ public class PModeLegSecurity
 
   }
 
-  public PModeLegSecurity (@Nullable final ICommonsList <String> m_aX509EncryptionEncrypt,
-                           @Nullable final Integer m_aX509EncryptionMinimumStrength,
+  public PModeLegSecurity (@Nullable final String m_sWSSVersion,
                            @Nullable final ICommonsList <String> m_aX509Sign,
-                           @Nonnull final ETriState m_ePModeAuthorize,
-                           @Nonnull final ETriState m_eSendReceipt,
-                           @Nonnull final ETriState m_eUsernameTokenCreated,
+                           @Nullable final String m_sX509SignatureCertificate,
+                           @Nullable final String m_sX509SignatureHashFunction,
+                           @Nullable final String m_sX509SignatureAlgorithm,
+                           @Nullable final ICommonsList <String> m_aX509EncryptionEncrypt,
+                           @Nullable final String m_sX509EncryptionCertificate,
+                           @Nullable final String m_sX509EncryptionAlgorithm,
+                           @Nullable final Integer m_aX509EncryptionMinimumStrength,
+                           @Nullable final String m_sUsernameTokenUsername,
+                           @Nullable final String m_sUsernameTokenPassword,
                            @Nonnull final ETriState m_eUsernameTokenDigest,
                            @Nonnull final ETriState m_eUsernameTokenNonce,
-                           @Nullable final String m_sSendReceiptReplyPattern,
-                           @Nullable final String m_sUsernameTokenPassword,
-                           @Nullable final String m_sUsernameTokenUsername,
-                           @Nullable final String m_sWSSVersion,
-                           @Nullable final String m_sX509EncryptionAlgorithm,
-                           @Nullable final String m_sX509EncryptionCertificate,
-                           @Nullable final String m_sX509SignatureAlgorithm,
-                           @Nullable final String m_sX509SignatureCertificate,
-                           @Nullable final String m_sX509SignatureHashFunction)
+                           @Nonnull final ETriState m_eUsernameTokenCreated,
+                           @Nonnull final ETriState m_ePModeAuthorize,
+                           @Nonnull final ETriState m_eSendReceipt,
+                           @Nullable final String m_sSendReceiptReplyPattern)
   {
     this.m_aX509EncryptionEncrypt = m_aX509EncryptionEncrypt;
     this.m_aX509EncryptionMinimumStrength = m_aX509EncryptionMinimumStrength;

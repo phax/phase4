@@ -8,8 +8,8 @@ import com.helger.xml.microdom.convert.MicroTypeConverter;
 
 public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPModeMicroTypeConverter
 {
-  private static final String ATTR_ACTION = "Action";
   private static final String ATTR_SERVICE = "Service";
+  private static final String ATTR_ACTION = "Action";
   private static final String ELEMENT_PROPERTIES = "Properties";
   private static final String ELEMENT_PAYLOAD_PROFILE = "PayloadProfile";
   private static final String ATTR_PAYLOAD_PROFILE_MAX_KB = "PayloadProfileMaxKB";
@@ -19,8 +19,8 @@ public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPMode
   {
     final PModeLegBusinessInformation aValue = (PModeLegBusinessInformation) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.setAttribute (ATTR_ACTION, aValue.getAction ());
     ret.setAttribute (ATTR_SERVICE, aValue.getService ());
+    ret.setAttribute (ATTR_ACTION, aValue.getAction ());
     aValue.forAllProperties (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
                                                                                              sNamespaceURI,
                                                                                              ELEMENT_PROPERTIES)));
