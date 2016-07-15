@@ -25,4 +25,21 @@ public class Ebms3Exception extends Exception
     m_sRefToMessageId = sRefToMessageId;
   }
 
+  @Nonnull
+  public EEbmsError getError ()
+  {
+    return m_eError;
+  }
+
+  @Nullable
+  public String getAdditionalInformation ()
+  {
+    return m_sAdditionalInformation;
+  }
+
+  @Nullable
+  public String getRefToMessageID ()
+  {
+    return m_sRefToMessageId;
+  }
 }
