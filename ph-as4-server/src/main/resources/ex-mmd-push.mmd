@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Example messsage meta-data document to send a message using P-Mode ex-pm-push
+
+The message contains a JPEG image as payload
+-->
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/">
+  <S11:Header>
+ 		<eb:Messaging S11:mustUnderstand="1"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/
+http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd"
+xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+			<eb:UserMessage>
+				<eb:MessageInfo>
+					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
+					<eb:MessageId>UUID-1@requester.example.com</eb:MessageId>
+				</eb:MessageInfo>
+				<eb:PartyInfo>
+					<eb:From>
+						<eb:PartyId>uri:requester.example.com</eb:PartyId>
+						<eb:Role>http://example.org/roles/Buyer</eb:Role>
+					</eb:From>
+					<eb:To>
+						<eb:PartyId type="someType">QRS543</eb:PartyId>
+						<eb:Role>http://example.org/roles/Seller</eb:Role>
+					</eb:To>
+				</eb:PartyInfo>
+				<eb:CollaborationInfo>
+					<eb:AgreementRef>http://registry.example.com/cpa/123456
+					</eb:AgreementRef>
+					<eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service>
+					<eb:Action>NewPurchaseOrder</eb:Action>
+					<eb:ConversationId>4321</eb:ConversationId>
+				</eb:CollaborationInfo>
+				<eb:MessageProperties>
+					<eb:Property name="ProcessInst">PurchaseOrder:123456</eb:Property>
+					<eb:Property name="ContextID"> 987654321</eb:Property>
+				</eb:MessageProperties>
+				<eb:PayloadInfo>
+					<eb:PartInfo href="cid:part@example.com">
+						<eb:Schema location="http://registry.example.org/po.xsd"
+							version="2.0" />
+						<eb:PartProperties>
+							<eb:Property name="Description">Purchase Order for 11 Widgets
+							</eb:Property>
+							<eb:Property name="MimeType">application/xml</eb:Property>
+						</eb:PartProperties>
+					</eb:PartInfo>
+				</eb:PayloadInfo>
+			</eb:UserMessage>
+		</eb:Messaging>
+  </S11:Header>
+  <S11:Body>
+<MessageMetaData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://holodeck-b2b.org/schemas/2014/06/mmd ../repository/xsd/messagemetadata.xsd"
+ xmlns="http://holodeck-b2b.org/schemas/2014/06/mmd">
+    <CollaborationInfo>
+        <AgreementRef pmode="ex-pm-push"/>
+        <ConversationId>org:holodeckb2b:test:conversation</ConversationId>
+    </CollaborationInfo>
+    <PayloadInfo>
+        <PartInfo containment="attachment" mimeType="image/jpeg" location="payloads/dandelion.jpg"/>
+    </PayloadInfo>
+</MessageMetaData>
+  </S11:Body>
+</S11:Envelope>

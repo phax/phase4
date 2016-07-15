@@ -21,8 +21,7 @@ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
 					</eb:To>
 				</eb:PartyInfo>
 				<eb:CollaborationInfo>
-					<eb:AgreementRef>http://registry.example.com/cpa/123456
-					</eb:AgreementRef>
+					<eb:AgreementRef>ex-pm-push</eb:AgreementRef>
 					<eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service>
 					<eb:Action>NewPurchaseOrder</eb:Action>
 					<eb:ConversationId>4321</eb:ConversationId>

@@ -1,5 +1,8 @@
 package com.helger.as4server.client;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.xml.soap.MessageFactory;
@@ -9,6 +12,7 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.InputStreamEntity;
@@ -18,7 +22,6 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.HttpClientResponseHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPClientSAAJ
@@ -40,10 +43,30 @@ public class SOAPClientSAAJ
       final HttpClientContext aContext = new HttpClientContext ();
       aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final HttpPost aPost = new HttpPost ("https://test.erechnung.gv.at/as4/msh/");
+      final HttpPost aPost = new HttpPost ("http://localhost:8080/services/");
       aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream ("UserMessage.xml")));
-      aClient.execute (aPost, HttpClientResponseHelper.RH_XML, aContext);
+      // aPost.setEntity (new InputStreamEntity
+      // (ClassPathResource.getInputStream ("ex-mmd-push.mmd")));
+      // aClient.execute (aPost, HttpClientResponseHelper.RH_XML, aContext);
 
+      final CloseableHttpResponse httpResponse = aClient.execute (aPost);
+
+      System.out.println ("GET Response Status:: " + httpResponse.getStatusLine ().getStatusCode ());
+
+      final BufferedReader reader = new BufferedReader (new InputStreamReader (httpResponse.getEntity ()
+                                                                                           .getContent ()));
+
+      String inputLine;
+      final StringBuffer response = new StringBuffer ();
+
+      while ((inputLine = reader.readLine ()) != null)
+      {
+        response.append (inputLine);
+      }
+      reader.close ();
+
+      // print result
+      System.out.println (response.toString ());
       // // Create SOAP Connection
       // final SOAPConnectionFactory soapConnectionFactory =
       // SOAPConnectionFactory.newInstance ();
