@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class MessageValidator
 
         if (aCVEH.getResourceErrors ().containsAtLeastOneError ())
         {
-          final List <EEbmsError> aOccurredErrors = new ArrayList <EEbmsError> ();
+          final List <EEbmsError> aOccurredErrors = new ArrayList<> ();
           aOccurredErrors.add (EEbmsError.EBMS_INVALID_HEADER);
           sendErrorResponse (aOccurredErrors);
           return false;
@@ -91,7 +92,7 @@ public class MessageValidator
   {
     final Ebms3Messaging aResponse = new Ebms3Messaging ();
     final Ebms3SignalMessage aErrorResponse = new Ebms3SignalMessage ();
-    final List <Ebms3Error> aErrorList = new ArrayList <Ebms3Error> ();
+    final List <Ebms3Error> aErrorList = new ArrayList<> ();
     // TODO how to get Messageinfo for response?
     // aErrorResponse.setMessageInfo (value);
     // TODO set S11MustUnderstand or S12MustUnderstand depending on MessageInfo?
@@ -102,25 +103,25 @@ public class MessageValidator
     }
 
     aErrorResponse.setError (aErrorList);
-    final List <Ebms3SignalMessage> aReponseList = new ArrayList <Ebms3SignalMessage> ();
+    final List <Ebms3SignalMessage> aReponseList = new ArrayList<> ();
     aReponseList.add (aErrorResponse);
     aResponse.setSignalMessage (aReponseList);
     // TODO Send SignalMessage (aResponse) back
   }
 
-  public boolean validatePOJO (final Ebms3Messaging aMessage)
+  public boolean validatePOJO (@Nonnull final Ebms3Messaging aMessage)
   {
-
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final CollectingExceptionCallback <JAXBException> aExHdl = new CollectingExceptionCallback<> ();
     final String test = Ebms3WriterBuilder.ebms3Messaging ()
                                           .setValidationEventHandler (aCVEH)
                                           .setExceptionHandler (aExHdl)
                                           .getAsString (aMessage);
-    if (aCVEH.getResourceErrors ().containsAtLeastOneError () || aExHdl.hasException ())
+    if (test == null || aCVEH.getResourceErrors ().containsAtLeastOneError () || aExHdl.hasException ())
     {
       // TODO Switch to logger
-      System.out.println (aExHdl.getException ().getCause ());
+      if (aExHdl.hasException ())
+        System.out.println (aExHdl.getException ().getCause ());
       return false;
     }
     return true;
