@@ -118,6 +118,7 @@ public final class Ebms3ReaderBuilderTest
           final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ()
                                                           .setValidationEventHandler (aCVEH)
                                                           .read (new ClassPathResource ("/soap12test/UserMessage12.xml"));
+          assertNotNull (aEnv12);
         }
       }
     }

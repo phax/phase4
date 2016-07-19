@@ -21,6 +21,7 @@ import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.commons.callback.exception.CollectingExceptionCallback;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.error.IResourceError;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
@@ -75,11 +76,9 @@ public class MessageValidator
                                                           .setValidationEventHandler (aCVEH)
                                                           .read (aDocument.getChildNodes ().item (i));
 
-        if (aCVEH.getResourceErrors ().containsAtLeastOneError ())
+        if (aMessage == null || aCVEH.getResourceErrors ().containsAtLeastOneError ())
         {
-          final List <EEbmsError> aOccurredErrors = new ArrayList<> ();
-          aOccurredErrors.add (EEbmsError.EBMS_INVALID_HEADER);
-          sendErrorResponse (aOccurredErrors);
+          sendErrorResponse (new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER));
           return false;
         }
       }

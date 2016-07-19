@@ -148,7 +148,6 @@ public class MessageValidatorTest
     // Creating Message
     final Ebms3Messaging aMessage = new Ebms3Messaging ();
     aMessage.setS11MustUnderstand (true);
-    final List <Ebms3SignalMessage> aSignalMessages = new ArrayList <Ebms3SignalMessage> ();
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
     // Message Info
