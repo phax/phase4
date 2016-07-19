@@ -43,7 +43,14 @@ public class SOAPClientSAAJ
       final HttpClientContext aContext = new HttpClientContext ();
       aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final HttpPost aPost = new HttpPost ("http://localhost:8080/services/");
+      // final HttpPost aPost = new HttpPost
+      // ("http://localhost:8080/services/"); // Original
+      // b2bholodeck
+      final HttpPost aPost = new HttpPost ("http://localhost:8080/axis2/services/msh/");
+      aPost.addHeader ("SOAPAction", "\"msh\"");
+      // aPost.setEntity (new InputStreamEntity
+      // (ClassPathResource.getInputStream ("UserMessage.xml")));
+
       aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream ("UserMessage.xml")));
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("ex-mmd-push.mmd")));

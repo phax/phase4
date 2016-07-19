@@ -1,10 +1,12 @@
 <S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
-	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/">
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
 	<S11:Header>
-		<eb:Messaging S11:mustUnderstand="1"
-			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/
-http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
+		<eb:Messaging S11:mustUnderstand="0">
 			<eb:UserMessage>
 				<eb:MessageInfo>
 					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
@@ -12,16 +14,16 @@ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
 				</eb:MessageInfo>
 				<eb:PartyInfo>
 					<eb:From>
-						<eb:PartyId>uri:requester.example.com</eb:PartyId>
-						<eb:Role>http://example.org/roles/Buyer</eb:Role>
+						<eb:PartyId>asdf</eb:PartyId>
+						<eb:Role>Sender</eb:Role>
 					</eb:From>
 					<eb:To>
-						<eb:PartyId type="someType">QRS543</eb:PartyId>
-						<eb:Role>http://example.org/roles/Seller</eb:Role>
+						<eb:PartyId>APP_1000000101</eb:PartyId>
+						<eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role>
 					</eb:To>
 				</eb:PartyInfo>
 				<eb:CollaborationInfo>
-					<eb:AgreementRef>ex-pm-push</eb:AgreementRef>
+					<eb:AgreementRef pmode="pm-esens-generic-resp">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef>
 					<eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service>
 					<eb:Action>NewPurchaseOrder</eb:Action>
 					<eb:ConversationId>4321</eb:ConversationId>
@@ -43,6 +45,48 @@ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
 				</eb:PayloadInfo>
 			</eb:UserMessage>
 		</eb:Messaging>
+		<wsse:Security S11:mustUnderStand="0">
+			<wsse:BinarySecurityToken wsu:Id="_smallco_cert">
+				<!-- details omitted -->
+			</wsse:BinarySecurityToken>
+			<ds:Signature>
+				<ds:SignedInfo>
+					<ds:CanonicalizationMethod
+						Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+					<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+					<ds:Reference URI="#_ebmessaging">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>KshAH7QFFAw2sV5LQBOUOSSrCaI=</ds:DigestValue>
+					</ds:Reference>
+					<ds:Reference URI="#_pullauthorization">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>PreCqm0ESZqmITjf1qzrLFuOEYg=</ds:DigestValue>
+					</ds:Reference>
+					<ds:Reference URI="#_soapbody">
+						<ds:Transforms>
+							<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" />
+						</ds:Transforms>
+						<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmlds#sha1" />
+						<ds:DigestValue>FkwnI8mmXh71J5qcwO404ZnlXpg=</ds:DigestValue>
+					</ds:Reference>
+				</ds:SignedInfo>
+				<ds:SignatureValue>
+					<!-- details omitted -->
+				</ds:SignatureValue>
+				<ds:KeyInfo>
+					<wsse:SecurityTokenReference>
+						<wsse:Reference URI="#_smallco_cert"
+							ValueType="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wssx509-token-profile-1.0#X509v3" />
+					</wsse:SecurityTokenReference>
+				</ds:KeyInfo>
+			</ds:Signature>
+		</wsse:Security>
 	</S11:Header>
 	<S11:Body>
 	</S11:Body>
