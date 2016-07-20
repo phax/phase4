@@ -1,0 +1,48 @@
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
+	<S11:Header>
+		<eb:Messaging S11:mustUnderstand="0">
+			<eb:UserMessage>
+				<eb:MessageInfo>
+					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
+					<eb:MessageId>UUID-1@requester.example.com</eb:MessageId>
+				</eb:MessageInfo>
+				<eb:PartyInfo>
+					<eb:From>
+						<eb:PartyId>asdf</eb:PartyId>
+						<eb:Role>Sender</eb:Role>
+					</eb:From>
+					<eb:To>
+						<eb:PartyId>APP_1000000101</eb:PartyId>
+						<eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role>
+					</eb:To>
+				</eb:PartyInfo>
+				<eb:CollaborationInfo>
+					<eb:AgreementRef pmode="pm-esens-generic-resp">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef>
+					<eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service>
+					<eb:Action>NewPurchaseOrder</eb:Action>
+					<eb:ConversationId>4321</eb:ConversationId>
+				</eb:CollaborationInfo>
+				<eb:MessageProperties>
+					<eb:Property name="ProcessInst">PurchaseOrder:123456</eb:Property>
+					<eb:Property name="ContextID"> 987654321</eb:Property>
+				</eb:MessageProperties>
+				<eb:PayloadInfo>
+					<eb:PartInfo href="cid:part@example.com">
+						<eb:Schema location="http://registry.example.org/po.xsd"
+							version="2.0" />
+						<eb:PartProperties>
+							<eb:Property name="Description">Purchase Order for 11 Widgets
+							</eb:Property>
+							<eb:Property name="MimeType">application/xml</eb:Property>
+						</eb:PartProperties>
+					</eb:PartInfo>
+				</eb:PayloadInfo>
+			</eb:UserMessage>
+		</eb:Messaging>
+	</S11:Header>
+	<S11:Body>
+	</S11:Body>
+</S11:Envelope> 
