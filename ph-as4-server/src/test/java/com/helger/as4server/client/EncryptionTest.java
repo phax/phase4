@@ -112,11 +112,7 @@ public class EncryptionTest extends org.junit.Assert
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     System.out.println (outputString);
     // TODO eb:Messagin now gone should be before the wsse stuff
-    if (LOG.isDebugEnabled ())
-    {
-      LOG.debug ("Encrypted message, RSA-15 keytransport, AES 128:");
-      LOG.debug (outputString);
-    }
+
     assertFalse (outputString.contains ("counter_port_type"));
 
   }

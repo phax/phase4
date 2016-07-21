@@ -1,10 +1,14 @@
 package com.helger.as4server.client;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConstants;
@@ -17,6 +21,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.common.crypto.Crypto;
+import org.apache.wss4j.common.crypto.CryptoFactory;
+import org.apache.wss4j.common.util.XMLUtils;
+import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.engine.WSSConfig;
+import org.apache.wss4j.dom.message.WSSecHeader;
+import org.apache.wss4j.dom.message.WSSecSignature;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.random.RandomHelper;
@@ -48,13 +62,19 @@ public class SOAPClientSAAJ
       // b2bholodeck
       final HttpPost aPost = new HttpPost ("http://localhost:8080/axis2/services/msh/");
       aPost.addHeader ("SOAPAction", "\"msh\"");
+
+      aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream ("TestMessage.xml")));
+
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("UserMessage.xml")));
 
-      aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream ("UserMessage.xml")));
+      // aPost.setEntity (new InputStreamEntity
+      // (ClassPathResource.getInputStream ("UserMessage.xml")));
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("ex-mmd-push.mmd")));
       // aClient.execute (aPost, HttpClientResponseHelper.RH_XML, aContext);
+      //
+      // aPost.setEntity (new StringEntity (_getSignedSoapMessage ()));
 
       final CloseableHttpResponse httpResponse = aClient.execute (aPost);
 
@@ -138,6 +158,31 @@ public class SOAPClientSAAJ
     // System.out.print ("\nResponse SOAP Message = ");
     // final StreamResult result = new StreamResult (System.out);
     // transformer.transform (sourceContent, result);
+  }
+
+  private static String _getSignedSoapMessage () throws Exception
+  {
+    WSSConfig.init ();
+    final Crypto crypto = CryptoFactory.getInstance ();
+    final WSSecSignature builder = new WSSecSignature ();
+    builder.setUserInfo ("ap.pilot", "peppol");
+    builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
+    builder.setDigestAlgo (WSS4JConstants.SHA256);
+    final Document doc = _getSoapEnvelope11 ();
+    final WSSecHeader secHeader = new WSSecHeader (doc);
+    secHeader.insertSecurityHeader ();
+    final Document signedDoc = builder.build (doc, crypto, secHeader);
+    return XMLUtils.prettyDocumentToString (signedDoc);
+  }
+
+  private static Document _getSoapEnvelope11 () throws SAXException, IOException, ParserConfigurationException
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
   }
 
 }
