@@ -36,10 +36,13 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.settings.exchange.configfile.ConfigFile;
+import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPClientSAAJ
 {
+  public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("as4test.properties").build ();
 
   /**
    * Starting point for the SAAJ - SOAP Client Testing
@@ -165,7 +168,7 @@ public class SOAPClientSAAJ
     WSSConfig.init ();
     final Crypto crypto = CryptoFactory.getInstance ();
     final WSSecSignature builder = new WSSecSignature ();
-    builder.setUserInfo ("ap.pilot", "peppol");
+    builder.setUserInfo (CF.getAsString ("key.alias"), CF.getAsString ("key.password"));
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
     // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
