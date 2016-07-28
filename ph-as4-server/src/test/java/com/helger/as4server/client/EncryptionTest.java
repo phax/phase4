@@ -19,6 +19,8 @@
 
 package com.helger.as4server.client;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.IOException;
 
 import javax.crypto.KeyGenerator;
@@ -47,7 +49,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 /**
  * A set of test-cases for encrypting and decrypting SOAP requests.
  */
-public class EncryptionTest extends org.junit.Assert
+public class EncryptionTest
 {
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
   private static final javax.xml.namespace.QName SOAP_BODY = new javax.xml.namespace.QName (WSConstants.URI_SOAP11_ENV,

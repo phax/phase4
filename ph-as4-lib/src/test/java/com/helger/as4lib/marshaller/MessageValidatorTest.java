@@ -128,7 +128,7 @@ public class MessageValidatorTest
   {
     final Ebms3Messaging aMessage = new Ebms3Messaging ();
     aMessage.setS11MustUnderstand (true);
-    final List <Ebms3SignalMessage> aSignalMessages = new ArrayList <Ebms3SignalMessage> ();
+    final List <Ebms3SignalMessage> aSignalMessages = new ArrayList<> ();
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
     aSignalMessage.setMessageInfo (aMessageInfo);
@@ -161,7 +161,7 @@ public class MessageValidatorTest
     aSignalMessage.setMessageInfo (aMessageInfo);
 
     // Error Message
-    final List <Ebms3Error> aErrorMessages = new ArrayList <Ebms3Error> ();
+    final List <Ebms3Error> aErrorMessages = new ArrayList<> ();
     final Ebms3Error aEbms3Error = new Ebms3Error ();
     aEbms3Error.setErrorCode (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
     aEbms3Error.setSeverity (EEbmsError.EBMS_INVALID_HEADER.getSeverity ().getSeverity ());

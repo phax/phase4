@@ -19,7 +19,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
@@ -63,13 +63,16 @@ public class SOAPClientSAAJ
       // final HttpPost aPost = new HttpPost
       // ("http://localhost:8080/services/"); // Original
       // b2bholodeck
-      final HttpPost aPost = new HttpPost ("http://localhost:8080/axis2/services/msh/");
-      aPost.addHeader ("SOAPAction", "\"msh\"");
-
-      aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream ("TestMessage.xml")));
+      final HttpPost aPost = new HttpPost ("http://127.0.0.1:8080/services/msh/");
+      // HB2B Online
+      // final HttpPost aPost = new HttpPost
+      // ("http://msh.holodeck-b2b.org:8080/services/msh");
+      // aPost.addHeader ("SOAPAction", "\"msh\"");
+      // TODO atm only calls testMessage
+      aPost.setEntity (new StringEntity (XMLWriter.getXMLString (CreateMessageClient.testUserMessage ())));
 
       // aPost.setEntity (new InputStreamEntity
-      // (ClassPathResource.getInputStream ("UserMessage.xml")));
+      // (ClassPathResource.getInputStream ("TestMessage.xml")));
 
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("UserMessage.xml")));

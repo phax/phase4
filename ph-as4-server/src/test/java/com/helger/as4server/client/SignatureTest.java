@@ -19,6 +19,9 @@
 
 package com.helger.as4server.client;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -45,7 +48,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 /**
  * A set of test-cases for signing and verifying SOAP requests.
  */
-public class SignatureTest extends org.junit.Assert
+public class SignatureTest
 {
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (SignatureTest.class);
 
@@ -111,5 +114,15 @@ public class SignatureTest extends org.junit.Assert
     domFactory.setNamespaceAware (true); // never forget this!
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
+  }
+
+  @Test
+  public void testBoxing ()
+  {
+    final Boolean aObj = Boolean.TRUE;
+    final boolean b1 = aObj;
+    final Boolean aObj2 = null;
+    final boolean b2 = aObj2;
+    System.out.println (b1 + " and " + b2);
   }
 }

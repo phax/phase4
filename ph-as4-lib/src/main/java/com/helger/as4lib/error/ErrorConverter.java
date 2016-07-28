@@ -14,7 +14,7 @@ public class ErrorConverter
 {
   // TODO Switch locale to dynamic version
   // TODO add Ebms3Description
-  public Ebms3Error convertEnumToEbms3Error (final EEbmsError aEbmsError)
+  public static Ebms3Error convertEnumToEbms3Error (final EEbmsError aEbmsError)
   {
     final Ebms3Error aEbms3Error = new Ebms3Error ();
     aEbms3Error.setErrorCode (aEbmsError.getErrorCode ());

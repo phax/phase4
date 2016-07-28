@@ -1,47 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?><S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/ http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/ebms-header-3_0-200704.xsd">
-	<S11:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" S11:mustUnderstand="0"><wsse:BinarySecurityToken EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3" wsu:Id="X509-681e6141-307f-4f84-8f28-96db4d2575e8">MIIEhTCCA22gAwIBAgIQV89muarYc7GGAzfaMbEjUjANBgkqhkiG9w0BAQsFADB9MQswCQYDVQQGEwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQLExZGT1IgVEVTVCBQVVJQT1NFUyBPTkxZMSQwIgYDVQQDExtQRVBQT0wgQUNDRVNTIFBPSU5UIFRFU1QgQ0EwHhcNMTUwMzA2MDAwMDAwWhcNMTcwMzA1MjM1OTU5WjBXMQswCQYDVQQGEwJBVDEvMC0GA1UECgwmQlJaIChGZWRlcmFsIENvbXB1dGluZyBDZW50ZXIgQXVzdHJpYSkxFzAVBgNVBAMMDkFQUF8xMDAwMDAwMTAxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1t+C86QTUyNx8s62eIl36ODl0dDk7ow3K9oqnNuMWMns9sR41NtDVIETWqaO7vj09whuveNeyZarxvyCPxDS9Ckqb8BxCqe5kExMSLuFiBprebL6RHOIRhXc1iGwyca55jhB1Z6g1VmRaSryWoNiDeQ57JLTQFpXp7ccDw+SRzpPAvdo9ye/1eXfp6IarxzK+wIv/5kw8wNgovgUan/iCUE+ofRhiOF14X+VjJUHfhTO3zO/eMEbHyom/pvzZ6nzkna0coKtQQKcdkQ8rrtdhLJoLWjJIIvXYIOE6zLds/L7IPIaSmL6WpJMz5d82pKgTreSx8/YKP0lzRvsQx4IuQIDAQABo4IBJTCCASEwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwdgYDVR0fBG8wbTBroGmgZ4ZlaHR0cDovL3BpbG90b25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3NzdHlyZWxzZW5QaWxvdE9wZW5QRVBQT0xBQ0NFU1NQT0lOVENBL0xhdGVzdENSTC5jcmwwHwYDVR0jBBgwFoAU95aLGUyu4lYhAL6G/XpHrJ3KBXUwHQYDVR0OBBYEFJj27Mzpvx84LQjHJtiUm6eJCe+WMDoGCCsGAQUFBwEBBC4wLDAqBggrBgEFBQcwAYYeaHR0cDovL3BpbG90LW9jc3AudmVyaXNpZ24uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQBagbfyISlRfqH6VsPZo14W+X5E/H0UjvGMwp1wlEFA8AzhIztqKWbVnS84vF2F0UqRrh44BHnwZmMhjnnHRqYdvzUDGNAiM2zPl0tDDb/RkLRfXHaXVA/kjaAYPzagq2N23vDEiz2G1ZKb9ufD+en8mbdmzpyIPVqbzc/qcitUOS9E70wUT3hx7wj54UN8j3jibWArz6/jC8RSL1AlVKISU2NxrIX3O1sBbxX0UvDKED7e4bSZGOYJRC6BAGn4xCSxK4B6rmGWt1RtlFvMjf0GyFRgb5HKVkOQCauFOUp543EKFKWkBTfFURRenBo1MDYAmofo0RnJ81qPbhYQSfps</wsse:BinarySecurityToken><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-aae44bdb-b8b1-467d-be9c-1693208dfb32"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"><ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="S11 eb xsi"/></ds:CanonicalizationMethod><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference URI="#id-4ff7820d-254f-437c-878c-1cc740158317"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"><ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="eb xsi"/></ds:Transform></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>PUB4GlU6ioROY5MoTtY0huI07h29SnbfepkFxY4qFLQ=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>BeiQZK+NF29h36MnRakT0XbAzBqBOMfVj4BiyezQJhUxheYEcpv4P1xNUAh2ITwzkw3Lw3bTvYohFmuBFitG7FGF2EU8SUDTtwqcp4V7CzjNXjw3980Np0OZ4zblXQshAtjeogCzOer4td+B9sw7KNNnlKibBnIHu6mHW9oFKH5lxT07oIi3zLh3n1nBKjrfolRrxuoXp3H2ukCMu5YizIsbvnTOStGWgfjuUIq/5nlKSTapICwMukbcCbZ9Bvy2yUWaEm3nqBB6JXdu1cwnvuTyDe7L0Mxdb9+8hL6OIKADR2q4Su4CVlgAncqU3BdHCk2O0WaW33R2Xw08w8caWA==</ds:SignatureValue><ds:KeyInfo Id="KI-99784169-3068-4be7-9c78-5ca25048c0aa"><wsse:SecurityTokenReference wsu:Id="STR-6753de81-267a-4934-a82b-2e20125716f3"><wsse:Reference URI="#X509-681e6141-307f-4f84-8f28-96db4d2575e8" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/></wsse:SecurityTokenReference></ds:KeyInfo></ds:Signature></wsse:Security>
-		<eb:Messaging S11:mustUnderstand="0">
-			<eb:UserMessage>
-				<eb:MessageInfo>
-					<eb:Timestamp>2006-07-25T12:19:05</eb:Timestamp>
-					<eb:MessageId>UUID-1@requester.example.com</eb:MessageId>
-				</eb:MessageInfo>
-				<eb:PartyInfo>
-					<eb:From>
-						<eb:PartyId>APP_1000000101</eb:PartyId>
-						<eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender</eb:Role>
-					</eb:From>
-					<eb:To>
-						<eb:PartyId>APP_1000000101</eb:PartyId>
-						<eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role>
-					</eb:To>
-				</eb:PartyInfo>
-				<eb:CollaborationInfo>
-					<eb:AgreementRef pmode="pm-esens-generic-resp">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef>
-					<eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service>
-					<eb:Action>NewPurchaseOrder</eb:Action>
-					<eb:ConversationId>4321</eb:ConversationId>
-				</eb:CollaborationInfo>
-				<eb:MessageProperties>
-					<eb:Property name="ProcessInst">PurchaseOrder:123456</eb:Property>
-					<eb:Property name="ContextID"> 987654321</eb:Property>
-				</eb:MessageProperties>
-        
-    				<eb:PayloadInfo><eb:PartInfo/></eb:PayloadInfo>
-					<!--<eb:PartInfo href="cid:part@example.com">
-						<eb:Schema location="http://registry.example.org/po.xsd"
-							version="2.0" />
-						<eb:PartProperties>
-							<eb:Property name="Description">Purchase Order for 11 Widgets</eb:Property>
-							<eb:Property name="MimeType">application/xml</eb:Property>
-						</eb:PartProperties>
-					</eb:PartInfo>
-				</eb:PayloadInfo>
-        -->
-			</eb:UserMessage>
-		</eb:Messaging>
-	</S11:Header>
-	<S11:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-4ff7820d-254f-437c-878c-1cc740158317">
 <StandardBusinessDocument xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <StandardBusinessDocumentHeader>
     <HeaderVersion>1.0</HeaderVersion>
@@ -280,5 +236,3 @@
     </ns3:InvoiceLine>
   </ns4:Invoice>
 </StandardBusinessDocument>
-	</S11:Body>
-</S11:Envelope>
