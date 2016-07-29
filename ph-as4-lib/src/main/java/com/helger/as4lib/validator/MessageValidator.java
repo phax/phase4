@@ -98,7 +98,8 @@ public class MessageValidator
     // or through other means
     for (final EEbmsError aError : aOccurredErrors)
     {
-      aErrorList.add (new ErrorConverter ().convertEnumToEbms3Error (aError));
+      new ErrorConverter ();
+      aErrorList.add (ErrorConverter.convertEnumToEbms3Error (aError));
     }
 
     aErrorResponse.setError (aErrorList);

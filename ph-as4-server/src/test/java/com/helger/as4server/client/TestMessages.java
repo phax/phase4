@@ -6,42 +6,48 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.message.WSSecHeader;
-import org.apache.wss4j.dom.message.WSSecSignature;
-import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.helger.as4lib.ebms3header.Ebms3Error;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.error.ErrorConverter;
+import com.helger.as4server.message.CreateErrorMessage;
+import com.helger.as4server.message.CreateMessageClient;
+import com.helger.as4server.message.CreateReceiptMessage;
+import com.helger.as4server.message.CreateUserMessage;
+import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.settings.exchange.configfile.ConfigFile;
-import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
-public class CreateMessageClient
+public class TestMessages
 {
-  public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("as4test.properties").build ();
-
   // TODO testMessage for developing delete if not needed anymore
   public static Document testUserMessage () throws WSSecurityException,
                                             IOException,
-                                            DatatypeConfigurationException,
                                             SAXException,
                                             ParserConfigurationException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final CreateMessageClient aClient = new CreateMessageClient ();
+
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
+    aEbms3PropertyProcess.setName ("ProcessInst");
+    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
+    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
+    aEbms3PropertyContext.setName ("ContextID");
+    aEbms3PropertyContext.setValue ("987654321");
+    aEbms3Properties.add (aEbms3PropertyContext);
+    aEbms3Properties.add (aEbms3PropertyProcess);
+
     final Document aSignedDoc = aClient.createSignedMessage (aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
                                                                                              aUserMessage.createEbms3PayloadInfo (),
                                                                                              aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
@@ -54,11 +60,12 @@ public class CreateMessageClient
                                                                                                                                 "APP_1000000101",
                                                                                                                                 "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                                                                                                                                 "APP_1000000101"),
-                                                                                             aUserMessage.createEbms3MessageProperties ()));
+                                                                                             aUserMessage.createEbms3MessageProperties (aEbms3Properties),
+                                                                                             "SOAPBodyPayload.xml"));
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage () throws WSSecurityException, DatatypeConfigurationException
+  public static Document testErrorMessage () throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final CreateMessageClient aClient = new CreateMessageClient ();
@@ -73,8 +80,7 @@ public class CreateMessageClient
                                                DOMException,
                                                IOException,
                                                SAXException,
-                                               ParserConfigurationException,
-                                               DatatypeConfigurationException
+                                               ParserConfigurationException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
     aEbms3ErrorList.add (ErrorConverter.convertEnumToEbms3Error (EEbmsError.EBMS_INVALID_HEADER));
@@ -119,29 +125,4 @@ public class CreateMessageClient
     System.out.println ("##############################################");
     System.out.println (XMLWriter.getNodeAsString (testReceiptMessage (), aXWS));
   }
-
-  public Document createSignedMessage (final Document aDocument) throws WSSecurityException
-  {
-    WSSConfig.init ();
-    final Crypto aCrypto = CryptoFactory.getInstance ();
-    final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (CF.getAsString ("key.alias"), CF.getAsString ("key.password"));
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
-    aBuilder.setDigestAlgo ("http://www.w3.org/2001/04/xmlenc#sha256");
-    final Document aDoc = aDocument;
-    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
-    aSecHeader.insertSecurityHeader ();
-    // TODO if you set attribute with NS it adds the same namespace again since
-    // it does not take the one from envelope => Change NS between S11 and S12
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNode ("S11:mustUnderstand");
-    // TODO Needs to be set to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    aMustUnderstand.setValue ("0");
-
-    final Document aSignedDoc = aBuilder.build (aDoc, aCrypto, aSecHeader);
-    return aSignedDoc;
-  }
-
 }

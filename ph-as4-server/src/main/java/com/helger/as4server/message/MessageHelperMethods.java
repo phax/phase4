@@ -1,4 +1,4 @@
-package com.helger.as4server.client;
+package com.helger.as4server.message;
 
 import java.io.IOException;
 
@@ -15,6 +15,13 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.datetime.util.PDTXMLConverter;
 
+/**
+ * This class contains every method, static variables which are used by more
+ * than one message creating classes in the package
+ * com.helger.as4server.message.
+ *
+ * @author bayerlma
+ */
 public class MessageHelperMethods
 {
   public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";
@@ -31,7 +38,8 @@ public class MessageHelperMethods
     return builder.parse (new ClassPathResource (sPath).getInputStream ());
   }
 
-  // TODO not finished test purpose rdy
+  // TODO Change Timestamp or do we only want the present date when the message
+  // gets sent/replied
   public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId,
                                                          @Nullable final String sRefToMessageID)
   {

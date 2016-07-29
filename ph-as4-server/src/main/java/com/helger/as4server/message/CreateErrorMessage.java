@@ -1,23 +1,27 @@
-package com.helger.as4server.client;
+package com.helger.as4server.message;
 
 import javax.annotation.Nonnull;
-import javax.xml.datatype.DatatypeConfigurationException;
+import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
 
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
-import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.soap11.Soap11Body;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap11.Soap11Header;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 
-public class CreatePullRequestMessage
+public class CreateErrorMessage
 {
-  public Document createPullRequestMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                            @Nonnull final String aMPC)
+  private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList<> ();
+
+  public Document createErrorMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                      @Nullable final ICommonsList <Ebms3Error> aErrorMessages)
   {
     // Creating SOAP
     final Soap11Envelope aSoapEnv = new Soap11Envelope ();
@@ -34,10 +38,12 @@ public class CreatePullRequestMessage
     // Message Info
     aSignalMessage.setMessageInfo (aEbms3MessageInfo);
 
-    // PullRequest
-    final Ebms3PullRequest aEbms3PullRequest = new Ebms3PullRequest ();
-    aEbms3PullRequest.setMpc (aMPC);
-    aSignalMessage.setPullRequest (aEbms3PullRequest);
+    if (aErrorMessages.isNotEmpty ())
+      m_aErrorMessages.addAll (aErrorMessages);
+
+    // Error Message
+    if (m_aErrorMessages.isNotEmpty ())
+      aSignalMessage.setError (m_aErrorMessages);
 
     aMessage.addSignalMessage (aSignalMessage);
 
@@ -48,8 +54,14 @@ public class CreatePullRequestMessage
     return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId) throws DatatypeConfigurationException
+  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
+  }
+
+  // Add Ebms Errors if no list is present or to increase the errors
+  public void addEbms3Error (@Nonnull final Ebms3Error aEbms3Error)
+  {
+    m_aErrorMessages.add (aEbms3Error);
   }
 }

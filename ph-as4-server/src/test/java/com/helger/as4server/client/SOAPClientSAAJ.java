@@ -69,7 +69,7 @@ public class SOAPClientSAAJ
       // ("http://msh.holodeck-b2b.org:8080/services/msh");
       // aPost.addHeader ("SOAPAction", "\"msh\"");
       // TODO atm only calls testMessage
-      aPost.setEntity (new StringEntity (XMLWriter.getXMLString (CreateMessageClient.testUserMessage ())));
+      aPost.setEntity (new StringEntity (XMLWriter.getXMLString (TestMessages.testUserMessage ())));
 
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("TestMessage.xml")));

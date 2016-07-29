@@ -112,7 +112,6 @@
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-settings</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

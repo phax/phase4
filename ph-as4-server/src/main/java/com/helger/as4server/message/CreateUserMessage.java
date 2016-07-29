@@ -1,9 +1,9 @@
-package com.helger.as4server.client;
+package com.helger.as4server.message;
 
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
-import javax.xml.datatype.DatatypeConfigurationException;
+import javax.annotation.Nullable;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -30,19 +30,23 @@ import com.helger.as4lib.soap11.Soap11Header;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
+/**
+ * With the help of this class an usermessage or parts of it can be created.
+ *
+ * @author bayerlma
+ */
 public class CreateUserMessage
 {
 
-  // TODO Involve Payload atm hardcoded soap body only Payload supported nothing
-  // else
+  // TODO Payload as SOAP Body only supported
   public Document createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
                                      @Nonnull final Ebms3PayloadInfo aEbms3PayloadInfo,
                                      @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                      @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                     @Nonnull final Ebms3MessageProperties aEbms3MessageProperties) throws DatatypeConfigurationException,
-                                                                                                    SAXException,
-                                                                                                    IOException,
-                                                                                                    ParserConfigurationException
+                                     @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
+                                     @Nullable final String sPayloadPath) throws SAXException,
+                                                                          IOException,
+                                                                          ParserConfigurationException
   {
     // Creating SOAP
     final Soap11Envelope aSoapEnv = new Soap11Envelope ();
@@ -53,7 +57,7 @@ public class CreateUserMessage
     final Ebms3Messaging aMessage = new Ebms3Messaging ();
     // TODO Needs to beset to 0 (equals false) since holodeck currently throws
     // a exception he does not understand mustUnderstand
-    aMessage.setS11MustUnderstand (false);
+    aMessage.setS11MustUnderstand (Boolean.FALSE);
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
     // Party Information
@@ -75,12 +79,10 @@ public class CreateUserMessage
     // Adding the user message to the existing soap
     final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
     aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-
-    aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest ("SOAPBodyPayload.xml").getDocumentElement ());
+    aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
     return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
   }
 
-  // TODO not finished test purpose rdy
   public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,
                                               final String sFromPartyID,
                                               final String sToRole,
@@ -110,7 +112,6 @@ public class CreateUserMessage
     return aEbms3PartyInfo;
   }
 
-  // TODO not finished test purpose rdy // Should be DONE => check again
   public Ebms3CollaborationInfo createEbms3CollaborationInfo (final String sAction,
                                                               final String sServiceType,
                                                               final String sServiceValue,
@@ -132,25 +133,13 @@ public class CreateUserMessage
     return aEbms3CollaborationInfo;
   }
 
-  // TODO not finished test purpose rdy => need a way to create n properties
-  // parameter list eg
-  public Ebms3MessageProperties createEbms3MessageProperties ()
+  public Ebms3MessageProperties createEbms3MessageProperties (final ICommonsList <Ebms3Property> aEbms3Properties)
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyProcess);
-    aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3MessageProperties.setProperty (aEbms3Properties);
     return aEbms3MessageProperties;
   }
 
-  // TODO not finished test purpose rdy
   public Ebms3PayloadInfo createEbms3PayloadInfo ()
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
@@ -158,7 +147,7 @@ public class CreateUserMessage
     return aEbms3PayloadInfo;
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId) throws DatatypeConfigurationException
+  public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
   }

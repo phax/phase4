@@ -1,4 +1,4 @@
-package com.helger.as4server.client;
+package com.helger.as4server.message;
 
 import java.util.Collection;
 
@@ -23,6 +23,7 @@ import com.helger.xml.XMLHelper;
 
 public class CreateReceiptMessage
 {
+  // TODO maybe find a better way
   private static Node _findChildElement (@Nullable final Node aStart, @Nonnull final String sLocalName)
   {
     final NodeList aNL = aStart == null ? null : aStart.getChildNodes ();
@@ -85,8 +86,7 @@ public class CreateReceiptMessage
     }
   }
 
-  public Document createReceiptMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                        @Nonnull final Document aUserMessage)
+  private String _findRefToMessageId (@Nonnull final Document aUserMessage)
   {
     {
       Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
@@ -95,9 +95,13 @@ public class CreateReceiptMessage
       aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "MessageInfo");
       aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "MessageId");
       if (aNext != null)
-        aEbms3MessageInfo.setRefToMessageId (aNext.getFirstChild ().getNodeValue ());
+        return (aNext.getFirstChild ().getNodeValue ());
     }
+    return null;
+  }
 
+  private ICommonsList <Node> _getAllReferences (@Nonnull final Document aUserMessage)
+  {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
       Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
@@ -107,6 +111,15 @@ public class CreateReceiptMessage
       if (aNext != null)
         _findAllChildElements (aNext, MessageHelperMethods.DS_NS, "Reference", aDSRefs);
     }
+    return aDSRefs;
+  }
+
+  public Document createReceiptMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                        @Nonnull final Document aUserMessage)
+  {
+    aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
+
+    final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
 
     // Creating SOAP
     final Soap11Envelope aSoapEnv = new Soap11Envelope ();
@@ -138,7 +151,10 @@ public class CreateReceiptMessage
     return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId, final String sRefToMessageId)
+  // TODO ReftomessageID maybe not needed here since, it comes with the
+  // usermessage
+  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId,
+                                                  @Nullable final String sRefToMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, sRefToMessageId);
   }
