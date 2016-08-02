@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -19,49 +18,25 @@ import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap11.Soap11Header;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings ("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
 public class CreateReceiptMessage
 {
   // TODO maybe find a better way
   private static Node _findChildElement (@Nullable final Node aStart, @Nonnull final String sLocalName)
   {
-    final NodeList aNL = aStart == null ? null : aStart.getChildNodes ();
-    if (aNL != null)
-    {
-      final int nMax = aNL.getLength ();
-      for (int i = 0; i < nMax; ++i)
-      {
-        final Node aNode = aNL.item (i);
-        if (aNode.getNodeType () == Node.ELEMENT_NODE && aNode.getLocalName ().equals (sLocalName))
-        {
-          return aNode;
-        }
-      }
-    }
-    return null;
+    return XMLHelper.getFirstChildElementOfName (aStart, sLocalName);
   }
 
   private static Node _findChildElement (@Nullable final Node aStart,
                                          @Nonnull final String sNamespaceURI,
                                          @Nonnull final String sLocalName)
   {
-    final NodeList aNL = aStart == null ? null : aStart.getChildNodes ();
-    if (aNL != null)
-    {
-      final int nMax = aNL.getLength ();
-      for (int i = 0; i < nMax; ++i)
-      {
-        final Node aNode = aNL.item (i);
-        if (aNode.getNodeType () == Node.ELEMENT_NODE &&
-            XMLHelper.hasNamespaceURI (aNode, sNamespaceURI) &&
-            aNode.getLocalName ().equals (sLocalName))
-        {
-          return aNode;
-        }
-      }
-    }
-    return null;
+    return XMLHelper.getFirstChildElementOfName (aStart, sNamespaceURI, sLocalName);
   }
 
   private static void _findAllChildElements (@Nullable final Node aStart,
@@ -69,21 +44,9 @@ public class CreateReceiptMessage
                                              @Nonnull final String sLocalName,
                                              @Nonnull final Collection <Node> aTarget)
   {
-    final NodeList aNL = aStart == null ? null : aStart.getChildNodes ();
-    if (aNL != null)
-    {
-      final int nMax = aNL.getLength ();
-      for (int i = 0; i < nMax; ++i)
-      {
-        final Node aNode = aNL.item (i);
-        if (aNode.getNodeType () == Node.ELEMENT_NODE &&
-            XMLHelper.hasNamespaceURI (aNode, sNamespaceURI) &&
-            aNode.getLocalName ().equals (sLocalName))
-        {
-          aTarget.add (aNode);
-        }
-      }
-    }
+    new ChildElementIterator (aStart).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (sNamespaceURI,
+                                                                                                 sLocalName),
+                                               aTarget::add);
   }
 
   private String _findRefToMessageId (@Nonnull final Document aUserMessage)
