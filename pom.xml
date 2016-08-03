@@ -76,6 +76,13 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
+        <artifactId>ph-web-parent-pom</artifactId>
+        <version>8.5.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
         <version>7.0.0-b1</version>
         <type>pom</type>

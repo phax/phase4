@@ -66,6 +66,7 @@ public class CreateUserMessage
     // Collabration Information
     aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
 
+    // Properties
     aUserMessage.setMessageProperties (aEbms3MessageProperties);
 
     // Payload Information
