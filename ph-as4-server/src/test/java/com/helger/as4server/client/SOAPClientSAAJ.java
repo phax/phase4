@@ -2,7 +2,10 @@ package com.helger.as4server.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 
+import javax.mail.Header;
+import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.xml.parsers.DocumentBuilder;
@@ -124,24 +127,40 @@ public class SOAPClientSAAJ
       // ("http://msh.holodeck-b2b.org:8080/services/msh");
       // aPost.addHeader ("SOAPAction", "\"msh\"");
       // TODO atm only calls testMessage
-      if (true)
+
+      if (false)
       {
         final Document aDoc = TestMessages.testUserMessage ();
-        SimpleFileIO.writeFile (new File ("ser-my.txt"), _serializeXMLMy (aDoc), CCharset.CHARSET_UTF_8_OBJ);
-        SimpleFileIO.writeFile (new File ("ser-rt.txt"), _serializeXMLRT (aDoc), CCharset.CHARSET_UTF_8_OBJ);
+        if (false)
+        {
+          SimpleFileIO.writeFile (new File ("ser-my.txt"), _serializeXMLMy (aDoc), CCharset.CHARSET_UTF_8_OBJ);
+          SimpleFileIO.writeFile (new File ("ser-rt.txt"), _serializeXMLRT (aDoc), CCharset.CHARSET_UTF_8_OBJ);
+        }
         aPost.setEntity (new StringEntity (_serializeXML (aDoc)));
       }
       else
         if (true)
+        {
           // TODO
-          aPost.setEntity (new HttpMimeMessageEntity (null));
+          final MimeMessage aMsg = TestMessages.testMIMEMessage ();
+          final Enumeration <?> e = aMsg.getAllHeaders ();
+          while (e.hasMoreElements ())
+          {
+            final Header h = (Header) e.nextElement ();
+            aPost.addHeader (h.getName (), h.getValue ());
+            aMsg.removeHeader (h.getName ());
+          }
+
+          aPost.setEntity (new HttpMimeMessageEntity (aMsg));
+        }
         else
           aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream (false ? "compare.xml"
                                                                                           : "TestMessage.xml")));
       System.out.println (EntityUtils.toString (aPost.getEntity ()));
 
-      // aPost.setEntity (new InputStreamEntity
-      // (ClassPathResource.getInputStream ("UserMessage.xml")));
+      // final Document aDoc = MessageHelperMethods.getSoapEnvelope11ForTest
+      // ("TestMessage.xml");
+      // aPost.setEntity (new StringEntity (_serializeXML (aDoc)));
       // aPost.setEntity (new InputStreamEntity
       // (ClassPathResource.getInputStream ("ex-mmd-push.mmd")));
       // aClient.execute (aPost, HttpClientResponseHelper.RH_XML, aContext);

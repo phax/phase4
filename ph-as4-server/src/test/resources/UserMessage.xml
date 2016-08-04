@@ -45,7 +45,7 @@
 				</eb:PayloadInfo>
 			</eb:UserMessage>
 		</eb:Messaging>
-		<wsse:Security S11:mustUnderStand="0">
+		<wsse:Security S11:mustUnderStand="1">
 			<wsse:BinarySecurityToken wsu:Id="_smallco_cert">
 				<!-- details omitted -->
 			</wsse:BinarySecurityToken>

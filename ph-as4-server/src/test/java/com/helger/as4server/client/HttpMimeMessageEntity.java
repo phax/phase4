@@ -38,8 +38,14 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 
   public InputStream getContent () throws IOException
   {
-    // Should be implemented as well but is irrelevant for this case
-    throw new UnsupportedOperationException ();
+    try
+    {
+      return m_aMsg.getInputStream ();
+    }
+    catch (final MessagingException e)
+    {
+      throw new IOException ();
+    }
   }
 
   public void writeTo (final OutputStream outstream) throws IOException

@@ -8,9 +8,11 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.ParseException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -35,6 +37,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
+import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.http.CHTTPHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
@@ -44,6 +47,18 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 
 public class TestMessages
 {
+  public static final class SoapMimeMultipart extends MimeMultipart
+  {
+    public SoapMimeMultipart () throws ParseException
+    {
+      super ("related");
+      // type parameter is essential for Axis to work!
+      final ContentType cType = new ContentType (contentType);
+      cType.setParameter ("type", "application/soap+xml");
+      contentType = cType.toString ();
+    }
+  }
+
   // TODO testMessage for developing delete if not needed anymore
   public static Document testUserMessage () throws WSSecurityException,
                                             IOException,
@@ -115,41 +130,75 @@ public class TestMessages
 
   public static MimeMessage testMIMEMessage () throws MessagingException
   {
-    final MimeMultipart aMimeMultipart = new MimeMultipart ();
+    final MimeMultipart aMimeMultipart = new SoapMimeMultipart ();
 
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final byte [] aEBMSMsg = StreamHelper.getAllBytes (new ClassPathResource ("TestMimeMessage.xml"));
+      final byte [] aEBMSMsg = StreamHelper.getAllBytes (new ClassPathResource ("TestMimeMessage12.xml"));
       aMessagePart.setContent (aEBMSMsg,
-                               new MimeType (CMimeType.APPLICATION_XML).addParameter (CMimeType.PARAMETER_NAME_CHARSET,
-                                                                                      CCharset.CHARSET_UTF_8)
-                                                                       .getAsString ());
-      aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding._8BIT.getID ());
-      aMessagePart.setHeader (CHTTPHeader.CONTENT_LENGTH, Integer.toString (aEBMSMsg.length));
+                               new MimeType (EMimeContentType.APPLICATION.buildMimeType ("soap+xml")).addParameter (CMimeType.PARAMETER_NAME_CHARSET,
+                                                                                                                    CCharset.CHARSET_UTF_8)
+                                                                                                     .getAsString ());
+      aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
 
     {
       // File Payload
       final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-      final File aAttachment = new File ("data/test.xml");
+      final File aAttachment = new File ("data/test.xml.gz");
       final DataSource fds = new FileDataSource (aAttachment);
       aMimeBodyPart.setDataHandler (new DataHandler (fds));
-      aMimeBodyPart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
-      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_LENGTH, Long.toString (aAttachment.length ()));
-      aMimeBodyPart.setFileName (fds.getName ());
+      aMimeBodyPart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMimeBodyPart);
     }
 
     final MimeMessage message = new MimeMessage ((Session) null);
-    message.setHeader ("MIME-Version", "1.0");
     message.setContent (aMimeMultipart);
     message.saveChanges ();
 
     return message;
   }
+
+  // public static MimeMessage testMIMEMessageGenerated () throws Exception
+  // {
+  // final MimeMultipart aMimeMultipart = new SoapMimeMultipart ();
+  //
+  // {
+  // // Message Itself
+  // final MimeBodyPart aMessagePart = new MimeBodyPart ();
+  // final Document aDoc = TestMessages.testUserMessageSoap12 ();
+  // aMessagePart.setContent (aDoc,
+  // new MimeType (EMimeContentType.APPLICATION.buildMimeType
+  // ("soap+xml")).addParameter (CMimeType.PARAMETER_NAME_CHARSET,
+  // CCharset.CHARSET_UTF_8)
+  // .getAsString ());
+  // aMessagePart.setHeader ("Content-Transfer-Encoding",
+  // EContentTransferEncoding.BINARY.getID ());
+  // aMimeMultipart.addBodyPart (aMessagePart);
+  // }
+  //
+  // {
+  // // File Payload
+  // final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
+  // final File aAttachment = new File ("data/test.xml.gz");
+  // final DataSource fds = new FileDataSource (aAttachment);
+  // aMimeBodyPart.setDataHandler (new DataHandler (fds));
+  // aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE,
+  // CMimeType.APPLICATION_GZIP.getAsString ());
+  // aMimeBodyPart.setHeader ("Content-Transfer-Encoding",
+  // EContentTransferEncoding.BINARY.getID ());
+  // aMimeMultipart.addBodyPart (aMimeBodyPart);
+  // }
+  //
+  // final MimeMessage message = new MimeMessage ((Session) null);
+  // message.setContent (aMimeMultipart);
+  // message.saveChanges ();
+  //
+  // return message;
+  // }
 
   /**
    * Starting point for the SAAJ - SOAP Client Testing
