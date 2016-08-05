@@ -1,4 +1,4 @@
-package com.helger.as4server.client;
+package com.helger.as4server.message.mime;
 
 import java.io.IOException;
 import java.io.InputStream;

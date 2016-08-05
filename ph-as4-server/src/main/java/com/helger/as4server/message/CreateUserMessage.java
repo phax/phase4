@@ -16,6 +16,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
+import com.helger.as4lib.ebms3header.Ebms3PartProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
@@ -27,6 +28,9 @@ import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.soap11.Soap11Body;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap11.Soap11Header;
+import com.helger.as4lib.soap12.Soap12Body;
+import com.helger.as4lib.soap12.Soap12Envelope;
+import com.helger.as4lib.soap12.Soap12Header;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -80,8 +84,56 @@ public class CreateUserMessage
     // Adding the user message to the existing soap
     final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
     aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-    aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
+    if (sPayloadPath != null)
+      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
     return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
+  }
+
+  // TODO Payload as SOAP Body only supported
+  public Document createUserMessage12 (@Nonnull final Ebms3MessageInfo aMessageInfo,
+                                       @Nonnull final Ebms3PayloadInfo aEbms3PayloadInfo,
+                                       @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
+                                       @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
+                                       @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
+                                       @Nullable final String sPayloadPath) throws SAXException,
+                                                                            IOException,
+                                                                            ParserConfigurationException
+  {
+    // Creating SOAP
+    final Soap12Envelope aSoapEnv = new Soap12Envelope ();
+    aSoapEnv.setHeader (new Soap12Header ());
+    aSoapEnv.setBody (new Soap12Body ());
+
+    // Creating Message
+    final Ebms3Messaging aMessage = new Ebms3Messaging ();
+    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
+    // a exception he does not understand mustUnderstand
+    aMessage.setS11MustUnderstand (Boolean.FALSE);
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+
+    // Party Information
+    aUserMessage.setPartyInfo (aEbms3PartyInfo);
+
+    // Collabration Information
+    aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+
+    // Properties
+    aUserMessage.setMessageProperties (aEbms3MessageProperties);
+
+    // Payload Information
+    aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
+
+    // Message Info
+    aUserMessage.setMessageInfo (aMessageInfo);
+
+    aMessage.addUserMessage (aUserMessage);
+
+    // Adding the user message to the existing soap
+    final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
+    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
+    if (sPayloadPath != null)
+      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
+    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
   }
 
   public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,
@@ -141,10 +193,44 @@ public class CreateUserMessage
     return aEbms3MessageProperties;
   }
 
-  public Ebms3PayloadInfo createEbms3PayloadInfo ()
+  public Ebms3PayloadInfo createEbms3PayloadInfoEmpty ()
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
     aEbms3PayloadInfo.setPartInfo (new CommonsArrayList<> (new Ebms3PartInfo ()));
+    return aEbms3PayloadInfo;
+  }
+
+  /**
+   * TODO make dynamic ok<eb:PartInfo href="cid:test-xml"> <eb:PartProperties>
+   * <eb:Property name="MimeType">application/xml</eb:Property>
+   * <eb:Property name="CharacterSet">utf-8</eb:Property>
+   * <eb:Property name="CompressionType">application/gzip</eb:Property>
+   * </eb:PartProperties> </eb:PartInfo>
+   *
+   * @return
+   */
+  public Ebms3PayloadInfo createEbms3PayloadInfo ()
+  {
+    final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
+    final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
+    aEbms3PartInfo.setHref ("cid:test-xml");
+    final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+    final Ebms3Property aMimeType = new Ebms3Property ();
+    aMimeType.setName ("MimeType");
+    aMimeType.setValue ("application/xml");
+    aEbms3PartProperties.addProperty (aMimeType);
+    final Ebms3Property aCharacterSet = new Ebms3Property ();
+    aCharacterSet.setName ("CharacterSet");
+    aCharacterSet.setValue ("utf-8");
+    aEbms3PartProperties.addProperty (aCharacterSet);
+    final Ebms3Property aCompressionType = new Ebms3Property ();
+    aCompressionType.setName ("CompressionType");
+    aCompressionType.setValue ("application/gzip");
+    aEbms3PartProperties.addProperty (aCompressionType);
+
+    aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
+
+    aEbms3PayloadInfo.setPartInfo (new CommonsArrayList<> (aEbms3PartInfo));
     return aEbms3PayloadInfo;
   }
 

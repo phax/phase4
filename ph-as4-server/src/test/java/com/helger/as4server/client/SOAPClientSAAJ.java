@@ -1,6 +1,5 @@
 package com.helger.as4server.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -15,12 +14,6 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -40,67 +33,21 @@ import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4server.message.MessageHelperMethods;
-import com.helger.commons.charset.CCharset;
-import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.as4server.message.mime.HttpMimeMessageEntity;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.NonBlockingStringWriter;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
-import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xml.serialize.write.XMLWriterSettings;
 
 public class SOAPClientSAAJ
 {
   public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("as4test.properties").build ();
-
-  private static final XMLWriterSettings XWS = new XMLWriterSettings ();
-  static
-  {
-    final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
-    aNSCtx.addMapping ("ds", MessageHelperMethods.DS_NS);
-    aNSCtx.addMapping ("eb", MessageHelperMethods.EBMS_NS);
-    aNSCtx.addMapping ("wsse", MessageHelperMethods.WSSE_NS);
-    aNSCtx.addMapping ("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
-    aNSCtx.addMapping ("S11", "http://schemas.xmlsoap.org/soap/envelope/");
-    aNSCtx.addMapping ("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
-    aNSCtx.addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
-    aNSCtx.addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");
-    XWS.setNamespaceContext (aNSCtx);
-    XWS.setPutNamespaceContextPrefixesInRoot (true);
-    XWS.setIndent (EXMLSerializeIndent.NONE);
-  }
-
-  private static String _serializeXMLMy (final Node aNode)
-  {
-    return XMLWriter.getNodeAsString (aNode, XWS);
-  }
-
-  private static String _serializeXMLRT (final Node aNode) throws TransformerFactoryConfigurationError,
-                                                           TransformerException
-  {
-    if (false)
-      return XMLWriter.getNodeAsString (aNode, XWS);
-
-    final Transformer transformer = TransformerFactory.newInstance ().newTransformer ();
-    final NonBlockingStringWriter aSW = new NonBlockingStringWriter ();
-    transformer.transform (new DOMSource (aNode), new StreamResult (aSW));
-    return aSW.getAsString ();
-  }
-
-  private static String _serializeXML (final Node aNode) throws TransformerFactoryConfigurationError,
-                                                         TransformerException
-  {
-    return true ? _serializeXMLRT (aNode) : _serializeXMLMy (aNode);
-  }
 
   /**
    * Starting point for the SAAJ - SOAP Client Testing
@@ -131,18 +78,13 @@ public class SOAPClientSAAJ
       if (false)
       {
         final Document aDoc = TestMessages.testUserMessage ();
-        if (false)
-        {
-          SimpleFileIO.writeFile (new File ("ser-my.txt"), _serializeXMLMy (aDoc), CCharset.CHARSET_UTF_8_OBJ);
-          SimpleFileIO.writeFile (new File ("ser-rt.txt"), _serializeXMLRT (aDoc), CCharset.CHARSET_UTF_8_OBJ);
-        }
-        aPost.setEntity (new StringEntity (_serializeXML (aDoc)));
+        aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
         if (true)
         {
           // TODO
-          final MimeMessage aMsg = TestMessages.testMIMEMessage ();
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated ();
           final Enumeration <?> e = aMsg.getAllHeaders ();
           while (e.hasMoreElements ())
           {
@@ -156,16 +98,14 @@ public class SOAPClientSAAJ
         else
           aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream (false ? "compare.xml"
                                                                                           : "TestMessage.xml")));
-      System.out.println (EntityUtils.toString (aPost.getEntity ()));
 
-      // final Document aDoc = MessageHelperMethods.getSoapEnvelope11ForTest
-      // ("TestMessage.xml");
-      // aPost.setEntity (new StringEntity (_serializeXML (aDoc)));
-      // aPost.setEntity (new InputStreamEntity
-      // (ClassPathResource.getInputStream ("ex-mmd-push.mmd")));
-      // aClient.execute (aPost, HttpClientResponseHelper.RH_XML, aContext);
-      //
-      // aPost.setEntity (new StringEntity (_getSignedSoapMessage ()));
+      if (false)
+      {
+        final Document aDoc = MessageHelperMethods.getSoapEnvelope11ForTest ("TestMessage.xml");
+        aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
+      }
+
+      System.out.println (EntityUtils.toString (aPost.getEntity ()));
 
       final CloseableHttpResponse httpResponse = aClient.execute (aPost);
 
@@ -214,7 +154,7 @@ public class SOAPClientSAAJ
    */
   private static void _printSOAPResponse (final SOAPMessage soapResponse) throws Exception
   {
-    System.out.print (XMLWriter.getNodeAsString (soapResponse.getSOAPPart (), XWS));
+    System.out.print (XMLWriter.getNodeAsString (soapResponse.getSOAPPart (), SerializerXML.XWS));
     // final TransformerFactory transformerFactory =
     // TransformerFactory.newInstance ();
     // final Transformer transformer = transformerFactory.newTransformer ();
