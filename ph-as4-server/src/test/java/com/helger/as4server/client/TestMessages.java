@@ -174,6 +174,7 @@ public class TestMessages
       aMimeBodyPart.setDataHandler (new DataHandler (fds));
       aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
       aMimeBodyPart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
+      aMimeBodyPart.setHeader ("Content-ID", "test-xml");
       aMimeMultipart.addBodyPart (aMimeBodyPart);
     }
 
@@ -218,6 +219,38 @@ public class TestMessages
                                                                                                  aUserMessage.createEbms3MessageProperties (aEbms3Properties),
                                                                                                  null));
     return aSignedDoc;
+  }
+
+  public static Document testUserMessageSoapNotSigned () throws SAXException, IOException, ParserConfigurationException
+  {
+    final CreateUserMessage aUserMessage = new CreateUserMessage ();
+
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
+    aEbms3PropertyProcess.setName ("ProcessInst");
+    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
+    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
+    aEbms3PropertyContext.setName ("ContextID");
+    aEbms3PropertyContext.setValue ("987654321");
+    aEbms3Properties.add (aEbms3PropertyContext);
+    aEbms3Properties.add (aEbms3PropertyProcess);
+
+    final Document aDoc = aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
+                                                          aUserMessage.createEbms3PayloadInfo (),
+                                                          aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                     "MyServiceTypes",
+                                                                                                     "QuoteToCollect",
+                                                                                                     "4321",
+                                                                                                     "pm-esens-generic-resp",
+                                                                                                     "http://agreements.holodeckb2b.org/examples/agreement0"),
+                                                          aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                                             "APP_1000000101",
+                                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                                             "APP_1000000101"),
+                                                          aUserMessage.createEbms3MessageProperties (aEbms3Properties),
+                                                          null);
+    return aDoc;
   }
 
   /**
