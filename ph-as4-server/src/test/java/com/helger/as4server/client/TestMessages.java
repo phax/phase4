@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
@@ -24,6 +25,7 @@ import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.error.ErrorConverter;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.message.CreateErrorMessage;
 import com.helger.as4server.message.CreateMessageClient;
 import com.helger.as4server.message.CreateReceiptMessage;
@@ -36,8 +38,6 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.EMimeContentType;
-import com.helger.commons.mime.MimeType;
 import com.helger.http.CHTTPHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
@@ -117,16 +117,14 @@ public class TestMessages
 
   public static MimeMessage testMIMEMessage () throws MessagingException
   {
-    final MimeMultipart aMimeMultipart = new SoapMimeMultipart ();
+    final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
+    final MimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
 
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       final byte [] aEBMSMsg = StreamHelper.getAllBytes (new ClassPathResource ("TestMimeMessage12.xml"));
-      aMessagePart.setContent (aEBMSMsg,
-                               new MimeType (EMimeContentType.APPLICATION.buildMimeType ("soap+xml")).addParameter (CMimeType.PARAMETER_NAME_CHARSET,
-                                                                                                                    CCharset.CHARSET_UTF_8)
-                                                                                                     .getAsString ());
+      aMessagePart.setContent (aEBMSMsg, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
       aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
@@ -149,19 +147,19 @@ public class TestMessages
     return message;
   }
 
-  public static MimeMessage testMIMEMessageGenerated () throws Exception
+  public static MimeMessage testMIMEMessageGenerated (final Document aSoapEnvelope,
+                                                      @Nonnull final ESOAPVersion eSOAPVersion) throws Exception
   {
-    final MimeMultipart aMimeMultipart = new SoapMimeMultipart ();
+    final MimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
 
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       // final Document aDoc = TestMessages.testUserMessageSoap12 ();
-      final String aDoc = SerializerXML.serializeXML (TestMessages.testUserMessageSoap12 ());
-      aMessagePart.setContent (aDoc,
-                               new MimeType (EMimeContentType.APPLICATION.buildMimeType ("soap+xml")).addParameter (CMimeType.PARAMETER_NAME_CHARSET,
-                                                                                                                    CCharset.CHARSET_UTF_8)
-                                                                                                     .getAsString ());
+      final String aDoc = SerializerXML.serializeXML (aSoapEnvelope);
+      // EMimeContentType.TEXT.buildMimeType ("xml"),
+      // EMimeContentType.APPLICATION.buildMimeType ("soap+xml") Soap 1.2
+      aMessagePart.setContent (aDoc, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
       aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
@@ -181,6 +179,8 @@ public class TestMessages
     final MimeMessage message = new MimeMessage ((Session) null);
     message.setContent (aMimeMultipart);
     message.saveChanges ();
+
+    message.writeTo (System.err);
 
     return message;
   }

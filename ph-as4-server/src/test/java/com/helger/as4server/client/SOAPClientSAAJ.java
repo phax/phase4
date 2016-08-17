@@ -35,12 +35,14 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.as4server.message.mime.HttpMimeMessageEntity;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.mime.AttachmentHelper;
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -84,7 +86,8 @@ public class SOAPClientSAAJ
         if (true)
         {
           // TODO
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated ();
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (AttachmentHelper.getMessageWithAttachmentsAsString (TestMessages.testUserMessageSoapNotSigned ()),
+                                                                          ESOAPVersion.SOAP_11);
           final Enumeration <?> e = aMsg.getAllHeaders ();
           while (e.hasMoreElements ())
           {

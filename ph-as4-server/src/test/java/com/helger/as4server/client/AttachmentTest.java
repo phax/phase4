@@ -1,12 +1,6 @@
 package com.helger.as4server.client;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +50,6 @@ public class AttachmentTest
 
     // final Document doc = SOAPUtil.toSOAPPart (SOAPUtil.SAMPLE_SOAP_MSG);
     final Document doc = TestMessages.testUserMessageSoapNotSigned ();
-    final String outputString2 = XMLUtils.prettyDocumentToString (doc);
 
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
@@ -76,42 +69,8 @@ public class AttachmentTest
     headers.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION, "attachment; filename=\"fname.ext\"");
     headers.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + attachmentId + ">");
     headers.put (AttachmentUtils.MIME_HEADER_CONTENT_LOCATION, "http://ws.apache.org");
-    // headers.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, "text/xml;
-    // charset=UTF-8");
     headers.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, "application/gzip");
     headers.put ("TestHeader", "testHeaderValue");
     return headers;
-  }
-
-  public static boolean isValidUTF8 (final byte [] bytes)
-  {
-
-    try
-    {
-      Charset.availableCharsets ().get ("UTF-8").newDecoder ().decode (ByteBuffer.wrap (bytes));
-
-    }
-    catch (final CharacterCodingException e)
-    {
-
-      return false;
-    }
-
-    return true;
-  }
-
-  public static byte [] getBytesFromInputStream (final InputStream is) throws IOException
-  {
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream ();)
-    {
-      final byte [] buffer = new byte [0xFFFF];
-
-      for (int len; (len = is.read (buffer)) != -1;)
-        os.write (buffer, 0, len);
-
-      os.flush ();
-
-      return os.toByteArray ();
-    }
   }
 }
