@@ -115,14 +115,4 @@ public class SignatureTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
   }
-
-  @Test
-  public void testBoxing ()
-  {
-    final Boolean aObj = Boolean.TRUE;
-    final boolean b1 = aObj;
-    final Boolean aObj2 = null;
-    final boolean b2 = aObj2;
-    System.out.println (b1 + " and " + b2);
-  }
 }
