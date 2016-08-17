@@ -19,6 +19,13 @@
 
 package com.helger.as4server.client;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -27,78 +34,75 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
- * A Callback Handler implementation for the case of signing/encrypting Attachments via the SwA
- * (SOAP with Attachments) specification or when using xop:Include in the case of MTOM.
+ * A Callback Handler implementation for the case of signing/encrypting
+ * Attachments via the SwA (SOAP with Attachments) specification or when using
+ * xop:Include in the case of MTOM.
  */
-public class AttachmentCallbackHandler implements CallbackHandler {
+public class AttachmentCallbackHandler implements CallbackHandler
+{
+  private final List <Attachment> originalRequestAttachments;
+  private final Map <String, Attachment> attachmentMap = new HashMap<> ();
+  private final List <Attachment> responseAttachments = new ArrayList<> ();
 
-    private final List<Attachment> originalRequestAttachments;
-    private Map<String, Attachment> attachmentMap = new HashMap<>();
-    private List<Attachment> responseAttachments = new ArrayList<>();
+  public AttachmentCallbackHandler ()
+  {
+    originalRequestAttachments = Collections.emptyList ();
+  }
 
-    public AttachmentCallbackHandler() {
-        originalRequestAttachments = Collections.emptyList();
-    }
+  public AttachmentCallbackHandler (final List <Attachment> attachments)
+  {
+    originalRequestAttachments = attachments;
+    if (attachments != null)
+      for (final Attachment attachment : attachments)
+        attachmentMap.put (attachment.getId (), attachment);
+  }
 
-    public AttachmentCallbackHandler(List<Attachment> attachments) {
-        originalRequestAttachments = attachments;
-        if (attachments != null) {
-            for (Attachment attachment : attachments) {
-                attachmentMap.put(attachment.getId(), attachment);
-            }
-        }
-    }
+  public void handle (final Callback [] callbacks) throws IOException, UnsupportedCallbackException
+  {
+    for (final Callback callback : callbacks)
+    {
+      if (callback instanceof AttachmentRequestCallback)
+      {
+        final AttachmentRequestCallback attachmentRequestCallback = (AttachmentRequestCallback) callback;
 
-    public void handle(Callback[] callbacks)
-        throws IOException, UnsupportedCallbackException {
-        for (int i = 0; i < callbacks.length; i++) {
-            if (callbacks[i] instanceof AttachmentRequestCallback) {
-                AttachmentRequestCallback attachmentRequestCallback =
-                    (AttachmentRequestCallback) callbacks[i];
-
-                List<Attachment> attachments =
-                    getAttachmentsToAdd(attachmentRequestCallback.getAttachmentId());
-                if (attachments.isEmpty()) {
-                    throw new RuntimeException("wrong attachment requested");
-                }
-
-                attachmentRequestCallback.setAttachments(attachments);
-            } else if (callbacks[i] instanceof AttachmentResultCallback) {
-                AttachmentResultCallback attachmentResultCallback =
-                    (AttachmentResultCallback) callbacks[i];
-                responseAttachments.add(attachmentResultCallback.getAttachment());
-                attachmentMap.put(attachmentResultCallback.getAttachment().getId(),
-                                  attachmentResultCallback.getAttachment());
-            } else {
-                throw new UnsupportedCallbackException(callbacks[i], "Unrecognized Callback");
-            }
-        }
-    }
-
-    public List<Attachment> getResponseAttachments() {
-        return responseAttachments;
-    }
-
-    // Try to match the Attachment Id. Otherwise, add all Attachments.
-    private List<Attachment> getAttachmentsToAdd(String id) {
-        List<Attachment> attachments = new ArrayList<>();
-        if (attachmentMap.containsKey(id)) {
-            attachments.add(attachmentMap.get(id));
-        } else {
-            if (originalRequestAttachments != null) {
-                attachments.addAll(originalRequestAttachments);
-            }
+        final List <Attachment> attachments = getAttachmentsToAdd (attachmentRequestCallback.getAttachmentId ());
+        if (attachments.isEmpty ())
+        {
+          throw new RuntimeException ("wrong attachment requested");
         }
 
-        return attachments;
+        attachmentRequestCallback.setAttachments (attachments);
+      }
+      else
+        if (callback instanceof AttachmentResultCallback)
+        {
+          final AttachmentResultCallback attachmentResultCallback = (AttachmentResultCallback) callback;
+          responseAttachments.add (attachmentResultCallback.getAttachment ());
+          attachmentMap.put (attachmentResultCallback.getAttachment ().getId (),
+                             attachmentResultCallback.getAttachment ());
+        }
+        else
+        {
+          throw new UnsupportedCallbackException (callback, "Unrecognized Callback");
+        }
     }
+  }
 
+  public List <Attachment> getResponseAttachments ()
+  {
+    return responseAttachments;
+  }
+
+  // Try to match the Attachment Id. Otherwise, add all Attachments.
+  private List <Attachment> getAttachmentsToAdd (final String id)
+  {
+    final List <Attachment> attachments = new ArrayList<> ();
+    if (attachmentMap.containsKey (id))
+      attachments.add (attachmentMap.get (id));
+    else
+      if (originalRequestAttachments != null)
+        attachments.addAll (originalRequestAttachments);
+    return attachments;
+  }
 }
