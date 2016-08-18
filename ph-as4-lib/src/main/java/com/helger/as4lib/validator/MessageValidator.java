@@ -99,7 +99,7 @@ public class MessageValidator
     // or through other means
     for (final IEbmsError aError : aOccurredErrors)
     {
-      aErrorResponse.addError (aError.getAsEbms3Error (aContentLocale, "", "", null));
+      aErrorResponse.addError (aError.getAsEbms3Error (aContentLocale));
     }
 
     aResponse.addSignalMessage (aErrorResponse);

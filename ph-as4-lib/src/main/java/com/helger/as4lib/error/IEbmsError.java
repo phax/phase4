@@ -53,6 +53,12 @@ public interface IEbmsError extends Serializable
   EErrorCategory getCategory ();
 
   @Nonnull
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale)
+  {
+    return getAsEbms3Error (aContentLocale, "", "", null);
+  }
+
+  @Nonnull
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sOrigin,
