@@ -1,7 +1,5 @@
 package com.helger.as4lib.validator;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -10,12 +8,12 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.error.EEbmsError;
-import com.helger.as4lib.error.ErrorConverter;
+import com.helger.as4lib.error.IEbmsError;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.soap11.Soap11Envelope;
@@ -25,7 +23,9 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.error.IResourceError;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
-// TODO USE ESOAPVersion 
+import com.helger.xml.NodeListIterator;
+
+// TODO USE ESOAPVersion
 public class MessageValidator
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (MessageValidator.class);
@@ -64,21 +64,21 @@ public class MessageValidator
 
   // TODO Split Message and SOAP CHECK? SOAP currently treated the same as xml
   // error
-  public boolean validateXML (final IReadableResource aXML)
+  public boolean validateXML (final IReadableResource aXML, @Nonnull final Locale aContentLocale)
   {
     final Document aDocument = getSoapEnvelope (aXML);
     if (aDocument != null)
     {
-      final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-      for (int i = 0; i < aDocument.getChildNodes ().getLength (); i++)
+      for (final Node aChildNode : NodeListIterator.createChildNodeIterator (aDocument))
       {
+        final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
         final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
                                                           .setValidationEventHandler (aCVEH)
-                                                          .read (aDocument.getChildNodes ().item (i));
+                                                          .read (aChildNode);
 
         if (aMessage == null || aCVEH.getResourceErrors ().containsAtLeastOneError ())
         {
-          sendErrorResponse (new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER));
+          sendErrorResponse (new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER), aContentLocale);
           return false;
         }
       }
@@ -87,25 +87,22 @@ public class MessageValidator
     return false;
   }
 
-  public void sendErrorResponse (final List <EEbmsError> aOccurredErrors)
+  public void sendErrorResponse (@Nonnull final Iterable <? extends IEbmsError> aOccurredErrors,
+                                 @Nonnull final Locale aContentLocale)
   {
     final Ebms3Messaging aResponse = new Ebms3Messaging ();
+
     final Ebms3SignalMessage aErrorResponse = new Ebms3SignalMessage ();
-    final List <Ebms3Error> aErrorList = new ArrayList<> ();
     // TODO how to get Messageinfo for response?
     // aErrorResponse.setMessageInfo (value);
     // TODO set S11MustUnderstand or S12MustUnderstand depending on MessageInfo?
     // or through other means
-    for (final EEbmsError aError : aOccurredErrors)
+    for (final IEbmsError aError : aOccurredErrors)
     {
-      new ErrorConverter ();
-      aErrorList.add (ErrorConverter.convertEnumToEbms3Error (aError));
+      aErrorResponse.addError (aError.getAsEbms3Error (aContentLocale, "", "", null));
     }
 
-    aErrorResponse.setError (aErrorList);
-    final List <Ebms3SignalMessage> aReponseList = new ArrayList<> ();
-    aReponseList.add (aErrorResponse);
-    aResponse.setSignalMessage (aReponseList);
+    aResponse.addSignalMessage (aErrorResponse);
     // TODO Send SignalMessage (aResponse) back
   }
 
