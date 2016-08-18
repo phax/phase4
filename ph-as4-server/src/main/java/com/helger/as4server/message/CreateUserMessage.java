@@ -25,6 +25,7 @@ import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.soap11.Soap11Body;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap11.Soap11Header;
@@ -48,20 +49,21 @@ public class CreateUserMessage
                                      @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                      @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
                                      @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
-                                     @Nullable final String sPayloadPath) throws SAXException,
-                                                                          IOException,
-                                                                          ParserConfigurationException
+                                     @Nullable final String sPayloadPath,
+                                     @Nonnull final ESOAPVersion eSOAPVersion) throws SAXException,
+                                                                               IOException,
+                                                                               ParserConfigurationException
   {
-    // Creating SOAP
-    final Soap11Envelope aSoapEnv = new Soap11Envelope ();
-    aSoapEnv.setHeader (new Soap11Header ());
-    aSoapEnv.setBody (new Soap11Body ());
 
     // Creating Message
     final Ebms3Messaging aMessage = new Ebms3Messaging ();
     // TODO Needs to beset to 0 (equals false) since holodeck currently throws
     // a exception he does not understand mustUnderstand
-    aMessage.setS11MustUnderstand (Boolean.FALSE);
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+      aMessage.setS11MustUnderstand (Boolean.FALSE);
+    else
+      aMessage.setS12MustUnderstand (Boolean.FALSE);
+
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
     // Party Information
@@ -83,57 +85,7 @@ public class CreateUserMessage
 
     // Adding the user message to the existing soap
     final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
-    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-    if (sPayloadPath != null)
-      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
-    return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
-  }
-
-  // TODO Payload as SOAP Body only supported
-  public Document createUserMessage12 (@Nonnull final Ebms3MessageInfo aMessageInfo,
-                                       @Nonnull final Ebms3PayloadInfo aEbms3PayloadInfo,
-                                       @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
-                                       @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                       @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
-                                       @Nullable final String sPayloadPath) throws SAXException,
-                                                                            IOException,
-                                                                            ParserConfigurationException
-  {
-    // Creating SOAP
-    final Soap12Envelope aSoapEnv = new Soap12Envelope ();
-    aSoapEnv.setHeader (new Soap12Header ());
-    aSoapEnv.setBody (new Soap12Body ());
-
-    // Creating Message
-    final Ebms3Messaging aMessage = new Ebms3Messaging ();
-    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    aMessage.setS11MustUnderstand (Boolean.FALSE);
-    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
-
-    // Party Information
-    aUserMessage.setPartyInfo (aEbms3PartyInfo);
-
-    // Collabration Information
-    aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
-
-    // Properties
-    aUserMessage.setMessageProperties (aEbms3MessageProperties);
-
-    // Payload Information
-    aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
-
-    // Message Info
-    aUserMessage.setMessageInfo (aMessageInfo);
-
-    aMessage.addUserMessage (aUserMessage);
-
-    // Adding the user message to the existing soap
-    final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
-    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-    if (sPayloadPath != null)
-      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
-    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
+    return _createSOAPEnvelopeAsDocument (eSOAPVersion, aEbms3Message, sPayloadPath);
   }
 
   public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,
@@ -237,6 +189,35 @@ public class CreateUserMessage
   public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
+  }
+
+  private Document _createSOAPEnvelopeAsDocument (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                 final Document aEbms3Message,
+                                                 final String sPayloadPath) throws SAXException,
+                                                                            IOException,
+                                                                            ParserConfigurationException
+  {
+
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+    {
+      // Creating SOAP 11 Envelope
+      final Soap11Envelope aSoapEnv = new Soap11Envelope ();
+      aSoapEnv.setHeader (new Soap11Header ());
+      aSoapEnv.setBody (new Soap11Body ());
+      aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
+      if (sPayloadPath != null)
+        aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
+      return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
+    }
+    // Creating SOAP 12 Envelope
+    final Soap12Envelope aSoapEnv = new Soap12Envelope ();
+    aSoapEnv.setHeader (new Soap12Header ());
+    aSoapEnv.setBody (new Soap12Body ());
+    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
+    if (sPayloadPath != null)
+      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
+    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
+
   }
 
 }

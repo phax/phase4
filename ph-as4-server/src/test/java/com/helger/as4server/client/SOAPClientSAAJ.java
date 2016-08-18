@@ -20,7 +20,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -38,6 +37,7 @@ import org.xml.sax.SAXException;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.as4server.message.mime.HttpMimeMessageEntity;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
@@ -77,17 +77,27 @@ public class SOAPClientSAAJ
       // aPost.addHeader ("SOAPAction", "\"msh\"");
       // TODO atm only calls testMessage
 
+      // No Mime Message, just SOAP + Payload in SOAP - Body
       if (false)
       {
-        final Document aDoc = TestMessages.testUserMessage ();
+        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11);
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
         if (true)
         {
           // TODO
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (AttachmentHelper.getMessageWithAttachmentsAsString (TestMessages.testUserMessageSoapNotSigned ()),
-                                                                          ESOAPVersion.SOAP_11);
+          // final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated
+          // (AttachmentHelper.getMessageWithAttachmentsAsString
+          // (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_11),
+          // ESOAPVersion.SOAP_11),
+          // ESOAPVersion.SOAP_11);
+
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (AttachmentHelper.getMessageWithAttachmentsAsString (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12),
+                                                                                                                              ESOAPVersion.SOAP_12,
+                                                                                                                              new CommonsArrayList<> ("test-xml")),
+                                                                          ESOAPVersion.SOAP_12);
+
           final Enumeration <?> e = aMsg.getAllHeaders ();
           while (e.hasMoreElements ())
           {
@@ -98,9 +108,22 @@ public class SOAPClientSAAJ
 
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
+        // Normal SOAP - Message with Body Payload as Mime Message
         else
-          aPost.setEntity (new InputStreamEntity (ClassPathResource.getInputStream (false ? "compare.xml"
-                                                                                          : "TestMessage.xml")));
+        {
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (ESOAPVersion.SOAP_11),
+                                                                          ESOAPVersion.SOAP_11);
+
+          final Enumeration <?> e = aMsg.getAllHeaders ();
+          while (e.hasMoreElements ())
+          {
+            final Header h = (Header) e.nextElement ();
+            aPost.addHeader (h.getName (), h.getValue ());
+            aMsg.removeHeader (h.getName ());
+          }
+
+          aPost.setEntity (new HttpMimeMessageEntity (aMsg));
+        }
 
       if (false)
       {

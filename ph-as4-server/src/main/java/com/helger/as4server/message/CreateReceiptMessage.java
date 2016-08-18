@@ -13,9 +13,7 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
-import com.helger.as4lib.soap11.Soap11Body;
-import com.helger.as4lib.soap11.Soap11Envelope;
-import com.helger.as4lib.soap11.Soap11Header;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.xml.ChildElementIterator;
@@ -78,16 +76,12 @@ public class CreateReceiptMessage
   }
 
   public Document createReceiptMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                        @Nonnull final Document aUserMessage)
+                                        @Nonnull final Document aUserMessage,
+                                        @Nonnull final ESOAPVersion eSOAPVersion)
   {
     aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
 
     final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
-
-    // Creating SOAP
-    final Soap11Envelope aSoapEnv = new Soap11Envelope ();
-    aSoapEnv.setHeader (new Soap11Header ());
-    aSoapEnv.setBody (new Soap11Body ());
 
     // Creating Message
     final Ebms3Messaging aMessage = new Ebms3Messaging ();
@@ -109,9 +103,8 @@ public class CreateReceiptMessage
 
     // Adding the signal message to the existing soap
     final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
-    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
 
-    return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
+    return MessageHelperMethods.createSOAPEnvelopeAsDocument (eSOAPVersion, aEbms3Message);
   }
 
   // TODO ReftomessageID maybe not needed here since, it comes with the

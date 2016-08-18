@@ -25,7 +25,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.error.IResourceError;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
-
+// TODO USE ESOAPVersion 
 public class MessageValidator
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (MessageValidator.class);

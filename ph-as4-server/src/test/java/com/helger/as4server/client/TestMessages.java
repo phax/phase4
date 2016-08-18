@@ -12,25 +12,27 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Error;
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.error.ErrorConverter;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.message.CreateErrorMessage;
-import com.helger.as4server.message.CreateMessageClient;
 import com.helger.as4server.message.CreateReceiptMessage;
+import com.helger.as4server.message.CreateSignedMessage;
 import com.helger.as4server.message.CreateUserMessage;
-import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.as4server.message.mime.SoapMimeMultipart;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -40,20 +42,17 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.http.CHTTPHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
-import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xml.serialize.write.XMLWriterSettings;
 
 public class TestMessages
 {
   // TODO testMessage for developing delete if not needed anymore
-  public static Document testUserMessage () throws WSSecurityException,
-                                            IOException,
-                                            SAXException,
-                                            ParserConfigurationException
+  public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException,
+                                                                                    IOException,
+                                                                                    SAXException,
+                                                                                    ParserConfigurationException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
-    final CreateMessageClient aClient = new CreateMessageClient ();
+    final CreateSignedMessage aClient = new CreateSignedMessage ();
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
@@ -79,42 +78,53 @@ public class TestMessages
                                                                                                                                 "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                                                                                                                                 "APP_1000000101"),
                                                                                              aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                                                             "SOAPBodyPayload.xml"));
+                                                                                             "SOAPBodyPayload.xml",
+                                                                                             eSOAPVersion),
+                                                             eSOAPVersion);
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage () throws WSSecurityException
+  public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
-    final CreateMessageClient aClient = new CreateMessageClient ();
+    final CreateSignedMessage aClient = new CreateSignedMessage ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
     aEbms3ErrorList.add (ErrorConverter.convertEnumToEbms3Error (EEbmsError.EBMS_INVALID_HEADER));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                               aEbms3ErrorList));
+                                                                                               aEbms3ErrorList,
+                                                                                               eSOAPVersion),
+                                                             eSOAPVersion);
     return aSignedDoc;
   }
 
-  public static Document testReceiptMessage () throws WSSecurityException,
-                                               DOMException,
-                                               IOException,
-                                               SAXException,
-                                               ParserConfigurationException
+  public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException,
+                                                                                       DOMException,
+                                                                                       IOException,
+                                                                                       SAXException,
+                                                                                       ParserConfigurationException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
     aEbms3ErrorList.add (ErrorConverter.convertEnumToEbms3Error (EEbmsError.EBMS_INVALID_HEADER));
 
-    final Document aUserMessage = testUserMessage ();
+    final Document aUserMessage = testUserMessage (eSOAPVersion);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
-    final CreateMessageClient aClient = new CreateMessageClient ();
+    final CreateSignedMessage aClient = new CreateSignedMessage ();
     final Document aDoc = aReceiptMessage.createReceiptMessage (aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
                                                                                                         null),
-                                                                aUserMessage);
+                                                                aUserMessage,
+                                                                eSOAPVersion);
 
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc);
+    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion);
     return aSignedDoc;
   }
 
+  /**
+   * JUST FOR TESTING
+   *
+   * @return
+   * @throws MessagingException
+   */
   public static MimeMessage testMIMEMessage () throws MessagingException
   {
     final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
@@ -155,10 +165,7 @@ public class TestMessages
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      // final Document aDoc = TestMessages.testUserMessageSoap12 ();
       final String aDoc = SerializerXML.serializeXML (aSoapEnvelope);
-      // EMimeContentType.TEXT.buildMimeType ("xml"),
-      // EMimeContentType.APPLICATION.buildMimeType ("soap+xml") Soap 1.2
       aMessagePart.setContent (aDoc, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
       aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
@@ -185,43 +192,9 @@ public class TestMessages
     return message;
   }
 
-  private static Document testUserMessageSoap12 () throws WSSecurityException,
-                                                   SAXException,
-                                                   IOException,
-                                                   ParserConfigurationException
-  {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-    final CreateMessageClient aClient = new CreateMessageClient ();
-
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
-
-    final Document aSignedDoc = aClient.createSignedMessage12 (aUserMessage.createUserMessage12 (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                                 aUserMessage.createEbms3PayloadInfo (),
-                                                                                                 aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                                                            "MyServiceTypes",
-                                                                                                                                            "QuoteToCollect",
-                                                                                                                                            "4321",
-                                                                                                                                            "pm-esens-generic-resp",
-                                                                                                                                            "http://agreements.holodeckb2b.org/examples/agreement0"),
-                                                                                                 aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                                                                                    "APP_1000000101",
-                                                                                                                                    "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                                                                                    "APP_1000000101"),
-                                                                                                 aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                                                                 null));
-    return aSignedDoc;
-  }
-
-  public static Document testUserMessageSoapNotSigned () throws SAXException, IOException, ParserConfigurationException
+  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion) throws SAXException,
+                                                                                                 IOException,
+                                                                                                 ParserConfigurationException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -236,49 +209,27 @@ public class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Document aDoc = aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                          aUserMessage.createEbms3PayloadInfo (),
-                                                          aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                     "MyServiceTypes",
-                                                                                                     "QuoteToCollect",
-                                                                                                     "4321",
-                                                                                                     "pm-esens-generic-resp",
-                                                                                                     "http://agreements.holodeckb2b.org/examples/agreement0"),
-                                                          aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                                             "APP_1000000101",
-                                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                                             "APP_1000000101"),
-                                                          aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                          null);
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo ();
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                      "MyServiceTypes",
+                                                                                                      "QuoteToCollect",
+                                                                                                      "4321",
+                                                                                                      "pm-esens-generic-resp",
+                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                              "APP_1000000101",
+                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              "APP_1000000101");
+    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    final Document aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                          aEbms3PayloadInfo,
+                                                          aEbms3CollaborationInfo,
+                                                          aEbms3PartyInfo,
+                                                          aEbms3MessageProperties,
+                                                          null,
+                                                          eSOAPVersion);
     return aDoc;
-  }
-
-  /**
-   * Starting point for the SAAJ - SOAP Client Testing
-   *
-   * @throws ParserConfigurationException
-   * @throws SAXException
-   * @throws TransformerException
-   * @throws IOException
-   * @throws WSSecurityException
-   * @throws DatatypeConfigurationException
-   */
-  public static void main (final String args[]) throws WSSecurityException,
-                                                IOException,
-                                                TransformerException,
-                                                SAXException,
-                                                ParserConfigurationException,
-                                                DatatypeConfigurationException
-  {
-    final XMLWriterSettings aXWS = new XMLWriterSettings ();
-    final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
-    aNSCtx.addMapping ("ds", MessageHelperMethods.DS_NS);
-    aNSCtx.addMapping ("ebms", MessageHelperMethods.EBMS_NS);
-    aNSCtx.addMapping ("wsse", MessageHelperMethods.WSSE_NS);
-    aNSCtx.addMapping ("S11", "http://schemas.xmlsoap.org/soap/envelope/");
-    aXWS.setNamespaceContext (aNSCtx);
-    System.out.println (XMLWriter.getNodeAsString (testUserMessage (), aXWS));
-    System.out.println ("##############################################");
-    System.out.println (XMLWriter.getNodeAsString (testReceiptMessage (), aXWS));
   }
 }

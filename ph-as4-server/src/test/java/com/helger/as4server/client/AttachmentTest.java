@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4lib.soap.ESOAPVersion;
+
 public class AttachmentTest
 {
   // private final WSSecurityEngine secEngine = new WSSecurityEngine ();
@@ -49,7 +51,7 @@ public class AttachmentTest
     builder.setAttachmentCallbackHandler (attachmentCallbackHandler);
 
     // final Document doc = SOAPUtil.toSOAPPart (SOAPUtil.SAMPLE_SOAP_MSG);
-    final Document doc = TestMessages.testUserMessageSoapNotSigned ();
+    final Document doc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_11);
 
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();

@@ -12,6 +12,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.soap11.Soap11Body;
+import com.helger.as4lib.soap11.Soap11Envelope;
+import com.helger.as4lib.soap11.Soap11Header;
+import com.helger.as4lib.soap12.Soap12Body;
+import com.helger.as4lib.soap12.Soap12Envelope;
+import com.helger.as4lib.soap12.Soap12Header;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.datetime.util.PDTXMLConverter;
 
@@ -48,5 +56,28 @@ public class MessageHelperMethods
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
     aMessageInfo.setRefToMessageId (sRefToMessageID);
     return aMessageInfo;
+  }
+
+  // TODO if Payload from UserMessage fixed merge with usermessage method
+  public static Document createSOAPEnvelopeAsDocument (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                       final Document aEbms3Message)
+  {
+
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+    {
+      // Creating SOAP 11 Envelope
+      final Soap11Envelope aSoapEnv = new Soap11Envelope ();
+      aSoapEnv.setHeader (new Soap11Header ());
+      aSoapEnv.setBody (new Soap11Body ());
+      aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
+      return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
+    }
+    // Creating SOAP 12 Envelope
+    final Soap12Envelope aSoapEnv = new Soap12Envelope ();
+    aSoapEnv.setHeader (new Soap12Header ());
+    aSoapEnv.setBody (new Soap12Body ());
+    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
+    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
+
   }
 }
