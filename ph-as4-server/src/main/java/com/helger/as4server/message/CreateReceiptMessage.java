@@ -10,10 +10,9 @@ import org.w3c.dom.Node;
 
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.messaging.MessagingHandler;
+import com.helger.as4lib.messaging.AS4ReceiptMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -76,9 +75,10 @@ public class CreateReceiptMessage
     return aDSRefs;
   }
 
-  public Document createReceiptMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                        @Nonnull final Document aUserMessage,
-                                        @Nonnull final ESOAPVersion eSOAPVersion)
+  @Nonnull
+  public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                 @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                                 @Nonnull final Document aUserMessage)
   {
     aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
 
@@ -95,18 +95,7 @@ public class CreateReceiptMessage
       aEbms3Receipt.addAny (aRef.cloneNode (true));
     aSignalMessage.setReceipt (aEbms3Receipt);
 
-    // Creating Message
-    final Ebms3Messaging aMessage = new Ebms3Messaging ();
-    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      aMessage.setS11MustUnderstand (Boolean.FALSE);
-    else
-      aMessage.setS12MustUnderstand (Boolean.FALSE);
-    aMessage.addSignalMessage (aSignalMessage);
-
-    // Adding the signal message to the existing soap
-    return MessagingHandler.createSOAPEnvelopeAsDocument (eSOAPVersion, aMessage, null);
+    return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }
 
   // TODO ReftomessageID maybe not needed here since, it comes with the

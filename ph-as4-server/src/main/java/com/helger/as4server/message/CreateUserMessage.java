@@ -3,16 +3,12 @@ package com.helger.as4server.message;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
-import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
@@ -22,7 +18,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.messaging.MessagingHandler;
+import com.helger.as4lib.messaging.AS4UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -36,13 +32,12 @@ public class CreateUserMessage
 {
   // TODO Payload as SOAP Body only supported
   @Nonnull
-  public Document createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
-                                     @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
-                                     @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
-                                     @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                     @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
-                                     @Nullable final Element aPayload,
-                                     @Nonnull final ESOAPVersion eSOAPVersion)
+  public AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
+                                           @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
+                                           @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
+                                           @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
+                                           @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
+                                           @Nonnull final ESOAPVersion eSOAPVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
@@ -61,18 +56,8 @@ public class CreateUserMessage
     // Message Info
     aUserMessage.setMessageInfo (aMessageInfo);
 
-    // Creating Message
-    final Ebms3Messaging aMessage = new Ebms3Messaging ();
-    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      aMessage.setS11MustUnderstand (Boolean.FALSE);
-    else
-      aMessage.setS12MustUnderstand (Boolean.FALSE);
-    aMessage.addUserMessage (aUserMessage);
-
-    // Adding the user message to the existing soap
-    return MessagingHandler.createSOAPEnvelopeAsDocument (eSOAPVersion, aMessage, aPayload);
+    final AS4UserMessage ret = new AS4UserMessage (eSOAPVersion, aUserMessage);
+    return ret;
   }
 
   public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,

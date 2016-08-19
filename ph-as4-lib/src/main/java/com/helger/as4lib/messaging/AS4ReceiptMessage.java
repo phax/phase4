@@ -7,13 +7,13 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 
 /**
- * AS4 error message
+ * AS4 receipt message
  * 
  * @author Philip Helger
  */
-public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
+public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
-  public AS4ErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSOAPVersion);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");

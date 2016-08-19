@@ -84,8 +84,9 @@ public class TestMessages
                                                                                                                                 "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                                                                                                                                 "APP_1000000101"),
                                                                                              aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                                                             aPayload,
-                                                                                             eSOAPVersion),
+                                                                                             eSOAPVersion)
+                                                                         .setMustUnderstand (false)
+                                                                         .getAsSOAPDocument (aPayload),
                                                              eSOAPVersion,
                                                              aAttachments);
     return aSignedDoc;
@@ -122,10 +123,12 @@ public class TestMessages
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
-    final Document aDoc = aReceiptMessage.createReceiptMessage (aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
+    final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
                                                                                                         null),
-                                                                aUserMessage,
-                                                                eSOAPVersion);
+                                                                aUserMessage)
+                                         .setMustUnderstand (false)
+                                         .getAsSOAPDocument ();
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments);
     return aSignedDoc;
@@ -243,8 +246,9 @@ public class TestMessages
                                                           aEbms3CollaborationInfo,
                                                           aEbms3PartyInfo,
                                                           aEbms3MessageProperties,
-                                                          null,
-                                                          eSOAPVersion);
+                                                          eSOAPVersion)
+                                      .setMustUnderstand (false)
+                                      .getAsSOAPDocument ();
     return aDoc;
   }
 }
