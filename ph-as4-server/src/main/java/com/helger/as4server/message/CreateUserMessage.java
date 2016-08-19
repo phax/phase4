@@ -1,13 +1,10 @@
 package com.helger.as4server.message;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
@@ -25,15 +22,9 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.messaging.MessagingHandler;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.soap11.Soap11Body;
-import com.helger.as4lib.soap11.Soap11Envelope;
-import com.helger.as4lib.soap11.Soap11Header;
-import com.helger.as4lib.soap12.Soap12Body;
-import com.helger.as4lib.soap12.Soap12Envelope;
-import com.helger.as4lib.soap12.Soap12Header;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 
 /**
@@ -43,34 +34,22 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public class CreateUserMessage
 {
-
   // TODO Payload as SOAP Body only supported
+  @Nonnull
   public Document createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
-                                     @Nonnull final Ebms3PayloadInfo aEbms3PayloadInfo,
+                                     @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
                                      @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                      @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
                                      @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
-                                     @Nullable final String sPayloadPath,
-                                     @Nonnull final ESOAPVersion eSOAPVersion) throws SAXException,
-                                                                               IOException,
-                                                                               ParserConfigurationException
+                                     @Nullable final Element aPayload,
+                                     @Nonnull final ESOAPVersion eSOAPVersion)
   {
-
-    // Creating Message
-    final Ebms3Messaging aMessage = new Ebms3Messaging ();
-    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      aMessage.setS11MustUnderstand (Boolean.FALSE);
-    else
-      aMessage.setS12MustUnderstand (Boolean.FALSE);
-
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
     // Party Information
     aUserMessage.setPartyInfo (aEbms3PartyInfo);
 
-    // Collabration Information
+    // Collaboration Information
     aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
 
     // Properties
@@ -82,11 +61,18 @@ public class CreateUserMessage
     // Message Info
     aUserMessage.setMessageInfo (aMessageInfo);
 
+    // Creating Message
+    final Ebms3Messaging aMessage = new Ebms3Messaging ();
+    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
+    // a exception he does not understand mustUnderstand
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+      aMessage.setS11MustUnderstand (Boolean.FALSE);
+    else
+      aMessage.setS12MustUnderstand (Boolean.FALSE);
     aMessage.addUserMessage (aUserMessage);
 
     // Adding the user message to the existing soap
-    final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
-    return _createSOAPEnvelopeAsDocument (eSOAPVersion, aEbms3Message, sPayloadPath);
+    return MessagingHandler.createSOAPEnvelopeAsDocument (eSOAPVersion, aMessage, aPayload);
   }
 
   public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,
@@ -99,21 +85,21 @@ public class CreateUserMessage
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
     aEbms3From.setRole (sFromRole);
-    ICommonsList <Ebms3PartyId> aEbms3PartyIdList = new CommonsArrayList<> ();
-    Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-    aEbms3PartyId.setValue (sFromPartyID);
-    aEbms3PartyIdList.add (aEbms3PartyId);
-    aEbms3From.setPartyId (aEbms3PartyIdList);
+    {
+      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
+      aEbms3PartyId.setValue (sFromPartyID);
+      aEbms3From.addPartyId (aEbms3PartyId);
+    }
     aEbms3PartyInfo.setFrom (aEbms3From);
 
     // To => Receiver
     final Ebms3To aEbms3To = new Ebms3To ();
     aEbms3To.setRole (sToRole);
-    aEbms3PartyIdList = new CommonsArrayList<> ();
-    aEbms3PartyId = new Ebms3PartyId ();
-    aEbms3PartyId.setValue (sToPartyID);
-    aEbms3PartyIdList.add (aEbms3PartyId);
-    aEbms3To.setPartyId (aEbms3PartyIdList);
+    {
+      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
+      aEbms3PartyId.setValue (sToPartyID);
+      aEbms3To.addPartyId (aEbms3PartyId);
+    }
     aEbms3PartyInfo.setTo (aEbms3To);
     return aEbms3PartyInfo;
   }
@@ -150,13 +136,6 @@ public class CreateUserMessage
     return aEbms3MessageProperties;
   }
 
-  public Ebms3PayloadInfo createEbms3PayloadInfoEmpty ()
-  {
-    final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
-    aEbms3PayloadInfo.setPartInfo (new CommonsArrayList<> (new Ebms3PartInfo ()));
-    return aEbms3PayloadInfo;
-  }
-
   /**
    * TODO make dynamic ok<eb:PartInfo href="cid:test-xml"> <eb:PartProperties>
    * <eb:Property name="MimeType">application/xml</eb:Property>
@@ -166,11 +145,14 @@ public class CreateUserMessage
    *
    * @param aAttachments
    *        Used attachments
-   * @return Never <code>null</code>.
+   * @return <code>null</code> if no attachments are present.
    */
-  @Nonnull
-  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nonnull final Iterable <? extends IAS4Attachment> aAttachments)
+  @Nullable
+  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Iterable <? extends IAS4Attachment> aAttachments)
   {
+    if (CollectionHelper.isEmpty (aAttachments))
+      return null;
+
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
     for (final IAS4Attachment aAttachment : aAttachments)
     {
@@ -208,34 +190,4 @@ public class CreateUserMessage
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
   }
-
-  private Document _createSOAPEnvelopeAsDocument (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                  final Document aEbms3Message,
-                                                  final String sPayloadPath) throws SAXException,
-                                                                             IOException,
-                                                                             ParserConfigurationException
-  {
-
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-    {
-      // Creating SOAP 11 Envelope
-      final Soap11Envelope aSoapEnv = new Soap11Envelope ();
-      aSoapEnv.setHeader (new Soap11Header ());
-      aSoapEnv.setBody (new Soap11Body ());
-      aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-      if (sPayloadPath != null)
-        aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
-      return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
-    }
-    // Creating SOAP 12 Envelope
-    final Soap12Envelope aSoapEnv = new Soap12Envelope ();
-    aSoapEnv.setHeader (new Soap12Header ());
-    aSoapEnv.setBody (new Soap12Body ());
-    aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
-    if (sPayloadPath != null)
-      aSoapEnv.getBody ().addAny (MessageHelperMethods.getSoapEnvelope11ForTest (sPayloadPath).getDocumentElement ());
-    return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
-
-  }
-
 }

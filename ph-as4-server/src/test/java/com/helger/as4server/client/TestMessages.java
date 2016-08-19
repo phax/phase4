@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
@@ -50,6 +51,7 @@ public class TestMessages
 {
   // TODO testMessage for developing delete if not needed anymore
   public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                          @Nullable final Element aPayload,
                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
                                                                                                             IOException,
                                                                                                             SAXException,
@@ -70,7 +72,7 @@ public class TestMessages
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     final Document aSignedDoc = aClient.createSignedMessage (aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                             aUserMessage.createEbms3PayloadInfoEmpty (),
+                                                                                             aUserMessage.createEbms3PayloadInfo (aAttachments),
                                                                                              aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                                                         "MyServiceTypes",
                                                                                                                                         "QuoteToCollect",
@@ -82,7 +84,7 @@ public class TestMessages
                                                                                                                                 "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                                                                                                                                 "APP_1000000101"),
                                                                                              aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                                                             "SOAPBodyPayload.xml",
+                                                                                             aPayload,
                                                                                              eSOAPVersion),
                                                              eSOAPVersion,
                                                              aAttachments);
@@ -94,17 +96,19 @@ public class TestMessages
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
-    aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
-    final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                               aEbms3ErrorList,
-                                                                                               eSOAPVersion),
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
+    final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                               aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
+                                                                                               aEbms3ErrorList)
+                                                                          .setMustUnderstand (false)
+                                                                          .getAsSOAPDocument (),
                                                              eSOAPVersion,
                                                              aAttachments);
     return aSignedDoc;
   }
 
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                             @Nullable final Element aPayload,
                                              @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
                                                                                                                DOMException,
                                                                                                                IOException,
@@ -114,7 +118,7 @@ public class TestMessages
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
     aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
 
-    final Document aUserMessage = testUserMessage (eSOAPVersion, aAttachments);
+    final Document aUserMessage = testUserMessage (eSOAPVersion, aPayload, aAttachments);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();

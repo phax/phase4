@@ -13,7 +13,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.messaging.MessagingHandler;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -84,11 +84,6 @@ public class CreateReceiptMessage
 
     final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
 
-    // Creating Message
-    final Ebms3Messaging aMessage = new Ebms3Messaging ();
-    // TODO needs to be set to false because holodeck throws error if it is set
-    // to true
-    aMessage.setS11MustUnderstand (Boolean.FALSE);
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
     // Message Info
@@ -100,12 +95,18 @@ public class CreateReceiptMessage
       aEbms3Receipt.addAny (aRef.cloneNode (true));
     aSignalMessage.setReceipt (aEbms3Receipt);
 
+    // Creating Message
+    final Ebms3Messaging aMessage = new Ebms3Messaging ();
+    // TODO Needs to beset to 0 (equals false) since holodeck currently throws
+    // a exception he does not understand mustUnderstand
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+      aMessage.setS11MustUnderstand (Boolean.FALSE);
+    else
+      aMessage.setS12MustUnderstand (Boolean.FALSE);
     aMessage.addSignalMessage (aSignalMessage);
 
     // Adding the signal message to the existing soap
-    final Document aEbms3Message = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aMessage);
-
-    return MessageHelperMethods.createSOAPEnvelopeAsDocument (eSOAPVersion, aEbms3Message);
+    return MessagingHandler.createSOAPEnvelopeAsDocument (eSOAPVersion, aMessage, null);
   }
 
   // TODO ReftomessageID maybe not needed here since, it comes with the

@@ -89,7 +89,7 @@ public class SOAPClientSAAJ
       // No Mime Message, just SOAP + Payload in SOAP - Body
       if (false)
       {
-        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, aAttachments);
+        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, null, aAttachments);
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
@@ -119,6 +119,7 @@ public class SOAPClientSAAJ
         else
         {
           final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (ESOAPVersion.SOAP_11,
+                                                                                                        null,
                                                                                                         aAttachments),
                                                                           ESOAPVersion.SOAP_11);
 
