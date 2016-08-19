@@ -127,15 +127,19 @@ public class CreateUserMessage
   {
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
     aEbms3CollaborationInfo.setAction (sAction);
-    final Ebms3Service aEbms3Service = new Ebms3Service ();
-    aEbms3Service.setType (sServiceType);
-    aEbms3Service.setValue (sServiceValue);
-    aEbms3CollaborationInfo.setService (aEbms3Service);
+    {
+      final Ebms3Service aEbms3Service = new Ebms3Service ();
+      aEbms3Service.setType (sServiceType);
+      aEbms3Service.setValue (sServiceValue);
+      aEbms3CollaborationInfo.setService (aEbms3Service);
+    }
     aEbms3CollaborationInfo.setConversationId (sConversationID);
-    final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
-    aEbms3AgreementRef.setPmode (sAgreementRefPMode);
-    aEbms3AgreementRef.setValue (sAgreementRefValue);
-    aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
+    {
+      final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
+      aEbms3AgreementRef.setPmode (sAgreementRefPMode);
+      aEbms3AgreementRef.setValue (sAgreementRefValue);
+      aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
+    }
     return aEbms3CollaborationInfo;
   }
 
@@ -164,32 +168,36 @@ public class CreateUserMessage
    */
   public Ebms3PayloadInfo createEbms3PayloadInfo (@Nonnull final Iterable <? extends IAS4Attachment> aAttachments)
   {
-    final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    {
-      final Ebms3Property aMimeType = new Ebms3Property ();
-      aMimeType.setName ("MimeType");
-      aMimeType.setValue ("application/xml");
-      aEbms3PartProperties.addProperty (aMimeType);
-    }
-    {
-      final Ebms3Property aCharacterSet = new Ebms3Property ();
-      aCharacterSet.setName ("CharacterSet");
-      aCharacterSet.setValue ("utf-8");
-      aEbms3PartProperties.addProperty (aCharacterSet);
-    }
-    {
-      final Ebms3Property aCompressionType = new Ebms3Property ();
-      aCompressionType.setName ("CompressionType");
-      aCompressionType.setValue ("application/gzip");
-      aEbms3PartProperties.addProperty (aCompressionType);
-    }
-
-    final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
-    aEbms3PartInfo.setHref ("cid:test-xml");
-    aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
-
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
-    aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
+    for (final IAS4Attachment aAttachment : aAttachments)
+    {
+      final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+      {
+        final Ebms3Property aMimeType = new Ebms3Property ();
+        aMimeType.setName ("MimeType");
+        aMimeType.setValue (aAttachment.getMimeType ().getAsString ());
+        aEbms3PartProperties.addProperty (aMimeType);
+      }
+      if (aAttachment.hasCharset ())
+      {
+        final Ebms3Property aCharacterSet = new Ebms3Property ();
+        aCharacterSet.setName ("CharacterSet");
+        aCharacterSet.setValue (aAttachment.getCharset ().name ());
+        aEbms3PartProperties.addProperty (aCharacterSet);
+      }
+      if (aAttachment.hasCompressionMode ())
+      {
+        final Ebms3Property aCompressionType = new Ebms3Property ();
+        aCompressionType.setName ("CompressionType");
+        aCompressionType.setValue (aAttachment.getCompressionMode ().getMimeTypeAsString ());
+        aEbms3PartProperties.addProperty (aCompressionType);
+      }
+
+      final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
+      aEbms3PartInfo.setHref ("cid:" + aAttachment.getID ());
+      aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
+      aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
+    }
     return aEbms3PayloadInfo;
   }
 

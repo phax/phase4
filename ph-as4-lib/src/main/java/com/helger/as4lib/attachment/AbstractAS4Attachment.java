@@ -1,8 +1,10 @@
 package com.helger.as4lib.attachment;
 
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -20,15 +22,19 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   protected static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
   protected static final String CONTENT_ID = "Content-ID";
 
-  protected final String m_sID;
-  protected final IMimeType m_aMimeType;
-  protected EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
+  private final String m_sID;
+  private Charset m_aCharset;
+  private final IMimeType m_aMimeType;
+  private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
+  private final EAS4CompressionMode m_eCompressionMode;
 
-  public AbstractAS4Attachment (@Nonnull final IMimeType aMimeType)
+  public AbstractAS4Attachment (@Nonnull final IMimeType aMimeType,
+                                @Nullable final EAS4CompressionMode eCompressionMode)
   {
     ValueEnforcer.notNull (aMimeType, "MimeType");
-    m_sID = UUID.randomUUID ().toString ();
+    m_sID = "ph-as4-" + UUID.randomUUID ().toString ();
     m_aMimeType = aMimeType;
+    m_eCompressionMode = eCompressionMode;
   }
 
   @Nonnull
@@ -36,6 +42,25 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   public final String getID ()
   {
     return m_sID;
+  }
+
+  @Nonnull
+  public final Charset getCharset ()
+  {
+    return m_aCharset;
+  }
+
+  @Nonnull
+  public final AbstractAS4Attachment setCharset (@Nonnull final Charset aCharset)
+  {
+    m_aCharset = ValueEnforcer.notNull (aCharset, "Charset");
+    return this;
+  }
+
+  @Nonnull
+  public final IMimeType getMimeType ()
+  {
+    return m_aMimeType;
   }
 
   @Nonnull
@@ -49,5 +74,11 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   {
     m_eCTE = ValueEnforcer.notNull (eCTE, "CTE");
     return this;
+  }
+
+  @Nonnull
+  public final EAS4CompressionMode getCompressionMode ()
+  {
+    return m_eCompressionMode;
   }
 }

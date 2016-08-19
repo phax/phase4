@@ -31,7 +31,7 @@ public class AS4FileAttachment extends AbstractAS4Attachment
 
   public AS4FileAttachment (@Nonnull final File aFile, @Nonnull final IMimeType aMimeType)
   {
-    super (aMimeType);
+    super (aMimeType, (EAS4CompressionMode) null);
     ValueEnforcer.notNull (aFile, "File");
     m_aFile = aFile;
   }
@@ -42,9 +42,9 @@ public class AS4FileAttachment extends AbstractAS4Attachment
 
     final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
     aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
-    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, m_aMimeType.getAsString ());
-    aMimeBodyPart.setHeader (CONTENT_TRANSFER_ENCODING, m_eCTE.getID ());
-    aMimeBodyPart.setHeader (CONTENT_ID, m_sID);
+    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, getMimeType ().getAsString ());
+    aMimeBodyPart.setHeader (CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
+    aMimeBodyPart.setHeader (CONTENT_ID, getID ());
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
 
@@ -55,13 +55,13 @@ public class AS4FileAttachment extends AbstractAS4Attachment
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (m_aFile) + "\"");
-    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + m_sID + ">");
-    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, m_aMimeType.getAsString ());
+    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getID () + ">");
+    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
 
     final Attachment aAttachment = new Attachment ();
-    aAttachment.setMimeType (m_aMimeType.getAsString ());
+    aAttachment.setMimeType (getMimeType ().getAsString ());
     aAttachment.addHeaders (aHeaders);
-    aAttachment.setId (m_sID);
+    aAttachment.setId (getID ());
     aAttachment.setSourceStream (FileHelper.getInputStream (m_aFile));
     return aAttachment;
   }

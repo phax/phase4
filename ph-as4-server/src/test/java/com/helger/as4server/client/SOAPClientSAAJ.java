@@ -97,7 +97,8 @@ public class SOAPClientSAAJ
                                                                                                             CMimeType.APPLICATION_GZIP));
 
           final CreateSignedMessage aSigned = new CreateSignedMessage ();
-          final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12),
+          final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
+                                                                                                                                                                              aAttachments),
                                                                                                                                    ESOAPVersion.SOAP_12,
                                                                                                                                    aAttachments),
                                                                                                       aAttachments);

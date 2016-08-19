@@ -1,11 +1,13 @@
 package com.helger.as4lib.error;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.ebms3header.Ebms3Description;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.commons.text.display.IHasDisplayText;
 
 public interface IEbmsError extends Serializable
@@ -50,27 +52,27 @@ public interface IEbmsError extends Serializable
   @Nonnull
   EErrorCategory getCategory ();
 
-  /**
-   * Gets the value of the refToMessageInError property.
-   *
-   * @return possible object is {@link String }
-   */
-  @Nullable
-  String getRefToMessageInError ();
+  @Nonnull
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale)
+  {
+    return getAsEbms3Error (aContentLocale, "", "", null);
+  }
 
-  /**
-   * Gets the value of the origin property.
-   *
-   * @return possible object is {@link String }
-   */
-  @Nullable
-  String getOrigin ();
-
-  /**
-   * Gets the value of the description property.
-   *
-   * @return possible object is {@link Ebms3Description }
-   */
-  @Nullable
-  Ebms3Description getDescription ();
+  @Nonnull
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
+                                      @Nullable final String sRefToMessageInError,
+                                      @Nullable final String sOrigin,
+                                      @Nullable final Ebms3Description aEbmsDescription)
+  {
+    final Ebms3Error aEbms3Error = new Ebms3Error ();
+    aEbms3Error.setDescription (aEbmsDescription);
+    aEbms3Error.setErrorDetail (getErrorDetail ().getDisplayText (aContentLocale));
+    aEbms3Error.setErrorCode (getErrorCode ());
+    aEbms3Error.setSeverity (getSeverity ().getSeverity ());
+    aEbms3Error.setShortDescription (getShortDescription ());
+    aEbms3Error.setCategory (getCategory ().getContent ());
+    aEbms3Error.setRefToMessageInError (sRefToMessageInError);
+    aEbms3Error.setOrigin (sOrigin);
+    return aEbms3Error;
+  }
 }

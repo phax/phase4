@@ -2,6 +2,7 @@ package com.helger.as4server.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -19,6 +20,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -27,7 +29,6 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
-import com.helger.as4lib.error.ErrorConverter;
 import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
@@ -90,7 +91,7 @@ public class TestMessages
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
-    aEbms3ErrorList.add (ErrorConverter.convertEnumToEbms3Error (EEbmsError.EBMS_INVALID_HEADER));
+    aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
                                                                                                aEbms3ErrorList,
                                                                                                eSOAPVersion),
@@ -105,7 +106,7 @@ public class TestMessages
                                                                                        ParserConfigurationException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
-    aEbms3ErrorList.add (ErrorConverter.convertEnumToEbms3Error (EEbmsError.EBMS_INVALID_HEADER));
+    aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
 
     final Document aUserMessage = testUserMessage (eSOAPVersion);
 
@@ -123,8 +124,9 @@ public class TestMessages
   /**
    * JUST FOR TESTING
    *
-   * @return
+   * @return MIME message
    * @throws MessagingException
+   *         if MIME problems occur
    */
   public static MimeMessage testMIMEMessage () throws MessagingException
   {
@@ -193,9 +195,10 @@ public class TestMessages
     return message;
   }
 
-  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion) throws SAXException,
-                                                                                                 IOException,
-                                                                                                 ParserConfigurationException
+  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                       @Nonnull final Iterable <? extends IAS4Attachment> aAttachments) throws SAXException,
+                                                                                                                        IOException,
+                                                                                                                        ParserConfigurationException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -211,7 +214,7 @@ public class TestMessages
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo ();
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",

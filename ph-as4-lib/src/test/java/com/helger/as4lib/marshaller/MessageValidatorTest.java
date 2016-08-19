@@ -1,18 +1,18 @@
 package com.helger.as4lib.marshaller;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -30,97 +30,72 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.resource.IReadableResource;
 
-public class MessageValidatorTest
+public final class MessageValidatorTest
 {
-
-  private MessageValidator aMessageValidator;
-
-  private StringBuilder m_aFailedDocuments;
-
-  @Before
-  public void setUp ()
-  {
-    aMessageValidator = new MessageValidator ();
-    m_aFailedDocuments = new StringBuilder ();
-  }
+  private static final Locale LOCALE = Locale.US;
 
   @Test
   public void messageValidatorXMLSuccessSOAP11 ()
   {
     final ICommonsList <String> aGoodFiles = CAS4TestFiles.getTestFilesSOAP11ValidXML ();
+    final MessageValidator aMessageValidator = new MessageValidator ();
 
-    for (final String aFilePath : aGoodFiles)
+    for (final String sFilePath : aGoodFiles)
     {
-      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath);
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + sFilePath);
 
-      if (!aMessageValidator.validateXML (aTMPFile))
-      {
-        m_aFailedDocuments.append (aFilePath);
-        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
-      }
-
+      assertTrue (sFilePath +
+                  " should have gone through, inspect file/code. ",
+                  aMessageValidator.validateXML (aTMPFile, LOCALE));
     }
-
-    _failedTestsCheck ();
   }
 
   @Test
   public void messageValidatorXMLSuccessSOAP12 ()
   {
     final ICommonsList <String> aGoodFiles = CAS4TestFiles.getTestFilesSOAP12ValidXML ();
+    final MessageValidator aMessageValidator = new MessageValidator ();
 
-    for (final String aFilePath : aGoodFiles)
+    for (final String sFilePath : aGoodFiles)
     {
-      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath);
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + sFilePath);
 
-      if (!aMessageValidator.validateXML (aTMPFile))
-      {
-        m_aFailedDocuments.append (aFilePath);
-        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
-      }
-
+      assertTrue (sFilePath +
+                  " should have gone through, inspect file/code.",
+                  aMessageValidator.validateXML (aTMPFile, LOCALE));
     }
-
-    _failedTestsCheck ();
   }
 
   @Test
   public void messageValidatorXMLInvalidSOAP11 ()
   {
     final ICommonsList <String> aInvalidFiles = CAS4TestFiles.getTestFilesSOAP11InvalidXML ();
+    final MessageValidator aMessageValidator = new MessageValidator ();
 
-    for (final String aFilePath : aInvalidFiles)
+    for (final String sFilePath : aInvalidFiles)
     {
-      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + aFilePath);
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_11 + sFilePath);
 
-      if (aMessageValidator.validateXML (aTMPFile))
-      {
-        m_aFailedDocuments.append (aFilePath);
-        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
-      }
-
+      assertFalse (sFilePath +
+                   " should have not gone through, inspect file/code.",
+                   aMessageValidator.validateXML (aTMPFile, LOCALE));
     }
-
-    _failedTestsCheck ();
   }
 
   @Test
   public void messageValidatorXMLInvalidSOAP12 ()
   {
     final ICommonsList <String> aInvalidFiles = CAS4TestFiles.getTestFilesSOAP12InvalidXML ();
+    final MessageValidator aMessageValidator = new MessageValidator ();
 
-    for (final String aFilePath : aInvalidFiles)
+    for (final String sFilePath : aInvalidFiles)
     {
-      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + aFilePath);
+      final IReadableResource aTMPFile = new ClassPathResource (CAS4TestFiles.TEST_FILE_PATH_SOAP_12 + sFilePath);
 
-      if (aMessageValidator.validateXML (aTMPFile))
-      {
-        m_aFailedDocuments.append (aFilePath);
-        m_aFailedDocuments.append (" should have gone through, inspect file/code. ");
-      }
+      assertFalse (sFilePath +
+                   " should not have gone through, inspect file/code. ",
+                   aMessageValidator.validateXML (aTMPFile, LOCALE));
     }
-
-    _failedTestsCheck ();
   }
 
   @Test
@@ -134,6 +109,8 @@ public class MessageValidatorTest
     aSignalMessage.setMessageInfo (aMessageInfo);
     aSignalMessages.add (aSignalMessage);
     aMessage.addSignalMessage (aSignalMessage);
+
+    final MessageValidator aMessageValidator = new MessageValidator ();
     assertFalse (aMessageValidator.validatePOJO (aMessage));
   }
 
@@ -174,13 +151,5 @@ public class MessageValidatorTest
     aSoapEnv.getHeader ().addAny (aEbms3Message.getDocumentElement ());
 
     System.out.println (Ebms3WriterBuilder.soap11 ().getAsString (aSoapEnv));
-  }
-
-  private void _failedTestsCheck ()
-  {
-    if (!m_aFailedDocuments.toString ().isEmpty ())
-    {
-      fail ("Documents who did not pass: " + m_aFailedDocuments.toString ());
-    }
   }
 }

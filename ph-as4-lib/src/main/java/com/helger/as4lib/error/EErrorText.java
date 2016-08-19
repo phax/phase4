@@ -5,6 +5,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.text.display.IHasDisplayText;
 
 public enum EErrorText implements IHasDisplayText
@@ -31,7 +32,7 @@ public enum EErrorText implements IHasDisplayText
 
   private final String m_sErrorText;
 
-  private EErrorText (@Nonnull final String sErrorText)
+  private EErrorText (@Nonnull @Nonempty final String sErrorText)
   {
     m_sErrorText = sErrorText;
   }
