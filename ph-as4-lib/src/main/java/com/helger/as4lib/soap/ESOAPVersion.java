@@ -49,6 +49,15 @@ public enum ESOAPVersion
   }
 
   @Nonnull
+  @Nonempty
+  public String getMustUnderstandValue (final boolean bMustUnderstand)
+  {
+    if (this == SOAP_11)
+      return bMustUnderstand ? "1" : "0";
+    return Boolean.toString (bMustUnderstand);
+  }
+
+  @Nonnull
   public MimeType getMimeType (@Nonnull final Charset aCharset)
   {
     return new MimeType (m_aMimeType).addParameter (CMimeType.PARAMETER_NAME_CHARSET, aCharset.name ());

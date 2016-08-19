@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.helger.as4server.client;
+package com.helger.as4lib.attachment;
 
 import java.io.IOException;
 import java.util.ArrayList;

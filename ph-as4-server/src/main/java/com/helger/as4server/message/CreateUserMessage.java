@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
@@ -161,28 +162,34 @@ public class CreateUserMessage
    *
    * @return
    */
-  public Ebms3PayloadInfo createEbms3PayloadInfo ()
+  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nonnull final Iterable <? extends IAS4Attachment> aAttachments)
   {
-    final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
+    final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+    {
+      final Ebms3Property aMimeType = new Ebms3Property ();
+      aMimeType.setName ("MimeType");
+      aMimeType.setValue ("application/xml");
+      aEbms3PartProperties.addProperty (aMimeType);
+    }
+    {
+      final Ebms3Property aCharacterSet = new Ebms3Property ();
+      aCharacterSet.setName ("CharacterSet");
+      aCharacterSet.setValue ("utf-8");
+      aEbms3PartProperties.addProperty (aCharacterSet);
+    }
+    {
+      final Ebms3Property aCompressionType = new Ebms3Property ();
+      aCompressionType.setName ("CompressionType");
+      aCompressionType.setValue ("application/gzip");
+      aEbms3PartProperties.addProperty (aCompressionType);
+    }
+
     final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
     aEbms3PartInfo.setHref ("cid:test-xml");
-    final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    final Ebms3Property aMimeType = new Ebms3Property ();
-    aMimeType.setName ("MimeType");
-    aMimeType.setValue ("application/xml");
-    aEbms3PartProperties.addProperty (aMimeType);
-    final Ebms3Property aCharacterSet = new Ebms3Property ();
-    aCharacterSet.setName ("CharacterSet");
-    aCharacterSet.setValue ("utf-8");
-    aEbms3PartProperties.addProperty (aCharacterSet);
-    final Ebms3Property aCompressionType = new Ebms3Property ();
-    aCompressionType.setName ("CompressionType");
-    aCompressionType.setValue ("application/gzip");
-    aEbms3PartProperties.addProperty (aCompressionType);
-
     aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
 
-    aEbms3PayloadInfo.setPartInfo (new CommonsArrayList<> (aEbms3PartInfo));
+    final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
+    aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
     return aEbms3PayloadInfo;
   }
 
@@ -192,10 +199,10 @@ public class CreateUserMessage
   }
 
   private Document _createSOAPEnvelopeAsDocument (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                 final Document aEbms3Message,
-                                                 final String sPayloadPath) throws SAXException,
-                                                                            IOException,
-                                                                            ParserConfigurationException
+                                                  final Document aEbms3Message,
+                                                  final String sPayloadPath) throws SAXException,
+                                                                             IOException,
+                                                                             ParserConfigurationException
   {
 
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))

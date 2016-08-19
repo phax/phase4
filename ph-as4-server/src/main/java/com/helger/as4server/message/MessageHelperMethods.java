@@ -32,9 +32,8 @@ import com.helger.datetime.util.PDTXMLConverter;
  */
 public class MessageHelperMethods
 {
-  public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";
-  public static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
-  public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
+  public static final String DIGEST_ALGORITHM_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+  public static final String SIGNATURE_ALGORITHM_RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,

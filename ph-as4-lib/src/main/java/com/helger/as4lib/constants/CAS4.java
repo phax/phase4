@@ -11,6 +11,11 @@ public final class CAS4
   public static final String XSD_SOAP12 = PATH_SCHEMATA + "soap12.xsd";
   public static final String XSD_XML = PATH_SCHEMATA + "xml.xsd";
 
+  public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";
+  public static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
+  public static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
+  public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
+
   private CAS4 ()
   {}
 }

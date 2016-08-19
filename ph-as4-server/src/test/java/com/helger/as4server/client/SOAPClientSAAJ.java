@@ -1,5 +1,6 @@
 package com.helger.as4server.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -34,15 +35,21 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.attachment.AS4FileAttachment;
+import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
+import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.xml.SerializerXML;
+import com.helger.as4server.message.CreateSignedMessage;
 import com.helger.as4server.message.MessageHelperMethods;
-import com.helger.as4server.message.mime.HttpMimeMessageEntity;
 import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.mime.CMimeType;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.mime.AttachmentHelper;
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -86,18 +93,16 @@ public class SOAPClientSAAJ
       else
         if (true)
         {
-          // TODO
-          // final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated
-          // (AttachmentHelper.getMessageWithAttachmentsAsString
-          // (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_11),
-          // ESOAPVersion.SOAP_11),
-          // ESOAPVersion.SOAP_11);
+          final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> (new AS4FileAttachment (new File ("data/test.xml.gz"),
+                                                                                                            CMimeType.APPLICATION_GZIP));
 
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (AttachmentHelper.getMessageWithAttachmentsAsString (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12),
-                                                                                                                              ESOAPVersion.SOAP_12,
-                                                                                                                              new CommonsArrayList<> ("test-xml")),
-                                                                          ESOAPVersion.SOAP_12);
+          final CreateSignedMessage aSigned = new CreateSignedMessage ();
+          final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12),
+                                                                                                                                   ESOAPVersion.SOAP_12,
+                                                                                                                                   aAttachments),
+                                                                                                      aAttachments);
 
+          // Move all global mime headers to the POST request
           final Enumeration <?> e = aMsg.getAllHeaders ();
           while (e.hasMoreElements ())
           {

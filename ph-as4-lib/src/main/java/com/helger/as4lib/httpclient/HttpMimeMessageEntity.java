@@ -1,4 +1,4 @@
-package com.helger.as4server.message.mime;
+package com.helger.as4lib.httpclient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,12 @@ import org.apache.http.entity.AbstractHttpEntity;
 
 import com.helger.commons.ValueEnforcer;
 
+/**
+ * Special HTTP entity that reads and writes to a {@link MimeMessage}.
+ *
+ * @author Philip Helger
+ * @author bayerlma
+ */
 public class HttpMimeMessageEntity extends AbstractHttpEntity
 {
   private final MimeMessage m_aMsg;
@@ -42,17 +48,17 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     {
       return m_aMsg.getInputStream ();
     }
-    catch (final MessagingException e)
+    catch (final MessagingException ex)
     {
-      throw new IOException ();
+      throw new IOException ("Error reading MIME message", ex);
     }
   }
 
-  public void writeTo (final OutputStream outstream) throws IOException
+  public void writeTo (@Nonnull final OutputStream aOS) throws IOException
   {
     try
     {
-      m_aMsg.writeTo (outstream);
+      m_aMsg.writeTo (aOS);
     }
     catch (final MessagingException ex)
     {

@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
@@ -51,10 +52,10 @@ public class CreateReceiptMessage
   {
     {
       Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
-      aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "Messaging");
-      aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "UserMessage");
-      aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "MessageInfo");
-      aNext = _findChildElement (aNext, MessageHelperMethods.EBMS_NS, "MessageId");
+      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "Messaging");
+      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "UserMessage");
+      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "MessageInfo");
+      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "MessageId");
       if (aNext != null)
         return (aNext.getFirstChild ().getNodeValue ());
     }
@@ -66,11 +67,11 @@ public class CreateReceiptMessage
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
       Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
-      aNext = _findChildElement (aNext, MessageHelperMethods.WSSE_NS, "Security");
-      aNext = _findChildElement (aNext, MessageHelperMethods.DS_NS, "Signature");
-      aNext = _findChildElement (aNext, MessageHelperMethods.DS_NS, "SignedInfo");
+      aNext = _findChildElement (aNext, CAS4.WSSE_NS, "Security");
+      aNext = _findChildElement (aNext, CAS4.DS_NS, "Signature");
+      aNext = _findChildElement (aNext, CAS4.DS_NS, "SignedInfo");
       if (aNext != null)
-        _findAllChildElements (aNext, MessageHelperMethods.DS_NS, "Reference", aDSRefs);
+        _findAllChildElements (aNext, CAS4.DS_NS, "Reference", aDSRefs);
     }
     return aDSRefs;
   }

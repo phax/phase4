@@ -1,17 +1,15 @@
 package com.helger.as4server.message;
 
-import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -19,8 +17,10 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
+import com.helger.as4lib.attachment.AttachmentCallbackHandler;
+import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.client.AttachmentCallbackHandler;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.settings.exchange.configfile.ConfigFile;
@@ -29,7 +29,48 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 public class CreateSignedMessage
 {
   public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("crypto.properties").build ();
-  private Crypto aCrypto;
+
+  static
+  {
+    WSSConfig.init ();
+  }
+
+  private final Crypto m_aCrypto;
+
+  public CreateSignedMessage () throws WSSecurityException
+  {
+    // Uses crypto.properties => needs exact name crypto.properties
+    m_aCrypto = CryptoFactory.getInstance ();
+  }
+
+  @Nonnull
+  private WSSecSignature _getBasicBuilder ()
+  {
+    final WSSecSignature aBuilder = new WSSecSignature ();
+    aBuilder.setUserInfo (CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
+                          CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setSignatureAlgorithm (MessageHelperMethods.SIGNATURE_ALGORITHM_RSA_SHA256);
+    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
+    aBuilder.setDigestAlgo (MessageHelperMethods.DIGEST_ALGORITHM_SHA256);
+    return aBuilder;
+  }
+
+  @Nonnull
+  private Document _signDocument (@Nonnull final WSSecSignature aBuilder,
+                                  @Nonnull final Document aPreSigningMessage,
+                                  @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
+  {
+    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
+    aSecHeader.insertSecurityHeader ();
+
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
+                                                                                     "mustUnderstand");
+    if (aMustUnderstand != null)
+      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (false));
+
+    return aBuilder.build (aPreSigningMessage, m_aCrypto, aSecHeader);
+  }
 
   /**
    * This method must be used if the message does not contain attachments, that
@@ -40,103 +81,33 @@ public class CreateSignedMessage
    * @return
    * @throws WSSecurityException
    */
-  public Document createSignedMessage (@Nonnull final Document aDocument,
+  public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
                                        @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
   {
-    WSSConfig.init ();
-    // Uses crypto.properties => needs exact name crypto.properties
-    aCrypto = CryptoFactory.getInstance ();
-    final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
-                          CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
-    aBuilder.setDigestAlgo ("http://www.w3.org/2001/04/xmlenc#sha256");
-    final Document aDoc = aDocument;
-    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
-    aSecHeader.insertSecurityHeader ();
-    // TODO if you set attribute with NS it adds the same namespace again since
-    // it does not take the one from envelope => Change NS between S11 and S12
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
-    // TODO Needs to be set to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    // For SOAP 1.2 ist must be "true" or "false"!
-    aMustUnderstand.setValue ("0");
-
-    final Document aSignedDoc = aBuilder.build (aDoc, aCrypto, aSecHeader);
-    return aSignedDoc;
+    return createSignedMessage (aPreSigningMessage, eSOAPVersion, null);
   }
 
-  public Document getMessageWithAttachmentsAsString (final Document aPreSigningMessage,
-                                                     @Nonnull final ESOAPVersion eSOAPVersion,
-                                                     @Nonnull final ICommonsList <String> aAttachmentList) throws Exception
+  public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
+                                       @Nonnull final ESOAPVersion eSOAPVersion,
+                                       @Nullable final Collection <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
-    WSSConfig.init ();
-    aCrypto = CryptoFactory.getInstance ();
+    final WSSecSignature aBuilder = _getBasicBuilder ();
 
-    final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (CreateSignedMessage.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
-                          CreateSignedMessage.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
-    aBuilder.setDigestAlgo ("http://www.w3.org/2001/04/xmlenc#sha256");
-
-    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
-    aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
-
-    final ICommonsList <Attachment> aAttachments = new CommonsArrayList<> ();
-
-    for (final String sAttachment : aAttachmentList)
+    if (CollectionHelper.isNotEmpty (aAttachments))
     {
-      final String sAttachmentId = sAttachment;
-      final Attachment aAttachment = new Attachment ();
-      aAttachment.setMimeType ("application/gzip");
-      aAttachment.addHeaders (_getHeaders (sAttachmentId));
-      aAttachment.setId (sAttachmentId);
-      aAttachment.setSourceStream (new FileInputStream ("data/test.xml.gz"));
+      // Modify builder for attachments
 
-      aAttachments.add (aAttachment);
+      aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
+      // XXX where is this ID used????
+      aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
+
+      final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
+                                                                                  IAS4Attachment::getAsWSS4JAttachment);
+
+      final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aWSS4JAttachments);
+      aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
-    final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aAttachments);
-    aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-
-    final Document aDoc = aPreSigningMessage;
-    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
-    aSecHeader.insertSecurityHeader ();
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
-    // TODO Needs to be set to 0 (equals false) since holodeck currently throws
-    // a exception he does not understand mustUnderstand
-    // For SOAP 1.2 it must be "true" or "false"!
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      aMustUnderstand.setValue ("0");
-    else
-      aMustUnderstand.setValue ("false");
-
-    final Document aSignedDoc = aBuilder.build (aDoc, aCrypto, aSecHeader);
-
-    return aSignedDoc;
+    return _signDocument (aBuilder, aPreSigningMessage, eSOAPVersion);
   }
-
-  /**
-   * Sets the MIME - headers for each Attachment
-   *
-   * @param aAttachmentId
-   * @return
-   */
-  private Map <String, String> _getHeaders (final String aAttachmentId)
-  {
-    final Map <String, String> aHeaderList = new HashMap<> ();
-    aHeaderList.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    aHeaderList.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION, "attachment; filename=\"fname.ext\"");
-    aHeaderList.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachmentId + ">");
-    aHeaderList.put (AttachmentUtils.MIME_HEADER_CONTENT_LOCATION, "http://ws.apache.org");
-    aHeaderList.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, "application/gzip");
-    return aHeaderList;
-  }
-
 }
