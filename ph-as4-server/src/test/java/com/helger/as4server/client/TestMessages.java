@@ -67,7 +67,8 @@ public class TestMessages
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     final Document aSignedDoc = aClient.createSignedMessage (aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                             aUserMessage.createEbms3PayloadInfo (aAttachments),
+                                                                                             aUserMessage.createEbms3PayloadInfo (aPayload,
+                                                                                                                                  aAttachments),
                                                                                              aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                                                         "MyServiceTypes",
                                                                                                                                         "QuoteToCollect",
@@ -83,7 +84,8 @@ public class TestMessages
                                                                          .setMustUnderstand (false)
                                                                          .getAsSOAPDocument (aPayload),
                                                              eSOAPVersion,
-                                                             aAttachments);
+                                                             aAttachments,
+                                                             false);
     return aSignedDoc;
   }
 
@@ -99,7 +101,8 @@ public class TestMessages
                                                                           .setMustUnderstand (false)
                                                                           .getAsSOAPDocument (),
                                                              eSOAPVersion,
-                                                             aAttachments);
+                                                             aAttachments,
+                                                             false);
     return aSignedDoc;
   }
 
@@ -119,7 +122,7 @@ public class TestMessages
                                          .setMustUnderstand (false)
                                          .getAsSOAPDocument ();
 
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments);
+    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments, false);
     return aSignedDoc;
   }
 
@@ -198,8 +201,9 @@ public class TestMessages
     return message;
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                             @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                       @Nullable final Node aPayload,
+                                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -215,7 +219,7 @@ public class TestMessages
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
@@ -235,6 +239,6 @@ public class TestMessages
                                                                 aEbms3MessageProperties,
                                                                 eSOAPVersion)
                                             .setMustUnderstand (false);
-    return aDoc;
+    return aDoc.getAsSOAPDocument (aPayload);
   }
 }

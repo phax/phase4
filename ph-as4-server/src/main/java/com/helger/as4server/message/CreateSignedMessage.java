@@ -71,7 +71,8 @@ public class CreateSignedMessage
   @Nonnull
   public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
                                        @Nonnull final ESOAPVersion eSOAPVersion,
-                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
+                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
+                                       final boolean bMustUnderstand) throws WSSecurityException
   {
     final WSSecSignature aBuilder = _getBasicBuilder ();
 
@@ -93,14 +94,12 @@ public class CreateSignedMessage
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
-    if (false)
-    {
-      // XXX This should have be handled outside
-      final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                       "mustUnderstand");
-      if (aMustUnderstand != null)
-        aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (false));
-    }
+    // Set the mustUnderstand header of the wsse:Security element as well
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
+                                                                                     "mustUnderstand");
+    if (aMustUnderstand != null)
+      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
+
     return aBuilder.build (aPreSigningMessage, m_aCrypto, aSecHeader);
   }
 }

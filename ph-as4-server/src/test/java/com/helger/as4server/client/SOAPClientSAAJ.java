@@ -105,10 +105,11 @@ public class SOAPClientSAAJ
 
           final CreateSignedMessage aSigned = new CreateSignedMessage ();
           final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                              aAttachments)
-                                                                                                                                               .getAsSOAPDocument (aPayload),
+                                                                                                                                                                              aPayload,
+                                                                                                                                                                              aAttachments),
                                                                                                                                    ESOAPVersion.SOAP_12,
-                                                                                                                                   aAttachments),
+                                                                                                                                   aAttachments,
+                                                                                                                                   false),
                                                                                                       aAttachments);
 
           // Move all global mime headers to the POST request

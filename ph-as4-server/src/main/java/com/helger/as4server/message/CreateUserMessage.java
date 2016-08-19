@@ -3,6 +3,8 @@ package com.helger.as4server.message;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.w3c.dom.Node;
+
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -20,7 +22,6 @@ import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 
 /**
@@ -122,49 +123,60 @@ public class CreateUserMessage
   }
 
   /**
-   * Add payload info if attachments are present. <br>
-   * TODO is this also needed if a payload is present?
+   * Add payload info if attachments are present.
    *
+   * @param aPayload
+   *        Optional SOAP body payload
    * @param aAttachments
    *        Used attachments
    * @return <code>null</code> if no attachments are present.
    */
   @Nullable
-  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
+                                                  @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
   {
-    if (CollectionHelper.isEmpty (aAttachments))
-      return null;
-
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
-    for (final IAS4Attachment aAttachment : aAttachments)
-    {
-      final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+
+    if (aPayload != null)
+      aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
+
+    if (aAttachments != null)
+      for (final IAS4Attachment aAttachment : aAttachments)
       {
-        final Ebms3Property aMimeType = new Ebms3Property ();
-        aMimeType.setName ("MimeType");
-        aMimeType.setValue (aAttachment.getMimeType ().getAsString ());
-        aEbms3PartProperties.addProperty (aMimeType);
-      }
-      if (aAttachment.hasCharset ())
-      {
-        final Ebms3Property aCharacterSet = new Ebms3Property ();
-        aCharacterSet.setName ("CharacterSet");
-        aCharacterSet.setValue (aAttachment.getCharset ().name ());
-        aEbms3PartProperties.addProperty (aCharacterSet);
-      }
-      if (aAttachment.hasCompressionMode ())
-      {
-        final Ebms3Property aCompressionType = new Ebms3Property ();
-        aCompressionType.setName ("CompressionType");
-        aCompressionType.setValue (aAttachment.getCompressionMode ().getMimeTypeAsString ());
-        aEbms3PartProperties.addProperty (aCompressionType);
+        final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+        {
+          final Ebms3Property aMimeType = new Ebms3Property ();
+          aMimeType.setName ("MimeType");
+          aMimeType.setValue (aAttachment.getMimeType ().getAsString ());
+          aEbms3PartProperties.addProperty (aMimeType);
+        }
+        if (aAttachment.hasCharset ())
+        {
+          final Ebms3Property aCharacterSet = new Ebms3Property ();
+          aCharacterSet.setName ("CharacterSet");
+          aCharacterSet.setValue (aAttachment.getCharset ().name ());
+          aEbms3PartProperties.addProperty (aCharacterSet);
+        }
+        if (aAttachment.hasCompressionMode ())
+        {
+          final Ebms3Property aCompressionType = new Ebms3Property ();
+          aCompressionType.setName ("CompressionType");
+          aCompressionType.setValue (aAttachment.getCompressionMode ().getMimeTypeAsString ());
+          aEbms3PartProperties.addProperty (aCompressionType);
+        }
+
+        final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
+        aEbms3PartInfo.setHref ("cid:" + aAttachment.getID ());
+        aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
+        aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
       }
 
-      final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
-      aEbms3PartInfo.setHref ("cid:" + aAttachment.getID ());
-      aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
-      aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
+    if (aEbms3PayloadInfo.getPartInfoCount () == 0)
+    {
+      // Neither payload nor attachments
+      return null;
     }
+
     return aEbms3PayloadInfo;
   }
 
