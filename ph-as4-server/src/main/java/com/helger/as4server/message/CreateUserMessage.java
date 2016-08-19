@@ -164,8 +164,11 @@ public class CreateUserMessage
    * <eb:Property name="CompressionType">application/gzip</eb:Property>
    * </eb:PartProperties> </eb:PartInfo>
    *
-   * @return
+   * @param aAttachments
+   *        Used attachments
+   * @return Never <code>null</code>.
    */
+  @Nonnull
   public Ebms3PayloadInfo createEbms3PayloadInfo (@Nonnull final Iterable <? extends IAS4Attachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();

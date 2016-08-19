@@ -3,7 +3,9 @@ package com.helger.as4lib.marshaller;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.jaxb.builder.JAXBWriterBuilder;
@@ -23,9 +25,9 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
   {
     super (eDocType);
     final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
-    aNSCtx.addMapping ("eb", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/");
-    aNSCtx.addMapping ("S11", "http://schemas.xmlsoap.org/soap/envelope/");
-    aNSCtx.addMapping ("S12", "http://www.w3.org/2003/05/soap-envelope");
+    aNSCtx.addMapping ("eb", CAS4.EBMS_NS);
+    for (final ESOAPVersion e : ESOAPVersion.values ())
+      aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
     setNamespaceContext (aNSCtx);
   }
 

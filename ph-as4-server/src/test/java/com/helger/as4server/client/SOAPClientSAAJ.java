@@ -84,17 +84,18 @@ public class SOAPClientSAAJ
       // aPost.addHeader ("SOAPAction", "\"msh\"");
       // TODO atm only calls testMessage
 
+      final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+
       // No Mime Message, just SOAP + Payload in SOAP - Body
       if (false)
       {
-        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11);
+        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, aAttachments);
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
         if (true)
         {
-          final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> (new AS4FileAttachment (new File ("data/test.xml.gz"),
-                                                                                                            CMimeType.APPLICATION_GZIP));
+          aAttachments.add (new AS4FileAttachment (new File ("data/test.xml.gz"), CMimeType.APPLICATION_GZIP));
 
           final CreateSignedMessage aSigned = new CreateSignedMessage ();
           final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
@@ -117,7 +118,8 @@ public class SOAPClientSAAJ
         // Normal SOAP - Message with Body Payload as Mime Message
         else
         {
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (ESOAPVersion.SOAP_11),
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (ESOAPVersion.SOAP_11,
+                                                                                                        aAttachments),
                                                                           ESOAPVersion.SOAP_11);
 
           final Enumeration <?> e = aMsg.getAllHeaders ();

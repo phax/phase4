@@ -1,7 +1,5 @@
 package com.helger.as4server.message;
 
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -76,31 +74,31 @@ public class CreateSignedMessage
    * This method must be used if the message does not contain attachments, that
    * should be in a additional mime message part.
    *
-   * @param aDocument
+   * @param aPreSigningMessage
+   *        SOAP Document before signing
    * @param eSOAPVersion
-   * @return
+   *        SOAP version to use
+   * @param aAttachments
+   *        Optional list of attachments
+   * @return The created signed SOAP document
    * @throws WSSecurityException
+   *         If an error occurs during signing
    */
-  public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
-                                       @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
-  {
-    return createSignedMessage (aPreSigningMessage, eSOAPVersion, null);
-  }
-
+  @Nonnull
   public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
                                        @Nonnull final ESOAPVersion eSOAPVersion,
-                                       @Nullable final Collection <? extends IAS4Attachment> aAttachments) throws WSSecurityException
+                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
     final WSSecSignature aBuilder = _getBasicBuilder ();
 
     if (CollectionHelper.isNotEmpty (aAttachments))
     {
       // Modify builder for attachments
-
       aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
       // XXX where is this ID used????
       aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
 
+      // Convert to WSS4J attachments
       final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
                                                                                   IAS4Attachment::getAsWSS4JAttachment);
 

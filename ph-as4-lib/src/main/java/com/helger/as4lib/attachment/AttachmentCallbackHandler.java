@@ -20,12 +20,9 @@
 package com.helger.as4lib.attachment;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -34,75 +31,85 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
 
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.CommonsHashMap;
+import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsMap;
+
 /**
  * A Callback Handler implementation for the case of signing/encrypting
  * Attachments via the SwA (SOAP with Attachments) specification or when using
  * xop:Include in the case of MTOM.
+ *
+ * @author Apache WSS4J
  */
 public class AttachmentCallbackHandler implements CallbackHandler
 {
-  private final List <Attachment> originalRequestAttachments;
-  private final Map <String, Attachment> attachmentMap = new HashMap<> ();
-  private final List <Attachment> responseAttachments = new ArrayList<> ();
+  private final ICommonsList <Attachment> m_aOriginalRequestAttachments = new CommonsArrayList<> ();
+  private final ICommonsMap <String, Attachment> m_aAttachmentMap = new CommonsHashMap<> ();
+  private final ICommonsList <Attachment> m_aResponseAttachments = new CommonsArrayList<> ();
 
   public AttachmentCallbackHandler ()
-  {
-    originalRequestAttachments = Collections.emptyList ();
-  }
+  {}
 
-  public AttachmentCallbackHandler (final List <Attachment> attachments)
+  public AttachmentCallbackHandler (@Nullable final Iterable <Attachment> aAttachments)
   {
-    originalRequestAttachments = attachments;
-    if (attachments != null)
-      for (final Attachment attachment : attachments)
-        attachmentMap.put (attachment.getId (), attachment);
-  }
-
-  public void handle (final Callback [] callbacks) throws IOException, UnsupportedCallbackException
-  {
-    for (final Callback callback : callbacks)
-    {
-      if (callback instanceof AttachmentRequestCallback)
+    if (aAttachments != null)
+      for (final Attachment aAttachment : aAttachments)
       {
-        final AttachmentRequestCallback attachmentRequestCallback = (AttachmentRequestCallback) callback;
+        m_aOriginalRequestAttachments.add (aAttachment);
+        m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
+      }
+  }
 
-        final List <Attachment> attachments = getAttachmentsToAdd (attachmentRequestCallback.getAttachmentId ());
-        if (attachments.isEmpty ())
-        {
-          throw new RuntimeException ("wrong attachment requested");
-        }
+  // Try to match the Attachment Id. Otherwise, add all Attachments.
+  @Nonnull
+  @ReturnsMutableCopy
+  private ICommonsList <Attachment> _getAttachmentsToAdd (final String sID)
+  {
+    final ICommonsList <Attachment> attachments = new CommonsArrayList<> ();
+    if (m_aAttachmentMap.containsKey (sID))
+      attachments.add (m_aAttachmentMap.get (sID));
+    else
+      attachments.addAll (m_aOriginalRequestAttachments);
+    return attachments;
+  }
 
-        attachmentRequestCallback.setAttachments (attachments);
+  public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
+  {
+    for (final Callback aCallback : aCallbacks)
+    {
+      if (aCallback instanceof AttachmentRequestCallback)
+      {
+        final AttachmentRequestCallback aAttachmentRequestCallback = (AttachmentRequestCallback) aCallback;
+
+        final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
+        final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
+        if (aAttachments.isEmpty ())
+          throw new RuntimeException ("wrong attachment requested (ID=" + sAttachmentID + ")");
+
+        aAttachmentRequestCallback.setAttachments (aAttachments);
       }
       else
-        if (callback instanceof AttachmentResultCallback)
+        if (aCallback instanceof AttachmentResultCallback)
         {
-          final AttachmentResultCallback attachmentResultCallback = (AttachmentResultCallback) callback;
-          responseAttachments.add (attachmentResultCallback.getAttachment ());
-          attachmentMap.put (attachmentResultCallback.getAttachment ().getId (),
-                             attachmentResultCallback.getAttachment ());
+          final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
+          final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
+          m_aResponseAttachments.add (aResponseAttachment);
+          m_aAttachmentMap.put (aResponseAttachment.getId (), aResponseAttachment);
         }
         else
         {
-          throw new UnsupportedCallbackException (callback, "Unrecognized Callback");
+          throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback");
         }
     }
   }
 
-  public List <Attachment> getResponseAttachments ()
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <Attachment> getResponseAttachments ()
   {
-    return responseAttachments;
-  }
-
-  // Try to match the Attachment Id. Otherwise, add all Attachments.
-  private List <Attachment> getAttachmentsToAdd (final String id)
-  {
-    final List <Attachment> attachments = new ArrayList<> ();
-    if (attachmentMap.containsKey (id))
-      attachments.add (attachmentMap.get (id));
-    else
-      if (originalRequestAttachments != null)
-        attachments.addAll (originalRequestAttachments);
-    return attachments;
+    return m_aResponseAttachments.getClone ();
   }
 }

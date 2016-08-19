@@ -8,6 +8,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
@@ -48,10 +49,11 @@ import com.helger.mail.cte.EContentTransferEncoding;
 public class TestMessages
 {
   // TODO testMessage for developing delete if not needed anymore
-  public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException,
-                                                                                    IOException,
-                                                                                    SAXException,
-                                                                                    ParserConfigurationException
+  public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
+                                                                                                            IOException,
+                                                                                                            SAXException,
+                                                                                                            ParserConfigurationException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
@@ -82,11 +84,13 @@ public class TestMessages
                                                                                              aUserMessage.createEbms3MessageProperties (aEbms3Properties),
                                                                                              "SOAPBodyPayload.xml",
                                                                                              eSOAPVersion),
-                                                             eSOAPVersion);
+                                                             eSOAPVersion,
+                                                             aAttachments);
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
+  public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
@@ -95,20 +99,22 @@ public class TestMessages
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
                                                                                                aEbms3ErrorList,
                                                                                                eSOAPVersion),
-                                                             eSOAPVersion);
+                                                             eSOAPVersion,
+                                                             aAttachments);
     return aSignedDoc;
   }
 
-  public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException,
-                                                                                       DOMException,
-                                                                                       IOException,
-                                                                                       SAXException,
-                                                                                       ParserConfigurationException
+  public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                             @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
+                                                                                                               DOMException,
+                                                                                                               IOException,
+                                                                                                               SAXException,
+                                                                                                               ParserConfigurationException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
     aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
 
-    final Document aUserMessage = testUserMessage (eSOAPVersion);
+    final Document aUserMessage = testUserMessage (eSOAPVersion, aAttachments);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
@@ -117,20 +123,21 @@ public class TestMessages
                                                                 aUserMessage,
                                                                 eSOAPVersion);
 
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion);
+    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments);
     return aSignedDoc;
   }
 
   /**
    * JUST FOR TESTING
    *
+   * @param eSOAPVersion
+   *        SOAP version
    * @return MIME message
    * @throws MessagingException
    *         if MIME problems occur
    */
-  public static MimeMessage testMIMEMessage () throws MessagingException
+  public static MimeMessage testMIMEMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws MessagingException
   {
-    final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
     final MimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
 
     {
