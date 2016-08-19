@@ -18,7 +18,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.messaging.AS4UserMessage;
+import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;

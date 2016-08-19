@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.messaging.AS4PullRequestMessage;
+import com.helger.as4lib.message.AS4PullRequestMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 
 public class CreatePullRequestMessage

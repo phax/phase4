@@ -1,4 +1,4 @@
-package com.helger.as4lib.messaging;
+package com.helger.as4lib.message;
 
 import java.io.Serializable;
 

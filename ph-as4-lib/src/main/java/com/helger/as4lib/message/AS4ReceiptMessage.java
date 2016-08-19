@@ -1,4 +1,4 @@
-package com.helger.as4lib.messaging;
+package com.helger.as4lib.message;
 
 import javax.annotation.Nonnull;
 
@@ -7,14 +7,13 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 
 /**
- * AS4 pull request message
- *
+ * AS4 receipt message
+ * 
  * @author Philip Helger
  */
-public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMessage>
+public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
-  public AS4PullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSOAPVersion);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
