@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.helger.as4lib.soap.ESOAPVersion;
 
@@ -36,9 +36,9 @@ public interface IAS4Message extends Serializable
   @Nonnull
   default Document getAsSOAPDocument ()
   {
-    return getAsSOAPDocument ((Element) null);
+    return getAsSOAPDocument ((Node) null);
   }
 
   @Nonnull
-  Document getAsSOAPDocument (@Nullable Element aPayload);
+  Document getAsSOAPDocument (@Nullable Node aPayload);
 }

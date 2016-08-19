@@ -50,8 +50,6 @@ import com.helger.commons.io.resource.ClassPathResource;
  */
 public class SignatureTest
 {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (SignatureTest.class);
-
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
   private Crypto crypto = null;
 
@@ -87,7 +85,9 @@ public class SignatureTest
 
     final WSHandlerResult results = verify (signedDoc);
 
-    final WSSecurityEngineResult actionResult = results.getActionResults ().get (WSConstants.SIGN).get (0);
+    final WSSecurityEngineResult actionResult = results.getActionResults ()
+                                                       .get (Integer.valueOf (WSConstants.SIGN))
+                                                       .get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);

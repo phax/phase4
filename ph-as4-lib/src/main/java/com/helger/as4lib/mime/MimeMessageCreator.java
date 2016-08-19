@@ -50,9 +50,6 @@ public final class MimeMessageCreator
     message.setContent (aMimeMultipart);
     message.saveChanges ();
 
-    if (false)
-      message.writeTo (System.err);
-
     return message;
   }
 }

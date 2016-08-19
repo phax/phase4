@@ -122,11 +122,8 @@ public class CreateUserMessage
   }
 
   /**
-   * TODO make dynamic ok<eb:PartInfo href="cid:test-xml"> <eb:PartProperties>
-   * <eb:Property name="MimeType">application/xml</eb:Property>
-   * <eb:Property name="CharacterSet">utf-8</eb:Property>
-   * <eb:Property name="CompressionType">application/gzip</eb:Property>
-   * </eb:PartProperties> </eb:PartInfo>
+   * Add payload info if attachments are present. <br>
+   * TODO is this also needed if a payload is present?
    *
    * @param aAttachments
    *        Used attachments

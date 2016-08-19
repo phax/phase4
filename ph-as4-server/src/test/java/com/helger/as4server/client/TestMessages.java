@@ -1,7 +1,6 @@
 package com.helger.as4server.client;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
 import javax.activation.DataHandler;
@@ -14,13 +13,11 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -31,6 +28,7 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
+import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
@@ -51,11 +49,8 @@ public class TestMessages
 {
   // TODO testMessage for developing delete if not needed anymore
   public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nullable final Element aPayload,
-                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
-                                                                                                            IOException,
-                                                                                                            SAXException,
-                                                                                                            ParserConfigurationException
+                                          @Nullable final Node aPayload,
+                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final CreateSignedMessage aClient = new CreateSignedMessage ();
@@ -109,16 +104,10 @@ public class TestMessages
   }
 
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                             @Nullable final Element aPayload,
+                                             @Nullable final Node aPayload,
                                              @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
-                                                                                                               DOMException,
-                                                                                                               IOException,
-                                                                                                               SAXException,
-                                                                                                               ParserConfigurationException
+                                                                                                               DOMException
   {
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> ();
-    aEbms3ErrorList.add (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
-
     final Document aUserMessage = testUserMessage (eSOAPVersion, aPayload, aAttachments);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
@@ -209,10 +198,8 @@ public class TestMessages
     return message;
   }
 
-  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                       @Nonnull final Iterable <? extends IAS4Attachment> aAttachments) throws SAXException,
-                                                                                                                        IOException,
-                                                                                                                        ParserConfigurationException
+  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                             @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -241,14 +228,13 @@ public class TestMessages
                                                                               "APP_1000000101");
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
-    final Document aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                          aEbms3PayloadInfo,
-                                                          aEbms3CollaborationInfo,
-                                                          aEbms3PartyInfo,
-                                                          aEbms3MessageProperties,
-                                                          eSOAPVersion)
-                                      .setMustUnderstand (false)
-                                      .getAsSOAPDocument ();
+    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                aEbms3PayloadInfo,
+                                                                aEbms3CollaborationInfo,
+                                                                aEbms3PartyInfo,
+                                                                aEbms3MessageProperties,
+                                                                eSOAPVersion)
+                                            .setMustUnderstand (false);
     return aDoc;
   }
 }

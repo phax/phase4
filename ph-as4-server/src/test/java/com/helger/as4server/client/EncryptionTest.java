@@ -52,8 +52,6 @@ import com.helger.commons.io.resource.ClassPathResource;
 public class EncryptionTest
 {
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
-  private static final javax.xml.namespace.QName SOAP_BODY = new javax.xml.namespace.QName (WSConstants.URI_SOAP11_ENV,
-                                                                                            "Body");
 
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
   private byte [] keyData;

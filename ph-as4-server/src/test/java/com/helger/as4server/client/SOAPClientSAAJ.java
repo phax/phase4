@@ -33,6 +33,7 @@ import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
@@ -52,6 +53,7 @@ import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;
+import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPClientSAAJ
@@ -60,8 +62,11 @@ public class SOAPClientSAAJ
 
   /**
    * Starting point for the SAAJ - SOAP Client Testing
+   *
+   * @param args
+   *        ignored
    */
-  public static void main (final String args[])
+  public static void main (final String [] args)
   {
     try
     {
@@ -85,11 +90,12 @@ public class SOAPClientSAAJ
       // TODO atm only calls testMessage
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+      final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message, just SOAP + Payload in SOAP - Body
       if (false)
       {
-        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, null, aAttachments);
+        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, aPayload, aAttachments);
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
@@ -99,7 +105,8 @@ public class SOAPClientSAAJ
 
           final CreateSignedMessage aSigned = new CreateSignedMessage ();
           final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                              aAttachments),
+                                                                                                                                                                              aAttachments)
+                                                                                                                                               .getAsSOAPDocument (aPayload),
                                                                                                                                    ESOAPVersion.SOAP_12,
                                                                                                                                    aAttachments),
                                                                                                       aAttachments);

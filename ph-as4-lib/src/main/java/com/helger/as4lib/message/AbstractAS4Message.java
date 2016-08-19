@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
@@ -54,9 +54,10 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   }
 
   @Nonnull
-  public final Document getAsSOAPDocument (@Nullable final Element aPayload)
+  public final Document getAsSOAPDocument (@Nullable final Node aPayload)
   {
     final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (m_aMessaging);
+    final Node aRealPayload = aPayload instanceof Document ? ((Document) aPayload).getDocumentElement () : aPayload;
 
     switch (m_eSOAPVersion)
     {
@@ -67,8 +68,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.setHeader (new Soap11Header ());
         aSoapEnv.setBody (new Soap11Body ());
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
-        if (aPayload != null)
-          aSoapEnv.getBody ().addAny (aPayload);
+        if (aRealPayload != null)
+          aSoapEnv.getBody ().addAny (aRealPayload);
         return Ebms3WriterBuilder.soap11 ().getAsDocument (aSoapEnv);
       }
       case SOAP_12:
@@ -78,8 +79,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         aSoapEnv.setHeader (new Soap12Header ());
         aSoapEnv.setBody (new Soap12Body ());
         aSoapEnv.getHeader ().addAny (aEbms3Document.getDocumentElement ());
-        if (aPayload != null)
-          aSoapEnv.getBody ().addAny (aPayload);
+        if (aRealPayload != null)
+          aSoapEnv.getBody ().addAny (aRealPayload);
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
       }
       default:

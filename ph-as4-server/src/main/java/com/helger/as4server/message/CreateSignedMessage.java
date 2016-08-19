@@ -49,25 +49,9 @@ public class CreateSignedMessage
                           CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (MessageHelperMethods.SIGNATURE_ALGORITHM_RSA_SHA256);
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
+    // TODO DONT FORGET: PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (MessageHelperMethods.DIGEST_ALGORITHM_SHA256);
     return aBuilder;
-  }
-
-  @Nonnull
-  private Document _signDocument (@Nonnull final WSSecSignature aBuilder,
-                                  @Nonnull final Document aPreSigningMessage,
-                                  @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
-  {
-    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
-    aSecHeader.insertSecurityHeader ();
-
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
-    if (aMustUnderstand != null)
-      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (false));
-
-    return aBuilder.build (aPreSigningMessage, m_aCrypto, aSecHeader);
   }
 
   /**
@@ -106,6 +90,17 @@ public class CreateSignedMessage
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
-    return _signDocument (aBuilder, aPreSigningMessage, eSOAPVersion);
+    // Start signing the document
+    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
+    aSecHeader.insertSecurityHeader ();
+    if (false)
+    {
+      // XXX This should have be handled outside
+      final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
+                                                                                       "mustUnderstand");
+      if (aMustUnderstand != null)
+        aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (false));
+    }
+    return aBuilder.build (aPreSigningMessage, m_aCrypto, aSecHeader);
   }
 }
