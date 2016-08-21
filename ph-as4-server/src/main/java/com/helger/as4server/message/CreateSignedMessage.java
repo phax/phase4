@@ -64,6 +64,8 @@ public class CreateSignedMessage
    *        SOAP version to use
    * @param aAttachments
    *        Optional list of attachments
+   * @param bMustUnderstand
+   *        Must understand
    * @return The created signed SOAP document
    * @throws WSSecurityException
    *         If an error occurs during signing
