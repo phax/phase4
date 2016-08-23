@@ -18,10 +18,6 @@ import com.helger.mail.cte.EContentTransferEncoding;
  */
 public abstract class AbstractAS4Attachment implements IAS4Attachment
 {
-  // Special http header names
-  protected static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-  protected static final String CONTENT_ID = "Content-ID";
-
   private final String m_sID;
   private Charset m_aCharset;
   private final IMimeType m_aMimeType;

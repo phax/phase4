@@ -42,9 +42,9 @@ public class AS4FileAttachment extends AbstractAS4Attachment
 
     final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
     aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
-    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, getMimeType ().getAsString ());
-    aMimeBodyPart.setHeader (CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
-    aMimeBodyPart.setHeader (CONTENT_ID, getID ());
+    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
+    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
+    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, getID ());
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
 
