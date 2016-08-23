@@ -57,6 +57,9 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   public final Document getAsSOAPDocument (@Nullable final Node aPayload)
   {
     final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (m_aMessaging);
+    if (aEbms3Document == null)
+      throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
+
     final Node aRealPayload = aPayload instanceof Document ? ((Document) aPayload).getDocumentElement () : aPayload;
 
     switch (m_eSOAPVersion)
@@ -84,7 +87,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
       }
       default:
-        throw new IllegalArgumentException ("Unsupported SOAP version!");
+        throw new IllegalStateException ("Unsupported SOAP version!");
     }
   }
 

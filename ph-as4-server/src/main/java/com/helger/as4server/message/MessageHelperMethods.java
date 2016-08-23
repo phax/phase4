@@ -1,13 +1,19 @@
 package com.helger.as4server.message;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+import javax.mail.Header;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.HttpMessage;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -22,10 +28,14 @@ import com.helger.datetime.util.PDTXMLConverter;
  *
  * @author bayerlma
  */
-public class MessageHelperMethods
+@Immutable
+public final class MessageHelperMethods
 {
   public static final String DIGEST_ALGORITHM_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
   public static final String SIGNATURE_ALGORITHM_RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+
+  private MessageHelperMethods ()
+  {}
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
@@ -47,5 +57,18 @@ public class MessageHelperMethods
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
     aMessageInfo.setRefToMessageId (sRefToMessageID);
     return aMessageInfo;
+  }
+
+  public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,
+                                                  @Nonnull final HttpMessage aHttpMsg) throws MessagingException
+  {
+    // Move all global mime headers to the POST request
+    final Enumeration <?> e = aMimeMsg.getAllHeaders ();
+    while (e.hasMoreElements ())
+    {
+      final Header h = (Header) e.nextElement ();
+      aHttpMsg.addHeader (h.getName (), h.getValue ());
+      aMimeMsg.removeHeader (h.getName ());
+    }
   }
 }

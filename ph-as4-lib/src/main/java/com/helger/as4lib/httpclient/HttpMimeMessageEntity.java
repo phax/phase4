@@ -39,7 +39,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 
   public boolean isStreaming ()
   {
-    return false;
+    return true;
   }
 
   public InputStream getContent () throws IOException

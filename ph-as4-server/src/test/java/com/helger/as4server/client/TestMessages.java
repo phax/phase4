@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.AttachmentUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -144,18 +145,18 @@ public class TestMessages
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       final byte [] aEBMSMsg = StreamHelper.getAllBytes (new ClassPathResource ("TestMimeMessage12.xml"));
       aMessagePart.setContent (aEBMSMsg, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
-      aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
+      aMessagePart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
 
     {
       // File Payload
       final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-      final File aAttachment = new File ("data/test.xml.gz");
+      final File aAttachment = ClassPathResource.getAsFile ("attachment/test.xml.gz");
       final DataSource fds = new FileDataSource (aAttachment);
       aMimeBodyPart.setDataHandler (new DataHandler (fds));
       aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
-      aMimeBodyPart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
+      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMimeBodyPart);
     }
 
@@ -176,19 +177,19 @@ public class TestMessages
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       final String aDoc = SerializerXML.serializeXML (aSoapEnvelope);
       aMessagePart.setContent (aDoc, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
-      aMessagePart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
+      aMessagePart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
 
     {
       // File Payload
       final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-      final File aAttachment = new File ("data/test.xml.gz");
+      final File aAttachment = ClassPathResource.getAsFile ("attachment/test.xml.gz");
       final DataSource fds = new FileDataSource (aAttachment);
       aMimeBodyPart.setDataHandler (new DataHandler (fds));
       aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
-      aMimeBodyPart.setHeader ("Content-Transfer-Encoding", EContentTransferEncoding.BINARY.getID ());
-      aMimeBodyPart.setHeader ("Content-ID", "test-xml");
+      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
+      aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "test-xml");
       aMimeMultipart.addBodyPart (aMimeBodyPart);
     }
 
@@ -230,6 +231,39 @@ public class TestMessages
                                                                               "APP_1000000101",
                                                                               "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                                                                               "APP_1000000101");
+    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                aEbms3PayloadInfo,
+                                                                aEbms3CollaborationInfo,
+                                                                aEbms3PartyInfo,
+                                                                aEbms3MessageProperties,
+                                                                eSOAPVersion)
+                                            .setMustUnderstand (false);
+    return aDoc.getAsSOAPDocument (aPayload);
+  }
+
+  @Nullable
+  public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                           @Nullable final Node aPayload,
+                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+  {
+    final CreateUserMessage aUserMessage = new CreateUserMessage ();
+
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
+    aEbms3Properties.add (aEbms3PropertyProcess);
+
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo (null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      null);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (null, null, null, null);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,

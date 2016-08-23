@@ -31,13 +31,12 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public class CreateUserMessage
 {
-  // TODO Payload as SOAP Body only supported
   @Nonnull
   public AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
                                            @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
                                            @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                            @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                           @Nonnull final Ebms3MessageProperties aEbms3MessageProperties,
+                                           @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
                                            @Nonnull final ESOAPVersion eSOAPVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
@@ -61,10 +60,10 @@ public class CreateUserMessage
     return ret;
   }
 
-  public Ebms3PartyInfo createEbms3PartyInfo (final String sFromRole,
-                                              final String sFromPartyID,
-                                              final String sToRole,
-                                              final String sToPartyID)
+  public Ebms3PartyInfo createEbms3PartyInfo (@Nonnull final String sFromRole,
+                                              @Nonnull final String sFromPartyID,
+                                              @Nonnull final String sToRole,
+                                              @Nonnull final String sToPartyID)
   {
     final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
 
@@ -90,12 +89,12 @@ public class CreateUserMessage
     return aEbms3PartyInfo;
   }
 
-  public Ebms3CollaborationInfo createEbms3CollaborationInfo (final String sAction,
-                                                              final String sServiceType,
-                                                              final String sServiceValue,
-                                                              final String sConversationID,
-                                                              final String sAgreementRefPMode,
-                                                              final String sAgreementRefValue)
+  public Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nonnull final String sAction,
+                                                              @Nonnull final String sServiceType,
+                                                              @Nonnull final String sServiceValue,
+                                                              @Nonnull final String sConversationID,
+                                                              @Nonnull final String sAgreementRefPMode,
+                                                              @Nonnull final String sAgreementRefValue)
   {
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
     aEbms3CollaborationInfo.setAction (sAction);
@@ -115,7 +114,7 @@ public class CreateUserMessage
     return aEbms3CollaborationInfo;
   }
 
-  public Ebms3MessageProperties createEbms3MessageProperties (final ICommonsList <Ebms3Property> aEbms3Properties)
+  public Ebms3MessageProperties createEbms3MessageProperties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);
@@ -180,7 +179,7 @@ public class CreateUserMessage
     return aEbms3PayloadInfo;
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (final String sMessageId)
+  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
   }

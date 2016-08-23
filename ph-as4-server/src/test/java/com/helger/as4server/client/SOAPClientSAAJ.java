@@ -1,20 +1,8 @@
 package com.helger.as4server.client;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-
-import javax.mail.Header;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPMessage;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -24,17 +12,8 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.wss4j.common.WSS4JConstants;
-import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
-import org.apache.wss4j.common.util.XMLUtils;
-import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.message.WSSecHeader;
-import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
@@ -54,7 +33,6 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPClientSAAJ
 {
@@ -101,7 +79,8 @@ public class SOAPClientSAAJ
       else
         if (true)
         {
-          aAttachments.add (new AS4FileAttachment (new File ("data/test.xml.gz"), CMimeType.APPLICATION_GZIP));
+          aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                   CMimeType.APPLICATION_GZIP));
 
           final CreateSignedMessage aSigned = new CreateSignedMessage ();
           final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
@@ -113,14 +92,7 @@ public class SOAPClientSAAJ
                                                                                                       aAttachments);
 
           // Move all global mime headers to the POST request
-          final Enumeration <?> e = aMsg.getAllHeaders ();
-          while (e.hasMoreElements ())
-          {
-            final Header h = (Header) e.nextElement ();
-            aPost.addHeader (h.getName (), h.getValue ());
-            aMsg.removeHeader (h.getName ());
-          }
-
+          MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
         // Normal SOAP - Message with Body Payload as Mime Message
@@ -130,14 +102,7 @@ public class SOAPClientSAAJ
                                                                                                         null,
                                                                                                         aAttachments),
                                                                           ESOAPVersion.SOAP_11);
-
-          final Enumeration <?> e = aMsg.getAllHeaders ();
-          while (e.hasMoreElements ())
-          {
-            final Header h = (Header) e.nextElement ();
-            aPost.addHeader (h.getName (), h.getValue ());
-            aMsg.removeHeader (h.getName ());
-          }
+          MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
 
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
@@ -150,12 +115,12 @@ public class SOAPClientSAAJ
 
       System.out.println (EntityUtils.toString (aPost.getEntity ()));
 
-      final CloseableHttpResponse httpResponse = aClient.execute (aPost);
+      final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);
 
-      System.out.println ("GET Response Status:: " + httpResponse.getStatusLine ().getStatusCode ());
+      System.out.println ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
 
       // print result
-      System.out.println (EntityUtils.toString (httpResponse.getEntity ()));
+      System.out.println (EntityUtils.toString (aHttpResponse.getEntity ()));
     }
     catch (final Exception e)
     {
@@ -163,73 +128,4 @@ public class SOAPClientSAAJ
       e.printStackTrace ();
     }
   }
-
-  private static SOAPMessage _createSOAPRequest11 () throws Exception
-  {
-    final MessageFactory messageFactory = MessageFactory.newInstance (SOAPConstants.SOAP_1_1_PROTOCOL);
-    final SOAPMessage soapMessage = messageFactory.createMessage (new MimeHeaders (),
-                                                                  ClassPathResource.getInputStream ("UserMessage.xml"));
-
-    /* Print the request message */
-    System.out.print ("Request SOAP Message = ");
-    soapMessage.writeTo (System.out);
-    System.out.println ();
-
-    return soapMessage;
-  }
-
-  private static SOAPMessage _createSOAPRequest12 () throws Exception
-  {
-    final MessageFactory messageFactory = MessageFactory.newInstance (SOAPConstants.SOAP_1_2_PROTOCOL);
-    final SOAPMessage soapMessage = messageFactory.createMessage (new MimeHeaders (),
-                                                                  ClassPathResource.getInputStream ("UserMessage12.xml"));
-
-    /* Print the request message */
-    System.out.print ("Request SOAP Message = ");
-    soapMessage.writeTo (System.out);
-    System.out.println ();
-
-    return soapMessage;
-  }
-
-  /**
-   * Method used to print the SOAP Response
-   */
-  private static void _printSOAPResponse (final SOAPMessage soapResponse) throws Exception
-  {
-    System.out.print (XMLWriter.getNodeAsString (soapResponse.getSOAPPart (), SerializerXML.XWS));
-    // final TransformerFactory transformerFactory =
-    // TransformerFactory.newInstance ();
-    // final Transformer transformer = transformerFactory.newTransformer ();
-    // final Source sourceContent = soapResponse.getSOAPPart ().getContent ();
-    // System.out.print ("\nResponse SOAP Message = ");
-    // final StreamResult result = new StreamResult (System.out);
-    // transformer.transform (sourceContent, result);
-  }
-
-  private static String _getSignedSoapMessage () throws Exception
-  {
-    WSSConfig.init ();
-    final Crypto crypto = CryptoFactory.getInstance ();
-    final WSSecSignature builder = new WSSecSignature ();
-    builder.setUserInfo (CF.getAsString ("key.alias"), CF.getAsString ("key.password"));
-    builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
-    builder.setDigestAlgo (WSS4JConstants.SHA256);
-    final Document doc = _getSoapEnvelope11 ();
-    final WSSecHeader secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
-    final Document signedDoc = builder.build (doc, crypto, secHeader);
-    return XMLUtils.prettyDocumentToString (signedDoc);
-  }
-
-  private static Document _getSoapEnvelope11 () throws SAXException, IOException, ParserConfigurationException
-  {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
-  }
-
 }
