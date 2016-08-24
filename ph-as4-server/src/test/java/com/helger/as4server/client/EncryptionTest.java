@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 
 /**
@@ -88,21 +89,23 @@ public class EncryptionTest
    *         Thrown when there is any problem in signing or verification
    */
   @Test
-  public void testEncryptionDecryptionRSA15 () throws Exception
+  public void testEncryptionDecryptionAES128GCM () throws Exception
   {
     final WSSecEncrypt builder = new WSSecEncrypt ();
     builder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128);
+    builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     builder.setSymmetricKey (null);
-    builder.setUserInfo ("app_1000000101_test", "nosecrets");
+    builder.setUserInfo (SOAPClientSAAJ.CF.getAsString ("encrypt.alias"),
+                         SOAPClientSAAJ.CF.getAsString ("encrypt.password"));
 
     final Document doc = _getSoapEnvelope11 ();
     WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
 
-    final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
-                                                        "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
-                                                        "Element");
+    // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
+    // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+    // "Element");
+    final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESOAPVersion.SOAP_11.getNamespaceURI (), "Element");
     builder.getParts ().add (encP);
     secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();

@@ -42,6 +42,7 @@ import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
 import com.helger.as4server.client.TestMessages;
+import com.helger.as4server.encrypt.EncryptionCreator;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -102,6 +103,18 @@ public class SendingUserMessageTest
   }
 
   @Test
+  public void testUserMessageWithSOAPBodyPayloadNoMimeEncryptedSuccess () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+
+    aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
+    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSuccess () throws Exception
   {
     final Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, null, null);
@@ -137,6 +150,7 @@ public class SendingUserMessageTest
                                                                                                                        false),
                                                                                           aAttachments);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
+    aMsg.writeTo (System.err);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -159,6 +173,27 @@ public class SendingUserMessageTest
                                                                                                                        aAttachments,
                                                                                                                        false),
                                                                                           aAttachments);
+    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
+    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+  }
+
+  @Test
+  public void testUserMessageWithMimeEncryptedSuccess () throws Exception
+  {
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                             CMimeType.APPLICATION_GZIP));
+
+    final CreateSignedMessage aSigned = new CreateSignedMessage ();
+    MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                                            null,
+                                                                                                                                                            aAttachments),
+                                                                                                                 m_eSOAPVersion,
+                                                                                                                 aAttachments,
+                                                                                                                 false),
+                                                                                    aAttachments);
+    aMsg = new EncryptionCreator ().encryptMimeMessageAttachments (aMsg);
+    aMsg.writeTo (System.err);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -227,6 +262,33 @@ public class SendingUserMessageTest
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testSendUnsignedMessageSuccess () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+
+    System.out.println (SerializerXML.serializeXML (aDoc));
+    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
+  public void testFalsePartyIDToTriggerPModeError () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aDoc = TestMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
+
+    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
+                  false,
+                  EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+  }
+
+  @Test
+  public void testSendEncryptedMessage ()
+  {
+
   }
 
   private void _sendMessage (final HttpEntity aHttpEntity,

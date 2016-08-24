@@ -18,15 +18,13 @@ import org.w3c.dom.Document;
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.encrypt.CryptoConfigBuilder;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.settings.exchange.configfile.ConfigFile;
-import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 
 public class CreateSignedMessage
 {
-  public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("crypto.properties").build ();
 
   static
   {
@@ -45,8 +43,8 @@ public class CreateSignedMessage
   private WSSecSignature _getBasicBuilder ()
   {
     final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
-                          CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
+    aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
+                          CryptoConfigBuilder.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (MessageHelperMethods.SIGNATURE_ALGORITHM_RSA_SHA256);
     // TODO DONT FORGET: PMode indicates the DigestAlgorithm as Hash Function
