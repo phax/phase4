@@ -89,7 +89,8 @@ public class SOAPClientSAAJ
                                                                                                                                    ESOAPVersion.SOAP_12,
                                                                                                                                    aAttachments,
                                                                                                                                    false),
-                                                                                                      aAttachments);
+                                                                                                      aAttachments,
+                                                                                                      false);
 
           // Move all global mime headers to the POST request
           MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);

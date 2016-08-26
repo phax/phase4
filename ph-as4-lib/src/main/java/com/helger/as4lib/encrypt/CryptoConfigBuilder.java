@@ -1,4 +1,4 @@
-package com.helger.as4server.encrypt;
+package com.helger.as4lib.encrypt;
 
 import com.helger.settings.exchange.configfile.ConfigFile;
 import com.helger.settings.exchange.configfile.ConfigFileBuilder;

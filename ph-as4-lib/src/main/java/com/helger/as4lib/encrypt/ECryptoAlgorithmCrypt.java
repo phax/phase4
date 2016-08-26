@@ -30,7 +30,7 @@
  * are those of the authors and should not be interpreted as representing
  * official policies, either expressed or implied, of the FreeBSD Project.
  */
-package com.helger.as4server.encrypt;
+package com.helger.as4lib.encrypt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +56,13 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
   CRYPT_RC2 ("rc2", PKCSObjectIdentifiers.RC2_CBC),
   AES_128_CBC ("aes128-cbc", CMSAlgorithm.AES128_CBC),
   AES_128_CCM ("aes128-ccm", CMSAlgorithm.AES128_CCM),
-  AES_128_GCM ("aes128-gcm", CMSAlgorithm.AES128_GCM);
+  AES_128_GCM ("aes128-gcm", CMSAlgorithm.AES128_GCM),
+  AES_192_CBC ("aes192-cbc", CMSAlgorithm.AES192_CBC),
+  AES_192_CCM ("aes192-ccm", CMSAlgorithm.AES192_CCM),
+  AES_192_GCM ("aes192-gcm", CMSAlgorithm.AES192_GCM),
+  AES_256_CBC ("aes256-cbc", CMSAlgorithm.AES256_CBC),
+  AES_256_CCM ("aes256-ccm", CMSAlgorithm.AES256_CCM),
+  AES_256_GCM ("aes256-gcm", CMSAlgorithm.AES256_GCM);
 
   private final String m_sID;
   private final ASN1ObjectIdentifier m_aOID;

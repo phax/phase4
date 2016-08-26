@@ -17,8 +17,8 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.encrypt.CryptoConfigBuilder;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.encrypt.CryptoConfigBuilder;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;

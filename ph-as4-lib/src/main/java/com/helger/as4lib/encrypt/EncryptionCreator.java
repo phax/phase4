@@ -1,10 +1,12 @@
-package com.helger.as4server.encrypt;
+package com.helger.as4lib.encrypt;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.mail.MessagingException;
@@ -16,6 +18,7 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.crypto.CryptoType;
+import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -33,9 +36,14 @@ import org.bouncycastle.operator.OutputEncryptor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
+import com.helger.as4lib.attachment.AttachmentCallbackHandler;
+import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 
 public class EncryptionCreator
 {
@@ -67,8 +75,7 @@ public class EncryptionCreator
     aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("encrypt.alias"),
                           CryptoConfigBuilder.CF.getAsString ("encrypt.password"));
 
-    final WSEncryptionPart encP = new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content");
-    aBuilder.getParts ().add (encP);
+    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
     final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
@@ -76,6 +83,50 @@ public class EncryptionCreator
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
     return aBuilder.build (aDoc, m_aCrypto, aSecHeader);
+  }
+
+  public MimeMessage tTEST (final ESOAPVersion eSOAPVersion,
+                            final Document aDoc,
+                            final boolean bMustUnderstand,
+                            @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws Exception
+  {
+
+    final KeyGenerator aKeyGen = KeyGenerator.getInstance ("AES");
+    aKeyGen.init (128);
+    m_aKey = aKeyGen.generateKey ();
+    m_aKeyData = m_aKey.getEncoded ();
+    m_aSecEngine.setWssConfig (WSSConfig.getNewInstance ());
+
+    final WSSecEncrypt aBuilder = new WSSecEncrypt ();
+    aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
+    aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    aBuilder.setSymmetricKey (null);
+    aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("encrypt.alias"),
+                          CryptoConfigBuilder.CF.getAsString ("encrypt.password"));
+
+    // final WSEncryptionPart encP = new WSEncryptionPart ("Body",
+    // eSOAPVersion.getNamespaceURI (), "Content");
+    // aBuilder.getParts ().add (encP);
+    aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
+    // Convert to WSS4J attachments
+    final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
+                                                                                IAS4Attachment::getAsWSS4JAttachment);
+
+    final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aWSS4JAttachments);
+    aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
+
+    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
+    aSecHeader.insertSecurityHeader ();
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
+                                                                                     "mustUnderstand");
+    if (aMustUnderstand != null)
+      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
+
+    final Document aDocTest = aBuilder.build (aDoc, m_aCrypto, aSecHeader);
+    final List <Attachment> encryptedAttachments = aAttachmentCallbackHandler.getResponseAttachments ();
+    aAttachments.iterator ().next ().setEncryptedAttachment (encryptedAttachments.get (0));
+
+    return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aDocTest, aAttachments, true);
   }
 
   public MimeMessage encryptMimeMessageAttachments (final MimeMessage aMimeMessage) throws IOException,

@@ -36,13 +36,13 @@ import org.w3c.dom.NodeList;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
 import com.helger.as4server.client.TestMessages;
-import com.helger.as4server.encrypt.EncryptionCreator;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -111,8 +111,28 @@ public class SendingUserMessageTest
     Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
 
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
+    System.out.println (SerializerXML.serializeXML (aDoc));
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
+
+  // @Test
+  // public void deleteAfterTesting () throws Exception
+  // {
+  //
+  // final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<>
+  // ();
+  // aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile
+  // ("attachment/test.xml.gz"),
+  // CMimeType.APPLICATION_GZIP));
+  // Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, null,
+  // aAttachments);
+  //
+  // aDoc = new EncryptionCreator ().tTEST (m_eSOAPVersion, aDoc, false,
+  // aAttachments);
+  // System.out.println (SerializerXML.serializeXML (aDoc));
+  // _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true,
+  // null);
+  // }
 
   @Test
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSuccess () throws Exception
@@ -148,9 +168,9 @@ public class SendingUserMessageTest
                                                                                                                        m_eSOAPVersion,
                                                                                                                        aAttachments,
                                                                                                                        false),
-                                                                                          aAttachments);
+                                                                                          aAttachments,
+                                                                                          false);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    aMsg.writeTo (System.err);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -172,7 +192,8 @@ public class SendingUserMessageTest
                                                                                                                        m_eSOAPVersion,
                                                                                                                        aAttachments,
                                                                                                                        false),
-                                                                                          aAttachments);
+                                                                                          aAttachments,
+                                                                                          false);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -181,20 +202,20 @@ public class SendingUserMessageTest
   public void testUserMessageWithMimeEncryptedSuccess () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                             CMimeType.IMAGE_JPG));
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
-    MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                            null,
-                                                                                                                                                            aAttachments),
-                                                                                                                 m_eSOAPVersion,
-                                                                                                                 aAttachments,
-                                                                                                                 false),
-                                                                                    aAttachments);
-    aMsg = new EncryptionCreator ().encryptMimeMessageAttachments (aMsg);
-    aMsg.writeTo (System.err);
+    final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                  null,
+                                                                                                  aAttachments),
+                                                       m_eSOAPVersion,
+                                                       aAttachments,
+                                                       false);
+
+    final MimeMessage aMsg = new EncryptionCreator ().tTEST (m_eSOAPVersion, aDoc, false, aAttachments);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
+    aMsg.writeTo (System.out);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -259,7 +280,7 @@ public class SendingUserMessageTest
         eElement.setAttribute ("href", "cid:invalid");
     }
     System.out.println (SerializerXML.serializeXML (aDoc));
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, false);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
@@ -283,12 +304,6 @@ public class SendingUserMessageTest
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
                   false,
                   EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
-  }
-
-  @Test
-  public void testSendEncryptedMessage ()
-  {
-
   }
 
   private void _sendMessage (final HttpEntity aHttpEntity,

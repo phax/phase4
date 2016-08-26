@@ -28,7 +28,8 @@ public final class MimeMessageCreator
 
   @Nonnull
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
-                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws Exception
+                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
+                                          final boolean bEncrypt) throws Exception
   {
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
 
@@ -44,7 +45,7 @@ public final class MimeMessageCreator
     // Add all attachments (if any)
     if (aAttachments != null)
       for (final IAS4Attachment aAttachment : aAttachments)
-        aAttachment.addToMimeMultipart (aMimeMultipart);
+        aAttachment.addToMimeMultipart (aMimeMultipart, bEncrypt);
 
     final MimeMessage message = new MimeMessage ((Session) null);
     message.setContent (aMimeMultipart);
