@@ -40,6 +40,7 @@ import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
+import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
 import com.helger.as4server.client.TestMessages;
@@ -93,54 +94,55 @@ public class SendingUserMessageTest
   }
 
   @Test
-  public void testUserMessageWithSOAPBodyPayloadNoMimeSuccess () throws Exception
+  public void testUserMessageSOAPBodyPayloadSignedSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    final Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
+  // TODO should this still work?
   @Test
-  public void testUserMessageWithSOAPBodyPayloadNoMimeEncryptedSuccess () throws Exception
+  public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
-
-    aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
-  }
-
-  @Test
-  public void testUserMessageNoSOAPBodyPayloadNoAttachmentSuccess () throws Exception
-  {
-    final Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, null, null);
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
-  }
-
-  @Test
-  public void testUserMessageWithSOAPBodyPayloadWithMimeSuccess () throws Exception
-  {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (m_eSOAPVersion,
-                                                                                                  aPayload,
-                                                                                                  null),
+    final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testSignedUserMessage (m_eSOAPVersion,
+                                                                                                        aPayload,
+                                                                                                        null),
                                                                     m_eSOAPVersion);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
-  public void testUserMessageWithOneAttachmentWithMimeSuccess () throws Exception
+  public void testUserMessageSOAPBodyPayloadSignedEncryptedSuccess () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+
+    aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
+    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
+  public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
+  {
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null);
+    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
+  public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                              CMimeType.APPLICATION_GZIP));
 
-    final CreateSignedMessage aSigned = new CreateSignedMessage ();
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                                                   null,
                                                                                                                                                                   aAttachments),
@@ -154,7 +156,7 @@ public class SendingUserMessageTest
   }
 
   @Test
-  public void testUserMessageWithManyAttachmentsWithMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageManyAttachmentsSignedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
@@ -164,7 +166,7 @@ public class SendingUserMessageTest
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
                                              CMimeType.IMAGE_JPG));
 
-    final CreateSignedMessage aSigned = new CreateSignedMessage ();
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                                                   null,
                                                                                                                                                                   aAttachments),
@@ -178,13 +180,13 @@ public class SendingUserMessageTest
   }
 
   @Test
-  public void testUserMessageWithMimeEncryptedSuccess () throws Exception
+  public void testUserMessageMimeSignedEncryptedSuccess () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortXML.xml"),
                                              CMimeType.TEXT_XML));
 
-    final CreateSignedMessage aSigned = new CreateSignedMessage ();
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                   null,
                                                                                                   aAttachments),
@@ -213,12 +215,12 @@ public class SendingUserMessageTest
   }
 
   @Test
-  public void testPayloadChangedAfterSigning () throws Exception
+  public void testPayloadChangedAfterSigningShouldFail () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    final Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
     final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
     for (int i = 0; i < nList.getLength (); i++)
     {
@@ -232,14 +234,14 @@ public class SendingUserMessageTest
   }
 
   @Test
-  public void testWrongAttachmentID () throws Exception
+  public void testWrongAttachmentIDShouldFail () throws Exception
   {
 
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                              CMimeType.APPLICATION_GZIP));
 
-    final CreateSignedMessage aSigned = new CreateSignedMessage ();
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
 
     final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                   null,

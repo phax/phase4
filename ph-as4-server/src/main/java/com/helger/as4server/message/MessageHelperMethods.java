@@ -31,8 +31,6 @@ import com.helger.datetime.util.PDTXMLConverter;
 @Immutable
 public final class MessageHelperMethods
 {
-  public static final String DIGEST_ALGORITHM_SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
-  public static final String SIGNATURE_ALGORITHM_RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 
   private MessageHelperMethods ()
   {}

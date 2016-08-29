@@ -31,11 +31,11 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.mime.SoapMimeMultipart;
+import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
 import com.helger.as4server.message.CreateErrorMessage;
 import com.helger.as4server.message.CreateReceiptMessage;
-import com.helger.as4server.message.CreateSignedMessage;
 import com.helger.as4server.message.CreateUserMessage;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -48,42 +48,16 @@ import com.helger.mail.cte.EContentTransferEncoding;
 
 public class TestMessages
 {
-  // TODO testMessage for developing delete if not needed anymore
-  public static Document testUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nullable final Node aPayload,
-                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
+
+  public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                @Nullable final Node aPayload,
+                                                @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-    final CreateSignedMessage aClient = new CreateSignedMessage ();
+    final SignedMessageCreator aClient = new SignedMessageCreator ();
 
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
-
-    final Document aSignedDoc = aClient.createSignedMessage (aUserMessage.createUserMessage (aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
-                                                                                             aUserMessage.createEbms3PayloadInfo (aPayload,
-                                                                                                                                  aAttachments),
-                                                                                             aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                                                        "MyServiceTypes",
-                                                                                                                                        "QuoteToCollect",
-                                                                                                                                        "4321",
-                                                                                                                                        "pm-esens-generic-resp",
-                                                                                                                                        "http://agreements.holodeckb2b.org/examples/agreement0"),
-                                                                                             aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                                                                                "APP_1000000101",
-                                                                                                                                "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                                                                                "APP_1000000101"),
-                                                                                             aUserMessage.createEbms3MessageProperties (aEbms3Properties),
-                                                                                             eSOAPVersion)
-                                                                         .setMustUnderstand (false)
-                                                                         .getAsSOAPDocument (aPayload),
+    final Document aSignedDoc = aClient.createSignedMessage (testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                           aPayload,
+                                                                                           aAttachments),
                                                              eSOAPVersion,
                                                              aAttachments,
                                                              false);
@@ -94,7 +68,7 @@ public class TestMessages
                                            @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
-    final CreateSignedMessage aClient = new CreateSignedMessage ();
+    final SignedMessageCreator aClient = new SignedMessageCreator ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
@@ -112,10 +86,10 @@ public class TestMessages
                                              @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
                                                                                                                DOMException
   {
-    final Document aUserMessage = testUserMessage (eSOAPVersion, aPayload, aAttachments);
+    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
-    final CreateSignedMessage aClient = new CreateSignedMessage ();
+    final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                 aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
                                                                                                         null),

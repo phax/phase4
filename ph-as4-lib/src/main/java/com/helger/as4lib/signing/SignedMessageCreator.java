@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.signing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,6 +15,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
@@ -22,16 +23,16 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
-public class CreateSignedMessage
+public class SignedMessageCreator
 {
   private final Crypto m_aCrypto;
 
-  public CreateSignedMessage ()
+  public SignedMessageCreator ()
   {
     this (AS4CryptoFactory.createCrypto ());
   }
 
-  public CreateSignedMessage (@Nonnull final Crypto aCrypto)
+  public SignedMessageCreator (@Nonnull final Crypto aCrypto)
   {
     m_aCrypto = ValueEnforcer.notNull (aCrypto, "Crypto");
   }
@@ -42,9 +43,9 @@ public class CreateSignedMessage
     final WSSecSignature aBuilder = new WSSecSignature ();
     aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm (MessageHelperMethods.SIGNATURE_ALGORITHM_RSA_SHA256);
+    aBuilder.setSignatureAlgorithm (CAS4.SIGNATURE_ALGORITHM_RSA_SHA256);
     // TODO DONT FORGET: PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (MessageHelperMethods.DIGEST_ALGORITHM_SHA256);
+    aBuilder.setDigestAlgo (CAS4.DIGEST_ALGORITHM_SHA256);
     return aBuilder;
   }
 

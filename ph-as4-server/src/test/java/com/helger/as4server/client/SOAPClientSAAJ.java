@@ -19,9 +19,9 @@ import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
+import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
-import com.helger.as4server.message.CreateSignedMessage;
 import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -73,7 +73,7 @@ public class SOAPClientSAAJ
       // No Mime Message, just SOAP + Payload in SOAP - Body
       if (false)
       {
-        final Document aDoc = TestMessages.testUserMessage (ESOAPVersion.SOAP_11, aPayload, aAttachments);
+        final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_11, aPayload, aAttachments);
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
       else
@@ -82,7 +82,7 @@ public class SOAPClientSAAJ
           aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                    CMimeType.APPLICATION_GZIP));
 
-          final CreateSignedMessage aSigned = new CreateSignedMessage ();
+          final SignedMessageCreator aSigned = new SignedMessageCreator ();
           final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                                                                                                                               aPayload,
                                                                                                                                                                               aAttachments),
@@ -99,7 +99,7 @@ public class SOAPClientSAAJ
         // Normal SOAP - Message with Body Payload as Mime Message
         else
         {
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testUserMessage (ESOAPVersion.SOAP_11,
+          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_11,
                                                                                                         null,
                                                                                                         aAttachments),
                                                                           ESOAPVersion.SOAP_11);
