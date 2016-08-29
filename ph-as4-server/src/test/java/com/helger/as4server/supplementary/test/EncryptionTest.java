@@ -17,14 +17,13 @@
  * under the License.
  */
 
-package com.helger.as4server.client;
+package com.helger.as4server.supplementary.test;
 
 import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
 import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,7 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -44,6 +42,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 
@@ -55,13 +54,11 @@ public class EncryptionTest
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
 
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
-  private byte [] keyData;
-  private SecretKey key;
-  private Crypto crypto = null;
+  private final Crypto crypto;
 
   public EncryptionTest () throws Exception
   {
-    crypto = CryptoFactory.getInstance ("test.properties");
+    crypto = AS4CryptoFactory.createCrypto ();
   }
 
   /**
@@ -75,8 +72,6 @@ public class EncryptionTest
   {
     final KeyGenerator keyGen = KeyGenerator.getInstance ("AES");
     keyGen.init (128);
-    key = keyGen.generateKey ();
-    keyData = key.getEncoded ();
     secEngine.setWssConfig (WSSConfig.getNewInstance ());
   }
 
@@ -95,8 +90,7 @@ public class EncryptionTest
     builder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     builder.setSymmetricKey (null);
-    builder.setUserInfo (SOAPClientSAAJ.CF.getAsString ("encrypt.alias"),
-                         SOAPClientSAAJ.CF.getAsString ("encrypt.password"));
+    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
 
     final Document doc = _getSoapEnvelope11 ();
     WSSecHeader secHeader = new WSSecHeader (doc);

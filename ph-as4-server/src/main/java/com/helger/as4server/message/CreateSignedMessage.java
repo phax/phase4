@@ -5,11 +5,9 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Attr;
@@ -17,34 +15,32 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
-import com.helger.as4lib.encrypt.CryptoConfigBuilder;
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
 public class CreateSignedMessage
 {
-
-  static
-  {
-    WSSConfig.init ();
-  }
-
   private final Crypto m_aCrypto;
 
-  public CreateSignedMessage () throws WSSecurityException
+  public CreateSignedMessage ()
   {
-    // Uses crypto.properties => needs exact name crypto.properties
-    m_aCrypto = CryptoFactory.getInstance ();
+    this (AS4CryptoFactory.createCrypto ());
+  }
+
+  public CreateSignedMessage (@Nonnull final Crypto aCrypto)
+  {
+    m_aCrypto = ValueEnforcer.notNull (aCrypto, "Crypto");
   }
 
   @Nonnull
   private WSSecSignature _getBasicBuilder ()
   {
     final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.alias"),
-                          CryptoConfigBuilder.CF.getAsString ("org.apache.wss4j.crypto.merlin.keystore.password"));
+    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (MessageHelperMethods.SIGNATURE_ALGORITHM_RSA_SHA256);
     // TODO DONT FORGET: PMode indicates the DigestAlgorithm as Hash Function

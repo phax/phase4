@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.helger.as4server.client;
+package com.helger.as4server.supplementary.test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -29,10 +29,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
@@ -43,6 +41,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 
 /**
@@ -51,12 +50,11 @@ import com.helger.commons.io.resource.ClassPathResource;
 public class SignatureTest
 {
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
-  private Crypto crypto = null;
+  private final Crypto crypto;
 
   public SignatureTest () throws Exception
   {
-    WSSConfig.init ();
-    crypto = CryptoFactory.getInstance ();
+    crypto = AS4CryptoFactory.createCrypto ();
   }
 
   /**
@@ -70,7 +68,7 @@ public class SignatureTest
   public void testX509SignatureIS () throws Exception
   {
     final WSSecSignature builder = new WSSecSignature ();
-    builder.setUserInfo (SOAPClientSAAJ.CF.getAsString ("key.alias"), SOAPClientSAAJ.CF.getAsString ("key.password"));
+    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
     // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function

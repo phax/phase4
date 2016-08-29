@@ -6,9 +6,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.Attachment;
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -17,6 +15,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
@@ -28,9 +27,9 @@ public class EncryptionCreator
 {
   private final Crypto m_aCrypto;
 
-  public EncryptionCreator () throws WSSecurityException
+  public EncryptionCreator ()
   {
-    this (CryptoFactory.getInstance ("test.properties"));
+    this (AS4CryptoFactory.createCrypto ());
   }
 
   public EncryptionCreator (@Nonnull final Crypto aCrypto)
@@ -50,8 +49,7 @@ public class EncryptionCreator
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("encrypt.alias"),
-                          CryptoConfigBuilder.CF.getAsString ("encrypt.password"));
+    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
@@ -77,8 +75,7 @@ public class EncryptionCreator
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (CryptoConfigBuilder.CF.getAsString ("encrypt.alias"),
-                          CryptoConfigBuilder.CF.getAsString ("encrypt.password"));
+    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
 
