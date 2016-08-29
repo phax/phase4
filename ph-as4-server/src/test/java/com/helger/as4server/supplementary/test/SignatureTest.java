@@ -79,7 +79,6 @@ public class SignatureTest
     final Document signedDoc = builder.build (doc, crypto, secHeader);
 
     final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
-    System.out.println (outputString);
 
     final WSHandlerResult results = verify (signedDoc);
 

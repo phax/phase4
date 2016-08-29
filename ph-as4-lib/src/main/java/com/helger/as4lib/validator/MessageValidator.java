@@ -116,9 +116,8 @@ public class MessageValidator
                                           .getAsString (aMessage);
     if (test == null || aCVEH.getResourceErrors ().containsAtLeastOneError () || aExHdl.hasException ())
     {
-      // TODO Switch to logger
       if (aExHdl.hasException ())
-        System.out.println (aExHdl.getException ().getCause ());
+        s_aLogger.error (aExHdl.getException ().getCause ().getMessage ());
       return false;
     }
     return true;

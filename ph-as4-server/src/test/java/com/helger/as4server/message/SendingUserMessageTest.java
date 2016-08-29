@@ -111,34 +111,13 @@ public class SendingUserMessageTest
     Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, aPayload, aAttachments);
 
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
-    System.out.println (SerializerXML.serializeXML (aDoc));
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
-
-  // @Test
-  // public void deleteAfterTesting () throws Exception
-  // {
-  //
-  // final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<>
-  // ();
-  // aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile
-  // ("attachment/test.xml.gz"),
-  // CMimeType.APPLICATION_GZIP));
-  // Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, null,
-  // aAttachments);
-  //
-  // aDoc = new EncryptionCreator ().tTEST (m_eSOAPVersion, aDoc, false,
-  // aAttachments);
-  // System.out.println (SerializerXML.serializeXML (aDoc));
-  // _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true,
-  // null);
-  // }
 
   @Test
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSuccess () throws Exception
   {
     final Document aDoc = TestMessages.testUserMessage (m_eSOAPVersion, null, null);
-    System.out.println (SerializerXML.serializeXML (aDoc));
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
@@ -163,11 +142,13 @@ public class SendingUserMessageTest
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                null,
-                                                aAttachments),
-     m_eSOAPVersion,
-     aAttachments,
-     false), aAttachments, null);
+                                                                                                                                                                  null,
+                                                                                                                                                                  aAttachments),
+                                                                                                                       m_eSOAPVersion,
+                                                                                                                       aAttachments,
+                                                                                                                       false),
+                                                                                          aAttachments,
+                                                                                          null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -185,11 +166,13 @@ public class SendingUserMessageTest
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                null,
-                                                aAttachments),
-     m_eSOAPVersion,
-     aAttachments,
-     false), aAttachments, null);
+                                                                                                                                                                  null,
+                                                                                                                                                                  aAttachments),
+                                                                                                                       m_eSOAPVersion,
+                                                                                                                       aAttachments,
+                                                                                                                       false),
+                                                                                          aAttachments,
+                                                                                          null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -211,8 +194,6 @@ public class SendingUserMessageTest
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    if (false)
-      aMsg.writeTo (System.out);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -244,7 +225,6 @@ public class SendingUserMessageTest
       final Node nNode = nList.item (i);
       final Element eElement = (Element) nNode;
       eElement.setAttribute ("INVALID", "INVALID");
-      System.out.println ("Manager ID : " + eElement.getAttribute ("INVALID"));
     }
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
                   false,
@@ -276,7 +256,6 @@ public class SendingUserMessageTest
       if (eElement.hasAttribute ("href"))
         eElement.setAttribute ("href", "cid:invalid");
     }
-    System.out.println (SerializerXML.serializeXML (aDoc));
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
@@ -288,7 +267,6 @@ public class SendingUserMessageTest
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    System.out.println (SerializerXML.serializeXML (aDoc));
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
@@ -313,11 +291,6 @@ public class SendingUserMessageTest
 
     m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
     m_sResponse = EntityUtils.toString (aHttpResponse.getEntity ());
-
-    System.out.println ("GET Response Status:: " + m_nStatusCode);
-
-    // print result
-    System.out.println (m_sResponse);
 
     if (bSuccess)
     {

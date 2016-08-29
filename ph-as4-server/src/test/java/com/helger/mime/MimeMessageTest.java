@@ -2,8 +2,6 @@ package com.helger.mime;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -14,11 +12,12 @@ import com.helger.as4server.client.TestMessages;
 
 public final class MimeMessageTest
 {
+
+  // TODO MERGE WITH SENDINGUSERMESSAGE
   @Test
-  public void testMessage () throws MessagingException, IOException
+  public void testMessage () throws MessagingException
   {
     final MimeMessage message = TestMessages.testMIMEMessage (ESOAPVersion.SOAP_12);
     assertNotNull (message);
-    message.writeTo (System.out);
   }
 }

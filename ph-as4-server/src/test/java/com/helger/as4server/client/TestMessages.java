@@ -197,8 +197,6 @@ public class TestMessages
     message.setContent (aMimeMultipart);
     message.saveChanges ();
 
-    message.writeTo (System.err);
-
     return message;
   }
 

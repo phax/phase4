@@ -107,7 +107,6 @@ public class EncryptionTest
     final Document encryptedDoc = builder.build (doc, crypto, secHeader);
     LOG.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
-    System.out.println (outputString);
     // TODO eb:Messagin now gone should be before the wsse stuff
 
     assertFalse (outputString.contains ("counter_port_type"));

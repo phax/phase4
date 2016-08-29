@@ -26,7 +26,6 @@ public class CompressionTest
   public void testCompression () throws IOException
   {
     final File aFile = new FileSystemResource ("data/test.xml").getAsFile ();
-    System.out.println (aFile.getAbsolutePath ());
     try (final OutputStream oos = new FileOutputStream (aFile))
     {
       compressPayload (oos, new ClassPathResource ("PayloadXML.xml").getAsFile ());
@@ -34,7 +33,6 @@ public class CompressionTest
 
     // DECOMPRESSION
     final File aFileDecompressed = new FileSystemResource ("data/result.xml").getAsFile ();
-    System.out.println (aFileDecompressed.getAbsolutePath ());
     final OutputStream aDecompress = new FileOutputStream (aFileDecompressed);
 
     try (final InputStream aIn = new FileInputStream (aFile))
@@ -48,7 +46,6 @@ public class CompressionTest
     try (final GZIPOutputStream aGZIPOut = new GZIPOutputStream (aOut))
     {
       aGZIPOut.write (Files.readAllBytes (aFile.toPath ()));
-      System.out.println (Files.readAllBytes (aFile.toPath ()).length);
     }
   }
 

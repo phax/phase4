@@ -12,8 +12,6 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
-import com.helger.xml.microdom.convert.MicroTypeConverter;
-import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.mock.XMLTestHelper;
 
 public class PModeMicroTypeConverterTest
@@ -30,7 +28,6 @@ public class PModeMicroTypeConverterTest
     aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
     aPMode.setResponder (_generateInitiatorOrResponder (false));
     XMLTestHelper.testMicroTypeConversion (aPMode);
-    System.out.println (MicroWriter.getXMLString (MicroTypeConverter.convertToMicroElement (aPMode, "PMode")));
   }
 
   private PModeParty _generateInitiatorOrResponder (final boolean bChoose)
