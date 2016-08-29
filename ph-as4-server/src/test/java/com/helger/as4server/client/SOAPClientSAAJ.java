@@ -90,7 +90,7 @@ public class SOAPClientSAAJ
                                                                                                                                    aAttachments,
                                                                                                                                    false),
                                                                                                       aAttachments,
-                                                                                                      false);
+                                                                                                      null);
 
           // Move all global mime headers to the POST request
           MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);

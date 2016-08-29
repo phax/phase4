@@ -88,7 +88,7 @@ public interface IAS4Attachment extends IHasID <String>, Serializable
    * @param aMimeMultipart
    *        The multipart message to add to. May not be <code>null</code>.
    */
-  void addToMimeMultipart (@Nonnull MimeMultipart aMimeMultipart, boolean bEncrypt) throws MessagingException;
+  void addToMimeMultipart (@Nonnull MimeMultipart aMimeMultipart) throws MessagingException;
 
   /**
    * @return This attachment as a WSS4J attachment. May not be
@@ -96,6 +96,4 @@ public interface IAS4Attachment extends IHasID <String>, Serializable
    */
   @Nonnull
   Attachment getAsWSS4JAttachment ();
-
-  void setEncryptedAttachment (final Attachment aEncryptedAttachment);
 }

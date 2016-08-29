@@ -163,13 +163,11 @@ public class SendingUserMessageTest
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                                  null,
-                                                                                                                                                                  aAttachments),
-                                                                                                                       m_eSOAPVersion,
-                                                                                                                       aAttachments,
-                                                                                                                       false),
-                                                                                          aAttachments,
-                                                                                          false);
+                                                null,
+                                                aAttachments),
+     m_eSOAPVersion,
+     aAttachments,
+     false), aAttachments, null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -187,13 +185,11 @@ public class SendingUserMessageTest
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                                  null,
-                                                                                                                                                                  aAttachments),
-                                                                                                                       m_eSOAPVersion,
-                                                                                                                       aAttachments,
-                                                                                                                       false),
-                                                                                          aAttachments,
-                                                                                          false);
+                                                null,
+                                                aAttachments),
+     m_eSOAPVersion,
+     aAttachments,
+     false), aAttachments, null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -202,8 +198,8 @@ public class SendingUserMessageTest
   public void testUserMessageWithMimeEncryptedSuccess () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                             CMimeType.IMAGE_JPG));
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortXML.xml"),
+                                             CMimeType.TEXT_XML));
 
     final CreateSignedMessage aSigned = new CreateSignedMessage ();
     final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -213,9 +209,10 @@ public class SendingUserMessageTest
                                                        aAttachments,
                                                        false);
 
-    final MimeMessage aMsg = new EncryptionCreator ().tTEST (m_eSOAPVersion, aDoc, false, aAttachments);
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    aMsg.writeTo (System.out);
+    if (false)
+      aMsg.writeTo (System.out);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -280,7 +277,7 @@ public class SendingUserMessageTest
         eElement.setAttribute ("href", "cid:invalid");
     }
     System.out.println (SerializerXML.serializeXML (aDoc));
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, false);
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
