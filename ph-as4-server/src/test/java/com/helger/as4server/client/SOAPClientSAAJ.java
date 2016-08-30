@@ -26,7 +26,6 @@ import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
-import com.helger.as4lib.message.TestMessages;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;

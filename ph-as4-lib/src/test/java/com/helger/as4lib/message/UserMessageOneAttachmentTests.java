@@ -1,9 +1,14 @@
 package com.helger.as4lib.message;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
@@ -13,13 +18,20 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-public class UserMessageOneAttachmentTests extends BaseUserMessageSetUp
+@RunWith (Parameterized.class)
+public class UserMessageOneAttachmentTests extends AbstractUserMessageSetUp
 {
+  @Parameters (name = "{index}: {0}")
+  public static Collection <Object []> data ()
+  {
+    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+  }
 
   public UserMessageOneAttachmentTests (@Nonnull final ESOAPVersion eSOAPVersion)
   {
@@ -39,8 +51,7 @@ public class UserMessageOneAttachmentTests extends BaseUserMessageSetUp
 
                                                                                           aAttachments,
                                                                                           null);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -59,8 +70,7 @@ public class UserMessageOneAttachmentTests extends BaseUserMessageSetUp
                                                                                                                        false),
                                                                                           aAttachments,
                                                                                           null);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -76,8 +86,7 @@ public class UserMessageOneAttachmentTests extends BaseUserMessageSetUp
                                                                                                                      aAttachments),
                                                                           false,
                                                                           aAttachments);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -96,7 +105,6 @@ public class UserMessageOneAttachmentTests extends BaseUserMessageSetUp
                                                        false);
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 }

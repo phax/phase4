@@ -2,12 +2,17 @@ package com.helger.as4lib.message;
 
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,6 +28,7 @@ import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -36,8 +42,15 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author bayerlma
  */
-public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
+@RunWith (Parameterized.class)
+public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
 {
+  @Parameters (name = "{index}: {0}")
+  public static Collection <Object []> data ()
+  {
+    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+  }
+
   public UserMessageFailureForgeryTest (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     super (eSOAPVersion);
@@ -50,7 +63,7 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
   {
     // the third parameter has to be empty String, since there is no EBMS
     // exception coming back
-    _sendMessage (new StringEntity (""), false, "");
+    sendPlainMessage (new StringEntity (""), false, "");
   }
 
   @Test (expected = IllegalStateException.class)
@@ -58,7 +71,6 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
   {
     TestMessages.emptyUserMessage (m_eSOAPVersion, null, null);
     fail ();
-
   }
 
   // Tinkering with the signature
@@ -67,7 +79,7 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
     final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null);
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -84,9 +96,9 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
       final Element eElement = (Element) nNode;
       eElement.setAttribute ("INVALID", "INVALID");
     }
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
-                  false,
-                  EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
 
   @Test
@@ -115,8 +127,7 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
         eElement.setAttribute ("href", "cid:invalid");
     }
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // False pmode settings
@@ -127,9 +138,9 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = TestMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
-                  false,
-                  EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   // Encrpytion
@@ -155,7 +166,6 @@ public class UserMessageFailureForgeryTest extends BaseUserMessageSetUp
 
     aMsg.saveChanges ();
 
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 }

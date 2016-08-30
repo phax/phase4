@@ -1,4 +1,4 @@
-package com.helger.as4lib.message;
+package com.helger.as4server.client;
 
 import java.util.Locale;
 
@@ -19,6 +19,10 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
+import com.helger.as4lib.message.AS4UserMessage;
+import com.helger.as4lib.message.CreateErrorMessage;
+import com.helger.as4lib.message.CreateReceiptMessage;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;

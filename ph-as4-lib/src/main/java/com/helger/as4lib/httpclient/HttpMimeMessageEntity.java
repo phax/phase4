@@ -27,6 +27,16 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     m_aMsg = ValueEnforcer.notNull (aMsg, "Msg");
   }
 
+  /**
+   * @return The mime message passed in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public MimeMessage getMimeMessage ()
+  {
+    return m_aMsg;
+  }
+
   public boolean isRepeatable ()
   {
     return true;

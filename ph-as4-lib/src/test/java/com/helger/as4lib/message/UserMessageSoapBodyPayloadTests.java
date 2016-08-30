@@ -1,10 +1,15 @@
 package com.helger.as4lib.message;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -14,13 +19,21 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
+@RunWith (Parameterized.class)
+public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
 {
+  @Parameters (name = "{index}: {0}")
+  public static Collection <Object []> data ()
+  {
+    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+  }
+
   public UserMessageSoapBodyPayloadTests (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     super (eSOAPVersion);
@@ -32,7 +45,7 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -42,7 +55,7 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
 
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -54,8 +67,7 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
                                                                                                                               null),
                                                                                           null,
                                                                                           null);
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-    _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -67,7 +79,7 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
     Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -79,6 +91,6 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
     Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
-    _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 }
