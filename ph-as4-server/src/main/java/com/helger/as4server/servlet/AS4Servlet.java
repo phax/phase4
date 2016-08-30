@@ -75,18 +75,14 @@ public class AS4Servlet extends HttpServlet
 
           final Multipart aMultipart = (Multipart) aMsg.getContent ();
 
-          s_aLogger.info ("BodyPart", "MultiPartCount: " + aMultipart.getCount ());
+          s_aLogger.info ("BodyPart - MultiPartCount: " + aMultipart.getCount ());
 
           for (int i = 0; i < aMultipart.getCount (); i++)
           {
-
             final BodyPart aBodyPart = aMultipart.getBodyPart (i);
-
-            final String aDisposition = aBodyPart.getDisposition ();
-
-            if (aDisposition != null && (aDisposition.equalsIgnoreCase ("ATTACHMENT")))
+            final String sDisposition = aBodyPart.getDisposition ();
+            if (sDisposition != null && sDisposition.equalsIgnoreCase ("ATTACHMENT"))
             {
-
               final DataHandler handler = aBodyPart.getDataHandler ();
               s_aLogger.info ("file name : " + handler.getName ());
             }
