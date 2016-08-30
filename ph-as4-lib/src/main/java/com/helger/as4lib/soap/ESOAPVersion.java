@@ -6,14 +6,13 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 
 public enum ESOAPVersion
 {
   SOAP_11 ("http://schemas.xmlsoap.org/soap/envelope/", "S11", CMimeType.TEXT_XML),
-  SOAP_12 ("http://www.w3.org/2003/05/soap-envelope", "S12", EMimeContentType.APPLICATION.buildMimeType ("soap+xml"));
+  SOAP_12 ("http://www.w3.org/2003/05/soap-envelope", "S12", CMimeType.APPLICATION_SOAP_XML);
 
   private final String m_sNamespaceURI;
   private final String m_sNamespacePrefix;

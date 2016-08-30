@@ -64,7 +64,7 @@
   <properties>
     <cxf.version>3.1.6</cxf.version>
     <wss4j.version>2.1.7</wss4j.version>
-    <bc.version>1.54</bc.version>
+    <bc.version>1.55</bc.version>
   </properties>
   
   <dependencyManagement>

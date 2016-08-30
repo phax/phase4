@@ -75,14 +75,9 @@ public class SOAPClientSAAJ
       aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
       // final HttpPost aPost = new HttpPost
-      // ("http://localhost:8080/services/"); // Original
-      // b2bholodeck
-      final HttpPost aPost = new HttpPost ("http://127.0.0.1:8080/services/msh/");
-      // HB2B Online
-      // final HttpPost aPost = new HttpPost
-      // ("http://msh.holodeck-b2b.org:8080/services/msh");
-      // aPost.addHeader ("SOAPAction", "\"msh\"");
-      // TODO atm only calls testMessage
+      // ("http://127.0.0.1:8080/services/msh/");
+
+      final HttpPost aPost = new HttpPost ("http://localhost:8080/AS4Servlet");
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
@@ -114,12 +109,7 @@ public class SOAPClientSAAJ
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
 
-      if (false)
-      {
-        final Document aDoc = getSoapEnvelope11ForTest ("TestMessage.xml");
-        aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
-      }
-
+      // XXX reinstate if you wanna see the request that is getting sent
       System.out.println (EntityUtils.toString (aPost.getEntity ()));
 
       final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);

@@ -14,6 +14,7 @@ import org.apache.http.HttpMessage;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
 import com.helger.datetime.util.PDTXMLConverter;
+import com.helger.http.HTTPStringHelper;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -64,7 +65,8 @@ public final class MessageHelperMethods
     while (e.hasMoreElements ())
     {
       final Header h = (Header) e.nextElement ();
-      aHttpMsg.addHeader (h.getName (), h.getValue ());
+      // Make a single-line HTTP header value!
+      aHttpMsg.addHeader (h.getName (), HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
       aMimeMsg.removeHeader (h.getName ());
     }
   }

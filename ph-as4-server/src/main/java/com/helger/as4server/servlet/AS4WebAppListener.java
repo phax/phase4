@@ -19,17 +19,27 @@ package com.helger.as4server.servlet;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import com.helger.web.servlet.ServletContextPathHolder;
 
 public class AS4WebAppListener implements ServletContextListener
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WebAppListener.class);
+
   public void contextInitialized (final ServletContextEvent sce)
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
+    ServletContextPathHolder.setServletContextPath (sce.getServletContext ().getContextPath ());
+    s_aLogger.info ("AS4 server started");
   }
 
   public void contextDestroyed (final ServletContextEvent sce)
-  {}
+  {
+    s_aLogger.info ("AS4 server destroyed");
+  }
 }

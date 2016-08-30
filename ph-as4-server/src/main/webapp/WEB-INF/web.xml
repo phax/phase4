@@ -17,27 +17,23 @@
     limitations under the License.
 
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-         version="3.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+<web-app
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  version="3.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
   <welcome-file-list>
     <welcome-file>secure</welcome-file>
   </welcome-file-list>
-
   <listener>
     <listener-class>com.helger.as4server.servlet.AS4WebAppListener</listener-class>
   </listener>
-
-  <!-- Apache CXF Servlet and mapping -->
   <servlet>
-    <servlet-name>CXF</servlet-name>
-    <servlet-class>com.helger.as4server.servlet.AS4CXFServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
+    <servlet-name>AS4Servlet</servlet-name>
+    <servlet-class>com.helger.as4server.servlet.AS4Servlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
-    <servlet-name>CXF</servlet-name>
-    <url-pattern>/services/*</url-pattern>
+    <servlet-name>AS4Servlet</servlet-name>
+    <url-pattern>/AS4Servlet</url-pattern>
   </servlet-mapping>
 </web-app>
