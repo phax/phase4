@@ -24,6 +24,8 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class TestMessages
 {
 
@@ -162,6 +164,7 @@ public class TestMessages
   }
 
   @Nullable
+  @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                            @Nullable final Node aPayload,
                                            @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
@@ -173,6 +176,7 @@ public class TestMessages
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 
+    // Use an empty message info by purpose
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (null);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo (null,

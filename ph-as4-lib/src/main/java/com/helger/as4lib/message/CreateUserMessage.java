@@ -178,7 +178,7 @@ public class CreateUserMessage
     return aEbms3PayloadInfo;
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
+  public Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
   }

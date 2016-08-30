@@ -1,8 +1,14 @@
 package com.helger.as4server.client;
 
+import java.io.IOException;
+
+import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -14,6 +20,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
@@ -38,6 +45,16 @@ import com.helger.xml.serialize.read.DOMReader;
 public class SOAPClientSAAJ
 {
   public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("as4test.properties").build ();
+
+  public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
+                                                                                IOException,
+                                                                                ParserConfigurationException
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    return builder.parse (new ClassPathResource (sPath).getInputStream ());
+  }
 
   /**
    * Starting point for the SAAJ - SOAP Client Testing
@@ -100,7 +117,7 @@ public class SOAPClientSAAJ
 
       if (false)
       {
-        final Document aDoc = MessageHelperMethods.getSoapEnvelope11ForTest ("TestMessage.xml");
+        final Document aDoc = getSoapEnvelope11ForTest ("TestMessage.xml");
         aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
       }
 

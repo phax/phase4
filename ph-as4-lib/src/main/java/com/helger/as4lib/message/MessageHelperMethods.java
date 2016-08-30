@@ -1,6 +1,5 @@
 package com.helger.as4lib.message;
 
-import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.annotation.Nonnull;
@@ -9,16 +8,11 @@ import javax.annotation.concurrent.Immutable;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpMessage;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.ValueEnforcer;
 import com.helger.datetime.util.PDTXMLConverter;
 
 /**
@@ -35,23 +29,25 @@ public final class MessageHelperMethods
   private MessageHelperMethods ()
   {}
 
-  public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
-                                                                                IOException,
-                                                                                ParserConfigurationException
-  {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    return builder.parse (new ClassPathResource (sPath).getInputStream ());
-  }
-
-  // TODO Change Timestamp or do we only want the present date when the message
-  // gets sent/replied
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId,
+  /**
+   * Create a new message info.
+   *
+   * @param sMessageId
+   *        The message ID. Should never be <code>null</code> for production
+   *        message but <code>null</code> is allowed for testing purposes.
+   * @param sRefToMessageID
+   *        Reference to message ID. May be <code>null</code>. Must be present
+   *        on receipt etc.
+   * @return Never <code>null</code>.
+   */
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId,
                                                          @Nullable final String sRefToMessageID)
   {
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
     aMessageInfo.setMessageId (sMessageId);
+    // TODO Change Timestamp or do we only want the present date when the
+    // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
     aMessageInfo.setRefToMessageId (sRefToMessageID);
     return aMessageInfo;
@@ -60,6 +56,9 @@ public final class MessageHelperMethods
   public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,
                                                   @Nonnull final HttpMessage aHttpMsg) throws MessagingException
   {
+    ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
+    ValueEnforcer.notNull (aHttpMsg, "HttpMsg");
+
     // Move all global mime headers to the POST request
     final Enumeration <?> e = aMimeMsg.getAllHeaders ();
     while (e.hasMoreElements ())
