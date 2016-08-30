@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
@@ -13,7 +13,6 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.client.TestMessages;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;

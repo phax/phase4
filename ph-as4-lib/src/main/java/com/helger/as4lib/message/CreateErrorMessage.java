@@ -1,11 +1,10 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import javax.annotation.Nonnull;
 
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.message.AS4ErrorMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.ICommonsList;
 

@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
@@ -30,14 +31,24 @@ import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 
+/**
+ * The test classes for the usermessage, are split up for a better overview.
+ * Since alle these classes need the same setup and a helpermethod, this class
+ * was created. Also with the help of Parameterized.class, each test will be
+ * done for both SOAP Versions.
+ *
+ * @author bayerlma
+ */
 @RunWith (Parameterized.class)
-public class BaseUserMessageSetUp
+public abstract class BaseUserMessageSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
     return Arrays.asList (new Object [] [] { { ESOAPVersion.SOAP_11 }, { ESOAPVersion.SOAP_12 } });
   }
+
+  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (BaseUserMessageSetUp.class);
 
   protected final ESOAPVersion m_eSOAPVersion;
   protected int m_nStatusCode;
@@ -53,6 +64,7 @@ public class BaseUserMessageSetUp
   @Before
   public void setUp () throws KeyManagementException, NoSuchAlgorithmException
   {
+    LOG.info ("The following test case will only work if there is a local holodeck server running, address http://127.0.0.1:8080/services/msh/!");
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
 
@@ -63,9 +75,20 @@ public class BaseUserMessageSetUp
     aPost = new HttpPost ("http://127.0.0.1:8080/services/msh/");
   }
 
-  protected void _sendMessage (final HttpEntity aHttpEntity,
-                               final boolean bSuccess,
-                               final String sErrorCode) throws IOException
+  /**
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @param bSuccess
+   *        specifies if the test case expects a positive or negativ response
+   *        from the server
+   * @param sErrorCode
+   *        if you expect a negative response, you must give the expected
+   *        errorcode as it will get searched for in the response.
+   * @throws IOException
+   */
+  protected void _sendMessage (@Nonnull final HttpEntity aHttpEntity,
+                               @Nonnull final boolean bSuccess,
+                               @Nullable final String sErrorCode) throws IOException
   {
     aPost.setEntity (aHttpEntity);
 

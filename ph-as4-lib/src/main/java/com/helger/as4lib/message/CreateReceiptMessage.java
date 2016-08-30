@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import java.util.Collection;
 
@@ -12,7 +12,6 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;

@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import java.io.IOException;
 import java.util.Enumeration;

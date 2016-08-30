@@ -1,4 +1,4 @@
-package com.helger.as4server.message;
+package com.helger.as4lib.message;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
@@ -11,9 +11,9 @@ import org.w3c.dom.Node;
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
+import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
-import com.helger.as4server.client.TestMessages;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -45,15 +45,15 @@ public class UserMessageSoapBodyPayloadTests extends BaseUserMessageSetUp
     _sendMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
   }
 
-  // TODO should this still work? remove encryption attachment check
   @Test
   public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testSignedUserMessage (m_eSOAPVersion,
-                                                                                                        aPayload,
-                                                                                                        null),
-                                                                    m_eSOAPVersion);
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                              aPayload,
+                                                                                                                              null),
+                                                                                          null,
+                                                                                          null);
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
     _sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }

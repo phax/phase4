@@ -1,21 +1,11 @@
-package com.helger.as4server.client;
+package com.helger.as4lib.message;
 
-import java.io.File;
 import java.util.Locale;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.common.util.AttachmentUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -29,22 +19,10 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
-import com.helger.as4lib.message.AS4UserMessage;
-import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.xml.SerializerXML;
-import com.helger.as4server.message.CreateErrorMessage;
-import com.helger.as4server.message.CreateReceiptMessage;
-import com.helger.as4server.message.CreateUserMessage;
-import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.mime.CMimeType;
-import com.helger.http.CHTTPHeader;
-import com.helger.mail.cte.EContentTransferEncoding;
 
 public class TestMessages
 {
@@ -99,79 +77,6 @@ public class TestMessages
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments, false);
     return aSignedDoc;
-  }
-
-  /**
-   * JUST FOR TESTING
-   *
-   * @param eSOAPVersion
-   *        SOAP version
-   * @return MIME message
-   * @throws MessagingException
-   *         if MIME problems occur
-   */
-  public static MimeMessage testMIMEMessage (@Nonnull final ESOAPVersion eSOAPVersion) throws MessagingException
-  {
-    final MimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
-
-    {
-      // Message Itself
-      final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final byte [] aEBMSMsg = StreamHelper.getAllBytes (new ClassPathResource ("TestMimeMessage12.xml"));
-      aMessagePart.setContent (aEBMSMsg, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
-      aMessagePart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
-      aMimeMultipart.addBodyPart (aMessagePart);
-    }
-
-    {
-      // File Payload
-      final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-      final File aAttachment = ClassPathResource.getAsFile ("attachment/test.xml.gz");
-      final DataSource fds = new FileDataSource (aAttachment);
-      aMimeBodyPart.setDataHandler (new DataHandler (fds));
-      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
-      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
-      aMimeMultipart.addBodyPart (aMimeBodyPart);
-    }
-
-    final MimeMessage message = new MimeMessage ((Session) null);
-    message.setContent (aMimeMultipart);
-    message.saveChanges ();
-
-    return message;
-  }
-
-  public static MimeMessage testMIMEMessageGenerated (final Document aSoapEnvelope,
-                                                      @Nonnull final ESOAPVersion eSOAPVersion) throws Exception
-  {
-    final MimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
-
-    {
-      // Message Itself
-      final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final String aDoc = SerializerXML.serializeXML (aSoapEnvelope);
-      aMessagePart.setContent (aDoc, eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
-      aMessagePart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
-      aMimeMultipart.addBodyPart (aMessagePart);
-    }
-
-    {
-      // File Payload
-      final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-      final File aAttachment = ClassPathResource.getAsFile ("attachment/test.xml.gz");
-      final DataSource fds = new FileDataSource (aAttachment);
-      aMimeBodyPart.setDataHandler (new DataHandler (fds));
-      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TYPE, CMimeType.APPLICATION_GZIP.getAsString ());
-      aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, EContentTransferEncoding.BINARY.getID ());
-      aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "test-xml");
-      aMimeMultipart.addBodyPart (aMimeBodyPart);
-    }
-
-    final MimeMessage message = new MimeMessage ((Session) null);
-    message.setContent (aMimeMultipart);
-    message.saveChanges ();
-
-    return message;
   }
 
   public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,

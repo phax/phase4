@@ -16,7 +16,6 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.charset.CCharset;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
@@ -38,13 +37,6 @@ public final class MimeMessageCreator
                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
                                           @Nullable final ICommonsList <Attachment> aEncryptedAttachments) throws Exception
   {
-    ValueEnforcer.isFalse (CollectionHelper.isNotEmpty (aAttachments) &&
-                           CollectionHelper.isNotEmpty (aEncryptedAttachments),
-                           "You can either have regular or encrypted attachments - never both!");
-    ValueEnforcer.isFalse (CollectionHelper.isEmpty (aAttachments) &&
-                           CollectionHelper.isEmpty (aEncryptedAttachments),
-                           "Either regular or encrypted attachments must be present - otherwise a MIME message makes no sense!");
-
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
 

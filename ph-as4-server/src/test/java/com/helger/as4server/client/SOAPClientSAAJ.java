@@ -18,11 +18,12 @@ import org.w3c.dom.Node;
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
+import com.helger.as4lib.message.MessageHelperMethods;
+import com.helger.as4lib.message.TestMessages;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.SerializerXML;
-import com.helger.as4server.message.MessageHelperMethods;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -94,17 +95,6 @@ public class SOAPClientSAAJ
 
           // Move all global mime headers to the POST request
           MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-          aPost.setEntity (new HttpMimeMessageEntity (aMsg));
-        }
-        // Normal SOAP - Message with Body Payload as Mime Message
-        else
-        {
-          final MimeMessage aMsg = TestMessages.testMIMEMessageGenerated (TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_11,
-                                                                                                        null,
-                                                                                                        aAttachments),
-                                                                          ESOAPVersion.SOAP_11);
-          MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
 
