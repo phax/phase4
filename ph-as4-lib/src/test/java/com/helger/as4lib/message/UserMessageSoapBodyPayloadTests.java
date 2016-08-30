@@ -67,7 +67,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
                                                                                                                               null),
                                                                                           null,
                                                                                           null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test

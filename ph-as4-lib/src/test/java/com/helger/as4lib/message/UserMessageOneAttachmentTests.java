@@ -51,7 +51,7 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageSetUp
 
                                                                                           aAttachments,
                                                                                           null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageSetUp
                                                                                                                        false),
                                                                                           aAttachments,
                                                                                           null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageSetUp
                                                                                                                      aAttachments),
                                                                           false,
                                                                           aAttachments);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -105,6 +105,6 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageSetUp
                                                        false);
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 }

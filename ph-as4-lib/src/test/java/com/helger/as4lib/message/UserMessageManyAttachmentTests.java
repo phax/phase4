@@ -55,7 +55,7 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
                                                                                                                                      aAttachments),
                                                                                           aAttachments,
                                                                                           null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -78,7 +78,7 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
                                                                                                                        false),
                                                                                           aAttachments,
                                                                                           null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
                                                                                                                      aAttachments),
                                                                           false,
                                                                           aAttachments);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -120,7 +120,7 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
                                                        aAttachments,
                                                        false);
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
-    sendMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
 }

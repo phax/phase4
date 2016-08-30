@@ -18,6 +18,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
@@ -84,9 +85,9 @@ public abstract class AbstractUserMessageSetUp
     }
   }
 
-  protected void sendMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                              @Nonnull final boolean bSuccess,
-                              @Nullable final String sErrorCode) throws IOException, MessagingException
+  protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
+                                  @Nonnull final boolean bSuccess,
+                                  @Nullable final String sErrorCode) throws IOException, MessagingException
   {
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), m_aPost);
     sendPlainMessage (aHttpEntity, bSuccess, sErrorCode);
@@ -109,22 +110,33 @@ public abstract class AbstractUserMessageSetUp
   {
     m_aPost.setEntity (aHttpEntity);
 
-    final CloseableHttpResponse aHttpResponse = m_aClient.execute (m_aPost);
-
-    m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
-    m_sResponse = EntityUtils.toString (aHttpResponse.getEntity ());
-
-    if (bSuccess)
+    try
     {
-      assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
-      assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
+      final CloseableHttpResponse aHttpResponse = m_aClient.execute (m_aPost);
+
+      m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
+      m_sResponse = EntityUtils.toString (aHttpResponse.getEntity ());
+
+      if (bSuccess)
+      {
+        assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
+        assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
+      }
+      else
+      {
+        // Status code may by 20x but may be an error anyway
+        assertTrue ("Server responded with success message but failure was expected." +
+                    "StatusCode: " +
+                    m_nStatusCode +
+                    "\nResponse: " +
+                    m_sResponse,
+                    m_sResponse.contains (sErrorCode));
+      }
     }
-    else
-      assertTrue ("Server responded with success message but failure was expected." +
-                  "StatusCode: " +
-                  m_nStatusCode +
-                  "\nResponse: " +
-                  m_sResponse,
-                  m_sResponse.contains (sErrorCode));
+    catch (final HttpHostConnectException ex)
+    {
+      // No such server running
+      LOG.info ("No target AS4 server reachable: " + ex.getMessage ());
+    }
   }
 }

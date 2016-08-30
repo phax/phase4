@@ -127,7 +127,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
         eElement.setAttribute ("href", "cid:invalid");
     }
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
-    sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // False pmode settings
@@ -166,6 +166,6 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
 
     aMsg.saveChanges ();
 
-    sendMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 }
