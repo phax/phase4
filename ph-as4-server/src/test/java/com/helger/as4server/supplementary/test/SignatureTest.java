@@ -29,7 +29,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
@@ -78,7 +77,7 @@ public class SignatureTest
     secHeader.insertSecurityHeader ();
     final Document signedDoc = builder.build (doc, crypto, secHeader);
 
-    final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
+    // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
     final WSHandlerResult results = verify (signedDoc);
 
