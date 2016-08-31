@@ -1,12 +1,14 @@
 package com.helger.as4server.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
-import javax.activation.DataHandler;
 import javax.annotation.Nonnull;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.charset.CCharset;
@@ -30,6 +33,8 @@ import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.web.servlet.response.UnifiedResponse;
+import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.XMLWriter;
 
 public class AS4Servlet extends HttpServlet
 {
@@ -49,101 +54,160 @@ public class AS4Servlet extends HttpServlet
       return;
     }
 
-    final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
-    if (aPlainMT.equals (MT_MULTIPART_RELATED))
+    try
     {
-      // MIME message
-      final String sBoundary = aMT.getParameterValueWithName ("boundary");
-      if (StringHelper.hasNoText (sBoundary))
+      Document aSOAPDocument = null;
+      ESOAPVersion eSOAPVersion = null;
+
+      final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
+      if (aPlainMT.equals (MT_MULTIPART_RELATED))
       {
-        s_aLogger.error ("Content-Type '" + aHttpServletRequest.getContentType () + "' misses boundary");
-        aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
-        return;
-      }
-
-      s_aLogger.info ("Boundary = " + sBoundary);
-
-      try
-      {
-        final MimeMessage aMsg = new MimeMessage (null, aHttpServletRequest.getInputStream ());
-        aMsg.writeTo (System.out);
-
-        // WHY string shouldnt it be multipart since attachment gets sent
-        s_aLogger.info (aMsg.getContent ().getClass ().getName ());
-        if (aMsg.getContent () instanceof MimeMultipart)
+        // MIME message
+        final String sBoundary = aMT.getParameterValueWithName ("boundary");
+        if (StringHelper.hasNoText (sBoundary))
         {
-
-          final Multipart aMultipart = (Multipart) aMsg.getContent ();
-
-          s_aLogger.info ("BodyPart", "MultiPartCount: " + aMultipart.getCount ());
-
-          for (int i = 0; i < aMultipart.getCount (); i++)
-          {
-
-            final BodyPart aBodyPart = aMultipart.getBodyPart (i);
-
-            final String aDisposition = aBodyPart.getDisposition ();
-
-            if (aDisposition != null && (aDisposition.equalsIgnoreCase ("ATTACHMENT")))
-            {
-
-              final DataHandler handler = aBodyPart.getDataHandler ();
-              s_aLogger.info ("file name : " + handler.getName ());
-            }
-          }
-        }
-      }
-      catch (final MessagingException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace ();
-      }
-
-      final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
-                                                          sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
-                                                          (MultipartProgressNotifier) null);
-      int nIndex = 0;
-      aMulti.skipPreamble ();
-      s_aLogger.info ("Found part " + (nIndex++));
-      final MultipartItemInputStream aItemIS = aMulti.createInputStream ();
-      // StreamHelper.getAllBytes (aItemIS);
-      System.out.println (StreamHelper.getAllBytesAsString (aItemIS, CCharset.CHARSET_ISO_8859_1_OBJ));
-
-      while (true)
-      {
-        final boolean bNextPart = aMulti.readBoundary ();
-        if (!bNextPart)
-          break;
-        s_aLogger.info ("Found part " + (nIndex++));
-        final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
-        // StreamHelper.getAllBytes (aItemIS);
-        System.out.println (StreamHelper.getAllBytesAsString (aItemIS2, CCharset.CHARSET_ISO_8859_1_OBJ));
-      }
-    }
-    else
-      if (aPlainMT.equals (ESOAPVersion.SOAP_11.getMimeType ()))
-      {
-        // SOAP 1.1
-      }
-      else
-        if (aPlainMT.equals (ESOAPVersion.SOAP_12.getMimeType ()))
-        {
-          // SOAP 1.2
-        }
-        else
-        {
-          s_aLogger.error ("Got unsupported Content-Type '" + aHttpServletRequest.getContentType () + "'");
+          s_aLogger.error ("Content-Type '" + aHttpServletRequest.getContentType () + "' misses boundary");
           aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
           return;
         }
 
-    new UnifiedResponse (aHttpServletRequest).setContentAndCharset ("<h1> hi </h1>\n" +
-                                                                    "Content-Type: " +
-                                                                    aHttpServletRequest.getContentType (),
-                                                                    CCharset.CHARSET_UTF_8_OBJ)
-                                             .setMimeType (CMimeType.TEXT_HTML)
-                                             .disableCaching ()
-                                             .applyToResponse (aHttpServletResponse);
+        s_aLogger.info ("Boundary = " + sBoundary);
+
+        // PARSING MIME Message via Datasource and Request
+        if (false)
+          try
+          {
+            final MimeMultipart aMultipart = new MimeMultipart (new ServletMultipartDataSource (aHttpServletRequest));
+
+            for (int i = 0; i < aMultipart.getCount (); i++)
+            {
+              final BodyPart aBodyPart = aMultipart.getBodyPart (i);
+
+              if (aBodyPart.getContent () instanceof InputStream)
+              {
+                s_aLogger.info (StreamHelper.getAllBytesAsString ((InputStream) aBodyPart.getContent (),
+                                                                  Charset.defaultCharset ()));
+                s_aLogger.info ("Bodypart " + i);
+                if (aBodyPart.getDataHandler () == null)
+                {
+                  s_aLogger.info ("should not be null expect for first bodypart " + i);
+                }
+                else
+                {
+                  s_aLogger.info ("Data Handler exists for multipart " + i);
+                }
+              }
+
+            }
+            final MimeMessage aMsg = new MimeMessage ((Session) null);
+            aMsg.setContent (aMultipart);
+            if (aMsg.getDataHandler () == null)
+            {
+              s_aLogger.info ("should not be null");
+            }
+            else
+            {
+              s_aLogger.info ("Data Handler exists for multipart");
+            }
+
+          }
+          catch (final MessagingException e1)
+          {
+            e1.printStackTrace ();
+          }
+
+        // PARSING MIME Message via MultiPartStream
+
+        final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
+                                                            sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
+                                                            (MultipartProgressNotifier) null);
+        int nIndex = 0;
+        while (true)
+        {
+          final boolean bNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+          if (!bNextPart)
+            break;
+          s_aLogger.info ("Found part " + nIndex);
+          final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
+
+          try
+          {
+            final MimeBodyPart p = new MimeBodyPart (aItemIS2);
+            if (nIndex == 0)
+            {
+              // SOAP document
+              // TODO handle
+              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (p.getContentType ())
+                                                           .getCopyWithoutParameters ();
+              if (aPlainPartMT.equals (ESOAPVersion.SOAP_11.getMimeType ()))
+                eSOAPVersion = ESOAPVersion.SOAP_11;
+              else
+                if (aPlainPartMT.equals (ESOAPVersion.SOAP_12.getMimeType ()))
+                  eSOAPVersion = ESOAPVersion.SOAP_12;
+                else
+                {
+                  s_aLogger.error ("Got unsupported MimeBodyPart Content-Type '" + p.getContentType () + "'");
+                  aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
+                  return;
+                }
+
+              aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
+            }
+            else
+            {
+              // Attachment - ignore for now
+            }
+          }
+          catch (final MessagingException e)
+          {
+            // TODO Auto-generated catch block
+            e.printStackTrace ();
+          }
+          nIndex++;
+        }
+      }
+      else
+        if (aPlainMT.equals (ESOAPVersion.SOAP_11.getMimeType ()))
+        {
+          // SOAP 1.1
+          eSOAPVersion = ESOAPVersion.SOAP_11;
+          aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
+        }
+        else
+          if (aPlainMT.equals (ESOAPVersion.SOAP_12.getMimeType ()))
+          {
+            // SOAP 1.2
+            eSOAPVersion = ESOAPVersion.SOAP_12;
+            aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
+          }
+          else
+          {
+            s_aLogger.error ("Got unsupported Content-Type '" + aHttpServletRequest.getContentType () + "'");
+            aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
+            return;
+          }
+
+      if (aSOAPDocument == null)
+      {
+        s_aLogger.error ("Failed to parse " + eSOAPVersion + " document!");
+        aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+
+      System.out.println (XMLWriter.getXMLString (aSOAPDocument));
+
+      new UnifiedResponse (aHttpServletRequest).setContentAndCharset ("<h1> hi </h1>\n" +
+                                                                      "Content-Type: " +
+                                                                      aHttpServletRequest.getContentType (),
+                                                                      CCharset.CHARSET_UTF_8_OBJ)
+                                               .setMimeType (CMimeType.TEXT_HTML)
+                                               .disableCaching ()
+                                               .applyToResponse (aHttpServletResponse);
+    }
+    catch (final Throwable t)
+    {
+      throw new ServletException ("Internal error", t);
+    }
   }
 
   @Override
