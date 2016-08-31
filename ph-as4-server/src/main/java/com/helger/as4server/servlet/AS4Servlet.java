@@ -20,9 +20,11 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.soap11.Soap11Envelope;
+import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.EMimeContentType;
@@ -36,6 +38,7 @@ import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.web.servlet.response.UnifiedResponse;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.XMLWriter;
 
 public class AS4Servlet extends HttpServlet
 {
@@ -61,10 +64,12 @@ public class AS4Servlet extends HttpServlet
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
 
+      // TODO not right i think, SoapVersion stil throws error need to
+      // investigate.
       if (aMT.getContentType ().equals (CMimeType.TEXT_PLAIN.getContentType ()) &&
           aMT.getContentSubType ().equals (CMimeType.TEXT_PLAIN.getContentSubType ()))
       {
-        handlePlainSoapMessage (eSOAPVersion, aHttpServletRequest);
+        handlePlainSoapMessage (aHttpServletRequest);
         return;
       }
 
@@ -195,35 +200,55 @@ public class AS4Servlet extends HttpServlet
     doPost (aHttpServletRequest, aHttpServletResponse);
   }
 
-  private void handlePlainSoapMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                       final HttpServletRequest aHttpServletRequest) throws IOException
+  private void handlePlainSoapMessage (final HttpServletRequest aHttpServletRequest) throws IOException,
+                                                                                     ServletException
   {
-
-    // aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
-    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+    ESOAPVersion eSOAPVersion;
+    String sReRead;
+    Ebms3Messaging aMessage;
+    CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
                                                   .setValidationEventHandler (aCVEH)
                                                   .read (aHttpServletRequest.getInputStream ());
-
-    final String sReRead = Ebms3WriterBuilder.soap11 ().getAsString (aEnv);
-    s_aLogger.info ("Just to recheck what was read: " + sReRead);
-
-    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
+    if (aEnv == null)
+    {
+      eSOAPVersion = ESOAPVersion.SOAP_12;
+      aCVEH = new CollectingValidationEventHandler ();
+      final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ()
                                                       .setValidationEventHandler (aCVEH)
-                                                      .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+                                                      .read (aHttpServletRequest.getInputStream ());
+
+      if (aEnv12 == null)
+        throw new ServletException ("Not a SOAP Message");
+
+      sReRead = Ebms3WriterBuilder.soap12 ().getAsString (aEnv12);
+      s_aLogger.info ("Just to recheck what was read: " + sReRead);
+
+      aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
+                                   .setValidationEventHandler (aCVEH)
+                                   .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+    }
+    else
+    {
+      eSOAPVersion = ESOAPVersion.SOAP_11;
+      sReRead = Ebms3WriterBuilder.soap11 ().getAsString (aEnv);
+      s_aLogger.info ("Just to recheck what was read: " + sReRead);
+      aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
+                                   .setValidationEventHandler (aCVEH)
+                                   .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+    }
 
     for (final Ebms3UserMessage aEbms3UserMessage : aMessage.getUserMessage ())
     {
       final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
       final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
                                                                                          null);
-      // final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage
-      // (eSOAPVersion,
-      // aEbms3MessageInfo,
-      // aEbms3UserMessage);
-      //
-      // return aDoc.getAsSOAPDocument (aPayload);
-      //
+      final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                           aEbms3MessageInfo,
+                                                                           aEbms3UserMessage,
+                                                                           null);
+
+      System.out.println (XMLWriter.getXMLString (aDoc.getAsSOAPDocument ()));
     }
 
   }
