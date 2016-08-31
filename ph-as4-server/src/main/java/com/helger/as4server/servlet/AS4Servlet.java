@@ -1,16 +1,10 @@
 package com.helger.as4server.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
-import javax.mail.BodyPart;
 import javax.mail.MessagingException;
-import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,22 +13,29 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
+import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
+import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.commons.charset.CCharset;
-import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
+import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.web.servlet.response.UnifiedResponse;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xml.serialize.write.XMLWriter;
 
 public class AS4Servlet extends HttpServlet
 {
@@ -47,6 +48,7 @@ public class AS4Servlet extends HttpServlet
   {
     // Determine content type
     final MimeType aMT = MimeTypeParser.parseMimeType (aHttpServletRequest.getContentType ());
+    s_aLogger.info ("Content-Type: " + aMT);
     if (aMT == null)
     {
       s_aLogger.error ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
@@ -58,6 +60,13 @@ public class AS4Servlet extends HttpServlet
     {
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
+
+      if (aMT.getContentType ().equals (CMimeType.TEXT_PLAIN.getContentType ()) &&
+          aMT.getContentSubType ().equals (CMimeType.TEXT_PLAIN.getContentSubType ()))
+      {
+        handlePlainSoapMessage (eSOAPVersion, aHttpServletRequest);
+        return;
+      }
 
       final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
       if (aPlainMT.equals (MT_MULTIPART_RELATED))
@@ -72,49 +81,6 @@ public class AS4Servlet extends HttpServlet
         }
 
         s_aLogger.info ("Boundary = " + sBoundary);
-
-        // PARSING MIME Message via Datasource and Request
-        if (false)
-          try
-          {
-            final MimeMultipart aMultipart = new MimeMultipart (new ServletMultipartDataSource (aHttpServletRequest));
-
-            for (int i = 0; i < aMultipart.getCount (); i++)
-            {
-              final BodyPart aBodyPart = aMultipart.getBodyPart (i);
-
-              if (aBodyPart.getContent () instanceof InputStream)
-              {
-                s_aLogger.info (StreamHelper.getAllBytesAsString ((InputStream) aBodyPart.getContent (),
-                                                                  Charset.defaultCharset ()));
-                s_aLogger.info ("Bodypart " + i);
-                if (aBodyPart.getDataHandler () == null)
-                {
-                  s_aLogger.info ("should not be null expect for first bodypart " + i);
-                }
-                else
-                {
-                  s_aLogger.info ("Data Handler exists for multipart " + i);
-                }
-              }
-
-            }
-            final MimeMessage aMsg = new MimeMessage ((Session) null);
-            aMsg.setContent (aMultipart);
-            if (aMsg.getDataHandler () == null)
-            {
-              s_aLogger.info ("should not be null");
-            }
-            else
-            {
-              s_aLogger.info ("Data Handler exists for multipart");
-            }
-
-          }
-          catch (final MessagingException e1)
-          {
-            e1.printStackTrace ();
-          }
 
         // PARSING MIME Message via MultiPartStream
 
@@ -150,8 +116,20 @@ public class AS4Servlet extends HttpServlet
                   aHttpServletResponse.sendError (HttpServletResponse.SC_BAD_REQUEST);
                   return;
                 }
+              {
+                // aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
+                final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+                final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
+                                                              .setValidationEventHandler (aCVEH)
+                                                              .read (p.getInputStream ());
+                final String sReRead = Ebms3WriterBuilder.soap11 ().getAsString (aEnv);
+                s_aLogger.info ("Just to recheck what was read: " + sReRead);
+                final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
+                                                                  .setValidationEventHandler (aCVEH)
+                                                                  .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
 
-              aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
+              }
+
             }
             else
             {
@@ -194,7 +172,7 @@ public class AS4Servlet extends HttpServlet
         return;
       }
 
-      System.out.println (XMLWriter.getXMLString (aSOAPDocument));
+      // TODO System.out.println (XMLWriter.getXMLString (aSOAPDocument));
 
       new UnifiedResponse (aHttpServletRequest).setContentAndCharset ("<h1> hi </h1>\n" +
                                                                       "Content-Type: " +
@@ -215,5 +193,38 @@ public class AS4Servlet extends HttpServlet
                      @Nonnull final HttpServletResponse aHttpServletResponse) throws ServletException, IOException
   {
     doPost (aHttpServletRequest, aHttpServletResponse);
+  }
+
+  private void handlePlainSoapMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                       final HttpServletRequest aHttpServletRequest) throws IOException
+  {
+
+    // aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
+    final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
+    final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()
+                                                  .setValidationEventHandler (aCVEH)
+                                                  .read (aHttpServletRequest.getInputStream ());
+
+    final String sReRead = Ebms3WriterBuilder.soap11 ().getAsString (aEnv);
+    s_aLogger.info ("Just to recheck what was read: " + sReRead);
+
+    final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
+                                                      .setValidationEventHandler (aCVEH)
+                                                      .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
+
+    for (final Ebms3UserMessage aEbms3UserMessage : aMessage.getUserMessage ())
+    {
+      final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
+      final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
+                                                                                         null);
+      // final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage
+      // (eSOAPVersion,
+      // aEbms3MessageInfo,
+      // aEbms3UserMessage);
+      //
+      // return aDoc.getAsSOAPDocument (aPayload);
+      //
+    }
+
   }
 }

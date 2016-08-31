@@ -40,3 +40,48 @@ public class ServletMultipartDataSource implements DataSource
     return "ServletMultipartDataSource";
   }
 }
+
+// PARSING MIME Message via Datasource and Request
+// if (false)
+// try
+// {
+// final MimeMultipart aMultipart = new MimeMultipart (new
+// ServletMultipartDataSource (aHttpServletRequest));
+//
+// for (int i = 0; i < aMultipart.getCount (); i++)
+// {
+// final BodyPart aBodyPart = aMultipart.getBodyPart (i);
+//
+// if (aBodyPart.getContent () instanceof InputStream)
+// {
+// s_aLogger.info (StreamHelper.getAllBytesAsString ((InputStream)
+// aBodyPart.getContent (),
+// Charset.defaultCharset ()));
+// s_aLogger.info ("Bodypart " + i);
+// if (aBodyPart.getDataHandler () == null)
+// {
+// s_aLogger.info ("should not be null expect for first bodypart " + i);
+// }
+// else
+// {
+// s_aLogger.info ("Data Handler exists for multipart " + i);
+// }
+// }
+//
+// }
+// final MimeMessage aMsg = new MimeMessage ((Session) null);
+// aMsg.setContent (aMultipart);
+// if (aMsg.getDataHandler () == null)
+// {
+// s_aLogger.info ("should not be null");
+// }
+// else
+// {
+// s_aLogger.info ("Data Handler exists for multipart");
+// }
+//
+// }
+// catch (final MessagingException e1)
+// {
+// e1.printStackTrace ();
+// }
