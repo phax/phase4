@@ -13,7 +13,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.xml.SerializerXML;
+import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -43,7 +43,7 @@ public final class MimeMessageCreator
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final String aDoc = SerializerXML.serializeXML (aSOAPEnvelope);
+      final String aDoc = AS4XMLHelper.serializeXML (aSOAPEnvelope);
       aMessagePart.setContent (aDoc, m_eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
       aMessagePart.setHeader (CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);

@@ -62,7 +62,6 @@
   </developers>
 
   <properties>
-    <cxf.version>3.1.6</cxf.version>
     <wss4j.version>2.1.7</wss4j.version>
     <bc.version>1.55</bc.version>
   </properties>
@@ -112,27 +111,6 @@
             <artifactId>geronimo-javamail_1.4_spec</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-security</artifactId>
-        <version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-ws-security</artifactId>
-        <version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-transports-http</artifactId>
-        <version>${cxf.version}</version>
       </dependency>
       
       <dependency>

@@ -27,7 +27,7 @@ import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.mime.SoapMimeMultipart;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.xml.SerializerXML;
+import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -79,7 +79,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
     final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null);
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
       final Element eElement = (Element) nNode;
       eElement.setAttribute ("INVALID", "INVALID");
     }
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
@@ -138,7 +138,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = TestMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)),
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }

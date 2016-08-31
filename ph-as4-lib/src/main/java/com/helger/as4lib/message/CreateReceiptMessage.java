@@ -1,7 +1,5 @@
 package com.helger.as4lib.message;
 
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -23,55 +21,21 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings ("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
 public class CreateReceiptMessage
 {
-  // TODO maybe find a better way
-  private static Node _findChildElement (@Nullable final Node aStart, @Nonnull final String sLocalName)
-  {
-    return XMLHelper.getFirstChildElementOfName (aStart, sLocalName);
-  }
-
-  private static Node _findChildElement (@Nullable final Node aStart,
-                                         @Nonnull final String sNamespaceURI,
-                                         @Nonnull final String sLocalName)
-  {
-    return XMLHelper.getFirstChildElementOfName (aStart, sNamespaceURI, sLocalName);
-  }
-
-  private static void _findAllChildElements (@Nullable final Node aStart,
-                                             @Nonnull final String sNamespaceURI,
-                                             @Nonnull final String sLocalName,
-                                             @Nonnull final Collection <Node> aTarget)
-  {
-    new ChildElementIterator (aStart).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (sNamespaceURI,
-                                                                                                 sLocalName),
-                                               aTarget::add);
-  }
-
-  @Deprecated
-  private String _findRefToMessageId (@Nonnull final Node aUserMessage)
-  {
-    {
-      Node aNext = _findChildElement (aUserMessage, "Header");
-      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "Messaging");
-      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "UserMessage");
-      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "MessageInfo");
-      aNext = _findChildElement (aNext, CAS4.EBMS_NS, "MessageId");
-      if (aNext != null)
-        return (aNext.getFirstChild ().getNodeValue ());
-    }
-    return null;
-  }
-
   @Nonnull
   private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
-      Node aNext = _findChildElement (aUserMessage, "Header");
-      aNext = _findChildElement (aNext, CAS4.WSSE_NS, "Security");
-      aNext = _findChildElement (aNext, CAS4.DS_NS, "Signature");
-      aNext = _findChildElement (aNext, CAS4.DS_NS, "SignedInfo");
+      Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Header");
+      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
+      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
+      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
       if (aNext != null)
-        _findAllChildElements (aNext, CAS4.DS_NS, "Reference", aDSRefs);
+      {
+        new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
+                                                                                                    "Reference"),
+                                                  aDSRefs::add);
+      }
     }
     return aDSRefs;
   }
@@ -79,11 +43,11 @@ public class CreateReceiptMessage
   @Nonnull
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                 @Nonnull final Ebms3UserMessage aEbms3UserMessage,
+                                                 @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                  @Nullable final Node aUserMessage)
   {
-
-    aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
+    if (aEbms3UserMessage != null)
+      aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
 
     final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
 

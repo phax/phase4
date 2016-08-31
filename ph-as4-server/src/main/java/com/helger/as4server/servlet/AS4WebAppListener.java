@@ -23,6 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4lib.ebms3header.ObjectFactory;
+import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorEbms3Messaging;
+import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.web.servlet.ServletContextPathHolder;
 
 public class AS4WebAppListener implements ServletContextListener
@@ -35,6 +38,10 @@ public class AS4WebAppListener implements ServletContextListener
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
     ServletContextPathHolder.setServletContextPath (sce.getServletContext ().getContextPath ());
+
+    // Register all SOAP header element processors
+    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (ObjectFactory._Messaging_QNAME,
+                                                                       new SOAPHeaderElementProcessorEbms3Messaging ());
     s_aLogger.info ("AS4 server started");
   }
 

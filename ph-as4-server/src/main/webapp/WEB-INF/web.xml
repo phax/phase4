@@ -34,6 +34,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>AS4Servlet</servlet-name>
-    <url-pattern>/AS4Servlet</url-pattern>
+    <url-pattern>/as4</url-pattern>
   </servlet-mapping>
 </web-app>

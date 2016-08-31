@@ -18,7 +18,7 @@ import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.xml.SerializerXML;
+import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -45,7 +45,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -55,7 +55,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
 
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -79,7 +79,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
     Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   @Test
@@ -91,6 +91,6 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageSetUp
     Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
-    sendPlainMessage (new StringEntity (SerializerXML.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 }

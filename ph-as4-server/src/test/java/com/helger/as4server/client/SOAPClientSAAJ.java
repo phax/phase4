@@ -29,7 +29,7 @@ import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.xml.SerializerXML;
+import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -76,8 +76,7 @@ public class SOAPClientSAAJ
 
       // final HttpPost aPost = new HttpPost
       // ("http://127.0.0.1:8080/services/msh/");
-
-      final HttpPost aPost = new HttpPost ("http://localhost:8080/AS4Servlet");
+      final HttpPost aPost = new HttpPost ("http://localhost:8080/as4");
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
@@ -88,7 +87,7 @@ public class SOAPClientSAAJ
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
         final Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        aPost.setEntity (new StringEntity (SerializerXML.serializeXML (aDoc)));
+        aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
       }
       else
         if (true)
