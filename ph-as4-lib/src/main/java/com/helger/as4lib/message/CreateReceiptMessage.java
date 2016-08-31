@@ -5,7 +5,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.constants.CAS4;
@@ -46,10 +45,10 @@ public class CreateReceiptMessage
                                                aTarget::add);
   }
 
-  private String _findRefToMessageId (@Nonnull final Document aUserMessage)
+  private String _findRefToMessageId (@Nonnull final Node aUserMessage)
   {
     {
-      Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
+      Node aNext = _findChildElement (aUserMessage, "Header");
       aNext = _findChildElement (aNext, CAS4.EBMS_NS, "Messaging");
       aNext = _findChildElement (aNext, CAS4.EBMS_NS, "UserMessage");
       aNext = _findChildElement (aNext, CAS4.EBMS_NS, "MessageInfo");
@@ -60,11 +59,12 @@ public class CreateReceiptMessage
     return null;
   }
 
-  private ICommonsList <Node> _getAllReferences (@Nonnull final Document aUserMessage)
+  @Nonnull
+  private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
-      Node aNext = _findChildElement (aUserMessage.getDocumentElement (), "Header");
+      Node aNext = _findChildElement (aUserMessage, "Header");
       aNext = _findChildElement (aNext, CAS4.WSSE_NS, "Security");
       aNext = _findChildElement (aNext, CAS4.DS_NS, "Signature");
       aNext = _findChildElement (aNext, CAS4.DS_NS, "SignedInfo");
@@ -77,7 +77,7 @@ public class CreateReceiptMessage
   @Nonnull
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                 @Nonnull final Document aUserMessage)
+                                                 @Nullable final Node aUserMessage)
   {
     aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
 
