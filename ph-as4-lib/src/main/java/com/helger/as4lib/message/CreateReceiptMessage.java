@@ -59,7 +59,8 @@ public class CreateReceiptMessage
     return null;
   }
 
-  private ICommonsList <Node> _getAllReferences (@Nonnull final Node aUserMessage)
+  @Nonnull
+  private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
@@ -76,7 +77,7 @@ public class CreateReceiptMessage
   @Nonnull
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                 @Nonnull final Node aUserMessage)
+                                                 @Nullable final Node aUserMessage)
   {
     aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
 
