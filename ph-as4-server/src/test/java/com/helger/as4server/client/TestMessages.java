@@ -76,6 +76,7 @@ final class TestMessages
     final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                 aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
                                                                                                         null),
+                                                                null,
                                                                 aUserMessage)
                                          .setMustUnderstand (false)
                                          .getAsSOAPDocument ();

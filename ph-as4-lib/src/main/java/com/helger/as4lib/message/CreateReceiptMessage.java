@@ -11,6 +11,7 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -45,6 +46,7 @@ public class CreateReceiptMessage
                                                aTarget::add);
   }
 
+  @Deprecated
   private String _findRefToMessageId (@Nonnull final Node aUserMessage)
   {
     {
@@ -77,9 +79,11 @@ public class CreateReceiptMessage
   @Nonnull
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                                 @Nonnull final Ebms3UserMessage aEbms3UserMessage,
                                                  @Nullable final Node aUserMessage)
   {
-    aEbms3MessageInfo.setRefToMessageId (_findRefToMessageId (aUserMessage));
+
+    aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
 
     final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
 

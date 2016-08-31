@@ -17,7 +17,9 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -31,7 +33,6 @@
   <description>AS4 common library</description>
   <url>https://github.com/phax/ph-as4/ph-as4-server</url>
   <inceptionYear>2015</inceptionYear>
-
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -39,13 +40,11 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
   <properties>
     <m2e.jaxrs.activation>false</m2e.jaxrs.activation>
     <m2e.jpa.activation>false</m2e.jpa.activation>
     <m2e.jsf.activation>false</m2e.jsf.activation>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
@@ -64,7 +63,6 @@
       <groupId>com.helger</groupId>
       <artifactId>ph-web</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -76,7 +74,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <resources>
       <resource>
