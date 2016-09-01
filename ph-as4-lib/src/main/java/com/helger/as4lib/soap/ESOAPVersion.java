@@ -48,6 +48,12 @@ public enum ESOAPVersion
   }
 
   @Nonnull
+  public MimeType getMimeType (@Nonnull final Charset aCharset)
+  {
+    return new MimeType (m_aMimeType).addParameter (CMimeType.PARAMETER_NAME_CHARSET, aCharset.name ());
+  }
+
+  @Nonnull
   @Nonempty
   public String getMustUnderstandValue (final boolean bMustUnderstand)
   {
@@ -57,8 +63,14 @@ public enum ESOAPVersion
   }
 
   @Nonnull
-  public MimeType getMimeType (@Nonnull final Charset aCharset)
+  public String getHeaderElementName ()
   {
-    return new MimeType (m_aMimeType).addParameter (CMimeType.PARAMETER_NAME_CHARSET, aCharset.name ());
+    return "Header";
+  }
+
+  @Nonnull
+  public String getBodyElementName ()
+  {
+    return "Body";
   }
 }

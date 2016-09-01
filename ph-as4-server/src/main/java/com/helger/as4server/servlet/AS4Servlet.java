@@ -28,6 +28,8 @@ import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -50,19 +52,31 @@ public class AS4Servlet extends HttpServlet
                                    @Nonnull final AS4Response aUR) throws Exception
   {
     // Find SOAP header
-    final Node aHeader = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (), "Header");
-    if (aHeader == null)
+    final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
+                                                                   eSOAPVersion.getHeaderElementName ());
+    if (aHeaderNode == null)
     {
       aUR.setBadRequest ("SOAP document is missing a Header element");
       return;
     }
 
-    final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
-    for (final Element aHeaderChild : new ChildElementIterator (aHeader))
+    // Extract all header elements
+    final ICommonsList <AS4SOAPHeader> aHeaders = new CommonsArrayList<> ();
+    for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = AS4XMLHelper.getQName (aHeaderChild);
       final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
       final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
+      aHeaders.add (new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+    }
+
+    final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
+
+    // TODO handle all headers in the order of the registered handlers!
+    for (final AS4SOAPHeader aHeader : aHeaders)
+    {
+      final QName aQName = aHeader.getQName ();
+      final boolean bIsMustUnderstand = aHeader.isMustUnderstand ();
 
       if (s_aLogger.isDebugEnabled ())
         s_aLogger.debug ("Processing SOAP header element " +
@@ -82,7 +96,7 @@ public class AS4Servlet extends HttpServlet
       }
       else
       {
-        if (aProcessor.processHeaderElement (aHeaderChild, aState).isFailure ())
+        if (aProcessor.processHeaderElement (aHeader.getNode (), aState).isFailure ())
         {
           if (bIsMustUnderstand)
           {
