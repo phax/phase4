@@ -46,27 +46,36 @@ public class CreateReceiptMessage
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                  @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                                 @Nullable final Node aUserMessage)
+                                                 @Nullable final Node aSignedUserMessage)
   {
     if (aEbms3UserMessage != null)
       aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
 
-    final ICommonsList <Node> aDSRefs = _getAllReferences (aUserMessage);
+    // Only for signed messages
+    final ICommonsList <Node> aDSRefs = _getAllReferences (aSignedUserMessage);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
     // Message Info
     aSignalMessage.setMessageInfo (aEbms3MessageInfo);
 
+    final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
     // PullRequest
     if (aDSRefs.isNotEmpty ())
     {
-      final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
       for (final Node aRef : aDSRefs)
         aEbms3Receipt.addAny (aRef.cloneNode (true));
-      aSignalMessage.setReceipt (aEbms3Receipt);
+
     }
-    // else Receipt must stay null
+    else
+    {
+      // If the original usermessage is not signed, the receipt will contain the
+      // original message part with out wss4j security
+      aEbms3Receipt.addAny (new CreateUserMessage ().getUserMessageAsAS4UserMessage (eSOAPVersion, aEbms3UserMessage)
+                                                    .getAsSOAPDocument ()
+                                                    .getDocumentElement ());
+    }
+    aSignalMessage.setReceipt (aEbms3Receipt);
 
     return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }

@@ -30,6 +30,12 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public class CreateUserMessage
 {
+  public AS4UserMessage getUserMessageAsAS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                        @Nonnull final Ebms3UserMessage aUserMessage)
+  {
+    return new AS4UserMessage (eSOAPVersion, aUserMessage);
+  }
+
   @Nonnull
   public AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
                                            @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,

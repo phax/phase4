@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.mime.MimeMessageCreator;
@@ -82,7 +83,7 @@ public class SOAPClientSAAJ
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message, just SOAP + Payload in SOAP - Body
-      if (true)
+      if (false)
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
@@ -109,6 +110,13 @@ public class SOAPClientSAAJ
           MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
           aPost.setEntity (new HttpMimeMessageEntity (aMsg));
         }
+        else
+          if (true)
+          {
+            Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+            aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
+            aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+          }
 
       // XXX reinstate if you wanna see the request that is getting sent
       System.out.println (EntityUtils.toString (aPost.getEntity ()));

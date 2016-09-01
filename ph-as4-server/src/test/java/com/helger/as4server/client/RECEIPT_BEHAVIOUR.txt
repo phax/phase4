@@ -1,0 +1,4 @@
+Not Signed: UserMessage
+Signed: 2x References (new reference from receipt + usermessage reference)
+Encrypt: UserMessage
+Signed&Encrypt: 1x Reference (new reference from receipt)
