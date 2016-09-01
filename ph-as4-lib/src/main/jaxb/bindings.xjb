@@ -58,4 +58,20 @@
       </nameXmlTransform>
     </schemaBindings>
   </bindings>
+  <bindings schemaLocation="../resources/schemas/xlink.xsd" node="/xs:schema">
+    <schemaBindings>
+      <package name="com.helger.as4lib.xlink" />
+      <nameXmlTransform>
+        <typeName prefix="XLink"/>
+      </nameXmlTransform>
+    </schemaBindings>
+  </bindings>
+  <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd" node="/xs:schema">
+    <schemaBindings>
+      <package name="com.helger.as4lib.ebbpsignals" />
+      <nameXmlTransform>
+        <typeName prefix="EbbpSig"/>
+      </nameXmlTransform>
+    </schemaBindings>
+  </bindings>
 </bindings>

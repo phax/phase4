@@ -64,6 +64,10 @@
       <artifactId>ph-httpclient</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-xsds-xmldsig</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk15on</artifactId>
     </dependency>
@@ -92,10 +96,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package> com.helger.as4lib.* 
-            </Export-Package>
-            <Import-Package> !javax.annotation.*,* 
-            </Import-Package>
+            <Export-Package> com.helger.as4lib.*</Export-Package>
+            <Import-Package>!javax.annotation.*,*</Import-Package>
           </instructions>
         </configuration>
       </plugin>
@@ -106,6 +108,7 @@
           <excludes>
             <exclude>**/NOTICE</exclude>
             <exclude>**/LICENSE</exclude>
+            <exclude>**/*.txt</exclude>
             <exclude>src/main/resources/schemas/*</exclude>
           </excludes>
         </configuration>
@@ -125,7 +128,8 @@
           <bindingDirectory>${basedir}/src/main/jaxb</bindingDirectory>
           <schemaDirectory>${basedir}/src/main/resources/schemas</schemaDirectory>
           <extension>true</extension>
-          <specVersion>2.1</specVersion>
+          <strict>false</strict>
+          <catalog>${basedir}/src/main/jaxb/catalog.txt</catalog>
           <args>
             <arg>-no-header</arg>
             <arg>-Xph-default-locale</arg>
@@ -140,24 +144,40 @@
             <arg>-Xph-list-extension</arg>
             <arg>-Xph-csu</arg>
           </args>
+          <episodes>
+            <episode>
+              <groupId>com.helger</groupId>
+              <artifactId>ph-xsds-xmldsig</artifactId>
+            </episode>
+          </episodes>
         </configuration>
         <dependencies>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.2.11</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>2.2.11</version>
-          </dependency>
           <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-jaxb22-plugin</artifactId>
             <version>2.2.11.8</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <!-- Delete the directory with only ObjectFactory 
+           Source: http://stackoverflow.com/questions/32635137
+      -->
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/xsds/" />
+                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/as4lib/xlink/" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
