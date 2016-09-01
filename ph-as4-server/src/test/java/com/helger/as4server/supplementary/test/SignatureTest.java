@@ -70,7 +70,7 @@ public class SignatureTest
     builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithmen as Hash Function
+    // PMode indicates the DigestAlgorithmen as Hash Function
     builder.setDigestAlgo ("http://www.w3.org/2001/04/xmlenc#sha256");
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

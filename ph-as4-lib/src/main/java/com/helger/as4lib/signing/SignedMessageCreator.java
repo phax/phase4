@@ -44,7 +44,7 @@ public class SignedMessageCreator
     aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (CAS4.SIGNATURE_ALGORITHM_RSA_SHA256);
-    // TODO DONT FORGET: PMode indicates the DigestAlgorithm as Hash Function
+    // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (CAS4.DIGEST_ALGORITHM_SHA256);
     return aBuilder;
   }
