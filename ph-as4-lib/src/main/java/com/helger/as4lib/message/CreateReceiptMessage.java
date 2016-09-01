@@ -11,6 +11,7 @@ import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.xml.ChildElementIterator;
@@ -22,6 +23,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class CreateReceiptMessage
 {
   @Nonnull
+  @ReturnsMutableCopy
   private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
@@ -57,10 +59,14 @@ public class CreateReceiptMessage
     aSignalMessage.setMessageInfo (aEbms3MessageInfo);
 
     // PullRequest
-    final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
-    for (final Node aRef : aDSRefs)
-      aEbms3Receipt.addAny (aRef.cloneNode (true));
-    aSignalMessage.setReceipt (aEbms3Receipt);
+    if (aDSRefs.isNotEmpty ())
+    {
+      final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
+      for (final Node aRef : aDSRefs)
+        aEbms3Receipt.addAny (aRef.cloneNode (true));
+      aSignalMessage.setReceipt (aEbms3Receipt);
+    }
+    // else Receipt must stay null
 
     return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }

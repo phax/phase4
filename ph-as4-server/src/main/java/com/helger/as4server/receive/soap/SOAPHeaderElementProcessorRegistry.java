@@ -10,14 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ext.CommonsHashMap;
-import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.collection.ext.CommonsLinkedHashMap;
+import com.helger.commons.collection.ext.ICommonsOrderedMap;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 
 /**
  * This class manages the SOAP header element processors. This is used to
  * validate the "must understand" SOAP requirement.
- * 
+ *
  * @author Philip Helger
  */
 @ThreadSafe
@@ -26,7 +26,7 @@ public final class SOAPHeaderElementProcessorRegistry
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
-  private static final ICommonsMap <QName, ISOAPHeaderElementProcessor> s_aMap = new CommonsHashMap<> ();
+  private static final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> s_aMap = new CommonsLinkedHashMap<> ();
 
   private SOAPHeaderElementProcessorRegistry ()
   {}
@@ -51,5 +51,11 @@ public final class SOAPHeaderElementProcessorRegistry
     if (aQName == null)
       return null;
     return s_aRWLock.readLocked ( () -> s_aMap.get (aQName));
+  }
+
+  @Nullable
+  public static ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
+  {
+    return s_aRWLock.readLocked ( () -> s_aMap.getClone ());
   }
 }

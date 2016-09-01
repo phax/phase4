@@ -3,6 +3,7 @@ package com.helger.as4server.servlet;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.internet.MimeBodyPart;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,11 +17,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
+import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.receive.AS4MessageState;
@@ -28,6 +37,8 @@ import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
@@ -47,9 +58,51 @@ public class AS4Servlet extends HttpServlet
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
+  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                       @Nullable final Node aPayload,
+                                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+  {
+    final CreateUserMessage aUserMessage = new CreateUserMessage ();
+
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
+    aEbms3PropertyProcess.setName ("ProcessInst");
+    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
+    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
+    aEbms3PropertyContext.setName ("ContextID");
+    aEbms3PropertyContext.setValue ("987654321");
+    aEbms3Properties.add (aEbms3PropertyContext);
+    aEbms3Properties.add (aEbms3PropertyProcess);
+
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                      "MyServiceTypes",
+                                                                                                      "QuoteToCollect",
+                                                                                                      "4321",
+                                                                                                      "pm-esens-generic-resp",
+                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                              "APP_1000000101",
+                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              "APP_1000000101");
+    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                aEbms3PayloadInfo,
+                                                                aEbms3CollaborationInfo,
+                                                                aEbms3PartyInfo,
+                                                                aEbms3MessageProperties,
+                                                                eSOAPVersion)
+                                            .setMustUnderstand (false);
+    System.out.println (XMLWriter.getXMLString (aDoc.getAsSOAPDocument (aPayload)));
+    return aDoc.getAsSOAPDocument (aPayload);
+  }
+
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
-                                   @Nonnull final AS4Response aUR)
+                                   @Nonnull final AS4Response aUR) throws Exception
   {
     // Find SOAP header
     final Node aHeader = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (), "Header");
@@ -108,17 +161,20 @@ public class AS4Servlet extends HttpServlet
       return;
     }
 
+    AS4Servlet.testUserMessageSoapNotSigned (eSOAPVersion, null, null);
+
     for (final Ebms3UserMessage aEbms3UserMessage : aMessaging.getUserMessage ())
     {
       final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
-      final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
+      final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-3@receiver.example.com",
                                                                                          null);
       final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                            aEbms3MessageInfo,
                                                                            aEbms3UserMessage,
-                                                                           null);
+                                                                           null)
+                                                    .setMustUnderstand (false);
 
-      System.out.println (XMLWriter.getXMLString (aDoc.getAsSOAPDocument ()));
+      System.out.println (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()));
     }
 
     aUR.setContentAndCharset ("<h1>Got " + eSOAPVersion + "</h1>\n", CCharset.CHARSET_UTF_8_OBJ)

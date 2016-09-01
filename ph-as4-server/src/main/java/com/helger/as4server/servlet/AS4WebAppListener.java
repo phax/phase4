@@ -40,6 +40,7 @@ public class AS4WebAppListener implements ServletContextListener
     ServletContextPathHolder.setServletContextPath (sce.getServletContext ().getContextPath ());
 
     // Register all SOAP header element processors
+    // Registration order matches execution order!
     SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (ObjectFactory._Messaging_QNAME,
                                                                        new SOAPHeaderElementProcessorEbms3Messaging ());
     s_aLogger.info ("AS4 server started");
