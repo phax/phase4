@@ -26,7 +26,10 @@ import org.junit.Before;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.lang.NonBlockingProperties;
+import com.helger.commons.lang.PropertiesHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
@@ -57,8 +60,9 @@ public abstract class AbstractUserMessageSetUp
   @Before
   public void setUp () throws KeyManagementException, NoSuchAlgorithmException
   {
-    // TODO read from config
-    final String sURL = "http://127.0.0.1:8080/services/msh/";
+    final NonBlockingProperties aProperties = PropertiesHelper.loadProperties (new ClassPathResource ("as4.properties"));
+
+    final String sURL = aProperties.get ("server.address");
 
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
@@ -68,10 +72,12 @@ public abstract class AbstractUserMessageSetUp
 
     m_aPost = new HttpPost (sURL);
 
-    // TODO read from config
     if (false)
     {
-      m_aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("10.0.0.0", 8080)).build ());
+      m_aPost.setConfig (RequestConfig.custom ()
+                                      .setProxy (new HttpHost (aProperties.get ("server.proxy.address"),
+                                                               Integer.parseInt (aProperties.get ("server.proxy.port"))))
+                                      .build ());
     }
   }
 
