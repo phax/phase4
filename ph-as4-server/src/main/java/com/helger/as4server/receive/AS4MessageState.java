@@ -5,14 +5,12 @@ import java.time.LocalDateTime;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.xml.namespace.QName;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
 import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.error.IResourceErrorGroup;
 
 /**
  * This class keeps track of the status of an incoming message. It is basically
@@ -62,25 +60,5 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public Ebms3Messaging getMessaging ()
   {
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
-  }
-
-  public void addUnhandledHeader (@Nonnull final QName aQName)
-  {
-    // TODO
-  }
-
-  public void addHandledHeader (@Nonnull final QName aQName)
-  {
-    // TODO
-  }
-
-  public void addProcessingErrors (@Nonnull final QName aQName, @Nonnull final IResourceErrorGroup aAllFailures)
-  {
-    // TODO
-  }
-
-  public void addFailedHeader (@Nonnull final QName aQName)
-  {
-    // TODO
   }
 }

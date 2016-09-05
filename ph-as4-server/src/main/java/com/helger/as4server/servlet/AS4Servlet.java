@@ -1,6 +1,7 @@
 package com.helger.as4server.servlet;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeBodyPart;
@@ -30,6 +31,7 @@ import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.errorlist.IErrorBase;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -53,6 +55,7 @@ public class AS4Servlet extends HttpServlet
   {
     // Find SOAP header
     final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
+                                                                   eSOAPVersion.getNamespaceURI (),
                                                                    eSOAPVersion.getHeaderElementName ());
     if (aHeaderNode == null)
     {
@@ -71,47 +74,41 @@ public class AS4Servlet extends HttpServlet
     }
 
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
-
-    // TODO handle all headers in the order of the registered handlers!
-    for (final AS4SOAPHeader aHeader : aHeaders)
+    // handle all headers in the order of the registered handlers!
+    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getAllElementProcessors ()
+                                                                                                         .entrySet ())
     {
-      final QName aQName = aHeader.getQName ();
-      final boolean bIsMustUnderstand = aHeader.isMustUnderstand ();
-
-      if (s_aLogger.isDebugEnabled ())
-        s_aLogger.debug ("Processing SOAP header element " +
-                         aQName.toString () +
-                         " with mustUnderstand=" +
-                         bIsMustUnderstand);
-
-      final ISOAPHeaderElementProcessor aProcessor = SOAPHeaderElementProcessorRegistry.getHeaderElementProcessor (aQName);
-      if (aProcessor == null)
+      final QName aQName = aEntry.getKey ();
+      final AS4SOAPHeader aHeader = aHeaders.findFirst (x -> aQName.equals (x.getQName ()));
+      if (aHeader != null)
       {
-        if (bIsMustUnderstand)
-        {
-          aUR.setBadRequest ("No handler for required SOAP header element " + aQName.toString () + " found");
-          return;
-        }
-        aState.addUnhandledHeader (aQName);
-      }
-      else
-      {
-        if (aProcessor.processHeaderElement (aHeader.getNode (), aState).isFailure ())
-        {
-          if (bIsMustUnderstand)
-          {
-            aUR.setBadRequest ("Error processing required SOAP header element " + aQName.toString ());
-            return;
-          }
-          aState.addFailedHeader (aQName);
-        }
+        final ISOAPHeaderElementProcessor aProcessor = aEntry.getValue ();
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
+
+        // Process element
+        final ICommonsList <IErrorBase <?>> aErrorList = new CommonsArrayList<> ();
+        if (aProcessor.processHeaderElement (aHeader.getNode (), aState, aErrorList).isSuccess ())
+          aHeader.setProcessed (true);
         else
         {
-          // Handled
-          aState.addHandledHeader (aQName);
+          // upon failure, the element stays unprocessed
+          s_aLogger.warn ("Failed to process SOAP header element " +
+                          aQName.toString () +
+                          " with processor " +
+                          aProcessor);
         }
       }
+      // else: no header element for current processor
     }
+
+    // Now check if all must understand headers were processed
+    for (final AS4SOAPHeader aHeader : aHeaders)
+      if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
+      {
+        aUR.setBadRequest ("Error processing required SOAP header element " + aHeader.getQName ().toString ());
+        return;
+      }
 
     final Ebms3Messaging aMessaging = aState.getMessaging ();
     if (aMessaging == null)
