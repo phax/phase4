@@ -27,7 +27,8 @@ public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPMode
     aValue.forAllPayloadProfiles (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
                                                                                                   sNamespaceURI,
                                                                                                   ELEMENT_PAYLOAD_PROFILE)));
-    ret.setAttribute (ATTR_PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ());
+    if (aValue.getPayloadProfileMaxKB () != null)
+      ret.setAttribute (ATTR_PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ());
     ret.setAttribute (ATTR_MPCID, aValue.getMPCID ());
     return ret;
   }

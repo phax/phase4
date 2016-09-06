@@ -20,37 +20,48 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.id.IHasID;
+import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 
 /**
  * Predefines transport channel bindings.
- * 
+ *
  * @author Philip Helger
  */
-public enum ETransportChannelBinding
+public enum ETransportChannelBinding implements IHasID <String>
 {
   /**
    * maps an MEP User message to the 1st leg of an underlying 2-way transport
    * protocol, or of a 1-way protocol.
    */
-  PUSH ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push"),
+  PUSH ("push", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push"),
   /**
    * maps an MEP User message to the second leg of an underlying two-way
    * transport protocol, as a result of an ebMS Pull Signal sent over the first
    * leg.
    */
-  PULL ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull"),
+  PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull"),
   /**
    * maps an exchange of two User messages respectively to the first and second
    * legs of a two-way underlying transport protocol.
    */
-  SYNC ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sync");
+  SYNC ("sync", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sync");
 
+  private final String m_sID;
   private final String m_sURI;
 
-  private ETransportChannelBinding (@Nonnull @Nonempty final String sURI)
+  private ETransportChannelBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
   {
+    m_sID = sID;
     m_sURI = sURI;
+  }
+
+  @Nonnull
+  @Nonempty
+  public String getID ()
+  {
+    return m_sID;
   }
 
   @Nonnull
@@ -61,12 +72,16 @@ public enum ETransportChannelBinding
   }
 
   @Nullable
+  public static ETransportChannelBinding getFromIDOrNull (@Nullable final String sID)
+  {
+    return EnumHelper.getFromIDOrNull (ETransportChannelBinding.class, sID);
+  }
+
+  @Nullable
   public static ETransportChannelBinding getFromURIOrNull (@Nullable final String sURI)
   {
-    if (StringHelper.hasText (sURI))
-      for (final ETransportChannelBinding e : values ())
-        if (sURI.equals (e.getURI ()))
-          return e;
-    return null;
+    if (StringHelper.hasNoText (sURI))
+      return null;
+    return EnumHelper.findFirst (ETransportChannelBinding.class, x -> sURI.equals (x.getURI ()));
   }
 }

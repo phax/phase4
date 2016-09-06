@@ -2,8 +2,6 @@ package com.helger.as4lib.model.pmode;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
@@ -13,11 +11,12 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
 {
   private static final String ATTR_ID = "ID";
   private static final String ATTR_AGREEMENT = "Agreement";
-  private static final String ELEMENT_MEP = "MEP";
-  private static final String ELEMENT_MEP_BINDING = "MEPBinding";
+  private static final String ATTR_MEP = "MEP";
+  private static final String ATTR_MEP_BINDING = "MEPBinding";
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";
-  private static final String ELEMENT_LEG = "Leg";
+  private static final String ELEMENT_LEG1 = "Leg1";
+  private static final String ELEMENT_LEG2 = "Leg2";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -25,19 +24,16 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ID, aValue.getID ());
     ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
-    ret.appendElement (ELEMENT_MEP).appendText (aValue.getMEP ().getURI ());
-    ret.appendElement (ELEMENT_MEP_BINDING).appendText (aValue.getMEPBinding ().getURI ());
+    ret.setAttribute (ATTR_MEP, aValue.getMEP ().getID ());
+    ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBinding ().getID ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
                                                                sNamespaceURI,
                                                                ELEMENT_INITIATOR));
-
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
                                                                sNamespaceURI,
                                                                ELEMENT_RESPONDER));
-    for (final PModeLeg aPModeLeg : aValue.getLegs ())
-    {
-      ret.appendChild (MicroTypeConverter.convertToMicroElement (aPModeLeg, sNamespaceURI, ELEMENT_LEG));
-    }
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
 
     return ret;
   }
@@ -46,23 +42,15 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
   {
     final PMode ret = new PMode ();
     ret.setID (aElement.getAttributeValue (ATTR_ID));
-    ret.setInitiator (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
-                                                          PModeParty.class));
-
-    final ICommonsList <PModeLeg> aPModeLegs = new CommonsArrayList<> ();
-    for (final IMicroElement aPModeElement : aElement.getAllChildElements (ELEMENT_LEG))
-    {
-      aPModeLegs.add (MicroTypeConverter.convertToNative (aPModeElement, PModeLeg.class));
-    }
-    ret.setLegs (aPModeLegs);
+    ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
+    ret.setMEP (EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)));
+    ret.setMEPBinding (ETransportChannelBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));
     ret.setResponder (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
                                                           PModeParty.class));
-    ret.setMEP (EMEP.getFromURIOrNull (aElement.getFirstChildElement (ELEMENT_MEP).getTextContentTrimmed ()));
-    ret.setMEPBinding (ETransportChannelBinding.getFromURIOrNull (aElement.getFirstChildElement (ELEMENT_MEP_BINDING)
-                                                                          .getTextContentTrimmed ()));
-    ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
-
+    ret.setLeg1 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1), PModeLeg.class));
+    ret.setLeg2 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2), PModeLeg.class));
+    ret.setInitiator (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
+                                                          PModeParty.class));
     return ret;
   }
-
 }

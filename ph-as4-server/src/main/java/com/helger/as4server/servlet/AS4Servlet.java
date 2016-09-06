@@ -22,6 +22,9 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
+import com.helger.as4lib.model.pmode.DefaultPMode;
+import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.receive.AS4MessageState;
@@ -48,6 +51,9 @@ public class AS4Servlet extends HttpServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
+
+  // TODO Replace with PMode Manager
+  private final PMode aTestPMode = DefaultPMode.getDefaultPmode ();
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -117,6 +123,12 @@ public class AS4Servlet extends HttpServlet
       return;
     }
 
+    // PMode Check
+    if (!checkIfPModeConform (aMessaging, eSOAPVersion, aUR))
+      return;
+
+    // Every message should only contain 1 UserMessage and n (0..n)
+    // SignalMessages
     if (aMessaging.getUserMessageCount () != 1)
     {
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
@@ -127,6 +139,7 @@ public class AS4Servlet extends HttpServlet
 
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
+    // TODO Change to dynamic Message ID
     final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-3@receiver.example.com",
                                                                                        null);
     final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
@@ -138,6 +151,55 @@ public class AS4Servlet extends HttpServlet
     // We've got our response
     aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
        .setMimeType (eSOAPVersion.getMimeType ());
+  }
+
+  private boolean checkIfPModeConform (@Nonnull final Ebms3Messaging aMessaging,
+                                       @Nonnull final ESOAPVersion eSOAPVersion,
+                                       @Nonnull final AS4Response aUR)
+  {
+    final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
+
+    // TODO Go through PModeManager to check for PModes | if PModeManger
+    // contains aMessage.Pmode
+    if (!aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ().equals (aTestPMode.getID ()))
+    {
+      aUR.setBadRequest ("Error processing the PMode " +
+                         aMessaging.getUserMessageAtIndex (0).getCollaborationInfo ().getAgreementRef ().getPmode () +
+                         " can not be found in the PMode - Manager.");
+      return false;
+    }
+
+    // Check if pmode contains a protocol and if the message complies
+    final PModeLeg aPModeLeg = aTestPMode.getLeg1 ();
+    if (aPModeLeg == null)
+    {
+      aUR.setBadRequest ("PMode is missing Leg 1");
+      return false;
+    }
+    if (aPModeLeg.getProtocol () == null)
+    {
+      aUR.setBadRequest ("PMode Leg 1 is missing protocol section");
+      return false;
+    }
+    final ESOAPVersion ePModeSoapVersion = aPModeLeg.getProtocol ().getSOAPVersion ();
+    if (!eSOAPVersion.equals (ePModeSoapVersion))
+    {
+      aUR.setBadRequest ("Error processing the PMode, the SOAP - Version (" + ePModeSoapVersion + ") is incorrect.");
+      return false;
+    }
+
+    // Check if PartyID is correct
+    if (!aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId ().contains (aTestPMode.getInitiator ().getIDValue ()))
+    {
+      aUR.setBadRequest ("Error processing the PMode, the Initiator/Sender PartyID is incorrect.");
+      return false;
+    }
+    if (!aEbms3UserMessage.getPartyInfo ().getTo ().getPartyId ().contains (aTestPMode.getResponder ().getIDValue ()))
+    {
+      aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect.");
+      return false;
+    }
+    return true;
   }
 
   @Override

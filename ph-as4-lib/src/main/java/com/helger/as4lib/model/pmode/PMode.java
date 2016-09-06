@@ -20,9 +20,6 @@ import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
@@ -102,19 +99,8 @@ public class PMode
    */
   private PModeParty m_aResponder;
 
-  private ICommonsList <PModeLeg> m_aLegs = new CommonsArrayList<> ();
-
-  @Nullable
-  public PModeParty getInitiator ()
-  {
-    return m_aInitiator;
-  }
-
-  @Nullable
-  public PModeParty getResponder ()
-  {
-    return m_aResponder;
-  }
+  private PModeLeg m_aLeg1;
+  private PModeLeg m_aLeg2;
 
   @Nullable
   public String getID ()
@@ -122,7 +108,7 @@ public class PMode
     return m_sID;
   }
 
-  public void setID (final String sID)
+  void setID (final String sID)
   {
     m_sID = sID;
   }
@@ -133,7 +119,7 @@ public class PMode
     return m_sAgreement;
   }
 
-  public void setAgreement (final String sAgreement)
+  void setAgreement (final String sAgreement)
   {
     m_sAgreement = sAgreement;
   }
@@ -144,7 +130,7 @@ public class PMode
     return m_eMEP;
   }
 
-  public void setMEP (final EMEP eMEP)
+  void setMEP (@Nullable final EMEP eMEP)
   {
     m_eMEP = eMEP;
   }
@@ -155,31 +141,53 @@ public class PMode
     return m_eMEPBinding;
   }
 
-  public void setMEPBinding (final ETransportChannelBinding eMEPBinding)
+  void setMEPBinding (@Nullable final ETransportChannelBinding eMEPBinding)
   {
     m_eMEPBinding = eMEPBinding;
   }
 
   @Nullable
-  @ReturnsMutableCopy
-  public ICommonsList <PModeLeg> getLegs ()
+  public PModeParty getInitiator ()
   {
-    return m_aLegs.getClone ();
+    return m_aInitiator;
   }
 
-  public void setLegs (final ICommonsList <PModeLeg> aLegs)
-  {
-    m_aLegs = aLegs;
-  }
-
-  public void setInitiator (final PModeParty aInitiator)
+  void setInitiator (@Nullable final PModeParty aInitiator)
   {
     m_aInitiator = aInitiator;
   }
 
-  public void setResponder (final PModeParty aResponder)
+  @Nullable
+  public PModeParty getResponder ()
+  {
+    return m_aResponder;
+  }
+
+  void setResponder (@Nullable final PModeParty aResponder)
   {
     m_aResponder = aResponder;
+  }
+
+  @Nullable
+  public PModeLeg getLeg1 ()
+  {
+    return m_aLeg1;
+  }
+
+  void setLeg1 (@Nullable final PModeLeg aLeg1)
+  {
+    m_aLeg1 = aLeg1;
+  }
+
+  @Nullable
+  public PModeLeg getLeg2 ()
+  {
+    return m_aLeg2;
+  }
+
+  void setLeg2 (@Nullable final PModeLeg aLeg2)
+  {
+    m_aLeg2 = aLeg2;
   }
 
   @Override
@@ -190,26 +198,27 @@ public class PMode
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PMode rhs = (PMode) o;
-    return m_aInitiator.equals (rhs.m_aInitiator) &&
-           EqualsHelper.equals (m_aLegs, rhs.m_aLegs) &&
-           EqualsHelper.equals (m_aResponder, rhs.m_aResponder) &&
+    return EqualsHelper.equals (m_sID, rhs.m_sID) &&
+           EqualsHelper.equals (m_sAgreement, rhs.m_sAgreement) &&
            EqualsHelper.equals (m_eMEP, rhs.m_eMEP) &&
            EqualsHelper.equals (m_eMEPBinding, rhs.m_eMEPBinding) &&
-           EqualsHelper.equals (m_sAgreement, rhs.m_sAgreement) &&
-           EqualsHelper.equals (m_sID, rhs.m_sID);
+           EqualsHelper.equals (m_aInitiator, rhs.m_aInitiator) &&
+           EqualsHelper.equals (m_aResponder, rhs.m_aResponder) &&
+           EqualsHelper.equals (m_aLeg1, rhs.m_aLeg1) &&
+           EqualsHelper.equals (m_aLeg2, rhs.m_aLeg2);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aInitiator)
-                                       .append (m_aLegs)
-                                       .append (m_aResponder)
+    return new HashCodeGenerator (this).append (m_sID)
+                                       .append (m_sAgreement)
                                        .append (m_eMEP)
                                        .append (m_eMEPBinding)
-                                       .append (m_sAgreement)
-                                       .append (m_sID)
+                                       .append (m_aInitiator)
+                                       .append (m_aResponder)
+                                       .append (m_aLeg1)
+                                       .append (m_aLeg2)
                                        .getHashCode ();
   }
-
 }

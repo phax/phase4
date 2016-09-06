@@ -16,8 +16,11 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
@@ -28,9 +31,6 @@ import com.helger.commons.hashcode.HashCodeGenerator;
  */
 public class PModeLegProtocol
 {
-  public static final String SOAP_VERSION_11 = "1.1";
-  public static final String SOAP_VERSION_12 = "1.2";
-
   /**
    * the value of this parameter represents the address (endpoint URL) of the
    * Receiver MSH (or Receiver Party) to which Messages under this P-Mode leg
@@ -49,16 +49,17 @@ public class PModeLegProtocol
    * @see #PROTOCOL_SOAP_VERSION_11
    * @see #PROTOCOL_SOAP_VERSION_12
    */
-  private String m_sSOAPVersion;
+  private ESOAPVersion m_eSOAPVersion;
 
   public PModeLegProtocol ()
-  {}
-
-  public PModeLegProtocol (@Nullable final String sAddress, @Nullable final String sSOAPVersion)
   {
-    super ();
-    m_sAddress = sAddress;
-    m_sSOAPVersion = sSOAPVersion;
+    this (null, ESOAPVersion.AS4_DEFAULT);
+  }
+
+  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESOAPVersion eSOAPVersion)
+  {
+    setAddress (sAddress);
+    setSOAPVersion (eSOAPVersion);
   }
 
   @Nullable
@@ -72,15 +73,16 @@ public class PModeLegProtocol
     m_sAddress = sAddress;
   }
 
-  @Nullable
-  public String getSOAPVersion ()
+  @Nonnull
+  public ESOAPVersion getSOAPVersion ()
   {
-    return m_sSOAPVersion;
+    return m_eSOAPVersion;
   }
 
-  public void setSOAPVersion (@Nullable final String sSOAPVersion)
+  public void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    m_sSOAPVersion = sSOAPVersion;
+    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_eSOAPVersion = eSOAPVersion;
   }
 
   @Override
@@ -91,12 +93,12 @@ public class PModeLegProtocol
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegProtocol rhs = (PModeLegProtocol) o;
-    return EqualsHelper.equals (m_sAddress, rhs.m_sAddress) && EqualsHelper.equals (m_sSOAPVersion, rhs.m_sSOAPVersion);
+    return EqualsHelper.equals (m_sAddress, rhs.m_sAddress) && m_eSOAPVersion.equals (rhs.m_eSOAPVersion);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sAddress).append (m_sSOAPVersion).getHashCode ();
+    return new HashCodeGenerator (this).append (m_sAddress).append (m_eSOAPVersion).getHashCode ();
   }
 }

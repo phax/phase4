@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -12,43 +13,49 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
+import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.mock.XMLTestHelper;
 
 public class PModeMicroTypeConverterTest
 {
   @Test
+  public void testDefaultPMode ()
+  {
+    System.out.println (MicroWriter.getXMLString (new PModeMicroTypeConverter ().convertToMicroElement (DefaultPMode.getDefaultPmode (),
+                                                                                                        null,
+                                                                                                        "PMode")));
+
+  }
+
+  @Test
   public void testNativToMicroElementConversion ()
   {
     final PMode aPMode = new PMode ();
-    aPMode.setAgreement ("Agreement");
     aPMode.setID ("id");
-    aPMode.setInitiator (_generateInitiatorOrResponder (true));
-    aPMode.setLegs (_generatePModeLeg ());
+    aPMode.setAgreement ("Agreement");
     aPMode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
     aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
+    aPMode.setInitiator (_generateInitiatorOrResponder (true));
     aPMode.setResponder (_generateInitiatorOrResponder (false));
+    aPMode.setLeg1 (_generatePModeLeg ());
+    aPMode.setLeg2 (_generatePModeLeg ());
     XMLTestHelper.testMicroTypeConversion (aPMode);
   }
 
-  private PModeParty _generateInitiatorOrResponder (final boolean bChoose)
+  private PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
-    if (bChoose)
+    if (bInitiator)
       return new PModeParty ("", "idvalue", "sender", "test", "testpw");
     return new PModeParty ("", "idvalue2", "responder", "test2", "test2pw");
   }
 
-  private ICommonsList <PModeLeg> _generatePModeLeg ()
+  private PModeLeg _generatePModeLeg ()
   {
-    return new CommonsArrayList<> (new PModeLeg (_generatePModeLegProtocol (),
-                                                 _generatePModeLegBusinessInformation (),
-                                                 _generatePModeLegErrorHandling (),
-                                                 _generatePModeLegReliability (),
-                                                 _generatePModeLegSecurity ()),
-                                   new PModeLeg (_generatePModeLegProtocol (),
-                                                 _generatePModeLegBusinessInformation (),
-                                                 _generatePModeLegErrorHandling (),
-                                                 _generatePModeLegReliability (),
-                                                 _generatePModeLegSecurity ()));
+    return new PModeLeg (_generatePModeLegProtocol (),
+                         _generatePModeLegBusinessInformation (),
+                         _generatePModeLegErrorHandling (),
+                         _generatePModeLegReliability (),
+                         _generatePModeLegSecurity ());
   }
 
   private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
@@ -76,7 +83,10 @@ public class PModeMicroTypeConverterTest
 
   private ICommonsOrderedMap <String, PModeProperty> _generatePModeProperties ()
   {
-    final PModeProperty aPModeProperty = new PModeProperty ("name", "description", "datatype", EMandatory.MANDATORY);
+    final PModeProperty aPModeProperty = new PModeProperty ("name",
+                                                            "description",
+                                                            PModeProperty.DATA_TYPE_STRING,
+                                                            EMandatory.MANDATORY);
     final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap<> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
@@ -99,7 +109,7 @@ public class PModeMicroTypeConverterTest
 
   private PModeLegProtocol _generatePModeLegProtocol ()
   {
-    return new PModeLegProtocol ("addressProtocol", "soap11");
+    return new PModeLegProtocol ("addressProtocol", ESOAPVersion.SOAP_11);
   }
 
   private PModeLegReliability _generatePModeLegReliability ()

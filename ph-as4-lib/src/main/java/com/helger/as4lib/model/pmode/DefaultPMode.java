@@ -1,9 +1,10 @@
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
+
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.as4lib.soap.ESOAPVersion;
 
 /**
  * Default MPC Specification from
@@ -14,36 +15,37 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public class DefaultPMode
 {
-  private PMode aDefaultPmode;
+  private DefaultPMode ()
+  {}
 
-  public PMode getDefaultPmode ()
+  @Nonnull
+  public static PMode getDefaultPmode ()
   {
-    _configureDefaultPMode ();
+    final PMode aDefaultPmode = new PMode ();
+    aDefaultPmode.setID ("default-pmode");
+    aDefaultPmode.setMEP (EMEP.ONE_WAY);
+    aDefaultPmode.setMEPBinding (ETransportChannelBinding.PUSH);
+    aDefaultPmode.setInitiator (_generateInitiatorOrResponder (true));
+    aDefaultPmode.setResponder (_generateInitiatorOrResponder (false));
+    aDefaultPmode.setLeg1 (_generatePModeLeg ());
+    // Leg 2 stays null, because we only use one-way
     return aDefaultPmode;
   }
 
-  private void _configureDefaultPMode ()
-  {
-    aDefaultPmode = new PMode ();
-    aDefaultPmode.setMEP (EMEP.ONE_WAY);
-    aDefaultPmode.setMEPBinding (ETransportChannelBinding.PUSH);
-    aDefaultPmode.setLegs (_generatePModeLeg ());
-    aDefaultPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aDefaultPmode.setResponder (_generateInitiatorOrResponder (false));
-  }
-
-  private ICommonsList <PModeLeg> _generatePModeLeg ()
+  @Nonnull
+  private static PModeLeg _generatePModeLeg ()
   {
     final PModeLegReliability aPModeLegReliability = null;
     final PModeLegSecurity aPModeLegSecurity = null;
-    return new CommonsArrayList<> (new PModeLeg (_generatePModeLegProtocol (),
-                                                 _generatePModeLegBusinessInformation (),
-                                                 null,
-                                                 aPModeLegReliability,
-                                                 aPModeLegSecurity));
+    return new PModeLeg (_generatePModeLegProtocol (),
+                         _generatePModeLegBusinessInformation (),
+                         null,
+                         aPModeLegReliability,
+                         aPModeLegSecurity);
   }
 
-  private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  @Nonnull
+  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test",
                                             null,
@@ -53,19 +55,25 @@ public class DefaultPMode
                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC");
   }
 
-  private PModeLegProtocol _generatePModeLegProtocol ()
+  @Nonnull
+  private static PModeLegProtocol _generatePModeLegProtocol ()
   {
-    return new PModeLegProtocol ("HTTP 1.1", "soap12");
+    return new PModeLegProtocol ("HTTP 1.1", ESOAPVersion.AS4_DEFAULT);
   }
 
-  private PModeParty _generateInitiatorOrResponder (final boolean bChoose)
+  @Nonnull
+  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
-    if (bChoose)
-      return new PModeParty ("",
+    if (bInitiator)
+      return new PModeParty (null,
                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultFrom",
-                             "",
-                             "",
-                             "");
-    return new PModeParty ("", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultTo", "", "", "");
+                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                             null,
+                             null);
+    return new PModeParty (null,
+                           "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultTo",
+                           "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                           null,
+                           null);
   }
 }

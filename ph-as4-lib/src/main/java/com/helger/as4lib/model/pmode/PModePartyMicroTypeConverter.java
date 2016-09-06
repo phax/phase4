@@ -40,5 +40,4 @@ public final class PModePartyMicroTypeConverter implements IMicroTypeConverter
     final String sPassword = aElement.getAttributeValue (ATTR_PASSWORD);
     return new PModeParty (sIDType, sIDValue, sRole, sUserName, sPassword);
   }
-
 }

@@ -83,7 +83,7 @@ public class SOAPClientSAAJ
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message, just SOAP + Payload in SOAP - Body
-      if (false)
+      if (true)
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);

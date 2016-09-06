@@ -83,7 +83,7 @@ public class PModeLegReliability
    * possible for this parameter, when using WS-Reliability: "Response",
    * "Callback", or "Poll".
    */
-  private String m_eAtLeastOnceReplyPattern;
+  private String m_sAtLeastOnceReplyPattern;
 
   /**
    * If "true", this Boolean parameter indicates that "At-Most-Once" (or
@@ -142,7 +142,7 @@ public class PModeLegReliability
                               @Nonnull final ETriState eAtLeastOnceAckOnDelivery,
                               @Nullable final String sAtLeastOnceContractAcksTo,
                               @Nonnull final ETriState eAtLeastOnceContractAckResponse,
-                              @Nullable final String eAtLeastOnceReplyPattern,
+                              @Nullable final String sAtLeastOnceReplyPattern,
                               @Nonnull final ETriState eAtMostOnceContract,
                               @Nonnull final ETriState eInOrderContract,
                               @Nonnull final ETriState eStartGroup,
@@ -153,7 +153,7 @@ public class PModeLegReliability
     m_eAtLeastOnceAckOnDelivery = eAtLeastOnceAckOnDelivery;
     m_sAtLeastOnceContractAcksTo = sAtLeastOnceContractAcksTo;
     m_eAtLeastOnceContractAckResponse = eAtLeastOnceContractAckResponse;
-    m_eAtLeastOnceReplyPattern = eAtLeastOnceReplyPattern;
+    m_sAtLeastOnceReplyPattern = sAtLeastOnceReplyPattern;
     m_eAtMostOnceContract = eAtMostOnceContract;
     m_eInOrderContract = eInOrderContract;
     m_eStartGroup = eStartGroup;
@@ -241,12 +241,12 @@ public class PModeLegReliability
   @Nullable
   public String getAtLeastOnceReplyPattern ()
   {
-    return m_eAtLeastOnceReplyPattern;
+    return m_sAtLeastOnceReplyPattern;
   }
 
   public void setAtLeastOnceReplyPattern (final String eAtLeastOnceReplyPattern)
   {
-    m_eAtLeastOnceReplyPattern = eAtLeastOnceReplyPattern;
+    m_sAtLeastOnceReplyPattern = eAtLeastOnceReplyPattern;
   }
 
   @Nonnull
@@ -361,7 +361,7 @@ public class PModeLegReliability
            EqualsHelper.equals (m_eAtLeastOnceAckOnDelivery, rhs.m_eAtLeastOnceAckOnDelivery) &&
            EqualsHelper.equals (m_eAtLeastOnceContract, rhs.m_eAtLeastOnceContract) &&
            EqualsHelper.equals (m_eAtLeastOnceContractAckResponse, rhs.m_eAtLeastOnceContractAckResponse) &&
-           EqualsHelper.equals (m_eAtLeastOnceReplyPattern, rhs.m_eAtLeastOnceReplyPattern) &&
+           EqualsHelper.equals (m_sAtLeastOnceReplyPattern, rhs.m_sAtLeastOnceReplyPattern) &&
            EqualsHelper.equals (m_eAtMostOnceContract, rhs.m_eAtMostOnceContract) &&
            EqualsHelper.equals (m_eInOrderContract, rhs.m_eInOrderContract) &&
            EqualsHelper.equals (m_eStartGroup, rhs.m_eStartGroup) &&
@@ -376,7 +376,7 @@ public class PModeLegReliability
                                        .append (m_eAtLeastOnceAckOnDelivery)
                                        .append (m_eAtLeastOnceContract)
                                        .append (m_eAtLeastOnceContractAckResponse)
-                                       .append (m_eAtLeastOnceReplyPattern)
+                                       .append (m_sAtLeastOnceReplyPattern)
                                        .append (m_eAtMostOnceContract)
                                        .append (m_eInOrderContract)
                                        .append (m_eStartGroup)
