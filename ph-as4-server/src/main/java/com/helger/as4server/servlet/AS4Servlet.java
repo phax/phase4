@@ -199,6 +199,10 @@ public class AS4Servlet extends HttpServlet
       aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect.");
       return false;
     }
+
+    // WSS Security checks TODO check with EWSSVersion
+    // TODO CHECK algorithms
+
     return true;
   }
 
