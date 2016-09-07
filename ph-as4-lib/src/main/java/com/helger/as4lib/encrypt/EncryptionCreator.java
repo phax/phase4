@@ -46,9 +46,8 @@ public class EncryptionCreator
     ValueEnforcer.notNull (aDoc, "XMLDoc");
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
-    aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
-    aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));

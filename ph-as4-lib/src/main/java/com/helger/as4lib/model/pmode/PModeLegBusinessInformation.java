@@ -81,12 +81,12 @@ public class PModeLegBusinessInformation
     this (sService, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
-  PModeLegBusinessInformation (@Nullable final String sService,
-                               @Nullable final String sAction,
-                               @Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties,
-                               @Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles,
-                               @Nullable final Integer nPayloadProfileMaxKB,
-                               @Nullable final String sMPCID)
+  public PModeLegBusinessInformation (@Nullable final String sService,
+                                      @Nullable final String sAction,
+                                      @Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties,
+                                      @Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles,
+                                      @Nullable final Integer nPayloadProfileMaxKB,
+                                      @Nullable final String sMPCID)
   {
     setService (sService);
     setAction (sAction);

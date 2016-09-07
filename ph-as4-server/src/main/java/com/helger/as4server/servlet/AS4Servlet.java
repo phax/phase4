@@ -16,16 +16,18 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
-import com.helger.as4lib.model.pmode.DefaultPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
@@ -46,6 +48,7 @@ import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.XMLWriter;
 
 public class AS4Servlet extends HttpServlet
 {
@@ -53,7 +56,10 @@ public class AS4Servlet extends HttpServlet
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
   // TODO Replace with PMode Manager
-  private final PMode aTestPMode = DefaultPMode.getDefaultPmode ();
+  // private final PMode aTestPMode = ServletTestPMode.getTestPMode ();
+  private final PMode aTestPMode = ServletTestPMode.getTestPModeWithSecurity ();
+
+  private AS4SOAPHeader aSecurityHeader = null;
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -77,6 +83,8 @@ public class AS4Servlet extends HttpServlet
       final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
       final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
       aHeaders.add (new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+      if (aQName.getLocalPart ().equals ("Security"))
+        aSecurityHeader = new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand);
     }
 
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
@@ -188,20 +196,84 @@ public class AS4Servlet extends HttpServlet
       return false;
     }
 
-    // Check if PartyID is correct
-    if (!aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId ().contains (aTestPMode.getInitiator ().getIDValue ()))
+    // Check if PartyID is correct for Initiator
+    boolean bIDCheck = false;
+    for (final Ebms3PartyId aID : aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId ())
+    {
+      if (aID.getValue ().equals (aTestPMode.getInitiator ().getIDValue ()))
+      {
+        bIDCheck = true;
+        break;
+      }
+    }
+    if (!bIDCheck)
     {
       aUR.setBadRequest ("Error processing the PMode, the Initiator/Sender PartyID is incorrect.");
       return false;
     }
-    if (!aEbms3UserMessage.getPartyInfo ().getTo ().getPartyId ().contains (aTestPMode.getResponder ().getIDValue ()))
+
+    // Check if PartyID is correct for Responder
+    bIDCheck = false;
+    for (final Ebms3PartyId aID : aEbms3UserMessage.getPartyInfo ().getTo ().getPartyId ())
+    {
+      if (aID.getValue ().equals (aTestPMode.getResponder ().getIDValue ()))
+      {
+        bIDCheck = true;
+        break;
+      }
+    }
+    if (!bIDCheck)
     {
       aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect.");
       return false;
     }
 
-    // WSS Security checks TODO check with EWSSVersion
-    // TODO CHECK algorithms
+    // TODO Also tests in the pmode manager if the pmode is legitimate and is
+    // AS4 specification compliant
+    // Does security - legpart checks if not <code>null</code>
+    if (aPModeLeg.getSecurity () != null)
+    {
+      // TODO delete sysout
+      final Element aSecurityNode = aSecurityHeader.getNode ();
+      System.out.println (XMLWriter.getXMLString (aSecurityNode));
+
+      final NodeList aSignaturNodes = aSecurityNode.getElementsByTagName ("Signature");
+      if (aSignaturNodes != null)
+      {
+        // Signature checks
+        System.out.println ("signature checks");
+        // TODO not working right now, maybe direct search from signatureNodes?
+        final NodeList aSignatureNodes = aSecurityNode.getElementsByTagName ("SignatureMethod");
+        for (int i = 0; i < aSignatureNodes.getLength (); i++)
+        {
+          final String ss = aSignatureNodes.item (i).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+        }
+      }
+
+      final NodeList aEncryptedNodes = aSecurityNode.getElementsByTagName ("Signature");
+      if (aEncryptedNodes != null)
+      {
+        // Signature checks
+        System.out.println ("encrypted checks");
+
+      }
+
+      // Checks the WSSVersion
+      if (EWSSVersion.getFromVersionOrNull (aPModeLeg.getSecurity ().getWSSVersion ()) == null)
+      {
+        aUR.setBadRequest ("Error processing the PMode, the WSS - Version," +
+                           aPModeLeg.getSecurity ().getWSSVersion () +
+                           " is incorrect");
+        return false;
+      }
+
+      // TODO CHECK algorithms
+      // TODO Encryption not working correctly
+      // http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p, it should be aes 128
+      // gcm not a key transport algorithm, rechecked with wss4j encrypt test =>
+      // in wss4j projects works fine with aes, if put in this project in
+      // produces the wrong algorithm
+    }
 
     return true;
   }
@@ -335,4 +407,5 @@ public class AS4Servlet extends HttpServlet
     // XXX debug only
     doPost (aHttpServletRequest, aHttpServletResponse);
   }
+
 }

@@ -82,41 +82,58 @@ public class SOAPClientSAAJ
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-      // No Mime Message, just SOAP + Payload in SOAP - Body
-      if (true)
+      // No Mime Message Not signed or encrpyted, just SOAP + Payload in SOAP -
+      // Body
+      if (false)
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_11, aPayload, aAttachments);
+        final Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
         aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
       }
       else
+        // BodyPayload SIGNED
         if (true)
         {
-          aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                   CMimeType.APPLICATION_GZIP));
-
-          final SignedMessageCreator aSigned = new SignedMessageCreator ();
-          final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                              aPayload,
-                                                                                                                                                                              aAttachments),
-                                                                                                                                   ESOAPVersion.SOAP_12,
-                                                                                                                                   aAttachments,
-                                                                                                                                   false),
-                                                                                                      aAttachments,
-                                                                                                      null);
-
-          // Move all global mime headers to the POST request
-          MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-          aPost.setEntity (new HttpMimeMessageEntity (aMsg));
+          final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+          aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
         }
+        // BodyPayload ENCRYPTED
         else
           if (true)
           {
-            Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+            Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
             aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
+
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
           }
+          else
+            if (true)
+            {
+              aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                       CMimeType.APPLICATION_GZIP));
+
+              final SignedMessageCreator aSigned = new SignedMessageCreator ();
+              final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
+                                                                                                                                                                                  aPayload,
+                                                                                                                                                                                  aAttachments),
+                                                                                                                                       ESOAPVersion.SOAP_12,
+                                                                                                                                       aAttachments,
+                                                                                                                                       false),
+                                                                                                          aAttachments,
+                                                                                                          null);
+
+              // Move all global mime headers to the POST request
+              MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
+              aPost.setEntity (new HttpMimeMessageEntity (aMsg));
+            }
+            else
+              if (true)
+              {
+                Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+                aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
+                aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+              }
 
       // XXX reinstate if you wanna see the request that is getting sent
       System.out.println (EntityUtils.toString (aPost.getEntity ()));

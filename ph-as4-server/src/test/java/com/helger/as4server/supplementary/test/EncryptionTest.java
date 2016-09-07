@@ -119,4 +119,22 @@ public class EncryptionTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
   }
+
+  @Test
+  public void testAES128GCM () throws Exception
+  {
+    final WSSecEncrypt builder = new WSSecEncrypt ();
+    // builder.setUserInfo ("wss40");
+    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    final Document doc = _getSoapEnvelope11 ();
+    final WSSecHeader secHeader = new WSSecHeader (doc);
+    secHeader.insertSecurityHeader ();
+    final Document encryptedDoc = builder.build (doc, crypto, secHeader);
+
+    final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
+    System.out.println (outputString);
+    assertFalse (outputString.contains ("counter_port_type"));
+  }
 }

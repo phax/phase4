@@ -23,6 +23,7 @@ import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
+// TODO remove public setters, needed for testing pmode in servlet
 public class PMode
 {
   /**
@@ -108,7 +109,7 @@ public class PMode
     return m_sID;
   }
 
-  void setID (final String sID)
+  public void setID (final String sID)
   {
     m_sID = sID;
   }
@@ -119,7 +120,7 @@ public class PMode
     return m_sAgreement;
   }
 
-  void setAgreement (final String sAgreement)
+  public void setAgreement (final String sAgreement)
   {
     m_sAgreement = sAgreement;
   }
@@ -130,7 +131,7 @@ public class PMode
     return m_eMEP;
   }
 
-  void setMEP (@Nullable final EMEP eMEP)
+  public void setMEP (@Nullable final EMEP eMEP)
   {
     m_eMEP = eMEP;
   }
@@ -141,7 +142,7 @@ public class PMode
     return m_eMEPBinding;
   }
 
-  void setMEPBinding (@Nullable final ETransportChannelBinding eMEPBinding)
+  public void setMEPBinding (@Nullable final ETransportChannelBinding eMEPBinding)
   {
     m_eMEPBinding = eMEPBinding;
   }
@@ -152,7 +153,7 @@ public class PMode
     return m_aInitiator;
   }
 
-  void setInitiator (@Nullable final PModeParty aInitiator)
+  public void setInitiator (@Nullable final PModeParty aInitiator)
   {
     m_aInitiator = aInitiator;
   }
@@ -163,7 +164,7 @@ public class PMode
     return m_aResponder;
   }
 
-  void setResponder (@Nullable final PModeParty aResponder)
+  public void setResponder (@Nullable final PModeParty aResponder)
   {
     m_aResponder = aResponder;
   }
@@ -174,7 +175,7 @@ public class PMode
     return m_aLeg1;
   }
 
-  void setLeg1 (@Nullable final PModeLeg aLeg1)
+  public void setLeg1 (@Nullable final PModeLeg aLeg1)
   {
     m_aLeg1 = aLeg1;
   }
@@ -185,7 +186,7 @@ public class PMode
     return m_aLeg2;
   }
 
-  void setLeg2 (@Nullable final PModeLeg aLeg2)
+  public void setLeg2 (@Nullable final PModeLeg aLeg2)
   {
     m_aLeg2 = aLeg2;
   }
