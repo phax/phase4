@@ -27,7 +27,7 @@ public interface ISOAPHeaderElementProcessor
    *        The current processing state. Never <code>null</code>.
    * @param aErrorList
    *        The error list to be filled in case there are processing errors.
-   *        Never <code>null</code>.
+   *        Never <code>null</code>. The list is always empty initially.
    * @return Never <code>null</code>. If {@link ESuccess#FAILURE} than the
    *         header is treated as "not handled".
    */

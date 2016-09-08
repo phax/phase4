@@ -18,14 +18,15 @@ package com.helger.as4server.servlet;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.as4lib.ebms3header.ObjectFactory;
-import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorEbms3Messaging;
+import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
 import com.helger.web.servlet.ServletContextPathHolder;
 
 public class AS4WebAppListener implements ServletContextListener
@@ -41,8 +42,12 @@ public class AS4WebAppListener implements ServletContextListener
 
     // Register all SOAP header element processors
     // Registration order matches execution order!
-    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (ObjectFactory._Messaging_QNAME,
-                                                                       new SOAPHeaderElementProcessorEbms3Messaging ());
+    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+                                                                                  "Messaging"),
+                                                                       new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+                                                                                  "Security"),
+                                                                       new SOAPHeaderElementProcessorWSS4J ());
     s_aLogger.info ("AS4 server started");
   }
 

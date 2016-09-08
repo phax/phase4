@@ -13,6 +13,8 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
@@ -69,7 +71,9 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
                                                                                                                                                                   aAttachments),
                                                                                                                        m_eSOAPVersion,
                                                                                                                        aAttachments,
-                                                                                                                       false),
+                                                                                                                       false,
+                                                                                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
                                                                                           aAttachments,
                                                                                           null);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
@@ -104,7 +108,9 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
                                                                                                   aAttachments),
                                                        m_eSOAPVersion,
                                                        aAttachments,
-                                                       false);
+                                                       false,
+                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);

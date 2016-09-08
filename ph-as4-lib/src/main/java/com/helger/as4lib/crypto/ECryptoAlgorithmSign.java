@@ -36,13 +36,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSS4JConstants;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 
 import com.helger.as4lib.constants.CAS4;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.string.StringHelper;
 
 /**
  * This enum contains all signing supported crypto algorithms.
@@ -52,23 +51,18 @@ import com.helger.commons.lang.EnumHelper;
 public enum ECryptoAlgorithmSign implements IHasID <String>
 {
   // TODO not sure if the right identifier need algorithm string for 384 and 512
-  RSA_SHA_256 ("rsa-sha-256", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256, "SHA256WITHRSA", CAS4.SIGNATURE_ALGORITHM_RSA_SHA256),
-  RSA_SHA_384 ("rsa-sha-384", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_384, "SHA384WITHRSA", WSS4JConstants.SHA384),
-  RSA_SHA_512 ("rsa-sha-512", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512, "SHA512WITHRSA", WSS4JConstants.SHA512);
+  RSA_SHA_256 ("rsa-sha-256", CAS4.SIGNATURE_ALGORITHM_RSA_SHA256),
+  RSA_SHA_384 ("rsa-sha-384", WSS4JConstants.SHA384),
+  RSA_SHA_512 ("rsa-sha-512", WSS4JConstants.SHA512);
+
+  public static final ECryptoAlgorithmSign SIGN_ALGORITHM_DEFAULT = ECryptoAlgorithmSign.RSA_SHA_256;
 
   private final String m_sID;
-  private final ASN1ObjectIdentifier m_aOID;
-  private final String m_sBCAlgorithmName;
   private final String m_sAlgorithmURI;
 
-  private ECryptoAlgorithmSign (@Nonnull @Nonempty final String sID,
-                                @Nonnull final ASN1ObjectIdentifier aOID,
-                                @Nonnull @Nonempty final String sBCAlgorithmName,
-                                @Nonnull @Nonempty final String sAlgorithmURI)
+  private ECryptoAlgorithmSign (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
-    m_aOID = aOID;
-    m_sBCAlgorithmName = sBCAlgorithmName;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
@@ -77,23 +71,6 @@ public enum ECryptoAlgorithmSign implements IHasID <String>
   public String getID ()
   {
     return m_sID;
-  }
-
-  @Nonnull
-  public ASN1ObjectIdentifier getOID ()
-  {
-    return m_aOID;
-  }
-
-  /**
-   * @return The algorithm name to be used for BouncyCastle to do the SMIME
-   *         packaging.
-   */
-  @Nonnull
-  @Nonempty
-  public String getSignAlgorithmName ()
-  {
-    return m_sBCAlgorithmName;
   }
 
   @Nonnull
@@ -122,4 +99,11 @@ public enum ECryptoAlgorithmSign implements IHasID <String>
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmSign.class, sID, eDefault);
   }
 
+  @Nullable
+  public static ECryptoAlgorithmSign getFromURIOrNull (@Nullable final String sURI)
+  {
+    if (StringHelper.hasNoText (sURI))
+      return null;
+    return EnumHelper.findFirst (ECryptoAlgorithmSign.class, x -> x.getAlgorithmURI ().equals (sURI));
+  }
 }

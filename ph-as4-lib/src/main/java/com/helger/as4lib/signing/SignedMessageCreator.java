@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -16,8 +15,9 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
-import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
@@ -39,14 +39,15 @@ public class SignedMessageCreator
   }
 
   @Nonnull
-  private WSSecSignature _getBasicBuilder ()
+  private WSSecSignature _getBasicBuilder (@Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
+                                           @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
   {
     final WSSecSignature aBuilder = new WSSecSignature ();
     aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm (CAS4.SIGNATURE_ALGORITHM_RSA_SHA256);
+    aBuilder.setSignatureAlgorithm (eECryptoAlgorithmSign.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (WSS4JConstants.SHA256);
+    aBuilder.setDigestAlgo (eECryptoAlgorithmSignDigest.getAlgorithmURI ());
     return aBuilder;
   }
 
@@ -70,9 +71,11 @@ public class SignedMessageCreator
   public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
                                        @Nonnull final ESOAPVersion eSOAPVersion,
                                        @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
-                                       final boolean bMustUnderstand) throws WSSecurityException
+                                       final boolean bMustUnderstand,
+                                       @Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
+                                       @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest) throws WSSecurityException
   {
-    final WSSecSignature aBuilder = _getBasicBuilder ();
+    final WSSecSignature aBuilder = _getBasicBuilder (eECryptoAlgorithmSign, eECryptoAlgorithmSignDigest);
 
     if (CollectionHelper.isNotEmpty (aAttachments))
     {

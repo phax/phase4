@@ -17,6 +17,7 @@ public final class CAS4
   public static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
   public static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
   public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
+  public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
 
   // Algorithm
   public static final String SIGNATURE_ALGORITHM_RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";

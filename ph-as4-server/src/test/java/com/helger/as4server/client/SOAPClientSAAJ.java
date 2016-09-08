@@ -24,6 +24,8 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
@@ -119,7 +121,9 @@ public class SOAPClientSAAJ
                                                                                                                                                                                   aAttachments),
                                                                                                                                        ESOAPVersion.SOAP_12,
                                                                                                                                        aAttachments,
-                                                                                                                                       false),
+                                                                                                                                       false,
+                                                                                                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
                                                                                                           aAttachments,
                                                                                                           null);
 

@@ -16,28 +16,20 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import com.helger.as4lib.constants.CAS4;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
-import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.model.pmode.PMode;
-import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.errorlist.IErrorBase;
@@ -52,7 +44,6 @@ import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xml.serialize.write.XMLWriter;
 
 public class AS4Servlet extends HttpServlet
 {
@@ -62,8 +53,6 @@ public class AS4Servlet extends HttpServlet
   // TODO Replace with PMode Manager
   // private final PMode aTestPMode = ServletTestPMode.getTestPMode ();
   private final PMode aTestPMode = ServletTestPMode.getTestPModeWithSecurity ();
-
-  private AS4SOAPHeader aSecurityHeader = null;
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -87,8 +76,6 @@ public class AS4Servlet extends HttpServlet
       final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
       final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
       aHeaders.add (new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
-      if (aQName.getLocalPart ().equals ("Security"))
-        aSecurityHeader = new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand);
     }
 
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
@@ -111,10 +98,14 @@ public class AS4Servlet extends HttpServlet
         else
         {
           // upon failure, the element stays unprocessed
-          s_aLogger.warn ("Failed to process SOAP header element " +
-                          aQName.toString () +
-                          " with processor " +
-                          aProcessor);
+          aUR.setBadRequest ("Failed to process SOAP header element " +
+                             aQName.toString () +
+                             " with processor " +
+                             aProcessor +
+                             "; error details: " +
+                             aErrorList);
+          // XXX check if really okay. [ph] store errors instead
+          return;
         }
       }
       // else: no header element for current processor
@@ -135,10 +126,6 @@ public class AS4Servlet extends HttpServlet
       return;
     }
 
-    // PMode Check
-    if (!checkIfPModeConform (aMessaging, eSOAPVersion, aUR))
-      return;
-
     // Every message should only contain 1 UserMessage and n (0..n)
     // SignalMessages
     if (aMessaging.getUserMessageCount () != 1)
@@ -146,8 +133,6 @@ public class AS4Servlet extends HttpServlet
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
       return;
     }
-
-    // TODO wss security signing check is missing!
 
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
@@ -163,154 +148,6 @@ public class AS4Servlet extends HttpServlet
     // We've got our response
     aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
        .setMimeType (eSOAPVersion.getMimeType ());
-  }
-
-  private boolean _isValidSigningAlgo (final String sAlgo)
-  {
-
-    if (ArrayHelper.findFirst (ECryptoAlgorithmSign.values (), e -> e.getAlgorithmURI ().equals (sAlgo)) != null)
-      return true;
-
-    return false;
-  }
-
-  private boolean _isValidSigningDigestAlgo (final String sAlgo)
-  {
-
-    if (ArrayHelper.findFirst (ECryptoAlgorithmSignDigest.values (), e -> e.getAlgorithmURI ().equals (sAlgo)) != null)
-      return true;
-
-    return false;
-  }
-
-  private boolean checkIfPModeConform (@Nonnull final Ebms3Messaging aMessaging,
-                                       @Nonnull final ESOAPVersion eSOAPVersion,
-                                       @Nonnull final AS4Response aUR)
-  {
-    final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
-
-    // TODO Go through PModeManager to check for PModes | if PModeManger
-    // contains aMessage.Pmode
-    if (!aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ().equals (aTestPMode.getID ()))
-    {
-      aUR.setBadRequest ("Error processing the PMode " +
-                         aMessaging.getUserMessageAtIndex (0).getCollaborationInfo ().getAgreementRef ().getPmode () +
-                         " can not be found in the PMode - Manager.");
-      return false;
-    }
-
-    // Check if pmode contains a protocol and if the message complies
-    final PModeLeg aPModeLeg = aTestPMode.getLeg1 ();
-    if (aPModeLeg == null)
-    {
-      aUR.setBadRequest ("PMode is missing Leg 1");
-      return false;
-    }
-    if (aPModeLeg.getProtocol () == null)
-    {
-      aUR.setBadRequest ("PMode Leg 1 is missing protocol section");
-      return false;
-    }
-    final ESOAPVersion ePModeSoapVersion = aPModeLeg.getProtocol ().getSOAPVersion ();
-    if (!eSOAPVersion.equals (ePModeSoapVersion))
-    {
-      aUR.setBadRequest ("Error processing the PMode, the SOAP - Version (" + ePModeSoapVersion + ") is incorrect.");
-      return false;
-    }
-
-    // Check if PartyID is correct for Initiator
-    final String sInitiatorID = aTestPMode.getInitiator ().getIDValue ();
-    boolean bIDCheck = CollectionHelper.containsAny (aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId (),
-                                                     aID -> aID.getValue ().equals (sInitiatorID));
-    if (!bIDCheck)
-    {
-      aUR.setBadRequest ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
-                         sInitiatorID +
-                         "'");
-      return false;
-    }
-
-    // Check if PartyID is correct for Responder
-    bIDCheck = false;
-    final String sResponderID = aTestPMode.getResponder ().getIDValue ();
-    for (final Ebms3PartyId aID : aEbms3UserMessage.getPartyInfo ().getTo ().getPartyId ())
-    {
-      if (aID.getValue ().equals (sResponderID))
-      {
-        bIDCheck = true;
-        break;
-      }
-    }
-    if (!bIDCheck)
-    {
-      aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
-                         sResponderID +
-                         "'");
-      return false;
-    }
-
-    // TODO Also tests in the pmode manager if the pmode is legitimate and is
-    // AS4 specification compliant
-    // Does security - legpart checks if not <code>null</code>
-    if (aPModeLeg.getSecurity () != null)
-    {
-      // TODO delete sysout
-      final Element aSecurityNode = aSecurityHeader.getNode ();
-      System.out.println (XMLWriter.getXMLString (aSecurityNode));
-
-      // Get Signature Algorithm
-      Node aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
-      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignedInfo");
-      final Node aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
-                                                                             CAS4.DS_NS,
-                                                                             "SignatureMethod");
-      String sAlgorithm = aSignatureAlgorithm.getAttributes ().getNamedItem ("Algorithm").getTextContent ();
-      if (_isValidSigningAlgo (sAlgorithm))
-      {
-        aUR.setBadRequest ("Error processing the Security Header, your signing algorithm is incorrect. Expected one of the following '" +
-                           ECryptoAlgorithmSign.values () +
-                           "' algorithm");
-        return false;
-      }
-
-      // Get Signature Digest Algorithm
-      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "Reference");
-      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "DigestMethod");
-      sAlgorithm = aSignatureAlgorithm.getAttributes ().getNamedItem ("Algorithm").getTextContent ();
-      if (_isValidSigningDigestAlgo (sAlgorithm))
-      {
-        aUR.setBadRequest ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected '" +
-                           ECryptoAlgorithmSignDigest.values () +
-                           "'");
-        return false;
-      }
-
-      final NodeList aEncryptedNodes = aSecurityNode.getElementsByTagName ("Signature");
-      if (aEncryptedNodes != null)
-      {
-        // Signature checks
-        System.out.println ("encrypted checks");
-
-      }
-
-      // Checks the WSSVersion
-      if (EWSSVersion.getFromVersionOrNull (aPModeLeg.getSecurity ().getWSSVersion ()) == null)
-      {
-        aUR.setBadRequest ("Error processing the PMode, the WSS - Version," +
-                           aPModeLeg.getSecurity ().getWSSVersion () +
-                           " is incorrect");
-        return false;
-      }
-
-      // TODO CHECK algorithms
-      // TODO Encryption not working correctly
-      // http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p, it should be aes 128
-      // gcm not a key transport algorithm, rechecked with wss4j encrypt test =>
-      // in wss4j projects works fine with aes, if put in this project in
-      // produces the wrong algorithm
-    }
-
-    return true;
   }
 
   @Override

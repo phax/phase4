@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -18,6 +20,7 @@ import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
+import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.standalone.RunInJettyAS4;
@@ -58,7 +61,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   @Test
   public void testWrongPModeID () throws Exception
   {
-    final Document aDoc = _modfiyUserMessage ("this-is-a-wrong-id", null, null);
+    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
   }
@@ -66,28 +69,56 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   @Test
   public void testWrongSOAPVersion () throws Exception
   {
-    final Document aDoc = _modfiyUserMessage (null, ESOAPVersion.SOAP_11, null);
+    final Document aDoc = _modifyUserMessage (null, ESOAPVersion.SOAP_11, null, null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
   }
 
   @Test
-  public void testWrongPartyID () throws Exception
+  public void testWrongPartyIDInitiator () throws Exception
   {
-    final Document aDoc = _modfiyUserMessage (null, null, "random_party_id120");
+    final Document aDoc = _modifyUserMessage (null, null, "random_party_id120", null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
   }
 
+  @Test
+  public void testWrongPartyIDResponder () throws Exception
+  {
+    final Document aDoc = _modifyUserMessage (null, null, null, "random_party_id121");
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
+  }
+
+  @Test
+  public void testSigningAlgorithm () throws Exception
+  {
+
+    final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null,
+                                                                                                     null,
+                                                                                                     null,
+                                                                                                     null),
+                                                                                 ESOAPVersion.AS4_DEFAULT,
+                                                                                 null,
+                                                                                 false,
+                                                                                 ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                 ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, "200");
+
+  }
+
   @Nonnull
-  private Document _modfiyUserMessage (@Nullable final String sPModeID,
-                                       @Nullable final ESOAPVersion eESOAPVersion,
-                                       @Nullable final String sPartyId) throws Exception
+  private Document _modifyUserMessage (@Nullable final String sWrongPModeID,
+                                       @Nullable final ESOAPVersion eWrongESOAPVersion,
+                                       @Nullable final String sWrongPartyIdInitiator,
+                                       @Nullable final String sWrongPartyIdResponder) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPModeID = sPModeID == null ? "pm-esens-generic-resp" : sPModeID;
-    final ESOAPVersion eSetESOAPVersion = eESOAPVersion == null ? ESOAPVersion.SOAP_12 : eESOAPVersion;
-    final String sSetPartyID = sPartyId == null ? "APP_1000000101" : sPartyId;
+    final String sSetPModeID = sWrongPModeID == null ? "pm-esens-generic-resp" : sWrongPModeID;
+    final ESOAPVersion eSetESOAPVersion = eWrongESOAPVersion == null ? ESOAPVersion.AS4_DEFAULT : eWrongESOAPVersion;
+    final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? "APP_1000000101" : sWrongPartyIdInitiator;
+    final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? "APP_1000000101" : sWrongPartyIdResponder;
 
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
@@ -112,9 +143,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                                       sSetPModeID,
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                              sSetPartyID,
+                                                                              sSetPartyIDInitiator,
                                                                               "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                              sSetPartyID);
+                                                                              sSetPartyIDResponder);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,

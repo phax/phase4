@@ -11,6 +11,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -43,7 +45,9 @@ final class TestMessages
                                                                                            aAttachments),
                                                              eSOAPVersion,
                                                              aAttachments,
-                                                             false);
+                                                             false,
+                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     return aSignedDoc;
   }
 
@@ -60,7 +64,9 @@ final class TestMessages
                                                                           .getAsSOAPDocument (),
                                                              eSOAPVersion,
                                                              aAttachments,
-                                                             false);
+                                                             false,
+                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     return aSignedDoc;
   }
 
@@ -81,7 +87,12 @@ final class TestMessages
                                          .setMustUnderstand (false)
                                          .getAsSOAPDocument ();
 
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc, eSOAPVersion, aAttachments, false);
+    final Document aSignedDoc = aClient.createSignedMessage (aDoc,
+                                                             eSOAPVersion,
+                                                             aAttachments,
+                                                             false,
+                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     return aSignedDoc;
   }
 

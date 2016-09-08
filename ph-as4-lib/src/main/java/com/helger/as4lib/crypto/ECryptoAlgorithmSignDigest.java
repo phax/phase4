@@ -36,12 +36,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSS4JConstants;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.string.StringHelper;
 
 /**
  * This enum contains all signing supported crypto algorithms.
@@ -50,23 +49,19 @@ import com.helger.commons.lang.EnumHelper;
  */
 public enum ECryptoAlgorithmSignDigest implements IHasID <String>
 {
-  DIGEST_SHA_256 ("sha-256", NISTObjectIdentifiers.id_sha256, "SHA256WITHRSA", WSS4JConstants.SHA256),
-  DIGEST_SHA_384 ("sha-384", NISTObjectIdentifiers.id_sha384, "SHA384WITHRSA", WSS4JConstants.SHA384),
-  DIGEST_SHA_512 ("sha-512", NISTObjectIdentifiers.id_sha512, "SHA512WITHRSA", WSS4JConstants.SHA512);
+  DIGEST_SHA_256 ("sha-256", WSS4JConstants.SHA256),
+  DIGEST_SHA_384 ("sha-384", WSS4JConstants.SHA384),
+  DIGEST_SHA_512 ("sha-512", WSS4JConstants.SHA512);
+
+  public static final ECryptoAlgorithmSignDigest SIGN_DIGEST_ALGORITHM_DEFAULT = ECryptoAlgorithmSignDigest.DIGEST_SHA_256;
 
   private final String m_sID;
-  private final ASN1ObjectIdentifier m_aOID;
-  private final String m_sBCAlgorithmName;
   private final String m_sAlgorithmURI;
 
   private ECryptoAlgorithmSignDigest (@Nonnull @Nonempty final String sID,
-                                      @Nonnull final ASN1ObjectIdentifier aOID,
-                                      @Nonnull @Nonempty final String sBCAlgorithmName,
                                       @Nonnull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
-    m_aOID = aOID;
-    m_sBCAlgorithmName = sBCAlgorithmName;
     m_sAlgorithmURI = sAlgorithmURI;
   }
 
@@ -75,23 +70,6 @@ public enum ECryptoAlgorithmSignDigest implements IHasID <String>
   public String getID ()
   {
     return m_sID;
-  }
-
-  @Nonnull
-  public ASN1ObjectIdentifier getOID ()
-  {
-    return m_aOID;
-  }
-
-  /**
-   * @return The algorithm name to be used for BouncyCastle to do the SMIME
-   *         packaging.
-   */
-  @Nonnull
-  @Nonempty
-  public String getSignAlgorithmName ()
-  {
-    return m_sBCAlgorithmName;
   }
 
   @Nonnull
@@ -118,5 +96,13 @@ public enum ECryptoAlgorithmSignDigest implements IHasID <String>
                                                                @Nullable final ECryptoAlgorithmSignDigest eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmSignDigest.class, sID, eDefault);
+  }
+
+  @Nullable
+  public static ECryptoAlgorithmSignDigest getFromURIOrNull (@Nullable final String sURI)
+  {
+    if (StringHelper.hasNoText (sURI))
+      return null;
+    return EnumHelper.findFirst (ECryptoAlgorithmSignDigest.class, x -> x.getAlgorithmURI ().equals (sURI));
   }
 }

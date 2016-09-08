@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
@@ -22,6 +23,7 @@ import com.helger.commons.datetime.PDTFactory;
 public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
+  private static final String KEY_PMODE = "as4.pmode";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -60,5 +62,16 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public Ebms3Messaging getMessaging ()
   {
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
+  }
+
+  public void setPMode (@Nullable final PMode aPMode)
+  {
+    setAttribute (KEY_PMODE, aPMode);
+  }
+
+  @Nullable
+  public PMode getPMode ()
+  {
+    return getCastedAttribute (KEY_PMODE);
   }
 }
