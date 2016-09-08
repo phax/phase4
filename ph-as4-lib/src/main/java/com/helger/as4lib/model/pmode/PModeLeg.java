@@ -16,7 +16,6 @@
  */
 package com.helger.as4lib.model.pmode;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.equals.EqualsHelper;
@@ -43,7 +42,7 @@ public class PModeLeg
     m_aSecurity = aSecurity;
   }
 
-  @Nonnull
+  @Nullable
   public PModeLegProtocol getProtocol ()
   {
     return m_aProtocol;
@@ -81,7 +80,7 @@ public class PModeLeg
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLeg rhs = (PModeLeg) o;
-    return m_aProtocol.equals (rhs.m_aProtocol) &&
+    return EqualsHelper.equals (m_aProtocol, rhs.m_aProtocol) &&
            EqualsHelper.equals (m_aBusinessInfo, rhs.m_aBusinessInfo) &&
            EqualsHelper.equals (m_aErrorHandling, rhs.m_aErrorHandling) &&
            EqualsHelper.equals (m_aReliability, rhs.m_aReliability) &&

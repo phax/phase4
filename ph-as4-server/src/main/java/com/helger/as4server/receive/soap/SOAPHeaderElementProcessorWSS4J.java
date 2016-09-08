@@ -15,6 +15,7 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
+import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4server.receive.AS4MessageState;
@@ -39,28 +40,37 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     if (aPMode == null)
       throw new IllegalStateException ("No PMode present in state");
 
+    if (aPMode.getMEP () == null || aPMode.getMEPBinding () == null)
+      throw new IllegalStateException ("PMode is incomplete: " + aPMode);
+
     // Check if pmode contains a protocol and if the message complies
-    final PModeLeg aPModeLeg = aPMode.getLeg1 ();
-    if (aPModeLeg == null)
+    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
+    if (aPModeLeg1 == null)
     {
       aErrorList.add (SingleError.createError ("PMode is missing Leg 1"));
       return ESuccess.FAILURE;
     }
-    // Protocol mostly SOAP - Version
-    if (aPModeLeg.getProtocol () == null)
-    {
-      aErrorList.add (SingleError.createError ("PMode Leg 1 is missing protocol section"));
-      return ESuccess.FAILURE;
-    }
 
-    // Check SOAP - Version
-    final ESOAPVersion ePModeSoapVersion = aPModeLeg.getProtocol ().getSOAPVersion ();
-    if (!aState.getSOAPVersion ().equals (ePModeSoapVersion))
+    // Check protocol
     {
-      aErrorList.add (SingleError.createError ("Error processing the PMode, the SOAP - Version (" +
-                                               ePModeSoapVersion +
-                                               ") is incorrect."));
-      return ESuccess.FAILURE;
+      final PModeLegProtocol aProtocol = aPModeLeg1.getProtocol ();
+      if (aProtocol == null || !"http".equals (aProtocol.getAddressProtocol ()))
+      {
+        aErrorList.add (SingleError.createError ("PMode Leg uses unsupported protocol '" +
+                                                 aProtocol.getAddressProtocol () +
+                                                 "'"));
+        return ESuccess.FAILURE;
+      }
+
+      // Check SOAP - Version
+      final ESOAPVersion ePModeSoapVersion = aProtocol.getSOAPVersion ();
+      if (!aState.getSOAPVersion ().equals (ePModeSoapVersion))
+      {
+        aErrorList.add (SingleError.createError ("Error processing the PMode, the SOAP Version (" +
+                                                 ePModeSoapVersion +
+                                                 ") is incorrect."));
+        return ESuccess.FAILURE;
+      }
     }
 
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
@@ -69,78 +79,72 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final Ebms3PartyInfo aPartyInfo = aUserMessage.getPartyInfo ();
       if (aPartyInfo != null)
       {
-        if (aPMode.getInitiator () != null)
+        // Initiator is optional for push
+        if (aPMode.getInitiator () == null)
         {
-          if (aPartyInfo.getFrom () != null)
+          if (aPMode.getMEPBinding ().isPull ())
           {
-            if (aPartyInfo.getFrom ().getPartyId () != null)
-            {
-              // Check if PartyID is correct for Initiator
-              final String sInitiatorID = aPMode.getInitiator ().getIDValue ();
-              if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
-                                                 aID -> aID.getValue ().equals (sInitiatorID)))
-              {
-                aErrorList.add (SingleError.createError ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
-                                                         sInitiatorID +
-                                                         "'"));
-                return ESuccess.FAILURE;
-              }
-            }
-          }
-          else
-          {
-            aErrorList.add (SingleError.createError ("Error processing the usermessage, initiator partyID is not present. It is required."));
+            aErrorList.add (SingleError.createError ("Initiator is required for PULL message"));
             return ESuccess.FAILURE;
           }
         }
         else
         {
-          aErrorList.add (SingleError.createError ("Error processing the usermessage, no initiator is present. PMode " +
-                                                   aPMode.getID () +
-                                                   " requires a initiator."));
-          return ESuccess.FAILURE;
-        }
-        if (aPMode.getResponder () != null)
-        {
-          if (aPartyInfo.getTo () != null)
+          if (aPartyInfo.getFrom () != null && aPartyInfo.getFrom ().getPartyId () != null)
           {
-            if (aPartyInfo.getTo ().getPartyId () != null)
+            // Check if PartyID is correct for Initiator
+            final String sInitiatorID = aPMode.getInitiator ().getIDValue ();
+            if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
+                                               aID -> aID.getValue ().equals (sInitiatorID)))
             {
-              // Check if PartyID is correct for Responder
-              final String sResponderID = aPMode.getResponder ().getIDValue ();
-              if (CollectionHelper.containsNone (aPartyInfo.getTo ().getPartyId (),
-                                                 aID -> aID.getValue ().equals (sResponderID)))
-              {
-                aErrorList.add (SingleError.createError ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
-                                                         sResponderID +
-                                                         "'"));
-                return ESuccess.FAILURE;
-              }
-            }
-            else
-            {
-              aErrorList.add (SingleError.createError ("Error processing the usermessage, initiator partyID is not present. It is required."));
+              aErrorList.add (SingleError.createError ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
+                                                       sInitiatorID +
+                                                       "'"));
               return ESuccess.FAILURE;
             }
           }
           else
           {
-            aErrorList.add (SingleError.createError ("Error processing the usermessage, no partyInfo is present. Min Occurs 1 is expected."));
+            aErrorList.add (SingleError.createError ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid."));
+            return ESuccess.FAILURE;
+          }
+        }
+
+        // Response is optional for pull
+        if (aPMode.getResponder () == null)
+        {
+          if (aPMode.getMEPBinding ().isPush ())
+          {
+            aErrorList.add (SingleError.createError ("Responder is required for PUSH message"));
             return ESuccess.FAILURE;
           }
         }
         else
         {
-          aErrorList.add (SingleError.createError ("Error processing the usermessage, no responder is present. PMode " +
-                                                   aPMode.getID () +
-                                                   " requires a responder."));
-          return ESuccess.FAILURE;
+          if (aPartyInfo.getTo () != null && aPartyInfo.getTo ().getPartyId () != null)
+          {
+            // Check if PartyID is correct for Responder
+            final String sResponderID = aPMode.getResponder ().getIDValue ();
+            if (CollectionHelper.containsNone (aPartyInfo.getTo ().getPartyId (),
+                                               aID -> aID.getValue ().equals (sResponderID)))
+            {
+              aErrorList.add (SingleError.createError ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
+                                                       sResponderID +
+                                                       "'"));
+              return ESuccess.FAILURE;
+            }
+          }
+          else
+          {
+            aErrorList.add (SingleError.createError ("Error processing the usermessage, to-PartyInfo is invalid."));
+            return ESuccess.FAILURE;
+          }
         }
       }
     }
 
     // Does security - legpart checks if not <code>null</code>
-    if (aPModeLeg.getSecurity () != null)
+    if (aPModeLeg1.getSecurity () != null)
     {
       // TODO delete sysout
       System.out.println (XMLWriter.getXMLString (aSecurityNode));
@@ -188,10 +192,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
 
       // Checks the WSSVersion
-      if (EWSSVersion.getFromVersionOrNull (aPModeLeg.getSecurity ().getWSSVersion ()) == null)
+      if (EWSSVersion.getFromVersionOrNull (aPModeLeg1.getSecurity ().getWSSVersion ()) == null)
       {
         aErrorList.add (SingleError.createError ("Error processing the PMode, the WSS - Version," +
-                                                 aPModeLeg.getSecurity ().getWSSVersion () +
+                                                 aPModeLeg1.getSecurity ().getWSSVersion () +
                                                  " is incorrect"));
         return ESuccess.FAILURE;
       }

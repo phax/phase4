@@ -49,36 +49,17 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
-      if (aUserMessage.getCollaborationInfo () != null)
+      String sPModeID = null;
+      if (aUserMessage.getCollaborationInfo () != null &&
+          aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
       {
-        if (aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
-        {
-          if (aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode () != null)
-          {
-            // Find PMode
-            final String sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
-            aPMode = PModeManager.getPModeOfID (sPModeID);
-            if (aPMode == null)
-            {
-              aErrorList.add (SingleError.createError ("Failed to resolve PMode '" + sPModeID + "'"));
-              return ESuccess.FAILURE;
-            }
-          }
-          else
-          {
-            aErrorList.add (SingleError.createError ("No PMode attribute in AgreementReference is present!"));
-            return ESuccess.FAILURE;
-          }
-        }
-        else
-        {
-          aErrorList.add (SingleError.createError ("No AgreementReference is present!"));
-          return ESuccess.FAILURE;
-        }
+        // Find PMode
+        sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+        aPMode = PModeManager.getPModeOfID (sPModeID);
       }
-      else
+      if (aPMode == null)
       {
-        aErrorList.add (SingleError.createError ("No CollaborationInfo is present!"));
+        aErrorList.add (SingleError.createError ("Failed to resolve PMode '" + sPModeID + "'"));
         return ESuccess.FAILURE;
       }
     }

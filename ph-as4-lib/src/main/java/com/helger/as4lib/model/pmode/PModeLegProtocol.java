@@ -16,19 +16,24 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import java.net.URL;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.url.URLHelper;
 
 /**
  * PMode leg protocol parameters.
  *
  * @author Philip Helger
  */
+@NotThreadSafe
 public class PModeLegProtocol
 {
   /**
@@ -66,6 +71,13 @@ public class PModeLegProtocol
   public String getAddress ()
   {
     return m_sAddress;
+  }
+
+  @Nullable
+  public String getAddressProtocol ()
+  {
+    final URL aURL = URLHelper.getAsURL (m_sAddress);
+    return aURL == null ? null : aURL.getProtocol ();
   }
 
   public void setAddress (@Nullable final String sAddress)

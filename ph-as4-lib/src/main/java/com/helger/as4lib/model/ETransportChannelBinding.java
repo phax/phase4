@@ -71,6 +71,16 @@ public enum ETransportChannelBinding implements IHasID <String>
     return m_sURI;
   }
 
+  public boolean isPush ()
+  {
+    return this == PUSH;
+  }
+
+  public boolean isPull ()
+  {
+    return this == PULL;
+  }
+
   @Nullable
   public static ETransportChannelBinding getFromIDOrNull (@Nullable final String sID)
   {

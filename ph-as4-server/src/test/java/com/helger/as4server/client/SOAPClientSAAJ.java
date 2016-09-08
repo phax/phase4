@@ -40,13 +40,10 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.settings.exchange.configfile.ConfigFile;
-import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.xml.serialize.read.DOMReader;
 
 public class SOAPClientSAAJ
 {
-  public static final ConfigFile CF = new ConfigFileBuilder ().addPath ("as4test.properties").build ();
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
