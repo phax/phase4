@@ -18,6 +18,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4lib.constants.CAS4;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
@@ -34,6 +37,7 @@ import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.errorlist.IErrorBase;
@@ -161,6 +165,24 @@ public class AS4Servlet extends HttpServlet
        .setMimeType (eSOAPVersion.getMimeType ());
   }
 
+  private boolean _isValidSigningAlgo (final String sAlgo)
+  {
+
+    if (ArrayHelper.findFirst (ECryptoAlgorithmSign.values (), e -> e.getAlgorithmURI ().equals (sAlgo)) != null)
+      return true;
+
+    return false;
+  }
+
+  private boolean _isValidSigningDigestAlgo (final String sAlgo)
+  {
+
+    if (ArrayHelper.findFirst (ECryptoAlgorithmSignDigest.values (), e -> e.getAlgorithmURI ().equals (sAlgo)) != null)
+      return true;
+
+    return false;
+  }
+
   private boolean checkIfPModeConform (@Nonnull final Ebms3Messaging aMessaging,
                                        @Nonnull final ESOAPVersion eSOAPVersion,
                                        @Nonnull final AS4Response aUR)
@@ -197,26 +219,23 @@ public class AS4Servlet extends HttpServlet
     }
 
     // Check if PartyID is correct for Initiator
-    boolean bIDCheck = false;
-    for (final Ebms3PartyId aID : aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId ())
-    {
-      if (aID.getValue ().equals (aTestPMode.getInitiator ().getIDValue ()))
-      {
-        bIDCheck = true;
-        break;
-      }
-    }
+    final String sInitiatorID = aTestPMode.getInitiator ().getIDValue ();
+    boolean bIDCheck = CollectionHelper.containsAny (aEbms3UserMessage.getPartyInfo ().getFrom ().getPartyId (),
+                                                     aID -> aID.getValue ().equals (sInitiatorID));
     if (!bIDCheck)
     {
-      aUR.setBadRequest ("Error processing the PMode, the Initiator/Sender PartyID is incorrect.");
+      aUR.setBadRequest ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
+                         sInitiatorID +
+                         "'");
       return false;
     }
 
     // Check if PartyID is correct for Responder
     bIDCheck = false;
+    final String sResponderID = aTestPMode.getResponder ().getIDValue ();
     for (final Ebms3PartyId aID : aEbms3UserMessage.getPartyInfo ().getTo ().getPartyId ())
     {
-      if (aID.getValue ().equals (aTestPMode.getResponder ().getIDValue ()))
+      if (aID.getValue ().equals (sResponderID))
       {
         bIDCheck = true;
         break;
@@ -224,7 +243,9 @@ public class AS4Servlet extends HttpServlet
     }
     if (!bIDCheck)
     {
-      aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect.");
+      aUR.setBadRequest ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
+                         sResponderID +
+                         "'");
       return false;
     }
 
@@ -237,17 +258,31 @@ public class AS4Servlet extends HttpServlet
       final Element aSecurityNode = aSecurityHeader.getNode ();
       System.out.println (XMLWriter.getXMLString (aSecurityNode));
 
-      final NodeList aSignaturNodes = aSecurityNode.getElementsByTagName ("Signature");
-      if (aSignaturNodes != null)
+      // Get Signature Algorithm
+      Node aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
+      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignedInfo");
+      final Node aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
+                                                                             CAS4.DS_NS,
+                                                                             "SignatureMethod");
+      String sAlgorithm = aSignatureAlgorithm.getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+      if (_isValidSigningAlgo (sAlgorithm))
       {
-        // Signature checks
-        System.out.println ("signature checks");
-        // TODO not working right now, maybe direct search from signatureNodes?
-        final NodeList aSignatureNodes = aSecurityNode.getElementsByTagName ("SignatureMethod");
-        for (int i = 0; i < aSignatureNodes.getLength (); i++)
-        {
-          final String ss = aSignatureNodes.item (i).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
-        }
+        aUR.setBadRequest ("Error processing the Security Header, your signing algorithm is incorrect. Expected one of the following '" +
+                           ECryptoAlgorithmSign.values () +
+                           "' algorithm");
+        return false;
+      }
+
+      // Get Signature Digest Algorithm
+      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "Reference");
+      aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "DigestMethod");
+      sAlgorithm = aSignatureAlgorithm.getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+      if (_isValidSigningDigestAlgo (sAlgorithm))
+      {
+        aUR.setBadRequest ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected '" +
+                           ECryptoAlgorithmSignDigest.values () +
+                           "'");
+        return false;
       }
 
       final NodeList aEncryptedNodes = aSecurityNode.getElementsByTagName ("Signature");

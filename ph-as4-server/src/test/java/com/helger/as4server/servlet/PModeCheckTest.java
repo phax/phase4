@@ -4,6 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.entity.StringEntity;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -18,25 +20,40 @@ import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.standalone.RunInJettyAS4;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.url.URLHelper;
+import com.helger.photon.jetty.JettyStarter;
+import com.helger.photon.jetty.JettyStopper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public class PModeCheckTest extends AbstractUserMessageSetUp
 {
-  // TODO Currently not working as intended, since its not working at all
-  // @BeforeClass
-  // public static void startServer () throws Exception
-  // {
-  // new JettyStarter (RunInJettyAS4.class).run ();
-  // }
-  //
-  // @AfterClass
-  // public static void shutDownServer () throws Exception
-  // {
-  // new JettyStopper ().run ();
-  // }
+  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
+  private static final int STOP_PORT = PORT + 1000;
+
+  @BeforeClass
+  public static void startServer () throws Exception
+  {
+    new Thread ( () -> {
+      try
+      {
+        new JettyStarter (RunInJettyAS4.class).setPort (PORT).setStopPort (STOP_PORT).run ();
+      }
+      catch (final Exception ex)
+      {
+        ex.printStackTrace ();
+      }
+    }).start ();
+  }
+
+  @AfterClass
+  public static void shutDownServer () throws Exception
+  {
+    new JettyStopper ().setStopPort (STOP_PORT).run ();
+  }
 
   @Test
   public void testWrongPModeID () throws Exception

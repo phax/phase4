@@ -4,35 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Before;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.lang.NonBlockingProperties;
-import com.helger.commons.lang.PropertiesHelper;
-import com.helger.commons.random.RandomHelper;
-import com.helger.commons.ws.TrustManagerTrustAll;
-import com.helger.httpclient.HttpClientFactory;
+import com.helger.as4lib.mock.AbstractHttpSetUp;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -42,49 +26,8 @@ import com.helger.httpclient.HttpClientFactory;
  *
  * @author bayerlma
  */
-public abstract class AbstractUserMessageSetUp
+public abstract class AbstractUserMessageSetUp extends AbstractHttpSetUp
 {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractUserMessageSetUp.class);
-
-  protected int m_nStatusCode;
-  protected String m_sResponse;
-  private CloseableHttpClient m_aClient;
-  private HttpPost m_aPost;
-
-  @Before
-  public void setUp () throws KeyManagementException, NoSuchAlgorithmException
-  {
-    final NonBlockingProperties aProperties = PropertiesHelper.loadProperties (new ClassPathResource ("as4.properties"));
-
-    final String sURL = aProperties.get ("server.address");
-
-    LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
-    final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
-    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
-
-    m_aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
-
-    m_aPost = new HttpPost (sURL);
-
-    if (false)
-    {
-      m_aPost.setConfig (RequestConfig.custom ()
-                                      .setProxy (new HttpHost (aProperties.get ("server.proxy.address"),
-                                                               Integer.parseInt (aProperties.get ("server.proxy.port"))))
-                                      .build ());
-    }
-  }
-
-  @After
-  public void after ()
-  {
-    if (m_aClient != null)
-    {
-      StreamHelper.close (m_aClient);
-      m_aClient = null;
-    }
-  }
-
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
                                   @Nonnull final boolean bSuccess,
                                   @Nullable final String sErrorCode) throws IOException, MessagingException

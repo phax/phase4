@@ -43,7 +43,7 @@ import com.helger.xml.serialize.read.DOMReader;
  * @author bayerlma
  */
 @RunWith (Parameterized.class)
-public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
+public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -51,9 +51,11 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageSetUp
     return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
   }
 
+  private final ESOAPVersion m_eSOAPVersion;
+
   public UserMessageFailureForgeryTest (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    super (eSOAPVersion);
+    m_eSOAPVersion = eSOAPVersion;
   }
 
   // Empty Messages

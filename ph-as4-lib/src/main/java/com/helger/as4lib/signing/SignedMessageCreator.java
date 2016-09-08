@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -45,7 +46,7 @@ public class SignedMessageCreator
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (CAS4.SIGNATURE_ALGORITHM_RSA_SHA256);
     // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (CAS4.DIGEST_ALGORITHM_SHA256);
+    aBuilder.setDigestAlgo (WSS4JConstants.SHA256);
     return aBuilder;
   }
 

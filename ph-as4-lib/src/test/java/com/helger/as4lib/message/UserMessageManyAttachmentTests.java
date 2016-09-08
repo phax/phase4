@@ -26,7 +26,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
 @RunWith (Parameterized.class)
-public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
+public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -34,9 +34,11 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageSetUp
     return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
   }
 
+  private final ESOAPVersion m_eSOAPVersion;
+
   public UserMessageManyAttachmentTests (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    super (eSOAPVersion);
+    m_eSOAPVersion = eSOAPVersion;
   }
 
   @Test
