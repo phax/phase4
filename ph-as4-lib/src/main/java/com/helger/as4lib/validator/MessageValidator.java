@@ -20,7 +20,8 @@ import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.commons.callback.exception.CollectingExceptionCallback;
 import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.error.IResourceError;
+import com.helger.commons.error.IError;
+import com.helger.commons.error.list.IErrorList;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.xml.NodeListIterator;
@@ -49,10 +50,12 @@ public class MessageValidator
       }
     }
     // If the document can not be read by the soap11 Reader, try soap12 Reader
-    if (aCVEH.getResourceErrors ().containsAtLeastOneError ())
+    final IErrorList aErrorList = aCVEH.getErrorList ();
+    if (aErrorList.containsAtLeastOneError ())
     {
-      final IResourceError aError = aCVEH.getResourceErrors ().iterator ().next ();
-      if (aError.getDisplayText (Locale.getDefault ()).contains ("S12:Envelope"))
+      final IError aError = aErrorList.iterator ().next ();
+      // FIXME hardcoded Locale
+      if (aError.getErrorText (Locale.getDefault ()).contains ("S12:Envelope"))
       {
         final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ().setValidationEventHandler (aCVEH).read (aXML);
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aEnv12);

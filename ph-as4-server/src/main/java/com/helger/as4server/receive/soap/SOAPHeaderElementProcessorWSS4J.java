@@ -1,7 +1,6 @@
 package com.helger.as4server.receive.soap;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -20,8 +19,8 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.errorlist.IErrorBase;
-import com.helger.commons.errorlist.SingleError;
+import com.helger.commons.error.SingleError;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -31,7 +30,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Element aSecurityNode,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final List <? super IErrorBase <?>> aErrorList)
+                                        @Nonnull final ErrorList aErrorList)
   {
     final Ebms3Messaging aMessaging = aState.getMessaging ();
     if (aMessaging == null)
@@ -47,7 +46,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1 == null)
     {
-      aErrorList.add (SingleError.createError ("PMode is missing Leg 1"));
+      aErrorList.add (SingleError.builderError ().setErrorText ("PMode is missing Leg 1").build ());
       return ESuccess.FAILURE;
     }
 
@@ -56,9 +55,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final PModeLegProtocol aProtocol = aPModeLeg1.getProtocol ();
       if (aProtocol == null || !"http".equals (aProtocol.getAddressProtocol ()))
       {
-        aErrorList.add (SingleError.createError ("PMode Leg uses unsupported protocol '" +
-                                                 aProtocol.getAddressProtocol () +
-                                                 "'"));
+        aErrorList.add (SingleError.builderError ()
+                                   .setErrorText ("PMode Leg uses unsupported protocol '" +
+                                                  aProtocol.getAddressProtocol () +
+                                                  "'")
+                                   .build ());
         return ESuccess.FAILURE;
       }
 
@@ -66,9 +67,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final ESOAPVersion ePModeSoapVersion = aProtocol.getSOAPVersion ();
       if (!aState.getSOAPVersion ().equals (ePModeSoapVersion))
       {
-        aErrorList.add (SingleError.createError ("Error processing the PMode, the SOAP Version (" +
-                                                 ePModeSoapVersion +
-                                                 ") is incorrect."));
+        aErrorList.add (SingleError.builderError ()
+                                   .setErrorText ("Error processing the PMode, the SOAP Version (" +
+                                                  ePModeSoapVersion +
+                                                  ") is incorrect.")
+                                   .build ());
         return ESuccess.FAILURE;
       }
     }
@@ -84,7 +87,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         {
           if (aPMode.getMEPBinding ().isPull ())
           {
-            aErrorList.add (SingleError.createError ("Initiator is required for PULL message"));
+            aErrorList.add (SingleError.builderError ()
+                                       .setErrorText ("Initiator is required for PULL message")
+                                       .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -97,15 +102,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
                                                aID -> aID.getValue ().equals (sInitiatorID)))
             {
-              aErrorList.add (SingleError.createError ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
-                                                       sInitiatorID +
-                                                       "'"));
+              aErrorList.add (SingleError.builderError ()
+                                         .setErrorText ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
+                                                        sInitiatorID +
+                                                        "'")
+                                         .build ());
               return ESuccess.FAILURE;
             }
           }
           else
           {
-            aErrorList.add (SingleError.createError ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid."));
+            aErrorList.add (SingleError.builderError ()
+                                       .setErrorText ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.")
+                                       .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -115,7 +124,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         {
           if (aPMode.getMEPBinding ().isPush ())
           {
-            aErrorList.add (SingleError.createError ("Responder is required for PUSH message"));
+            aErrorList.add (SingleError.builderError ()
+                                       .setErrorText ("Responder is required for PUSH message")
+                                       .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -128,15 +139,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             if (CollectionHelper.containsNone (aPartyInfo.getTo ().getPartyId (),
                                                aID -> aID.getValue ().equals (sResponderID)))
             {
-              aErrorList.add (SingleError.createError ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
-                                                       sResponderID +
-                                                       "'"));
+              aErrorList.add (SingleError.builderError ()
+                                         .setErrorText ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
+                                                        sResponderID +
+                                                        "'")
+                                         .build ());
               return ESuccess.FAILURE;
             }
           }
           else
           {
-            aErrorList.add (SingleError.createError ("Error processing the usermessage, to-PartyInfo is invalid."));
+            aErrorList.add (SingleError.builderError ()
+                                       .setErrorText ("Error processing the usermessage, to-PartyInfo is invalid.")
+                                       .build ());
             return ESuccess.FAILURE;
           }
         }
@@ -160,11 +175,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         if (ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm) == null)
         {
-          aErrorList.add (SingleError.createError ("Error processing the Security Header, your signing algorithm '" +
-                                                   sAlgorithm +
-                                                   "' is incorrect. Expected one of the following '" +
-                                                   Arrays.asList (ECryptoAlgorithmSign.values ()) +
-                                                   "' algorithms"));
+          aErrorList.add (SingleError.builderError ()
+                                     .setErrorText ("Error processing the Security Header, your signing algorithm '" +
+                                                    sAlgorithm +
+                                                    "' is incorrect. Expected one of the following '" +
+                                                    Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                                                    "' algorithms")
+                                     .build ());
           return ESuccess.FAILURE;
         }
 
@@ -174,9 +191,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         sAlgorithm = aSignedNode == null ? null : aSignedNode.getAttribute ("Algorithm");
         if (ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm) == null)
         {
-          aErrorList.add (SingleError.createError ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                                                   Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
-                                                   "' algorithms"));
+          aErrorList.add (SingleError.builderError ()
+                                     .setErrorText ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+                                                    Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
+                                                    "' algorithms")
+                                     .build ());
           return ESuccess.FAILURE;
         }
       }
@@ -194,9 +213,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Checks the WSSVersion
       if (EWSSVersion.getFromVersionOrNull (aPModeLeg1.getSecurity ().getWSSVersion ()) == null)
       {
-        aErrorList.add (SingleError.createError ("Error processing the PMode, the WSS - Version," +
-                                                 aPModeLeg1.getSecurity ().getWSSVersion () +
-                                                 " is incorrect"));
+        aErrorList.add (SingleError.builderError ()
+                                   .setErrorText ("Error processing the PMode, the WSS - Version," +
+                                                  aPModeLeg1.getSecurity ().getWSSVersion () +
+                                                  " is incorrect")
+                                   .build ());
         return ESuccess.FAILURE;
       }
     }

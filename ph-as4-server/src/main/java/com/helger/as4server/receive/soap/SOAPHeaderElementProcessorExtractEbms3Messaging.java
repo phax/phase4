@@ -1,7 +1,5 @@
 package com.helger.as4server.receive.soap;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import org.w3c.dom.Element;
@@ -13,8 +11,8 @@ import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.errorlist.IErrorBase;
-import com.helger.commons.errorlist.SingleError;
+import com.helger.commons.error.SingleError;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 
@@ -23,7 +21,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Element aElement,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final List <? super IErrorBase <?>> aErrorList)
+                                        @Nonnull final ErrorList aErrorList)
   {
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -32,15 +30,17 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                                         .read (aElement);
     if (aMessaging == null)
     {
-      aCVEH.getResourceErrors ().getAllFailures ().forEach (aErrorList::add);
+      aErrorList.addAll (aCVEH.getErrorList ());
       return ESuccess.FAILURE;
     }
 
     // 0 or 1 are allowed
     if (aMessaging.getUserMessageCount () > 1)
     {
-      aErrorList.add (SingleError.createError ("Too many UserMessage objects contained: " +
-                                               aMessaging.getUserMessageCount ()));
+      aErrorList.add (SingleError.builderError ()
+                                 .setErrorText ("Too many UserMessage objects contained: " +
+                                                aMessaging.getUserMessageCount ())
+                                 .build ());
       return ESuccess.FAILURE;
     }
 
@@ -59,7 +59,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       }
       if (aPMode == null)
       {
-        aErrorList.add (SingleError.createError ("Failed to resolve PMode '" + sPModeID + "'"));
+        aErrorList.add (SingleError.builderError ()
+                                   .setErrorText ("Failed to resolve PMode '" + sPModeID + "'")
+                                   .build ());
         return ESuccess.FAILURE;
       }
     }

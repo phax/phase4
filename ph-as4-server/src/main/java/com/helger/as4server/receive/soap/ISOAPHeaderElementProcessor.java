@@ -1,13 +1,11 @@
 package com.helger.as4server.receive.soap;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 
 import org.w3c.dom.Element;
 
 import com.helger.as4server.receive.AS4MessageState;
-import com.helger.commons.errorlist.IErrorBase;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 
 /**
@@ -34,5 +32,5 @@ public interface ISOAPHeaderElementProcessor
   @Nonnull
   ESuccess processHeaderElement (@Nonnull Element aElement,
                                  @Nonnull AS4MessageState aState,
-                                 @Nonnull List <? super IErrorBase <?>> aErrorList);
+                                 @Nonnull ErrorList aErrorList);
 }

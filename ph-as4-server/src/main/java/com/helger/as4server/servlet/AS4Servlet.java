@@ -32,7 +32,7 @@ import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.errorlist.IErrorBase;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -92,7 +92,7 @@ public class AS4Servlet extends HttpServlet
           s_aLogger.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
         // Process element
-        final ICommonsList <IErrorBase <?>> aErrorList = new CommonsArrayList<> ();
+        final ErrorList aErrorList = new ErrorList ();
         if (aProcessor.processHeaderElement (aHeader.getNode (), aState, aErrorList).isSuccess ())
           aHeader.setProcessed (true);
         else
