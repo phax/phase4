@@ -26,7 +26,7 @@ public final class Ebms3ReaderBuilderTest
                                                   .setValidationEventHandler (aCVEH)
                                                   .read (new ClassPathResource ("/soap11test/UserMessage.xml"));
     assertNotNull (aEnv);
-    assertTrue (aCVEH.getResourceErrors ().isEmpty ());
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
@@ -48,7 +48,7 @@ public final class Ebms3ReaderBuilderTest
                                                       .setValidationEventHandler (aCVEH)
                                                       .read (new ClassPathResource ("/soap11test/UserMessage-no-soap.xml"));
     assertNotNull (aMessage);
-    assertTrue (aCVEH.getResourceErrors ().isEmpty ());
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
 
     aMessage.getUserMessageAtIndex (0).getMessageInfo ().setMessageId ("blaFoo");
 
@@ -64,7 +64,7 @@ public final class Ebms3ReaderBuilderTest
                                                   .setValidationEventHandler (aCVEH)
                                                   .read (new ClassPathResource ("/soap11test/MessageInfoMissing.xml"));
     assertNotNull (aEnv);
-    assertTrue (aCVEH.getResourceErrors ().isEmpty ());
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
@@ -72,7 +72,7 @@ public final class Ebms3ReaderBuilderTest
     final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
                                                       .setValidationEventHandler (aCVEH)
                                                       .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
-    assertTrue (aCVEH.getResourceErrors ().containsAtLeastOneError ());
+    assertTrue (aCVEH.getErrorList ().containsAtLeastOneError ());
     assertNull (aMessage);
   }
 
@@ -84,7 +84,7 @@ public final class Ebms3ReaderBuilderTest
                                                   .setValidationEventHandler (aCVEH)
                                                   .read (new ClassPathResource ("/soap11test/MessageInfoIDMissing.xml"));
     assertNotNull (aEnv);
-    assertTrue (aCVEH.getResourceErrors ().isEmpty ());
+    assertTrue (aCVEH.getErrorList ().isEmpty ());
     assertNotNull (aEnv.getHeader ());
     assertEquals (1, aEnv.getHeader ().getAnyCount ());
     assertTrue (aEnv.getHeader ().getAnyAtIndex (0) instanceof Element);
@@ -92,7 +92,7 @@ public final class Ebms3ReaderBuilderTest
     final Ebms3Messaging aMessage = Ebms3ReaderBuilder.ebms3Messaging ()
                                                       .setValidationEventHandler (aCVEH)
                                                       .read ((Element) aEnv.getHeader ().getAnyAtIndex (0));
-    assertTrue (aCVEH.getResourceErrors ().containsAtLeastOneError ());
+    assertTrue (aCVEH.getErrorList ().containsAtLeastOneError ());
     assertNull (aMessage);
 
   }
@@ -106,6 +106,6 @@ public final class Ebms3ReaderBuilderTest
                                                   .read (new ClassPathResource ("/soap12test/UserMessage12.xml"));
 
     assertNull (aEnv);
-    assertFalse (aCVEH.getResourceErrors ().isEmpty ());
+    assertFalse (aCVEH.getErrorList ().isEmpty ());
   }
 }

@@ -79,7 +79,7 @@ public class MessageValidator
                                                           .setValidationEventHandler (aCVEH)
                                                           .read (aChildNode);
 
-        if (aMessage == null || aCVEH.getResourceErrors ().containsAtLeastOneError ())
+        if (aMessage == null || aCVEH.getErrorList ().containsAtLeastOneError ())
         {
           sendErrorResponse (new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER), aContentLocale);
           return false;
@@ -117,7 +117,7 @@ public class MessageValidator
                                           .setValidationEventHandler (aCVEH)
                                           .setExceptionHandler (aExHdl)
                                           .getAsString (aMessage);
-    if (test == null || aCVEH.getResourceErrors ().containsAtLeastOneError () || aExHdl.hasException ())
+    if (test == null || aCVEH.getErrorList ().containsAtLeastOneError () || aExHdl.hasException ())
     {
       if (aExHdl.hasException ())
         s_aLogger.error (aExHdl.getException ().getCause ().getMessage ());
