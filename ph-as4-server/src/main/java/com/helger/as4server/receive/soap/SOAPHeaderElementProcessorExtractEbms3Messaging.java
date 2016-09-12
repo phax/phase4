@@ -7,8 +7,8 @@ import org.w3c.dom.Element;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
-import com.helger.as4lib.model.pmode.PMode;
-import com.helger.as4lib.model.pmode.PModeManager;
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.error.SingleError;
@@ -45,7 +45,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     // Check if the usermessage has a pmode in the collaboration info
-    PMode aPMode = null;
+    IPMode aPMode = null;
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
@@ -55,7 +55,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         // Find PMode
         sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
-        aPMode = PModeManager.getPModeOfID (sPModeID);
+        aPMode = MetaAS4Manager.getPModeMgr ().getPModeOfID (sPModeID);
       }
       if (aPMode == null)
       {

@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
@@ -22,8 +23,7 @@ public class ServletTestPMode
   @Nonnull
   public static PMode getTestPMode ()
   {
-    final PMode aTestPmode = new PMode ();
-    aTestPmode.setID ("pm-esens-generic-resp");
+    final PMode aTestPmode = new PMode ("pm-esens-generic-resp");
     aTestPmode.setMEP (EMEP.ONE_WAY);
     aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
     aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
@@ -34,7 +34,7 @@ public class ServletTestPMode
   }
 
   @Nonnull
-  public static PMode getTestPModeWithSecurity ()
+  public static IPMode getTestPModeWithSecurity ()
   {
     final PMode aTestPmode = getTestPMode ();
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();

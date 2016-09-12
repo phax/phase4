@@ -40,8 +40,7 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
 
   public PMode convertToNative (final IMicroElement aElement)
   {
-    final PMode ret = new PMode ();
-    ret.setID (aElement.getAttributeValue (ATTR_ID));
+    final PMode ret = new PMode (aElement.getAttributeValue (ATTR_ID));
     ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
     ret.setMEP (EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)));
     ret.setMEPBinding (ETransportChannelBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));

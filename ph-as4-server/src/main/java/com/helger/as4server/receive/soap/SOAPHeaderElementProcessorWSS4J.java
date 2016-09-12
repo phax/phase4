@@ -12,7 +12,7 @@ import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -35,7 +35,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     final Ebms3Messaging aMessaging = aState.getMessaging ();
     if (aMessaging == null)
       throw new IllegalStateException ("No Ebms3Messaging present in state");
-    final PMode aPMode = aState.getPMode ();
+    final IPMode aPMode = aState.getPMode ();
     if (aPMode == null)
       throw new IllegalStateException ("No PMode present in state");
 

@@ -30,8 +30,7 @@ public class PModeMicroTypeConverterTest
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PMode aPMode = new PMode ();
-    aPMode.setID ("id");
+    final PMode aPMode = new PMode ("id");
     aPMode.setAgreement ("Agreement");
     aPMode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
     aPMode.setMEPBinding (ETransportChannelBinding.SYNC);

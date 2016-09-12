@@ -2,12 +2,19 @@ package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nullable;
 
-public class PModeManager
+import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
+import com.helger.photon.basic.app.dao.impl.DAOException;
+
+public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
 {
-  @Nullable
-  public static PMode getPModeOfID (@Nullable final String sID)
+  public PModeManager (@Nullable final String sFilename) throws DAOException
   {
-    // TODO
-    return null;
+    super (PMode.class, sFilename);
+  }
+
+  @Nullable
+  public IPMode getPModeOfID (@Nullable final String sID)
+  {
+    return getOfID (sID);
   }
 }

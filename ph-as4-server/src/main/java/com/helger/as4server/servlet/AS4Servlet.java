@@ -22,7 +22,7 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
-import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.receive.AS4MessageState;
@@ -52,7 +52,7 @@ public class AS4Servlet extends HttpServlet
 
   // TODO Replace with PMode Manager
   // private final PMode aTestPMode = ServletTestPMode.getTestPMode ();
-  private final PMode aTestPMode = ServletTestPMode.getTestPModeWithSecurity ();
+  private final IPMode aTestPMode = ServletTestPMode.getTestPModeWithSecurity ();
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,

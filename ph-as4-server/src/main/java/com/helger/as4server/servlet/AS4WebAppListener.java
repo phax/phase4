@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
@@ -48,6 +49,10 @@ public class AS4WebAppListener implements ServletContextListener
     SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                                                                   "Security"),
                                                                        new SOAPHeaderElementProcessorWSS4J ());
+
+    // Ensure all managers are initialized
+    MetaAS4Manager.getInstance ();
+
     s_aLogger.info ("AS4 server started");
   }
 

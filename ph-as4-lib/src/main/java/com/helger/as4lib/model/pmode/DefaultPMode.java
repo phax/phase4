@@ -19,10 +19,9 @@ public class DefaultPMode
   {}
 
   @Nonnull
-  public static PMode getDefaultPmode ()
+  public static IPMode getDefaultPmode ()
   {
-    final PMode aDefaultPmode = new PMode ();
-    aDefaultPmode.setID ("default-pmode");
+    final PMode aDefaultPmode = new PMode ("default-pmode");
     aDefaultPmode.setMEP (EMEP.ONE_WAY);
     aDefaultPmode.setMEPBinding (ETransportChannelBinding.PUSH);
     aDefaultPmode.setInitiator (_generateInitiatorOrResponder (true));

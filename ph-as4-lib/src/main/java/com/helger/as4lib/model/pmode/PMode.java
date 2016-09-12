@@ -16,15 +16,18 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
 // TODO remove public setters, needed for testing pmode in servlet
-public class PMode
+public class PMode implements IPMode
 {
   /**
    * (optional) The identifier for the P-Mode, e.g. the name of the business
@@ -37,7 +40,7 @@ public class PMode
    * the <code>AgreementRef/@pmode</code> attribute value is also expected to be
    * set in associated messages.
    */
-  private String m_sID;
+  private final String m_sID;
 
   /**
    * The reference to the agreement governing this message exchange (maps to
@@ -103,15 +106,16 @@ public class PMode
   private PModeLeg m_aLeg1;
   private PModeLeg m_aLeg2;
 
-  @Nullable
+  public PMode (@Nonnull @Nonempty final String sID)
+  {
+    m_sID = ValueEnforcer.notEmpty (sID, "ID");
+  }
+
+  @Nonnull
+  @Nonempty
   public String getID ()
   {
     return m_sID;
-  }
-
-  public void setID (final String sID)
-  {
-    m_sID = sID;
   }
 
   @Nullable

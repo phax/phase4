@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
-import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
@@ -64,13 +64,13 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
   }
 
-  public void setPMode (@Nullable final PMode aPMode)
+  public void setPMode (@Nullable final IPMode aPMode)
   {
     setAttribute (KEY_PMODE, aPMode);
   }
 
   @Nullable
-  public PMode getPMode ()
+  public IPMode getPMode ()
   {
     return getCastedAttribute (KEY_PMODE);
   }
