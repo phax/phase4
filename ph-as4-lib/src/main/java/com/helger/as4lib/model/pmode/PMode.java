@@ -21,14 +21,17 @@ import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.string.ToStringGenerator;
+import com.helger.commons.type.ObjectType;
+import com.helger.photon.basic.object.AbstractBaseObject;
+import com.helger.photon.security.object.StubObject;
 
 // TODO remove public setters, needed for testing pmode in servlet
-public class PMode implements IPMode
+public class PMode extends AbstractBaseObject implements IPMode
 {
+  public static final ObjectType OT = new ObjectType ("as4.pmode");
+
   /**
    * (optional) The identifier for the P-Mode, e.g. the name of the business
    * transaction: PurchaseOrderFromACME. This identifier is user-defined and
@@ -40,7 +43,6 @@ public class PMode implements IPMode
    * the <code>AgreementRef/@pmode</code> attribute value is also expected to be
    * set in associated messages.
    */
-  private final String m_sID;
 
   /**
    * The reference to the agreement governing this message exchange (maps to
@@ -108,14 +110,18 @@ public class PMode implements IPMode
 
   public PMode (@Nonnull @Nonempty final String sID)
   {
-    m_sID = ValueEnforcer.notEmpty (sID, "ID");
+    this (StubObject.createForCurrentUserAndID (sID));
+  }
+
+  PMode (@Nonnull final StubObject aStubObject)
+  {
+    super (aStubObject);
   }
 
   @Nonnull
-  @Nonempty
-  public String getID ()
+  public ObjectType getObjectType ()
   {
-    return m_sID;
+    return OT;
   }
 
   @Nullable
@@ -196,34 +202,16 @@ public class PMode implements IPMode
   }
 
   @Override
-  public boolean equals (final Object o)
+  public String toString ()
   {
-    if (o == this)
-      return true;
-    if (o == null || !getClass ().equals (o.getClass ()))
-      return false;
-    final PMode rhs = (PMode) o;
-    return EqualsHelper.equals (m_sID, rhs.m_sID) &&
-           EqualsHelper.equals (m_sAgreement, rhs.m_sAgreement) &&
-           EqualsHelper.equals (m_eMEP, rhs.m_eMEP) &&
-           EqualsHelper.equals (m_eMEPBinding, rhs.m_eMEPBinding) &&
-           EqualsHelper.equals (m_aInitiator, rhs.m_aInitiator) &&
-           EqualsHelper.equals (m_aResponder, rhs.m_aResponder) &&
-           EqualsHelper.equals (m_aLeg1, rhs.m_aLeg1) &&
-           EqualsHelper.equals (m_aLeg2, rhs.m_aLeg2);
-  }
-
-  @Override
-  public int hashCode ()
-  {
-    return new HashCodeGenerator (this).append (m_sID)
-                                       .append (m_sAgreement)
-                                       .append (m_eMEP)
-                                       .append (m_eMEPBinding)
-                                       .append (m_aInitiator)
-                                       .append (m_aResponder)
-                                       .append (m_aLeg1)
-                                       .append (m_aLeg2)
-                                       .getHashCode ();
+    return ToStringGenerator.getDerived (super.toString ())
+                            .append ("Agreement", m_sAgreement)
+                            .append ("MEP", m_eMEP)
+                            .append ("MEPBinding", m_eMEPBinding)
+                            .append ("Initiator", m_aInitiator)
+                            .append ("Responder", m_aResponder)
+                            .append ("Leg1", m_aLeg1)
+                            .append ("Leg2", m_aLeg2)
+                            .toString ();
   }
 }

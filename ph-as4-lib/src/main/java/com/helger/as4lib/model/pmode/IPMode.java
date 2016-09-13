@@ -1,14 +1,12 @@
 package com.helger.as4lib.model.pmode;
 
-import java.io.Serializable;
-
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.id.IHasID;
+import com.helger.photon.basic.object.IObject;
 
-public interface IPMode extends IHasID <String>, Serializable
+public interface IPMode extends IObject
 {
   @Nullable
   String getAgreement ();

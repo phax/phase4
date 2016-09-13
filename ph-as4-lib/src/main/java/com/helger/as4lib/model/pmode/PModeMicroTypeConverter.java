@@ -2,14 +2,13 @@ package com.helger.as4lib.model.pmode;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
-import com.helger.xml.microdom.convert.IMicroTypeConverter;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeMicroTypeConverter implements IMicroTypeConverter
+public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
-  private static final String ATTR_ID = "ID";
   private static final String ATTR_AGREEMENT = "Agreement";
   private static final String ATTR_MEP = "MEP";
   private static final String ATTR_MEP_BINDING = "MEPBinding";
@@ -20,9 +19,9 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
-    final PMode aValue = (PMode) aObject;
+    final IPMode aValue = (IPMode) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.setAttribute (ATTR_ID, aValue.getID ());
+    setObjectFields (aValue, ret);
     ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
     ret.setAttribute (ATTR_MEP, aValue.getMEP ().getID ());
     ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBinding ().getID ());
@@ -40,7 +39,7 @@ public class PModeMicroTypeConverter implements IMicroTypeConverter
 
   public PMode convertToNative (final IMicroElement aElement)
   {
-    final PMode ret = new PMode (aElement.getAttributeValue (ATTR_ID));
+    final PMode ret = new PMode (getStubObject (aElement));
     ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
     ret.setMEP (EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)));
     ret.setMEPBinding (ETransportChannelBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));
