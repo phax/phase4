@@ -61,6 +61,9 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                                    @Nonnull final ESOAPVersion eSOAPVersion,
                                    @Nonnull final AS4Response aUR) throws Exception
   {
+    if (true)
+      s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
+
     // Find SOAP header
     final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
                                                                    eSOAPVersion.getNamespaceURI (),
