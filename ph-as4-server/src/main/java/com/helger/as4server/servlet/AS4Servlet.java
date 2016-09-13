@@ -1,12 +1,9 @@
 package com.helger.as4server.servlet;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeBodyPart;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -38,14 +35,19 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
+import com.helger.http.EHTTPMethod;
+import com.helger.http.EHTTPVersion;
+import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
+import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+import com.helger.web.servlet.response.UnifiedResponse;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4Servlet extends HttpServlet
+public class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
@@ -151,11 +153,20 @@ public class AS4Servlet extends HttpServlet
   }
 
   @Override
-  protected void doPost (@Nonnull final HttpServletRequest aHttpServletRequest,
-                         @Nonnull final HttpServletResponse aHttpServletResponse) throws ServletException, IOException
+  @Nonnull
+  protected AS4Response createUnifiedResponse (@Nonnull final EHTTPVersion eHTTPVersion,
+                                               @Nonnull final EHTTPMethod eHTTPMethod,
+                                               @Nonnull final HttpServletRequest aHttpRequest)
   {
-    // Never cache the responses
-    final AS4Response aUR = new AS4Response (aHttpServletRequest);
+    return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);
+  }
+
+  @Override
+  protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
+  {
+    final AS4Response aUR = (AS4Response) aUnifiedResponse;
+    final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
     try
     {
@@ -268,16 +279,5 @@ public class AS4Servlet extends HttpServlet
     {
       aUR.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", t);
     }
-
-    aUR.applyToResponse (aHttpServletResponse);
   }
-
-  @Override
-  public void doGet (@Nonnull final HttpServletRequest aHttpServletRequest,
-                     @Nonnull final HttpServletResponse aHttpServletResponse) throws ServletException, IOException
-  {
-    // XXX debug only
-    doPost (aHttpServletRequest, aHttpServletResponse);
-  }
-
 }

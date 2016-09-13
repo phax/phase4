@@ -16,8 +16,9 @@
  */
 package com.helger.as4server.servlet;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -28,18 +29,54 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
-import com.helger.web.servlet.ServletContextPathHolder;
+import com.helger.photon.core.servlet.WebAppListener;
 
-public class AS4WebAppListener implements ServletContextListener
+public final class AS4WebAppListener extends WebAppListener
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WebAppListener.class);
 
-  public void contextInitialized (final ServletContextEvent sce)
+  @Override
+  @Nullable
+  protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
+  {
+    // TODO read from config file
+    return null;
+  }
+
+  @Override
+  @Nullable
+  protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
+  {
+    // TODO read from config file
+    return null;
+  }
+
+  @Override
+  @Nullable
+  protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
+  {
+    return "true";
+  }
+
+  @Override
+  protected String getDataPath (@Nonnull final ServletContext aSC)
+  {
+    // TODO read from config file
+    return "/var/www/as4/data";
+  }
+
+  @Override
+  protected boolean shouldCheckFileAccess (@Nonnull final ServletContext aSC)
+  {
+    return false;
+  }
+
+  @Override
+  protected void afterContextInitialized (@Nonnull final ServletContext aSC)
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
-    ServletContextPathHolder.setServletContextPath (sce.getServletContext ().getContextPath ());
 
     // Register all SOAP header element processors
     // Registration order matches execution order!
@@ -56,7 +93,8 @@ public class AS4WebAppListener implements ServletContextListener
     s_aLogger.info ("AS4 server started");
   }
 
-  public void contextDestroyed (final ServletContextEvent sce)
+  @Override
+  protected void afterContextDestroyed (@Nonnull final ServletContext aSC)
   {
     s_aLogger.info ("AS4 server destroyed");
   }

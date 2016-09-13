@@ -11,15 +11,20 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.mime.CMimeType;
+import com.helger.http.EHTTPMethod;
+import com.helger.http.EHTTPVersion;
 import com.helger.web.servlet.response.UnifiedResponse;
 
 public class AS4Response extends UnifiedResponse
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Response.class);
 
-  public AS4Response (@Nonnull final HttpServletRequest aHttpServletRequest)
+  public AS4Response (@Nonnull final EHTTPVersion eHTTPVersion,
+                      @Nonnull final EHTTPMethod eHTTPMethod,
+                      @Nonnull final HttpServletRequest aHttpRequest)
   {
-    super (aHttpServletRequest);
+    super (eHTTPVersion, eHTTPMethod, aHttpRequest);
+    // Never cache the responses
     disableCaching ();
     setAllowContentOnStatusCode (true);
   }
