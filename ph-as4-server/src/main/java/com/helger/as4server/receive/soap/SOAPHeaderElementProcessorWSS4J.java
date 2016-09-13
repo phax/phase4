@@ -1,12 +1,19 @@
 package com.helger.as4server.receive.soap;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.dom.engine.WSSecurityEngine;
+import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4lib.constants.CAS4;
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -27,8 +34,11 @@ import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
+  private static final Logger LOG = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
+
   @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Element aSecurityNode,
+  public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
+                                        @Nonnull final Element aSecurityNode,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
@@ -162,7 +172,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     if (aPModeLeg1.getSecurity () != null)
     {
       // TODO delete sysout
-      System.out.println (XMLWriter.getXMLString (aSecurityNode));
+      LOG.info (XMLWriter.getXMLString (aSecurityNode));
 
       // Get Signature Algorithm
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
@@ -206,7 +216,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       if (aEncryptedNode != null)
       {
         // Encrypted checks
-        System.out.println ("encrypted checks");
+        LOG.info ("encrypted checks");
 
       }
 
@@ -220,8 +230,46 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                    .build ());
         return ESuccess.FAILURE;
       }
-    }
 
+      // De - Signing and Decryption
+      final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
+
+      List <WSSecurityEngineResult> aResults = null;
+
+      try
+      {
+
+        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler ();
+        // Upon success, the SOAP document contains the decrypted content
+        // afterwards!
+        aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc,
+                                                          null,
+                                                          aKeyStoreCallback,
+                                                          AS4CryptoFactory.createCrypto ())
+                                  .getResults ();
+        // TODO maybe not needed since you cant check Digest algorithm OR
+        // encrypt algorithm
+        aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info (k + "=" + v)));
+
+        aState.setDecryptedSOAPDocument (aSOAPDoc);
+
+        // TODO save DOc somewhere? or what should happen with it
+        // aSecurityEngine.processSecurityHeader (aSOAPDoc, null,
+        // aKeyStoreCallback, AS4CryptoFactory.createCrypto ());
+        // System.out.println ("Decryption Result ");
+        // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
+      }
+      catch (final Exception e)
+      {
+        // Decryption failed
+        aErrorList.add (SingleError.builderError ()
+                                   .setErrorText ("Error processing the WSSSecurity Header: " +
+                                                  e.getLocalizedMessage ())
+                                   .setLinkedException (e)
+                                   .build ());
+        return ESuccess.FAILURE;
+      }
+    }
     return ESuccess.SUCCESS;
   }
 }

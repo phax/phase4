@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.w3c.dom.Document;
+
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -15,7 +17,8 @@ import com.helger.commons.datetime.PDTFactory;
 
 /**
  * This class keeps track of the status of an incoming message. It is basically
- * a String to any map.
+ * a String to any map.<br>
+ * Keys starting with <code>as4.</code> are reserved for internal use.
  *
  * @author Philip Helger
  */
@@ -24,6 +27,7 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE = "as4.pmode";
+  private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -73,5 +77,21 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public IPMode getPMode ()
   {
     return getCastedAttribute (KEY_PMODE);
+  }
+
+  public void setDecryptedSOAPDocument (@Nullable final Document aDocument)
+  {
+    setAttribute (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
+  }
+
+  public boolean hasDecryptedSOAPDocument ()
+  {
+    return containsAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
+  }
+
+  @Nullable
+  public Document getDecryptedSOAPDocument ()
+  {
+    return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 }

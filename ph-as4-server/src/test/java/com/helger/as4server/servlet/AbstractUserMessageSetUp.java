@@ -2,6 +2,7 @@ package com.helger.as4server.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -62,12 +63,14 @@ public abstract class AbstractUserMessageSetUp extends AbstractHttpSetUp
 
       if (bSuccess)
       {
-        assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
+
         assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
+        assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
       }
       else
       {
-        assertEquals ("Server respondedn with success message but failure was expected.",
+        assertEquals ("Server respondedn with success message but failure was expected. Response: " +
+                      m_sResponse,
                       new StringBuilder ().append (m_nStatusCode).toString (),
                       sStatusCode);
 
@@ -76,7 +79,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractHttpSetUp
     catch (final HttpHostConnectException ex)
     {
       // No such server running
-      LOG.info ("No target AS4 server reachable: " + ex.getMessage ());
+      fail ("No target AS4 server reachable: " + ex.getMessage () + " \n Check your properties!");
     }
   }
 }

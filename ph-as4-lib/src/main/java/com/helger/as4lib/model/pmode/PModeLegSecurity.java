@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
@@ -204,11 +205,11 @@ public class PModeLegSecurity
     m_sWSSVersion = sWSSVersion;
   }
 
-  @Nullable
+  @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> getX509Sign ()
   {
-    return m_aX509Sign.getClone ();
+    return new CommonsArrayList<> (m_aX509Sign);
   }
 
   public void setX509Sign (final ICommonsList <String> aX509Sign)
@@ -249,10 +250,11 @@ public class PModeLegSecurity
     m_sX509SignatureAlgorithm = sX509SignatureAlgorithm;
   }
 
-  @Nullable
+  @Nonnull
+  @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncrypt ()
   {
-    return m_aX509EncryptionEncrypt;
+    return new CommonsArrayList<> (m_aX509EncryptionEncrypt);
   }
 
   public void setX509EncryptionEncrypt (final ICommonsList <String> aX509EncryptionEncrypt)

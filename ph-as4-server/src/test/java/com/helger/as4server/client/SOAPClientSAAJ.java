@@ -92,7 +92,7 @@ public class SOAPClientSAAJ
       }
       else
         // BodyPayload SIGNED
-        if (false)
+        if (true)
         {
           final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
           aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));

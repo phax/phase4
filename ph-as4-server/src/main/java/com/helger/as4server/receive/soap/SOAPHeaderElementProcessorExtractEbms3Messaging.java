@@ -2,6 +2,7 @@ package com.helger.as4server.receive.soap;
 
 import javax.annotation.Nonnull;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -19,7 +20,8 @@ import com.helger.jaxb.validation.CollectingValidationEventHandler;
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   @Nonnull
-  public ESuccess processHeaderElement (@Nonnull final Element aElement,
+  public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
+                                        @Nonnull final Element aElement,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {

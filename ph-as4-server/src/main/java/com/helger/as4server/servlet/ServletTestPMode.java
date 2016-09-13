@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
@@ -34,7 +33,7 @@ public class ServletTestPMode
   }
 
   @Nonnull
-  public static IPMode getTestPModeWithSecurity ()
+  public static PMode getTestPModeWithSecurity ()
   {
     final PMode aTestPmode = getTestPMode ();
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -74,7 +73,7 @@ public class ServletTestPMode
   @Nonnull
   private static PModeLegProtocol _generatePModeLegProtocol ()
   {
-    return new PModeLegProtocol ("HTTP 1.1", ESOAPVersion.AS4_DEFAULT);
+    return new PModeLegProtocol ("http://localhost:8080", ESOAPVersion.AS4_DEFAULT);
   }
 
   @Nonnull

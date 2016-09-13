@@ -2,6 +2,7 @@ package com.helger.as4server.receive.soap;
 
 import javax.annotation.Nonnull;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4server.receive.AS4MessageState;
@@ -19,7 +20,10 @@ public interface ISOAPHeaderElementProcessor
   /**
    * Process the passed header element.
    *
-   * @param aElement
+   * @param aSOAPDoc
+   *        The complete SOAP document (logically no MIME parts are contained).
+   *        Never <code>null</code>.
+   * @param aHeaderElement
    *        The DOM node with the header element. Never <code>null</code>.
    * @param aState
    *        The current processing state. Never <code>null</code>.
@@ -30,7 +34,8 @@ public interface ISOAPHeaderElementProcessor
    *         header is treated as "not handled".
    */
   @Nonnull
-  ESuccess processHeaderElement (@Nonnull Element aElement,
+  ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
+                                 @Nonnull Element aHeaderElement,
                                  @Nonnull AS4MessageState aState,
                                  @Nonnull ErrorList aErrorList);
 }
