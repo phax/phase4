@@ -19,12 +19,28 @@ import com.helger.xml.mock.XMLTestHelper;
 public class PModeMicroTypeConverterTest
 {
 
+  // TODO do something meaningful with it or delete
   @Test
   public void testDefaultPMode ()
   {
     System.out.println (MicroWriter.getXMLString (new PModeMicroTypeConverter ().convertToMicroElement (DefaultPMode.getDefaultPmode (),
                                                                                                         null,
                                                                                                         "PMode")));
+  }
+
+  // TODO no global scope has been set
+  @Test
+  public void NativToMicroElementConversionWithNullValues ()
+  {
+    final PMode aPMode = new PMode ("");
+    aPMode.setAgreement (null);
+    aPMode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
+    aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
+    aPMode.setInitiator (_generateInitiatorOrResponder (true));
+    aPMode.setResponder (_generateInitiatorOrResponder (false));
+    aPMode.setLeg1 (_generatePModeLeg ());
+    aPMode.setLeg2 (_generatePModeLeg ());
+    XMLTestHelper.testMicroTypeConversion (aPMode);
   }
 
   @Test

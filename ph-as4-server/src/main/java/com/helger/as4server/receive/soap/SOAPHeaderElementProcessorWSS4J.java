@@ -107,6 +107,16 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
       try
       {
+        // TODO Attachment Mimes need an AttachmentCallBackHandler, but encrypt
+        // TODO needs a Keycallbackhandler
+        // TODO also i think the attachmentcallbackhandler somehow needs the
+        // TODO attachments or the entire mimemessage should be put into
+        // TODOprocesssecurityheader or somthing like thats
+        // final RequestData aRequestData = new RequestData ();
+        // aRequestData.setAttachmentCallbackHandler (new
+        // AttachmentCallbackHandler ());
+        // aRequestData.setSigVerCrypto (AS4CryptoFactory.createCrypto ());
+        // aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
 
         final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler ();
         // Upon success, the SOAP document contains the decrypted content

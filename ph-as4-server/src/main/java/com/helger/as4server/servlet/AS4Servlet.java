@@ -213,6 +213,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
             final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
                                                                 sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
                                                                 (MultipartProgressNotifier) null);
+
             int nIndex = 0;
             while (true)
             {
