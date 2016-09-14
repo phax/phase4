@@ -11,7 +11,7 @@ import com.helger.commons.string.ToStringGenerator;
 
 /**
  * File base incoming attachment.
- * 
+ *
  * @author Philip Helger
  */
 public class IncomingFileAttachment extends AbstractIncomingAttachment
@@ -22,6 +22,12 @@ public class IncomingFileAttachment extends AbstractIncomingAttachment
   {
     m_aFile = ValueEnforcer.notNull (aFile, "File");
     ValueEnforcer.isTrue (FileHelper.canReadAndWriteFile (aFile), () -> aFile + " must be readable and writable");
+  }
+
+  @Nonnull
+  public File getFile ()
+  {
+    return m_aFile;
   }
 
   @Nonnull

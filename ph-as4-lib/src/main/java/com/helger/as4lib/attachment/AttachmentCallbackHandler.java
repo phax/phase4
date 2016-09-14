@@ -50,9 +50,6 @@ public class AttachmentCallbackHandler implements CallbackHandler
   private final ICommonsMap <String, Attachment> m_aAttachmentMap = new CommonsHashMap<> ();
   private final ICommonsList <Attachment> m_aResponseAttachments = new CommonsArrayList<> ();
 
-  public AttachmentCallbackHandler ()
-  {}
-
   public AttachmentCallbackHandler (@Nullable final Iterable <Attachment> aAttachments)
   {
     if (aAttachments != null)
