@@ -90,11 +90,15 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-oton-jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <optional>true</optional>
     </dependency>
-    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -185,8 +189,10 @@
             </goals>
             <configuration>
               <target>
-                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/xsds/" />
-                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/as4lib/xlink/" />
+                <delete
+                  dir="${basedir}/target/generated-sources/xjc/com/helger/xsds/"/>
+                <delete
+                  dir="${basedir}/target/generated-sources/xjc/com/helger/as4lib/xlink/"/>
               </target>
             </configuration>
           </execution>

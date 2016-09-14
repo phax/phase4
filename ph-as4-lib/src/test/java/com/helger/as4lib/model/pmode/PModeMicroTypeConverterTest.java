@@ -18,13 +18,13 @@ import com.helger.xml.mock.XMLTestHelper;
 
 public class PModeMicroTypeConverterTest
 {
+
   @Test
   public void testDefaultPMode ()
   {
     System.out.println (MicroWriter.getXMLString (new PModeMicroTypeConverter ().convertToMicroElement (DefaultPMode.getDefaultPmode (),
                                                                                                         null,
                                                                                                         "PMode")));
-
   }
 
   @Test

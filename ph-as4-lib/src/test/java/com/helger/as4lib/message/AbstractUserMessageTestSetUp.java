@@ -14,12 +14,42 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.EntityUtils;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mock.AbstractHttpSetUp;
+import com.helger.as4lib.standalone.RunInJettyAS4;
+import com.helger.commons.url.URLHelper;
+import com.helger.photon.jetty.JettyStarter;
+import com.helger.photon.jetty.JettyStopper;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractHttpSetUp
 {
+  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
+  private static final int STOP_PORT = PORT + 1000;
+
+  @BeforeClass
+  public static void startServer () throws Exception
+  {
+    new Thread ( () -> {
+      try
+      {
+        new JettyStarter (RunInJettyAS4.class).setPort (PORT).setStopPort (STOP_PORT).run ();
+      }
+      catch (final Exception ex)
+      {
+        ex.printStackTrace ();
+      }
+    }).start ();
+  }
+
+  @AfterClass
+  public static void shutDownServer () throws Exception
+  {
+    new JettyStopper ().setStopPort (STOP_PORT).run ();
+  }
+
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
                                   @Nonnull final boolean bSuccess,
                                   @Nullable final String sErrorCode) throws IOException, MessagingException
