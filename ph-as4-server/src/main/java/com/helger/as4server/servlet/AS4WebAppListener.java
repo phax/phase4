@@ -19,6 +19,8 @@ package com.helger.as4server.servlet;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -30,6 +32,10 @@ import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3M
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
 import com.helger.photon.core.servlet.WebAppListener;
+import com.helger.web.scope.IRequestWebScope;
+import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
+import com.helger.web.scope.mgr.DefaultWebScopeFactory;
+import com.helger.web.scope.mgr.WebScopeFactoryProvider;
 
 public final class AS4WebAppListener extends WebAppListener
 {
@@ -86,6 +92,20 @@ public final class AS4WebAppListener extends WebAppListener
     SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                                                                   "Security"),
                                                                        new SOAPHeaderElementProcessorWSS4J ());
+
+    // Ensure to create request scopes not using Multipart handling so that the
+    // MIME parsing can happen internally
+    // TODO make this AS4Servlet specific
+    WebScopeFactoryProvider.setWebScopeFactory (new DefaultWebScopeFactory ()
+    {
+      @Override
+      @Nonnull
+      public IRequestWebScope createRequestScope (@Nonnull final HttpServletRequest aHttpRequest,
+                                                  @Nonnull final HttpServletResponse aHttpResponse)
+      {
+        return new RequestWebScopeNoMultipart (aHttpRequest, aHttpResponse);
+      }
+    });
 
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
