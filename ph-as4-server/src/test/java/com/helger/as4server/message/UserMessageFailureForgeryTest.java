@@ -1,4 +1,4 @@
-package com.helger.as4lib.message;
+package com.helger.as4server.message;
 
 import static org.junit.Assert.fail;
 

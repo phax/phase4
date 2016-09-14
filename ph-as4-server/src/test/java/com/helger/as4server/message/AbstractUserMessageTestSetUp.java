@@ -1,4 +1,4 @@
-package com.helger.as4lib.message;
+package com.helger.as4server.message;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,8 +18,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
+import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.mock.AbstractHttpSetUp;
-import com.helger.as4lib.standalone.RunInJettyAS4;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.jetty.JettyStarter;
 import com.helger.photon.jetty.JettyStopper;
@@ -35,7 +35,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractHttpSetUp
     new Thread ( () -> {
       try
       {
-        new JettyStarter (RunInJettyAS4.class).setPort (PORT).setStopPort (STOP_PORT).run ();
+        new JettyStarter (com.helger.as4server.standalone.RunInJettyAS4.class).setPort (PORT)
+                                                                              .setStopPort (STOP_PORT)
+                                                                              .run ();
       }
       catch (final Exception ex)
       {
