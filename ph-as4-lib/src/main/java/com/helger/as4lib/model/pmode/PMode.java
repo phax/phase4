@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
 import com.helger.photon.basic.object.AbstractBaseObject;
@@ -199,6 +200,23 @@ public class PMode extends AbstractBaseObject implements IPMode
   public void setLeg2 (@Nullable final PModeLeg aLeg2)
   {
     m_aLeg2 = aLeg2;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final PMode rhs = (PMode) o;
+    return getID ().equals (rhs.getID ());
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (getID ()).getHashCode ();
   }
 
   @Override

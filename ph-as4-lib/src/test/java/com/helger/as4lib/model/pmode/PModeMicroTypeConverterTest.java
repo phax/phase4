@@ -1,10 +1,15 @@
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -13,33 +18,18 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
-import com.helger.xml.microdom.serialize.MicroWriter;
+import com.helger.web.scope.mock.WebScopeTestRule;
 import com.helger.xml.mock.XMLTestHelper;
 
-public class PModeMicroTypeConverterTest
+public final class PModeMicroTypeConverterTest
 {
+  @Rule
+  public final TestRule m_aTestRule = new WebScopeTestRule ();
 
-  // TODO do something meaningful with it or delete
   @Test
-  public void testDefaultPMode ()
+  public void testAsSimpleAsPossible ()
   {
-    System.out.println (MicroWriter.getXMLString (new PModeMicroTypeConverter ().convertToMicroElement (DefaultPMode.getDefaultPmode (),
-                                                                                                        null,
-                                                                                                        "PMode")));
-  }
-
-  // TODO no global scope has been set
-  @Test
-  public void NativToMicroElementConversionWithNullValues ()
-  {
-    final PMode aPMode = new PMode ("");
-    aPMode.setAgreement (null);
-    aPMode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
-    aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
-    aPMode.setInitiator (_generateInitiatorOrResponder (true));
-    aPMode.setResponder (_generateInitiatorOrResponder (false));
-    aPMode.setLeg1 (_generatePModeLeg ());
-    aPMode.setLeg2 (_generatePModeLeg ());
+    final PMode aPMode = new PMode ("id");
     XMLTestHelper.testMicroTypeConversion (aPMode);
   }
 
@@ -55,15 +45,21 @@ public class PModeMicroTypeConverterTest
     aPMode.setLeg1 (_generatePModeLeg ());
     aPMode.setLeg2 (_generatePModeLeg ());
     XMLTestHelper.testMicroTypeConversion (aPMode);
+    XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg1 ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
   }
 
+  @Nonnull
   private PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty ("", "idvalue", "sender", "test", "testpw");
-    return new PModeParty ("", "idvalue2", "responder", "test2", "test2pw");
+      return new PModeParty ("initiator-type", "idvalue", "sender", "test", "testpw");
+    return new PModeParty ("responder-type", "idvalue2", "responder", "test2", "test2pw");
   }
 
+  @Nonnull
   private PModeLeg _generatePModeLeg ()
   {
     return new PModeLeg (_generatePModeLegProtocol (),
@@ -73,6 +69,7 @@ public class PModeMicroTypeConverterTest
                          _generatePModeLegSecurity ());
   }
 
+  @Nonnull
   private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation ("service",
@@ -83,6 +80,8 @@ public class PModeMicroTypeConverterTest
                                             "mpcexample");
   }
 
+  @Nonnull
+  @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModePayloadProfile> _generatePModePayloadProfile ()
   {
     final PModePayloadProfile aPModePayloadProfile = new PModePayloadProfile ("name",
@@ -96,6 +95,8 @@ public class PModeMicroTypeConverterTest
     return aPModePayloadProfiles;
   }
 
+  @Nonnull
+  @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModeProperty> _generatePModeProperties ()
   {
     final PModeProperty aPModeProperty = new PModeProperty ("name",
@@ -107,6 +108,7 @@ public class PModeMicroTypeConverterTest
     return aPModeProperties;
   }
 
+  @Nonnull
   private PModeLegErrorHandling _generatePModeLegErrorHandling ()
   {
     return new PModeLegErrorHandling (_generatePModeAddressList (),
@@ -117,16 +119,19 @@ public class PModeMicroTypeConverterTest
                                       ETriState.TRUE);
   }
 
+  @Nonnull
   private PModeAddressList _generatePModeAddressList ()
   {
     return new PModeAddressList ("address1");
   }
 
+  @Nonnull
   private PModeLegProtocol _generatePModeLegProtocol ()
   {
     return new PModeLegProtocol ("addressProtocol", ESOAPVersion.SOAP_11);
   }
 
+  @Nonnull
   private PModeLegReliability _generatePModeLegReliability ()
   {
     final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation", "correlation2");
@@ -143,6 +148,7 @@ public class PModeMicroTypeConverterTest
 
   }
 
+  @Nonnull
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
     final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",

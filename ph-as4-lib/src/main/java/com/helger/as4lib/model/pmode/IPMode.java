@@ -15,7 +15,21 @@ public interface IPMode extends IObject
   EMEP getMEP ();
 
   @Nullable
+  default String getMEPID ()
+  {
+    final EMEP eMEP = getMEP ();
+    return eMEP == null ? null : eMEP.getID ();
+  }
+
+  @Nullable
   ETransportChannelBinding getMEPBinding ();
+
+  @Nullable
+  default String getMEPBindingID ()
+  {
+    final ETransportChannelBinding eMEPBinding = getMEPBinding ();
+    return eMEPBinding == null ? null : eMEPBinding.getID ();
+  }
 
   @Nullable
   PModeParty getInitiator ();

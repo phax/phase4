@@ -23,8 +23,8 @@ public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
     ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
-    ret.setAttribute (ATTR_MEP, aValue.getMEP ().getID ());
-    ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBinding ().getID ());
+    ret.setAttribute (ATTR_MEP, aValue.getMEPID ());
+    ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
                                                                sNamespaceURI,
                                                                ELEMENT_INITIATOR));
