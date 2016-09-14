@@ -93,12 +93,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <optional>true</optional>
-    </dependency>
-
-    <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-oton-jetty</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

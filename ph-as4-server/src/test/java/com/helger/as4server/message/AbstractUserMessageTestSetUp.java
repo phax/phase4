@@ -19,12 +19,12 @@ import org.junit.BeforeClass;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
-import com.helger.as4lib.mock.AbstractHttpSetUp;
+import com.helger.as4server.AbstractClientSetUp;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.jetty.JettyStarter;
 import com.helger.photon.jetty.JettyStopper;
 
-public abstract class AbstractUserMessageTestSetUp extends AbstractHttpSetUp
+public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;

@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
-import com.helger.as4lib.mock.AbstractHttpSetUp;
+import com.helger.as4server.AbstractClientSetUp;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -27,7 +27,7 @@ import com.helger.as4lib.mock.AbstractHttpSetUp;
  *
  * @author bayerlma
  */
-public abstract class AbstractUserMessageSetUp extends AbstractHttpSetUp
+public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
 {
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
                                   @Nonnull final boolean bSuccess,

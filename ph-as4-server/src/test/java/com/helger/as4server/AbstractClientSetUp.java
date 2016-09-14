@@ -1,4 +1,4 @@
-package com.helger.as4lib.mock;
+package com.helger.as4server;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -28,9 +28,9 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
  *
  * @author bayerlma
  */
-public abstract class AbstractHttpSetUp
+public abstract class AbstractClientSetUp
 {
-  protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractHttpSetUp.class);
+  protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractClientSetUp.class);
   protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("as4.properties").build ();
 
   protected int m_nStatusCode;
