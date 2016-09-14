@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
+import com.helger.as4lib.AS4TestRule;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -18,13 +19,17 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
-import com.helger.web.scope.mock.WebScopeTestRule;
 import com.helger.xml.mock.XMLTestHelper;
 
+/**
+ * Test class for class {@link PModeMicroTypeConverter}.
+ *
+ * @author Philip Helger
+ */
 public final class PModeMicroTypeConverterTest
 {
   @Rule
-  public final TestRule m_aTestRule = new WebScopeTestRule ();
+  public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
   public void testAsSimpleAsPossible ()

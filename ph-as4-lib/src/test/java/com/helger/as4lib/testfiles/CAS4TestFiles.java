@@ -2,10 +2,11 @@ package com.helger.as4lib.testfiles;
 
 import javax.annotation.Nonnull;
 
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
-public class CAS4TestFiles
+public final class CAS4TestFiles
 {
   public static final String TEST_FILE_PATH_SOAP_11 = "/soap11test/";
   public static final String TEST_FILE_PATH_SOAP_12 = "/soap12test/";
@@ -25,28 +26,34 @@ public class CAS4TestFiles
                                                                        "NoMessaging.xml" };
   private static final String [] SOAP_12_INVALID_XML = new String [] { "" };
 
+  private CAS4TestFiles ()
+  {}
+
   @Nonnull
+  @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSOAP11ValidXML ()
   {
     return new CommonsArrayList<> (SOAP_11_VALID_XML);
   }
 
   @Nonnull
+  @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSOAP12ValidXML ()
   {
     return new CommonsArrayList<> (SOAP_12_VALID_XML);
   }
 
   @Nonnull
+  @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSOAP11InvalidXML ()
   {
     return new CommonsArrayList<> (SOAP_11_INVALID_XML);
   }
 
   @Nonnull
+  @ReturnsMutableCopy
   public static ICommonsList <String> getTestFilesSOAP12InvalidXML ()
   {
     return new CommonsArrayList<> (SOAP_12_INVALID_XML);
   }
-
 }

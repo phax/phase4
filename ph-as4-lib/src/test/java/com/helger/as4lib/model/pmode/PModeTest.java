@@ -6,12 +6,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
-import com.helger.web.scope.mock.WebScopeTestRule;
+import com.helger.as4lib.AS4TestRule;
 
+/**
+ * Test class for class {@link PMode}.
+ *
+ * @author Philip Helger
+ */
 public final class PModeTest
 {
   @Rule
-  public final TestRule m_aTestRule = new WebScopeTestRule ();
+  public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
   public void testInvalidCtor ()
