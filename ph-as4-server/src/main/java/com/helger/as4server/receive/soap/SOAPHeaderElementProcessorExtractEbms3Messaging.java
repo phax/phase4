@@ -72,7 +72,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       }
     }
 
-    if (aPMode.getMEP () == null || aPMode.getMEPBinding () == null)
+    if (aPMode == null || aPMode.getMEP () == null || aPMode.getMEPBinding () == null)
       throw new IllegalStateException ("PMode is incomplete: " + aPMode);
 
     // Check if pmode contains a protocol and if the message complies
@@ -86,7 +86,12 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Check protocol
     {
       final PModeLegProtocol aProtocol = aPModeLeg1.getProtocol ();
-      if (aProtocol == null || !"http".equals (aProtocol.getAddressProtocol ()))
+      if (aProtocol == null)
+      {
+        aErrorList.add (SingleError.builderError ().setErrorText ("PMode Leg is missing protocol").build ());
+        return ESuccess.FAILURE;
+      }
+      if (!"http".equals (aProtocol.getAddressProtocol ()))
       {
         aErrorList.add (SingleError.builderError ()
                                    .setErrorText ("PMode Leg uses unsupported protocol '" +
