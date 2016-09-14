@@ -7,6 +7,7 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * This class represents a single DOM element in a SOAP header with some
@@ -64,5 +65,14 @@ public class AS4SOAPHeader
   public void setProcessed (final boolean bProcessed)
   {
     m_bProcessed = bProcessed;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("QName", m_aQName)
+                                       .append ("MustUnderstand", m_bIsMustUnderstand)
+                                       .append ("Processed", m_bProcessed)
+                                       .toString ();
   }
 }
