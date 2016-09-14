@@ -17,7 +17,7 @@ import com.helger.commons.mime.MimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 /**
- * Base interface for an attachment.
+ * Base interface for an attachment to be used for sending messages.
  *
  * @author Philip Helger
  */

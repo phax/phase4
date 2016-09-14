@@ -23,6 +23,8 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.attachment.IIncomingAttachment;
+import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
@@ -59,10 +61,13 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
+                                   @Nonnull final ICommonsList <IIncomingAttachment> aIncomingAttachments,
                                    @Nonnull final AS4Response aUR) throws Exception
   {
     if (true)
       s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
+
+    s_aLogger.info ("!!!!" + aIncomingAttachments.toString ());
 
     // Find SOAP header
     final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -184,103 +189,104 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       if (aMT == null)
       {
         aUR.setBadRequest ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
+        return;
+      }
+
+      Document aSOAPDocument = null;
+      ESOAPVersion eSOAPVersion = null;
+      final ICommonsList <IIncomingAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+
+      final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
+      if (aPlainMT.equals (MT_MULTIPART_RELATED))
+      {
+        // MIME message
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Received MIME message");
+
+        final String sBoundary = aMT.getParameterValueWithName ("boundary");
+        if (StringHelper.hasNoText (sBoundary))
+        {
+          aUR.setBadRequest ("Content-Type '" + aHttpServletRequest.getContentType () + "' misses boundary parameter");
+        }
+        else
+        {
+          if (s_aLogger.isDebugEnabled ())
+            s_aLogger.debug ("MIME Boundary = " + sBoundary);
+
+          // PARSING MIME Message via MultiPartStream
+          final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
+                                                              sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
+                                                              (MultipartProgressNotifier) null);
+
+          int nIndex = 0;
+          while (true)
+          {
+            final boolean bNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+            if (!bNextPart)
+              break;
+            s_aLogger.info ("Found part " + nIndex);
+            final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
+
+            final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
+            if (nIndex == 0)
+            {
+              // SOAP document
+              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
+                                                           .getCopyWithoutParameters ();
+
+              // Determine SOAP version from MIME part content type
+              eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
+                                                    x -> aPlainPartMT.equals (x.getMimeType ()));
+
+              // Read SOAP document
+              aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
+            }
+            else
+            {
+              // MIME Attachment
+              final IIncomingAttachment aAttachment = MetaManager.getIncomingAttachmentFactory ()
+                                                                 .createAttachment (aBodyPart);
+              aIncomingAttachments.add (aAttachment);
+            }
+            nIndex++;
+          }
+        }
       }
       else
       {
-        Document aSOAPDocument = null;
-        ESOAPVersion eSOAPVersion = null;
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Received plain message with Content-Type " + aMT.getAsString ());
 
-        final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
-        if (aPlainMT.equals (MT_MULTIPART_RELATED))
+        // Expect plain SOAP - read whole request to DOM
+        // Note: this may require a huge amount of memory for large requests
+        aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
+
+        // Determine SOAP version from content type
+        eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainMT.equals (x.getMimeType ()));
+      }
+
+      if (aSOAPDocument == null)
+      {
+        aUR.setBadRequest ("Failed to parse " + eSOAPVersion + " document!");
+      }
+      else
+      {
+        if (eSOAPVersion == null)
         {
-          // MIME message
-          if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug ("Received MIME message");
+          // Determine from namespace URI of read document
+          final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
+          eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
+                                                x -> x.getNamespaceURI ().equals (sNamespaceURI));
+        }
 
-          final String sBoundary = aMT.getParameterValueWithName ("boundary");
-          if (StringHelper.hasNoText (sBoundary))
-          {
-            aUR.setBadRequest ("Content-Type '" +
-                               aHttpServletRequest.getContentType () +
-                               "' misses boundary parameter");
-          }
-          else
-          {
-            if (s_aLogger.isDebugEnabled ())
-              s_aLogger.debug ("MIME Boundary = " + sBoundary);
-
-            // PARSING MIME Message via MultiPartStream
-            final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
-                                                                sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
-                                                                (MultipartProgressNotifier) null);
-
-            int nIndex = 0;
-            while (true)
-            {
-              final boolean bNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-              if (!bNextPart)
-                break;
-              s_aLogger.info ("Found part " + nIndex);
-              final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
-
-              final MimeBodyPart p = new MimeBodyPart (aItemIS2);
-              if (nIndex == 0)
-              {
-                // SOAP document
-                final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (p.getContentType ())
-                                                             .getCopyWithoutParameters ();
-
-                // Determine SOAP version from MIME part content type
-                eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
-                                                      x -> aPlainPartMT.equals (x.getMimeType ()));
-
-                // Read SOAP document
-                aSOAPDocument = DOMReader.readXMLDOM (p.getInputStream ());
-              }
-              else
-              {
-                // TODO MIME Attachment - ignore for now
-              }
-              nIndex++;
-            }
-          }
+        if (eSOAPVersion == null)
+        {
+          aUR.setBadRequest ("Failed to determine SOAP version from XML document!");
         }
         else
         {
-          if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug ("Received plain message with Content-Type " + aMT.getAsString ());
-
-          // Expect plain SOAP - read whole request to DOM
-          // Note: this may require a huge amount of memory for large requests
-          aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
-
-          // Determine SOAP version from content type
-          eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainMT.equals (x.getMimeType ()));
-        }
-
-        if (aSOAPDocument == null)
-        {
-          aUR.setBadRequest ("Failed to parse " + eSOAPVersion + " document!");
-        }
-        else
-        {
-          if (eSOAPVersion == null)
-          {
-            // Determine from namespace URI of read document
-            final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
-            eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
-                                                  x -> x.getNamespaceURI ().equals (sNamespaceURI));
-          }
-
-          if (eSOAPVersion == null)
-          {
-            aUR.setBadRequest ("Failed to determine SOAP version from XML document!");
-          }
-          else
-          {
-            // SOAP document and SOAP version are determined
-            _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aUR);
-          }
+          // SOAP document and SOAP version are determined
+          _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aUR);
         }
       }
     }

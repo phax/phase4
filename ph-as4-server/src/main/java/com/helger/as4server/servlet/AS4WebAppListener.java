@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
@@ -109,6 +110,7 @@ public final class AS4WebAppListener extends WebAppListener
 
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
+    MetaManager.getInstance ();
 
     s_aLogger.info ("AS4 server started");
   }
