@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
+import com.helger.commons.error.IError;
+import com.helger.commons.error.SingleError;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 
 public interface IEbmsError extends Serializable
@@ -51,6 +54,20 @@ public interface IEbmsError extends Serializable
    */
   @Nonnull
   EErrorCategory getCategory ();
+
+  @Nonnull
+  default IError getAsError (@Nonnull final Locale aContentLocale)
+  {
+    return SingleError.builder ()
+                      .setErrorLevel (getSeverity ().getErrorLevel ())
+                      .setErrorID (getErrorCode ())
+                      .setErrorText ("[" +
+                                     getCategory ().getContent () +
+                                     "] " +
+                                     StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
+                                                              getShortDescription ()))
+                      .build ();
+  }
 
   @Nonnull
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale)
