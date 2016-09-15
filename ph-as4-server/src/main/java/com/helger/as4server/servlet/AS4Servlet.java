@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
+import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -94,6 +95,15 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
+
+    // Needed to do since not every message will have attachments
+    ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> ();
+
+    if (aIncomingAttachments.isNotEmpty ())
+    {
+      aWSS4JAttachments = new CommonsArrayList<> (aIncomingAttachments, IIncomingAttachment::getAsWSS4JAttachment);
+    }
+
     // handle all headers in the order of the registered handlers!
     for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getAllElementProcessors ()
                                                                                                          .entrySet ())
@@ -108,7 +118,8 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Process element
         final ErrorList aErrorList = new ErrorList ();
-        if (aProcessor.processHeaderElement (aSOAPDocument, aHeader.getNode (), aState, aErrorList).isSuccess ())
+        if (aProcessor.processHeaderElement (aSOAPDocument, aHeader.getNode (), aWSS4JAttachments, aState, aErrorList)
+                      .isSuccess ())
           aHeader.setProcessed (true);
         else
         {
@@ -120,6 +131,21 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                              "; error details: " +
                              aErrorList);
           // XXX check if really okay. [ph] store errors instead
+
+          // TODO Create Reverse Function for converting IErrors to EBMSErrors
+          // TODO Change to dynamic Message ID
+          // final Ebms3MessageInfo aEbms3MessageInfo =
+          // aReceiptMessage.createEbms3MessageInfo
+          // ("UUID-3@receiver.example.com",
+          // null);
+          // final AS4ErrorMessage aDoc = new CreateErrorMessage
+          // ().createErrorMessage (eSOAPVersion,
+          // aEbms3MessageInfo,
+          // aErrorMessages);
+          // aUR.setContentAndCharset (AS4XMLHelper.serializeXML
+          // (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
+          // .setMimeType (eSOAPVersion.getMimeType ());
+
           return;
         }
       }
@@ -158,7 +184,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                          aEbms3MessageInfo,
                                                                          aEbms3UserMessage,
                                                                          null)
-                                                  .setMustUnderstand (false);
+                                                  .setMustUnderstand (true);
 
     // We've got our response
     aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)

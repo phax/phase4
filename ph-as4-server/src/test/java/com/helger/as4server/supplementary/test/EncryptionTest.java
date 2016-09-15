@@ -134,7 +134,7 @@ public class EncryptionTest
     final Document encryptedDoc = builder.build (doc, crypto, secHeader);
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
-    System.out.println (outputString);
+    // System.out.println (outputString);
     assertFalse (outputString.contains ("counter_port_type"));
   }
 }

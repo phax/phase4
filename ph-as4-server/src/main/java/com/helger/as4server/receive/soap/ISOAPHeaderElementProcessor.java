@@ -2,10 +2,12 @@ package com.helger.as4server.receive.soap;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.common.ext.Attachment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4server.receive.AS4MessageState;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 
@@ -36,6 +38,7 @@ public interface ISOAPHeaderElementProcessor
   @Nonnull
   ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
                                  @Nonnull Element aHeaderElement,
+                                 @Nonnull ICommonsList <Attachment> aAttachments,
                                  @Nonnull AS4MessageState aState,
                                  @Nonnull ErrorList aErrorList);
 }

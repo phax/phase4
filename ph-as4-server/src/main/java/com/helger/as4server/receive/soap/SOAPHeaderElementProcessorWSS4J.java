@@ -2,23 +2,29 @@ package com.helger.as4server.receive.soap;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
+import org.apache.wss4j.dom.handler.RequestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4server.receive.AS4MessageState;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
@@ -32,6 +38,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aSecurityNode,
+                                        @Nonnull final ICommonsList <Attachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
@@ -107,28 +114,24 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
       try
       {
-        // TODO Attachment Mimes need an AttachmentCallBackHandler, but encrypt
-        // TODO needs a Keycallbackhandler
-        // TODO also i think the attachmentcallbackhandler somehow needs the
-        // TODO attachments or the entire mimemessage should be put into
-        // TODOprocesssecurityheader or somthing like thats
-        // final RequestData aRequestData = new RequestData ();
-        // aRequestData.setAttachmentCallbackHandler (new
-        // AttachmentCallbackHandler ());
-        // aRequestData.setSigVerCrypto (AS4CryptoFactory.createCrypto ());
-        // aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-
+        // Convert to WSS4J attachments
         final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler ();
+        final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aAttachments);
+
+        final RequestData aRequestData = new RequestData ();
+        aRequestData.setCallbackHandler (aKeyStoreCallback);
+        if (aAttachments.isNotEmpty ())
+          aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
+        aRequestData.setSigVerCrypto (AS4CryptoFactory.createCrypto ());
+        aRequestData.setDecCrypto (AS4CryptoFactory.createCrypto ());
+
         // Upon success, the SOAP document contains the decrypted content
         // afterwards!
-        aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc,
-                                                          null,
-                                                          aKeyStoreCallback,
-                                                          AS4CryptoFactory.createCrypto ())
-                                  .getResults ();
+        aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
+
         // TODO maybe not needed since you cant check Digest algorithm OR
         // encrypt algorithm
-        aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info (k + "=" + v)));
+        aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info ("KeyValuePair: " + k + "=" + v)));
 
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
@@ -140,12 +143,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
       catch (final Exception e)
       {
-        // Decryption failed
-        aErrorList.add (SingleError.builderError ()
-                                   .setErrorText ("Error processing the WSSSecurity Header: " +
-                                                  e.getLocalizedMessage ())
-                                   .setLinkedException (e)
-                                   .build ());
+        // Decryption or Signature check failed
+
+        LOG.info ("Error processing the WSSSecurity Header: " + e.getLocalizedMessage ());
+
+        // TODO change Local to dynamic one + we need a way to distinct
+        // signature and decrypt WSSecurityException provides no such thing
+        aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+
         return ESuccess.FAILURE;
       }
     }

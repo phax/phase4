@@ -152,7 +152,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   // Encrpytion
 
   @Test
-  public void testUserMessageEncrypteMimeAttachmentForged () throws Exception
+  public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
@@ -162,7 +162,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                                           TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments),
-                                                                          false,
+                                                                          true,
                                                                           aAttachments);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
@@ -171,7 +171,9 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     aMimeBodyPart.attachFile (ClassPathResource.getAsFile ("attachment/test-img.jpg"));
 
     aMsg.saveChanges ();
-
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    // TODO remove when output not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    // System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 }

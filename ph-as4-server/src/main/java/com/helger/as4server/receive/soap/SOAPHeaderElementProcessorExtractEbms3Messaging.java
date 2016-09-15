@@ -1,13 +1,19 @@
 package com.helger.as4server.receive.soap;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.common.ext.Attachment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.IPMode;
@@ -16,6 +22,7 @@ import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
@@ -23,9 +30,12 @@ import com.helger.jaxb.validation.CollectingValidationEventHandler;
 
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
+  private static final Logger LOG = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
+
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aElement,
+                                        @Nonnull final ICommonsList <Attachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
@@ -137,11 +147,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
                                              aID -> aID.getValue ().equals (sInitiatorID)))
           {
-            aErrorList.add (SingleError.builderError ()
-                                       .setErrorText ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
-                                                      sInitiatorID +
-                                                      "'")
-                                       .build ());
+            LOG.info ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
+                      sInitiatorID +
+                      "'");
+            // TODO change Local to dynamic one
+            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
             return ESuccess.FAILURE;
           }
         }
@@ -172,11 +182,13 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           if (CollectionHelper.containsNone (aPartyInfo.getTo ().getPartyId (),
                                              aID -> aID.getValue ().equals (sResponderID)))
           {
-            aErrorList.add (SingleError.builderError ()
-                                       .setErrorText ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
-                                                      sResponderID +
-                                                      "'")
-                                       .build ());
+
+            LOG.info ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
+                      sResponderID +
+                      "'");
+
+            // TODO change Local to dynamic one
+            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
             return ESuccess.FAILURE;
           }
         }

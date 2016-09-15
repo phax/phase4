@@ -92,7 +92,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       else
       {
         // Status code may by 20x but may be an error anyway
-        assertTrue ("Server responded with success message but failure was expected." +
+        assertTrue ("Server responded with success or different error message but failure was expected." +
                     "StatusCode: " +
                     m_nStatusCode +
                     "\nResponse: " +
