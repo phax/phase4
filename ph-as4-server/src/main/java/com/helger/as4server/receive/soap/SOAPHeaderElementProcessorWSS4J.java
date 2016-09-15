@@ -119,9 +119,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                          .equals (aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID)))
         {
           // TODO change Local to dynamic one
-          LOG.info ("Error processing the Attachments,the attachment ," +
+          LOG.info ("Error processing the attachment '" +
                     aAttachments.get (i).getId () +
-                    " is not valid with what is specified in the usermessage.");
+                    "' is not valid with what is specified in the EBMS UserMessage.");
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
 
           return ESuccess.FAILURE;
@@ -162,11 +162,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // System.out.println ("Decryption Result ");
         // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
       }
-      catch (final Exception e)
+      catch (final Exception ex)
       {
         // Decryption or Signature check failed
 
-        LOG.info ("Error processing the WSSSecurity Header: " + e.getLocalizedMessage ());
+        LOG.info ("Error processing the WSSSecurity Header", ex);
 
         // TODO change Local to dynamic one + we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing
