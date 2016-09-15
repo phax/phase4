@@ -3,10 +3,12 @@ package com.helger.as4server;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.http.HttpHost;
+import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -47,7 +49,22 @@ public abstract class AbstractClientSetUp
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
 
-    m_aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
+    m_aClient = new HttpClientFactory (aSSLContext)
+    {
+      @Override
+      @Nonnull
+      public RequestConfig createRequestConfig ()
+      {
+        return RequestConfig.custom ()
+                            .setCookieSpec (CookieSpecs.DEFAULT)
+                            .setSocketTimeout (100_000)
+                            .setConnectTimeout (5_000)
+                            .setConnectionRequestTimeout (5_000)
+                            .setCircularRedirectsAllowed (false)
+                            .setRedirectsEnabled (true)
+                            .build ();
+      }
+    }.createHttpClient ();
 
     m_aPost = new HttpPost (sURL);
 
