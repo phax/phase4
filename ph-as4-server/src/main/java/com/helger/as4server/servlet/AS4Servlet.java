@@ -174,7 +174,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
       return;
     }
-
+    // TODO Repuditation Receipt
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     // TODO Change to dynamic Message ID

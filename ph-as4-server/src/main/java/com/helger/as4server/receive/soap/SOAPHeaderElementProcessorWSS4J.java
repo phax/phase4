@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.ext.Attachment;
+import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -20,6 +21,7 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.wss.EWSSVersion;
@@ -47,7 +49,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg1.getSecurity () != null)
     {
-      // TODO delete sysout
+      // TODO set to debug
       LOG.info (XMLWriter.getXMLString (aSecurityNode));
 
       // Get Signature Algorithm
@@ -107,7 +109,26 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         return ESuccess.FAILURE;
       }
 
-      // De - Signing and Decryption
+      final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);
+      // Check if Attachment IDs are the same
+      for (int i = 0; i < aAttachments.size (); i++)
+      {
+        if (!aUserMessage.getPayloadInfo ()
+                         .getPartInfoAtIndex (i)
+                         .getHref ()
+                         .equals (aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID)))
+        {
+          // TODO change Local to dynamic one
+          LOG.info ("Error processing the Attachments,the attachment ," +
+                    aAttachments.get (i).getId () +
+                    " is not valid with what is specified in the usermessage.");
+          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+
+          return ESuccess.FAILURE;
+        }
+      }
+
+      // Signing Check and Decryption
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
 
       List <WSSecurityEngineResult> aResults = null;

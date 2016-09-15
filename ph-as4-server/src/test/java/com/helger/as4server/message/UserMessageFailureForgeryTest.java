@@ -9,6 +9,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -133,7 +134,10 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
         eElement.setAttribute ("href", "cid:invalid");
     }
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    // TODO DELETE OUTPUT IF not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // False pmode settings
