@@ -36,6 +36,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -129,9 +130,9 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     for (int i = 0; i < nList.getLength (); i++)
     {
       final Node nNode = nList.item (i);
-      final Element eElement = (Element) nNode;
-      if (eElement.hasAttribute ("href"))
-        eElement.setAttribute ("href", "cid:invalid");
+      final Element aElement = (Element) nNode;
+      if (aElement.hasAttribute ("href"))
+        aElement.setAttribute ("href", "cid:invalid");
     }
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
     // TODO DELETE OUTPUT IF not needed anymore
@@ -153,7 +154,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
-  // Encrpytion
+  // Encryption
 
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
@@ -178,6 +179,78 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     // TODO remove when output not needed anymore
     final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
     // System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithPayloadInfoOnly () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+
+    // Delete the added Payload in the soap body to confirm right behaviour when
+    // the payload is missing
+    final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
+    for (int i = 0; i < nList.getLength (); i++)
+    {
+      final Node nNode = nList.item (i);
+      final Element aElement = (Element) nNode;
+      XMLHelper.removeAllChildElements (aElement);
+    }
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithAttachmentInfoOnly () throws Exception
+  {
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                             CMimeType.APPLICATION_GZIP));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                     null,
+                                                                                                                                     aAttachments),
+
+                                                                                          aAttachments,
+                                                                                          null);
+
+    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
+
+    // Since we want to remove the attachment
+    aMultipart.removeBodyPart (1);
+
+    aMsg.saveChanges ();
+    // TODO remove when output not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    // System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
+  {
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                             CMimeType.APPLICATION_GZIP));
+
+    final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                             CMimeType.IMAGE_JPG));
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
+                                             CMimeType.IMAGE_JPG));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
+
+                                                                                          aAttachments,
+                                                                                          null);
+    aMsg.saveChanges ();
+    // TODO remove when output not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 }

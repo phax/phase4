@@ -26,7 +26,7 @@ public enum EEbmsError implements IEbmsError
   EBMS_CONNECTION_FAIlURE ("EBMS:0005",
                            EErrorSeverity.WARNING,
                            "ConnectionFailure",
-                           EErrorText.CONNECTION_FAIlURE,
+                           EErrorText.CONNECTION_FAILURE,
                            EErrorCategory.COMMUNICATION),
   EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL ("EBMS:0006",
                                         EErrorSeverity.FAILURE,

@@ -113,15 +113,16 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Check if Attachment IDs are the same
       for (int i = 0; i < aAttachments.size (); i++)
       {
-        if (!aUserMessage.getPayloadInfo ()
-                         .getPartInfoAtIndex (i)
-                         .getHref ()
-                         .equals (aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID)))
+        String aAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
+        aAttachmentId = aAttachmentId.substring ("<attachment=".length (), aAttachmentId.length () - 1);
+        if (!aUserMessage.getPayloadInfo ().getPartInfoAtIndex (i).getHref ().contains (aAttachmentId))
         {
           // TODO change Local to dynamic one
-          LOG.info ("Error processing the Attachments,the attachment ," +
-                    aAttachments.get (i).getId () +
-                    " is not valid with what is specified in the usermessage.");
+          LOG.info ("Error processing the Attachments, the attachment" +
+                    aUserMessage.getPayloadInfo ().getPartInfoAtIndex (i).getHref () +
+                    " is not valid with what is specified in the usermessage.: " +
+                    aAttachmentId);
+
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
 
           return ESuccess.FAILURE;
