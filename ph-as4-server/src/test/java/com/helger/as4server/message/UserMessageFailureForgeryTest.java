@@ -7,9 +7,12 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,6 +24,7 @@ import org.w3c.dom.NodeList;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
@@ -77,6 +81,20 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   {
     TestMessages.emptyUserMessage (m_eSOAPVersion, null, null);
     fail ();
+  }
+
+  // TODO NOT WORKING SINCE SOMEHOW THE SECOND USER MESSAGE GETS IGNORED!?!?!
+  @Ignore
+  @Test
+  public void testTwoUserMessageShouldFail () throws Exception
+  {
+
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TwoUserMessages.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   // Tinkering with the signature
@@ -197,6 +215,27 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
       final Element aElement = (Element) nNode;
       XMLHelper.removeAllChildElements (aElement);
     }
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithBodyPayloadOnlyNoInfo () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+
+    // Delete the added Payload in the soap body to confirm right behaviour when
+    // the payload is missing
+    Node aNext = XMLHelper.getFirstChildElementOfName (aDoc, "Envelope");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "Messaging");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "UserMessage");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "PayloadInfo");
+
+    aNext.getParentNode ().removeChild (aNext);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,

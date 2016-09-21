@@ -155,6 +155,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                 aEbms3MessageProperties,
                                                                 eSetESOAPVersion)
                                             .setMustUnderstand (false);
+
     return aDoc.getAsSOAPDocument (aPayload);
   }
 }

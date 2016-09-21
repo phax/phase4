@@ -12,6 +12,7 @@ import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.ebms3header.MessagePartNRInformation;
 import com.helger.as4lib.ebms3header.NonRepudiationInformation;
+import com.helger.as4lib.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.marshaller.XMLDSigReaderBuilder;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -81,7 +82,9 @@ public class CreateReceiptMessage
         aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
       }
 
-      aEbms3Receipt.addAny (aNonRepudiationInformation);
+      aEbms3Receipt.addAny (Ebms3WriterBuilder.nonRepudiationInformation ()
+                                              .getAsDocument (aNonRepudiationInformation)
+                                              .getDocumentElement ());
     }
     else
     {

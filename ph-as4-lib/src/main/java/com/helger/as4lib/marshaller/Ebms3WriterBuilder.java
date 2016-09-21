@@ -5,6 +5,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.NonRepudiationInformation;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
@@ -26,6 +27,7 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
     super (eDocType);
     final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
     aNSCtx.addMapping ("eb", CAS4.EBMS_NS);
+    aNSCtx.addMapping ("ebbp", CAS4.EBBP_NS);
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
     setNamespaceContext (aNSCtx);
@@ -35,6 +37,12 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
   public static Ebms3WriterBuilder <Ebms3Messaging> ebms3Messaging ()
   {
     return new Ebms3WriterBuilder<> (EEbms3DocumentType.MESSAGING);
+  }
+
+  @Nonnull
+  public static Ebms3WriterBuilder <NonRepudiationInformation> nonRepudiationInformation ()
+  {
+    return new Ebms3WriterBuilder<> (EEbms3DocumentType.NON_REPUDIATION_INFORMATION);
   }
 
   @Nonnull

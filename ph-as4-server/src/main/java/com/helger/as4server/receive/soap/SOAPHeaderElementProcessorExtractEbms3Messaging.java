@@ -213,8 +213,23 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
     if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
     {
-      // TODO check for BodyPayload needs also to be emtpy and NO attachment
-      // should be present if it is a mime message
+      // TODO NO attachment should be present if it is a mime message, problem
+      // here is there can be n amount of other mime parts added to the message
+      final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
+      for (int i = 0; i < nList.getLength (); i++)
+      {
+        final Node nNode = nList.item (i);
+        final Element aBody = (Element) nNode;
+        if (aBody.hasChildNodes ())
+        {
+          LOG.info ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+          return ESuccess.FAILURE;
+        }
+      }
+
     }
     else
     {
