@@ -1,5 +1,6 @@
 package com.helger.as4server.servlet;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -15,10 +16,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.as4lib.error.EEbmsError;
+import com.helger.as4lib.message.AS4ErrorMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
+import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.PMode;
@@ -134,17 +139,22 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
 
           // TODO Create Reverse Function for converting IErrors to EBMSErrors
           // TODO Change to dynamic Message ID
-          // final Ebms3MessageInfo aEbms3MessageInfo =
-          // aReceiptMessage.createEbms3MessageInfo
-          // ("UUID-3@receiver.example.com",
-          // null);
-          // final AS4ErrorMessage aDoc = new CreateErrorMessage
-          // ().createErrorMessage (eSOAPVersion,
-          // aEbms3MessageInfo,
-          // aErrorMessages);
-          // aUR.setContentAndCharset (AS4XMLHelper.serializeXML
-          // (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
-          // .setMimeType (eSOAPVersion.getMimeType ());
+
+          // getFromErrorCodeOrNull
+
+          final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+
+          // TODO change Locale to dynamic
+          aErrorList.forEach (error -> aErrorMessages.add (EEbmsError.getFromErrorCodeOrNull (error.getErrorID ())
+                                                                     .getAsEbms3Error (Locale.US)));
+
+          final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
+          final AS4ErrorMessage aDoc = aErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                         aErrorMessage.createEbms3MessageInfo ("UUID-3@receiver.example.com"),
+                                                                         aErrorMessages);
+
+          aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
+             .setMimeType (eSOAPVersion.getMimeType ());
 
           return;
         }
