@@ -163,11 +163,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // System.out.println ("Decryption Result ");
         // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
       }
-      catch (final Exception e)
+      catch (final Exception ex)
       {
         // Decryption or Signature check failed
 
-        LOG.info ("Error processing the WSSSecurity Header: " + e.getLocalizedMessage ());
+        LOG.info ("Error processing the WSSSecurity Header", ex);
 
         // TODO change Local to dynamic one + we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing

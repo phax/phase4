@@ -1,7 +1,11 @@
 package com.helger.as4lib.error;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.helger.commons.error.IError;
+import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 
 public enum EEbmsError implements IEbmsError
@@ -149,5 +153,21 @@ public enum EEbmsError implements IEbmsError
   public EErrorCategory getCategory ()
   {
     return m_eCategory;
+  }
+
+  @Nullable
+  public static EEbmsError getFromErrorCodeOrNull (@Nullable final String sErrorCode)
+  {
+    if (StringHelper.hasNoText (sErrorCode))
+      return null;
+    return EnumHelper.findFirst (EEbmsError.class, x -> x.getErrorCode ().equals (sErrorCode));
+  }
+
+  @Nullable
+  public static EEbmsError getFromIErrorOrNull (@Nullable final IError aError)
+  {
+    if (aError == null)
+      return null;
+    return getFromErrorCodeOrNull (aError.getErrorID ());
   }
 }

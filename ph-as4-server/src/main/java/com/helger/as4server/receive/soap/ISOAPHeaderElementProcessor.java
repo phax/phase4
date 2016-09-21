@@ -27,6 +27,9 @@ public interface ISOAPHeaderElementProcessor
    *        Never <code>null</code>.
    * @param aHeaderElement
    *        The DOM node with the header element. Never <code>null</code>.
+   * @param aAttachments
+   *        Existing extracted attachments. Never <code>null</code> but maybe
+   *        empty.
    * @param aState
    *        The current processing state. Never <code>null</code>.
    * @param aErrorList
