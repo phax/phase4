@@ -35,6 +35,7 @@ public final class AS4XMLHelper
     aNSCtx.addMapping ("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
     aNSCtx.addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
     aNSCtx.addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");
+    aNSCtx.addMapping ("ebbp", "  http://docs.oasis-open.org/ebxml-bp/2.0.4/ebbp-signals-2.0.4.xsd");
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
     XWS.setNamespaceContext (aNSCtx);

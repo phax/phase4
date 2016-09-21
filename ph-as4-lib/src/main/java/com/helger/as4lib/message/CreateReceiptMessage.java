@@ -10,12 +10,16 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.as4lib.ebms3header.MessagePartNRInformation;
+import com.helger.as4lib.ebms3header.NonRepudiationInformation;
+import com.helger.as4lib.marshaller.XMLDSigReaderBuilder;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
+import com.helger.xsds.xmldsig.ReferenceType;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -28,7 +32,8 @@ public class CreateReceiptMessage
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     {
-      Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Header");
+      Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
+      aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
       aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
       aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
       aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
@@ -46,13 +51,13 @@ public class CreateReceiptMessage
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                  @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                                 @Nullable final Node aSignedUserMessage)
+                                                 @Nullable final Node aSOAPDocument)
   {
     if (aEbms3UserMessage != null)
       aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
 
     // Only for signed messages
-    final ICommonsList <Node> aDSRefs = _getAllReferences (aSignedUserMessage);
+    final ICommonsList <Node> aDSRefs = _getAllReferences (aSOAPDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -63,9 +68,20 @@ public class CreateReceiptMessage
     // PullRequest
     if (aDSRefs.isNotEmpty ())
     {
-      for (final Node aRef : aDSRefs)
-        aEbms3Receipt.addAny (aRef.cloneNode (true));
 
+      final NonRepudiationInformation aNonRepudiationInformation = new NonRepudiationInformation ();
+      for (final Node aRef : aDSRefs)
+      {
+        final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRef);
+
+        final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
+        aMessagePartNRInformation.setMessagePartIdentifier ("test-please-change-me");
+        aMessagePartNRInformation.setReference (aRefObj);
+
+        aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);
+      }
+
+      aEbms3Receipt.addAny (aNonRepudiationInformation);
     }
     else
     {

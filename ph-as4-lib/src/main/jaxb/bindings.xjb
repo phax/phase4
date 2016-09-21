@@ -68,7 +68,7 @@
   </bindings>
   <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.ebbpsignals" />
+      <package name="com.helger.as4lib.ebms3header" />
       <nameXmlTransform>
         <typeName prefix="EbbpSig"/>
       </nameXmlTransform>

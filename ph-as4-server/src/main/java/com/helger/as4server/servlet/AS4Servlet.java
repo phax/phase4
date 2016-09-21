@@ -183,11 +183,12 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                          aEbms3MessageInfo,
                                                                          aEbms3UserMessage,
-                                                                         null)
+                                                                         aSOAPDocument)
                                                   .setMustUnderstand (true);
 
     // We've got our response
-    aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
+    final Document testi = aDoc.getAsSOAPDocument ();
+    aUR.setContentAndCharset (AS4XMLHelper.serializeXML (testi), CCharset.CHARSET_UTF_8_OBJ)
        .setMimeType (eSOAPVersion.getMimeType ());
   }
 
