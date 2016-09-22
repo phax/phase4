@@ -128,19 +128,15 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
           aHeader.setProcessed (true);
         else
         {
-          // upon failure, the element stays unprocessed
-          aUR.setBadRequest ("Failed to process SOAP header element " +
-                             aQName.toString () +
-                             " with processor " +
-                             aProcessor +
-                             "; error details: " +
-                             aErrorList);
-          // XXX check if really okay. [ph] store errors instead
 
-          // TODO Create Reverse Function for converting IErrors to EBMSErrors
-          // TODO Change to dynamic Message ID
-
-          // getFromErrorCodeOrNull
+          // upon failure, the element stays unprocessed and sends back a signal
+          // message with the errors
+          s_aLogger.info ("Failed to process SOAP header element " +
+                          aQName.toString () +
+                          " with processor " +
+                          aProcessor +
+                          "; error details: " +
+                          aErrorList);
 
           final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
@@ -149,8 +145,9 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                      .getAsEbms3Error (Locale.US)));
 
           final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
+          // TODO Change to dynamic Message ID
           final AS4ErrorMessage aDoc = aErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                         aErrorMessage.createEbms3MessageInfo ("UUID-3@receiver.example.com"),
+                                                                         aErrorMessage.createEbms3MessageInfo ("AS4-Server"),
                                                                          aErrorMessages);
 
           aUR.setContentAndCharset (AS4XMLHelper.serializeXML (aDoc.getAsSOAPDocument ()), CCharset.CHARSET_UTF_8_OBJ)
@@ -184,12 +181,11 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
       return;
     }
-    // TODO Repuditation Receipt
+    // TODO Repudiation Receipt
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     // TODO Change to dynamic Message ID
-    final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("UUID-3@receiver.example.com",
-                                                                                       null);
+    final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("AS4-Server", null);
     final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                          aEbms3MessageInfo,
                                                                          aEbms3UserMessage,

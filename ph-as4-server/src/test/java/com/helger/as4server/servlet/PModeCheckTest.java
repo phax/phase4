@@ -134,7 +134,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",

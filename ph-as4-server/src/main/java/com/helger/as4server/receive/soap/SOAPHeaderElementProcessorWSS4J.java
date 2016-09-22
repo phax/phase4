@@ -27,7 +27,6 @@ import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
@@ -63,13 +62,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         if (ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm) == null)
         {
-          aErrorList.add (SingleError.builderError ()
-                                     .setErrorText ("Error processing the Security Header, your signing algorithm '" +
-                                                    sAlgorithm +
-                                                    "' is incorrect. Expected one of the following '" +
-                                                    Arrays.asList (ECryptoAlgorithmSign.values ()) +
-                                                    "' algorithms")
-                                     .build ());
+          LOG.info ("Error processing the Security Header, your signing algorithm '" +
+                    sAlgorithm +
+                    "' is incorrect. Expected one of the following '" +
+                    Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                    "' algorithms");
+
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+
           return ESuccess.FAILURE;
         }
 
@@ -79,11 +79,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         sAlgorithm = aSignedNode == null ? null : aSignedNode.getAttribute ("Algorithm");
         if (ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm) == null)
         {
-          aErrorList.add (SingleError.builderError ()
-                                     .setErrorText ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                                                    Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
-                                                    "' algorithms")
-                                     .build ());
+          LOG.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+                    Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
+                    "' algorithms");
+
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+
           return ESuccess.FAILURE;
         }
       }
@@ -101,11 +102,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Checks the WSSVersion
       if (EWSSVersion.getFromVersionOrNull (aPModeLeg1.getSecurity ().getWSSVersion ()) == null)
       {
-        aErrorList.add (SingleError.builderError ()
-                                   .setErrorText ("Error processing the PMode, the WSS - Version," +
-                                                  aPModeLeg1.getSecurity ().getWSSVersion () +
-                                                  " is incorrect")
-                                   .build ());
+        LOG.info ("Error processing the PMode, the WSS - Version," +
+                  aPModeLeg1.getSecurity ().getWSSVersion () +
+                  " is incorrect");
+
+        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
+
         return ESuccess.FAILURE;
       }
 

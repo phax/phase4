@@ -1,6 +1,7 @@
 package com.helger.as4lib.message;
 
 import java.util.Enumeration;
+import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,6 +14,7 @@ import org.apache.http.HttpMessage;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
 import com.helger.http.HTTPStringHelper;
 
@@ -34,8 +36,8 @@ public final class MessageHelperMethods
    * Create a new message info.
    *
    * @param sMessageId
-   *        The message ID. Should never be <code>null</code> for production
-   *        message but <code>null</code> is allowed for testing purposes.
+   *        The message ID. Can be <code>null</code> in this case just a UUID
+   *        gets generated. Else the MessageId gets added to the UID
    * @param sRefToMessageID
    *        Reference to message ID. May be <code>null</code>. Must be present
    *        on receipt etc.
@@ -46,7 +48,11 @@ public final class MessageHelperMethods
                                                          @Nullable final String sRefToMessageID)
   {
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
-    aMessageInfo.setMessageId (sMessageId);
+    final UUID aUUID = UUID.randomUUID ();
+    if (StringHelper.hasNoText (sMessageId))
+      aMessageInfo.setMessageId (aUUID.toString ());
+    else
+      aMessageInfo.setMessageId (aUUID.toString () + "@" + sMessageId);
     // TODO Change Timestamp or do we only want the present date when the
     // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());

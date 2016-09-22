@@ -98,7 +98,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1 == null)
     {
-      aErrorList.add (SingleError.builderError ().setErrorText ("PMode is missing Leg 1").build ());
+      LOG.info ("PMode is missing Leg 1");
+
+      // TODO change Local to dynamic one
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
       return ESuccess.FAILURE;
     }
 
@@ -112,11 +115,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
     if (!"http".equals (aProtocol.getAddressProtocol ()))
     {
-      aErrorList.add (SingleError.builderError ()
-                                 .setErrorText ("PMode Leg uses unsupported protocol '" +
-                                                aProtocol.getAddressProtocol () +
-                                                "'")
-                                 .build ());
+
+      LOG.info ("PMode Leg uses unsupported protocol '" + aProtocol.getAddressProtocol () + "'");
+
+      // TODO change Local to dynamic one
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
       return ESuccess.FAILURE;
     }
 
@@ -124,11 +127,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final ESOAPVersion ePModeSoapVersion = aProtocol.getSOAPVersion ();
     if (!aState.getSOAPVersion ().equals (ePModeSoapVersion))
     {
-      aErrorList.add (SingleError.builderError ()
-                                 .setErrorText ("Error processing the PMode, the SOAP Version (" +
-                                                ePModeSoapVersion +
-                                                ") is incorrect.")
-                                 .build ());
+      LOG.info ("Error processing the PMode, the SOAP Version (" + ePModeSoapVersion + ") is incorrect.");
+
+      // TODO change Local to dynamic one
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
       return ESuccess.FAILURE;
     }
 
@@ -142,7 +144,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         if (aPMode.getMEPBinding ().isPull ())
         {
-          aErrorList.add (SingleError.builderError ().setErrorText ("Initiator is required for PULL message").build ());
+          LOG.info ("Initiator is required for PULL message");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
           return ESuccess.FAILURE;
         }
       }
@@ -165,9 +170,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
         else
         {
-          aErrorList.add (SingleError.builderError ()
-                                     .setErrorText ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.")
-                                     .build ());
+          LOG.info ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
           return ESuccess.FAILURE;
         }
       }
@@ -177,7 +183,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         if (aPMode.getMEPBinding ().isPush ())
         {
-          aErrorList.add (SingleError.builderError ().setErrorText ("Responder is required for PUSH message").build ());
+          LOG.info ("Responder is required for PUSH message");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
           return ESuccess.FAILURE;
         }
       }
@@ -202,9 +211,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
         else
         {
-          aErrorList.add (SingleError.builderError ()
-                                     .setErrorText ("Error processing the usermessage, to-PartyInfo is invalid.")
-                                     .build ());
+          LOG.info ("Error processing the usermessage, to-PartyInfo is invalid.");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
           return ESuccess.FAILURE;
         }
       }

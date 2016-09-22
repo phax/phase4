@@ -58,7 +58,7 @@ final class TestMessages
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                               aErrorMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com"),
+                                                                                               aErrorMessage.createEbms3MessageInfo ("AS4-Server"),
                                                                                                aEbms3ErrorList)
                                                                           .setMustUnderstand (false)
                                                                           .getAsSOAPDocument (),
@@ -80,7 +80,7 @@ final class TestMessages
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                aReceiptMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com",
+                                                                aReceiptMessage.createEbms3MessageInfo ("AS4-Server",
                                                                                                         null),
                                                                 null,
                                                                 aUserMessage)
@@ -113,7 +113,7 @@ final class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
@@ -154,7 +154,7 @@ final class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("UUID-2@receiver.example.com");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
