@@ -76,7 +76,6 @@ public class CreateReceiptMessage
         final ReferenceType aRefObj = XMLDSigReaderBuilder.dsigReference ().read (aRef);
 
         final MessagePartNRInformation aMessagePartNRInformation = new MessagePartNRInformation ();
-        aMessagePartNRInformation.setMessagePartIdentifier ("test-please-change-me");
         aMessagePartNRInformation.setReference (aRefObj);
 
         aNonRepudiationInformation.addMessagePartNRInformation (aMessagePartNRInformation);

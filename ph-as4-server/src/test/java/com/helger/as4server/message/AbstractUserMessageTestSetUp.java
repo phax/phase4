@@ -28,11 +28,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
+  private static Thread s_aJettyThread;
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    new Thread ( () -> {
+    s_aJettyThread = new Thread ( () -> {
       try
       {
         new JettyStarter (com.helger.as4server.standalone.RunInJettyAS4.class).setPort (PORT)
@@ -43,13 +44,20 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       {
         ex.printStackTrace ();
       }
-    }).start ();
+    });
+    s_aJettyThread.setDaemon (true);
+    s_aJettyThread.start ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    new JettyStopper ().setStopPort (STOP_PORT).run ();
+    if (s_aJettyThread != null)
+    {
+      new JettyStopper ().setStopPort (STOP_PORT).run ();
+      s_aJettyThread.join ();
+      s_aJettyThread = null;
+    }
   }
 
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,

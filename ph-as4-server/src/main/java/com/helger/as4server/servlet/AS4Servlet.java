@@ -145,7 +145,6 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                      .getAsEbms3Error (Locale.US)));
 
           final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
-          // TODO Change to dynamic Message ID
           final AS4ErrorMessage aDoc = aErrorMessage.createErrorMessage (eSOAPVersion,
                                                                          aErrorMessage.createEbms3MessageInfo ("AS4-Server"),
                                                                          aErrorMessages);
@@ -184,7 +183,6 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     // TODO Repudiation Receipt
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
-    // TODO Change to dynamic Message ID
     final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("AS4-Server", null);
     final AS4ReceiptMessage aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                          aEbms3MessageInfo,

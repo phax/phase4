@@ -30,7 +30,6 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
-import com.helger.xml.serialize.write.XMLWriter;
 
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
@@ -48,9 +47,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg1.getSecurity () != null)
     {
-      // TODO set to debug
-      LOG.info (XMLWriter.getXMLString (aSecurityNode));
-
       // Get Signature Algorithm
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
       if (aSignedNode != null)

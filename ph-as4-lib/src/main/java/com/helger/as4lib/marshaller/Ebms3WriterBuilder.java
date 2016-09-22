@@ -28,6 +28,8 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
     final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
     aNSCtx.addMapping ("eb", CAS4.EBMS_NS);
     aNSCtx.addMapping ("ebbp", CAS4.EBBP_NS);
+    aNSCtx.addMapping ("ds", CAS4.DS_NS);
+    aNSCtx.addMapping ("xlink", "http://www.w3.org/1999/xlink");
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
     setNamespaceContext (aNSCtx);

@@ -24,9 +24,11 @@ import com.helger.jaxb.builder.JAXBDocumentType;
 
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
-  MESSAGING (Ebms3Messaging.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_EBMS_HEADER),
-                                                           new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
-  NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
+  MESSAGING (Ebms3Messaging.class, new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                                           new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
+                                                           new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
+  NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class, new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                                                                        new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
   SOAP_11 (Soap11Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP11))),
   SOAP_12 (Soap12Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP12)));
 

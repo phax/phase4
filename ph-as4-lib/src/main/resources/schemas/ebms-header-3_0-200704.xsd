@@ -12,8 +12,6 @@
 	<xsd:import namespace="http://www.w3.org/2003/05/soap-envelope" schemaLocation="soap12.xsd"/>
   <!-- schemaLocation="http://www.w3.org/2001/03/xml.xsd" -->
 	<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-  <!-- [ph]added -->
-  <xsd:import namespace="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" schemaLocation="ebbp-signals-2.0.4.xsd"/>
 	<xsd:element name="Messaging" type="Messaging"/>
 	<xsd:complexType name="Messaging">
 		<xsd:annotation>
