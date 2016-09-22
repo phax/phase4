@@ -18,6 +18,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.signing.SignedMessageCreator;
@@ -63,7 +64,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, null);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -71,7 +74,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final Document aDoc = _modifyUserMessage (null, ESOAPVersion.SOAP_11, null, null);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -79,7 +84,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final Document aDoc = _modifyUserMessage (null, null, "random_party_id120", null);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -87,7 +94,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final Document aDoc = _modifyUserMessage (null, null, null, "random_party_id121");
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "400");
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test

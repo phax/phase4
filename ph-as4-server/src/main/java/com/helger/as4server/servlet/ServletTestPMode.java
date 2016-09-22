@@ -20,25 +20,29 @@ public class ServletTestPMode
   {}
 
   @Nonnull
-  public static PMode getTestPMode ()
+  public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aTestPmode = new PMode ("pm-esens-generic-resp");
+    final PMode aTestPmode;
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_12))
+      aTestPmode = new PMode ("pm-esens-generic-resp");
+    else
+      aTestPmode = new PMode ("pm-esens-generic-resp11");
     aTestPmode.setMEP (EMEP.ONE_WAY);
     aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
     aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
     aTestPmode.setResponder (_generateInitiatorOrResponder (false));
-    aTestPmode.setLeg1 (_generatePModeLeg ());
+    aTestPmode.setLeg1 (_generatePModeLeg (eSOAPVersion));
     // Leg 2 stays null, because we only use one-way
     return aTestPmode;
   }
 
   @Nonnull
-  public static PMode getTestPModeWithSecurity ()
+  public static PMode getTestPModeWithSecurity (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aTestPmode = getTestPMode ();
+    final PMode aTestPmode = getTestPMode (eSOAPVersion);
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_11.getVersion ());
-    aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),
+    aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                                       _generatePModeLegBusinessInformation (),
                                       null,
                                       null,
@@ -48,11 +52,11 @@ public class ServletTestPMode
   }
 
   @Nonnull
-  private static PModeLeg _generatePModeLeg ()
+  private static PModeLeg _generatePModeLeg (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     final PModeLegReliability aPModeLegReliability = null;
     final PModeLegSecurity aPModeLegSecurity = null;
-    return new PModeLeg (_generatePModeLegProtocol (),
+    return new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                          _generatePModeLegBusinessInformation (),
                          null,
                          aPModeLegReliability,
@@ -71,9 +75,9 @@ public class ServletTestPMode
   }
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol ()
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    return new PModeLegProtocol ("http://localhost:8080", ESOAPVersion.AS4_DEFAULT);
+    return new PModeLegProtocol ("http://localhost:8080", eSOAPVersion);
   }
 
   @Nonnull

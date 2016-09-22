@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -22,6 +23,7 @@ public final class MessageValidatorTest
 {
   private static final Locale LOCALE = Locale.US;
 
+  @Ignore
   @Test
   public void messageValidatorXMLSuccessSOAP11 ()
   {

@@ -23,7 +23,7 @@ import com.helger.commons.hashcode.HashCodeGenerator;
 
 public class PModeLeg
 {
-  private PModeLegProtocol m_aProtocol = new PModeLegProtocol ();
+  private final PModeLegProtocol m_aProtocol;
   private final PModeLegBusinessInformation m_aBusinessInfo;
   private final PModeLegErrorHandling m_aErrorHandling;
   private final PModeLegReliability m_aReliability;

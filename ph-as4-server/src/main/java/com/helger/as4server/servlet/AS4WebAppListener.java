@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
@@ -87,12 +89,13 @@ public final class AS4WebAppListener extends WebAppListener
 
     // Register all SOAP header element processors
     // Registration order matches execution order!
-    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
-                                                                                  "Messaging"),
-                                                                       new SOAPHeaderElementProcessorExtractEbms3Messaging ());
-    SOAPHeaderElementProcessorRegistry.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-                                                                                  "Security"),
-                                                                       new SOAPHeaderElementProcessorWSS4J ());
+    final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
+    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+                                                    "Messaging"),
+                                         new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+                                                    "Security"),
+                                         new SOAPHeaderElementProcessorWSS4J ());
 
     // Ensure to create request scopes not using Multipart handling so that the
     // MIME parsing can happen internally
@@ -111,6 +114,14 @@ public final class AS4WebAppListener extends WebAppListener
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
     MetaManager.getInstance ();
+
+    // TODO just for testing
+    for (final ESOAPVersion e : ESOAPVersion.values ())
+    {
+      final PMode aPMode = ServletTestPMode.getTestPModeWithSecurity (e);
+      if (!MetaAS4Manager.getPModeMgr ().containsWithID (aPMode.getID ()))
+        MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
+    }
 
     s_aLogger.info ("AS4 server started");
   }

@@ -56,7 +56,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("UserMessage"));
+    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
   }
 
 }

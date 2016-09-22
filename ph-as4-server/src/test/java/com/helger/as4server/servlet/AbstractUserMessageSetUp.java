@@ -50,7 +50,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
    */
   protected void sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
                                    @Nonnull final boolean bSuccess,
-                                   @Nullable final String sStatusCode) throws IOException
+                                   @Nullable final String sErrorCode) throws IOException
   {
     m_aPost.setEntity (aHttpEntity);
 
@@ -69,11 +69,13 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
       }
       else
       {
-        assertEquals ("Server respondedn with success message but failure was expected. Response: " +
-                      m_sResponse,
-                      new StringBuilder ().append (m_nStatusCode).toString (),
-                      sStatusCode);
-
+        // Status code may by 20x but may be an error anyway
+        assertTrue ("Server responded with success or different error message but failure was expected." +
+                    "StatusCode: " +
+                    m_nStatusCode +
+                    "\nResponse: " +
+                    m_sResponse,
+                    m_sResponse.contains (sErrorCode));
       }
     }
     catch (final HttpHostConnectException ex)

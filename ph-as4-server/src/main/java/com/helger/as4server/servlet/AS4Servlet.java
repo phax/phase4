@@ -25,8 +25,6 @@ import com.helger.as4lib.message.AS4ErrorMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
-import com.helger.as4lib.mgr.MetaAS4Manager;
-import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachment;
@@ -61,9 +59,8 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
-  // TODO Replace with PMode Manager
-  // private final PMode aTestPMode = ServletTestPMode.getTestPMode ();
-  private final PMode aTestPMode = ServletTestPMode.getTestPModeWithSecurity ();
+  public AS4Servlet ()
+  {}
 
   private void _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -85,10 +82,6 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       return;
     }
 
-    // TODO just for testing
-    if (!MetaAS4Manager.getPModeMgr ().containsWithID (aTestPMode.getID ()))
-      MetaAS4Manager.getPModeMgr ().createPMode (aTestPMode);
-
     // Extract all header elements
     final ICommonsList <AS4SOAPHeader> aHeaders = new CommonsArrayList<> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -102,15 +95,13 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
 
     // Needed to do since not every message will have attachments
-    ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> ();
-
+    final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> ();
     if (aIncomingAttachments.isNotEmpty ())
-    {
-      aWSS4JAttachments = new CommonsArrayList<> (aIncomingAttachments, IIncomingAttachment::getAsWSS4JAttachment);
-    }
+      aWSS4JAttachments.addAllMapped (aIncomingAttachments, IIncomingAttachment::getAsWSS4JAttachment);
 
     // handle all headers in the order of the registered handlers!
-    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getAllElementProcessors ()
+    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getInstance ()
+                                                                                                         .getAllElementProcessors ()
                                                                                                          .entrySet ())
     {
       final QName aQName = aEntry.getKey ();

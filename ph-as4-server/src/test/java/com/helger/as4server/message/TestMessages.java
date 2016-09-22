@@ -119,7 +119,7 @@ final class TestMessages
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      "pm-esens-generic-resp",
+                                                                                                      _getPMode (eSOAPVersion),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               "APP_1000000101",
@@ -160,7 +160,7 @@ final class TestMessages
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      "pm-esens-generic-resp",
+                                                                                                      _getPMode (eSOAPVersion),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               "testt",
@@ -211,5 +211,12 @@ final class TestMessages
                                                                 eSOAPVersion)
                                             .setMustUnderstand (false);
     return aDoc.getAsSOAPDocument (aPayload);
+  }
+
+  private static String _getPMode (@Nonnull final ESOAPVersion eSOAPVersion)
+  {
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_12))
+      return "pm-esens-generic-resp";
+    return "pm-esens-generic-resp11";
   }
 }

@@ -60,7 +60,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // 0 or 1 are allowed
     if (aMessaging.getUserMessageCount () > 1)
     {
-
       LOG.info ("Too many UserMessage objects contained: " + aMessaging.getUserMessageCount ());
 
       // TODO change Local to dynamic one

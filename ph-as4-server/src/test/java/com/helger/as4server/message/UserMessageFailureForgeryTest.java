@@ -174,6 +174,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 
   // Encryption
 
+  @Ignore
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {

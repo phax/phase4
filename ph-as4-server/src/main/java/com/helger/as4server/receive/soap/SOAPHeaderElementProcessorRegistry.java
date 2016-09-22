@@ -10,9 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 
 /**
  * This class manages the SOAP header element processors. This is used to
@@ -21,41 +22,48 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
  * @author Philip Helger
  */
 @ThreadSafe
-public final class SOAPHeaderElementProcessorRegistry
+public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSingleton
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
-  private static final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> s_aMap = new CommonsLinkedHashMap<> ();
+  @GuardedBy ("m_aRWLock")
+  private final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap<> ();
 
-  private SOAPHeaderElementProcessorRegistry ()
+  @Deprecated
+  @UsedViaReflection
+  public SOAPHeaderElementProcessorRegistry ()
   {}
 
-  public static void registerHeaderElementProcessor (@Nonnull final QName aQName,
-                                                     @Nonnull final ISOAPHeaderElementProcessor aProcessor)
+  @Nonnull
+  public static SOAPHeaderElementProcessorRegistry getInstance ()
+  {
+    return getGlobalSingleton (SOAPHeaderElementProcessorRegistry.class);
+  }
+
+  public void registerHeaderElementProcessor (@Nonnull final QName aQName,
+                                              @Nonnull final ISOAPHeaderElementProcessor aProcessor)
   {
     ValueEnforcer.notNull (aQName, "QName");
     ValueEnforcer.notNull (aProcessor, "Processor");
 
-    s_aRWLock.writeLocked ( () -> {
-      if (s_aMap.containsKey (aQName))
+    m_aRWLock.writeLocked ( () -> {
+      if (m_aMap.containsKey (aQName))
         throw new IllegalArgumentException ("A processor for QName " + aQName.toString () + " is already registered!");
-      s_aMap.put (aQName, aProcessor);
+      m_aMap.put (aQName, aProcessor);
     });
     s_aLogger.info ("Successfully registered SOAP header element processor for " + aQName.toString ());
   }
 
   @Nullable
-  public static ISOAPHeaderElementProcessor getHeaderElementProcessor (@Nullable final QName aQName)
+  public ISOAPHeaderElementProcessor getHeaderElementProcessor (@Nullable final QName aQName)
   {
     if (aQName == null)
       return null;
-    return s_aRWLock.readLocked ( () -> s_aMap.get (aQName));
+    return m_aRWLock.readLocked ( () -> m_aMap.get (aQName));
   }
 
   @Nullable
-  public static ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
+  public ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
   {
-    return s_aRWLock.readLocked ( () -> s_aMap.getClone ());
+    return m_aRWLock.readLocked ( () -> m_aMap.getClone ());
   }
 }
