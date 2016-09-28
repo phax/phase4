@@ -17,11 +17,12 @@
 package com.helger.as4lib.attachment;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.annotation.Nonnull;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
@@ -52,7 +53,16 @@ public class AS4FileAttachment extends AbstractAS4Attachment
     m_aFile = aFile;
   }
 
-  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws MessagingException
+  public AS4FileAttachment (@Nonnull final File aFile,
+                            @Nonnull final IMimeType aMimeType,
+                            @Nonnull final EAS4CompressionMode aEAS4CompressionMode)
+  {
+    super (aMimeType, aEAS4CompressionMode);
+    ValueEnforcer.notNull (aFile, "File");
+    m_aFile = aFile;
+  }
+
+  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
 
@@ -60,7 +70,19 @@ public class AS4FileAttachment extends AbstractAS4Attachment
 
     aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, getID ());
-    aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
+    // If the attachment has an compressionMode assigned the compressed file
+    // will be set as DataSource
+    if (hasCompressionMode ())
+    {
+      // TODO file suffix in enum
+      final File aCompressedFile = File.createTempFile (m_aFile.getName () + "Compressed", ".gz");
+
+      getCompressionMode ().getCompressStream (new FileOutputStream (aCompressedFile))
+                           .write (Files.readAllBytes (m_aFile.toPath ()));
+      aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
+    }
+    else
+      aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }

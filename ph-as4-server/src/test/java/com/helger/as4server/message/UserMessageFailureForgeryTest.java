@@ -286,6 +286,27 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
+  public void testUserMessageWithOnlyAttachmentsNoPartInfo () throws Exception
+  {
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+
+    final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                             CMimeType.APPLICATION_GZIP));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
+
+                                                                                          aAttachments,
+                                                                                          null);
+    aMsg.saveChanges ();
+    // TODO remove when output not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+  }
+
+  @Test
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();

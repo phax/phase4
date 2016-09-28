@@ -83,6 +83,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
                                    @Nonnull final ICommonsList <IIncomingAttachment> aIncomingAttachments,
                                    @Nonnull final AS4Response aUR) throws Exception
   {
+    // TODO remove if or entire statement
     if (true)
       s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
 
@@ -109,9 +110,9 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion);
-
-    // Needed to do since not every message will have attachments
     final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> ();
+
+    // Need to check, since not every message will have attachments
     if (aIncomingAttachments.isNotEmpty ())
       aWSS4JAttachments.addAllMapped (aIncomingAttachments, IIncomingAttachment::getAsWSS4JAttachment);
 
@@ -164,7 +165,6 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       // else: no header element for current processor
     }
-
     // Now check if all must understand headers were processed
     for (final AS4SOAPHeader aHeader : aHeaders)
       if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
@@ -187,7 +187,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
       return;
     }
-    // TODO Repudiation Receipt
+
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final Ebms3MessageInfo aEbms3MessageInfo = aReceiptMessage.createEbms3MessageInfo ("AS4-Server", null);

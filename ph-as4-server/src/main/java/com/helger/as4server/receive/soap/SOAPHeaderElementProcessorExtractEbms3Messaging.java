@@ -28,10 +28,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
@@ -234,11 +236,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
       }
     }
+    // Needed for the compression check, it is not allowed to have a compressed
+    // attachment and a SOAPBodyPayload
+    boolean bHasSoapBodyPayload = false;
 
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
     if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
     {
-      // TODO NO attachment should be present if it is a mime message, problem
+      // TODO NO attachment should be present if it is not a mime message,
+      // problem
       // here is there can be n amount of other mime parts added to the message
       final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
       for (int i = 0; i < nList.getLength (); i++)
@@ -253,8 +259,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
           return ESuccess.FAILURE;
         }
+        bHasSoapBodyPayload = true;
       }
 
+      // For the case that there is no Payload/Part - Info but still attachments
+      // in the message
+      if (aAttachments.size () > 0)
+      {
+        LOG.info ("No PartInfo is specified, so no attachments are allowed.");
+
+        // TODO change Local to dynamic one
+        aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (Locale.US));
+        return ESuccess.FAILURE;
+      }
     }
     else
     {
@@ -290,7 +307,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!aBody.hasChildNodes ())
             {
-              LOG.info ("Error processing the UserMessage, Expected no BodyPayload both there is one present. ");
+              LOG.info ("Error processing the UserMessage, Expected no BodyPayload but there is one present. ");
 
               // TODO change Local to dynamic one
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
@@ -301,7 +318,37 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         else
         {
           // Attachment
+          // To check attachments which are specified in the usermessage and the
+          // real amount in the mime message
           specifiedAttachments++;
+
+          for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
+          {
+            if (aEbms3Property.getName ().toLowerCase ().equals ("compressiontype"))
+            {
+              if (bHasSoapBodyPayload)
+              {
+                LOG.info ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
+
+                // TODO change Local to dynamic one
+                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+                return ESuccess.FAILURE;
+              }
+
+              // Only needed check here since AS4 does not support another
+              // CompressionType http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
+              if (EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ()) == null)
+              {
+                LOG.info ("Error processing the UserMessage, CompressionType " +
+                          aEbms3Property.getValue () +
+                          " is not supported. ");
+
+                // TODO change Local to dynamic one
+                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+                return ESuccess.FAILURE;
+              }
+            }
+          }
         }
       }
 
@@ -332,4 +379,5 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     return ESuccess.SUCCESS;
   }
+
 }

@@ -23,10 +23,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.string.StringHelper;
 
 /**
  * Defines the allowed AS4 compression modes.
@@ -77,4 +80,12 @@ public enum EAS4CompressionMode
 
   @Nonnull
   public abstract OutputStream getCompressStream (@Nonnull OutputStream aOS) throws IOException;
+
+  @Nullable
+  public static EAS4CompressionMode getFromMimeTypeStringOrNull (@Nullable final String sMimeType)
+  {
+    if (StringHelper.hasNoText (sMimeType))
+      return null;
+    return EnumHelper.findFirst (EAS4CompressionMode.class, x -> x.getMimeTypeAsString ().equals (sMimeType));
+  }
 }

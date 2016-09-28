@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.Attachment;
@@ -104,7 +103,7 @@ public interface IAS4Attachment extends IHasID <String>, Serializable
    * @param aMimeMultipart
    *        The multipart message to add to. May not be <code>null</code>.
    */
-  void addToMimeMultipart (@Nonnull MimeMultipart aMimeMultipart) throws MessagingException;
+  void addToMimeMultipart (@Nonnull MimeMultipart aMimeMultipart) throws Exception;
 
   /**
    * @return This attachment as a WSS4J attachment. May not be

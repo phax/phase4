@@ -172,8 +172,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
         // TODO save DOc somewhere? or what should happen with it
-        // aSecurityEngine.processSecurityHeader (aSOAPDoc, null,
-        // aKeyStoreCallback, AS4CryptoFactory.createCrypto ());
         // System.out.println ("Decryption Result ");
         // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
       }
