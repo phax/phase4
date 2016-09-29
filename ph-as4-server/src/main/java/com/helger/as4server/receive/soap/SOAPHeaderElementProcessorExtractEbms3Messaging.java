@@ -44,6 +44,7 @@ import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
@@ -240,6 +241,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
+    final ICommonsList <String> compressionAttachmentIDs = new CommonsArrayList<> ();
+
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
     if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
     {
@@ -347,6 +350,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
                 return ESuccess.FAILURE;
               }
+              compressionAttachmentIDs.add (StringHelper.trimStart (aPart.getHref (), "cid:"));
             }
           }
         }
@@ -376,6 +380,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Remember in state
     aState.setMessaging (aMessaging);
     aState.setPMode (aPMode);
+    aState.setCompressedAttachmentIDs (compressionAttachmentIDs);
 
     return ESuccess.SUCCESS;
   }

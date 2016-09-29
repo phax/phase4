@@ -29,6 +29,7 @@ import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
 
 /**
@@ -44,6 +45,7 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE = "as4.pmode";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
+  private static final String KEY_COMPRESSION_ID_LIST = "as4.compression.list.ids";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -109,5 +111,21 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public Document getDecryptedSOAPDocument ()
   {
     return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
+  }
+
+  public void setCompressedAttachmentIDs (@Nullable final ICommonsList <String> aIDList)
+  {
+    setAttribute (KEY_COMPRESSION_ID_LIST, aIDList);
+  }
+
+  public boolean hasCompressedAttachmentIDs ()
+  {
+    return containsAttribute (KEY_COMPRESSION_ID_LIST);
+  }
+
+  @Nullable
+  public ICommonsList <String> getCompressedAttachmentIDs ()
+  {
+    return getCastedAttribute (KEY_COMPRESSION_ID_LIST);
   }
 }

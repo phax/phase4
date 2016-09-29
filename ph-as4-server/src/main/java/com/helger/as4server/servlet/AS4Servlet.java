@@ -18,6 +18,7 @@ package com.helger.as4server.servlet;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeBodyPart;
@@ -186,6 +187,17 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     {
       aUR.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " + aMessaging.getUserMessageCount ());
       return;
+    }
+
+    for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments)
+    {
+      if (aState.getCompressedAttachmentIDs ().contains (aIncomingAttachment.getContentID ()))
+      {
+        final IIncomingAttachment aDecompressedAttachment = MetaManager.getIncomingAttachmentFactory ()
+                                                                       .createAttachment (new GZIPInputStream (aIncomingAttachment.getInputStream ()));
+        aIncomingAttachments.remove (aIncomingAttachment);
+        aIncomingAttachments.add (aDecompressedAttachment);
+      }
     }
 
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);

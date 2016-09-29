@@ -18,6 +18,7 @@ package com.helger.as4server.attachment;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
@@ -29,13 +30,16 @@ import com.helger.commons.collection.ext.ICommonsList;
 
 /**
  * Factory interface for {@link IIncomingAttachment} objects.
- * 
+ *
  * @author Philip Helger
  */
 public interface IIncomingAttachmentFactory extends Serializable
 {
   @Nonnull
   IIncomingAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
+
+  @Nonnull
+  IIncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException;
 
   @Nonnull
   @Nonempty
