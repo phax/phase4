@@ -18,9 +18,11 @@ package com.helger.as4server.attachment;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -35,12 +37,17 @@ import com.helger.commons.io.stream.StreamHelper;
 
 /**
  * Default implementation of {@link IIncomingAttachmentFactory}.
- * 
+ *
  * @author Philip Helger
  */
 public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFactory
 {
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
+
+  public boolean canKeepInMemory (@Nonnegative final long nSize)
+  {
+    return nSize >= 0 && nSize <= 30 * CGlobal.BYTES_PER_KILOBYTE;
+  }
 
   @Nonnull
   public IIncomingAttachment createAttachment (@Nonnull final MimeBodyPart aBodyPart) throws IOException,
@@ -48,7 +55,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   {
     final int nSize = aBodyPart.getSize ();
     AbstractIncomingAttachment ret;
-    if (nSize >= 0 && nSize <= 30 * CGlobal.BYTES_PER_KILOBYTE)
+    if (canKeepInMemory (nSize))
     {
       // Store in memory
       ret = new IncomingInMemoryAttachment (StreamHelper.getAllBytes (aBodyPart.getInputStream ()));
@@ -74,6 +81,19 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
     }
 
     return ret;
+  }
+
+  @Nonnull
+  public IIncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException
+  {
+    // Write to temp file
+    final File aTempFile = File.createTempFile ("as4-incoming", "attachment");
+    try (OutputStream aOS = FileHelper.getOutputStream (aTempFile))
+    {
+      StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
+    }
+    m_aTempFiles.add (aTempFile);
+    return new IncomingFileAttachment (aTempFile);
   }
 
   @Nonnull
