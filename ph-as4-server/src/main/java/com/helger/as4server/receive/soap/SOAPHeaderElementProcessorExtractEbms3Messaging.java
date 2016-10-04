@@ -243,29 +243,36 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     final ICommonsList <String> compressionAttachmentIDs = new CommonsArrayList<> ();
 
+    // Check if a SOAPBodyPayload exists
+    final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
+    for (int i = 0; i < nList.getLength (); i++)
+    {
+      final Node nNode = nList.item (i);
+      final Element aBody = (Element) nNode;
+      if (aBody.hasChildNodes ())
+      {
+        bHasSoapBodyPayload = true;
+      }
+    }
+
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
     if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
     {
+      if (bHasSoapBodyPayload)
+      {
+        LOG.info ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
+
+        // TODO change Local to dynamic one
+        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+        return ESuccess.FAILURE;
+      }
       // TODO NO attachment should be present if it is not a mime message,
       // problem
-      // here is there can be n amount of other mime parts added to the message
-      final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
-      for (int i = 0; i < nList.getLength (); i++)
-      {
-        final Node nNode = nList.item (i);
-        final Element aBody = (Element) nNode;
-        if (aBody.hasChildNodes ())
-        {
-          LOG.info ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
+      // here is there can be n amount of other mime parts added to the
+      // message
 
-          // TODO change Local to dynamic one
-          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
-          return ESuccess.FAILURE;
-        }
-        bHasSoapBodyPayload = true;
-      }
-
-      // For the case that there is no Payload/Part - Info but still attachments
+      // For the case that there is no Payload/Part - Info but still
+      // attachments
       // in the message
       if (aAttachments.size () > 0)
       {
@@ -276,6 +283,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         return ESuccess.FAILURE;
       }
     }
+
     else
     {
 
@@ -301,27 +309,21 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         // If href is null or empty there has to be a SOAP Payload
         if (StringHelper.hasNoText (aPart.getHref ()))
         {
-          // Get SOAP Boady
-          final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
-          for (int i = 0; i < nList.getLength (); i++)
+          // Check if there is a BodyPayload as specified in the UserMessage
+          if (!bHasSoapBodyPayload)
           {
-            final Node nNode = nList.item (i);
-            final Element aBody = (Element) nNode;
-            // Check if there is a BodyPayload as specified in the UserMessage
-            if (!aBody.hasChildNodes ())
-            {
-              LOG.info ("Error processing the UserMessage, Expected no BodyPayload but there is one present. ");
+            LOG.info ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
 
-              // TODO change Local to dynamic one
-              aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
-              return ESuccess.FAILURE;
-            }
+            // TODO change Local to dynamic one
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+            return ESuccess.FAILURE;
           }
         }
         else
         {
           // Attachment
-          // To check attachments which are specified in the usermessage and the
+          // To check attachments which are specified in the usermessage and
+          // the
           // real amount in the mime message
           specifiedAttachments++;
 
@@ -339,7 +341,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
               }
 
               // Only needed check here since AS4 does not support another
-              // CompressionType http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
+              // CompressionType
+              // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
               if (EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ()) == null)
               {
                 LOG.info ("Error processing the UserMessage, CompressionType " +

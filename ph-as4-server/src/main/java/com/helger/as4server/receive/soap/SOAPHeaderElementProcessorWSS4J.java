@@ -58,7 +58,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
-
     final PModeLeg aPModeLeg1 = aState.getPMode ().getLeg1 ();
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg1.getSecurity () != null)
@@ -106,7 +105,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final Element aEncryptedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.XENC_NS, "EncryptedKey");
       if (aEncryptedNode != null)
       {
-        // Encrypted checks
+        // TODO Encrypted checks
         LOG.info ("encrypted checks");
 
       }
@@ -145,7 +144,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
       // Signing Check and Decryption
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
-
       List <WSSecurityEngineResult> aResults = null;
 
       try

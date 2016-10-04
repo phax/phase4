@@ -10,10 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -22,9 +24,10 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
-public class UserMessageCompression extends AbstractUserMessageTestSetUp
+public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -34,7 +37,7 @@ public class UserMessageCompression extends AbstractUserMessageTestSetUp
 
   private final ESOAPVersion m_eSOAPVersion;
 
-  public UserMessageCompression (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageCompressionTest (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }
@@ -57,6 +60,28 @@ public class UserMessageCompression extends AbstractUserMessageTestSetUp
     final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
     System.out.println (EntityUtils.toString (aEntity));
     sendMimeMessage (aEntity, true, null);
+  }
+
+  @Test
+  public void testUserMessageWithCompressedAttachmentFailureNoBodyPayloadAllowed () throws Exception
+  {
+
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/ShortXML.xml"),
+                                             CMimeType.APPLICATION_XML,
+                                             EAS4CompressionMode.GZIP));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                     aPayload,
+                                                                                                                                     aAttachments),
+
+                                                                                          aAttachments,
+                                                                                          null);
+    // TODO remove when output not needed anymore
+    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
+    System.out.println (EntityUtils.toString (aEntity));
+    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
 }

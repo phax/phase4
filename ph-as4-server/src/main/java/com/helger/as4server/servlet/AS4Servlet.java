@@ -189,6 +189,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       return;
     }
 
+    // Decompressing the attachments
     for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments)
     {
       if (aState.getCompressedAttachmentIDs ().contains (aIncomingAttachment.getContentID ()))
@@ -199,6 +200,8 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
         aIncomingAttachments.add (aDecompressedAttachment);
       }
     }
+
+    // TODO Do something with the attachments
 
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
