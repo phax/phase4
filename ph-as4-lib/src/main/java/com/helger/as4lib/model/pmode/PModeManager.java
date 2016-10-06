@@ -139,4 +139,40 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   {
     return getOfID (sID);
   }
+
+  public void validatePMode (@Nonnull final IPMode aPMode)
+  {
+    // TODO FIXME XXX
+    // Needs ID
+    // Needs Agreement
+    // MEP ONLY ONEWAY maybe twoway
+    // MEPBINDING only push maybe push and pull
+    // INITIATOR PARTY + ROLE
+    // RESPONDER PARTY+ROLE
+    // PROTOCOL Address =http
+    // SOAP VERSION = 1.2
+    // BUSINESS INFO SERVICE
+    // BUSINESS INFO ACTION
+    // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
+    // Send NonRepudiation => Only activate able when Send Receipt true and only
+    // when Sign on True and Message Signed
+
+    // WSSecurity Stuff
+    // Check Certificate
+    // Check Signature Algorithm
+    // Check Hash Function
+    // Check Encrypt algorithm
+    // Check WSS Version = 1.1.1
+
+    // Compression
+    // application/gzip ONLY
+
+    // On FAILURE throw IllegalStateException
+  }
+
+  public void validateAllPModes ()
+  {
+    for (final IPMode aPMode : getAll ())
+      validatePMode (aPMode);
+  }
 }

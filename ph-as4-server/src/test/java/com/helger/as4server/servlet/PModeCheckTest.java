@@ -43,6 +43,8 @@ import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeLeg;
+import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -145,15 +147,17 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   }
 
   @Test
-  public void testSigningAlgorithmAS () throws Exception
+  public void testPModeLegNullReject () throws Exception
   {
-    final PMode a = new PMode ("pmode-" + GlobalIDFactory.getNewPersistentIntID ());
+    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    aPMode.setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {
-      aPModeMgr.createPMode (a);
+      aPModeMgr.createPMode (aPMode);
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null,
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
                                                                                                        null,
                                                                                                        null,
                                                                                                        null),
@@ -163,11 +167,79 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, "200");
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                        false,
+                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
     finally
     {
-      aPModeMgr.deletePMode (a.getID ());
+      aPModeMgr.deletePMode (aPMode.getID ());
+    }
+  }
+
+  @Test
+  public void testPModeLegProtocolReject () throws Exception
+  {
+    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    try
+    {
+      aPModeMgr.createPMode (aPMode);
+
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
+                                                                                                       null,
+                                                                                                       null,
+                                                                                                       null),
+                                                                                   ESOAPVersion.AS4_DEFAULT,
+                                                                                   null,
+                                                                                   false,
+                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                        false,
+                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    }
+    finally
+    {
+      aPModeMgr.deletePMode (aPMode.getID ());
+    }
+  }
+
+  @Test
+  public void testPModeLegProtocolAddressReject () throws Exception
+  {
+    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("TestsimulationAddressWrong", ESOAPVersion.AS4_DEFAULT),
+                                  null,
+                                  null,
+                                  null,
+                                  null));
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    try
+    {
+      aPModeMgr.createPMode (aPMode);
+
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
+                                                                                                       null,
+                                                                                                       null,
+                                                                                                       null),
+                                                                                   ESOAPVersion.AS4_DEFAULT,
+                                                                                   null,
+                                                                                   false,
+                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                        false,
+                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    }
+    finally
+    {
+      aPModeMgr.deletePMode (aPMode.getID ());
     }
   }
 

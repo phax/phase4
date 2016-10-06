@@ -47,8 +47,9 @@ import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsSet;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -281,7 +282,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsList <String> compressionAttachmentIDs = new CommonsArrayList<> ();
+    final ICommonsSet <String> compressionAttachmentIDs = new CommonsHashSet<> ();
 
     // Check if a SOAPBodyPayload exists
     final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
@@ -424,6 +425,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     aState.setMessaging (aMessaging);
     aState.setPMode (aPMode);
     aState.setCompressedAttachmentIDs (compressionAttachmentIDs);
+    aState.setMPC (aEffectiveMPC);
 
     return ESuccess.SUCCESS;
   }

@@ -81,17 +81,23 @@ public class SOAPClientSAAJ
   {
     try
     {
-      final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
-      aSSLContext.init (null,
-                        new TrustManager [] { new TrustManagerTrustAll (false) },
-                        RandomHelper.getSecureRandom ());
+      final String sURL = true ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/services/msh/";
+
+      SSLContext aSSLContext = null;
+      if (sURL.startsWith ("https"))
+      {
+        aSSLContext = SSLContext.getInstance ("TLS");
+        aSSLContext.init (null,
+                          new TrustManager [] { new TrustManagerTrustAll (false) },
+                          RandomHelper.getSecureRandom ());
+      }
 
       final CloseableHttpClient aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
       final HttpClientContext aContext = new HttpClientContext ();
-      aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
+      if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
+        aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final HttpPost aPost = new HttpPost ("http://127.0.0.1:8080/services/msh/");
-      // final HttpPost aPost = new HttpPost ("http://localhost:8080/as4");
+      final HttpPost aPost = new HttpPost (sURL);
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));

@@ -58,6 +58,9 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
       _initCallbacks ();
 
+      // Validate content
+      m_aPModeMgr.validateAllPModes ();
+
       s_aLogger.info (ClassHelper.getClassLocalName (this) + " was initialized");
     }
     catch (final Throwable t)

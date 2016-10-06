@@ -25,11 +25,12 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.w3c.dom.Document;
 
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsSet;
 import com.helger.commons.datetime.PDTFactory;
 
 /**
@@ -44,8 +45,9 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE = "as4.pmode";
+  private static final String KEY_MPC = "as4.mps";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
-  private static final String KEY_COMPRESSION_ID_LIST = "as4.compression.list.ids";
+  private static final String KEY_COMPRESSION_IDS = "as4.compression.list.ids";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -113,19 +115,36 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 
-  public void setCompressedAttachmentIDs (@Nullable final ICommonsList <String> aIDList)
+  public void setCompressedAttachmentIDs (@Nullable final ICommonsSet <String> aIDList)
   {
-    setAttribute (KEY_COMPRESSION_ID_LIST, aIDList);
+    setAttribute (KEY_COMPRESSION_IDS, aIDList);
   }
 
   public boolean hasCompressedAttachmentIDs ()
   {
-    return containsAttribute (KEY_COMPRESSION_ID_LIST);
+    return containsAttribute (KEY_COMPRESSION_IDS);
   }
 
   @Nullable
-  public ICommonsList <String> getCompressedAttachmentIDs ()
+  public ICommonsSet <String> getCompressedAttachmentIDs ()
   {
-    return getCastedAttribute (KEY_COMPRESSION_ID_LIST);
+    return getCastedAttribute (KEY_COMPRESSION_IDS);
+  }
+
+  public boolean containsCompressedAttachmentID (@Nullable final String sID)
+  {
+    final ICommonsSet <String> aIDs = getCompressedAttachmentIDs ();
+    return aIDs != null && aIDs.contains (sID);
+  }
+
+  public void setMPC (@Nullable final IMPC aMPC)
+  {
+    setAttribute (KEY_MPC, aMPC);
+  }
+
+  @Nullable
+  public IMPC getMPC ()
+  {
+    return getCastedAttribute (KEY_MPC);
   }
 }

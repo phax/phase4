@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 import javax.mail.internet.MimeBodyPart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,11 +52,15 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -76,10 +81,38 @@ import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4Servlet extends AbstractUnifiedResponseServlet
+public final class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
+
+  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
+  @GuardedBy ("s_aRWLock")
+  private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList<> ();
+
+  public static void reinitProcessors ()
+  {
+    final ICommonsList <IAS4ServletMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletMessageProcessorSPI.class);
+    if (aProcessorSPIs.isEmpty ())
+      s_aLogger.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
+    else
+      s_aLogger.info ("Found " + aProcessorSPIs.size () + " AS4 message processors");
+
+    s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
+  }
+
+  static
+  {
+    // Init once at the beginning
+    reinitProcessors ();
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
+  {
+    return s_aRWLock.readLocked ( () -> s_aProcessors.getClone ());
+  }
 
   public AS4Servlet ()
   {}
@@ -171,6 +204,7 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       // else: no header element for current processor
     }
+
     // Now check if all must understand headers were processed
     for (final AS4SOAPHeader aHeader : aHeaders)
       if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
@@ -195,9 +229,9 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Decompressing the attachments
-    for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments)
+    for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments.getClone ())
     {
-      if (aState.getCompressedAttachmentIDs ().contains (aIncomingAttachment.getContentID ()))
+      if (aState.containsCompressedAttachmentID (aIncomingAttachment.getContentID ()))
       {
         final IIncomingAttachment aDecompressedAttachment = MetaManager.getIncomingAttachmentFactory ()
                                                                        .createAttachment (new GZIPInputStream (aIncomingAttachment.getInputStream ()));
@@ -206,7 +240,20 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
-    // TODO Do something with the attachments
+    // Do something with the message
+    for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
+      try
+      {
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
+
+        final byte [] aPayload = null;
+        aProcessor.processAS4Message (aPayload, aIncomingAttachments);
+      }
+      catch (final Throwable t)
+      {
+        s_aLogger.error ("Error processing incoming AS4 message with processor " + aProcessor, t);
+      }
 
     final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
