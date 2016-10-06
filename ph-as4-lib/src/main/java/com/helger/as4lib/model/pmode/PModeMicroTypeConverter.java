@@ -16,6 +16,9 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
@@ -33,7 +36,10 @@ public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
   private static final String ELEMENT_LEG1 = "Leg1";
   private static final String ELEMENT_LEG2 = "Leg2";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IPMode aValue = (IPMode) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
@@ -53,7 +59,8 @@ public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
     return ret;
   }
 
-  public PMode convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PMode convertToNative (@Nonnull final IMicroElement aElement)
   {
     final PMode ret = new PMode (getStubObject (aElement));
     ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));

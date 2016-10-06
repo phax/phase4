@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.soap.ESOAPVersion;
 
 /**
@@ -67,7 +68,7 @@ public class DefaultPMode
                                             null,
                                             null,
                                             null,
-                                            "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC");
+                                            MPCManager.DEFAULT_MPC_ID);
   }
 
   @Nonnull

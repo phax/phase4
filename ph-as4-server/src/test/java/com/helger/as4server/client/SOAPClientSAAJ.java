@@ -90,9 +90,8 @@ public class SOAPClientSAAJ
       final HttpClientContext aContext = new HttpClientContext ();
       aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      // final HttpPost aPost = new HttpPost
-      // ("http://127.0.0.1:8080/services/msh/");
-      final HttpPost aPost = new HttpPost ("http://localhost:8080/as4");
+      final HttpPost aPost = new HttpPost ("http://127.0.0.1:8080/services/msh/");
+      // final HttpPost aPost = new HttpPost ("http://localhost:8080/as4");
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));

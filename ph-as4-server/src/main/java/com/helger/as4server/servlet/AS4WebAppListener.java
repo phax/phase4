@@ -16,6 +16,8 @@
  */
 package com.helger.as4server.servlet;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -35,6 +37,9 @@ import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3M
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
 import com.helger.photon.core.servlet.WebAppListener;
+import com.helger.photon.security.CSecurity;
+import com.helger.photon.security.mgr.PhotonSecurityManager;
+import com.helger.photon.security.user.UserManager;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
 import com.helger.web.scope.mgr.DefaultWebScopeFactory;
@@ -114,6 +119,20 @@ public final class AS4WebAppListener extends WebAppListener
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
     MetaManager.getInstance ();
+
+    // Ensure user exists
+    final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
+    if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
+      aUserMgr.createPredefinedUser (CSecurity.USER_ADMINISTRATOR_ID,
+                                     CSecurity.USER_ADMINISTRATOR_LOGIN,
+                                     CSecurity.USER_ADMINISTRATOR_EMAIL,
+                                     CSecurity.USER_ADMINISTRATOR_PASSWORD,
+                                     "Admin",
+                                     "istrator",
+                                     null,
+                                     Locale.US,
+                                     null,
+                                     false);
 
     // TODO just for testing
     for (final ESOAPVersion e : ESOAPVersion.values ())

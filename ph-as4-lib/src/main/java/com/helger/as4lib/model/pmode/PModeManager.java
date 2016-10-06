@@ -75,7 +75,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   }
 
   @Nonnull
-  public EChange deletePMode (@Nullable final String sPModeID)
+  public EChange markPModeDeleted (@Nullable final String sPModeID)
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
     if (aDeletedPMode == null)
@@ -93,6 +93,30 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
         return EChange.UNCHANGED;
       }
       internalMarkItemDeleted (aDeletedPMode);
+    }
+    finally
+    {
+      m_aRWLock.writeLock ().unlock ();
+    }
+    AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
+
+    return EChange.CHANGED;
+  }
+
+  @Nonnull
+  public EChange deletePMode (@Nullable final String sPModeID)
+  {
+    final PMode aDeletedPMode = getOfID (sPModeID);
+    if (aDeletedPMode == null)
+    {
+      AuditHelper.onAuditDeleteFailure (PMode.OT, "no-such-object-id", sPModeID);
+      return EChange.UNCHANGED;
+    }
+
+    m_aRWLock.writeLock ().lock ();
+    try
+    {
+      internalDeleteItem (sPModeID);
     }
     finally
     {

@@ -19,6 +19,8 @@ package com.helger.as4lib.config;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.as4lib.model.mpc.MPC;
+import com.helger.as4lib.model.mpc.MPCMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeAddressList;
 import com.helger.as4lib.model.pmode.PModeAddressListMicroTypeConverter;
@@ -67,5 +69,7 @@ public final class PModeMicroTypeConverterRegistrar implements IMicroTypeConvert
                                                  new PModePayloadProfileMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeProperty.class, new PModePropertyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeAddressList.class, new PModeAddressListMicroTypeConverter ());
+
+    aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
   }
 }

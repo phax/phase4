@@ -16,6 +16,10 @@
  */
 package com.helger.as4server.servlet;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,13 +41,18 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.standalone.RunInJettyAS4;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.thread.ThreadHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.jetty.JettyStarter;
 import com.helger.photon.jetty.JettyStopper;
@@ -67,6 +76,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
         ex.printStackTrace ();
       }
     }).start ();
+    ThreadHelper.sleep (5, TimeUnit.SECONDS);
   }
 
   @AfterClass
@@ -79,6 +89,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   public void testWrongPModeID () throws Exception
   {
     final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, null);
+    assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -131,6 +142,33 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, "200");
 
+  }
+
+  @Test
+  public void testSigningAlgorithmAS () throws Exception
+  {
+    final PMode a = new PMode ("pmode-" + GlobalIDFactory.getNewPersistentIntID ());
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    try
+    {
+      aPModeMgr.createPMode (a);
+
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null,
+                                                                                                       null,
+                                                                                                       null,
+                                                                                                       null),
+                                                                                   ESOAPVersion.AS4_DEFAULT,
+                                                                                   null,
+                                                                                   false,
+                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, "200");
+    }
+    finally
+    {
+      aPModeMgr.deletePMode (a.getID ());
+    }
   }
 
   @Nonnull

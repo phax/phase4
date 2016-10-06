@@ -16,9 +16,9 @@
  */
 package com.helger.as4lib;
 
-import com.helger.web.scope.mock.WebScopeTestRule;
+import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
 
-public class AS4TestRule extends WebScopeTestRule
+public class AS4TestRule extends PhotonBasicWebTestRule
 {
   @Override
   public void before ()

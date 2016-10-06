@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
@@ -30,11 +31,13 @@ import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
+  private static final String MPC_XML = "mpc.xml";
   private static final String PMODE_XML = "pmode.xml";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private PModeManager m_aPModeMgr;
+  private MPCManager m_aMPCMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -49,7 +52,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {
     try
     {
-      // Non business-logic managers
+      // MPC manager before PMode manager
+      m_aMPCMgr = new MPCManager (MPC_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
 
       _initCallbacks ();
@@ -70,6 +74,12 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static MetaAS4Manager getInstance ()
   {
     return getGlobalSingleton (MetaAS4Manager.class);
+  }
+
+  @Nonnull
+  public static MPCManager getMPCMgr ()
+  {
+    return getInstance ().m_aMPCMgr;
   }
 
   @Nonnull

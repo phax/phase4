@@ -16,6 +16,8 @@
  */
 package com.helger.as4server.servlet;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -62,6 +64,9 @@ import com.helger.commons.string.StringHelper;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
 import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
+import com.helger.photon.security.CSecurity;
+import com.helger.photon.security.login.ELoginResult;
+import com.helger.photon.security.login.LoggedInUserManager;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -234,6 +239,11 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     final AS4Response aUR = (AS4Response) aUnifiedResponse;
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
+    // XXX By default login in admin user
+    final ELoginResult e = LoggedInUserManager.getInstance ().loginUser (CSecurity.USER_ADMINISTRATOR_LOGIN,
+                                                                         CSecurity.USER_ADMINISTRATOR_PASSWORD);
+    assertTrue (e.toString (), e.isSuccess ());
+
     try
     {
       // Determine content type
@@ -346,6 +356,10 @@ public class AS4Servlet extends AbstractUnifiedResponseServlet
     catch (final Throwable t)
     {
       aUR.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", t);
+    }
+    finally
+    {
+      LoggedInUserManager.getInstance ().logoutCurrentUser ();
     }
   }
 }

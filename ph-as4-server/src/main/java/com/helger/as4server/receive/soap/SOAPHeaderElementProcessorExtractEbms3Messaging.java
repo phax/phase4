@@ -38,15 +38,17 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.mpc.IMPC;
+import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
+import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -63,6 +65,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
+    final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -97,7 +101,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         // Find PMode
         sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
-        aPMode = MetaAS4Manager.getPModeMgr ().getPModeOfID (sPModeID);
+        aPMode = aPModeMgr.getPModeOfID (sPModeID);
       }
       if (aPMode == null)
       {
@@ -128,7 +132,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final PModeLegProtocol aProtocol = aPModeLeg1.getProtocol ();
     if (aProtocol == null)
     {
-      aErrorList.add (SingleError.builderError ().setErrorText ("PMode Leg is missing protocol").build ());
+      LOG.info ("PMode Leg is missing protocol");
+
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
       return ESuccess.FAILURE;
     }
     if (!"http".equals (aProtocol.getAddressProtocol ()))
@@ -237,6 +243,40 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
       }
     }
+
+    // Check if MPC is contained in PMode and if so, if it is valid
+    // TODO move to PMode initialization
+    if (aPModeLeg1.getBusinessInfo () != null)
+    {
+      final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
+      if (sPModeMPC != null)
+        if (!aMPCMgr.containsWithID (sPModeMPC))
+        {
+          LOG.info ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+
+          // TODO change Local to dynamic one
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
+          return ESuccess.FAILURE;
+        }
+    }
+
+    // PMode is valid
+    // Check MPC - can be in user message or in PMode
+    String sEffectiveMPCID = aUserMessage.getMpc ();
+    if (sEffectiveMPCID == null)
+    {
+      if (aPModeLeg1.getBusinessInfo () != null)
+        sEffectiveMPCID = aPModeLeg1.getBusinessInfo ().getMPCID ();
+    }
+    final IMPC aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
+    if (aEffectiveMPC == null)
+    {
+      LOG.info ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
+
+      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+      return ESuccess.FAILURE;
+    }
+
     // Needed for the compression check, it is not allowed to have a compressed
     // attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;

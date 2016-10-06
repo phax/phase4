@@ -53,6 +53,19 @@ public class ServletTestPMode
   }
 
   @Nonnull
+  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
+  {
+    final PMode aTestPmode = new PMode (sPModeID);
+    aTestPmode.setMEP (EMEP.ONE_WAY);
+    aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
+    aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
+    aTestPmode.setResponder (_generateInitiatorOrResponder (false));
+    aTestPmode.setLeg1 (_generatePModeLeg (eSOAPVersion));
+    // Leg 2 stays null, because we only use one-way
+    return aTestPmode;
+  }
+
+  @Nonnull
   public static PMode getTestPModeWithSecurity (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     final PMode aTestPmode = getTestPMode (eSOAPVersion);
