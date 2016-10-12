@@ -373,7 +373,7 @@ public class PModeLegSecurity
 
   public void setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
   {
-    ValueEnforcer.notNull (eUsernameTokenNonce, "UsernameTokenNonce ");
+    ValueEnforcer.notNull (eUsernameTokenNonce, "UsernameTokenNonce");
     m_eUsernameTokenNonce = eUsernameTokenNonce;
   }
 
@@ -395,7 +395,7 @@ public class PModeLegSecurity
 
   public void setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
   {
-    ValueEnforcer.notNull (eUsernameTokenCreated, "UsernameTokenCreated ");
+    ValueEnforcer.notNull (eUsernameTokenCreated, "UsernameTokenCreated");
     m_eUsernameTokenCreated = eUsernameTokenCreated;
   }
 
@@ -417,7 +417,7 @@ public class PModeLegSecurity
 
   public void setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
   {
-    ValueEnforcer.notNull (ePModeAuthorize, "PModeAuthorize ");
+    ValueEnforcer.notNull (ePModeAuthorize, "PModeAuthorize");
     m_ePModeAuthorize = ePModeAuthorize;
   }
 
@@ -439,7 +439,7 @@ public class PModeLegSecurity
 
   public void setSendReceipt (@Nonnull final ETriState eSendReceipt)
   {
-    ValueEnforcer.notNull (eSendReceipt, "SendReceipt ");
+    ValueEnforcer.notNull (eSendReceipt, "SendReceipt");
     m_eSendReceipt = eSendReceipt;
   }
 

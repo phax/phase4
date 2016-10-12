@@ -41,8 +41,12 @@ import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.model.pmode.PModePartyMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PModePayloadProfile;
 import com.helger.as4lib.model.pmode.PModePayloadProfileMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModePayloadService;
+import com.helger.as4lib.model.pmode.PModePayloadServiceMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PModeProperty;
 import com.helger.as4lib.model.pmode.PModePropertyMicroTypeConverter;
+import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
+import com.helger.as4lib.model.pmode.PModeReceptionAwarenessMicroTypeConverter;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
@@ -69,6 +73,10 @@ public final class PModeMicroTypeConverterRegistrar implements IMicroTypeConvert
                                                  new PModePayloadProfileMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeProperty.class, new PModePropertyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeAddressList.class, new PModeAddressListMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModePayloadService.class,
+                                                 new PModePayloadServiceMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (PModeReceptionAwareness.class,
+                                                 new PModeReceptionAwarenessMicroTypeConverter ());
 
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
   }

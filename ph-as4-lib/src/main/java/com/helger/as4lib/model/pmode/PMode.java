@@ -109,6 +109,14 @@ public class PMode extends AbstractBaseObject implements IPMode
   private PModeLeg m_aLeg1;
   private PModeLeg m_aLeg2;
 
+  /**
+   * PayloadService is only used in the AS4 - Profile, to mark the compression
+   * type.
+   */
+  private PModePayloadService m_aPayloadService;
+
+  private PModeReceptionAwareness m_aReceptionAwareness;
+
   public PMode (@Nonnull @Nonempty final String sID)
   {
     this (StubObject.createForCurrentUserAndID (sID));
@@ -202,6 +210,26 @@ public class PMode extends AbstractBaseObject implements IPMode
     m_aLeg2 = aLeg2;
   }
 
+  public PModePayloadService getPayloadService ()
+  {
+    return m_aPayloadService;
+  }
+
+  public void setPayloadService (@Nullable final PModePayloadService aPayloadService)
+  {
+    m_aPayloadService = aPayloadService;
+  }
+
+  public PModeReceptionAwareness getReceptionAwareness ()
+  {
+    return m_aReceptionAwareness;
+  }
+
+  public void setReceptionAwareness (@Nullable final PModeReceptionAwareness aPModeReceptionAwareness)
+  {
+    m_aReceptionAwareness = aPModeReceptionAwareness;
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -230,6 +258,8 @@ public class PMode extends AbstractBaseObject implements IPMode
                             .append ("Responder", m_aResponder)
                             .append ("Leg1", m_aLeg1)
                             .append ("Leg2", m_aLeg2)
+                            .append ("PayloadService", m_aPayloadService)
+                            .append ("ReceptionAwareness", m_aReceptionAwareness)
                             .toString ();
   }
 }

@@ -19,6 +19,10 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -144,28 +148,128 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   {
     // TODO FIXME XXX
     // Needs ID
-    // Needs Agreement
-    // MEP ONLY ONEWAY maybe twoway
+    if (aPMode.getID () == null)
+    {
+      throw new IllegalStateException ("No PModeID present");
+    }
+
     // MEPBINDING only push maybe push and pull
-    // INITIATOR PARTY + ROLE
-    // RESPONDER PARTY+ROLE
-    // PROTOCOL Address =http
-    // SOAP VERSION = 1.2
+    if (aPMode.getMEPBinding () == null)
+    {
+      throw new IllegalStateException ("No MEPBinding present. (Push, Pull, Sync)");
+    }
+
+    // MEP ONLY ONEWAY maybe twoway
+    // TODO Check on specific MEP? or allow all
+    if (aPMode.getMEP () == null)
+    {
+      throw new IllegalStateException ("No MEP present");
+    }
+
+    // INITIATOR PARTY_ID
+    if (aPMode.getInitiator ().getIDValue () == null)
+    {
+      throw new IllegalStateException ("No Initiator PartyID present");
+    }
+
+    // INITIATOR ROLE
+    if (aPMode.getInitiator ().getRole () == null)
+    {
+      throw new IllegalStateException ("No Initiator Party Role present");
+    }
+
+    // RESPONDER PARTY_ID
+    if (aPMode.getResponder ().getIDValue () == null)
+    {
+      throw new IllegalStateException ("No Responder PartyID present");
+    }
+
+    // RESPONDER ROLE
+    if (aPMode.getResponder ().getRole () == null)
+    {
+      throw new IllegalStateException ("No Responder Party Role present");
+    }
+
+    // PROTOCOL Address only http allowed
+    if (aPMode.getLeg1 ().getProtocol ().getAddressProtocol () == null ||
+        !aPMode.getLeg1 ().getProtocol ().getAddressProtocol ().toLowerCase ().equals ("http"))
+    {
+      throw new IllegalStateException ("Only the address protocol 'http' is allowed");
+    }
+
+    // SOAP VERSION = 1.2 TODO AS4 Specific if we implement SOAP 1.1 Gets
+    // blocked
+    // if (aPMode.getLeg1 ().getProtocol ().getSOAPVersion () ==
+    // ESOAPVersion.AS4_DEFAULT)
+    // {
+    // throw new IllegalStateException ("No Responder Party Role present");
+    // }
+
     // BUSINESS INFO SERVICE
+
     // BUSINESS INFO ACTION
+
     // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
+    if (aPMode.getLeg1 ().getSecurity ().getSendReceiptReplyPattern () == null ||
+        !aPMode.getLeg1 ().getSecurity ().getSendReceiptReplyPattern ().toLowerCase ().equals ("response"))
+    {
+      throw new IllegalStateException ("Only response is allowed as pattern");
+    }
+
     // Send NonRepudiation => Only activate able when Send Receipt true and only
     // when Sign on True and Message Signed
 
+    // TODO XXX Ask Philipp should it be allowed that a pmode has no WSSecurity
+    // settings => Disable Enc and Signed Messages?
     // WSSecurity Stuff
-    // Check Certificate
-    // Check Signature Algorithm
-    // Check Hash Function
-    // Check Encrypt algorithm
-    // Check WSS Version = 1.1.1
 
-    // Compression
-    // application/gzip ONLY
+    // Check Certificate
+    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureCertificate () == null)
+    {
+      throw new IllegalStateException ("A signature certificate is required");
+    }
+
+    // Check Signature Algorithm
+    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureAlgorithm () == null)
+    {
+      throw new IllegalStateException ("No signature algorithm is specified but is required");
+    }
+    ECryptoAlgorithmSign.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509SignatureAlgorithm ());
+
+    // Check Hash Function
+    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureHashFunction () == null)
+    {
+      throw new IllegalStateException ("No hash function (Digest Algorithm) is specified but is required");
+    }
+    ECryptoAlgorithmSignDigest.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509SignatureHashFunction ());
+
+    // Check Encrypt algorithm
+    if (aPMode.getLeg1 ().getSecurity ().getX509EncryptionAlgorithm () == null)
+    {
+      throw new IllegalStateException ("No encryption algorithm is specified but is required");
+    }
+    ECryptoAlgorithmCrypt.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509EncryptionAlgorithm ());
+
+    // Check WSS Version = 1.1.1
+    if (aPMode.getLeg1 ().getSecurity ().getWSSVersion () != null)
+    {
+      // Check for WSS - Version if there is one present
+      if (!aPMode.getLeg1 ().getSecurity ().getWSSVersion ().equals ("1.1") ||
+          !aPMode.getLeg1 ().getSecurity ().getWSSVersion ().equals ("1.1.1"))
+        throw new IllegalStateException ("No encryption algorithm is specified but is required");
+    }
+
+    // Compression application/gzip ONLY // other possible states are absent or
+    // "" (No input)
+    final EAS4CompressionMode aCompressionMode = aPMode.getPayloadService ().getCompressionMode ();
+    if (aCompressionMode != null)
+    {
+      if (!aCompressionMode.equals (""))
+      {
+        if (!aCompressionMode.equals (EAS4CompressionMode.GZIP))
+          throw new IllegalStateException ("Only GZIP Compression is allowed");
+      }
+    }
 
     // On FAILURE throw IllegalStateException
   }

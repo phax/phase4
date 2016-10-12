@@ -58,4 +58,10 @@ public interface IPMode extends IObject
 
   @Nullable
   PModeLeg getLeg2 ();
+
+  @Nullable
+  PModePayloadService getPayloadService ();
+
+  @Nullable
+  PModeReceptionAwareness getReceptionAwareness ();
 }
