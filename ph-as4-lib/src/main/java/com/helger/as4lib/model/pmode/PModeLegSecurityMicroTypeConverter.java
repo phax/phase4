@@ -42,6 +42,8 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final String ATTR_PMODE_AUTHORIZE = "PModeAuthorize";
   private static final String ATTR_SEND_RECEIPT = "SendReceipt";
   private static final String ATTR_SEND_RECEIPT_REPLY_PATTERN = "SendReceiptReplyPattern";
+  private static final String ATTR_X509_SIGN = "X509Sign";
+  private static final String ATTR_X509_ENCRYPTION_ENCRYPT = "X509EncryptionEncrypt";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -79,6 +81,10 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     if (aValue.isSendReceiptDefined ())
       ret.setAttribute (ATTR_SEND_RECEIPT, aValue.isSendReceipt ());
     ret.setAttribute (ATTR_SEND_RECEIPT_REPLY_PATTERN, aValue.getSendReceiptReplyPattern ());
+    if (aValue.isX509SignDefined ())
+      ret.setAttribute (ATTR_X509_SIGN, aValue.isX509Sign ());
+    if (aValue.isX509EncryptionEncryptDefined ())
+      ret.setAttribute (ATTR_X509_ENCRYPTION_ENCRYPT, aValue.isX509EncryptionEncrypt ());
     return ret;
   }
 
@@ -117,6 +123,10 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     final ETriState eSendReceipt = getTriState (aElement.getAttributeValue (ATTR_SEND_RECEIPT),
                                                 PModeLegSecurity.DEFAULT_SEND_RECEIPT);
     final String sSendReceiptReplyPattern = aElement.getAttributeValue (ATTR_SEND_RECEIPT_REPLY_PATTERN);
+    final ETriState eX509Sign = getTriState (aElement.getAttributeValue (ATTR_X509_SIGN),
+                                             PModeLegSecurity.DEFAULT_X509_SIGN);
+    final ETriState eX509EncryptionEncrypt = getTriState (aElement.getAttributeValue (ATTR_X509_ENCRYPTION_ENCRYPT),
+                                                          PModeLegSecurity.DEFAULT_X509_ENCRYPTION_ENCRYPT);
     return new PModeLegSecurity (sWSSVersion,
                                  aX509SignStrings,
                                  sX509SignatureCertificate,
@@ -133,7 +143,9 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
                                  eUsernameTokenCreated,
                                  ePModeAuthorize,
                                  eSendReceipt,
-                                 sSendReceiptReplyPattern);
+                                 sSendReceiptReplyPattern,
+                                 eX509Sign,
+                                 eX509EncryptionEncrypt);
   }
 
 }

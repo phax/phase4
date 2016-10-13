@@ -191,6 +191,8 @@ public final class PModeMicroTypeConverterTest
                                  ETriState.TRUE,
                                  ETriState.TRUE,
                                  ETriState.TRUE,
-                                 "replyPattern");
+                                 "replyPattern",
+                                 ETriState.TRUE,
+                                 ETriState.TRUE);
   }
 }

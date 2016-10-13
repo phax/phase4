@@ -23,6 +23,7 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -146,7 +147,13 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
 
   public void validatePMode (@Nonnull final IPMode aPMode)
   {
-    // TODO FIXME XXX
+    // TODO FIXME XXX validatestuff
+
+    if (aPMode == null)
+    {
+      throw new IllegalStateException ("No PMode is null!");
+    }
+
     // Needs ID
     if (aPMode.getID () == null)
     {
@@ -166,39 +173,64 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       throw new IllegalStateException ("No MEP present");
     }
 
-    // INITIATOR PARTY_ID
-    if (aPMode.getInitiator ().getIDValue () == null)
+    final PModeParty aInitiator = aPMode.getInitiator ();
+    if (aInitiator != null)
     {
-      throw new IllegalStateException ("No Initiator PartyID present");
+      // INITIATOR PARTY_ID
+      if (aInitiator.getIDValue () == null)
+      {
+        throw new IllegalStateException ("No Initiator PartyID present");
+      }
+
+      // INITIATOR ROLE
+      if (aInitiator.getRole () == null)
+      {
+        throw new IllegalStateException ("No Initiator Party Role present");
+      }
     }
 
-    // INITIATOR ROLE
-    if (aPMode.getInitiator ().getRole () == null)
+    final PModeParty aResponder = aPMode.getResponder ();
+    if (aResponder != null)
     {
-      throw new IllegalStateException ("No Initiator Party Role present");
+      // RESPONDER PARTY_ID
+      if (aResponder.getIDValue () == null)
+      {
+        throw new IllegalStateException ("No Responder PartyID present");
+      }
+
+      // RESPONDER ROLE
+      if (aResponder.getRole () == null)
+      {
+        throw new IllegalStateException ("No Responder Party Role present");
+      }
     }
 
-    // RESPONDER PARTY_ID
-    if (aPMode.getResponder ().getIDValue () == null)
+    if (aResponder == null && aInitiator == null)
     {
-      throw new IllegalStateException ("No Responder PartyID present");
+      throw new IllegalStateException ("There has to be atleast one of the following: Responder or Initiator present");
     }
 
-    // RESPONDER ROLE
-    if (aPMode.getResponder ().getRole () == null)
+    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
+    if (aPModeLeg1 == null)
     {
-      throw new IllegalStateException ("No Responder Party Role present");
+      throw new IllegalStateException ("PMode is missing Leg 1");
+    }
+
+    if (aPModeLeg1.getProtocol () == null)
+    {
+      throw new IllegalStateException ("PMode is missing Leg 1, Protocol is missing");
     }
 
     // PROTOCOL Address only http allowed
-    if (aPMode.getLeg1 ().getProtocol ().getAddressProtocol () == null ||
-        !aPMode.getLeg1 ().getProtocol ().getAddressProtocol ().toLowerCase ().equals ("http"))
+    if (aPModeLeg1.getProtocol ().getAddressProtocol () == null ||
+        !aPModeLeg1.getProtocol ().getAddressProtocol ().toLowerCase ().equals ("http"))
     {
       throw new IllegalStateException ("Only the address protocol 'http' is allowed");
     }
 
     // SOAP VERSION = 1.2 TODO AS4 Specific if we implement SOAP 1.1 Gets
     // blocked
+    // TODO also as4 specific PModeAuthorize needs to be false
     // if (aPMode.getLeg1 ().getProtocol ().getSOAPVersion () ==
     // ESOAPVersion.AS4_DEFAULT)
     // {
@@ -210,68 +242,110 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     // BUSINESS INFO ACTION
 
     // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
-    if (aPMode.getLeg1 ().getSecurity ().getSendReceiptReplyPattern () == null ||
-        !aPMode.getLeg1 ().getSecurity ().getSendReceiptReplyPattern ().toLowerCase ().equals ("response"))
+    final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
+    if (aPModeLegSecurity != null)
     {
-      throw new IllegalStateException ("Only response is allowed as pattern");
-    }
+      if (aPModeLegSecurity.isSendReceiptDefined ())
+      {
+        if (aPModeLegSecurity.isSendReceipt ())
+        {
+          // set response required
 
-    // Send NonRepudiation => Only activate able when Send Receipt true and only
-    // when Sign on True and Message Signed
+          if (aPModeLegSecurity.getSendReceiptReplyPattern () == null ||
+              !aPModeLegSecurity.getSendReceiptReplyPattern ().toLowerCase ().equals ("response"))
+          {
+            throw new IllegalStateException ("Only response is allowed as pattern");
+          }
 
-    // TODO XXX Ask Philipp should it be allowed that a pmode has no WSSecurity
-    // settings => Disable Enc and Signed Messages?
-    // WSSecurity Stuff
+          // Send NonRepudiation => Only activate able when Send Receipt true
+          // and
+          // only when Sign on True and Message Signed
 
-    // Check Certificate
-    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureCertificate () == null)
-    {
-      throw new IllegalStateException ("A signature certificate is required");
-    }
+        }
+      }
 
-    // Check Signature Algorithm
-    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureAlgorithm () == null)
-    {
-      throw new IllegalStateException ("No signature algorithm is specified but is required");
-    }
-    ECryptoAlgorithmSign.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509SignatureAlgorithm ());
+      // TODO XXX Ask Philipp should it be allowed that a pmode has no
+      // WSSecurity
+      // Check Certificate
+      if (aPModeLegSecurity.getX509SignatureCertificate () == null)
+      {
+        throw new IllegalStateException ("A signature certificate is required");
+      }
 
-    // Check Hash Function
-    if (aPMode.getLeg1 ().getSecurity ().getX509SignatureHashFunction () == null)
-    {
-      throw new IllegalStateException ("No hash function (Digest Algorithm) is specified but is required");
-    }
-    ECryptoAlgorithmSignDigest.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509SignatureHashFunction ());
+      // Check Signature Algorithm
+      if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
+      {
+        throw new IllegalStateException ("No signature algorithm is specified but is required");
+      }
+      ECryptoAlgorithmSign.getFromIDOrThrow (aPModeLegSecurity.getX509SignatureAlgorithm ());
 
-    // Check Encrypt algorithm
-    if (aPMode.getLeg1 ().getSecurity ().getX509EncryptionAlgorithm () == null)
-    {
-      throw new IllegalStateException ("No encryption algorithm is specified but is required");
-    }
-    ECryptoAlgorithmCrypt.getFromIDOrThrow (aPMode.getLeg1 ().getSecurity ().getX509EncryptionAlgorithm ());
+      // Check Hash Function
+      if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
+      {
+        throw new IllegalStateException ("No hash function (Digest Algorithm) is specified but is required");
+      }
+      ECryptoAlgorithmSignDigest.getFromIDOrThrow (aPModeLegSecurity.getX509SignatureHashFunction ());
 
-    // Check WSS Version = 1.1.1
-    if (aPMode.getLeg1 ().getSecurity ().getWSSVersion () != null)
-    {
-      // Check for WSS - Version if there is one present
-      if (!aPMode.getLeg1 ().getSecurity ().getWSSVersion ().equals ("1.1") ||
-          !aPMode.getLeg1 ().getSecurity ().getWSSVersion ().equals ("1.1.1"))
+      // Check Encrypt algorithm
+      if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
+      {
         throw new IllegalStateException ("No encryption algorithm is specified but is required");
+      }
+      ECryptoAlgorithmCrypt.getFromIDOrThrow (aPModeLegSecurity.getX509EncryptionAlgorithm ());
+
+      // Check WSS Version = 1.1.1
+      if (aPModeLegSecurity.getWSSVersion () != null)
+      {
+        // Check for WSS - Version if there is one present
+        if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_11.getVersion ()))
+          throw new IllegalStateException ("No WSS Version is defined but required");
+      }
+    }
+
+    // Error Handling
+    final PModeLegErrorHandling aErrorHandling = aPModeLeg1.getErrorHandling ();
+    if (aErrorHandling != null)
+    {
+      if (aErrorHandling.isReportAsResponseDefined ())
+        if (aErrorHandling.isReportAsResponse ())
+        {
+          // TODO AS4 Profile says true
+        }
+      if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
+        if (aErrorHandling.isReportProcessErrorNotifyConsumer ())
+        {
+          // TODO AS4 Profile says true
+        }
+      if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
+        if (aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
+        {
+          // TODO AS4 Profile says true
+        }
+    }
+    else
+    {
+      // Disable Error Responses
     }
 
     // Compression application/gzip ONLY // other possible states are absent or
     // "" (No input)
-    final EAS4CompressionMode aCompressionMode = aPMode.getPayloadService ().getCompressionMode ();
-    if (aCompressionMode != null)
+    final PModePayloadService aPayloadService = aPMode.getPayloadService ();
+    if (aPayloadService != null)
     {
-      if (!aCompressionMode.equals (""))
+      final EAS4CompressionMode aCompressionMode = aPayloadService.getCompressionMode ();
+      if (aCompressionMode != null)
       {
-        if (!aCompressionMode.equals (EAS4CompressionMode.GZIP))
-          throw new IllegalStateException ("Only GZIP Compression is allowed");
+        if (!aCompressionMode.equals (""))
+        {
+          if (!aCompressionMode.equals (EAS4CompressionMode.GZIP))
+            throw new IllegalStateException ("Only GZIP Compression is allowed");
+        }
       }
     }
-
-    // On FAILURE throw IllegalStateException
+    else
+    {
+      // TODO no compression allowed
+    }
   }
 
   public void validateAllPModes ()

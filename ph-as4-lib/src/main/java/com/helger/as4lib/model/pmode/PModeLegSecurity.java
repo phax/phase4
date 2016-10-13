@@ -40,6 +40,8 @@ public class PModeLegSecurity
   public static final boolean DEFAULT_USERNAME_TOKEN_CREATED = false;
   public static final boolean DEFAULT_PMODE_AUTHORIZE = false;
   public static final boolean DEFAULT_SEND_RECEIPT = false;
+  public static final boolean DEFAULT_X509_SIGN = false;
+  public static final boolean DEFAULT_X509_ENCRYPTION_ENCRYPT = false;
 
   /**
    * This parameter has two possible values, 1.0 and 1.1. The value of this
@@ -152,6 +154,10 @@ public class PModeLegSecurity
    */
   private String m_sSendReceiptReplyPattern;
 
+  private ETriState m_eX509Sign = ETriState.UNDEFINED;
+
+  private ETriState m_eX509EncryptionEncrypt = ETriState.UNDEFINED;
+
   public PModeLegSecurity ()
   {
 
@@ -173,7 +179,9 @@ public class PModeLegSecurity
                            @Nonnull final ETriState m_eUsernameTokenCreated,
                            @Nonnull final ETriState m_ePModeAuthorize,
                            @Nonnull final ETriState m_eSendReceipt,
-                           @Nullable final String m_sSendReceiptReplyPattern)
+                           @Nullable final String m_sSendReceiptReplyPattern,
+                           @Nonnull final ETriState m_eX509Sign,
+                           @Nonnull final ETriState m_eX509EncryptionEncrypt)
   {
     this.m_aX509EncryptionEncrypt = m_aX509EncryptionEncrypt;
     this.m_aX509EncryptionMinimumStrength = m_aX509EncryptionMinimumStrength;
@@ -192,6 +200,8 @@ public class PModeLegSecurity
     this.m_sX509SignatureAlgorithm = m_sX509SignatureAlgorithm;
     this.m_sX509SignatureCertificate = m_sX509SignatureCertificate;
     this.m_sX509SignatureHashFunction = m_sX509SignatureHashFunction;
+    this.m_eX509Sign = m_eX509Sign;
+    this.m_eX509EncryptionEncrypt = m_eX509EncryptionEncrypt;
   }
 
   @Nullable
@@ -443,6 +453,50 @@ public class PModeLegSecurity
     m_eSendReceipt = eSendReceipt;
   }
 
+  public boolean isX509SignDefined ()
+  {
+    return m_eX509Sign.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isX509Sign ()
+  {
+    return m_eX509Sign.getAsBooleanValue (DEFAULT_X509_SIGN);
+  }
+
+  public void setX509Sign (final boolean bX509Sign)
+  {
+    setSendReceipt (ETriState.valueOf (bX509Sign));
+  }
+
+  public void setX509Sign (@Nonnull final ETriState eX509Sign)
+  {
+    ValueEnforcer.notNull (eX509Sign, "X509Sign");
+    m_eX509Sign = eX509Sign;
+  }
+
+  public boolean isX509EncryptionEncryptDefined ()
+  {
+    return m_eX509EncryptionEncrypt.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isX509EncryptionEncrypt ()
+  {
+    return m_eX509EncryptionEncrypt.getAsBooleanValue (DEFAULT_X509_SIGN);
+  }
+
+  public void setX509EncryptionEncrypt (final boolean bX509EncryptionEncrypt)
+  {
+    setSendReceipt (ETriState.valueOf (bX509EncryptionEncrypt));
+  }
+
+  public void setX509EncryptionEncrypt (@Nonnull final ETriState eX509EncryptionEncrypt)
+  {
+    ValueEnforcer.notNull (eX509EncryptionEncrypt, "X509EncryptionEncrypt");
+    m_eX509EncryptionEncrypt = eX509EncryptionEncrypt;
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -467,7 +521,9 @@ public class PModeLegSecurity
            EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
            EqualsHelper.equals (m_sX509SignatureAlgorithm, rhs.m_sX509SignatureAlgorithm) &&
            EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
-           EqualsHelper.equals (m_sX509SignatureHashFunction, rhs.m_sX509SignatureHashFunction);
+           EqualsHelper.equals (m_sX509SignatureHashFunction, rhs.m_sX509SignatureHashFunction) &&
+           EqualsHelper.equals (m_eX509Sign, rhs.m_eX509Sign) &&
+           EqualsHelper.equals (m_eX509EncryptionEncrypt, rhs.m_eX509EncryptionEncrypt);
   }
 
   @Override
@@ -490,6 +546,8 @@ public class PModeLegSecurity
                                        .append (m_sX509SignatureAlgorithm)
                                        .append (m_sX509SignatureCertificate)
                                        .append (m_sX509SignatureHashFunction)
+                                       .append (m_eX509Sign)
+                                       .append (m_eX509EncryptionEncrypt)
                                        .getHashCode ();
   }
 }

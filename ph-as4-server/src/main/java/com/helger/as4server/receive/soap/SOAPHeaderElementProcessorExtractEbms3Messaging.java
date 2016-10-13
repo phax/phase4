@@ -42,9 +42,7 @@ import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
-import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeManager;
-import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashSet;
@@ -112,51 +110,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
         return ESuccess.FAILURE;
       }
-    }
-
-    if (aPMode == null || aPMode.getMEP () == null || aPMode.getMEPBinding () == null)
-      throw new IllegalStateException ("PMode is incomplete: " + aPMode);
-
-    // Check if pmode contains a protocol and if the message complies
-    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
-    if (aPModeLeg1 == null)
-    {
-      LOG.info ("PMode is missing Leg 1");
-
-      // TODO change Local to dynamic one
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
-      return ESuccess.FAILURE;
-    }
-
-    // Check protocol
-
-    final PModeLegProtocol aProtocol = aPModeLeg1.getProtocol ();
-    if (aProtocol == null)
-    {
-      LOG.info ("PMode Leg is missing protocol");
-
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
-      return ESuccess.FAILURE;
-    }
-    if (!"http".equals (aProtocol.getAddressProtocol ()))
-    {
-
-      LOG.info ("PMode Leg uses unsupported protocol '" + aProtocol.getAddressProtocol () + "'");
-
-      // TODO change Local to dynamic one
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
-      return ESuccess.FAILURE;
-    }
-
-    // Check SOAP - Version
-    final ESOAPVersion ePModeSoapVersion = aProtocol.getSOAPVersion ();
-    if (!aState.getSOAPVersion ().equals (ePModeSoapVersion))
-    {
-      LOG.info ("Error processing the PMode, the SOAP Version (" + ePModeSoapVersion + ") is incorrect.");
-
-      // TODO change Local to dynamic one
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
-      return ESuccess.FAILURE;
     }
 
     // UserMessage does not need to get checked for null again since it got
@@ -247,6 +200,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // Check if MPC is contained in PMode and if so, if it is valid
     // TODO move to PMode initialization
+    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1.getBusinessInfo () != null)
     {
       final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
@@ -285,7 +239,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final ICommonsSet <String> compressionAttachmentIDs = new CommonsHashSet<> ();
 
     // Check if a SOAPBodyPayload exists
-    final NodeList nList = aSOAPDoc.getElementsByTagName (ePModeSoapVersion.getNamespacePrefix () + ":Body");
+
+    final NodeList nList = aSOAPDoc.getElementsByTagName (aPModeLeg1.getProtocol ()
+                                                                    .getSOAPVersion ()
+                                                                    .getNamespacePrefix () +
+                                                          ":Body");
     for (int i = 0; i < nList.getLength (); i++)
     {
       final Node nNode = nList.item (i);

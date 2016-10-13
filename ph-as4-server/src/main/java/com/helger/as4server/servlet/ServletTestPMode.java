@@ -18,6 +18,9 @@ package com.helger.as4server.servlet;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.PMode;
@@ -71,6 +74,12 @@ public class ServletTestPMode
     final PMode aTestPmode = getTestPMode (eSOAPVersion);
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_11.getVersion ());
+    aPModeLegSecurity.setX509SignatureCertificate ("TODO change to real cert");
+    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getID ());
+    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ());
+    aPModeLegSecurity.setX509EncryptionCertificate ("TODO change to real cert");
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getID ());
+
     aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                                       _generatePModeLegBusinessInformation (),
                                       null,
