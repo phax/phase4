@@ -281,7 +281,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     aMsg.saveChanges ();
     // TODO remove when output not needed anymore
     final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    // System.out.println (EntityUtils.toString (aEntity));
+    System.out.println (EntityUtils.toString (aEntity));
     sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 

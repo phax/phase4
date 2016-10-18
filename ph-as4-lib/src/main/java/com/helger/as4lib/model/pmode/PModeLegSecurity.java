@@ -19,6 +19,10 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -47,7 +51,7 @@ public class PModeLegSecurity
    * This parameter has two possible values, 1.0 and 1.1. The value of this
    * parameter represents the version of WS-Security to be used.
    */
-  private String m_sWSSVersion;
+  private EWSSVersion m_eWSSVersion;
   /**
    * The value of this parameter is a list of the names of XML elements (inside
    * the SOAP envelope) that should be signed, as well as whether or not
@@ -58,7 +62,8 @@ public class PModeLegSecurity
    * belongs). An element within the Attachment[] list is identified by the
    * Content-Id.
    */
-  private ICommonsList <String> m_aX509Sign;
+  private ICommonsList <String> m_aX509SignElement;
+  private ICommonsList <String> m_aX509SignAttachment;
   /**
    * The value of this parameter identifies the public certificate to use when
    * verifying signed data.
@@ -69,21 +74,24 @@ public class PModeLegSecurity
    * compute the digest of the message being signed. The definitions for these
    * values are in the [XMLDSIG] specification.
    */
-  private String m_sX509SignatureHashFunction;
+  private ECryptoAlgorithmSignDigest m_eX509SignatureHashFunction;
   /**
    * The value of this parameter identifies the algorithm that is used to
    * compute the value of the digital signature. The definitions for these
    * values are found in the [XMLDSIG] or [XMLENC] specifications.
    */
-  private String m_sX509SignatureAlgorithm;
+  private ECryptoAlgorithmSign m_eX509SignatureAlgorithm;
   /**
-   * The value of this parameter lists the names of XML elements(inside the SOAP
-   * envelope) that should be encrypted, as well as whether or not attachments
-   * should also be encrypted. The list is represented in two sublists that
-   * extend this parameter: Encrypt.Element[] and Encrypt.Attachment[]. An
-   * element within these lists is identified as in Security.X509.Sign lists.
+   * The value of this parameter lists the names of XML elements (inside the
+   * SOAP envelope) that should be encrypted, as well as whether or not
+   * attachments should also be encrypted. The list is represented in two
+   * sublists that extend this parameter: Encrypt.Element[] and
+   * Encrypt.Attachment[]. An element within these lists is identified as in
+   * Security.X509.Sign lists.
    */
-  private ICommonsList <String> m_aX509EncryptionEncrypt;
+  private ICommonsList <String> m_aX509EncryptionEncryptElement;
+  private ICommonsList <String> m_aX509EncryptionEncryptAttachment;
+
   /**
    * The value of this parameter identifies the public certificate to use when
    * encrypting data.
@@ -93,7 +101,7 @@ public class PModeLegSecurity
    * The value of this parameter identifies the encryption algorithm to be used.
    * The definitions for these values are found in the [XMLENC] specification.
    */
-  private String m_sX509EncryptionAlgorithm;
+  private ECryptoAlgorithmCrypt m_eX509EncryptionAlgorithm;
   /**
    * The integer value of this parameter describes the effective strength the
    * encryption algorithm MUST provide in terms of "effective" or random bits.
@@ -152,79 +160,91 @@ public class PModeLegSecurity
    * callback (value "callback"), or synchronously in the back-channel response
    * (value "response"). If not present, any pattern may be used.
    */
-  private String m_sSendReceiptReplyPattern;
-
-  private ETriState m_eX509Sign = ETriState.UNDEFINED;
-
-  private ETriState m_eX509EncryptionEncrypt = ETriState.UNDEFINED;
+  private EPModeSendReceiptReplyPattern m_eSendReceiptReplyPattern;
 
   public PModeLegSecurity ()
-  {
+  {}
 
-  }
-
-  public PModeLegSecurity (@Nullable final String m_sWSSVersion,
-                           @Nullable final ICommonsList <String> m_aX509Sign,
-                           @Nullable final String m_sX509SignatureCertificate,
-                           @Nullable final String m_sX509SignatureHashFunction,
-                           @Nullable final String m_sX509SignatureAlgorithm,
-                           @Nullable final ICommonsList <String> m_aX509EncryptionEncrypt,
-                           @Nullable final String m_sX509EncryptionCertificate,
-                           @Nullable final String m_sX509EncryptionAlgorithm,
-                           @Nullable final Integer m_aX509EncryptionMinimumStrength,
-                           @Nullable final String m_sUsernameTokenUsername,
-                           @Nullable final String m_sUsernameTokenPassword,
-                           @Nonnull final ETriState m_eUsernameTokenDigest,
-                           @Nonnull final ETriState m_eUsernameTokenNonce,
-                           @Nonnull final ETriState m_eUsernameTokenCreated,
-                           @Nonnull final ETriState m_ePModeAuthorize,
-                           @Nonnull final ETriState m_eSendReceipt,
-                           @Nullable final String m_sSendReceiptReplyPattern,
-                           @Nonnull final ETriState m_eX509Sign,
-                           @Nonnull final ETriState m_eX509EncryptionEncrypt)
+  public PModeLegSecurity (@Nullable final EWSSVersion eWSSVersion,
+                           @Nullable final ICommonsList <String> aX509SignElement,
+                           @Nullable final ICommonsList <String> aX509SignAttachment,
+                           @Nullable final String sX509SignatureCertificate,
+                           @Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction,
+                           @Nullable final ECryptoAlgorithmSign sX509SignatureAlgorithm,
+                           @Nullable final ICommonsList <String> aX509EncryptionEncryptElement,
+                           @Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment,
+                           @Nullable final String sX509EncryptionCertificate,
+                           @Nullable final ECryptoAlgorithmCrypt sX509EncryptionAlgorithm,
+                           @Nullable final Integer aX509EncryptionMinimumStrength,
+                           @Nullable final String sUsernameTokenUsername,
+                           @Nullable final String sUsernameTokenPassword,
+                           @Nonnull final ETriState eUsernameTokenDigest,
+                           @Nonnull final ETriState eUsernameTokenNonce,
+                           @Nonnull final ETriState eUsernameTokenCreated,
+                           @Nonnull final ETriState ePModeAuthorize,
+                           @Nonnull final ETriState eSendReceipt,
+                           @Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
   {
-    this.m_aX509EncryptionEncrypt = m_aX509EncryptionEncrypt;
-    this.m_aX509EncryptionMinimumStrength = m_aX509EncryptionMinimumStrength;
-    this.m_aX509Sign = m_aX509Sign;
-    this.m_ePModeAuthorize = m_ePModeAuthorize;
-    this.m_eSendReceipt = m_eSendReceipt;
-    this.m_eUsernameTokenCreated = m_eUsernameTokenCreated;
-    this.m_eUsernameTokenDigest = m_eUsernameTokenDigest;
-    this.m_eUsernameTokenNonce = m_eUsernameTokenNonce;
-    this.m_sSendReceiptReplyPattern = m_sSendReceiptReplyPattern;
-    this.m_sUsernameTokenPassword = m_sUsernameTokenPassword;
-    this.m_sUsernameTokenUsername = m_sUsernameTokenUsername;
-    this.m_sWSSVersion = m_sWSSVersion;
-    this.m_sX509EncryptionAlgorithm = m_sX509EncryptionAlgorithm;
-    this.m_sX509EncryptionCertificate = m_sX509EncryptionCertificate;
-    this.m_sX509SignatureAlgorithm = m_sX509SignatureAlgorithm;
-    this.m_sX509SignatureCertificate = m_sX509SignatureCertificate;
-    this.m_sX509SignatureHashFunction = m_sX509SignatureHashFunction;
-    this.m_eX509Sign = m_eX509Sign;
-    this.m_eX509EncryptionEncrypt = m_eX509EncryptionEncrypt;
+    setX509EncryptionEncryptElement (aX509EncryptionEncryptElement);
+    setX509EncryptionEncryptAttachment (aX509EncryptionEncryptAttachment);
+    setX509EncryptionMinimumStrength (aX509EncryptionMinimumStrength);
+    setX509SignElement (aX509SignElement);
+    setX509SignAttachment (aX509SignAttachment);
+    setPModeAuthorize (ePModeAuthorize);
+    setSendReceipt (eSendReceipt);
+    setUsernameTokenCreated (eUsernameTokenCreated);
+    setUsernameTokenDigest (eUsernameTokenDigest);
+    setUsernameTokenNonce (eUsernameTokenNonce);
+    setSendReceiptReplyPattern (eSendReceiptReplyPattern);
+    setUsernameTokenPassword (sUsernameTokenPassword);
+    setUsernameTokenUsername (sUsernameTokenUsername);
+    setWSSVersion (eWSSVersion);
+    setX509EncryptionAlgorithm (sX509EncryptionAlgorithm);
+    setX509EncryptionCertificate (sX509EncryptionCertificate);
+    setX509SignatureAlgorithm (sX509SignatureAlgorithm);
+    setX509SignatureCertificate (sX509SignatureCertificate);
+    setX509SignatureHashFunction (eX509SignatureHashFunction);
   }
 
   @Nullable
-  public String getWSSVersion ()
+  public EWSSVersion getWSSVersion ()
   {
-    return m_sWSSVersion;
+    return m_eWSSVersion;
   }
 
-  public void setWSSVersion (final String sWSSVersion)
+  @Nullable
+  public String getWSSVersionAsString ()
   {
-    m_sWSSVersion = sWSSVersion;
+    return m_eWSSVersion == null ? null : m_eWSSVersion.getVersion ();
+  }
+
+  public void setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
+  {
+    m_eWSSVersion = eWSSVersion;
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509Sign ()
+  public ICommonsList <String> getX509SignElement ()
   {
-    return new CommonsArrayList<> (m_aX509Sign);
+    return new CommonsArrayList<> (m_aX509SignElement);
   }
 
-  public void setX509Sign (final ICommonsList <String> aX509Sign)
+  public void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
   {
-    m_aX509Sign = aX509Sign;
+    m_aX509SignElement = aX509SignElement;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <String> getX509SignAttachment ()
+  {
+    return new CommonsArrayList<> (m_aX509SignAttachment);
+  }
+
+  public void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
+  {
+    m_aX509SignAttachment = aX509SignAttachment;
   }
 
   @Nullable
@@ -233,43 +253,67 @@ public class PModeLegSecurity
     return m_sX509SignatureCertificate;
   }
 
-  public void setX509SignatureCertificate (final String sX509SignatureCertificate)
+  public void setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
   {
     m_sX509SignatureCertificate = sX509SignatureCertificate;
   }
 
   @Nullable
-  public String getX509SignatureHashFunction ()
+  public ECryptoAlgorithmSignDigest getX509SignatureHashFunction ()
   {
-    return m_sX509SignatureHashFunction;
-  }
-
-  public void setX509SignatureHashFunction (final String sX509SignatureHashFunction)
-  {
-    m_sX509SignatureHashFunction = sX509SignatureHashFunction;
+    return m_eX509SignatureHashFunction;
   }
 
   @Nullable
-  public String getX509SignatureAlgorithm ()
+  public String getX509SignatureHashFunctionID ()
   {
-    return m_sX509SignatureAlgorithm;
+    return m_eX509SignatureHashFunction == null ? null : m_eX509SignatureHashFunction.getID ();
   }
 
-  public void setX509SignatureAlgorithm (final String sX509SignatureAlgorithm)
+  public void setX509SignatureHashFunction (@Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction)
   {
-    m_sX509SignatureAlgorithm = sX509SignatureAlgorithm;
+    m_eX509SignatureHashFunction = eX509SignatureHashFunction;
+  }
+
+  @Nullable
+  public ECryptoAlgorithmSign getX509SignatureAlgorithm ()
+  {
+    return m_eX509SignatureAlgorithm;
+  }
+
+  @Nullable
+  public String getX509SignatureAlgorithmID ()
+  {
+    return m_eX509SignatureAlgorithm == null ? null : m_eX509SignatureAlgorithm.getID ();
+  }
+
+  public void setX509SignatureAlgorithm (@Nullable final ECryptoAlgorithmSign eX509SignatureAlgorithm)
+  {
+    m_eX509SignatureAlgorithm = eX509SignatureAlgorithm;
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509EncryptionEncrypt ()
+  public ICommonsList <String> getX509EncryptionEncryptElement ()
   {
-    return new CommonsArrayList<> (m_aX509EncryptionEncrypt);
+    return new CommonsArrayList<> (m_aX509EncryptionEncryptElement);
   }
 
-  public void setX509EncryptionEncrypt (final ICommonsList <String> aX509EncryptionEncrypt)
+  public void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
   {
-    m_aX509EncryptionEncrypt = aX509EncryptionEncrypt;
+    m_aX509EncryptionEncryptElement = aX509EncryptionEncryptElement;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <String> getX509EncryptionEncryptAttachment ()
+  {
+    return new CommonsArrayList<> (m_aX509EncryptionEncryptAttachment);
+  }
+
+  public void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
+  {
+    m_aX509EncryptionEncryptAttachment = aX509EncryptionEncryptAttachment;
   }
 
   @Nullable
@@ -278,20 +322,26 @@ public class PModeLegSecurity
     return m_sX509EncryptionCertificate;
   }
 
-  public void setX509EncryptionCertificate (final String sX509EncryptionCertificate)
+  public void setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
   {
     m_sX509EncryptionCertificate = sX509EncryptionCertificate;
   }
 
   @Nullable
-  public String getX509EncryptionAlgorithm ()
+  public ECryptoAlgorithmCrypt getX509EncryptionAlgorithm ()
   {
-    return m_sX509EncryptionAlgorithm;
+    return m_eX509EncryptionAlgorithm;
   }
 
-  public void setX509EncryptionAlgorithm (final String sX509EncryptionAlgorithm)
+  @Nullable
+  public String getX509EncryptionAlgorithmID ()
   {
-    m_sX509EncryptionAlgorithm = sX509EncryptionAlgorithm;
+    return m_eX509EncryptionAlgorithm == null ? null : m_eX509EncryptionAlgorithm.getID ();
+  }
+
+  public void setX509EncryptionAlgorithm (@Nullable final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm)
+  {
+    m_eX509EncryptionAlgorithm = eX509EncryptionAlgorithm;
   }
 
   public boolean hasX509EncryptionMinimumStrength ()
@@ -316,7 +366,7 @@ public class PModeLegSecurity
     return m_sUsernameTokenUsername;
   }
 
-  public void setUsernameTokenUsername (final String sUsernameTokenUsername)
+  public void setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
   {
     m_sUsernameTokenUsername = sUsernameTokenUsername;
   }
@@ -327,20 +377,26 @@ public class PModeLegSecurity
     return m_sUsernameTokenPassword;
   }
 
-  public void setUsernameTokenPassword (final String sUsernameTokenPassword)
+  public void setUsernameTokenPassword (@Nullable final String sUsernameTokenPassword)
   {
     m_sUsernameTokenPassword = sUsernameTokenPassword;
   }
 
   @Nullable
-  public String getSendReceiptReplyPattern ()
+  public EPModeSendReceiptReplyPattern getSendReceiptReplyPattern ()
   {
-    return m_sSendReceiptReplyPattern;
+    return m_eSendReceiptReplyPattern;
   }
 
-  public void setSendReceiptReplyPattern (final String sSendReceiptReplyPattern)
+  @Nullable
+  public String getSendReceiptReplyPatternID ()
   {
-    m_sSendReceiptReplyPattern = sSendReceiptReplyPattern;
+    return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
+  }
+
+  public void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
+  {
+    m_eSendReceiptReplyPattern = eSendReceiptReplyPattern;
   }
 
   public boolean isUsernameTokenDigestDefined ()
@@ -453,50 +509,6 @@ public class PModeLegSecurity
     m_eSendReceipt = eSendReceipt;
   }
 
-  public boolean isX509SignDefined ()
-  {
-    return m_eX509Sign.isDefined ();
-  }
-
-  @Nonnull
-  public boolean isX509Sign ()
-  {
-    return m_eX509Sign.getAsBooleanValue (DEFAULT_X509_SIGN);
-  }
-
-  public void setX509Sign (final boolean bX509Sign)
-  {
-    setSendReceipt (ETriState.valueOf (bX509Sign));
-  }
-
-  public void setX509Sign (@Nonnull final ETriState eX509Sign)
-  {
-    ValueEnforcer.notNull (eX509Sign, "X509Sign");
-    m_eX509Sign = eX509Sign;
-  }
-
-  public boolean isX509EncryptionEncryptDefined ()
-  {
-    return m_eX509EncryptionEncrypt.isDefined ();
-  }
-
-  @Nonnull
-  public boolean isX509EncryptionEncrypt ()
-  {
-    return m_eX509EncryptionEncrypt.getAsBooleanValue (DEFAULT_X509_SIGN);
-  }
-
-  public void setX509EncryptionEncrypt (final boolean bX509EncryptionEncrypt)
-  {
-    setSendReceipt (ETriState.valueOf (bX509EncryptionEncrypt));
-  }
-
-  public void setX509EncryptionEncrypt (@Nonnull final ETriState eX509EncryptionEncrypt)
-  {
-    ValueEnforcer.notNull (eX509EncryptionEncrypt, "X509EncryptionEncrypt");
-    m_eX509EncryptionEncrypt = eX509EncryptionEncrypt;
-  }
-
   @Override
   public boolean equals (final Object o)
   {
@@ -505,49 +517,49 @@ public class PModeLegSecurity
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegSecurity rhs = (PModeLegSecurity) o;
-    return m_aX509EncryptionEncrypt.equals (rhs.m_aX509EncryptionEncrypt) &&
+    return EqualsHelper.equals (m_aX509EncryptionEncryptElement, rhs.m_aX509EncryptionEncryptElement) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptAttachment, rhs.m_aX509EncryptionEncryptAttachment) &&
            EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
-           EqualsHelper.equals (m_aX509Sign, rhs.m_aX509Sign) &&
+           EqualsHelper.equals (m_aX509SignElement, rhs.m_aX509SignElement) &&
+           EqualsHelper.equals (m_aX509SignAttachment, rhs.m_aX509SignAttachment) &&
            EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
            EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
            EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
            EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
            EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
-           EqualsHelper.equals (m_sSendReceiptReplyPattern, rhs.m_sSendReceiptReplyPattern) &&
+           EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
            EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
            EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
-           EqualsHelper.equals (m_sWSSVersion, rhs.m_sWSSVersion) &&
-           EqualsHelper.equals (m_sX509EncryptionAlgorithm, rhs.m_sX509EncryptionAlgorithm) &&
+           EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
+           EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
            EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
-           EqualsHelper.equals (m_sX509SignatureAlgorithm, rhs.m_sX509SignatureAlgorithm) &&
+           EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
            EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
-           EqualsHelper.equals (m_sX509SignatureHashFunction, rhs.m_sX509SignatureHashFunction) &&
-           EqualsHelper.equals (m_eX509Sign, rhs.m_eX509Sign) &&
-           EqualsHelper.equals (m_eX509EncryptionEncrypt, rhs.m_eX509EncryptionEncrypt);
+           EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aX509EncryptionEncrypt)
+    return new HashCodeGenerator (this).append (m_aX509EncryptionEncryptElement)
+                                       .append (m_aX509EncryptionEncryptAttachment)
                                        .append (m_aX509EncryptionMinimumStrength)
-                                       .append (m_aX509Sign)
+                                       .append (m_aX509SignElement)
+                                       .append (m_aX509SignAttachment)
                                        .append (m_ePModeAuthorize)
                                        .append (m_eSendReceipt)
                                        .append (m_eUsernameTokenCreated)
                                        .append (m_eUsernameTokenDigest)
                                        .append (m_eUsernameTokenNonce)
-                                       .append (m_sSendReceiptReplyPattern)
+                                       .append (m_eSendReceiptReplyPattern)
                                        .append (m_sUsernameTokenPassword)
                                        .append (m_sUsernameTokenUsername)
-                                       .append (m_sWSSVersion)
-                                       .append (m_sX509EncryptionAlgorithm)
+                                       .append (m_eWSSVersion)
+                                       .append (m_eX509EncryptionAlgorithm)
                                        .append (m_sX509EncryptionCertificate)
-                                       .append (m_sX509SignatureAlgorithm)
+                                       .append (m_eX509SignatureAlgorithm)
                                        .append (m_sX509SignatureCertificate)
-                                       .append (m_sX509SignatureHashFunction)
-                                       .append (m_eX509Sign)
-                                       .append (m_eX509EncryptionEncrypt)
+                                       .append (m_eX509SignatureHashFunction)
                                        .getHashCode ();
   }
 }

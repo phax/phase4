@@ -73,12 +73,12 @@ public class ServletTestPMode
   {
     final PMode aTestPmode = getTestPMode (eSOAPVersion);
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
-    aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_11.getVersion ());
+    aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_11);
     aPModeLegSecurity.setX509SignatureCertificate ("TODO change to real cert");
-    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getID ());
-    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ());
+    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
+    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionCertificate ("TODO change to real cert");
-    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getID ());
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                                       _generatePModeLegBusinessInformation (),

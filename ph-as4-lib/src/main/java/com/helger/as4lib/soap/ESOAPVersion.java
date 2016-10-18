@@ -106,6 +106,11 @@ public enum ESOAPVersion
     return "Body";
   }
 
+  public boolean isAS4Default ()
+  {
+    return this == AS4_DEFAULT;
+  }
+
   @Nullable
   public static ESOAPVersion getFromVersionOrNull (@Nullable final String sVersion)
   {

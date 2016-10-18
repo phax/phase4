@@ -23,6 +23,11 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 
+/**
+ * Specifies the different WS Security versions available
+ * 
+ * @author bayerlma
+ */
 public enum EWSSVersion
 {
   WSS_10 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.0"),

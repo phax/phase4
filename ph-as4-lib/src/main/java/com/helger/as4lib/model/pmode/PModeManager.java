@@ -19,10 +19,11 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.as4lib.attachment.EAS4CompressionMode;
-import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -35,6 +36,8 @@ import com.helger.photon.security.object.ObjectHelper;
 
 public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (PModeManager.class);
+
   public PModeManager (@Nullable final String sFilename) throws DAOException
   {
     super (PMode.class, sFilename);
@@ -145,32 +148,32 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     return getOfID (sID);
   }
 
-  public void validatePMode (@Nonnull final IPMode aPMode)
+  public void validatePMode (@Nullable final IPMode aPMode)
   {
     // TODO FIXME XXX validatestuff
 
     if (aPMode == null)
     {
-      throw new IllegalStateException ("No PMode is null!");
+      throw new IllegalStateException ("PMode is null!");
     }
 
     // Needs ID
     if (aPMode.getID () == null)
     {
-      throw new IllegalStateException ("No PModeID present");
+      throw new IllegalStateException ("No PMode ID present");
     }
 
     // MEPBINDING only push maybe push and pull
     if (aPMode.getMEPBinding () == null)
     {
-      throw new IllegalStateException ("No MEPBinding present. (Push, Pull, Sync)");
+      throw new IllegalStateException ("No PMode MEPBinding present. (Push, Pull, Sync)");
     }
 
     // MEP ONLY ONEWAY maybe twoway
     // TODO Check on specific MEP? or allow all
     if (aPMode.getMEP () == null)
     {
-      throw new IllegalStateException ("No MEP present");
+      throw new IllegalStateException ("No PMode MEP present");
     }
 
     final PModeParty aInitiator = aPMode.getInitiator ();
@@ -179,13 +182,13 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       // INITIATOR PARTY_ID
       if (aInitiator.getIDValue () == null)
       {
-        throw new IllegalStateException ("No Initiator PartyID present");
+        throw new IllegalStateException ("No PMode Initiator ID present");
       }
 
       // INITIATOR ROLE
       if (aInitiator.getRole () == null)
       {
-        throw new IllegalStateException ("No Initiator Party Role present");
+        throw new IllegalStateException ("No PMode Initiator Role present");
       }
     }
 
@@ -195,19 +198,19 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       // RESPONDER PARTY_ID
       if (aResponder.getIDValue () == null)
       {
-        throw new IllegalStateException ("No Responder PartyID present");
+        throw new IllegalStateException ("No PMode Responder ID present");
       }
 
       // RESPONDER ROLE
       if (aResponder.getRole () == null)
       {
-        throw new IllegalStateException ("No Responder Party Role present");
+        throw new IllegalStateException ("No PMode Responder Role present");
       }
     }
 
     if (aResponder == null && aInitiator == null)
     {
-      throw new IllegalStateException ("There has to be atleast one of the following: Responder or Initiator present");
+      throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
     }
 
     final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
@@ -216,26 +219,35 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       throw new IllegalStateException ("PMode is missing Leg 1");
     }
 
-    if (aPModeLeg1.getProtocol () == null)
+    final PModeLegProtocol aLeg1Protocol = aPModeLeg1.getProtocol ();
+    if (aLeg1Protocol == null)
     {
-      throw new IllegalStateException ("PMode is missing Leg 1, Protocol is missing");
+      throw new IllegalStateException ("PMode Leg 1 is missing Protocol");
     }
 
     // PROTOCOL Address only http allowed
-    if (aPModeLeg1.getProtocol ().getAddressProtocol () == null ||
-        !aPModeLeg1.getProtocol ().getAddressProtocol ().toLowerCase ().equals ("http"))
+    final String sAddressProtocol = aLeg1Protocol.getAddressProtocol ();
+    if (sAddressProtocol == null)
     {
-      throw new IllegalStateException ("Only the address protocol 'http' is allowed");
+      throw new IllegalStateException ("PMode Leg 1 is missing AddressProtocol");
+    }
+    // Non https?
+    if (!sAddressProtocol.equalsIgnoreCase ("https"))
+    {
+      s_aLogger.warn ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol);
     }
 
-    // SOAP VERSION = 1.2 TODO AS4 Specific if we implement SOAP 1.1 Gets
-    // blocked
-    // TODO also as4 specific PModeAuthorize needs to be false
-    // if (aPMode.getLeg1 ().getProtocol ().getSOAPVersion () ==
-    // ESOAPVersion.AS4_DEFAULT)
-    // {
-    // throw new IllegalStateException ("No Responder Party Role present");
-    // }
+    // By default AS4 only allows SOAP 1.2 - since we're flexible, just emit a
+    // warning
+    final ESOAPVersion eSOAPVersion = aLeg1Protocol.getSOAPVersion ();
+    if (eSOAPVersion == null)
+    {
+      throw new IllegalStateException ("PMode Leg 1 is missing SOAPVersion");
+    }
+    if (!eSOAPVersion.isAS4Default ())
+    {
+      s_aLogger.warn ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ());
+    }
 
     // BUSINESS INFO SERVICE
 
@@ -251,8 +263,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
         {
           // set response required
 
-          if (aPModeLegSecurity.getSendReceiptReplyPattern () == null ||
-              !aPModeLegSecurity.getSendReceiptReplyPattern ().toLowerCase ().equals ("response"))
+          if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
           {
             throw new IllegalStateException ("Only response is allowed as pattern");
           }
@@ -277,27 +288,24 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       {
         throw new IllegalStateException ("No signature algorithm is specified but is required");
       }
-      ECryptoAlgorithmSign.getFromIDOrThrow (aPModeLegSecurity.getX509SignatureAlgorithm ());
 
       // Check Hash Function
       if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
       {
         throw new IllegalStateException ("No hash function (Digest Algorithm) is specified but is required");
       }
-      ECryptoAlgorithmSignDigest.getFromIDOrThrow (aPModeLegSecurity.getX509SignatureHashFunction ());
 
       // Check Encrypt algorithm
       if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
       {
         throw new IllegalStateException ("No encryption algorithm is specified but is required");
       }
-      ECryptoAlgorithmCrypt.getFromIDOrThrow (aPModeLegSecurity.getX509EncryptionAlgorithm ());
 
       // Check WSS Version = 1.1.1
       if (aPModeLegSecurity.getWSSVersion () != null)
       {
         // Check for WSS - Version if there is one present
-        if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_11.getVersion ()))
+        if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_11))
           throw new IllegalStateException ("No WSS Version is defined but required");
       }
     }

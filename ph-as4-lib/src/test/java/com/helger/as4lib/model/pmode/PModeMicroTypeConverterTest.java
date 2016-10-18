@@ -23,9 +23,13 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4lib.AS4TestRule;
+import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
@@ -175,14 +179,16 @@ public final class PModeMicroTypeConverterTest
     final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",
                                                                                  "X509EncryptionEncrypt2");
     final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign", "X509Sign2");
-    return new PModeLegSecurity ("wssversion",
+    return new PModeLegSecurity (EWSSVersion.WSS_11,
+                                 aX509Sign,
                                  aX509Sign,
                                  "X509SignatureCertificate",
-                                 "X509SignatureHashFunction",
-                                 "X509SignatureAlgorithm",
+                                 ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT,
+                                 ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                 aX509EncryptionEncrypt,
                                  aX509EncryptionEncrypt,
                                  "X509EncryptionCertificate",
-                                 "X509EncryptionAlgorithm",
+                                 ECryptoAlgorithmCrypt.AES_128_GCM,
                                  1,
                                  "usernametokenusername",
                                  "usernametokenpassword",
@@ -191,8 +197,6 @@ public final class PModeMicroTypeConverterTest
                                  ETriState.TRUE,
                                  ETriState.TRUE,
                                  ETriState.TRUE,
-                                 "replyPattern",
-                                 ETriState.TRUE,
-                                 ETriState.TRUE);
+                                 EPModeSendReceiptReplyPattern.RESPONSE);
   }
 }

@@ -16,9 +16,14 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.StringHelper;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.util.MicroHelper;
@@ -26,11 +31,13 @@ import com.helger.xml.microdom.util.MicroHelper;
 public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeConverter
 {
   private static final String ATTR_WSS_VERSION = "WSSVersion";
-  private static final String ELEMENT_X509_SIGN = "X509Sign";
+  private static final String ELEMENT_X509_SIGN_ELEMENT = "X509SignElement";
+  private static final String ELEMENT_X509_SIGN_ATTACHMENT = "X509SignAttachment";
   private static final String ELEMENT_X509_SIGNATURE_CERTIFICATE = "X509SignatureCertificate";
   private static final String ATTR_X509_SIGNATURE_HASH_FUNCTION = "X509SignatureHashFunction";
   private static final String ATTR_X509_SIGNATURE_ALGORITHM = "X509SignatureAlgorithm";
-  private static final String ELEMENT_X509_ENCRYPTION_ENCRYPT = "X509EncryptionEncrypt";
+  private static final String ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT = "X509EncryptionEncryptElement";
+  private static final String ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT = "X509EncryptionEncryptAttachment";
   private static final String ELEMENT_X509_ENCRYPTION_CERTIFICATE = "X509EncryptionCertificate";
   private static final String ATTR_X509_ENCRYPTION_ALGORITHM = "X509EncryptionAlgorithm";
   private static final String ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH = "X509EncryptionMinimumStrength";
@@ -42,30 +49,38 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final String ATTR_PMODE_AUTHORIZE = "PModeAuthorize";
   private static final String ATTR_SEND_RECEIPT = "SendReceipt";
   private static final String ATTR_SEND_RECEIPT_REPLY_PATTERN = "SendReceiptReplyPattern";
-  private static final String ATTR_X509_SIGN = "X509Sign";
-  private static final String ATTR_X509_ENCRYPTION_ENCRYPT = "X509EncryptionEncrypt";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
     final PModeLegSecurity aValue = (PModeLegSecurity) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
-    ret.setAttribute (ATTR_WSS_VERSION, aValue.getWSSVersion ());
-    for (final String sSign : aValue.getX509Sign ())
+    ret.setAttribute (ATTR_WSS_VERSION, aValue.getWSSVersionAsString ());
+    for (final String sSign : aValue.getX509SignElement ())
     {
-      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN).appendText (sSign);
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN_ELEMENT).appendText (sSign);
     }
-    ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGNATURE_CERTIFICATE)
-       .appendText (aValue.getX509SignatureCertificate ());
-    ret.setAttribute (ATTR_X509_SIGNATURE_HASH_FUNCTION, aValue.getX509SignatureHashFunction ());
-    ret.setAttribute (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithm ());
-    for (final String sEncrypt : aValue.getX509EncryptionEncrypt ())
+    for (final String sSign : aValue.getX509SignAttachment ())
     {
-      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT).appendText (sEncrypt);
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN_ATTACHMENT).appendText (sSign);
     }
-    ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_CERTIFICATE)
-       .appendText (aValue.getX509EncryptionCertificate ());
-    ret.setAttribute (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithm ());
+    if (StringHelper.hasText (aValue.getX509SignatureCertificate ()))
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGNATURE_CERTIFICATE)
+         .appendText (aValue.getX509SignatureCertificate ());
+    ret.setAttribute (ATTR_X509_SIGNATURE_HASH_FUNCTION, aValue.getX509SignatureHashFunctionID ());
+    ret.setAttribute (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithmID ());
+    for (final String sEncrypt : aValue.getX509EncryptionEncryptElement ())
+    {
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT).appendText (sEncrypt);
+    }
+    for (final String sEncrypt : aValue.getX509EncryptionEncryptAttachment ())
+    {
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT).appendText (sEncrypt);
+    }
+    if (StringHelper.hasText (aValue.getX509EncryptionCertificate ()))
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_CERTIFICATE)
+         .appendText (aValue.getX509EncryptionCertificate ());
+    ret.setAttribute (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithmID ());
     if (aValue.hasX509EncryptionMinimumStrength ())
       ret.setAttribute (ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH, aValue.getX509EncryptionMinimumStrength ().intValue ());
     ret.setAttribute (ATTR_USERNAME_TOKEN_USERNAME, aValue.getUsernameTokenUsername ());
@@ -80,34 +95,64 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       ret.setAttribute (ATTR_PMODE_AUTHORIZE, aValue.isPModeAuthorize ());
     if (aValue.isSendReceiptDefined ())
       ret.setAttribute (ATTR_SEND_RECEIPT, aValue.isSendReceipt ());
-    ret.setAttribute (ATTR_SEND_RECEIPT_REPLY_PATTERN, aValue.getSendReceiptReplyPattern ());
-    if (aValue.isX509SignDefined ())
-      ret.setAttribute (ATTR_X509_SIGN, aValue.isX509Sign ());
-    if (aValue.isX509EncryptionEncryptDefined ())
-      ret.setAttribute (ATTR_X509_ENCRYPTION_ENCRYPT, aValue.isX509EncryptionEncrypt ());
+    ret.setAttribute (ATTR_SEND_RECEIPT_REPLY_PATTERN, aValue.getSendReceiptReplyPatternID ());
     return ret;
   }
 
   public Object convertToNative (final IMicroElement aElement)
   {
     final String sWSSVersion = aElement.getAttributeValue (ATTR_WSS_VERSION);
-    final ICommonsList <String> aX509SignStrings = new CommonsArrayList<> ();
-    for (final IMicroElement aSignElement : aElement.getAllChildElements (ELEMENT_X509_SIGN))
+    final EWSSVersion eWSSVersion = EWSSVersion.getFromVersionOrNull (sWSSVersion);
+    if (eWSSVersion == null && sWSSVersion != null)
     {
-      aX509SignStrings.add (aSignElement.getTextContentTrimmed ());
+      throw new IllegalStateException ("Invalid WSS version '" + sWSSVersion + "'");
+    }
+
+    final ICommonsList <String> aX509SignElement = new CommonsArrayList<> ();
+    for (final IMicroElement aSignElement : aElement.getAllChildElements (ELEMENT_X509_SIGN_ELEMENT))
+    {
+      aX509SignElement.add (aSignElement.getTextContentTrimmed ());
+    }
+    final ICommonsList <String> aX509SignAttachment = new CommonsArrayList<> ();
+    for (final IMicroElement aSignElement : aElement.getAllChildElements (ELEMENT_X509_SIGN_ATTACHMENT))
+    {
+      aX509SignAttachment.add (aSignElement.getTextContentTrimmed ());
     }
     final String sX509SignatureCertificate = MicroHelper.getChildTextContentTrimmed (aElement,
                                                                                      ELEMENT_X509_SIGNATURE_CERTIFICATE);
     final String sX509SignatureHashFunction = aElement.getAttributeValue (ATTR_X509_SIGNATURE_HASH_FUNCTION);
-    final String sX509SignatureAlgorithm = aElement.getAttributeValue (ATTR_X509_SIGNATURE_ALGORITHM);
-    final ICommonsList <String> aX509EncryptionEncryptStrings = new CommonsArrayList<> ();
-    for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_X509_ENCRYPTION_ENCRYPT))
+    final ECryptoAlgorithmSignDigest eX509SignatureHashFunction = ECryptoAlgorithmSignDigest.getFromIDOrNull (sX509SignatureHashFunction);
+    if (eX509SignatureHashFunction == null && sX509SignatureHashFunction != null)
     {
-      aX509EncryptionEncryptStrings.add (aEncryptElement.getTextContentTrimmed ());
+      throw new IllegalStateException ("Invalid signature hash function '" + sX509SignatureHashFunction + "'");
+    }
+
+    final String sX509SignatureAlgorithm = aElement.getAttributeValue (ATTR_X509_SIGNATURE_ALGORITHM);
+    final ECryptoAlgorithmSign eX509SignatureAlgorithm = ECryptoAlgorithmSign.getFromIDOrNull (sX509SignatureAlgorithm);
+    if (eX509SignatureAlgorithm == null && sX509SignatureAlgorithm != null)
+    {
+      throw new IllegalStateException ("Invalid signature algorithm '" + sX509SignatureAlgorithm + "'");
+    }
+
+    final ICommonsList <String> aX509EncryptionEncryptElement = new CommonsArrayList<> ();
+    for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT))
+    {
+      aX509EncryptionEncryptElement.add (aEncryptElement.getTextContentTrimmed ());
+    }
+    final ICommonsList <String> aX509EncryptionEncryptAttachment = new CommonsArrayList<> ();
+    for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT))
+    {
+      aX509EncryptionEncryptAttachment.add (aEncryptElement.getTextContentTrimmed ());
     }
     final String sX509EncryptionCertificate = MicroHelper.getChildTextContentTrimmed (aElement,
                                                                                       ELEMENT_X509_ENCRYPTION_CERTIFICATE);
     final String sX509EncryptionAlgorithm = aElement.getAttributeValue (ATTR_X509_ENCRYPTION_ALGORITHM);
+    final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm = ECryptoAlgorithmCrypt.getFromIDOrNull (sX509EncryptionAlgorithm);
+    if (eX509EncryptionAlgorithm == null && sX509EncryptionAlgorithm != null)
+    {
+      throw new IllegalStateException ("Invalid encrypt algorithm '" + sX509EncryptionAlgorithm + "'");
+    }
+
     final Integer aX509EncryptionMinimumStrength = aElement.getAttributeValueWithConversion (ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH,
                                                                                              Integer.class);
     final String sUsernameTokenUsername = aElement.getAttributeValue (ATTR_USERNAME_TOKEN_USERNAME);
@@ -123,18 +168,22 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     final ETriState eSendReceipt = getTriState (aElement.getAttributeValue (ATTR_SEND_RECEIPT),
                                                 PModeLegSecurity.DEFAULT_SEND_RECEIPT);
     final String sSendReceiptReplyPattern = aElement.getAttributeValue (ATTR_SEND_RECEIPT_REPLY_PATTERN);
-    final ETriState eX509Sign = getTriState (aElement.getAttributeValue (ATTR_X509_SIGN),
-                                             PModeLegSecurity.DEFAULT_X509_SIGN);
-    final ETriState eX509EncryptionEncrypt = getTriState (aElement.getAttributeValue (ATTR_X509_ENCRYPTION_ENCRYPT),
-                                                          PModeLegSecurity.DEFAULT_X509_ENCRYPTION_ENCRYPT);
-    return new PModeLegSecurity (sWSSVersion,
-                                 aX509SignStrings,
+    final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern = EPModeSendReceiptReplyPattern.getFromIDOrNull (sSendReceiptReplyPattern);
+    if (eSendReceiptReplyPattern == null && sSendReceiptReplyPattern != null)
+    {
+      throw new IllegalStateException ("Invalid SendReceipt ReplyPattern version '" + sSendReceiptReplyPattern + "'");
+    }
+
+    return new PModeLegSecurity (eWSSVersion,
+                                 aX509SignElement,
+                                 aX509SignAttachment,
                                  sX509SignatureCertificate,
-                                 sX509SignatureHashFunction,
-                                 sX509SignatureAlgorithm,
-                                 aX509EncryptionEncryptStrings,
+                                 eX509SignatureHashFunction,
+                                 eX509SignatureAlgorithm,
+                                 aX509EncryptionEncryptElement,
+                                 aX509EncryptionEncryptAttachment,
                                  sX509EncryptionCertificate,
-                                 sX509EncryptionAlgorithm,
+                                 eX509EncryptionAlgorithm,
                                  aX509EncryptionMinimumStrength,
                                  sUsernameTokenUsername,
                                  sUsernameTokenPassword,
@@ -143,9 +192,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
                                  eUsernameTokenCreated,
                                  ePModeAuthorize,
                                  eSendReceipt,
-                                 sSendReceiptReplyPattern,
-                                 eX509Sign,
-                                 eX509EncryptionEncrypt);
+                                 eSendReceiptReplyPattern);
   }
 
 }
