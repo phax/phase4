@@ -179,7 +179,7 @@ public final class PModeMicroTypeConverterTest
     final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",
                                                                                  "X509EncryptionEncrypt2");
     final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign", "X509Sign2");
-    return new PModeLegSecurity (EWSSVersion.WSS_11,
+    return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,
                                  aX509Sign,
                                  "X509SignatureCertificate",

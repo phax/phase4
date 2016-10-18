@@ -22,9 +22,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4lib.attachment.EAS4CompressionMode;
-import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -169,8 +166,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       throw new IllegalStateException ("No PMode MEPBinding present. (Push, Pull, Sync)");
     }
 
-    // MEP ONLY ONEWAY maybe twoway
-    // TODO Check on specific MEP? or allow all
+    // Checking MEP all are allowed
     if (aPMode.getMEP () == null)
     {
       throw new IllegalStateException ("No PMode MEP present");
@@ -211,148 +207,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     if (aResponder == null && aInitiator == null)
     {
       throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
-    }
-
-    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
-    if (aPModeLeg1 == null)
-    {
-      throw new IllegalStateException ("PMode is missing Leg 1");
-    }
-
-    final PModeLegProtocol aLeg1Protocol = aPModeLeg1.getProtocol ();
-    if (aLeg1Protocol == null)
-    {
-      throw new IllegalStateException ("PMode Leg 1 is missing Protocol");
-    }
-
-    // PROTOCOL Address only http allowed
-    final String sAddressProtocol = aLeg1Protocol.getAddressProtocol ();
-    if (sAddressProtocol == null)
-    {
-      throw new IllegalStateException ("PMode Leg 1 is missing AddressProtocol");
-    }
-    // Non https?
-    if (!sAddressProtocol.equalsIgnoreCase ("https"))
-    {
-      s_aLogger.warn ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol);
-    }
-
-    // By default AS4 only allows SOAP 1.2 - since we're flexible, just emit a
-    // warning
-    final ESOAPVersion eSOAPVersion = aLeg1Protocol.getSOAPVersion ();
-    if (eSOAPVersion == null)
-    {
-      throw new IllegalStateException ("PMode Leg 1 is missing SOAPVersion");
-    }
-    if (!eSOAPVersion.isAS4Default ())
-    {
-      s_aLogger.warn ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ());
-    }
-
-    // BUSINESS INFO SERVICE
-
-    // BUSINESS INFO ACTION
-
-    // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
-    final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
-    if (aPModeLegSecurity != null)
-    {
-      if (aPModeLegSecurity.isSendReceiptDefined ())
-      {
-        if (aPModeLegSecurity.isSendReceipt ())
-        {
-          // set response required
-
-          if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
-          {
-            throw new IllegalStateException ("Only response is allowed as pattern");
-          }
-
-          // Send NonRepudiation => Only activate able when Send Receipt true
-          // and
-          // only when Sign on True and Message Signed
-
-        }
-      }
-
-      // TODO XXX Ask Philipp should it be allowed that a pmode has no
-      // WSSecurity
-      // Check Certificate
-      if (aPModeLegSecurity.getX509SignatureCertificate () == null)
-      {
-        throw new IllegalStateException ("A signature certificate is required");
-      }
-
-      // Check Signature Algorithm
-      if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
-      {
-        throw new IllegalStateException ("No signature algorithm is specified but is required");
-      }
-
-      // Check Hash Function
-      if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
-      {
-        throw new IllegalStateException ("No hash function (Digest Algorithm) is specified but is required");
-      }
-
-      // Check Encrypt algorithm
-      if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
-      {
-        throw new IllegalStateException ("No encryption algorithm is specified but is required");
-      }
-
-      // Check WSS Version = 1.1.1
-      if (aPModeLegSecurity.getWSSVersion () != null)
-      {
-        // Check for WSS - Version if there is one present
-        if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_11))
-          throw new IllegalStateException ("No WSS Version is defined but required");
-      }
-    }
-
-    // Error Handling
-    final PModeLegErrorHandling aErrorHandling = aPModeLeg1.getErrorHandling ();
-    if (aErrorHandling != null)
-    {
-      if (aErrorHandling.isReportAsResponseDefined ())
-        if (aErrorHandling.isReportAsResponse ())
-        {
-          // TODO AS4 Profile says true
-        }
-      if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
-        if (aErrorHandling.isReportProcessErrorNotifyConsumer ())
-        {
-          // TODO AS4 Profile says true
-        }
-      if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
-        if (aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-        {
-          // TODO AS4 Profile says true
-        }
-    }
-    else
-    {
-      // Disable Error Responses
-    }
-
-    // Compression application/gzip ONLY // other possible states are absent or
-    // "" (No input)
-    final PModePayloadService aPayloadService = aPMode.getPayloadService ();
-    if (aPayloadService != null)
-    {
-      final EAS4CompressionMode aCompressionMode = aPayloadService.getCompressionMode ();
-      if (aCompressionMode != null)
-      {
-        if (!aCompressionMode.equals (""))
-        {
-          if (!aCompressionMode.equals (EAS4CompressionMode.GZIP))
-            throw new IllegalStateException ("Only GZIP Compression is allowed");
-        }
-      }
-    }
-    else
-    {
-      // TODO no compression allowed
     }
   }
 

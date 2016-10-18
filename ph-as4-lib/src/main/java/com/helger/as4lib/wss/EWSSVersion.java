@@ -25,13 +25,16 @@ import com.helger.commons.string.StringHelper;
 
 /**
  * Specifies the different WS Security versions available
- * 
+ *
  * @author bayerlma
  */
 public enum EWSSVersion
 {
+  @Deprecated
   WSS_10 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.0"),
-  WSS_11 ("http://docs.oasis-open.org/wss/2005/xx/oasis-2005xx-wss-wssecurity-secext-1.1.xsd", "wsse11", "1.1");
+  @Deprecated
+  WSS_11 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1"),
+  WSS_111 ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "wsse", "1.1.1");
 
   private final String m_sNamespaceURI;
   private final String m_sNamespacePrefix;

@@ -186,7 +186,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                           aErrorList);
 
           final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
-
+          // TODO Use AS4 Esens profile if appropiate
           // TODO change Locale to dynamic
           aErrorList.forEach (error -> aErrorMessages.add (EEbmsError.getFromErrorCodeOrNull (error.getErrorID ())
                                                                      .getAsEbms3Error (Locale.US)));

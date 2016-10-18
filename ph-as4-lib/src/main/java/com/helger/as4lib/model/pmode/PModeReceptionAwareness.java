@@ -3,41 +3,39 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.ETriState;
 
 public class PModeReceptionAwareness
 {
-
   public static final boolean DEFAULT_RECEPTION_AWARENESS = true;
   public static final boolean DEFAULT_RETRY = true;
   public static final boolean DEFAULT_DUPLICATE_DETECTION = true;
 
-  private ETriState m_bReceptionAwareness;
+  private ETriState m_eReceptionAwareness;
 
-  private ETriState m_bRetry;
+  private ETriState m_eRetry;
 
-  private ETriState m_bDuplicateDetection;
+  private ETriState m_eDuplicateDetection;
 
-  public PModeReceptionAwareness (@Nonnull final ETriState bReceptionAwareness,
-                                  @Nonnull final ETriState bRetry,
-                                  @Nonnull final ETriState bDuplicateDetection)
+  public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
+                                  @Nonnull final ETriState eRetry,
+                                  @Nonnull final ETriState eDuplicateDetection)
   {
-    m_bReceptionAwareness = bReceptionAwareness;
-    m_bRetry = bRetry;
-    m_bDuplicateDetection = bDuplicateDetection;
+    setReceptionAwareness (eReceptionAwareness);
+    setRetry (eRetry);
+    setDuplicateDetection (eDuplicateDetection);
   }
 
   public boolean isReceptionAwarenessDefined ()
   {
-    return m_bReceptionAwareness.isDefined ();
+    return m_eReceptionAwareness.isDefined ();
   }
 
   @Nonnull
   public boolean isReceptionAwareness ()
   {
-    return m_bReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
+    return m_eReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
   }
 
   public void setReceptionAwareness (final boolean bReceptionAwareness)
@@ -48,18 +46,18 @@ public class PModeReceptionAwareness
   public void setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
   {
     ValueEnforcer.notNull (eReceptionAwareness, "ReceptionAwareness");
-    m_bReceptionAwareness = eReceptionAwareness;
+    m_eReceptionAwareness = eReceptionAwareness;
   }
 
   public boolean isRetryDefined ()
   {
-    return m_bRetry.isDefined ();
+    return m_eRetry.isDefined ();
   }
 
   @Nonnull
   public boolean isRetry ()
   {
-    return m_bRetry.getAsBooleanValue (DEFAULT_RETRY);
+    return m_eRetry.getAsBooleanValue (DEFAULT_RETRY);
   }
 
   public void setRetry (final boolean bRetry)
@@ -70,18 +68,18 @@ public class PModeReceptionAwareness
   public void setRetry (@Nonnull final ETriState eRetry)
   {
     ValueEnforcer.notNull (eRetry, "Retry");
-    m_bRetry = eRetry;
+    m_eRetry = eRetry;
   }
 
   public boolean isDuplicateDetectionDefined ()
   {
-    return m_bDuplicateDetection.isDefined ();
+    return m_eDuplicateDetection.isDefined ();
   }
 
   @Nonnull
   public boolean isDuplicateDetection ()
   {
-    return m_bDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
+    return m_eDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
   }
 
   public void setDuplicateDetection (final boolean bDuplicateDetection)
@@ -92,7 +90,7 @@ public class PModeReceptionAwareness
   public void setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
   {
     ValueEnforcer.notNull (eDuplicateDetection, "DuplicateDetection");
-    m_bDuplicateDetection = eDuplicateDetection;
+    m_eDuplicateDetection = eDuplicateDetection;
   }
 
   @Override
@@ -103,17 +101,17 @@ public class PModeReceptionAwareness
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeReceptionAwareness rhs = (PModeReceptionAwareness) o;
-    return m_bReceptionAwareness.equals (rhs.m_bReceptionAwareness) &&
-           EqualsHelper.equals (m_bRetry, rhs.m_bRetry) &&
-           EqualsHelper.equals (m_bDuplicateDetection, rhs.m_bDuplicateDetection);
+    return m_eReceptionAwareness.equals (rhs.m_eReceptionAwareness) &&
+           m_eRetry.equals (rhs.m_eRetry) &&
+           m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_bReceptionAwareness)
-                                       .append (m_bRetry)
-                                       .append (m_bDuplicateDetection)
+    return new HashCodeGenerator (this).append (m_eReceptionAwareness)
+                                       .append (m_eRetry)
+                                       .append (m_eDuplicateDetection)
                                        .getHashCode ();
   }
 }
