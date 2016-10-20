@@ -1,4 +1,4 @@
-package com.helger.as4lib.model;
+package com.helger.as4server.profile;
 
 import javax.annotation.Nonnull;
 
@@ -9,13 +9,17 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.EMEP;
+import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
-import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeLegSecurity;
 import com.helger.as4lib.model.pmode.PModePayloadService;
+import com.helger.as4lib.model.profile.IAS4ProfileValidator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
@@ -28,11 +32,11 @@ import com.helger.commons.error.list.ErrorList;
  *
  * @author bayerlma
  */
-public class ESENSCompatibilityValidator
+public class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
 
-  private ESENSCompatibilityValidator ()
+  public ESENSCompatibilityValidator ()
   {}
 
   @Nonnull
@@ -41,17 +45,18 @@ public class ESENSCompatibilityValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  public static void validatePMode (@Nonnull final PMode aPMode, @Nonnull final ErrorList aErrorList)
+  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
+    assert MetaAS4Manager.getPModeMgr ().validatePMode (aPMode).isSuccess ();
 
     if (!aPMode.getMEP ().equals (EMEP.ONE_WAY) || aPMode.getMEP ().equals (EMEP.TWO_WAY))
     {
       aErrorList.add (_createError ("A non valid PMode MEP was specified, valid or only one-way and two-way."));
     }
 
-    if (!aPMode.getMEPBinding ().equals (ETransportChannelBinding.PULL) ||
-        aPMode.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
+    if (!aPMode.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
+        !aPMode.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
     {
       aErrorList.add (_createError ("A non valid PMode MEP-Binding was specified, valid or only one-way and two-way."));
     }
@@ -83,8 +88,6 @@ public class ESENSCompatibilityValidator
             aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
           }
 
-        // By default AS4 only allows SOAP 1.2 - since we're flexible, just emit
-        // a warning
         final ESOAPVersion eSOAPVersion = aLeg1Protocol.getSOAPVersion ();
         if (eSOAPVersion == null)
         {
@@ -232,27 +235,24 @@ public class ESENSCompatibilityValidator
     }
     else
     {
-      // Disable Error Responses
+      aErrorList.add (_createError ("No ErrorHandling Parameter present but they are mandatory"));
     }
 
-    // Compression application/gzip ONLY // other possible states are absent or
-    // "" (No input)
+    // Compression application/gzip ONLY
+    // other possible states are absent or "" (No input)
     final PModePayloadService aPayloadService = aPMode.getPayloadService ();
     if (aPayloadService != null)
     {
-      final EAS4CompressionMode aCompressionMode = aPayloadService.getCompressionMode ();
-      if (aCompressionMode != null)
+      final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
+      if (eCompressionMode != null)
       {
-        if (!aCompressionMode.equals (""))
-        {
-          if (!aCompressionMode.equals (EAS4CompressionMode.GZIP))
-            aErrorList.add (_createError ("Only GZIP Compression is allowed"));
-        }
+        if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
+          aErrorList.add (_createError ("Only GZIP Compression is allowed"));
       }
     }
     else
     {
-      // TODO no compression allowed
+      // TODO no compression allowed in the implementation
     }
   }
 }

@@ -26,6 +26,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.EChange;
+import com.helger.commons.state.ESuccess;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
@@ -145,7 +146,8 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     return getOfID (sID);
   }
 
-  public void validatePMode (@Nullable final IPMode aPMode)
+  @Nonnull
+  public ESuccess validatePMode (@Nullable final IPMode aPMode)
   {
     // TODO FIXME XXX validatestuff
 
@@ -208,6 +210,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     {
       throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
     }
+    return ESuccess.SUCCESS;
   }
 
   public void validateAllPModes ()
