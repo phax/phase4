@@ -2,9 +2,6 @@ package com.helger.as4server.profile;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
@@ -34,8 +31,6 @@ import com.helger.commons.error.list.ErrorList;
  */
 public class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
-
   public ESENSCompatibilityValidator ()
   {}
 
