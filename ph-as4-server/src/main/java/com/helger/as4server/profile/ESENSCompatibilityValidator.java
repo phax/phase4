@@ -100,159 +100,166 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
                                           eSOAPVersion.getVersion ()));
           }
       }
-    }
 
-    // BUSINESS INFO SERVICE
+      // BUSINESS INFO SERVICE
 
-    // BUSINESS INFO ACTION
+      // BUSINESS INFO ACTION
 
-    // Only check the security features if a Security Leg is currently present
-    final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
-    if (aPModeLegSecurity != null)
-    {
-
-      // Check Certificate
-      if (aPModeLegSecurity.getX509SignatureCertificate () == null)
+      // Only check the security features if a Security Leg is currently present
+      final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
+      if (aPModeLegSecurity != null)
       {
-        aErrorList.add (_createError ("A signature certificate is required"));
-      }
 
-      // Check Signature Algorithm
-      if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
-      {
-        aErrorList.add (_createError ("No signature algorithm is specified but is required"));
-      }
-      else
-        if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT))
+        // Check Certificate
+        if (aPModeLegSecurity.getX509SignatureCertificate () == null)
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
-                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID () +
-                                        "as signing algorithm"));
-        }
-      // Check Hash Function
-      if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
-      {
-        aErrorList.add (_createError ("No hash function (Digest Algorithm) is specified but is required"));
-      }
-      else
-        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ()
-                              .equals (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT))
-        {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
-                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID () +
-                                        "as hash function"));
-        }
-      // Check Encrypt algorithm
-      if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
-      {
-        aErrorList.add (_createError ("No encryption algorithm is specified but is required"));
-      }
-      else
-        if (!aPModeLegSecurity.getX509EncryptionAlgorithm ()
-                              .equals (ECryptoAlgorithmCrypt.SIGN_DIGEST_ALGORITHM_DEFAULT))
-        {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
-                                        ECryptoAlgorithmCrypt.SIGN_DIGEST_ALGORITHM_DEFAULT.getID () +
-                                        "as encryption algorithm"));
+          aErrorList.add (_createError ("A signature certificate is required"));
         }
 
-      // Check WSS Version = 1.1.1
-      if (aPModeLegSecurity.getWSSVersion () != null)
-      {
-        // Check for WSS - Version if there is one present
-        if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_111))
-          aErrorList.add (_createError ("No WSS Version is defined but required"));
-      }
-      // PModeAuthorize
-
-      if (aPModeLegSecurity.isPModeAuthorizeDefined ())
-      {
-        if (!aPModeLegSecurity.isPModeAuthorize ())
+        // Check Signature Algorithm
+        if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
         {
-          aErrorList.add (_createError ("PMode Authorize has to be set to false"));
+          aErrorList.add (_createError ("No signature algorithm is specified but is required"));
         }
-      }
-      else
-      {
-        aErrorList.add (_createError ("PMode Authorize is a mandatory parameter"));
-      }
-      // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
-      if (aPModeLegSecurity.isSendReceiptDefined ())
-      {
-        if (aPModeLegSecurity.isSendReceipt ())
-        {
-          // set response required
-
-          if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
+        else
+          if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT))
           {
-            aErrorList.add (_createError ("Only response is allowed as pattern"));
+            aErrorList.add (_createError ("AS4 Profile only allows " +
+                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID () +
+                                          "as signing algorithm"));
           }
 
-          // TODO Send NonRepudiation => Only activate able when Send Receipt
-          // true and only when Sign on True and Message Signed
-          // Needs to interact with the implementation
+        // Check Hash Function
+        if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
+        {
+          aErrorList.add (_createError ("No hash function (Digest Algorithm) is specified but is required"));
         }
-      }
-    }
+        else
+          if (!aPModeLegSecurity.getX509SignatureHashFunction ()
+                                .equals (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT))
+          {
+            aErrorList.add (_createError ("AS4 Profile only allows " +
+                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID () +
+                                          "as hash function"));
+          }
 
-    // Error Handling
-    final PModeLegErrorHandling aErrorHandling = aPModeLeg1.getErrorHandling ();
-    if (aErrorHandling != null)
-    {
-      if (aErrorHandling.isReportAsResponseDefined ())
-      {
-        if (!aErrorHandling.isReportAsResponse ())
+        // Check Encrypt algorithm
+        if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
         {
-          aErrorList.add (_createError ("PMode ReportAsResponse has to be True"));
+          aErrorList.add (_createError ("No encryption algorithm is specified but is required"));
         }
-      }
-      else
-      {
-        aErrorList.add (_createError ("ReportAsResponse is a mandatory PMode parameter"));
-      }
-      if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
-      {
-        if (aErrorHandling.isReportProcessErrorNotifyConsumer ())
-        {
-          aErrorList.add (_createError ("PMode ReportProcessErrorNotifyConsumer has to be True"));
-        }
-      }
-      else
-      {
-        aErrorList.add (_createError ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter"));
-      }
-      if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
-      {
-        if (aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-        {
-          aErrorList.add (_createError ("PMode ReportDeliveryFailuresNotifyProducer has to be True"));
-        }
-      }
-      else
-      {
-        aErrorList.add (_createError ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter"));
-      }
-    }
-    else
-    {
-      aErrorList.add (_createError ("No ErrorHandling Parameter present but they are mandatory"));
-    }
+        else
+          if (!aPModeLegSecurity.getX509EncryptionAlgorithm ()
+                                .equals (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT))
+          {
+            aErrorList.add (_createError ("AS4 Profile only allows " +
+                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID () +
+                                          "as encryption algorithm"));
+          }
 
-    // Compression application/gzip ONLY
-    // other possible states are absent or "" (No input)
-    final PModePayloadService aPayloadService = aPMode.getPayloadService ();
-    if (aPayloadService != null)
-    {
-      final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
-      if (eCompressionMode != null)
-      {
-        if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
-          aErrorList.add (_createError ("Only GZIP Compression is allowed"));
+        // Check WSS Version = 1.1.1
+        if (aPModeLegSecurity.getWSSVersion () != null)
+        {
+          // Check for WSS - Version if there is one present
+          if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_111))
+            aErrorList.add (_createError ("Wrong WSS Version " +
+                                          aPModeLegSecurity.getWSSVersion () +
+                                          " only " +
+                                          EWSSVersion.WSS_111 +
+                                          " is allowed."));
+        }
+
+        // PModeAuthorize
+        if (aPModeLegSecurity.isPModeAuthorizeDefined ())
+        {
+          if (!aPModeLegSecurity.isPModeAuthorize ())
+          {
+            aErrorList.add (_createError ("PMode Authorize has to be set to false"));
+          }
+        }
+        else
+        {
+          aErrorList.add (_createError ("PMode Authorize is a mandatory parameter"));
+        }
+
+        // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
+        if (aPModeLegSecurity.isSendReceiptDefined ())
+        {
+          if (aPModeLegSecurity.isSendReceipt ())
+          {
+            // set response required
+
+            if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
+            {
+              aErrorList.add (_createError ("Only response is allowed as pattern"));
+            }
+
+            // TODO Send NonRepudiation => Only activate able when Send Receipt
+            // true and only when Sign on True and Message Signed
+            // Needs to interact with the implementation
+          }
+        }
       }
-    }
-    else
-    {
-      // TODO no compression allowed in the implementation
+
+      // Error Handling
+      final PModeLegErrorHandling aErrorHandling = aPModeLeg1.getErrorHandling ();
+      if (aErrorHandling != null)
+      {
+        if (aErrorHandling.isReportAsResponseDefined ())
+        {
+          if (!aErrorHandling.isReportAsResponse ())
+          {
+            aErrorList.add (_createError ("PMode ReportAsResponse has to be True"));
+          }
+        }
+        else
+        {
+          aErrorList.add (_createError ("ReportAsResponse is a mandatory PMode parameter"));
+        }
+        if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
+        {
+          if (aErrorHandling.isReportProcessErrorNotifyConsumer ())
+          {
+            aErrorList.add (_createError ("PMode ReportProcessErrorNotifyConsumer has to be True"));
+          }
+        }
+        else
+        {
+          aErrorList.add (_createError ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter"));
+        }
+        if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
+        {
+          if (aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
+          {
+            aErrorList.add (_createError ("PMode ReportDeliveryFailuresNotifyProducer has to be True"));
+          }
+        }
+        else
+        {
+          aErrorList.add (_createError ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter"));
+        }
+      }
+      else
+      {
+        aErrorList.add (_createError ("No ErrorHandling Parameter present but they are mandatory"));
+      }
+
+      // Compression application/gzip ONLY
+      // other possible states are absent or "" (No input)
+      final PModePayloadService aPayloadService = aPMode.getPayloadService ();
+      if (aPayloadService != null)
+      {
+        final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
+        if (eCompressionMode != null)
+        {
+          if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
+            aErrorList.add (_createError ("Only GZIP Compression is allowed"));
+        }
+      }
+      else
+      {
+        // TODO no compression allowed in the implementation
+      }
     }
   }
 }
