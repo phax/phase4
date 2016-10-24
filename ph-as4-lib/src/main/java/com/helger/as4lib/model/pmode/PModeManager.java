@@ -50,6 +50,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       internalCreateItem (aPMode);
     });
     AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
+    s_aLogger.info ("Created PMode with ID '" + aPMode.getID () + "'");
 
     return aPMode;
   }
@@ -76,6 +77,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPMode.getID ());
+    s_aLogger.info ("Updated PMode with ID '" + aPMode.getID () + "'");
 
     return EChange.CHANGED;
   }
@@ -105,6 +107,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
+    s_aLogger.info ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
 
     return EChange.CHANGED;
   }
