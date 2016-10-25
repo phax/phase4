@@ -167,9 +167,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
-                        false,
-                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), false, "500");
     }
     finally
     {

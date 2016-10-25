@@ -152,7 +152,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   @Nonnull
   public ESuccess validatePMode (@Nullable final IPMode aPMode)
   {
-    // TODO FIXME XXX validatestuff
 
     if (aPMode == null)
     {

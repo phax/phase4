@@ -123,7 +123,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                    @Nonnull final AS4Response aUR) throws Exception
   {
     // TODO remove if or entire statement
-    if (true)
+    if (false)
       s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
 
     s_aLogger.info ("!!!!" + aIncomingAttachments.toString ());

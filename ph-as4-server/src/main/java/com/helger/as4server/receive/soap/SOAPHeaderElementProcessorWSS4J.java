@@ -99,24 +99,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         }
       }
 
-      // Encrypted header TODO need to check BodyPayload for right or wrong
-      // Algorithm
+      // Encrypted header
+      // TODO need to check BodyPayload for right or wrong Algorithm
       final Element aEncryptedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.XENC_NS, "EncryptedKey");
       if (aEncryptedNode != null)
       {
         // TODO Encrypted checks
         LOG.info ("encrypted checks");
 
-      }
-
-      // Checks the WSSVersion
-      if (aPModeLeg1.getSecurity ().getWSSVersion () == null)
-      {
-        LOG.info ("Error processing the PMode, no WSS-Version present");
-
-        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (Locale.US));
-
-        return ESuccess.FAILURE;
       }
 
       final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);

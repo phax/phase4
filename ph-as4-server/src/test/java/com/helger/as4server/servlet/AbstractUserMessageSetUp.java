@@ -85,13 +85,21 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
       }
       else
       {
-        // Status code may by 20x but may be an error anyway
-        assertTrue ("Server responded with success or different error message but failure was expected." +
-                    "StatusCode: " +
-                    m_nStatusCode +
-                    "\nResponse: " +
-                    m_sResponse,
-                    m_sResponse.contains (sErrorCode));
+        if (sErrorCode.equals ("500"))
+        {
+          // Expecting Internal Servlet error
+          assertEquals ("Server responded with internal servlet error", 500, m_nStatusCode);
+        }
+        else
+        {
+          // Status code may by 20x but may be an error anyway
+          assertTrue ("Server responded with success or different error message but failure was expected." +
+                      "StatusCode: " +
+                      m_nStatusCode +
+                      "\nResponse: " +
+                      m_sResponse,
+                      m_sResponse.contains (sErrorCode));
+        }
       }
     }
     catch (final HttpHostConnectException ex)

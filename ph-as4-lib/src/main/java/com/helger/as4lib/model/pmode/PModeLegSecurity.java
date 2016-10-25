@@ -38,7 +38,6 @@ import com.helger.commons.state.ETriState;
  */
 public class PModeLegSecurity
 {
-  // TODO SET DEFAULT VALUES
   public static final boolean DEFAULT_USERNAME_TOKEN_DIGEST = false;
   public static final boolean DEFAULT_USERNAME_TOKEN_NONCE = false;
   public static final boolean DEFAULT_USERNAME_TOKEN_CREATED = false;
