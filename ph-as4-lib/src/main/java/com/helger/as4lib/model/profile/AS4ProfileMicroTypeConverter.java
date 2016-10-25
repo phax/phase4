@@ -26,7 +26,6 @@ import com.helger.xml.microdom.MicroElement;
 
 public class AS4ProfileMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
-  private static final String ATTR_ID = "ID";
   private static final String ATTR_DISPLAYNAME = "Displayname";
   private static final String ATTR_CLASS = "Class";
 
