@@ -222,6 +222,7 @@ public class ESENSCompatibilityValidatorTest
                                               .contains (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID ())));
   }
 
+  @SuppressWarnings ("deprecation")
   @Test
   public void testValidatePModeSecurityWrongWSSVersion ()
   {

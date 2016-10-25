@@ -35,6 +35,7 @@ import com.helger.commons.error.list.ErrorList;
  */
 public class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
+  @SuppressWarnings ("unused")
   private static final Logger s_aLogger = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
 
   public ESENSCompatibilityValidator ()
