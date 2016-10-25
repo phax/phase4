@@ -172,7 +172,7 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
         // PModeAuthorize
         if (aPModeLegSecurity.isPModeAuthorizeDefined ())
         {
-          if (!aPModeLegSecurity.isPModeAuthorize ())
+          if (aPModeLegSecurity.isPModeAuthorize ())
           {
             aErrorList.add (_createError ("PMode Authorize has to be set to false"));
           }
@@ -218,7 +218,7 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
         }
         if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
         {
-          if (aErrorHandling.isReportProcessErrorNotifyConsumer ())
+          if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
           {
             aErrorList.add (_createError ("PMode ReportProcessErrorNotifyConsumer has to be True"));
           }
@@ -229,7 +229,7 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
         }
         if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
         {
-          if (aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
+          if (!aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
           {
             aErrorList.add (_createError ("PMode ReportDeliveryFailuresNotifyProducer has to be True"));
           }
