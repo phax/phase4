@@ -100,6 +100,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         // Find PMode
         sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+        // Includes fallback to default PMode (if defined)
         aPMode = aPModeMgr.getPModeOfID (sPModeID);
       }
       if (aPMode == null)

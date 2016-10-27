@@ -197,6 +197,7 @@ public final class PModeMicroTypeConverterTest
                                  ETriState.TRUE,
                                  ETriState.TRUE,
                                  ETriState.TRUE,
-                                 EPModeSendReceiptReplyPattern.RESPONSE);
+                                 EPModeSendReceiptReplyPattern.RESPONSE,
+                                 ETriState.TRUE);
   }
 }
