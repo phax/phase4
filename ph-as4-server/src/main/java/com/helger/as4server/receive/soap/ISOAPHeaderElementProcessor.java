@@ -16,6 +16,8 @@
  */
 package com.helger.as4server.receive.soap;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.ext.Attachment;
@@ -51,6 +53,8 @@ public interface ISOAPHeaderElementProcessor
    * @param aErrorList
    *        The error list to be filled in case there are processing errors.
    *        Never <code>null</code>. The list is always empty initially.
+   * @param aLocale
+   *        The locale to be used. May not be <code>null</code>.
    * @return Never <code>null</code>. If {@link ESuccess#FAILURE} than the
    *         header is treated as "not handled".
    */
@@ -59,5 +63,6 @@ public interface ISOAPHeaderElementProcessor
                                  @Nonnull Element aHeaderElement,
                                  @Nonnull ICommonsList <Attachment> aAttachments,
                                  @Nonnull AS4MessageState aState,
-                                 @Nonnull ErrorList aErrorList);
+                                 @Nonnull ErrorList aErrorList,
+                                 @Nonnull Locale aLocale);
 }

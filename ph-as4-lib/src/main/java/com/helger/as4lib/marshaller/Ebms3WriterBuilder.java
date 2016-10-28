@@ -19,14 +19,11 @@ package com.helger.as4lib.marshaller;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.NonRepudiationInformation;
-import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.jaxb.builder.JAXBWriterBuilder;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
 
 /**
  * A reader builder for Ebms documents.
@@ -41,14 +38,7 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
   public Ebms3WriterBuilder (@Nonnull final EEbms3DocumentType eDocType)
   {
     super (eDocType);
-    final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
-    aNSCtx.addMapping ("eb", CAS4.EBMS_NS);
-    aNSCtx.addMapping ("ebbp", CAS4.EBBP_NS);
-    aNSCtx.addMapping ("ds", CAS4.DS_NS);
-    aNSCtx.addMapping ("xlink", "http://www.w3.org/1999/xlink");
-    for (final ESOAPVersion e : ESOAPVersion.values ())
-      aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
-    setNamespaceContext (aNSCtx);
+    setNamespaceContext (new Ebms3NamespaceHandler ());
   }
 
   @Nonnull

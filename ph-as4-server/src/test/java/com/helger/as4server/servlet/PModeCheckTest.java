@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -267,7 +268,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",

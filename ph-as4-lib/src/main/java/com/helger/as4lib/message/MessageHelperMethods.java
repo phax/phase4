@@ -44,31 +44,29 @@ import com.helger.http.HTTPStringHelper;
 @Immutable
 public final class MessageHelperMethods
 {
-
   private MessageHelperMethods ()
   {}
 
   /**
    * Create a new message info.
    *
-   * @param sMessageId
-   *        The message ID. Can be <code>null</code> in this case just a UUID
-   *        gets generated. Else the MessageId gets added to the UID
+   * @param sMessageIDSuffix
+   *        The message ID suffix. If present, it is appended to the generated
+   *        UUID, otherwise just the UUID is used.
    * @param sRefToMessageID
    *        Reference to message ID. May be <code>null</code>. Must be present
    *        on receipt etc.
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId,
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix,
                                                          @Nullable final String sRefToMessageID)
   {
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
+
     final UUID aUUID = UUID.randomUUID ();
-    if (StringHelper.hasNoText (sMessageId))
-      aMessageInfo.setMessageId (aUUID.toString ());
-    else
-      aMessageInfo.setMessageId (aUUID.toString () + "@" + sMessageId);
+    aMessageInfo.setMessageId (StringHelper.getConcatenatedOnDemand (aUUID.toString (), '@', sMessageIDSuffix));
+
     // TODO Change Timestamp or do we only want the present date when the
     // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
@@ -82,13 +80,15 @@ public final class MessageHelperMethods
     ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
     ValueEnforcer.notNull (aHttpMsg, "HttpMsg");
 
-    // Move all global mime headers to the POST request
-    final Enumeration <?> e = aMimeMsg.getAllHeaders ();
-    while (e.hasMoreElements ())
+    // Move all mime headers to the HTTP request
+    final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
+    while (aEnum.hasMoreElements ())
     {
-      final Header h = (Header) e.nextElement ();
+      final Header h = (Header) aEnum.nextElement ();
       // Make a single-line HTTP header value!
       aHttpMsg.addHeader (h.getName (), HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
+
+      // Remove from MIME message!
       aMimeMsg.removeHeader (h.getName ());
     }
   }

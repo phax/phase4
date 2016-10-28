@@ -50,7 +50,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   protected EChange onRead (@Nonnull final IMicroDocument aDoc)
   {
     final EChange ret = super.onRead (aDoc);
-    m_sDefaultID = aDoc.getDocumentElement ().getAttributeValue (m_sDefaultID);
+    m_sDefaultID = aDoc.getDocumentElement ().getAttributeValue (ATTR_DEFAULT_ID);
     return ret;
   }
 

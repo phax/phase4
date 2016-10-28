@@ -22,12 +22,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.string.StringHelper;
 
+/**
+ * Enumeration with all known and supported SOAP versions.
+ *
+ * @author Philip Helger
+ */
 public enum ESOAPVersion
 {
   SOAP_11 ("http://schemas.xmlsoap.org/soap/envelope/", "S11", CMimeType.TEXT_XML, "1.1"),
@@ -52,6 +58,10 @@ public enum ESOAPVersion
     m_sVersion = sVersion;
   }
 
+  /**
+   * @return The namespace URI for this SOAP version. Neither <code>null</code>
+   *         nor empty.
+   */
   @Nonnull
   @Nonempty
   public String getNamespaceURI ()
@@ -59,6 +69,10 @@ public enum ESOAPVersion
     return m_sNamespaceURI;
   }
 
+  /**
+   * @return The default namespace prefix to be used. Neither <code>null</code>
+   *         nor empty.
+   */
   @Nonnull
   @Nonempty
   public String getNamespacePrefix ()
@@ -66,18 +80,33 @@ public enum ESOAPVersion
     return m_sNamespacePrefix;
   }
 
+  /**
+   * @return The mime type of this SOAP version. Never <code>null</code>.
+   */
   @Nonnull
   public IMimeType getMimeType ()
   {
     return m_aMimeType;
   }
 
+  /**
+   * Get the mime type of this SOAP version with the passed charset.
+   *
+   * @param aCharset
+   *        The charset to be used. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   */
   @Nonnull
+  @ReturnsMutableCopy
   public MimeType getMimeType (@Nonnull final Charset aCharset)
   {
     return new MimeType (m_aMimeType).addParameter (CMimeType.PARAMETER_NAME_CHARSET, aCharset.name ());
   }
 
+  /**
+   * @return The human readable version string. Neither <code>null</code> nor
+   *         empty.
+   */
   @Nonnull
   @Nonempty
   public String getVersion ()
@@ -85,6 +114,13 @@ public enum ESOAPVersion
     return m_sVersion;
   }
 
+  /**
+   * Get the must understand value contained in SOAP instances of this version.
+   *
+   * @param bMustUnderstand
+   *        must understand value
+   * @return A non-<code>null</code> non-empty string.
+   */
   @Nonnull
   @Nonempty
   public String getMustUnderstandValue (final boolean bMustUnderstand)
@@ -94,18 +130,28 @@ public enum ESOAPVersion
     return Boolean.toString (bMustUnderstand);
   }
 
+  /**
+   * @return The XML element local name of the SOAP header element.
+   */
   @Nonnull
   public String getHeaderElementName ()
   {
     return "Header";
   }
 
+  /**
+   * @return The XML element local name of the SOAP body element.
+   */
   @Nonnull
   public String getBodyElementName ()
   {
     return "Body";
   }
 
+  /**
+   * @return <code>true</code> if this SOAP version is the AS4 default version.
+   * @see #AS4_DEFAULT
+   */
   public boolean isAS4Default ()
   {
     return this == AS4_DEFAULT;

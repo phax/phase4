@@ -79,7 +79,6 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
 
       if (bSuccess)
       {
-
         assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
         assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
       }

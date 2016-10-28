@@ -27,6 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -74,7 +75,7 @@ final class TestMessages
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                               aErrorMessage.createEbms3MessageInfo ("AS4-Server"),
+                                                                                               aErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
                                                                                                aEbms3ErrorList)
                                                                           .setMustUnderstand (false)
                                                                           .getAsSOAPDocument (),
@@ -96,7 +97,7 @@ final class TestMessages
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                aReceiptMessage.createEbms3MessageInfo ("AS4-Server",
+                                                                aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
                                                                                                         null),
                                                                 null,
                                                                 aUserMessage)
@@ -129,7 +130,7 @@ final class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
@@ -170,7 +171,7 @@ final class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo ("AS4-Server");
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",

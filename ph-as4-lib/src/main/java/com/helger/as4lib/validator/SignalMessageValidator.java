@@ -16,6 +16,8 @@
  */
 package com.helger.as4lib.validator;
 
+import javax.annotation.Nonnull;
+
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.exception.Ebms3Exception;
@@ -27,15 +29,15 @@ import com.helger.as4lib.exception.Ebms3Exception;
  */
 public class SignalMessageValidator
 {
-  public void validateSignalMessage (final Ebms3SignalMessage signalMessage) throws Ebms3Exception
+  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage) throws Ebms3Exception
   {
-    if (signalMessage.getMessageInfo ().getMessageId ().isEmpty ())
+    if (aSignalMessage.getMessageInfo ().getMessageId ().isEmpty ())
       throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER, "MessageInfo messageId is missing", null);
 
-    final String sRefToMessageId = signalMessage.getMessageInfo ().getRefToMessageId ();
-    if (!signalMessage.getError ().isEmpty () ||
-        !signalMessage.getPullRequest ().getMpc ().isEmpty () ||
-        signalMessage.getReceipt ().hasAnyEntries ())
+    final String sRefToMessageId = aSignalMessage.getMessageInfo ().getRefToMessageId ();
+    if (!aSignalMessage.getError ().isEmpty () ||
+        !aSignalMessage.getPullRequest ().getMpc ().isEmpty () ||
+        aSignalMessage.getReceipt ().hasAnyEntries ())
     {
 
     }

@@ -70,18 +70,6 @@ public enum EWSSVersion
     return m_sVersion;
   }
 
-  @Nonnull
-  public String getHeaderElementName ()
-  {
-    return "Header";
-  }
-
-  @Nonnull
-  public String getBodyElementName ()
-  {
-    return "Body";
-  }
-
   @Nullable
   public static EWSSVersion getFromVersionOrNull (@Nullable final String sVersion)
   {

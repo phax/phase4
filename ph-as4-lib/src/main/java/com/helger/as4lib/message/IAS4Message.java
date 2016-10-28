@@ -49,6 +49,11 @@ public interface IAS4Message extends Serializable
   @Nonnull
   IAS4Message setMustUnderstand (boolean bMustUnderstand);
 
+  /**
+   * Create a SOAP document from this message without a payload.
+   * 
+   * @return The created DOM document
+   */
   @Nonnull
   default Document getAsSOAPDocument ()
   {

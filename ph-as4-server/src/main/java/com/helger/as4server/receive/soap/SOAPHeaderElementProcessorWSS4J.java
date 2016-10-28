@@ -55,7 +55,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <Attachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final ErrorList aErrorList)
+                                        @Nonnull final ErrorList aErrorList,
+                                        @Nonnull final Locale aLocale)
   {
     final PModeLeg aPModeLeg1 = aState.getPMode ().getLeg1 ();
     // Does security - legpart checks if not <code>null</code>
@@ -78,7 +79,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                     Arrays.asList (ECryptoAlgorithmSign.values ()) +
                     "' algorithms");
 
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
           return ESuccess.FAILURE;
         }
@@ -93,7 +94,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                     Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
                     "' algorithms");
 
-          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+          aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
           return ESuccess.FAILURE;
         }
@@ -123,7 +124,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                     " is not valid with what is specified in the usermessage.: " +
                     aAttachmentId);
 
-          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (Locale.US));
+          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
 
           return ESuccess.FAILURE;
         }
@@ -168,7 +169,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         // TODO change Local to dynamic one + we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing
-        aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (Locale.US));
+        aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
         return ESuccess.FAILURE;
       }

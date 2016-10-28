@@ -48,18 +48,16 @@ public class CreateReceiptMessage
   private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
     final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
+    Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
+    if (aNext != null)
     {
-      Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
-      aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
-      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
-      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "Signature");
-      aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
-      if (aNext != null)
-      {
-        new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
-                                                                                                    "Reference"),
-                                                  aDSRefs::add);
-      }
+      new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
+                                                                                                  "Reference"),
+                                                aDSRefs::add);
     }
     return aDSRefs;
   }

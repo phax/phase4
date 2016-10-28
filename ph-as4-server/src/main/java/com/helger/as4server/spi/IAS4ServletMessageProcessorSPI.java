@@ -23,6 +23,11 @@ import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.ext.ICommonsList;
 
+/**
+ * Implement this SPI interface to handle incoming messages approriate
+ *
+ * @author Philip Helger
+ */
 @IsSPIInterface
 public interface IAS4ServletMessageProcessorSPI
 {
@@ -34,9 +39,9 @@ public interface IAS4ServletMessageProcessorSPI
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
-   * @return A non-<code>null</code> response object.
+   * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResponse processAS4Message (@Nullable byte [] aPayload,
-                                                 @Nullable ICommonsList <IIncomingAttachment> aIncomingAttachments);
+  AS4MessageProcessorResult processAS4Message (@Nullable byte [] aPayload,
+                                               @Nullable ICommonsList <IIncomingAttachment> aIncomingAttachments);
 }

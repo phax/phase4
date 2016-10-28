@@ -16,27 +16,32 @@
  */
 package com.helger.as4server.spi;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import com.helger.as4server.attachment.IIncomingAttachment;
-import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.state.ISuccessIndicator;
+import com.helger.commons.string.ToStringGenerator;
 
-/**
- * Test implementation of {@link IAS4ServletMessageProcessorSPI}
- *
- * @author Philip Helger
- */
-@IsSPIImplementation
-public class TestMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
+public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
 {
-  @Nonnull
-  public AS4MessageProcessorResult processAS4Message (@Nullable final byte [] aPayload,
-                                                        @Nullable final ICommonsList <IIncomingAttachment> aIncomingAttachments)
+  private final ESuccess m_eSuccess;
+
+  public AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess)
   {
-    System.out.println ("HERE!Q!!!!!!");
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS);
+    m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
+  }
+
+  public boolean isSuccess ()
+  {
+    return m_eSuccess.isSuccess ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Success", m_eSuccess).toString ();
   }
 }
