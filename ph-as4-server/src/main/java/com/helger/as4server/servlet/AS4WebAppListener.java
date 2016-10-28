@@ -40,6 +40,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
+import com.helger.web.mock.OfflineHttpServletRequest;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
 import com.helger.web.scope.mgr.DefaultWebScopeFactory;
@@ -102,9 +103,6 @@ public final class AS4WebAppListener extends WebAppListener
                                                     "Security"),
                                          new SOAPHeaderElementProcessorWSS4J ());
 
-    // Ensure to create request scopes not using Multipart handling so that the
-    // MIME parsing can happen internally
-    // TODO make this AS4Servlet specific
     WebScopeFactoryProvider.setWebScopeFactory (new DefaultWebScopeFactory ()
     {
       @Override
@@ -112,7 +110,14 @@ public final class AS4WebAppListener extends WebAppListener
       public IRequestWebScope createRequestScope (@Nonnull final HttpServletRequest aHttpRequest,
                                                   @Nonnull final HttpServletResponse aHttpResponse)
       {
-        return new RequestWebScopeNoMultipart (aHttpRequest, aHttpResponse);
+        // TODO hard coded AS4 servlet path
+        if (!(aHttpRequest instanceof OfflineHttpServletRequest) && aHttpRequest.getServletPath ().equals ("/as4"))
+        {
+          // Ensure to create request scopes not using Multipart handling so
+          // that the MIME parsing can happen in the Servlet
+          return new RequestWebScopeNoMultipart (aHttpRequest, aHttpResponse);
+        }
+        return super.createRequestScope (aHttpRequest, aHttpResponse);
       }
     });
 

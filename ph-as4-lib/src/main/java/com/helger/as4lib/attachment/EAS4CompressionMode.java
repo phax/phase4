@@ -38,7 +38,7 @@ import com.helger.commons.string.StringHelper;
  */
 public enum EAS4CompressionMode
 {
-  GZIP (CMimeType.APPLICATION_GZIP)
+  GZIP (CMimeType.APPLICATION_GZIP, ".gz")
   {
     @Override
     @Nonnull
@@ -56,10 +56,12 @@ public enum EAS4CompressionMode
   };
 
   private final IMimeType m_aMimeType;
+  private final String m_sFileExtension;
 
-  private EAS4CompressionMode (@Nonnull final IMimeType aMimeType)
+  private EAS4CompressionMode (@Nonnull final IMimeType aMimeType, @Nonnull @Nonempty final String sFileExtension)
   {
     m_aMimeType = aMimeType;
+    m_sFileExtension = sFileExtension;
   }
 
   @Nonnull
@@ -73,6 +75,16 @@ public enum EAS4CompressionMode
   public String getMimeTypeAsString ()
   {
     return m_aMimeType.getAsString ();
+  }
+
+  /**
+   * @return The file extension including the leading dot (e.g. ".gz")
+   */
+  @Nonnull
+  @Nonempty
+  public String getFileExtension ()
+  {
+    return m_sFileExtension;
   }
 
   @Nonnull

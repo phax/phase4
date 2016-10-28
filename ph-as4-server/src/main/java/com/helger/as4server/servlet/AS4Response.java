@@ -31,6 +31,11 @@ import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
 import com.helger.web.servlet.response.UnifiedResponse;
 
+/**
+ * Special {@link UnifiedResponse} class with some sanity methods.
+ * 
+ * @author Philip Helger
+ */
 public class AS4Response extends UnifiedResponse
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Response.class);

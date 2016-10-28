@@ -33,7 +33,7 @@ import com.helger.jaxb.builder.JAXBWriterBuilder;
 @NotThreadSafe
 public class XMLDSigWriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, XMLDSigWriterBuilder <JAXBTYPE>>
 {
-  public XMLDSigWriterBuilder (@Nonnull final XMLDSigDocumentType eDocType)
+  public XMLDSigWriterBuilder (@Nonnull final EXMLDSigDocumentType eDocType)
   {
     super (eDocType);
     setNamespaceContext (new Ebms3NamespaceHandler ());
@@ -42,6 +42,6 @@ public class XMLDSigWriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE
   @Nonnull
   public static XMLDSigWriterBuilder <ReferenceType> dsigReference ()
   {
-    return new XMLDSigWriterBuilder<> (XMLDSigDocumentType.REFERENCE);
+    return new XMLDSigWriterBuilder<> (EXMLDSigDocumentType.REFERENCE);
   }
 }

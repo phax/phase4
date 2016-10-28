@@ -55,6 +55,7 @@ public class ESENSCompatibilityValidatorTest
   @ClassRule
   public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();
 
+  private static final Locale LOCALE = Locale.US;
   private final ESENSCompatibilityValidator aESENSCompatibilityValidator = new ESENSCompatibilityValidator ();
 
   private PMode aPMode;
@@ -73,7 +74,7 @@ public class ESENSCompatibilityValidatorTest
     aPMode.setMEP (EMEP.TWO_WAY_PULL_PUSH);
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
 
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("MEP")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
 
   @Test
@@ -83,7 +84,7 @@ public class ESENSCompatibilityValidatorTest
     aPMode.setResponder (new PModeParty ("sa", "id1", "role", "as", "as"));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
 
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("MEP-Binding")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP-Binding")));
   }
 
   @Test
@@ -91,8 +92,7 @@ public class ESENSCompatibilityValidatorTest
   {
     aPMode.setLeg1 (null);
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
-                                              .contains ("PMode is missing Leg 1")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
   }
 
   @Test
@@ -100,7 +100,7 @@ public class ESENSCompatibilityValidatorTest
   {
     aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("Protocol")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
   }
 
   @Test
@@ -108,7 +108,7 @@ public class ESENSCompatibilityValidatorTest
   {
     aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol (), null, null, null, null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("AddressProtocol")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
   }
 
   @Test
@@ -120,8 +120,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
-                                              .contains ("non-standard AddressProtocol: ftp")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
   }
 
   @Test
@@ -133,7 +132,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("1.1")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
   }
 
   @Test
@@ -147,7 +146,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("signature certificate")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
   }
 
   @Test
@@ -161,7 +160,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("signature algorithm")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
   }
 
   @Test
@@ -175,7 +174,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID ())));
   }
 
@@ -190,7 +189,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("hash function")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
   }
 
   @Test
@@ -204,7 +203,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID ())));
   }
 
@@ -219,7 +218,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("encryption algorithm")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
   }
 
   @Test
@@ -233,7 +232,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID ())));
   }
 
@@ -249,14 +248,14 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("Wrong WSS Version")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
   }
 
   @Test
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("mandatory")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
   @Test
@@ -270,7 +269,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ()).contains ("false")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
   @Test
@@ -285,8 +284,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
-                                              .contains ("Only response is allowed as pattern")));
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
   }
 
   // Error Handling
@@ -295,7 +293,7 @@ public class ESENSCompatibilityValidatorTest
   public void testValidatePModeErrorHandlingMandatory ()
   {
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("No ErrorHandling Parameter present but they are mandatory")));
   }
 
@@ -314,7 +312,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("ReportAsResponse is a mandatory PMode parameter")));
   }
 
@@ -334,7 +332,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("PMode ReportAsResponse has to be True")));
   }
 
@@ -353,7 +351,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
   }
 
@@ -373,7 +371,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
   }
 
@@ -392,7 +390,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
   }
 
@@ -412,7 +410,7 @@ public class ESENSCompatibilityValidatorTest
                                   null,
                                   null));
     aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (Locale.getDefault ())
+    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                               .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
   }
 }

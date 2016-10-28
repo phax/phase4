@@ -32,7 +32,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
 @NotThreadSafe
 public class XMLDSigReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE, XMLDSigReaderBuilder <JAXBTYPE>>
 {
-  public XMLDSigReaderBuilder (@Nonnull final XMLDSigDocumentType eDocType, @Nonnull final Class <JAXBTYPE> aImplClass)
+  public XMLDSigReaderBuilder (@Nonnull final EXMLDSigDocumentType eDocType, @Nonnull final Class <JAXBTYPE> aImplClass)
   {
     super (eDocType, aImplClass);
   }
@@ -40,6 +40,6 @@ public class XMLDSigReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE
   @Nonnull
   public static XMLDSigReaderBuilder <ReferenceType> dsigReference ()
   {
-    return new XMLDSigReaderBuilder<> (XMLDSigDocumentType.REFERENCE, ReferenceType.class);
+    return new XMLDSigReaderBuilder<> (EXMLDSigDocumentType.REFERENCE, ReferenceType.class);
   }
 }

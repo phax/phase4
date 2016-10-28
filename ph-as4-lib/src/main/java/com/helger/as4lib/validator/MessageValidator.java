@@ -49,7 +49,7 @@ public class MessageValidator
 
   // TODO Check P-Modes they should define which SOAP Version should be used for
   // the conversation
-  public Document getSoapEnvelope (final IReadableResource aXML)
+  public Document getSoapEnvelope (@Nonnull final IReadableResource aXML, @Nonnull final Locale aContentLocale)
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final CollectingExceptionCallback <JAXBException> aExHdl = new CollectingExceptionCallback<> ();
@@ -70,8 +70,7 @@ public class MessageValidator
     if (aErrorList.containsAtLeastOneError ())
     {
       final IError aError = aErrorList.iterator ().next ();
-      // FIXME hardcoded Locale
-      if (aError.getErrorText (Locale.getDefault ()).contains ("S12:Envelope"))
+      if (aError.getErrorText (aContentLocale).contains ("S12:Envelope"))
       {
         final Soap12Envelope aEnv12 = Ebms3ReaderBuilder.soap12 ().setValidationEventHandler (aCVEH).read (aXML);
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aEnv12);
@@ -85,7 +84,7 @@ public class MessageValidator
   // error
   public boolean validateXML (final IReadableResource aXML, @Nonnull final Locale aContentLocale)
   {
-    final Document aDocument = getSoapEnvelope (aXML);
+    final Document aDocument = getSoapEnvelope (aXML, aContentLocale);
     if (aDocument != null)
     {
       for (final Node aChildNode : NodeListIterator.createChildNodeIterator (aDocument))

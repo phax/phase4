@@ -16,7 +16,6 @@
  */
 package com.helger.as4lib.marshaller;
 
-import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -30,7 +29,6 @@ import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -40,28 +38,30 @@ import com.helger.jaxb.builder.JAXBDocumentType;
 
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
-  MESSAGING (Ebms3Messaging.class, new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
-                                                           new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
-                                                           new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
-  NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class, new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
-                                                                                        new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
+  MESSAGING (Ebms3Messaging.class,
+             new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                     new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
+                                     new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
+  NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class,
+                               new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                                       new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
   SOAP_11 (Soap11Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP11))),
   SOAP_12 (Soap12Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP12)));
 
   private final JAXBDocumentType m_aDocType;
 
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
-                              @Nonnull final List <? extends IReadableResource> aXSDPaths)
+                              @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
   {
     this (aClass, aXSDPaths, null);
   }
 
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
-                              @Nonnull final List <? extends IReadableResource> aXSDPaths,
+                              @Nonnull final Iterable <? extends IReadableResource> aXSDPaths,
                               @Nullable final Function <String, String> aTypeToElementNameMapper)
   {
     m_aDocType = new JAXBDocumentType (aClass,
-                                       CollectionHelper.newListMapped (aXSDPaths, IReadableResource::getPath),
+                                       new CommonsArrayList<> (aXSDPaths, IReadableResource::getPath),
                                        aTypeToElementNameMapper);
   }
 

@@ -22,6 +22,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.mime.IMimeType;
@@ -44,7 +45,7 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
                                 @Nullable final EAS4CompressionMode eCompressionMode)
   {
     ValueEnforcer.notNull (aMimeType, "MimeType");
-    m_sID = "ph-as4-" + UUID.randomUUID ().toString ();
+    m_sID = CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
     m_aMimeType = aMimeType;
     m_eCompressionMode = eCompressionMode;
   }
