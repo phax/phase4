@@ -238,10 +238,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsSet <String> compressionAttachmentIDs = new CommonsHashSet<> ();
+    final ICommonsSet <String> aCompressionAttachmentIDs = new CommonsHashSet<> ();
 
     // Check if a SOAPBodyPayload exists
-
     final NodeList nList = aSOAPDoc.getElementsByTagName (aPModeLeg1.getProtocol ()
                                                                     .getSOAPVersion ()
                                                                     .getNamespacePrefix () +
@@ -354,7 +353,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                 return ESuccess.FAILURE;
               }
-              compressionAttachmentIDs.add (StringHelper.trimStart (aPart.getHref (), "cid:"));
+              aCompressionAttachmentIDs.add (StringHelper.trimStart (aPart.getHref (), "cid:"));
             }
           }
         }
@@ -384,7 +383,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Remember in state
     aState.setMessaging (aMessaging);
     aState.setPMode (aPMode);
-    aState.setCompressedAttachmentIDs (compressionAttachmentIDs);
+    aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
 
     return ESuccess.SUCCESS;

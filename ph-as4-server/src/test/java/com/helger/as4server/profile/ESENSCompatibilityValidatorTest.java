@@ -38,7 +38,7 @@ import com.helger.as4lib.model.pmode.PModeLegSecurity;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
-import com.helger.as4server.servlet.ServletTestPMode;
+import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;

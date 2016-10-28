@@ -33,6 +33,7 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.mgr.MetaManager;
+import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
@@ -55,7 +56,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
     // TODO read from config file
-    return null;
+    return "true";
   }
 
   @Override
@@ -63,7 +64,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
     // TODO read from config file
-    return null;
+    return "false";
   }
 
   @Override

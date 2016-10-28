@@ -50,6 +50,7 @@ import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.as4server.standalone.RunInJettyAS4;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;

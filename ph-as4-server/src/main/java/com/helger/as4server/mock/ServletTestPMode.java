@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.servlet;
+package com.helger.as4server.mock;
 
 import javax.annotation.Nonnull;
 
@@ -41,18 +41,9 @@ public class ServletTestPMode
   @Nonnull
   public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aTestPmode;
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_12))
-      aTestPmode = new PMode ("pm-esens-generic-resp");
-    else
-      aTestPmode = new PMode ("pm-esens-generic-resp11");
-    aTestPmode.setMEP (EMEP.ONE_WAY);
-    aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
-    aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aTestPmode.setResponder (_generateInitiatorOrResponder (false));
-    aTestPmode.setLeg1 (_generatePModeLeg (eSOAPVersion));
-    // Leg 2 stays null, because we only use one-way
-    return aTestPmode;
+    return getTestPModeSetID (eSOAPVersion,
+                              eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? "pm-esens-generic-resp"
+                                                                         : "pm-esens-generic-resp11");
   }
 
   @Nonnull
