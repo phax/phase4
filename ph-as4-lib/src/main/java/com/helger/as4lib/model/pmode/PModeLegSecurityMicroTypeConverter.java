@@ -49,6 +49,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final String ATTR_PMODE_AUTHORIZE = "PModeAuthorize";
   private static final String ATTR_SEND_RECEIPT = "SendReceipt";
   private static final String ATTR_SEND_RECEIPT_REPLY_PATTERN = "SendReceiptReplyPattern";
+  private static final String ATTR_SEND_RECEIPT_NON_REPUDIATION = "SendReceiptNonRepudiation";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -96,6 +97,8 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     if (aValue.isSendReceiptDefined ())
       ret.setAttribute (ATTR_SEND_RECEIPT, aValue.isSendReceipt ());
     ret.setAttribute (ATTR_SEND_RECEIPT_REPLY_PATTERN, aValue.getSendReceiptReplyPatternID ());
+    if (aValue.isSendReceiptNonRepudiationDefined ())
+      ret.setAttribute (ATTR_SEND_RECEIPT_NON_REPUDIATION, aValue.isSendReceiptNonRepudiation ());
     return ret;
   }
 
@@ -174,6 +177,9 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       throw new IllegalStateException ("Invalid SendReceipt ReplyPattern version '" + sSendReceiptReplyPattern + "'");
     }
 
+    final ETriState eSendReceiptNonRepudiation = getTriState (aElement.getAttributeValue (ATTR_SEND_RECEIPT_NON_REPUDIATION),
+                                                              PModeLegSecurity.DEFAULT_SEND_RECEIPT_NON_REPUDIATION);
+
     return new PModeLegSecurity (eWSSVersion,
                                  aX509SignElement,
                                  aX509SignAttachment,
@@ -192,7 +198,8 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
                                  eUsernameTokenCreated,
                                  ePModeAuthorize,
                                  eSendReceipt,
-                                 eSendReceiptReplyPattern);
+                                 eSendReceiptReplyPattern,
+                                 eSendReceiptNonRepudiation);
   }
 
 }

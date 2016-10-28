@@ -42,9 +42,10 @@ public class PModeLegSecurity
   public static final boolean DEFAULT_USERNAME_TOKEN_NONCE = false;
   public static final boolean DEFAULT_USERNAME_TOKEN_CREATED = false;
   public static final boolean DEFAULT_PMODE_AUTHORIZE = false;
-  public static final boolean DEFAULT_SEND_RECEIPT = false;
   public static final boolean DEFAULT_X509_SIGN = false;
   public static final boolean DEFAULT_X509_ENCRYPTION_ENCRYPT = false;
+  public static final boolean DEFAULT_SEND_RECEIPT = false;
+  public static final boolean DEFAULT_SEND_RECEIPT_NON_REPUDIATION = false;
 
   /**
    * This parameter has two possible values, 1.0 and 1.1. The value of this
@@ -161,6 +162,8 @@ public class PModeLegSecurity
    */
   private EPModeSendReceiptReplyPattern m_eSendReceiptReplyPattern;
 
+  private ETriState m_eSendReceiptNonRepudiation = ETriState.UNDEFINED;
+
   public PModeLegSecurity ()
   {}
 
@@ -182,27 +185,30 @@ public class PModeLegSecurity
                            @Nonnull final ETriState eUsernameTokenCreated,
                            @Nonnull final ETriState ePModeAuthorize,
                            @Nonnull final ETriState eSendReceipt,
-                           @Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
+                           @Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern,
+                           @Nonnull final ETriState eSendReceiptNonRepudiation)
   {
-    setX509EncryptionEncryptElement (aX509EncryptionEncryptElement);
-    setX509EncryptionEncryptAttachment (aX509EncryptionEncryptAttachment);
-    setX509EncryptionMinimumStrength (aX509EncryptionMinimumStrength);
+
+    setWSSVersion (eWSSVersion);
     setX509SignElement (aX509SignElement);
     setX509SignAttachment (aX509SignAttachment);
-    setPModeAuthorize (ePModeAuthorize);
-    setSendReceipt (eSendReceipt);
-    setUsernameTokenCreated (eUsernameTokenCreated);
-    setUsernameTokenDigest (eUsernameTokenDigest);
-    setUsernameTokenNonce (eUsernameTokenNonce);
-    setSendReceiptReplyPattern (eSendReceiptReplyPattern);
-    setUsernameTokenPassword (sUsernameTokenPassword);
-    setUsernameTokenUsername (sUsernameTokenUsername);
-    setWSSVersion (eWSSVersion);
-    setX509EncryptionAlgorithm (sX509EncryptionAlgorithm);
-    setX509EncryptionCertificate (sX509EncryptionCertificate);
-    setX509SignatureAlgorithm (sX509SignatureAlgorithm);
     setX509SignatureCertificate (sX509SignatureCertificate);
     setX509SignatureHashFunction (eX509SignatureHashFunction);
+    setX509SignatureAlgorithm (sX509SignatureAlgorithm);
+    setX509EncryptionEncryptElement (aX509EncryptionEncryptElement);
+    setX509EncryptionEncryptAttachment (aX509EncryptionEncryptAttachment);
+    setX509EncryptionCertificate (sX509EncryptionCertificate);
+    setX509EncryptionAlgorithm (sX509EncryptionAlgorithm);
+    setX509EncryptionMinimumStrength (aX509EncryptionMinimumStrength);
+    setUsernameTokenUsername (sUsernameTokenUsername);
+    setUsernameTokenPassword (sUsernameTokenPassword);
+    setUsernameTokenDigest (eUsernameTokenDigest);
+    setUsernameTokenNonce (eUsernameTokenNonce);
+    setUsernameTokenCreated (eUsernameTokenCreated);
+    setPModeAuthorize (ePModeAuthorize);
+    setSendReceipt (eSendReceipt);
+    setSendReceiptReplyPattern (eSendReceiptReplyPattern);
+    setSendReceiptNonRepudiation (eSendReceiptNonRepudiation);
   }
 
   @Nullable
@@ -381,23 +387,6 @@ public class PModeLegSecurity
     m_sUsernameTokenPassword = sUsernameTokenPassword;
   }
 
-  @Nullable
-  public EPModeSendReceiptReplyPattern getSendReceiptReplyPattern ()
-  {
-    return m_eSendReceiptReplyPattern;
-  }
-
-  @Nullable
-  public String getSendReceiptReplyPatternID ()
-  {
-    return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
-  }
-
-  public void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
-  {
-    m_eSendReceiptReplyPattern = eSendReceiptReplyPattern;
-  }
-
   public boolean isUsernameTokenDigestDefined ()
   {
     return m_eUsernameTokenDigest.isDefined ();
@@ -506,6 +495,45 @@ public class PModeLegSecurity
   {
     ValueEnforcer.notNull (eSendReceipt, "SendReceipt");
     m_eSendReceipt = eSendReceipt;
+  }
+
+  @Nullable
+  public EPModeSendReceiptReplyPattern getSendReceiptReplyPattern ()
+  {
+    return m_eSendReceiptReplyPattern;
+  }
+
+  @Nullable
+  public String getSendReceiptReplyPatternID ()
+  {
+    return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
+  }
+
+  public void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
+  {
+    m_eSendReceiptReplyPattern = eSendReceiptReplyPattern;
+  }
+
+  public boolean isSendReceiptNonRepudiationDefined ()
+  {
+    return m_eSendReceiptNonRepudiation.isDefined ();
+  }
+
+  @Nonnull
+  public boolean isSendReceiptNonRepudiation ()
+  {
+    return m_eSendReceiptNonRepudiation.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
+  }
+
+  public void setSendReceiptNonRepudiation (final boolean bSendReceiptNonRepudiation)
+  {
+    setSendReceiptNonRepudiation (ETriState.valueOf (bSendReceiptNonRepudiation));
+  }
+
+  public void setSendReceiptNonRepudiation (@Nonnull final ETriState eSendReceiptNonRepudiation)
+  {
+    ValueEnforcer.notNull (eSendReceiptNonRepudiation, "SendReceiptNonRepudiation");
+    m_eSendReceiptNonRepudiation = eSendReceiptNonRepudiation;
   }
 
   @Override
