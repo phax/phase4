@@ -19,12 +19,15 @@ package com.helger.as4server.spi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.w3c.dom.Node;
+
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.ext.ICommonsList;
 
 /**
- * Implement this SPI interface to handle incoming messages approriate
+ * Implement this SPI interface to handle incoming messages appropriate
  *
  * @author Philip Helger
  */
@@ -34,14 +37,18 @@ public interface IAS4ServletMessageProcessorSPI
   /**
    * Process incoming AS4 message
    *
+   * @param aUserMessage
+   *        The received user message. May be <code>null</code>.
    * @param aPayload
-   *        Extracted, decrypted and verified payload. May be <code>null</code>.
+   *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
+   *        <code>null</code>.
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4Message (@Nullable byte [] aPayload,
+  AS4MessageProcessorResult processAS4Message (@Nullable Ebms3UserMessage aUserMessage,
+                                               @Nullable Node aPayload,
                                                @Nullable ICommonsList <IIncomingAttachment> aIncomingAttachments);
 }

@@ -30,10 +30,11 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -60,6 +61,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class SOAPClientSAAJ
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPClientSAAJ.class);
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
@@ -81,7 +83,7 @@ public class SOAPClientSAAJ
   {
     try
     {
-      final String sURL = true ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/services/msh/";
+      final String sURL = false ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/as4";
 
       SSLContext aSSLContext = null;
       if (sURL.startsWith ("https"))
@@ -93,16 +95,17 @@ public class SOAPClientSAAJ
       }
 
       final CloseableHttpClient aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
-      final HttpClientContext aContext = new HttpClientContext ();
-      if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
-        aContext.setRequestConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
+      s_aLogger.info ("Sending to " + sURL);
       final HttpPost aPost = new HttpPost (sURL);
+
+      if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
+        aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
       final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-      // No Mime Message Not signed or encrpyted, just SOAP + Payload in SOAP -
+      // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body
       if (false)
       {
@@ -113,7 +116,7 @@ public class SOAPClientSAAJ
       }
       else
         // BodyPayload SIGNED
-        if (true)
+        if (false)
         {
           final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
           aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
@@ -128,7 +131,7 @@ public class SOAPClientSAAJ
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
           }
           else
-            if (true)
+            if (false)
             {
               aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                        CMimeType.APPLICATION_GZIP));
@@ -150,12 +153,14 @@ public class SOAPClientSAAJ
               aPost.setEntity (new HttpMimeMessageEntity (aMsg));
             }
             else
-              if (true)
+              if (false)
               {
                 Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
                 aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
                 aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
               }
+              else
+                throw new IllegalStateException ("Some test message should be selected :)");
 
       // XXX reinstate if you wanna see the request that is getting sent
       System.out.println (EntityUtils.toString (aPost.getEntity ()));

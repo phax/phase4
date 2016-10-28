@@ -20,7 +20,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
@@ -36,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -49,6 +49,7 @@ import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachment;
+import com.helger.as4server.attachment.IIncomingAttachmentFactory;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
@@ -156,6 +157,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     if (aHeaderNode == null)
     {
       aAS4Response.setBadRequest ("SOAP document is missing a Header element");
+      return;
+    }
+
+    // Find SOAP body
+    Node aBodyNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
+                                                           eSOAPVersion.getNamespaceURI (),
+                                                           eSOAPVersion.getBodyElementName ());
+    if (aBodyNode == null)
+    {
+      aAS4Response.setBadRequest ("SOAP document is missing a Body element");
       return;
     }
 
@@ -276,28 +287,50 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                   aMessaging.getUserMessageCount ());
       return;
     }
+    final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
     // Decompressing the attachments
+    final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
     for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments.getClone ())
     {
-      if (aState.containsCompressedAttachmentID (aIncomingAttachment.getContentID ()))
+      final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getContentID ());
+      if (eCompressionMode != null)
       {
-        final IIncomingAttachment aDecompressedAttachment = MetaManager.getIncomingAttachmentFactory ()
-                                                                       .createAttachment (new GZIPInputStream (aIncomingAttachment.getInputStream ()));
+        // Remove the old one
         aIncomingAttachments.remove (aIncomingAttachment);
+
+        // Add the new one with decompressing InputStream
+        final IIncomingAttachment aDecompressedAttachment = aIAF.createAttachment (eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()));
         aIncomingAttachments.add (aDecompressedAttachment);
       }
     }
 
     // Do something with the message
+    final Document aDecryptedSOAPDoc = aState.getDecryptedSOAPDocument ();
+    if (aDecryptedSOAPDoc != null)
+    {
+      // Re-evaluate body node from decrypted SOAP document
+      aBodyNode = XMLHelper.getFirstChildElementOfName (aDecryptedSOAPDoc.getDocumentElement (),
+                                                        eSOAPVersion.getNamespaceURI (),
+                                                        eSOAPVersion.getBodyElementName ());
+      if (aBodyNode == null)
+      {
+        // TODO is this error handling okay?
+        aAS4Response.setBadRequest ("Decrypted SOAP document is missing a Body element");
+        return;
+      }
+    }
+    final Node aPayloadNode = aBodyNode.getFirstChild ();
+
     for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
       try
       {
         if (s_aLogger.isDebugEnabled ())
           s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
 
-        final byte [] aPayload = null;
-        final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aPayload, aIncomingAttachments);
+        final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
+                                                                                aPayloadNode,
+                                                                                aIncomingAttachments);
         if (aResult == null)
           throw new IllegalStateException ("No result object present!");
         if (aResult.isSuccess ())

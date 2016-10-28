@@ -91,7 +91,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm) == null)
         {
           LOG.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                    Arrays.asList (ECryptoAlgorithmSignDigest.values ()) +
+                    Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
                     "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
@@ -114,15 +114,18 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Check if Attachment IDs are the same
       for (int i = 0; i < aAttachments.size (); i++)
       {
-        String aAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
-        aAttachmentId = aAttachmentId.substring ("<attachment=".length (), aAttachmentId.length () - 1);
-        if (!aUserMessage.getPayloadInfo ().getPartInfoAtIndex (i).getHref ().contains (aAttachmentId))
+        String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
+        sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
+
+        // Add +1 because the payload has index 0
+        final String sHref = aUserMessage.getPayloadInfo ().getPartInfoAtIndex (1 + i).getHref ();
+        if (!sHref.contains (sAttachmentId))
         {
           // TODO change Local to dynamic one
           LOG.info ("Error processing the Attachments, the attachment" +
-                    aUserMessage.getPayloadInfo ().getPartInfoAtIndex (i).getHref () +
+                    sHref +
                     " is not valid with what is specified in the usermessage.: " +
-                    aAttachmentId);
+                    sAttachmentId);
 
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
 
@@ -151,9 +154,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // afterwards!
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
-        // TODO maybe not needed since you cant check Digest algorithm OR
-        // encrypt algorithm
-        aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info ("KeyValuePair: " + k + "=" + v)));
+        // Too much output :)
+        if (false)
+        {
+          // TODO maybe not needed since you can't check Digest algorithm OR
+          // encrypt algorithm
+          aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info ("KeyValuePair: " + k + "=" + v)));
+        }
 
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 

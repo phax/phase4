@@ -19,10 +19,18 @@ package com.helger.as4server.spi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ESuccess;
+import com.helger.xml.serialize.write.XMLWriter;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test implementation of {@link IAS4ServletMessageProcessorSPI}
@@ -32,11 +40,18 @@ import com.helger.commons.state.ESuccess;
 @IsSPIImplementation
 public class TestMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (TestMessageProcessorSPI.class);
+
   @Nonnull
-  public AS4MessageProcessorResult processAS4Message (@Nullable final byte [] aPayload,
-                                                        @Nullable final ICommonsList <IIncomingAttachment> aIncomingAttachments)
+  @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
+  public AS4MessageProcessorResult processAS4Message (@Nullable final Ebms3UserMessage aUserMessage,
+                                                      @Nullable final Node aPayload,
+                                                      @Nullable final ICommonsList <IIncomingAttachment> aIncomingAttachments)
   {
-    System.out.println ("HERE!Q!!!!!!");
+    s_aLogger.info ("Received AS4 message:");
+    s_aLogger.info ("  UserMessage: " + aUserMessage);
+    s_aLogger.info ("  Payload: " + XMLWriter.getXMLString (aPayload));
+    s_aLogger.info ("  Attachments: " + aIncomingAttachments);
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);
   }
 }

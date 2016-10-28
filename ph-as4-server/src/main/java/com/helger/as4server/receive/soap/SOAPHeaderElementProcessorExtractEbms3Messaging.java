@@ -45,9 +45,9 @@ import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.ext.CommonsHashSet;
+import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsSet;
+import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -85,7 +85,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       LOG.info ("Too many UserMessage objects contained: " + aMessaging.getUserMessageCount ());
 
-      // TODO change Local to dynamic one
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -108,7 +107,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         LOG.info ("Failed to resolve PMode '" + sPModeID + "'");
 
-        // TODO change Local to dynamic one
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
@@ -126,7 +124,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           LOG.info ("Initiator is required for PULL message");
 
-          // TODO change Local to dynamic one
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -143,7 +140,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
             LOG.info ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
                       sInitiatorID +
                       "'");
-            // TODO change Local to dynamic one
             aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
@@ -152,7 +148,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           LOG.info ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.");
 
-          // TODO change Local to dynamic one
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -165,7 +160,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           LOG.info ("Responder is required for PUSH message");
 
-          // TODO change Local to dynamic one
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -184,7 +178,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                       sResponderID +
                       "'");
 
-            // TODO change Local to dynamic one
             aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
@@ -193,7 +186,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           LOG.info ("Error processing the usermessage, to-PartyInfo is invalid.");
 
-          // TODO change Local to dynamic one
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -211,7 +203,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           LOG.info ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
-          // TODO change Local to dynamic one
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -238,7 +229,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsSet <String> aCompressionAttachmentIDs = new CommonsHashSet<> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     // Check if a SOAPBodyPayload exists
     final NodeList nList = aSOAPDoc.getElementsByTagName (aPModeLeg1.getProtocol ()
@@ -262,7 +253,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         LOG.info ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
 
-        // TODO change Local to dynamic one
         aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
@@ -278,7 +268,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         LOG.info ("No PartInfo is specified, so no attachments are allowed.");
 
-        // TODO change Local to dynamic one
         aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
@@ -297,7 +286,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                   aAttachments.size () +
                   "'");
 
-        // TODO change Local to dynamic one
         aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
@@ -314,7 +302,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           {
             LOG.info ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
 
-            // TODO change Local to dynamic one
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
@@ -335,7 +322,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
               {
                 LOG.info ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
 
-                // TODO change Local to dynamic one
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                 return ESuccess.FAILURE;
               }
@@ -343,17 +329,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
               // Only needed check here since AS4 does not support another
               // CompressionType
               // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
-              if (EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ()) == null)
+              final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
+              if (eCompressionMode == null)
               {
                 LOG.info ("Error processing the UserMessage, CompressionType " +
                           aEbms3Property.getValue () +
                           " is not supported. ");
 
-                // TODO change Local to dynamic one
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                 return ESuccess.FAILURE;
               }
-              aCompressionAttachmentIDs.add (StringHelper.trimStart (aPart.getHref (), "cid:"));
+
+              final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), "cid:");
+              aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
             }
           }
         }
@@ -368,7 +356,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                   aAttachments.size () +
                   "'");
 
-        // TODO change Local to dynamic one
         aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
