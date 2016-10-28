@@ -114,11 +114,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // UserMessage does not need to get checked for null again since it got
     // checked above
-    final Ebms3PartyInfo aPartyInfo = aUserMessage.getPartyInfo ();
+    final Ebms3PartyInfo aPartyInfo = aUserMessage == null ? null : aUserMessage.getPartyInfo ();
     if (aPartyInfo != null)
     {
       // Initiator is optional for push
-      if (aPMode.getInitiator () == null)
+      if (aPMode != null && aPMode.getInitiator () == null)
       {
         if (aPMode.getMEPBinding ().isPull ())
         {

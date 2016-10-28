@@ -18,4 +18,7 @@
 -->
 <FindBugsFilter>
   <!-- Docs: http://findbugs.sourceforge.net/manual/filter.html -->
+  <Class classname="com.helger.as4lib.ebms3header.runtime.ZeroOneBooleanAdapter">
+    <Bug category="BAD_PRACTICE" />
+  </Class>
 </FindBugsFilter>
