@@ -18,13 +18,17 @@ package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.id.IHasID;
+import com.helger.commons.string.StringHelper;
 
-public class PModeParty
+@Immutable
+public class PModeParty implements IHasID <String>
 {
   /** Optional ID type */
   private final String m_sIDType;
@@ -41,6 +45,11 @@ public class PModeParty
   /** Authorization password */
   private final String m_sPassword;
 
+  // Status vars
+
+  /** ID type and value combined */
+  private final String m_sID;
+
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
                      @Nonnull @Nonempty final String sRole,
@@ -52,6 +61,7 @@ public class PModeParty
     m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
     m_sUserName = sUserName;
     m_sPassword = sPassword;
+    m_sID = StringHelper.getNotNull (m_sIDType) + ":" + m_sIDValue;
   }
 
   @Nullable
@@ -65,6 +75,13 @@ public class PModeParty
   public String getIDValue ()
   {
     return m_sIDValue;
+  }
+
+  @Nonnull
+  @Nonempty
+  public String getID ()
+  {
+    return m_sID;
   }
 
   @Nonnull

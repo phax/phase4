@@ -16,8 +16,17 @@
  */
 package com.helger.as4server.profile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+
 import javax.annotation.Nonnull;
 
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -34,6 +43,7 @@ import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
+import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.state.ETriState;
 
 public class ESENSPMode
@@ -72,6 +82,46 @@ public class ESENSPMode
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
 
     // TODO getDefaultX509Identifier() from Crypto.class => AS4CryptoFactory
+    try
+    {
+      final ClassPathResource aRes = new ClassPathResource ("privatekeys.jks");
+      final String keystoreFilename = aRes.getPath ();
+
+      final char [] password = AS4CryptoFactory.getKeyPassword ().toCharArray ();
+      final String alias = AS4CryptoFactory.getKeyAlias ();
+
+      final FileInputStream fIn = new FileInputStream (keystoreFilename);
+      final KeyStore keystore = KeyStore.getInstance ("JKS");
+
+      keystore.load (fIn, password);
+      final Certificate cert = keystore.getCertificate (alias);
+
+      System.out.println (cert);
+      System.out.println (keystore.getCertificateAlias (cert));
+      System.out.println (keystore.size ());
+
+    }
+
+    catch (final KeyStoreException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace ();
+    }
+    catch (final NoSuchAlgorithmException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace ();
+    }
+    catch (final CertificateException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace ();
+    }
+    catch (final IOException e)
+    {
+      // TODO Auto-generated catch block
+      e.printStackTrace ();
+    }
     aPModeLegSecurity.setX509SignatureCertificate ("TODO change to real cert");
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);

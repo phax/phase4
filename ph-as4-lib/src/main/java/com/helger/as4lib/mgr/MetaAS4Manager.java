@@ -36,8 +36,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 
-  private PModeManager m_aPModeMgr;
   private MPCManager m_aMPCMgr;
+  private PModeManager m_aPModeMgr;
 
   @Deprecated
   @UsedViaReflection

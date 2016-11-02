@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
@@ -36,9 +37,9 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public enum EAS4CompressionMode
+public enum EAS4CompressionMode implements IHasID <String>
 {
-  GZIP (CMimeType.APPLICATION_GZIP, ".gz")
+  GZIP ("gzip", CMimeType.APPLICATION_GZIP, ".gz")
   {
     @Override
     @Nonnull
@@ -55,13 +56,24 @@ public enum EAS4CompressionMode
     }
   };
 
+  private final String m_sID;
   private final IMimeType m_aMimeType;
   private final String m_sFileExtension;
 
-  private EAS4CompressionMode (@Nonnull final IMimeType aMimeType, @Nonnull @Nonempty final String sFileExtension)
+  private EAS4CompressionMode (@Nonnull @Nonempty final String sID,
+                               @Nonnull final IMimeType aMimeType,
+                               @Nonnull @Nonempty final String sFileExtension)
   {
+    m_sID = sID;
     m_aMimeType = aMimeType;
     m_sFileExtension = sFileExtension;
+  }
+
+  @Nonnull
+  @Nonempty
+  public String getID ()
+  {
+    return m_sID;
   }
 
   @Nonnull
