@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
+import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -137,7 +138,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                          .getHref ();
         if (!sHref.contains (sAttachmentId))
         {
-          // TODO change Local to dynamic one
           LOG.info ("Error processing the Attachments, the attachment" +
                     sHref +
                     " is not valid with what is specified in the usermessage.: " +
@@ -165,6 +165,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
         aRequestData.setSigVerCrypto (AS4CryptoFactory.createCrypto ());
         aRequestData.setDecCrypto (AS4CryptoFactory.createCrypto ());
+        aRequestData.setWssConfig (WSSConfig.getNewInstance ());
 
         // Upon success, the SOAP document contains the decrypted content
         // afterwards!
@@ -179,6 +180,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         }
 
         aState.setDecryptedSOAPDocument (aSOAPDoc);
+        aState.setDecryptedAttachments (aAttachmentCallbackHandler.getResponseAttachments ());
 
         // TODO save DOc somewhere? or what should happen with it
         // System.out.println ("Decryption Result ");

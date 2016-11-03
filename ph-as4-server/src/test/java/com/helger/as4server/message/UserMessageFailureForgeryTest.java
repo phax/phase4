@@ -18,6 +18,7 @@ package com.helger.as4server.message;
 
 import static org.junit.Assert.fail;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -190,13 +191,13 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 
   // Encryption
 
-  @Ignore
+  // @Ignore
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/ShortXML.xml"),
+                                             CMimeType.APPLICATION_XML));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
                                                                           TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -208,12 +209,15 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
     // Since we want to change the attachment
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
-    aMimeBodyPart.attachFile (ClassPathResource.getAsFile ("attachment/test-img.jpg"));
+    if (false)
+      aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1),
+                                CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
     aMsg.saveChanges ();
     // TODO remove when output not needed anymore
     final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    // System.out.println (EntityUtils.toString (aEntity));
+    if (false)
+      System.out.println (EntityUtils.toString (aEntity));
     sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 

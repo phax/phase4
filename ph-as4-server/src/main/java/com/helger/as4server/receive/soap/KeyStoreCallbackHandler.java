@@ -23,11 +23,15 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 
 public class KeyStoreCallbackHandler implements CallbackHandler
 {
+  private static final Logger LOG = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
     for (final Callback aCallback : aCallbacks)
@@ -38,7 +42,10 @@ public class KeyStoreCallbackHandler implements CallbackHandler
         if (AS4CryptoFactory.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
         {
           aPasswordCallback.setPassword (AS4CryptoFactory.getKeyPassword ());
+          LOG.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
         }
+        else
+          LOG.info ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
       }
       else
       {

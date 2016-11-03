@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.apache.wss4j.common.ext.Attachment;
 import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
@@ -31,6 +32,7 @@ import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 
@@ -48,6 +50,7 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   private static final String KEY_PMODE = "as4.pmode";
   private static final String KEY_MPC = "as4.mps";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
+  private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "as4.soap.decrypted.attachmentlist";
   private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
   private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "as4.soap.body.payload.present";
 
@@ -115,6 +118,22 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public Document getDecryptedSOAPDocument ()
   {
     return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
+  }
+
+  public void setDecryptedAttachments (@Nullable final ICommonsList <Attachment> aAttachments)
+  {
+    setAttribute (KEY_DECRYPTED_ATTACHMENT_LIST, aAttachments);
+  }
+
+  public boolean hasDecryptedAttachments ()
+  {
+    return containsAttribute (KEY_DECRYPTED_ATTACHMENT_LIST);
+  }
+
+  @Nullable
+  public ICommonsList <Attachment> getDecryptedAttachments ()
+  {
+    return getCastedAttribute (KEY_DECRYPTED_ATTACHMENT_LIST);
   }
 
   public void setCompressedAttachmentIDs (@Nullable final ICommonsMap <String, EAS4CompressionMode> aIDs)

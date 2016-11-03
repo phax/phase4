@@ -16,6 +16,8 @@
  */
 package com.helger.as4server.spi;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,6 +29,7 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -51,7 +54,13 @@ public class TestMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     s_aLogger.info ("Received AS4 message:");
     s_aLogger.info ("  UserMessage: " + aUserMessage);
     s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getXMLString (aPayload)));
-    s_aLogger.info ("  Attachments: " + aIncomingAttachments);
+    if (aIncomingAttachments != null)
+    {
+      s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
+      for (final IIncomingAttachment x : aIncomingAttachments)
+        s_aLogger.info ("    Attachment: " +
+                        StreamHelper.getAllBytesAsString (x.getInputStream (), StandardCharsets.ISO_8859_1));
+    }
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);
   }
 }

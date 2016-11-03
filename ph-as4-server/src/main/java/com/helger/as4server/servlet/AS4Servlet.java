@@ -50,6 +50,7 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.as4server.attachment.IIncomingAttachmentFactory;
+import com.helger.as4server.attachment.IncomingWrappedAttachment;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
@@ -290,18 +291,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
     // Decompressing the attachments
+    assert aState.hasDecryptedAttachments ();
+    final ICommonsList <IIncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.getDecryptedAttachments (),
+                                                                                             x -> new IncomingWrappedAttachment (x));
+
     final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
-    for (final IIncomingAttachment aIncomingAttachment : aIncomingAttachments.getClone ())
+    for (final IIncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
     {
       final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getContentID ());
       if (eCompressionMode != null)
       {
         // Remove the old one
-        aIncomingAttachments.remove (aIncomingAttachment);
+        aDecryptedAttachments.remove (aIncomingAttachment);
 
         // Add the new one with decompressing InputStream
         final IIncomingAttachment aDecompressedAttachment = aIAF.createAttachment (eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()));
-        aIncomingAttachments.add (aDecompressedAttachment);
+        aDecryptedAttachments.add (aDecompressedAttachment);
       }
     }
 
@@ -330,7 +335,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
                                                                                 aPayloadNode,
-                                                                                aIncomingAttachments);
+                                                                                aDecryptedAttachments);
         if (aResult == null)
           throw new IllegalStateException ("No result object present!");
         if (aResult.isSuccess ())
