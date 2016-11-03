@@ -209,7 +209,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
     // Since we want to change the attachment
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
-    if (false)
+    if (true)
       aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1),
                                 CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
