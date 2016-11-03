@@ -39,10 +39,14 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.util.IStringMap;
 import com.helger.as4lib.util.StringMap;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.commons.type.ObjectType;
+import com.helger.photon.basic.object.AbstractBaseObject;
+import com.helger.photon.security.object.StubObject;
 
 /**
  * This class represents a single partner. A partnership consists of 2 partners
@@ -51,14 +55,21 @@ import com.helger.commons.string.ToStringGenerator;
  * @author Philip Helger
  * @since 2.2.0
  */
-public class Partner implements IPartner
+public class Partner extends AbstractBaseObject implements IPartner
 {
+  public static final ObjectType OT = new ObjectType ("as4.partner");
   public static final String PARTNER_NAME = "name";
 
   private final StringMap m_aAttrs;
 
-  public Partner (@Nonnull final IStringMap aAttrs)
+  public Partner (@Nonnull @Nonempty final String sID, @Nonnull final IStringMap aAttrs)
   {
+    this (StubObject.createForCurrentUserAndID (sID), aAttrs);
+  }
+
+  Partner (@Nonnull final StubObject aStubObject, @Nonnull final IStringMap aAttrs)
+  {
+    super (aStubObject);
     m_aAttrs = new StringMap (aAttrs);
     if (!m_aAttrs.containsAttribute (PARTNER_NAME))
       throw new IllegalArgumentException ("The provided attributes are missing the required '" +
@@ -107,4 +118,10 @@ public class Partner implements IPartner
   {
     return new ToStringGenerator (this).append ("Attrs", m_aAttrs).toString ();
   }
+
+  public ObjectType getObjectType ()
+  {
+    return OT;
+  }
+
 }

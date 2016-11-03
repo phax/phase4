@@ -149,7 +149,8 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
   {
     // Name is required
     final StringMap aAttrs = XMLHelper.getAllAttrsWithLowercaseNameWithRequired (ePartner, PARTNER_NAME);
-    return new Partner (aAttrs);
+    // TODO id should get here somehow if we decide to use partnerships
+    return new Partner ("id", aAttrs);
   }
 
   protected void loadPartnerIDs (@Nonnull final IMicroElement ePartnership,

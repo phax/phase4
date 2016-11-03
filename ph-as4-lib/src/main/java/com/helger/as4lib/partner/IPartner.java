@@ -40,6 +40,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsIterable;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.name.IHasName;
+import com.helger.photon.basic.object.IObject;
 
 /**
  * Read-only interface for a single partner that is used in a partnership.
@@ -47,7 +48,7 @@ import com.helger.commons.name.IHasName;
  * @author Philip Helger
  * @since 2.2.0
  */
-public interface IPartner extends IHasName, ICommonsIterable <Map.Entry <String, String>>
+public interface IPartner extends IHasName, ICommonsIterable <Map.Entry <String, String>>, IObject
 {
   /**
    * @return All contained attributes. Neither <code>null</code> nor empty.

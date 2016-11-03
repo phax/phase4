@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.PModeManager;
+import com.helger.as4lib.partner.PartnerManager;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
@@ -33,11 +34,13 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
   private static final String MPC_XML = "mpc.xml";
   private static final String PMODE_XML = "pmode.xml";
+  private static final String PARTNER_XML = "partner.xml";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private MPCManager m_aMPCMgr;
   private PModeManager m_aPModeMgr;
+  private PartnerManager m_aPartnerMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -55,6 +58,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       // MPC manager before PMode manager
       m_aMPCMgr = new MPCManager (MPC_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
+      m_aPartnerMgr = new PartnerManager (PARTNER_XML);
 
       _initCallbacks ();
 
@@ -89,5 +93,11 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static PModeManager getPModeMgr ()
   {
     return getInstance ().m_aPModeMgr;
+  }
+
+  @Nonnull
+  public static PartnerManager getPartnerMgr ()
+  {
+    return getInstance ().m_aPartnerMgr;
   }
 }
