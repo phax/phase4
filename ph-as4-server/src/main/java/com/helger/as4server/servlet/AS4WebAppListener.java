@@ -100,6 +100,7 @@ public final class AS4WebAppListener extends WebAppListener
     aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
                                                     "Messaging"),
                                          new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+    // WSS4J must be after Ebms3Messaging handler!
     aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
                                                     "Security"),
                                          new SOAPHeaderElementProcessorWSS4J ());

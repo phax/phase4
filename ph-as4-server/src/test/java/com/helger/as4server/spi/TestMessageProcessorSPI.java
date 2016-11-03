@@ -50,7 +50,7 @@ public class TestMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   {
     s_aLogger.info ("Received AS4 message:");
     s_aLogger.info ("  UserMessage: " + aUserMessage);
-    s_aLogger.info ("  Payload: " + XMLWriter.getXMLString (aPayload));
+    s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getXMLString (aPayload)));
     s_aLogger.info ("  Attachments: " + aIncomingAttachments);
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);
   }

@@ -49,6 +49,7 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   private static final String KEY_MPC = "as4.mps";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
   private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
+  private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "as4.soap.body.payload.present";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -154,5 +155,15 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public IMPC getMPC ()
   {
     return getCastedAttribute (KEY_MPC);
+  }
+
+  public void setSoapBodyPayloadPresent (final boolean bHasSoapBodyPayload)
+  {
+    setAttribute (KEY_SOAP_BODY_PAYLOAD_PRESENT, bHasSoapBodyPayload);
+  }
+
+  public boolean isSoapBodyPayloadPresent ()
+  {
+    return getAttributeAsBoolean (KEY_SOAP_BODY_PAYLOAD_PRESENT, false);
   }
 }

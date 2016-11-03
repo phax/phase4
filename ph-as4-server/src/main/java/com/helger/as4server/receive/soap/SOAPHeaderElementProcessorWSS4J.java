@@ -39,6 +39,7 @@ import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -58,9 +59,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final ErrorList aErrorList,
                                         @Nonnull final Locale aLocale)
   {
-    final PModeLeg aPModeLeg1 = aState.getPMode ().getLeg1 ();
+    final IPMode aPMode = aState.getPMode ();
+    if (aPMode == null)
+      throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
+
+    // TODO select correct leg
+    final PModeLeg aPModeLeg = aPMode.getLeg1 ();
     // Does security - legpart checks if not <code>null</code>
-    if (aPModeLeg1.getSecurity () != null)
+    if (aPModeLeg.getSecurity () != null)
     {
       // Get Signature Algorithm
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
@@ -71,7 +77,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                                                                   CAS4.DS_NS,
                                                                                   "SignatureMethod");
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
-        if (ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm) == null)
+        final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
+        if (eSignAlgo == null)
         {
           LOG.info ("Error processing the Security Header, your signing algorithm '" +
                     sAlgorithm +
@@ -84,11 +91,15 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           return ESuccess.FAILURE;
         }
 
+        if (LOG.isDebugEnabled ())
+          LOG.debug ("Using signature algorithm " + eSignAlgo);
+
         // Get Signature Digest Algorithm
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "Reference");
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "DigestMethod");
         sAlgorithm = aSignedNode == null ? null : aSignedNode.getAttribute ("Algorithm");
-        if (ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm) == null)
+        final ECryptoAlgorithmSignDigest eSignDigestAlgo = ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm);
+        if (eSignDigestAlgo == null)
         {
           LOG.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
                     Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
@@ -98,6 +109,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
           return ESuccess.FAILURE;
         }
+        if (LOG.isDebugEnabled ())
+          LOG.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
 
       // Encrypted header
@@ -111,6 +124,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
 
       final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);
+      final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
       // Check if Attachment IDs are the same
       for (int i = 0; i < aAttachments.size (); i++)
       {
@@ -118,7 +132,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
 
         // Add +1 because the payload has index 0
-        final String sHref = aUserMessage.getPayloadInfo ().getPartInfoAtIndex (1 + i).getHref ();
+        final String sHref = aUserMessage.getPayloadInfo ()
+                                         .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
+                                         .getHref ();
         if (!sHref.contains (sAttachmentId))
         {
           // TODO change Local to dynamic one

@@ -25,8 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -52,6 +50,7 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
+import com.helger.xml.XMLHelper;
 
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
@@ -232,19 +231,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     // Check if a SOAPBodyPayload exists
-    final NodeList nList = aSOAPDoc.getElementsByTagName (aPModeLeg1.getProtocol ()
-                                                                    .getSOAPVersion ()
-                                                                    .getNamespacePrefix () +
-                                                          ":Body");
-    for (int i = 0; i < nList.getLength (); i++)
-    {
-      final Node nNode = nList.item (i);
-      final Element aBody = (Element) nNode;
-      if (aBody.hasChildNodes ())
-      {
-        bHasSoapBodyPayload = true;
-      }
-    }
+    final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
+                                                                aPModeLeg1.getProtocol ()
+                                                                          .getSOAPVersion ()
+                                                                          .getBodyElementName ());
+    if (aBody != null && aBody.hasChildNodes ())
+      bHasSoapBodyPayload = true;
+
+    // Remember in state
+    aState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
 
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
     if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
