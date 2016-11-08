@@ -53,6 +53,9 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "as4.soap.decrypted.attachmentlist";
   private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
   private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "as4.soap.body.payload.present";
+  // TODO maybe not needed
+  private static final String KEY_INITIATOR_ID = "as4.initiator.id";
+  private static final String KEY_RESPONDER_ID = "as4.responder.id";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -184,5 +187,27 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public boolean isSoapBodyPayloadPresent ()
   {
     return getAttributeAsBoolean (KEY_SOAP_BODY_PAYLOAD_PRESENT, false);
+  }
+
+  public void setInitiatorID (@Nullable final String aInitiatorID)
+  {
+    setAttribute (KEY_INITIATOR_ID, aInitiatorID);
+  }
+
+  @Nullable
+  public String getInitiatorID ()
+  {
+    return getAttributeAsString (KEY_INITIATOR_ID);
+  }
+
+  public void setResponderID (@Nullable final String aResponderID)
+  {
+    setAttribute (KEY_RESPONDER_ID, aResponderID);
+  }
+
+  @Nullable
+  public String getResponderID ()
+  {
+    return getAttributeAsString (KEY_RESPONDER_ID);
   }
 }

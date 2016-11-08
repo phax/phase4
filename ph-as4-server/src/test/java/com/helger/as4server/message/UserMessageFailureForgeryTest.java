@@ -191,7 +191,10 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 
   // Encryption
 
-  // @Ignore
+  // Cannot be tested easily, since the error gets only thrown if the SPI tries
+  // to read the stream
+  // of the attachment
+  @Ignore
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {

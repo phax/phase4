@@ -16,6 +16,7 @@
  */
 package com.helger.as4server.receive.soap;
 
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +44,9 @@ import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4server.receive.AS4MessageState;
+import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsSet;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
@@ -119,7 +122,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       final Element aEncryptedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.XENC_NS, "EncryptedKey");
       if (aEncryptedNode != null)
       {
-        // TODO Encrypted checks
+        // TODO Encrypted checks if needed beyond pmode checks
         LOG.info ("encrypted checks");
 
       }
@@ -149,7 +152,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         }
       }
 
-      // Signing Check and Decryption
+      // Signing Verification and Decryption
       final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
       List <WSSecurityEngineResult> aResults = null;
 
@@ -171,6 +174,17 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // afterwards!
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
+        // Collect all used certificates
+        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet<> ();
+        aResults.forEach (x -> {
+          final X509Certificate aCert = (X509Certificate) x.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+          if (aCert != null)
+            aCerts.add (aCert);
+        });
+
+        if (aCerts.size () > 1)
+          LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+
         // Too much output :)
         if (false)
         {
@@ -182,7 +196,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aState.setDecryptedSOAPDocument (aSOAPDoc);
         aState.setDecryptedAttachments (aAttachmentCallbackHandler.getResponseAttachments ());
 
-        // TODO save DOc somewhere? or what should happen with it
         // System.out.println ("Decryption Result ");
         // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
       }
@@ -192,7 +205,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         LOG.info ("Error processing the WSSSecurity Header", ex);
 
-        // TODO change Local to dynamic one + we need a way to distinct
+        // TODO we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing
         aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
