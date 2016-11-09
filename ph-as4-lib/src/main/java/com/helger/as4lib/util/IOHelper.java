@@ -199,6 +199,7 @@ public final class IOHelper
     return FilenameHelper.getAsSecureValidASCIIFilename (s);
   }
 
+  // TODO Replace with CertificateHelper method in ph-security > 8.5.4
   @Nonnull
   @Nonempty
   public static String getPEMEncodedCertificate (@Nonnull final Certificate aCert)
