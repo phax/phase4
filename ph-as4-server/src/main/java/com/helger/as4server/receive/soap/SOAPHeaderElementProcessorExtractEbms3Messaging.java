@@ -16,9 +16,7 @@
  */
 package com.helger.as4server.receive.soap;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -43,9 +41,6 @@ import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeManager;
-import com.helger.as4lib.partner.Partner;
-import com.helger.as4lib.partner.PartnerManager;
-import com.helger.as4lib.util.StringMap;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
@@ -71,7 +66,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
   {
     final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -148,14 +142,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
             aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
-          if (!aPartnerMgr.containsWithID (sInitiatorID))
-          {
-            final Map <String, String> aAttributes = new HashMap<> ();
-            aAttributes.put ("InitiatorID", sInitiatorID);
-            final StringMap aStringMap = new StringMap (aAttributes);
-            final Partner aPartner = new Partner (sInitiatorID, aStringMap);
-            aPartnerMgr.createPartner (aPartner);
-          }
+
+          aState.setInitiatorID (sInitiatorID);
         }
         else
         {
@@ -194,14 +182,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
             aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
             return ESuccess.FAILURE;
           }
-          if (!aPartnerMgr.containsWithID (sResponderID))
-          {
-            final Map <String, String> aAttributes = new HashMap<> ();
-            aAttributes.put ("ResponderID", sResponderID);
-            final StringMap aStringMap = new StringMap (aAttributes);
-            final Partner aPartner = new Partner (sResponderID, aStringMap);
-            aPartnerMgr.createPartner (aPartner);
-          }
+
+          aState.setResponderID (sResponderID);
+
         }
         else
         {

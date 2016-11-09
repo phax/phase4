@@ -18,6 +18,7 @@ package com.helger.as4server.servlet;
 
 import static org.junit.Assert.assertTrue;
 
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Map;
 
@@ -46,7 +47,11 @@ import com.helger.as4lib.message.AS4ErrorMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.partner.Partner;
+import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachment;
 import com.helger.as4server.attachment.IIncomingAttachmentFactory;
@@ -327,6 +332,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     final Node aPayloadNode = aBodyNode.getFirstChild ();
 
+    // TODO choose right ID Initiator or ResponderID
+    _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
+
     for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
       try
       {
@@ -366,6 +374,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
     aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
                 .setMimeType (eSOAPVersion.getMimeType ());
+  }
+
+  private void _updatePartnership (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
+  {
+    final StringMap aStringMap = new StringMap ();
+    aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
+    if (usedCertificate != null)
+      aStringMap.setAttribute (Partner.ATTR_CERT, usedCertificate.toString ());
+    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
+    aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
+
   }
 
   @Override

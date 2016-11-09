@@ -47,6 +47,8 @@ import com.helger.as4lib.model.pmode.PModeProperty;
 import com.helger.as4lib.model.pmode.PModePropertyMicroTypeConverter;
 import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
 import com.helger.as4lib.model.pmode.PModeReceptionAwarenessMicroTypeConverter;
+import com.helger.as4lib.partner.Partner;
+import com.helger.as4lib.partner.PartnerMicroTypeConverter;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
@@ -79,5 +81,7 @@ public final class PModeMicroTypeConverterRegistrar implements IMicroTypeConvert
                                                  new PModeReceptionAwarenessMicroTypeConverter ());
 
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
+
+    aRegistry.registerMicroElementTypeConverter (Partner.class, new PartnerMicroTypeConverter ());
   }
 }

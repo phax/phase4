@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.util.IStringMap;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -78,30 +78,48 @@ public class PartnerManager extends AbstractMapBasedWALDAO <IPartner, Partner>
   }
 
   @Nonnull
-  public EChange updatePartner (@Nonnull final IPartner aPartner)
+  public EChange updatePartner (@Nonnull final String sPartnerID, @Nonnull final IStringMap aNewAttrs)
   {
-    ValueEnforcer.notNull (aPartner, "Partner");
-    final Partner aRealPartner = getOfID (aPartner.getID ());
-    if (aRealPartner == null)
+    ValueEnforcer.notNull (aNewAttrs, "NewAttrs");
+
+    final Partner aPartner = getOfID (sPartnerID);
+    if (aPartner == null)
     {
-      AuditHelper.onAuditModifyFailure (PMode.OT, aPartner.getID (), "no-such-id");
+      AuditHelper.onAuditModifyFailure (Partner.OT, sPartnerID, "no-such-id");
       return EChange.UNCHANGED;
     }
 
     m_aRWLock.writeLock ().lock ();
     try
     {
-      ObjectHelper.setLastModificationNow (aRealPartner);
-      internalUpdateItem (aRealPartner);
+      aPartner.setAllAttributes (aNewAttrs);
+      ObjectHelper.setLastModificationNow (aPartner);
+      internalUpdateItem (aPartner);
     }
     finally
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPartner.getID ());
-    s_aLogger.info ("Updated PMode with ID '" + aPartner.getID () + "'");
+    AuditHelper.onAuditModifySuccess (Partner.OT, "all", sPartnerID);
+    s_aLogger.info ("Updated PMode with ID '" + sPartnerID + "'");
 
     return EChange.CHANGED;
+  }
+
+  @Nonnull
+  public Partner createOrUpdatePartner (@Nullable final String sID, final IStringMap aSM)
+  {
+    Partner ret = getOfID (sID);
+    if (ret == null)
+    {
+      ret = new Partner (sID, aSM);
+      createPartner (ret);
+    }
+    else
+    {
+      updatePartner (sID, aSM);
+    }
+    return ret;
   }
 
   @Nonnull
@@ -110,7 +128,7 @@ public class PartnerManager extends AbstractMapBasedWALDAO <IPartner, Partner>
     final Partner aDeletedPartner = getOfID (sPartnerID);
     if (aDeletedPartner == null)
     {
-      AuditHelper.onAuditDeleteFailure (PMode.OT, "no-such-object-id", sPartnerID);
+      AuditHelper.onAuditDeleteFailure (Partner.OT, "no-such-object-id", sPartnerID);
       return EChange.UNCHANGED;
     }
 
@@ -123,7 +141,7 @@ public class PartnerManager extends AbstractMapBasedWALDAO <IPartner, Partner>
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditDeleteSuccess (PMode.OT, sPartnerID);
+    AuditHelper.onAuditDeleteSuccess (Partner.OT, sPartnerID);
 
     return EChange.CHANGED;
   }
