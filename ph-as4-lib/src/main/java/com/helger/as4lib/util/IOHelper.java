@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -44,7 +46,10 @@ import javax.annotation.WillClose;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 
+import org.apache.xml.security.utils.Base64;
+
 import com.helger.commons.CGlobal;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
@@ -192,5 +197,20 @@ public final class IOHelper
     String s = StringHelper.removeAll (sMessageID, '<');
     s = StringHelper.removeAll (s, '>');
     return FilenameHelper.getAsSecureValidASCIIFilename (s);
+  }
+
+  @Nonnull
+  @Nonempty
+  public static String getPEMEncodedCertificate (@Nonnull final Certificate aCert)
+  {
+    ValueEnforcer.notNull (aCert, "Cert");
+    try
+    {
+      return Base64.encode (aCert.getEncoded ());
+    }
+    catch (final CertificateEncodingException ex)
+    {
+      throw new IllegalArgumentException ("Failed to encode certificate " + aCert, ex);
+    }
   }
 }

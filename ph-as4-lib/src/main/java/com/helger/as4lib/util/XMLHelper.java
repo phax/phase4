@@ -36,11 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -51,9 +47,6 @@ import com.helger.xml.microdom.IMicroElement;
 @Immutable
 public final class XMLHelper
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (XMLHelper.class);
-  private static final String DOLLAR_HOME_DOLLAR = "%home%";
-
   private XMLHelper ()
   {}
 
@@ -142,20 +135,5 @@ public final class XMLHelper
       ++nIndex;
     }
     return ret;
-  }
-
-  private static void _updateDirectories (@Nonnull final StringMap aAttributes, @Nullable final String sBaseDirectory)
-  {
-    for (final Map.Entry <String, String> attrEntry : aAttributes)
-    {
-      final String sValue = attrEntry.getValue ();
-      if (sValue.startsWith (DOLLAR_HOME_DOLLAR))
-      {
-        if (sBaseDirectory == null)
-          throw new IllegalStateException ("Base directory isn't set");
-        aAttributes.setAttribute (attrEntry.getKey (),
-                                  sBaseDirectory + sValue.substring (DOLLAR_HOME_DOLLAR.length ()));
-      }
-    }
   }
 }
