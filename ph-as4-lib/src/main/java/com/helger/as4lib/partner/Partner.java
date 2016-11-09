@@ -58,7 +58,8 @@ import com.helger.photon.security.object.StubObject;
 public class Partner extends AbstractBaseObject implements IPartner
 {
   public static final ObjectType OT = new ObjectType ("as4.partner");
-  public static final String PARTNER_NAME = "name";
+  public static final String ATTR_PARTNER_NAME = "name";
+  public static final String ATTR_CERT = "certificate";
 
   private final StringMap m_aAttrs;
 
@@ -71,16 +72,16 @@ public class Partner extends AbstractBaseObject implements IPartner
   {
     super (aStubObject);
     m_aAttrs = new StringMap (aAttrs);
-    if (!m_aAttrs.containsAttribute (PARTNER_NAME))
+    if (!m_aAttrs.containsAttribute (ATTR_PARTNER_NAME))
       throw new IllegalArgumentException ("The provided attributes are missing the required '" +
-                                          PARTNER_NAME +
+                                          ATTR_PARTNER_NAME +
                                           "' attribute!");
   }
 
   @Nonnull
   public String getName ()
   {
-    return m_aAttrs.getAttributeAsString (PARTNER_NAME);
+    return m_aAttrs.getAttributeAsString (ATTR_PARTNER_NAME);
   }
 
   @Nonnull
@@ -88,6 +89,12 @@ public class Partner extends AbstractBaseObject implements IPartner
   public ICommonsMap <String, String> getAllAttributes ()
   {
     return m_aAttrs.getAllAttributes ();
+  }
+
+  public void setAllAttributes (final IStringMap aAttrs)
+  {
+    m_aAttrs.clear ();
+    m_aAttrs.setAttributes (aAttrs);
   }
 
   @Nonnull

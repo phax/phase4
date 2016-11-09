@@ -16,6 +16,7 @@
  */
 package com.helger.as4server.receive;
 
+import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
@@ -56,6 +57,7 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   // TODO maybe not needed
   private static final String KEY_INITIATOR_ID = "as4.initiator.id";
   private static final String KEY_RESPONDER_ID = "as4.responder.id";
+  private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -189,9 +191,9 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getAttributeAsBoolean (KEY_SOAP_BODY_PAYLOAD_PRESENT, false);
   }
 
-  public void setInitiatorID (@Nullable final String aInitiatorID)
+  public void setInitiatorID (@Nullable final String sInitiatorID)
   {
-    setAttribute (KEY_INITIATOR_ID, aInitiatorID);
+    setAttribute (KEY_INITIATOR_ID, sInitiatorID);
   }
 
   @Nullable
@@ -200,14 +202,25 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getAttributeAsString (KEY_INITIATOR_ID);
   }
 
-  public void setResponderID (@Nullable final String aResponderID)
+  public void setResponderID (@Nullable final String sResponderID)
   {
-    setAttribute (KEY_RESPONDER_ID, aResponderID);
+    setAttribute (KEY_RESPONDER_ID, sResponderID);
   }
 
   @Nullable
   public String getResponderID ()
   {
     return getAttributeAsString (KEY_RESPONDER_ID);
+  }
+
+  public void setUsedCertificate (@Nullable final X509Certificate aCert)
+  {
+    setAttribute (KEY_USED_CERTIFICATE, aCert);
+  }
+
+  @Nullable
+  public X509Certificate getUsedCertificate ()
+  {
+    return getCastedAttribute (KEY_USED_CERTIFICATE);
   }
 }

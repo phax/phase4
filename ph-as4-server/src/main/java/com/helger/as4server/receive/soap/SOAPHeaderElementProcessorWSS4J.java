@@ -184,6 +184,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (aCerts.size () > 1)
           LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+        aState.setUsedCertificate (aCerts.getAtIndex (0));
 
         // Too much output :)
         if (false)
