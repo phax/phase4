@@ -59,6 +59,7 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mutable.MutableLong;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.timing.StopWatch;
+import com.helger.security.certificate.CertificateHelper;
 
 @Immutable
 public final class IOHelper
@@ -206,7 +207,11 @@ public final class IOHelper
     ValueEnforcer.notNull (aCert, "Cert");
     try
     {
-      return Base64.encode (aCert.getEncoded ());
+      return CertificateHelper.BEGIN_CERTIFICATE +
+             "\n" +
+             Base64.encode (aCert.getEncoded ()) +
+             "\n" +
+             CertificateHelper.END_CERTIFICATE;
     }
     catch (final CertificateEncodingException ex)
     {
