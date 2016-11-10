@@ -44,6 +44,7 @@ import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeManager;
@@ -153,7 +154,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    aPMode.setLeg1 (null);
+    ((PModeConfig) aPMode.getConfig ()).setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {
@@ -182,7 +183,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
+    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (null, null, null, null, null));
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {
@@ -213,11 +214,12 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("TestsimulationAddressWrong", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  null));
+    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (new PModeLegProtocol ("TestsimulationAddressWrong",
+                                                                                     ESOAPVersion.AS4_DEFAULT),
+                                                               null,
+                                                               null,
+                                                               null,
+                                                               null));
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {

@@ -79,12 +79,6 @@ public class PMode extends AbstractBaseObject implements IPMode
 
   private final IPModeConfig m_aConfig;
 
-  @Deprecated
-  public PMode (@Nonnull final IPModeConfig aConfig)
-  {
-    this (null, null, aConfig);
-  }
-
   public PMode (@Nullable final PModeParty aInitiator,
                 @Nullable final PModeParty aResponder,
                 @Nonnull final IPModeConfig aConfig)

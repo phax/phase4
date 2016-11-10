@@ -68,7 +68,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 
     // TODO select correct leg
-    final PModeLeg aPModeLeg = aPMode.getLeg1 ();
+    final PModeLeg aPModeLeg = aPMode.getConfig ().getLeg1 ();
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg.getSecurity () != null)
     {

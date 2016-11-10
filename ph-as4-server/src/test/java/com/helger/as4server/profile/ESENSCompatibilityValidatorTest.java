@@ -20,6 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -31,6 +33,7 @@ import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
@@ -58,233 +61,240 @@ public class ESENSCompatibilityValidatorTest
   private static final Locale LOCALE = Locale.US;
   private final ESENSCompatibilityValidator aESENSCompatibilityValidator = new ESENSCompatibilityValidator ();
 
-  private PMode aPMode;
-  private ErrorList aErrorList;
+  private PMode m_aPMode;
+  private ErrorList m_aErrorList;
 
   @Before
   public void setUp ()
   {
-    aErrorList = new ErrorList ();
-    aPMode = ServletTestPMode.getTestPModeWithSecurity (ESOAPVersion.SOAP_12);
+    m_aErrorList = new ErrorList ();
+    m_aPMode = ServletTestPMode.getTestPModeWithSecurity (ESOAPVersion.SOAP_12);
+  }
+
+  @Nonnull
+  private PModeConfig _getConfig ()
+  {
+    return (PModeConfig) m_aPMode.getConfig ();
   }
 
   @Test
   public void testValidatePModeWrongMEP ()
   {
-    aPMode.setMEP (EMEP.TWO_WAY_PULL_PUSH);
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
+    _getConfig ().setMEP (EMEP.TWO_WAY_PULL_PUSH);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
 
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
 
   @Test
   public void testValidatePModeWrongMEPBinding ()
   {
-    aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
-    aPMode.setResponder (new PModeParty ("sa", "id1", "role", "as", "as"));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
+    _getConfig ().setMEPBinding (ETransportChannelBinding.SYNC);
+    m_aPMode.setResponder (new PModeParty ("sa", "id1", "role", "as", "as"));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
 
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP-Binding")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP-Binding")));
   }
 
   @Test
   public void testValidatePModeNoLeg ()
   {
-    aPMode.setLeg1 (null);
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
+    _getConfig ().setLeg1 (null);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
   }
 
   @Test
   public void testValidatePModeNoProtocol ()
   {
-    aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
+    _getConfig ().setLeg1 (new PModeLeg (null, null, null, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
   }
 
   @Test
   public void testValidatePModeNoProtocolAddress ()
   {
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol (), null, null, null, null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol (), null, null, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
   }
 
   @Test
   public void testValidatePModeProtocolAddressIsNotHttps ()
   {
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("ftp://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("ftp://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
   }
 
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
-                                  null,
-                                  null,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
+                                         null,
+                                         null,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
   }
 
   @Test
   public void testValidatePModeSecurityNoX509SignatureCertificate ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
   }
 
   @Test
   public void testValidatePModeSecurityNoX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (null);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
   }
 
   @Test
   public void testValidatePModeSecurityWrongX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_512);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID ())));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID ())));
   }
 
   @Test
   public void testValidatePModeSecurityNoX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (null);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
   }
 
   @Test
   public void testValidatePModeSecurityWrongX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID ())));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID ())));
   }
 
   @Test
   public void testValidatePModeSecurityNoX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (null);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
   }
 
   @Test
   public void testValidatePModeSecurityWrongX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.CRYPT_CAST5);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID ())));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID ())));
   }
 
   @SuppressWarnings ("deprecation")
   @Test
   public void testValidatePModeSecurityWrongWSSVersion ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setWSSVersion (EWSSVersion.WSS_10);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
   }
 
   @Test
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
   @Test
   public void testValidatePModeSecurityPModeAuthorizeTrue ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setPModeAuthorize (true);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
   @Test
   public void testValidatePModeSecurityResponsePatternWrongBoolean ()
   {
-    final PModeLegSecurity aSecurityLeg = aPMode.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getConfig ().getLeg1 ().getSecurity ();
     aSecurityLeg.setSendReceipt (true);
     aSecurityLeg.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.CALLBACK);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  null,
-                                  null,
-                                  aSecurityLeg));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         null,
+                                         null,
+                                         aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Only response is allowed as pattern")));
   }
 
   // Error Handling
@@ -292,9 +302,9 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("No ErrorHandling Parameter present but they are mandatory")));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("No ErrorHandling Parameter present but they are mandatory")));
   }
 
   @Test
@@ -306,14 +316,14 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("ReportAsResponse is a mandatory PMode parameter")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReportAsResponse is a mandatory PMode parameter")));
   }
 
   @Test
@@ -326,14 +336,14 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportAsResponse (false);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("PMode ReportAsResponse has to be True")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode ReportAsResponse has to be True")));
   }
 
   @Test
@@ -345,14 +355,14 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
   }
 
   @Test
@@ -365,14 +375,14 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
   }
 
   @Test
@@ -384,14 +394,14 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
   }
 
   @Test
@@ -404,13 +414,13 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
-    aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
-                                  null,
-                                  aErrorHandler,
-                                  null,
-                                  null));
-    aESENSCompatibilityValidator.validatePMode (aPMode, aErrorList);
-    assertTrue (aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                              .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
+    _getConfig ().setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
+                                         null,
+                                         aErrorHandler,
+                                         null,
+                                         null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
   }
 }

@@ -199,6 +199,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     {
       throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
     }
+
     return ESuccess.SUCCESS;
   }
 

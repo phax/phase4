@@ -21,9 +21,11 @@ import javax.annotation.Nonnull;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
@@ -41,28 +43,25 @@ public class ESENSPMode
   @Nonnull
   public static PMode getESENSPMode ()
   {
-    final PMode aTestPmode = new PMode ("pm-esens-default");
-    aTestPmode.setMEP (EMEP.ONE_WAY);
-    aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
-    aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aTestPmode.setResponder (_generateInitiatorOrResponder (false));
-    aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),
-                                      _generatePModeLegBusinessInformation (),
-                                      _generatePModeLegErrorHandling (),
-                                      null,
-                                      _generatePModeLegSecurity ()));
+    final PModeConfig aConfig = new PModeConfig ("pm-esens-default");
+    aConfig.setMEP (EMEP.ONE_WAY);
+    aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
+    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),
+                                   _generatePModeLegBusinessInformation (),
+                                   _generatePModeLegErrorHandling (),
+                                   null,
+                                   _generatePModeLegSecurity ()));
     // Leg 2 stays null, because we only use one-way
-    aTestPmode.setReceptionAwareness (new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE));
-    return aTestPmode;
+    aConfig.setReceptionAwareness (new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE));
+
+    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
   }
 
+  @Nonnull
   private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
   {
-    final PModeLegErrorHandling aPModeLegErrorHandling = new PModeLegErrorHandling ();
-    aPModeLegErrorHandling.setReportAsResponse (true);
-    aPModeLegErrorHandling.setReportDeliveryFailuresNotifyProducer (true);
-    aPModeLegErrorHandling.setReportProcessErrorNotifyConsumer (true);
-    return aPModeLegErrorHandling;
+    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
   }
 
   @SuppressWarnings ("boxing")

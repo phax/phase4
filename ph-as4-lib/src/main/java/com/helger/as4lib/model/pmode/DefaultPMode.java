@@ -18,6 +18,7 @@ package com.helger.as4lib.model.pmode;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.mpc.MPCManager;
@@ -43,6 +44,7 @@ public class DefaultPMode
     aDefaultConfig.setMEPBinding (ETransportChannelBinding.PUSH);
     aDefaultConfig.setLeg1 (_generatePModeLeg ());
     // Leg 2 stays null, because we only use one-way
+    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aDefaultConfig);
     return aDefaultConfig;
   }
 

@@ -149,7 +149,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     ValueEnforcer.notNull (aLocale, "Locale");
 
     // TODO remove if or entire statement
-    if (GlobalDebug.isDebugMode ())
+    if (GlobalDebug.isDebugMode () && false)
     {
       s_aLogger.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
       s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));

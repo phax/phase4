@@ -82,7 +82,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // 0 or 1 are allowed
     if (aMessaging.getUserMessageCount () > 1)
     {
-      LOG.info ("Too many UserMessage objects contained: " + aMessaging.getUserMessageCount ());
+      LOG.warn ("Too many UserMessage objects contained: " + aMessaging.getUserMessageCount ());
 
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
@@ -104,7 +104,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       }
       if (aPMode == null)
       {
-        LOG.info ("Failed to resolve PMode '" + sPModeID + "'");
+        LOG.warn ("Failed to resolve PMode '" + sPModeID + "'");
 
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
         return ESuccess.FAILURE;
@@ -119,9 +119,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       // Initiator is optional for push
       if (aPMode != null && aPMode.getInitiator () == null)
       {
-        if (aPMode.getMEPBinding ().isPull ())
+        if (aPMode.getConfig ().getMEPBinding ().isPull ())
         {
-          LOG.info ("Initiator is required for PULL message");
+          LOG.warn ("Initiator is required for PULL message");
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -136,7 +136,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
                                              aID -> aID.getValue ().equals (sInitiatorID)))
           {
-            LOG.info ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
+            LOG.warn ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
                       sInitiatorID +
                       "'");
             aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
@@ -147,7 +147,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
         else
         {
-          LOG.info ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.");
+          LOG.warn ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.");
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -157,9 +157,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       // Response is optional for pull
       if (aPMode.getResponder () == null)
       {
-        if (aPMode.getMEPBinding ().isPush ())
+        if (aPMode.getConfig ().getMEPBinding ().isPush ())
         {
-          LOG.info ("Responder is required for PUSH message");
+          LOG.warn ("Responder is required for PUSH message");
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -175,7 +175,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                              aID -> aID.getValue ().equals (sResponderID)))
           {
 
-            LOG.info ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
+            LOG.warn ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
                       sResponderID +
                       "'");
 
@@ -188,7 +188,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
         else
         {
-          LOG.info ("Error processing the usermessage, to-PartyInfo is invalid.");
+          LOG.warn ("Error processing the usermessage, to-PartyInfo is invalid.");
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -198,14 +198,14 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // Check if MPC is contained in PMode and if so, if it is valid
     // TODO move to PMode initialization
-    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
+    final PModeLeg aPModeLeg1 = aPMode.getConfig ().getLeg1 ();
     if (aPModeLeg1.getBusinessInfo () != null)
     {
       final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
       if (sPModeMPC != null)
         if (!aMPCMgr.containsWithID (sPModeMPC))
         {
-          LOG.info ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+          LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -223,7 +223,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     final IMPC aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
     if (aEffectiveMPC == null)
     {
-      LOG.info ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
+      LOG.warn ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
 
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
@@ -251,7 +251,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       if (bHasSoapBodyPayload)
       {
-        LOG.info ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
+        LOG.warn ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
 
         aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
         return ESuccess.FAILURE;
@@ -262,11 +262,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       // message
 
       // For the case that there is no Payload/Part - Info but still
-      // attachments
-      // in the message
-      if (aAttachments.size () > 0)
+      // attachments in the message
+      if (aAttachments.isNotEmpty ())
       {
-        LOG.info ("No PartInfo is specified, so no attachments are allowed.");
+        LOG.warn ("No PartInfo is specified, so no attachments are allowed.");
 
         aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
         return ESuccess.FAILURE;
@@ -279,7 +278,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       // Check if there are more Attachments then specified
       if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
       {
-        LOG.info ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
+        LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
                   aEbms3PayloadInfo.getPartInfoCount () +
                   "'" +
                   " but was '" +
@@ -300,7 +299,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           // Check if there is a BodyPayload as specified in the UserMessage
           if (!bHasSoapBodyPayload)
           {
-            LOG.info ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
+            LOG.warn ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
 
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;
@@ -320,7 +319,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
             {
               if (bHasSoapBodyPayload)
               {
-                LOG.info ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
+                LOG.warn ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
 
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                 return ESuccess.FAILURE;
@@ -332,7 +331,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
               final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
               if (eCompressionMode == null)
               {
-                LOG.info ("Error processing the UserMessage, CompressionType " +
+                LOG.warn ("Error processing the UserMessage, CompressionType " +
                           aEbms3Property.getValue () +
                           " is not supported. ");
 
@@ -349,7 +348,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
       if (specifiedAttachments != aAttachments.size ())
       {
-        LOG.info ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
+        LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
                   aEbms3PayloadInfo.getPartInfoCount () +
                   "'" +
                   " but was '" +

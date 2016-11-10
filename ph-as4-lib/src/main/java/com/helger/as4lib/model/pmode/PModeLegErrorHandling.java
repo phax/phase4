@@ -96,14 +96,14 @@ public class PModeLegErrorHandling
   {
     m_aReportSenderErrorsTo = aReportSenderErrorsTo;
     m_aReportReceiverErrorsTo = aReportReceiverErrorsTo;
-    m_eReportAsResponse = eReportAsResponse;
-    m_eReportProcessErrorNotifyConsumer = eReportProcessErrorNotifyConsumer;
-    m_eReportProcessErrorNotifyProducer = eReportProcessErrorNotifyProducer;
-    m_eReportDeliveryFailuresNotifyProducer = eReportDeliveryFailuresNotifyProducer;
+    m_eReportAsResponse = ValueEnforcer.notNull (eReportAsResponse, "ReportAsResponse");
+    m_eReportProcessErrorNotifyConsumer = ValueEnforcer.notNull (eReportProcessErrorNotifyConsumer,
+                                                                 "ReportProcessErrorNotifyConsumer");
+    m_eReportProcessErrorNotifyProducer = ValueEnforcer.notNull (eReportProcessErrorNotifyProducer,
+                                                                 "ReportProcessErrorNotifyProducer");
+    m_eReportDeliveryFailuresNotifyProducer = ValueEnforcer.notNull (eReportDeliveryFailuresNotifyProducer,
+                                                                     "ReportDeliveryFailuresNotifyProducer");
   }
-
-  public PModeLegErrorHandling ()
-  {}
 
   @Nullable
   public PModeAddressList getReportSenderErrorsTo ()

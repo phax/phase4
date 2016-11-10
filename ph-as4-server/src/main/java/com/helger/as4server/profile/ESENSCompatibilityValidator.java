@@ -30,6 +30,7 @@ import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
@@ -66,19 +67,21 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     assert MetaAS4Manager.getPModeMgr ().validatePMode (aPMode).isSuccess ();
+    assert MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPMode.getConfig ()).isSuccess ();
+    final IPModeConfig aConfig = aPMode.getConfig ();
 
-    if (!aPMode.getMEP ().equals (EMEP.ONE_WAY) || aPMode.getMEP ().equals (EMEP.TWO_WAY))
+    if (!aConfig.getMEP ().equals (EMEP.ONE_WAY) || aConfig.getMEP ().equals (EMEP.TWO_WAY))
     {
       aErrorList.add (_createError ("A non valid PMode MEP was specified, valid or only one-way and two-way."));
     }
 
-    if (!aPMode.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
-        !aPMode.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
+    if (!aConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
+        !aConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
     {
       aErrorList.add (_createError ("A non valid PMode MEP-Binding was specified, valid or only one-way and two-way."));
     }
 
-    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
+    final PModeLeg aPModeLeg1 = aConfig.getLeg1 ();
     if (aPModeLeg1 == null)
     {
       aErrorList.add (_createError ("PMode is missing Leg 1"));
@@ -263,7 +266,7 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
 
       // Compression application/gzip ONLY
       // other possible states are absent or "" (No input)
-      final PModePayloadService aPayloadService = aPMode.getPayloadService ();
+      final PModePayloadService aPayloadService = aConfig.getPayloadService ();
       if (aPayloadService != null)
       {
         final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();

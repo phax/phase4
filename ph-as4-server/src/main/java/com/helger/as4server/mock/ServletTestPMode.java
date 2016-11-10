@@ -21,9 +21,11 @@ import javax.annotation.Nonnull;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
@@ -39,30 +41,48 @@ public class ServletTestPMode
   {}
 
   @Nonnull
+  public static PModeConfig getTestPModeConfig (@Nonnull final ESOAPVersion eSOAPVersion)
+  {
+    return getTestPModeConfigSetID (eSOAPVersion,
+                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? "pm-esens-generic-resp"
+                                                                               : "pm-esens-generic-resp11");
+  }
+
+  @Nonnull
+  public static PModeConfig getTestPModeConfigSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
+  {
+    final PModeConfig aConfig = new PModeConfig (sPModeID);
+    aConfig.setMEP (EMEP.ONE_WAY);
+    aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
+    aConfig.setLeg1 (_generatePModeLeg (eSOAPVersion));
+    // Leg 2 stays null, because we only use one-way
+    return aConfig;
+  }
+
+  @Nonnull
+  private static PMode _createTestPMode (@Nonnull final PModeConfig aConfig)
+  {
+    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
+  }
+
+  @Nonnull
   public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    return getTestPModeSetID (eSOAPVersion,
-                              eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? "pm-esens-generic-resp"
-                                                                         : "pm-esens-generic-resp11");
+    return _createTestPMode (getTestPModeConfig (eSOAPVersion));
   }
 
   @Nonnull
   public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
   {
-    final PMode aTestPmode = new PMode (sPModeID);
-    aTestPmode.setMEP (EMEP.ONE_WAY);
-    aTestPmode.setMEPBinding (ETransportChannelBinding.PUSH);
-    aTestPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aTestPmode.setResponder (_generateInitiatorOrResponder (false));
-    aTestPmode.setLeg1 (_generatePModeLeg (eSOAPVersion));
-    // Leg 2 stays null, because we only use one-way
-    return aTestPmode;
+    return _createTestPMode (getTestPModeConfigSetID (eSOAPVersion, sPModeID));
   }
 
   @Nonnull
   public static PMode getTestPModeWithSecurity (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aTestPmode = getTestPMode (eSOAPVersion);
+    final PModeConfig aConfig = getTestPModeConfig (eSOAPVersion);
+
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
     aPModeLegSecurity.setX509SignatureCertificate ("TODO change to real cert");
@@ -71,13 +91,13 @@ public class ServletTestPMode
     aPModeLegSecurity.setX509EncryptionCertificate ("TODO change to real cert");
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aTestPmode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                                      _generatePModeLegBusinessInformation (),
-                                      null,
-                                      null,
-                                      aPModeLegSecurity));
+    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
+                                   _generatePModeLegBusinessInformation (),
+                                   null,
+                                   null,
+                                   aPModeLegSecurity));
     // Leg 2 stays null, because we only use one-way
-    return aTestPmode;
+    return _createTestPMode (aConfig);
   }
 
   @Nonnull

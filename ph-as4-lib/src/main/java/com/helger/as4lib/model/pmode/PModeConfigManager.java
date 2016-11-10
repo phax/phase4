@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -61,6 +62,14 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
     final IMicroDocument ret = super.createWriteData ();
     ret.getDocumentElement ().setAttribute (ATTR_DEFAULT_ID, m_sDefaultID);
     return ret;
+  }
+
+  @VisibleForTesting
+  public void createPModeConfigIfNotExisting (@Nonnull final PModeConfig aPModeConfig)
+  {
+    ValueEnforcer.notNull (aPModeConfig, "PModeConfig");
+    if (!containsWithID (aPModeConfig.getID ()))
+      createPModeConfig (aPModeConfig);
   }
 
   @Nonnull
