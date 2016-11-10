@@ -46,11 +46,10 @@ import javax.annotation.WillClose;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 
-import org.apache.xml.security.utils.Base64;
-
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.base64.Base64;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
 import com.helger.commons.io.file.FilenameHelper;
@@ -200,6 +199,7 @@ public final class IOHelper
     return FilenameHelper.getAsSecureValidASCIIFilename (s);
   }
 
+  // TODO Replace with CertificateHelper method in ph-security > 8.5.4
   @Nonnull
   @Nonempty
   public static String getPEMEncodedCertificate (@Nonnull final Certificate aCert)
@@ -209,7 +209,7 @@ public final class IOHelper
     {
       return CertificateHelper.BEGIN_CERTIFICATE +
              "\n" +
-             Base64.encode (aCert.getEncoded ()) +
+             Base64.encodeBytes (aCert.getEncoded ()) +
              "\n" +
              CertificateHelper.END_CERTIFICATE;
     }
