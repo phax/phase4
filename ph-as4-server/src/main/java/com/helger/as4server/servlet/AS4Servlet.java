@@ -51,6 +51,7 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.IOHelper;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachment;
@@ -381,7 +382,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
     if (usedCertificate != null)
-      aStringMap.setAttribute (Partner.ATTR_CERT, usedCertificate.toString ());
+      aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (usedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
 

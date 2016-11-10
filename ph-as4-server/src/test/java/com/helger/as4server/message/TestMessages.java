@@ -49,7 +49,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-final class TestMessages
+public final class TestMessages
 {
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
