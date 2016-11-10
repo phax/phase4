@@ -36,16 +36,22 @@ public class DefaultPMode
   {}
 
   @Nonnull
-  public static IPMode getDefaultPmode ()
+  public static IPModeConfig getDefaultPModeConfig ()
   {
-    final PMode aDefaultPmode = new PMode ("default-pmode");
-    aDefaultPmode.setMEP (EMEP.ONE_WAY);
-    aDefaultPmode.setMEPBinding (ETransportChannelBinding.PUSH);
-    aDefaultPmode.setInitiator (_generateInitiatorOrResponder (true));
-    aDefaultPmode.setResponder (_generateInitiatorOrResponder (false));
-    aDefaultPmode.setLeg1 (_generatePModeLeg ());
+    final PModeConfig aDefaultConfig = new PModeConfig ("default-pmode");
+    aDefaultConfig.setMEP (EMEP.ONE_WAY);
+    aDefaultConfig.setMEPBinding (ETransportChannelBinding.PUSH);
+    aDefaultConfig.setLeg1 (_generatePModeLeg ());
     // Leg 2 stays null, because we only use one-way
-    return aDefaultPmode;
+    return aDefaultConfig;
+  }
+
+  @Nonnull
+  public static IPMode getDefaultPMode ()
+  {
+    return new PMode (_generateInitiatorOrResponder (true),
+                      _generateInitiatorOrResponder (false),
+                      getDefaultPModeConfig ());
   }
 
   @Nonnull

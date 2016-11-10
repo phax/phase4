@@ -26,6 +26,7 @@ import com.helger.as4lib.AS4TestRule;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -54,26 +55,35 @@ public final class PModeMicroTypeConverterTest
   @Test
   public void testAsSimpleAsPossible ()
   {
-    final PMode aPMode = new PMode ("id");
+    final PModeConfig aPMode = new PModeConfig ("id");
     XMLTestHelper.testMicroTypeConversion (aPMode);
   }
 
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PMode aPMode = new PMode ("id");
-    aPMode.setAgreement ("Agreement");
-    aPMode.setMEP (EMEP.TWO_WAY_PUSH_PULL);
-    aPMode.setMEPBinding (ETransportChannelBinding.SYNC);
-    aPMode.setInitiator (_generateInitiatorOrResponder (true));
-    aPMode.setResponder (_generateInitiatorOrResponder (false));
-    aPMode.setLeg1 (_generatePModeLeg ());
-    aPMode.setLeg2 (_generatePModeLeg ());
-    XMLTestHelper.testMicroTypeConversion (aPMode);
-    XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg1 ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
+    final PModeConfig aConfig = new PModeConfig ("id");
+    {
+      aConfig.setAgreement ("Agreement");
+      aConfig.setMEP (EMEP.TWO_WAY_PUSH_PULL);
+      aConfig.setMEPBinding (ETransportChannelBinding.SYNC);
+      aConfig.setLeg1 (_generatePModeLeg ());
+      aConfig.setLeg2 (_generatePModeLeg ());
+      XMLTestHelper.testMicroTypeConversion (aConfig);
+      XMLTestHelper.testMicroTypeConversion (aConfig.getLeg1 ());
+      XMLTestHelper.testMicroTypeConversion (aConfig.getLeg2 ());
+    }
+    MetaAS4Manager.getPModeConfigMgr ().createPModeConfig (aConfig);
+
+    {
+      final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
+                                      _generateInitiatorOrResponder (false),
+                                      aConfig);
+      XMLTestHelper.testMicroTypeConversion (aPMode);
+      XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
+      XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
+      XMLTestHelper.testMicroTypeConversion (aPMode.getConfig ());
+    }
   }
 
   @Nonnull

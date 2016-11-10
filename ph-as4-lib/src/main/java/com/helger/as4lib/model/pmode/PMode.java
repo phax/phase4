@@ -19,9 +19,7 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4lib.model.EMEP;
-import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
@@ -32,33 +30,6 @@ import com.helger.photon.security.object.StubObject;
 public class PMode extends AbstractBaseObject implements IPMode
 {
   public static final ObjectType OT = new ObjectType ("as4.pmode");
-
-  /**
-   * (optional) The identifier for the P-Mode, e.g. the name of the business
-   * transaction: PurchaseOrderFromACME. This identifier is user-defined and
-   * optional, for the convenience of P-Mode management. It must uniquely
-   * identify the P-Mode among all P-Modes deployed on the same MSH, and may be
-   * absent if the P-Mode is identified by other means, e.g. embedded in a
-   * larger structure that is itself identified, or has parameter values
-   * distinct from other P-Modes used on the same MSH. If the ID is specified,
-   * the <code>AgreementRef/@pmode</code> attribute value is also expected to be
-   * set in associated messages.
-   */
-
-  /**
-   * The reference to the agreement governing this message exchange (maps to
-   * <code>eb:AgreementRef</code> in message header).
-   */
-  private String m_sAgreement;
-
-  /** The type of ebMS MEP associated with this P-Mode. */
-  private EMEP m_eMEP;
-
-  /**
-   * The transport channel binding assigned to the MEP (push, pull, sync,
-   * push-and-push, push-and-pull, pull-and-push, pull-and-pull, ...).
-   */
-  private ETransportChannelBinding m_eMEPBinding;
 
   /**
    * 1.(PMode.Initiator and its subelements are optional if PMode.Responder is
@@ -106,64 +77,36 @@ public class PMode extends AbstractBaseObject implements IPMode
    */
   private PModeParty m_aResponder;
 
-  private PModeLeg m_aLeg1;
-  private PModeLeg m_aLeg2;
+  private final IPModeConfig m_aConfig;
 
-  /**
-   * PayloadService is only used in the AS4 - Profile, to mark the compression
-   * type.
-   */
-  private PModePayloadService m_aPayloadService;
-
-  private PModeReceptionAwareness m_aReceptionAwareness;
-
-  public PMode (@Nonnull @Nonempty final String sID)
+  @Deprecated
+  public PMode (@Nonnull final IPModeConfig aConfig)
   {
-    this (StubObject.createForCurrentUserAndID (sID));
+    this (null, null, aConfig);
   }
 
-  PMode (@Nonnull final StubObject aStubObject)
+  public PMode (@Nullable final PModeParty aInitiator,
+                @Nullable final PModeParty aResponder,
+                @Nonnull final IPModeConfig aConfig)
+  {
+    this (StubObject.createForCurrentUser (), aInitiator, aResponder, aConfig);
+  }
+
+  PMode (@Nonnull final StubObject aStubObject,
+         @Nullable final PModeParty aInitiator,
+         @Nullable final PModeParty aResponder,
+         @Nonnull final IPModeConfig aConfig)
   {
     super (aStubObject);
+    setInitiator (aInitiator);
+    setResponder (aResponder);
+    m_aConfig = ValueEnforcer.notNull (aConfig, "PModeConfig");
   }
 
   @Nonnull
   public ObjectType getObjectType ()
   {
     return OT;
-  }
-
-  @Nullable
-  public String getAgreement ()
-  {
-    return m_sAgreement;
-  }
-
-  public void setAgreement (final String sAgreement)
-  {
-    m_sAgreement = sAgreement;
-  }
-
-  @Nullable
-  public EMEP getMEP ()
-  {
-    return m_eMEP;
-  }
-
-  public void setMEP (@Nullable final EMEP eMEP)
-  {
-    m_eMEP = eMEP;
-  }
-
-  @Nullable
-  public ETransportChannelBinding getMEPBinding ()
-  {
-    return m_eMEPBinding;
-  }
-
-  public void setMEPBinding (@Nullable final ETransportChannelBinding eMEPBinding)
-  {
-    m_eMEPBinding = eMEPBinding;
   }
 
   @Nullable
@@ -189,45 +132,9 @@ public class PMode extends AbstractBaseObject implements IPMode
   }
 
   @Nullable
-  public PModeLeg getLeg1 ()
+  public IPModeConfig getConfig ()
   {
-    return m_aLeg1;
-  }
-
-  public void setLeg1 (@Nullable final PModeLeg aLeg1)
-  {
-    m_aLeg1 = aLeg1;
-  }
-
-  @Nullable
-  public PModeLeg getLeg2 ()
-  {
-    return m_aLeg2;
-  }
-
-  public void setLeg2 (@Nullable final PModeLeg aLeg2)
-  {
-    m_aLeg2 = aLeg2;
-  }
-
-  public PModePayloadService getPayloadService ()
-  {
-    return m_aPayloadService;
-  }
-
-  public void setPayloadService (@Nullable final PModePayloadService aPayloadService)
-  {
-    m_aPayloadService = aPayloadService;
-  }
-
-  public PModeReceptionAwareness getReceptionAwareness ()
-  {
-    return m_aReceptionAwareness;
-  }
-
-  public void setReceptionAwareness (@Nullable final PModeReceptionAwareness aPModeReceptionAwareness)
-  {
-    m_aReceptionAwareness = aPModeReceptionAwareness;
+    return m_aConfig;
   }
 
   @Override
@@ -251,15 +158,9 @@ public class PMode extends AbstractBaseObject implements IPMode
   public String toString ()
   {
     return ToStringGenerator.getDerived (super.toString ())
-                            .append ("Agreement", m_sAgreement)
-                            .append ("MEP", m_eMEP)
-                            .append ("MEPBinding", m_eMEPBinding)
                             .append ("Initiator", m_aInitiator)
                             .append ("Responder", m_aResponder)
-                            .append ("Leg1", m_aLeg1)
-                            .append ("Leg2", m_aLeg2)
-                            .append ("PayloadService", m_aPayloadService)
-                            .append ("ReceptionAwareness", m_aReceptionAwareness)
+                            .append ("Config", m_aConfig)
                             .toString ();
   }
 }

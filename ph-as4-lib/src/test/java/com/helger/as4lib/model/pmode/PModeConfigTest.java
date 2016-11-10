@@ -25,11 +25,11 @@ import org.junit.rules.TestRule;
 import com.helger.as4lib.AS4TestRule;
 
 /**
- * Test class for class {@link PMode}.
+ * Test class for class {@link PModeConfig}.
  *
  * @author Philip Helger
  */
-public final class PModeTest
+public final class PModeConfigTest
 {
   @Rule
   public final TestRule m_aTestRule = new AS4TestRule ();
@@ -39,7 +39,7 @@ public final class PModeTest
   {
     try
     {
-      new PMode ((String) null);
+      new PModeConfig ((String) null);
       fail ();
     }
     catch (final NullPointerException ex)
@@ -48,7 +48,7 @@ public final class PModeTest
     }
     try
     {
-      new PMode ("");
+      new PModeConfig ("");
       fail ();
     }
     catch (final IllegalArgumentException ex)

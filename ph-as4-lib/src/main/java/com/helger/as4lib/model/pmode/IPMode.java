@@ -16,52 +16,27 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4lib.model.EMEP;
-import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.photon.basic.object.IObject;
 
 public interface IPMode extends IObject
 {
-  @Nullable
-  String getAgreement ();
-
-  @Nullable
-  EMEP getMEP ();
-
-  @Nullable
-  default String getMEPID ()
-  {
-    final EMEP eMEP = getMEP ();
-    return eMEP == null ? null : eMEP.getID ();
-  }
-
-  @Nullable
-  ETransportChannelBinding getMEPBinding ();
-
-  @Nullable
-  default String getMEPBindingID ()
-  {
-    final ETransportChannelBinding eMEPBinding = getMEPBinding ();
-    return eMEPBinding == null ? null : eMEPBinding.getID ();
-  }
-
   @Nullable
   PModeParty getInitiator ();
 
   @Nullable
   PModeParty getResponder ();
 
-  @Nullable
-  PModeLeg getLeg1 ();
+  @Nonnull
+  IPModeConfig getConfig ();
 
-  @Nullable
-  PModeLeg getLeg2 ();
-
-  @Nullable
-  PModePayloadService getPayloadService ();
-
-  @Nullable
-  PModeReceptionAwareness getReceptionAwareness ();
+  @Nonnull
+  @Nonempty
+  default String getConfigID ()
+  {
+    return getConfig ().getID ();
+  }
 }

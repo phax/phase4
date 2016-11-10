@@ -19,8 +19,7 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4lib.model.EMEP;
-import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
@@ -28,13 +27,9 @@ import com.helger.xml.microdom.convert.MicroTypeConverter;
 
 public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
-  private static final String ATTR_AGREEMENT = "Agreement";
-  private static final String ATTR_MEP = "MEP";
-  private static final String ATTR_MEP_BINDING = "MEPBinding";
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";
-  private static final String ELEMENT_LEG1 = "Leg1";
-  private static final String ELEMENT_LEG2 = "Leg2";
+  private static final String ATTR_PMODE_CONFIG_ID = "ConfigID";
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -44,34 +39,29 @@ public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
     final IPMode aValue = (IPMode) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
-    ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
-    ret.setAttribute (ATTR_MEP, aValue.getMEPID ());
-    ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),
                                                                sNamespaceURI,
                                                                ELEMENT_INITIATOR));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
                                                                sNamespaceURI,
                                                                ELEMENT_RESPONDER));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
-
+    ret.setAttribute (ATTR_PMODE_CONFIG_ID, aValue.getConfigID ());
     return ret;
   }
 
   @Nonnull
   public PMode convertToNative (@Nonnull final IMicroElement aElement)
   {
-    final PMode ret = new PMode (getStubObject (aElement));
-    ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
-    ret.setMEP (EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)));
-    ret.setMEPBinding (ETransportChannelBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));
-    ret.setResponder (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
-                                                          PModeParty.class));
-    ret.setLeg1 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1), PModeLeg.class));
-    ret.setLeg2 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2), PModeLeg.class));
-    ret.setInitiator (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
-                                                          PModeParty.class));
-    return ret;
+    final String sConfigID = aElement.getAttributeValue (ATTR_PMODE_CONFIG_ID);
+    final IPModeConfig aConfig = MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID);
+    if (aConfig == null)
+      throw new IllegalStateException ("Failed to resolve PModeConfig with ID '" + sConfigID + "'");
+
+    final PModeParty aInitiator = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
+                                                                      PModeParty.class);
+    final PModeParty aResponder = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
+                                                                      PModeParty.class);
+
+    return new PMode (getStubObject (aElement), aInitiator, aResponder, aConfig);
   }
 }

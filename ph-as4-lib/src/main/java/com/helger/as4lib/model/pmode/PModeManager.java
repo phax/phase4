@@ -31,36 +31,14 @@ import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.ObjectHelper;
-import com.helger.xml.microdom.IMicroDocument;
 
 public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (PModeManager.class);
-  private static final String ATTR_DEFAULT_ID = "defaultpmode";
-
-  private String m_sDefaultID = null;
 
   public PModeManager (@Nullable final String sFilename) throws DAOException
   {
     super (PMode.class, sFilename);
-  }
-
-  @Override
-  @Nonnull
-  protected EChange onRead (@Nonnull final IMicroDocument aDoc)
-  {
-    final EChange ret = super.onRead (aDoc);
-    m_sDefaultID = aDoc.getDocumentElement ().getAttributeValue (ATTR_DEFAULT_ID);
-    return ret;
-  }
-
-  @Override
-  @Nonnull
-  protected IMicroDocument createWriteData ()
-  {
-    final IMicroDocument ret = super.createWriteData ();
-    ret.getDocumentElement ().setAttribute (ATTR_DEFAULT_ID, m_sDefaultID);
-    return ret;
   }
 
   @Nonnull
@@ -168,30 +146,12 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sID)
   {
-    IPMode ret = getOfID (sID);
-    if (ret == null && m_sDefaultID != null)
-    {
-      // ID not found - try default
-      ret = getOfID (m_sDefaultID);
-    }
-    return ret;
-  }
-
-  @Nullable
-  public String getDefaultPModeID ()
-  {
-    return m_sDefaultID;
-  }
-
-  public void setDefaultPModeID (@Nullable final String sDefaultPModeID)
-  {
-    m_sDefaultID = sDefaultPModeID;
+    return getOfID (sID);
   }
 
   @Nonnull
   public ESuccess validatePMode (@Nullable final IPMode aPMode)
   {
-
     if (aPMode == null)
     {
       throw new IllegalStateException ("PMode is null!");
@@ -201,18 +161,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     if (aPMode.getID () == null)
     {
       throw new IllegalStateException ("No PMode ID present");
-    }
-
-    // MEPBINDING only push maybe push and pull
-    if (aPMode.getMEPBinding () == null)
-    {
-      throw new IllegalStateException ("No PMode MEPBinding present. (Push, Pull, Sync)");
-    }
-
-    // Checking MEP all are allowed
-    if (aPMode.getMEP () == null)
-    {
-      throw new IllegalStateException ("No PMode MEP present");
     }
 
     final PModeParty aInitiator = aPMode.getInitiator ();
