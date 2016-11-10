@@ -33,7 +33,7 @@ import com.helger.web.servlet.response.UnifiedResponse;
 
 /**
  * Special {@link UnifiedResponse} class with some sanity methods.
- * 
+ *
  * @author Philip Helger
  */
 public class AS4Response extends UnifiedResponse
@@ -54,7 +54,7 @@ public class AS4Response extends UnifiedResponse
                                 @Nonnull final String sMsg,
                                 @Nullable final Throwable t)
   {
-    s_aLogger.error (sMsg, t);
+    s_aLogger.error ("HTTP " + nStatusCode + ": " + sMsg, t);
     setContentAndCharset (sMsg, CCharset.CHARSET_UTF_8_OBJ);
     setMimeType (CMimeType.TEXT_PLAIN);
     setStatus (nStatusCode);

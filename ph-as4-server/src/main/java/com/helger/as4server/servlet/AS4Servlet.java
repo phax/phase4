@@ -234,7 +234,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        s_aLogger.info ("Failed to process SOAP header element " +
+        s_aLogger.warn ("Failed to process SOAP header element " +
                         aQName.toString () +
                         " with processor " +
                         aProcessor +
@@ -266,7 +266,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
                                            CCharset.CHARSET_UTF_8_OBJ)
                     .setMimeType (eSOAPVersion.getMimeType ());
-
         return;
       }
     }
