@@ -17,6 +17,7 @@
 package com.helger.as4server.message;
 
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,8 +43,11 @@ import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.message.CreateUserMessage;
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -130,13 +134,15 @@ public final class TestMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
+
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      _getPMode (eSOAPVersion),
+                                                                                                      aPModeID.getID (),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               "APP_1000000101",
@@ -177,7 +183,7 @@ public final class TestMessages
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      _getPMode (eSOAPVersion),
+                                                                                                      _getPModeConfigID (eSOAPVersion),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               "testt",
@@ -230,10 +236,18 @@ public final class TestMessages
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
-  private static String _getPMode (@Nonnull final ESOAPVersion eSOAPVersion)
+  private static String _getPModeConfigID (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return "pm-esens-generic-resp";
-    return "pm-esens-generic-resp11";
+      return ServletTestPMode.PMODE_ID_SOAP12_TEST;
+    return ServletTestPMode.PMODE_ID_SOAP11_TEST;
+  }
+
+  @Nonnull
+  private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
+  {
+    if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
+      return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_ID_SOAP12_TEST);
+    return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_ID_SOAP11_TEST);
   }
 }

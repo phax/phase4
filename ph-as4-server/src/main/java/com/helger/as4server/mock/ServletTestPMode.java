@@ -37,6 +37,9 @@ import com.helger.as4lib.wss.EWSSVersion;
 
 public class ServletTestPMode
 {
+  public static String PMODE_ID_SOAP11_TEST = "pmode-test11";
+  public static String PMODE_ID_SOAP12_TEST = "pmode-test";
+
   private ServletTestPMode ()
   {}
 
@@ -44,8 +47,8 @@ public class ServletTestPMode
   public static PModeConfig getTestPModeConfig (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     return getTestPModeConfigSetID (eSOAPVersion,
-                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? "pm-esens-generic-resp"
-                                                                               : "pm-esens-generic-resp11");
+                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_ID_SOAP12_TEST
+                                                                               : PMODE_ID_SOAP11_TEST);
   }
 
   @Nonnull
@@ -73,7 +76,7 @@ public class ServletTestPMode
   }
 
   @Nonnull
-  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
+  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final String sPModeID)
   {
     return _createTestPMode (getTestPModeConfigSetID (eSOAPVersion, sPModeID));
   }
@@ -98,6 +101,7 @@ public class ServletTestPMode
                                    aPModeLegSecurity));
     // Leg 2 stays null, because we only use one-way
     return _createTestPMode (aConfig);
+
   }
 
   @Nonnull
