@@ -199,17 +199,27 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Check if MPC is contained in PMode and if so, if it is valid
     // TODO move to PMode initialization
     final PModeLeg aPModeLeg1 = aPMode.getConfig ().getLeg1 ();
-    if (aPModeLeg1.getBusinessInfo () != null)
+    if (aPModeLeg1 != null)
     {
-      final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
-      if (sPModeMPC != null)
-        if (!aMPCMgr.containsWithID (sPModeMPC))
-        {
-          LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+      if (aPModeLeg1.getBusinessInfo () != null)
+      {
+        final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
+        if (sPModeMPC != null)
+          if (!aMPCMgr.containsWithID (sPModeMPC))
+          {
+            LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
+            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+      }
+    }
+    else
+    {
+      LOG.warn ("Error processing the usermessage, PMode does not contain a leg!");
+
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+      return ESuccess.FAILURE;
     }
 
     // PMode is valid

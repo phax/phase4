@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4lib.AS4TestRule;
+import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -55,35 +56,49 @@ public final class PModeMicroTypeConverterTest
   @Test
   public void testAsSimpleAsPossible ()
   {
-    final PModeConfig aPMode = new PModeConfig ("id");
-    XMLTestHelper.testMicroTypeConversion (aPMode);
+    final PModeConfig aPModeConfig = new PModeConfig ("id");
+    XMLTestHelper.testMicroTypeConversion (aPModeConfig);
   }
 
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PModeConfig aConfig = new PModeConfig ("id");
+    final PModeConfig aPModeConfig = new PModeConfig ("id");
     {
-      aConfig.setAgreement ("Agreement");
-      aConfig.setMEP (EMEP.TWO_WAY_PUSH_PULL);
-      aConfig.setMEPBinding (ETransportChannelBinding.SYNC);
-      aConfig.setLeg1 (_generatePModeLeg ());
-      aConfig.setLeg2 (_generatePModeLeg ());
-      XMLTestHelper.testMicroTypeConversion (aConfig);
-      XMLTestHelper.testMicroTypeConversion (aConfig.getLeg1 ());
-      XMLTestHelper.testMicroTypeConversion (aConfig.getLeg2 ());
+      aPModeConfig.setAgreement ("Agreement");
+      aPModeConfig.setMEP (EMEP.TWO_WAY_PUSH_PULL);
+      aPModeConfig.setMEPBinding (ETransportChannelBinding.SYNC);
+      aPModeConfig.setLeg1 (_generatePModeLeg ());
+      aPModeConfig.setLeg2 (_generatePModeLeg ());
+      aPModeConfig.setPayloadService (_generatePayloadService ());
+      aPModeConfig.setReceptionAwareness (_generatePModeReceptionAwareness ());
+      XMLTestHelper.testMicroTypeConversion (aPModeConfig);
+      XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg1 ());
+      XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg2 ());
     }
-    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aPModeConfig);
 
     {
       final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
                                       _generateInitiatorOrResponder (false),
-                                      aConfig);
+                                      aPModeConfig);
       XMLTestHelper.testMicroTypeConversion (aPMode);
       XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
       XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
       XMLTestHelper.testMicroTypeConversion (aPMode.getConfig ());
     }
+  }
+
+  @Nonnull
+  private PModePayloadService _generatePayloadService ()
+  {
+    return new PModePayloadService (EAS4CompressionMode.GZIP);
+  }
+
+  @Nonnull
+  private PModeReceptionAwareness _generatePModeReceptionAwareness ()
+  {
+    return new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
   }
 
   @Nonnull

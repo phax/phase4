@@ -18,7 +18,7 @@ package com.helger.as4server.servlet;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +43,7 @@ import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
@@ -52,59 +53,37 @@ import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.mock.ServletTestPMode;
-import com.helger.as4server.standalone.RunInJettyAS4;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.thread.ThreadHelper;
 import com.helger.commons.url.URLHelper;
-import com.helger.photon.jetty.JettyStarter;
-import com.helger.photon.jetty.JettyStopper;
+import com.helger.photon.jetty.JettyRunner;
 import com.helger.xml.serialize.read.DOMReader;
 
 public class PModeCheckTest extends AbstractUserMessageSetUp
 {
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
+  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    new Thread ( () -> {
-      try
-      {
-        new JettyStarter (RunInJettyAS4.class).setPort (PORT).setStopPort (STOP_PORT).run ();
-      }
-      catch (final Exception ex)
-      {
-        ex.printStackTrace ();
-      }
-    }).start ();
-    ThreadHelper.sleep (5, TimeUnit.SECONDS);
+    s_aJetty.startServer ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    new JettyStopper ().setStopPort (STOP_PORT).run ();
+    s_aJetty.shutDownServer ();
   }
 
   @Test
   public void testWrongPModeID () throws Exception
   {
-    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, null);
+    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null);
     assertNotNull (aDoc);
-
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
-  }
-
-  @Test
-  public void testWrongSOAPVersion () throws Exception
-  {
-    final Document aDoc = _modifyUserMessage (null, ESOAPVersion.SOAP_11, null, null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -114,7 +93,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   @Test
   public void testWrongPartyIDInitiator () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (null, null, "random_party_id120", null);
+    final Document aDoc = _modifyUserMessage (null, "random_party_id120", null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -124,7 +103,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   @Test
   public void testWrongPartyIDResponder () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (null, null, null, "random_party_id121");
+    final Document aDoc = _modifyUserMessage (null, null, "random_party_id121");
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -135,10 +114,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   public void testSigningAlgorithm () throws Exception
   {
 
-    final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null,
-                                                                                                     null,
-                                                                                                     null,
-                                                                                                     null),
+    final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null, null, null),
                                                                                  ESOAPVersion.AS4_DEFAULT,
                                                                                  null,
                                                                                  false,
@@ -160,8 +136,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     {
       aPModeMgr.createPMode (aPMode);
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
-                                                                                                       null,
+      final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
+
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (aPModeID.getID (),
                                                                                                        null,
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
@@ -170,7 +147,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), false, "500");
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                        false,
+                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
     finally
     {
@@ -190,7 +169,6 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
       aPModeMgr.createPMode (aPMode);
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
-                                                                                                       null,
                                                                                                        null,
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
@@ -227,7 +205,6 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
                                                                                                        null,
-                                                                                                       null,
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
@@ -247,13 +224,13 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
   @Nonnull
   private Document _modifyUserMessage (@Nullable final String sWrongPModeID,
-                                       @Nullable final ESOAPVersion eWrongESOAPVersion,
                                        @Nullable final String sWrongPartyIdInitiator,
                                        @Nullable final String sWrongPartyIdResponder) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPModeID = sWrongPModeID == null ? "pm-esens-generic-resp" : sWrongPModeID;
-    final ESOAPVersion eSetESOAPVersion = eWrongESOAPVersion == null ? ESOAPVersion.AS4_DEFAULT : eWrongESOAPVersion;
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
+                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_ID_SOAP12_TEST));
+    final String sSetPModeID = sWrongPModeID == null ? aPModeID.getID () : sWrongPModeID;
     final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? "APP_1000000101" : sWrongPartyIdInitiator;
     final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? "APP_1000000101" : sWrongPartyIdResponder;
 
@@ -290,9 +267,15 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                 aEbms3CollaborationInfo,
                                                                 aEbms3PartyInfo,
                                                                 aEbms3MessageProperties,
-                                                                eSetESOAPVersion)
+                                                                ESOAPVersion.AS4_DEFAULT)
                                             .setMustUnderstand (false);
 
     return aDoc.getAsSOAPDocument (aPayload);
+  }
+
+  @Nonnull
+  private static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
+  {
+    return p -> p.getConfigID ().equals (sID);
   }
 }

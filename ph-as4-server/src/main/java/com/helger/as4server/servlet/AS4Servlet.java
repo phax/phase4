@@ -296,7 +296,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
     // Decompressing the attachments
-    assert aState.hasDecryptedAttachments ();
+
     final ICommonsList <IIncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.getDecryptedAttachments (),
                                                                                              x -> new IncomingWrappedAttachment (x));
 
@@ -384,7 +384,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (usedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
-
   }
 
   @Override

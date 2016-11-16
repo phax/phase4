@@ -17,10 +17,13 @@
 package com.helger.as4server.servlet;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,19 +45,21 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.partner.IPartner;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.IOHelper;
+import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.standalone.RunInJettyAS4;
+import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.thread.ThreadHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
-import com.helger.photon.jetty.JettyStarter;
-import com.helger.photon.jetty.JettyStopper;
+import com.helger.photon.jetty.JettyRunner;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -69,44 +74,48 @@ public class PartnerTest extends AbstractUserMessageSetUp
 {
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
+  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
   private final PartnerManager aPM = MetaAS4Manager.getPartnerMgr ();
+  private static final String PARTNER_ID = "testpartner";
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    new Thread ( () -> {
-      try
-      {
-        new JettyStarter (RunInJettyAS4.class).setPort (PORT).setStopPort (STOP_PORT).run ();
-      }
-      catch (final Exception ex)
-      {
-        ex.printStackTrace ();
-      }
-    }).start ();
-    ThreadHelper.sleep (5, TimeUnit.SECONDS);
+    s_aJetty.startServer ();
+    final StringMap aStringMap = new StringMap ();
+    aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, PARTNER_ID);
+    final byte [] aCertBytes = Files.readAllBytes (Paths.get (new ClassPathResource ("cert.txt").getAsFile ()
+                                                                                                .getAbsolutePath ()));
+    final X509Certificate aUsedCertificate = CertificateHelper.convertByteArrayToCertficate (aCertBytes);
+    aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (aUsedCertificate));
+    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
+    aPartnerMgr.createOrUpdatePartner (PARTNER_ID, aStringMap);
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    new JettyStopper ().setStopPort (STOP_PORT).run ();
+    s_aJetty.shutDownServer ();
   }
 
   @Test
   public void testPartnerCertificateSavedSuccess () throws CertificateException
   {
-    final IPartner aPartner = aPM.getPartnerOfID ("APP_1000000101");
-    final X509Certificate aCert = CertificateHelper.convertStringToCertficate (aPartner.getAllAttributes ()
-                                                                                       .get (Partner.ATTR_CERT));
+    final IPartner aPartner = aPM.getPartnerOfID (PARTNER_ID);
+    assertNotNull (aPartner);
+
+    final String sCertificate = aPartner.getAllAttributes ().get (Partner.ATTR_CERT);
+    assertTrue (StringHelper.hasText (sCertificate));
+
+    final X509Certificate aCert = CertificateHelper.convertStringToCertficate (sCertificate);
+    assertNotNull (aCert);
     aCert.checkValidity ();
-    aCert.getSigAlgName ();
   }
 
   @Test
   public void testAddingNewUnkownPartner () throws Exception
   {
-    final String sPartnerID = "TestPartner";
+    final String sPartnerID = "TestPartnerUnkown";
 
     final Document aDoc = _modifyUserMessage (sPartnerID, null);
     assertNotNull (aDoc);
@@ -121,7 +130,8 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                        @Nullable final String sDifferentPartyIdResponder) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPModeID = "pm-esens-generic-resp";
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
+                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_ID_SOAP12_TEST));
     final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
     final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ? "APP_1000000101"
                                                                            : sDifferentPartyIdInitiator;
@@ -148,7 +158,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      sSetPModeID,
+                                                                                                      aPModeID.getID (),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               sSetPartyIDInitiator,
@@ -165,5 +175,11 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                             .setMustUnderstand (false);
 
     return aDoc.getAsSOAPDocument (aPayload);
+  }
+
+  @Nonnull
+  private static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
+  {
+    return p -> p.getConfigID ().equals (sID);
   }
 }

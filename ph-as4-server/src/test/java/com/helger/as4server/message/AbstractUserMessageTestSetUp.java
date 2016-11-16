@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,7 +30,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.EntityUtils;
-import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -39,53 +37,24 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4server.AbstractClientSetUp;
 import com.helger.commons.url.URLHelper;
-import com.helger.photon.jetty.JettyStarter;
-import com.helger.photon.jetty.JettyStopper;
+import com.helger.photon.jetty.JettyRunner;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
-  private static Thread s_aJettyThread;
+  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    final Semaphore s = new Semaphore (0);
-    s_aJettyThread = new Thread ( () -> {
-      try
-      {
-        new JettyStarter (com.helger.as4server.standalone.RunInJettyAS4.class)
-        {
-          @Override
-          protected void onServerStarted (@Nonnull final Server aServer)
-          {
-            // Notify that server started
-            s.release ();
-          }
-        }.setPort (PORT).setStopPort (STOP_PORT).run ();
-      }
-      catch (final Exception ex)
-      {
-        ex.printStackTrace ();
-      }
-    });
-    s_aJettyThread.setDaemon (true);
-    s_aJettyThread.start ();
-
-    // Wait until server started
-    s.acquire ();
+    s_aJetty.startServer ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    if (s_aJettyThread != null)
-    {
-      new JettyStopper ().setStopPort (STOP_PORT).run ();
-      s_aJettyThread.join ();
-      s_aJettyThread = null;
-    }
+    s_aJetty.shutDownServer ();
   }
 
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
