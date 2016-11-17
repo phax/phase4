@@ -33,7 +33,7 @@ public class AS4ResourceManager implements Closeable
   public File createTempFile () throws IOException
   {
     // Create
-    final File ret = File.createTempFile ("as4", ".tmp");
+    final File ret = File.createTempFile ("as4-", ".tmp");
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
     return ret;
@@ -53,12 +53,17 @@ public class AS4ResourceManager implements Closeable
       m_aTempFiles.clear ();
       return ret;
     });
-    for (final File aFile : aFiles)
+    if (aFiles.isNotEmpty ())
     {
-      s_aLogger.info ("Deleting temporary file " + aFile.getAbsolutePath ());
-      final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
-      if (aError.isFailure ())
-        s_aLogger.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
+      s_aLogger.info ("Deleting" + aFiles.size () + " temporary files");
+      for (final File aFile : aFiles)
+      {
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
+        final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
+        if (aError.isFailure ())
+          s_aLogger.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
+      }
     }
 
     // Close all closeables
@@ -67,7 +72,11 @@ public class AS4ResourceManager implements Closeable
       m_aCloseables.clear ();
       return ret;
     });
-    for (final Closeable aCloseable : aCloseables)
-      StreamHelper.close (aCloseable);
+    if (aCloseables.isNotEmpty ())
+    {
+      s_aLogger.info ("Closing " + aCloseables.size () + " stream handles");
+      for (final Closeable aCloseable : aCloseables)
+        StreamHelper.close (aCloseable);
+    }
   }
 }

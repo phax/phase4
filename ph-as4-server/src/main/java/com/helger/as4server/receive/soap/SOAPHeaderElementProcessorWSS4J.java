@@ -16,12 +16,15 @@
  */
 package com.helger.as4server.receive.soap;
 
+import java.io.File;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.crypto.CipherInputStream;
 
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -48,6 +51,8 @@ import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsSet;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
 
@@ -187,16 +192,29 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
         aState.setUsedCertificate (aCerts.getAtIndex (0));
 
-        // Too much output :)
+        // TODO remove since only for debugging purpose Too much output :)
         if (false)
         {
-          // TODO maybe not needed since you can't check Digest algorithm OR
-          // encrypt algorithm
           aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info ("KeyValuePair: " + k + "=" + v)));
         }
 
         aState.setDecryptedSOAPDocument (aSOAPDoc);
-        aState.setDecryptedAttachments (aAttachmentCallbackHandler.getResponseAttachments ());
+
+        final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getResponseAttachments ();
+        for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
+        {
+          final InputStream aIS = aResponseAttachment.getSourceStream ();
+          if (aIS instanceof CipherInputStream)
+          {
+            LOG.warn ("Found CipherIS: " + aIS);
+            final File aTempFile = aState.getResourceMgr ().createTempFile ();
+            StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getOutputStream (aTempFile));
+            aResponseAttachment.setSourceStreamProvider ( () -> FileHelper.getInputStream (aTempFile));
+          }
+          else
+            LOG.warn ("Found other IS: " + aIS);
+        }
+        aState.setDecryptedAttachments (aResponseAttachments);
 
         // System.out.println ("Decryption Result ");
         // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));

@@ -63,14 +63,14 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   public void testUserMessageManyAttachmentsMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                     CMimeType.APPLICATION_GZIP,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
                                                      CMimeType.IMAGE_JPG,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
-                                                     CMimeType.IMAGE_JPG,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -85,14 +85,14 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   public void testUserMessageManyAttachmentsSignedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                     CMimeType.APPLICATION_GZIP,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
                                                      CMimeType.IMAGE_JPG,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
-                                                     CMimeType.IMAGE_JPG,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
@@ -114,14 +114,14 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   public void testUserMessageManyAttachmentsEncryptedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                     CMimeType.APPLICATION_GZIP,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
                                                      CMimeType.IMAGE_JPG,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
-                                                     CMimeType.IMAGE_JPG,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
@@ -138,14 +138,14 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   public void testUserMessageManyAttachmentsSignedEncryptedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                     CMimeType.APPLICATION_GZIP,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
                                                      CMimeType.IMAGE_JPG,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
-                                                     CMimeType.IMAGE_JPG,
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                     CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();

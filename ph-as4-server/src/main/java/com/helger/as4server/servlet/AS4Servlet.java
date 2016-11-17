@@ -149,7 +149,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     ValueEnforcer.notNull (aAS4Response, "AS4Response");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    // TODO remove if or entire statement
+    // TODO remove if or entire statement so much output
     if (GlobalDebug.isDebugMode () && false)
     {
       s_aLogger.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
@@ -187,6 +187,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
       aHeaders.add (new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
+
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
@@ -243,7 +245,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                           "; error details: " +
                           aErrorList);
 
-          final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
           // TODO Use AS4 Esens profile if appropriate
           aErrorList.forEach (error -> {
             final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (error.getErrorID ());
@@ -260,124 +261,137 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             }
           });
 
-          final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
-          final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                    aCreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
-                                                                                    aErrorMessages);
-
-          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
-                                             CCharset.CHARSET_UTF_8_OBJ)
-                      .setMimeType (eSOAPVersion.getMimeType ());
-          return;
+          // Stop processing of other headers
+          break;
         }
       }
 
       // Now check if all must understand headers were processed
-      for (final AS4SOAPHeader aHeader : aHeaders)
-        if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
+      Ebms3Messaging aMessaging = null;
+      if (aErrorMessages.isEmpty ())
+      {
+        for (final AS4SOAPHeader aHeader : aHeaders)
+          if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
+          {
+            aAS4Response.setBadRequest ("Error processing required SOAP header element " +
+                                        aHeader.getQName ().toString ());
+            return;
+          }
+
+        aMessaging = aState.getMessaging ();
+        if (aMessaging == null)
         {
-          aAS4Response.setBadRequest ("Error processing required SOAP header element " +
-                                      aHeader.getQName ().toString ());
+          aAS4Response.setBadRequest ("No Ebms3 Messaging header was found");
           return;
         }
 
-      final Ebms3Messaging aMessaging = aState.getMessaging ();
-      if (aMessaging == null)
-      {
-        aAS4Response.setBadRequest ("No Ebms3 Messaging header was found");
-        return;
-      }
-
-      // Every message should only contain 1 UserMessage and n (0..n)
-      // SignalMessages
-      if (aMessaging.getUserMessageCount () != 1)
-      {
-        aAS4Response.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " +
-                                    aMessaging.getUserMessageCount ());
-        return;
-      }
-      final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
-
-      // Decompressing the attachments
-      final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                                                    : aState.getOriginalAttachments (),
-                                                                                                  x -> new AS4IncomingWSS4JAttachment (x));
-
-      // Decompress attachments (if compress)
-      final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
-      for (final IAS4IncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
-      {
-        final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getContentID ());
-        if (eCompressionMode != null)
+        // Every message should only contain 1 UserMessage and n (0..n)
+        // SignalMessages
+        if (aMessaging.getUserMessageCount () != 1)
         {
-          // Remove the old one
-          aDecryptedAttachments.remove (aIncomingAttachment);
-
-          // Add the new one with decompressing InputStream
-          final IAS4IncomingAttachment aDecompressedAttachment = aIAF.createAttachment (eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()));
-          aDecryptedAttachments.add (aDecompressedAttachment);
-        }
-      }
-
-      // Do something with the message
-      final Document aDecryptedSOAPDoc = aState.getDecryptedSOAPDocument ();
-      if (aDecryptedSOAPDoc != null)
-      {
-        // Re-evaluate body node from decrypted SOAP document
-        aBodyNode = XMLHelper.getFirstChildElementOfName (aDecryptedSOAPDoc.getDocumentElement (),
-                                                          eSOAPVersion.getNamespaceURI (),
-                                                          eSOAPVersion.getBodyElementName ());
-        if (aBodyNode == null)
-        {
-          // TODO is this error handling okay?
-          aAS4Response.setBadRequest ("Decrypted SOAP document is missing a Body element");
+          aAS4Response.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " +
+                                      aMessaging.getUserMessageCount ());
           return;
         }
-      }
-      final Node aPayloadNode = aBodyNode.getFirstChild ();
+        final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
-      // TODO choose right ID Initiator or ResponderID
-      _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
+        // Decompressing the attachments
+        final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                                                      : aState.getOriginalAttachments (),
+                                                                                                    x -> new AS4IncomingWSS4JAttachment (x));
 
-      for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
-        try
+        // Decompress attachments (if compress)
+        final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
+        for (final IAS4IncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
         {
-          if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
+          final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getContentID ());
+          if (eCompressionMode != null)
+          {
+            // Remove the old one
+            aDecryptedAttachments.remove (aIncomingAttachment);
 
-          final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
-                                                                                  aPayloadNode,
-                                                                                  aDecryptedAttachments);
-          if (aResult == null)
-            throw new IllegalStateException ("No result object present!");
-          if (aResult.isSuccess ())
+            // Add the new one with decompressing InputStream
+            final IAS4IncomingAttachment aDecompressedAttachment = aIAF.createAttachment (eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()));
+            aDecryptedAttachments.add (aDecompressedAttachment);
+          }
+        }
+
+        // Do something with the message
+        final Document aDecryptedSOAPDoc = aState.getDecryptedSOAPDocument ();
+        if (aDecryptedSOAPDoc != null)
+        {
+          // Re-evaluate body node from decrypted SOAP document
+          aBodyNode = XMLHelper.getFirstChildElementOfName (aDecryptedSOAPDoc.getDocumentElement (),
+                                                            eSOAPVersion.getNamespaceURI (),
+                                                            eSOAPVersion.getBodyElementName ());
+          if (aBodyNode == null)
+          {
+            aAS4Response.setBadRequest ("Decrypted SOAP document is missing a Body element");
+            return;
+          }
+        }
+        final Node aPayloadNode = aBodyNode.getFirstChild ();
+
+        // TODO choose right ID Initiator or ResponderID
+        _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
+
+        for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
+          try
           {
             if (s_aLogger.isDebugEnabled ())
-              s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+              s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
+
+            final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
+                                                                                    aPayloadNode,
+                                                                                    aDecryptedAttachments);
+            if (aResult == null)
+              throw new IllegalStateException ("No result object present!");
+            if (aResult.isSuccess ())
+            {
+              if (s_aLogger.isDebugEnabled ())
+                s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+            }
+            else
+            {
+              s_aLogger.warn ("Invoked AS4 message processor " + aProcessor + " returned a failure");
+              // TODO add error message
+            }
           }
-          else
+          catch (final Throwable t)
           {
-            s_aLogger.warn ("Invoked AS4 message processor " + aProcessor + " returned a failure");
+            s_aLogger.error ("Error processing incoming AS4 message with processor " + aProcessor, t);
+            // TODO add error message
           }
-        }
-        catch (final Throwable t)
-        {
-          s_aLogger.error ("Error processing incoming AS4 message with processor " + aProcessor, t);
-        }
+      }
 
-      final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
-      final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
-      final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME, null);
-      final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                            aEbms3MessageInfo,
-                                                                                            aEbms3UserMessage,
-                                                                                            aSOAPDocument)
-                                                                     .setMustUnderstand (true);
+      // TODO build response according to handler result
+      if (aErrorMessages.isNotEmpty ())
+      {
+        final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
+        final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                  aCreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                  aErrorMessages);
 
-      // We've got our response
-      final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-      aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
-                  .setMimeType (eSOAPVersion.getMimeType ());
+        aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
+                                           CCharset.CHARSET_UTF_8_OBJ)
+                    .setMimeType (eSOAPVersion.getMimeType ());
+      }
+      else
+      {
+        final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
+        final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
+        final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME, null);
+        final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                                              aEbms3MessageInfo,
+                                                                                              aEbms3UserMessage,
+                                                                                              aSOAPDocument)
+                                                                       .setMustUnderstand (true);
+
+        // We've got our response
+        final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+        aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                    .setMimeType (eSOAPVersion.getMimeType ());
+      }
     }
   }
 
@@ -404,7 +418,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                 @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
-    final AS4Response aUR = (AS4Response) aUnifiedResponse;
+    final AS4Response aHttpResponse = (AS4Response) aUnifiedResponse;
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
     // XXX By default login in admin user
@@ -419,7 +433,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       s_aLogger.info ("Content-Type: " + aMT);
       if (aMT == null)
       {
-        aUR.setBadRequest ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
+        aHttpResponse.setBadRequest ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
         return;
       }
 
@@ -437,7 +451,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         final String sBoundary = aMT.getParameterValueWithName ("boundary");
         if (StringHelper.hasNoText (sBoundary))
         {
-          aUR.setBadRequest ("Content-Type '" + aHttpServletRequest.getContentType () + "' misses boundary parameter");
+          aHttpResponse.setBadRequest ("Content-Type '" +
+                                       aHttpServletRequest.getContentType () +
+                                       "' misses boundary parameter");
         }
         else
         {
@@ -499,9 +515,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (aSOAPDocument == null)
       {
         if (eSOAPVersion == null)
-          aUR.setBadRequest ("Failed to parse incoming document!");
+          aHttpResponse.setBadRequest ("Failed to parse incoming document!");
         else
-          aUR.setBadRequest ("Failed to parse incoming SOAP " + eSOAPVersion.getVersion () + " document!");
+          aHttpResponse.setBadRequest ("Failed to parse incoming SOAP " + eSOAPVersion.getVersion () + " document!");
       }
       else
       {
@@ -515,19 +531,21 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         if (eSOAPVersion == null)
         {
-          aUR.setBadRequest ("Failed to determine SOAP version from XML document!");
+          aHttpResponse.setBadRequest ("Failed to determine SOAP version from XML document!");
         }
         else
         {
           // SOAP document and SOAP version are determined
           // TODO make locale dynamic
-          _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aUR, Locale.US);
+          _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aHttpResponse, Locale.US);
         }
       }
     }
     catch (final Throwable t)
     {
-      aUR.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", t);
+      aHttpResponse.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                                      "Internal error processing AS4 request",
+                                      t);
     }
     finally
     {
