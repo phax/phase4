@@ -24,6 +24,7 @@ import java.util.Enumeration;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -32,6 +33,7 @@ import com.helger.commons.CGlobal;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
 
@@ -40,8 +42,10 @@ import com.helger.commons.io.stream.StreamHelper;
  *
  * @author Philip Helger
  */
+@ThreadSafe
 public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFactory
 {
+  private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
 
   public boolean canKeepInMemory (@Nonnegative final long nSize)
@@ -68,7 +72,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      m_aTempFiles.add (aTempFile);
+      m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
       ret = new IncomingFileAttachment (aTempFile);
     }
 
@@ -92,14 +96,18 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
-    m_aTempFiles.add (aTempFile);
+    m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
     return new IncomingFileAttachment (aTempFile);
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <File> getAllTempFiles ()
+  public ICommonsList <File> getAndRemoveAllTempFiles ()
   {
-    return m_aTempFiles.getClone ();
+    return m_aRWLock.writeLocked ( () -> {
+      final ICommonsList <File> ret = m_aTempFiles.getClone ();
+      m_aTempFiles.clear ();
+      return ret;
+    });
   }
 }

@@ -23,7 +23,6 @@ import javax.mail.internet.MimeMessage;
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -32,6 +31,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -97,8 +97,8 @@ public class EncryptionCreator
     if (aAttachments != null)
     {
       // Convert to WSS4J attachments
-      final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
-                                                                                  IAS4Attachment::getAsWSS4JAttachment);
+      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
+                                                                                       IAS4Attachment::getAsWSS4JAttachment);
 
       aAttachmentCallbackHandler = new AttachmentCallbackHandler (aWSS4JAttachments);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
@@ -116,8 +116,8 @@ public class EncryptionCreator
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!
-    final ICommonsList <Attachment> aEncryptedAttachments = aAttachmentCallbackHandler == null ? null
-                                                                                               : aAttachmentCallbackHandler.getResponseAttachments ();
+    final ICommonsList <WSS4JAttachment> aEncryptedAttachments = aAttachmentCallbackHandler == null ? null
+                                                                                                    : aAttachmentCallbackHandler.getResponseAttachments ();
 
     // Use the encrypted attachments!
     return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aEncryptedDoc, null, aEncryptedAttachments);

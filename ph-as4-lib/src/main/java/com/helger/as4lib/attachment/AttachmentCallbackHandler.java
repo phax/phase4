@@ -43,14 +43,14 @@ import com.helger.commons.collection.ext.ICommonsMap;
  */
 public class AttachmentCallbackHandler implements CallbackHandler
 {
-  private final ICommonsList <Attachment> m_aOriginalRequestAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aOriginalRequestAttachments = new CommonsArrayList<> ();
   private final ICommonsMap <String, Attachment> m_aAttachmentMap = new CommonsHashMap<> ();
-  private final ICommonsList <Attachment> m_aResponseAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aResponseAttachments = new CommonsArrayList<> ();
 
-  public AttachmentCallbackHandler (@Nullable final Iterable <Attachment> aAttachments)
+  public AttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments)
   {
     if (aAttachments != null)
-      for (final Attachment aAttachment : aAttachments)
+      for (final WSS4JAttachment aAttachment : aAttachments)
       {
         m_aOriginalRequestAttachments.add (aAttachment);
         m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
@@ -90,7 +90,15 @@ public class AttachmentCallbackHandler implements CallbackHandler
         {
           final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
           final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
-          m_aResponseAttachments.add (aResponseAttachment);
+
+          // Convert
+          final WSS4JAttachment aRealAttachment = new WSS4JAttachment ();
+          aRealAttachment.setId (aResponseAttachment.getId ());
+          aRealAttachment.setMimeType (aResponseAttachment.getMimeType ());
+          aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
+          aRealAttachment.setSourceStreamProvider ( () -> aResponseAttachment.getSourceStream ());
+
+          m_aResponseAttachments.add (aRealAttachment);
           m_aAttachmentMap.put (aResponseAttachment.getId (), aResponseAttachment);
         }
         else
@@ -102,7 +110,7 @@ public class AttachmentCallbackHandler implements CallbackHandler
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <Attachment> getResponseAttachments ()
+  public ICommonsList <WSS4JAttachment> getResponseAttachments ()
   {
     return m_aResponseAttachments.getClone ();
   }

@@ -51,7 +51,7 @@ public final class MimeMessageCreator
   @Nonnull
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
-                                          @Nullable final ICommonsList <Attachment> aEncryptedAttachments) throws Exception
+                                          @Nullable final ICommonsList <? extends Attachment> aEncryptedAttachments) throws Exception
   {
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;

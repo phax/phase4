@@ -27,6 +27,7 @@ import com.helger.as4server.attachment.DefaultIncomingAttachmentFactory;
 import com.helger.as4server.attachment.IIncomingAttachmentFactory;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
+import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
 import com.helger.commons.io.file.LoggingFileOperationCallback;
 import com.helger.commons.lang.ClassHelper;
@@ -69,10 +70,12 @@ public final class MetaManager extends AbstractGlobalSingleton
   protected void onBeforeDestroy (@Nonnull final IScope aScopeToBeDestroyed) throws Exception
   {
     if (m_aIncomingAttachmentFactory != null)
-      for (final File aFile : m_aIncomingAttachmentFactory.getAllTempFiles ())
+      for (final File aFile : m_aIncomingAttachmentFactory.getAndRemoveAllTempFiles ())
       {
         s_aLogger.info ("Deleting temporary file " + aFile.getAbsolutePath ());
-        s_aFOP.deleteFileIfExisting (aFile);
+        final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
+        if (aError.isFailure ())
+          s_aLogger.warn ("Ooops");
       }
   }
 

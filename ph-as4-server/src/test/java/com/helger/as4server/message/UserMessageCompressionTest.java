@@ -62,7 +62,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/ShortXML.xml"),
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                              CMimeType.APPLICATION_XML,
                                              EAS4CompressionMode.GZIP));
 
@@ -84,7 +84,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/ShortXML.xml"),
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                              CMimeType.APPLICATION_XML,
                                              EAS4CompressionMode.GZIP));
 

@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
 import com.helger.commons.ValueEnforcer;
@@ -83,6 +82,7 @@ public class AS4FileAttachment extends AbstractAS4Attachment
         aOS.write (Files.readAllBytes (m_aFile.toPath ()));
       }
       aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
+      aCompressedFile.deleteOnExit ();
     }
     else
     {
@@ -94,7 +94,7 @@ public class AS4FileAttachment extends AbstractAS4Attachment
   }
 
   @Nonnull
-  public Attachment getAsWSS4JAttachment ()
+  public WSS4JAttachment getAsWSS4JAttachment ()
   {
     final ICommonsMap <String, String> aHeaders = new CommonsHashMap<> ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
@@ -103,11 +103,11 @@ public class AS4FileAttachment extends AbstractAS4Attachment
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
 
-    final Attachment aAttachment = new Attachment ();
+    final WSS4JAttachment aAttachment = new WSS4JAttachment ();
     aAttachment.setMimeType (getMimeType ().getAsString ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getID ());
-    aAttachment.setSourceStream (FileHelper.getInputStream (m_aFile));
+    aAttachment.setSourceStreamProvider ( () -> FileHelper.getInputStream (m_aFile));
     return aAttachment;
   }
 }

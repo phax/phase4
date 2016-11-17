@@ -39,9 +39,9 @@ public interface IIncomingAttachmentFactory extends Serializable
   IIncomingAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
 
   @Nonnull
-  IIncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException;
+  IIncomingAttachment createAttachment (@Nonnull InputStream aIS) throws IOException;
 
   @Nonnull
   @Nonempty
-  ICommonsList <File> getAllTempFiles ();
+  ICommonsList <File> getAndRemoveAllTempFiles ();
 }

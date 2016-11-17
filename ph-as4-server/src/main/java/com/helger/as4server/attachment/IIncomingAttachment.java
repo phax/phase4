@@ -21,9 +21,9 @@ import java.io.File;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
@@ -57,7 +57,7 @@ public interface IIncomingAttachment extends IHasInputStream, IAttributeContaine
   }
 
   @Nonnull
-  default Attachment getAsWSS4JAttachment ()
+  default WSS4JAttachment getAsWSS4JAttachment ()
   {
     final ICommonsMap <String, String> aHeaders = new CommonsHashMap<> ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
@@ -70,11 +70,11 @@ public interface IIncomingAttachment extends IHasInputStream, IAttributeContaine
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getContentID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getContentType ());
 
-    final Attachment aAttachment = new Attachment ();
+    final WSS4JAttachment aAttachment = new WSS4JAttachment ();
     aAttachment.setMimeType (getContentType ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getContentID ());
-    aAttachment.setSourceStream (getInputStream ());
+    aAttachment.setSourceStreamProvider (this);
     return aAttachment;
   }
 }

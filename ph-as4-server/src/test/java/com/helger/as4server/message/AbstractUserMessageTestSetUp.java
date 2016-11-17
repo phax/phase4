@@ -37,6 +37,7 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4server.AbstractClientSetUp;
 import com.helger.commons.url.URLHelper;
+import com.helger.photon.core.requesttrack.RequestTracker;
 import com.helger.photon.jetty.JettyRunner;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
@@ -49,6 +50,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   public static void startServer () throws Exception
   {
     s_aJetty.startServer ();
+    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
   }
 
   @AfterClass

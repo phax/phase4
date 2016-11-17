@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.crypto.Crypto;
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -31,6 +30,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -101,8 +101,8 @@ public class SignedMessageCreator
       aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
 
       // Convert to WSS4J attachments
-      final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
-                                                                                  IAS4Attachment::getAsWSS4JAttachment);
+      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
+                                                                                       IAS4Attachment::getAsWSS4JAttachment);
 
       final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aWSS4JAttachments);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);

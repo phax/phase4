@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.pmode.IPMode;
@@ -49,7 +49,8 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE = "as4.pmode";
-  private static final String KEY_MPC = "as4.mps";
+  private static final String KEY_MPC = "as4.mpc";
+  private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "as4.soap.attachmentlist";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
   private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "as4.soap.decrypted.attachmentlist";
   private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
@@ -109,6 +110,23 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_PMODE);
   }
 
+  public void setOriginalAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  {
+    setAttribute (KEY_ORIGINAL_ATTACHMENT_LIST, aAttachments);
+  }
+
+  public boolean hasOriginalAttachments ()
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = getOriginalAttachments ();
+    return aAttachments != null && aAttachments.isNotEmpty ();
+  }
+
+  @Nullable
+  public ICommonsList <WSS4JAttachment> getOriginalAttachments ()
+  {
+    return getCastedAttribute (KEY_ORIGINAL_ATTACHMENT_LIST);
+  }
+
   public void setDecryptedSOAPDocument (@Nullable final Document aDocument)
   {
     setAttribute (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
@@ -125,18 +143,19 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 
-  public void setDecryptedAttachments (@Nullable final ICommonsList <Attachment> aAttachments)
+  public void setDecryptedAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     setAttribute (KEY_DECRYPTED_ATTACHMENT_LIST, aAttachments);
   }
 
   public boolean hasDecryptedAttachments ()
   {
-    return containsAttribute (KEY_DECRYPTED_ATTACHMENT_LIST);
+    final ICommonsList <WSS4JAttachment> aAttachments = getDecryptedAttachments ();
+    return aAttachments != null && aAttachments.isNotEmpty ();
   }
 
   @Nullable
-  public ICommonsList <Attachment> getDecryptedAttachments ()
+  public ICommonsList <WSS4JAttachment> getDecryptedAttachments ()
   {
     return getCastedAttribute (KEY_DECRYPTED_ATTACHMENT_LIST);
   }

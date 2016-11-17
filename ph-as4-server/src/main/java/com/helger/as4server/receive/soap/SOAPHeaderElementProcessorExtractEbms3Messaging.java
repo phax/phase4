@@ -20,13 +20,13 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
@@ -59,7 +59,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aElement,
-                                        @Nonnull final ICommonsList <Attachment> aAttachments,
+                                        @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList,
                                         @Nonnull final Locale aLocale)
@@ -281,10 +281,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         return ESuccess.FAILURE;
       }
     }
-
     else
     {
-
       // Check if there are more Attachments then specified
       if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
       {
@@ -299,7 +297,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         return ESuccess.FAILURE;
       }
 
-      int specifiedAttachments = 0;
+      int nSpecifiedAttachments = 0;
 
       for (final Ebms3PartInfo aPart : aEbms3PayloadInfo.getPartInfo ())
       {
@@ -319,9 +317,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         {
           // Attachment
           // To check attachments which are specified in the usermessage and
-          // the
-          // real amount in the mime message
-          specifiedAttachments++;
+          // the real amount in the mime message
+          nSpecifiedAttachments++;
 
           for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
           {
@@ -356,7 +353,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
       }
 
-      if (specifiedAttachments != aAttachments.size ())
+      if (nSpecifiedAttachments != aAttachments.size ())
       {
         LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
                   aEbms3PayloadInfo.getPartInfoCount () +
@@ -368,7 +365,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
-
     }
 
     // TODO if pullrequest the methode for extracting the pmode needs to be
@@ -379,6 +375,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Remember in state
     aState.setMessaging (aMessaging);
     aState.setPMode (aPMode);
+    aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
 

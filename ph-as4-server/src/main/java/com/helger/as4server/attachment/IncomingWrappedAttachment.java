@@ -21,8 +21,7 @@ import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.wss4j.common.ext.Attachment;
-
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.http.CHTTPHeader;
@@ -34,9 +33,9 @@ import com.helger.http.CHTTPHeader;
  */
 public class IncomingWrappedAttachment extends AbstractIncomingAttachment
 {
-  private final Attachment m_aSrc;
+  private final WSS4JAttachment m_aSrc;
 
-  public IncomingWrappedAttachment (@Nonnull final Attachment aSrc)
+  public IncomingWrappedAttachment (@Nonnull final WSS4JAttachment aSrc)
   {
     m_aSrc = ValueEnforcer.notNull (aSrc, "SrcAttachment");
   }
@@ -60,7 +59,7 @@ public class IncomingWrappedAttachment extends AbstractIncomingAttachment
   }
 
   @Nonnull
-  public Attachment getAsWSS4JAttachment ()
+  public WSS4JAttachment getAsWSS4JAttachment ()
   {
     return m_aSrc;
   }

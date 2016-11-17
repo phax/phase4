@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -37,6 +36,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -189,7 +189,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
     // Convert all attachments to WSS4J attachments
     // Need to check, since not every message will have attachments
-    final ICommonsList <Attachment> aWSS4JAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> ();
     if (aIncomingAttachments.isNotEmpty ())
       aWSS4JAttachments.addAllMapped (aIncomingAttachments, IIncomingAttachment::getAsWSS4JAttachment);
 
@@ -296,10 +296,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
     // Decompressing the attachments
-
-    final ICommonsList <IIncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.getDecryptedAttachments (),
+    final ICommonsList <IIncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                                               : aState.getOriginalAttachments (),
                                                                                              x -> new IncomingWrappedAttachment (x));
 
+    // Decompress attachments (if compress)
     final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
     for (final IIncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
     {

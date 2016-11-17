@@ -23,8 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.wss4j.common.ext.Attachment;
-
 import com.helger.commons.id.IHasID;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
@@ -110,5 +108,5 @@ public interface IAS4Attachment extends IHasID <String>, Serializable
    *         <code>null</code>.
    */
   @Nonnull
-  Attachment getAsWSS4JAttachment ();
+  WSS4JAttachment getAsWSS4JAttachment ();
 }

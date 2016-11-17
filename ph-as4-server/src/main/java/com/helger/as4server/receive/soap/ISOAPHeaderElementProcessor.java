@@ -20,10 +20,10 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.error.list.ErrorList;
@@ -61,7 +61,7 @@ public interface ISOAPHeaderElementProcessor
   @Nonnull
   ESuccess processHeaderElement (@Nonnull Document aSOAPDoc,
                                  @Nonnull Element aHeaderElement,
-                                 @Nonnull ICommonsList <Attachment> aAttachments,
+                                 @Nonnull ICommonsList <WSS4JAttachment> aAttachments,
                                  @Nonnull AS4MessageState aState,
                                  @Nonnull ErrorList aErrorList,
                                  @Nonnull Locale aLocale);

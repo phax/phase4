@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -35,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.helger.as4lib.attachment.AttachmentCallbackHandler;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
@@ -58,7 +58,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aSecurityNode,
-                                        @Nonnull final ICommonsList <Attachment> aAttachments,
+                                        @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList,
                                         @Nonnull final Locale aLocale)

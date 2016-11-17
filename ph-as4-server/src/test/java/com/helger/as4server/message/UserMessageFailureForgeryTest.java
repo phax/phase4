@@ -199,7 +199,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
     final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/ShortXML.xml"),
+    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                              CMimeType.APPLICATION_XML));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
