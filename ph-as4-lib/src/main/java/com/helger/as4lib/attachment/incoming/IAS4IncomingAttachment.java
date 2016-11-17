@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.attachment;
+package com.helger.as4lib.attachment.incoming;
 
 import java.io.File;
 
@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
 import com.helger.as4lib.attachment.WSS4JAttachment;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
@@ -36,7 +37,7 @@ import com.helger.http.CHTTPHeader;
  *
  * @author Philip Helger
  */
-public interface IIncomingAttachment extends IHasInputStream, IAttributeContainer <String, String>
+public interface IAS4IncomingAttachment extends IHasInputStream, IAttributeContainer <String, String>
 {
   @Nullable
   default String getContentID ()
@@ -57,20 +58,20 @@ public interface IIncomingAttachment extends IHasInputStream, IAttributeContaine
   }
 
   @Nonnull
-  default WSS4JAttachment getAsWSS4JAttachment ()
+  default WSS4JAttachment getAsWSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
   {
     final ICommonsMap <String, String> aHeaders = new CommonsHashMap<> ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    if (this instanceof IncomingFileAttachment)
+    if (this instanceof AS4IncomingFileAttachment)
     {
-      final File aFile = ((IncomingFileAttachment) this).getFile ();
+      final File aFile = ((AS4IncomingFileAttachment) this).getFile ();
       aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
                     "attachment; filename=\"" + FilenameHelper.getWithoutPath (aFile) + "\"");
     }
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getContentID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getContentType ());
 
-    final WSS4JAttachment aAttachment = new WSS4JAttachment ();
+    final WSS4JAttachment aAttachment = new WSS4JAttachment (aResMgr);
     aAttachment.setMimeType (getContentType ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getContentID ());

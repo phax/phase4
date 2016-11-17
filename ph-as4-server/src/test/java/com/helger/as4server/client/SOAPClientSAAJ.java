@@ -39,8 +39,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.helger.as4lib.attachment.AS4FileAttachment;
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
@@ -49,6 +49,7 @@ import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -81,7 +82,7 @@ public class SOAPClientSAAJ
    */
   public static void main (final String [] args)
   {
-    try
+    try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
       final String sURL = false ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/as4";
 
@@ -102,7 +103,7 @@ public class SOAPClientSAAJ
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
         aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+      final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
@@ -118,7 +119,10 @@ public class SOAPClientSAAJ
         // BodyPayload SIGNED
         if (false)
         {
-          final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+          final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+                                                                    aPayload,
+                                                                    aAttachments,
+                                                                    aResMgr);
           aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
         }
         // BodyPayload ENCRYPTED
@@ -133,8 +137,9 @@ public class SOAPClientSAAJ
           else
             if (false)
             {
-              aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                       CMimeType.APPLICATION_GZIP));
+              aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                               CMimeType.APPLICATION_GZIP,
+                                                               aResMgr));
 
               final SignedMessageCreator aSigned = new SignedMessageCreator ();
               final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
@@ -142,6 +147,7 @@ public class SOAPClientSAAJ
                                                                                                                                                                                   aAttachments),
                                                                                                                                        ESOAPVersion.SOAP_12,
                                                                                                                                        aAttachments,
+                                                                                                                                       aResMgr,
                                                                                                                                        false,
                                                                                                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
@@ -155,7 +161,10 @@ public class SOAPClientSAAJ
             else
               if (false)
               {
-                Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+                Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+                                                                    aPayload,
+                                                                    aAttachments,
+                                                                    aResMgr);
                 aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
                 aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
               }

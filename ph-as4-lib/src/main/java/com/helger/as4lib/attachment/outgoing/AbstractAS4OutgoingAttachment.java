@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.attachment;
+package com.helger.as4lib.attachment.outgoing;
 
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -22,6 +22,7 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -33,7 +34,7 @@ import com.helger.mail.cte.EContentTransferEncoding;
  *
  * @author Philip Helger
  */
-public abstract class AbstractAS4Attachment implements IAS4Attachment
+public abstract class AbstractAS4OutgoingAttachment implements IAS4OutgoingAttachment
 {
   private final String m_sID;
   private Charset m_aCharset;
@@ -41,8 +42,8 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private final EAS4CompressionMode m_eCompressionMode;
 
-  public AbstractAS4Attachment (@Nonnull final IMimeType aMimeType,
-                                @Nullable final EAS4CompressionMode eCompressionMode)
+  public AbstractAS4OutgoingAttachment (@Nonnull final IMimeType aMimeType,
+                                        @Nullable final EAS4CompressionMode eCompressionMode)
   {
     ValueEnforcer.notNull (aMimeType, "MimeType");
     m_sID = CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
@@ -64,7 +65,7 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   }
 
   @Nonnull
-  public final AbstractAS4Attachment setCharset (@Nonnull final Charset aCharset)
+  public final AbstractAS4OutgoingAttachment setCharset (@Nonnull final Charset aCharset)
   {
     m_aCharset = ValueEnforcer.notNull (aCharset, "Charset");
     return this;
@@ -83,13 +84,13 @@ public abstract class AbstractAS4Attachment implements IAS4Attachment
   }
 
   @Nonnull
-  public final AbstractAS4Attachment setContentTransferEncoding (@Nonnull final EContentTransferEncoding eCTE)
+  public final AbstractAS4OutgoingAttachment setContentTransferEncoding (@Nonnull final EContentTransferEncoding eCTE)
   {
     m_eCTE = ValueEnforcer.notNull (eCTE, "CTE");
     return this;
   }
 
-  @Nonnull
+  @Nullable
   public final EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;

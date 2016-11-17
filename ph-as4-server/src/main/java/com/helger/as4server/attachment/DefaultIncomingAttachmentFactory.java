@@ -29,6 +29,10 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
+import com.helger.as4lib.attachment.incoming.AS4IncomingFileAttachment;
+import com.helger.as4lib.attachment.incoming.AS4IncomingInMemoryAttachment;
+import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
+import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
 import com.helger.commons.CGlobal;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -54,26 +58,26 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   }
 
   @Nonnull
-  public IIncomingAttachment createAttachment (@Nonnull final MimeBodyPart aBodyPart) throws IOException,
-                                                                                      MessagingException
+  public IAS4IncomingAttachment createAttachment (@Nonnull final MimeBodyPart aBodyPart) throws IOException,
+                                                                                         MessagingException
   {
     final int nSize = aBodyPart.getSize ();
-    AbstractIncomingAttachment ret;
+    AbstractAS4IncomingAttachment ret;
     if (canKeepInMemory (nSize))
     {
       // Store in memory
-      ret = new IncomingInMemoryAttachment (StreamHelper.getAllBytes (aBodyPart.getInputStream ()));
+      ret = new AS4IncomingInMemoryAttachment (StreamHelper.getAllBytes (aBodyPart.getInputStream ()));
     }
     else
     {
       // Write to temp file
-      final File aTempFile = File.createTempFile ("as4-incoming", "attachment");
+      final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
       try (OutputStream aOS = FileHelper.getOutputStream (aTempFile))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
       m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
-      ret = new IncomingFileAttachment (aTempFile);
+      ret = new AS4IncomingFileAttachment (aTempFile);
     }
 
     // Convert all headers to attributes
@@ -88,16 +92,16 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   }
 
   @Nonnull
-  public IIncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException
+  public IAS4IncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException
   {
     // Write to temp file
-    final File aTempFile = File.createTempFile ("as4-incoming", "attachment");
+    final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
     try (OutputStream aOS = FileHelper.getOutputStream (aTempFile))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
-    return new IncomingFileAttachment (aTempFile);
+    return new AS4IncomingFileAttachment (aTempFile);
   }
 
   @Nonnull

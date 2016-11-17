@@ -6,15 +6,19 @@ import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.ext.Attachment;
 
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.IHasInputStream;
 
 public class WSS4JAttachment extends Attachment
 {
+  private final AS4ResourceManager m_aResMgr;
   private IHasInputStream m_aISP;
 
-  public WSS4JAttachment ()
-  {}
+  public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
+  {
+    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+  }
 
   @Override
   public InputStream getSourceStream ()
@@ -22,7 +26,7 @@ public class WSS4JAttachment extends Attachment
     final InputStream ret = m_aISP.getInputStream ();
     if (ret == null)
       throw new IllegalStateException ("Failed to get InputStream from " + m_aISP);
-    // TODO remember me
+    m_aResMgr.addCloseable (ret);
     return ret;
   }
 

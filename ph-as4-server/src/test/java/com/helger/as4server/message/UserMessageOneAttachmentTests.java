@@ -27,8 +27,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
-import com.helger.as4lib.attachment.AS4FileAttachment;
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
@@ -61,9 +61,10 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentMimeSuccess () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
@@ -77,9 +78,10 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -87,6 +89,7 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
                                                                                                                                                                   aAttachments),
                                                                                                                        m_eSOAPVersion,
                                                                                                                        aAttachments,
+                                                                                                                       s_aResMgr,
                                                                                                                        false,
                                                                                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
@@ -98,25 +101,28 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentEncryptedMimeSuccess () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
                                                                           TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments),
                                                                           false,
-                                                                          aAttachments);
+                                                                          aAttachments,
+                                                                          s_aResMgr);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
   public void testUserMessageMimeSignedEncryptedSuccess () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -124,11 +130,16 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
                                                                                                   aAttachments),
                                                        m_eSOAPVersion,
                                                        aAttachments,
+                                                       s_aResMgr,
                                                        false,
                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion, aDoc, false, aAttachments);
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
+                                                                          aDoc,
+                                                                          false,
+                                                                          aAttachments,
+                                                                          s_aResMgr);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 }

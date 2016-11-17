@@ -31,6 +31,7 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -62,11 +63,13 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
+  private final AS4ResourceManager m_aResMgr;
 
-  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion)
+  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4ResourceManager aResMgr)
   {
     m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
   }
 
   /**
@@ -86,6 +89,16 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public final ESOAPVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
+  }
+
+  /**
+   * @return The resource manager as specified in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public final AS4ResourceManager getResourceMgr ()
+  {
+    return m_aResMgr;
   }
 
   public void setMessaging (@Nullable final Ebms3Messaging aMessaging)

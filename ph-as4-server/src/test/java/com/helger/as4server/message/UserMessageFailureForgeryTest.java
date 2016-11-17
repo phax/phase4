@@ -39,8 +39,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.helger.as4lib.attachment.AS4FileAttachment;
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -119,7 +119,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null);
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null, s_aResMgr);
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
@@ -128,8 +128,8 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
     for (int i = 0; i < nList.getLength (); i++)
     {
@@ -146,9 +146,10 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testWrongAttachmentIDShouldFail () throws Exception
   {
 
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                     CMimeType.APPLICATION_GZIP,
+                                                     s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
 
@@ -157,6 +158,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                                                                   aAttachments),
                                                        m_eSOAPVersion,
                                                        aAttachments,
+                                                       s_aResMgr,
                                                        false,
                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -198,16 +200,18 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
                                                                           TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments),
                                                                           true,
-                                                                          aAttachments);
+                                                                          aAttachments,
+                                                                          s_aResMgr);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
     // Since we want to change the attachment
@@ -269,9 +273,10 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithAttachmentInfoOnly () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                     CMimeType.APPLICATION_GZIP,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
@@ -295,12 +300,13 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithOnlyAttachmentsNoPartInfo () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
 
     final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
 
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                     CMimeType.APPLICATION_GZIP,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
 
@@ -316,16 +322,19 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                             CMimeType.APPLICATION_GZIP));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                     CMimeType.APPLICATION_GZIP,
+                                                     s_aResMgr));
 
     final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
 
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                             CMimeType.IMAGE_JPG));
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
-                                             CMimeType.IMAGE_JPG));
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                     CMimeType.IMAGE_JPG,
+                                                     s_aResMgr));
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
+                                                     CMimeType.IMAGE_JPG,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
 

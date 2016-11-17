@@ -35,6 +35,7 @@ import org.junit.BeforeClass;
 
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4server.AbstractClientSetUp;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.core.requesttrack.RequestTracker;
@@ -45,17 +46,20 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
   private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
+  protected static AS4ResourceManager s_aResMgr;
 
   @BeforeClass
   public static void startServer () throws Exception
   {
     s_aJetty.startServer ();
     RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+    s_aResMgr = new AS4ResourceManager ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    s_aResMgr.close ();
     s_aJetty.shutDownServer ();
   }
 

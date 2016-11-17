@@ -68,7 +68,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
   public void testReceiptReceivedFromUserMessageWithWSSecurity () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 

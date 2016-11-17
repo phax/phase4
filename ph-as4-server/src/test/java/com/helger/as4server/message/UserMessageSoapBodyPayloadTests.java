@@ -29,7 +29,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
@@ -71,8 +71,8 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageTestSetU
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
@@ -82,7 +82,8 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageTestSetU
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testSignedUserMessage (m_eSOAPVersion,
                                                                                                                               aPayload,
-                                                                                                                              null),
+                                                                                                                              null,
+                                                                                                                              s_aResMgr),
                                                                                           null,
                                                                                           null);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
@@ -93,7 +94,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageTestSetU
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
@@ -105,8 +106,8 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageTestSetU
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments);
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion, aDoc, false);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);

@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
@@ -153,7 +153,7 @@ public class CreateUserMessage
    */
   @Nullable
   public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
-                                                  @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+                                                  @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
@@ -161,7 +161,7 @@ public class CreateUserMessage
       aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
 
     if (aAttachments != null)
-      for (final IAS4Attachment aAttachment : aAttachments)
+      for (final IAS4OutgoingAttachment aAttachment : aAttachments)
       {
         final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
         {

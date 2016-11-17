@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.attachment;
+package com.helger.as4lib.attachment.incoming;
 
 import com.helger.commons.collection.attr.MapBasedAttributeContainer;
 
 /**
  * Abstract base class for incoming attachments.
- * 
+ *
  * @author Philip Helger
  */
-public abstract class AbstractIncomingAttachment extends MapBasedAttributeContainer <String, String>
-                                                 implements IIncomingAttachment
+public abstract class AbstractAS4IncomingAttachment extends MapBasedAttributeContainer <String, String>
+                                                    implements IAS4IncomingAttachment
 {
-
+  /* empty */
 }

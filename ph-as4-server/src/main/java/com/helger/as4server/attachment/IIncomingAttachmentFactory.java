@@ -25,23 +25,24 @@ import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
-import com.helger.commons.annotation.Nonempty;
+import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
 
 /**
- * Factory interface for {@link IIncomingAttachment} objects.
+ * Factory interface for {@link IAS4IncomingAttachment} objects.
  *
  * @author Philip Helger
  */
 public interface IIncomingAttachmentFactory extends Serializable
 {
   @Nonnull
-  IIncomingAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
+  IAS4IncomingAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
 
   @Nonnull
-  IIncomingAttachment createAttachment (@Nonnull InputStream aIS) throws IOException;
+  IAS4IncomingAttachment createAttachment (@Nonnull InputStream aIS) throws IOException;
 
   @Nonnull
-  @Nonempty
+  @ReturnsMutableCopy
   ICommonsList <File> getAndRemoveAllTempFiles ();
 }

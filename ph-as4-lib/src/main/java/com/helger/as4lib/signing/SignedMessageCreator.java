@@ -28,13 +28,14 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
-import com.helger.as4lib.attachment.AttachmentCallbackHandler;
-import com.helger.as4lib.attachment.IAS4Attachment;
 import com.helger.as4lib.attachment.WSS4JAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -86,7 +87,8 @@ public class SignedMessageCreator
   @Nonnull
   public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
                                        @Nonnull final ESOAPVersion eSOAPVersion,
-                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
+                                       @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                       @Nonnull final AS4ResourceManager aResMgr,
                                        final boolean bMustUnderstand,
                                        @Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
                                        @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest) throws WSSecurityException
@@ -102,9 +104,10 @@ public class SignedMessageCreator
 
       // Convert to WSS4J attachments
       final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
-                                                                                       IAS4Attachment::getAsWSS4JAttachment);
+                                                                                       IAS4OutgoingAttachment::getAsWSS4JAttachment);
 
-      final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aWSS4JAttachments);
+      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aWSS4JAttachments,
+                                                                                                            aResMgr);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 

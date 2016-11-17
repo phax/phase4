@@ -51,6 +51,7 @@ import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -66,16 +67,19 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
   private static final int STOP_PORT = PORT + 1000;
   private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
+  private static AS4ResourceManager s_aResMgr;
 
   @BeforeClass
   public static void startServer () throws Exception
   {
     s_aJetty.startServer ();
+    s_aResMgr = new AS4ResourceManager ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    s_aResMgr.close ();
     s_aJetty.shutDownServer ();
   }
 
@@ -117,6 +121,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null, null, null),
                                                                                  ESOAPVersion.AS4_DEFAULT,
                                                                                  null,
+                                                                                 s_aResMgr,
                                                                                  false,
                                                                                  ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                  ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -143,6 +148,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
+                                                                                   s_aResMgr,
                                                                                    false,
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -173,6 +179,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
+                                                                                   s_aResMgr,
                                                                                    false,
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -208,6 +215,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                                        null),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
+                                                                                   s_aResMgr,
                                                                                    false,
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);

@@ -14,47 +14,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.attachment;
+package com.helger.as4lib.attachment.incoming;
 
-import java.io.File;
 import java.io.InputStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.http.CHTTPHeader;
 
 /**
- * File base incoming attachment.
+ * Wraps an existing (decrypted) WSS4J attachment.
  *
  * @author Philip Helger
  */
-public class IncomingFileAttachment extends AbstractIncomingAttachment
+public class AS4IncomingWSS4JAttachment extends AbstractAS4IncomingAttachment
 {
-  private final File m_aFile;
+  private final WSS4JAttachment m_aSrc;
 
-  public IncomingFileAttachment (@Nonnull final File aFile)
+  public AS4IncomingWSS4JAttachment (@Nonnull final WSS4JAttachment aSrc)
   {
-    m_aFile = ValueEnforcer.notNull (aFile, "File");
-    ValueEnforcer.isTrue (FileHelper.canReadAndWriteFile (aFile), () -> aFile + " must be readable and writable");
+    m_aSrc = ValueEnforcer.notNull (aSrc, "SrcAttachment");
+  }
+
+  @Nullable
+  public String getContentID ()
+  {
+    return m_aSrc.getId ();
+  }
+
+  @Nullable
+  public String getContentTransferEncoding ()
+  {
+    return m_aSrc.getHeaders ().get (CHTTPHeader.CONTENT_TRANSFER_ENCODING);
+  }
+
+  @Nullable
+  public String getContentType ()
+  {
+    return m_aSrc.getMimeType ();
   }
 
   @Nonnull
-  public File getFile ()
+  public WSS4JAttachment getAsWSS4JAttachment ()
   {
-    return m_aFile;
+    return m_aSrc;
   }
 
   @Nonnull
   public InputStream getInputStream ()
   {
-    return FileHelper.getInputStream (m_aFile);
+    return m_aSrc.getSourceStream ();
   }
 
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("File", m_aFile).toString ();
+    return ToStringGenerator.getDerived (super.toString ()).append ("Src", m_aSrc).toString ();
   }
 }

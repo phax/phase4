@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.attachment;
+package com.helger.as4lib.attachment.outgoing;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +30,9 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.util.AttachmentUtils;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.attachment.WSS4JAttachment;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
@@ -43,22 +46,26 @@ import com.helger.http.CHTTPHeader;
  *
  * @author Philip Helger
  */
-public class AS4FileAttachment extends AbstractAS4Attachment
+public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
 {
   private final File m_aFile;
+  private final AS4ResourceManager m_aResMgr;
 
-  public AS4FileAttachment (@Nonnull final File aFile, @Nonnull final IMimeType aMimeType)
+  public AS4OutgoingFileAttachment (@Nonnull final File aFile,
+                                    @Nonnull final IMimeType aMimeType,
+                                    @Nonnull final AS4ResourceManager aTempFileHdl)
   {
-    this (aFile, aMimeType, (EAS4CompressionMode) null);
+    this (aFile, aMimeType, (EAS4CompressionMode) null, aTempFileHdl);
   }
 
-  public AS4FileAttachment (@Nonnull final File aFile,
-                            @Nonnull final IMimeType aMimeType,
-                            @Nullable final EAS4CompressionMode aEAS4CompressionMode)
+  public AS4OutgoingFileAttachment (@Nonnull final File aFile,
+                                    @Nonnull final IMimeType aMimeType,
+                                    @Nullable final EAS4CompressionMode aEAS4CompressionMode,
+                                    @Nonnull final AS4ResourceManager aResMgr)
   {
     super (aMimeType, aEAS4CompressionMode);
-    ValueEnforcer.notNull (aFile, "File");
-    m_aFile = aFile;
+    m_aFile = ValueEnforcer.notNull (aFile, "File");
+    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
   }
 
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
@@ -73,16 +80,13 @@ public class AS4FileAttachment extends AbstractAS4Attachment
     // will be set as DataSource
     if (hasCompressionMode ())
     {
-      final File aCompressedFile = File.createTempFile (m_aFile.getName () +
-                                                        "-compressed",
-                                                        getCompressionMode ().getFileExtension ());
-
+      // Create temporary file with compressed content
+      final File aCompressedFile = m_aResMgr.createTempFile ();
       try (final OutputStream aOS = getCompressionMode ().getCompressStream (new FileOutputStream (aCompressedFile)))
       {
         aOS.write (Files.readAllBytes (m_aFile.toPath ()));
       }
       aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
-      aCompressedFile.deleteOnExit ();
     }
     else
     {
@@ -103,7 +107,7 @@ public class AS4FileAttachment extends AbstractAS4Attachment
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
 
-    final WSS4JAttachment aAttachment = new WSS4JAttachment ();
+    final WSS4JAttachment aAttachment = new WSS4JAttachment (m_aResMgr);
     aAttachment.setMimeType (getMimeType ().getAsString ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getID ());

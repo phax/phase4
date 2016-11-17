@@ -27,7 +27,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -47,6 +47,7 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -57,7 +58,8 @@ public final class TestMessages
 {
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
-                                                @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
+                                                @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                                @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
 
@@ -66,6 +68,7 @@ public final class TestMessages
                                                                                            aAttachments),
                                                              eSOAPVersion,
                                                              aAttachments,
+                                                             aResMgr,
                                                              false,
                                                              ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                              ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -73,7 +76,8 @@ public final class TestMessages
   }
 
   public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException
+                                           @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                           @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
@@ -85,6 +89,7 @@ public final class TestMessages
                                                                           .getAsSOAPDocument (),
                                                              eSOAPVersion,
                                                              aAttachments,
+                                                             aResMgr,
                                                              false,
                                                              ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                              ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -93,10 +98,11 @@ public final class TestMessages
 
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                              @Nullable final Node aPayload,
-                                             @Nullable final Iterable <? extends IAS4Attachment> aAttachments) throws WSSecurityException,
-                                                                                                               DOMException
+                                             @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                             @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException,
+                                                                                        DOMException
   {
-    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments);
+    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
@@ -111,6 +117,7 @@ public final class TestMessages
     final Document aSignedDoc = aClient.createSignedMessage (aDoc,
                                                              eSOAPVersion,
                                                              aAttachments,
+                                                             aResMgr,
                                                              false,
                                                              ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                              ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -119,7 +126,7 @@ public final class TestMessages
 
   public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
                                                        @Nullable final Node aPayload,
-                                                       @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+                                                       @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -162,7 +169,7 @@ public final class TestMessages
 
   public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESOAPVersion eSOAPVersion,
                                                                       @Nullable final Node aPayload,
-                                                                      @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+                                                                      @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -207,7 +214,7 @@ public final class TestMessages
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                            @Nullable final Node aPayload,
-                                           @Nullable final Iterable <? extends IAS4Attachment> aAttachments)
+                                           @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 

@@ -27,7 +27,7 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.w3c.dom.Document;
 
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
@@ -50,7 +50,7 @@ public final class MimeMessageCreator
 
   @Nonnull
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
-                                          @Nullable final Iterable <? extends IAS4Attachment> aAttachments,
+                                          @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
                                           @Nullable final ICommonsList <? extends Attachment> aEncryptedAttachments) throws Exception
   {
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
@@ -67,7 +67,7 @@ public final class MimeMessageCreator
 
     // Add all attachments (if any)
     if (aAttachments != null)
-      for (final IAS4Attachment aAttachment : aAttachments)
+      for (final IAS4OutgoingAttachment aAttachment : aAttachments)
         aAttachment.addToMimeMultipart (aMimeMultipart);
 
     if (aEncryptedAttachments != null)

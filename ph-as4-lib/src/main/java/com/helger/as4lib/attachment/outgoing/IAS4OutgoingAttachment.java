@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.attachment;
+package com.helger.as4lib.attachment.outgoing;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.MimeMultipart;
 
+import com.helger.as4lib.attachment.EAS4CompressionMode;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
@@ -34,7 +36,7 @@ import com.helger.mail.cte.EContentTransferEncoding;
  *
  * @author Philip Helger
  */
-public interface IAS4Attachment extends IHasID <String>, Serializable
+public interface IAS4OutgoingAttachment extends IHasID <String>, Serializable
 {
   /**
    * @return The content transfer encoding to be used. Required for MIME

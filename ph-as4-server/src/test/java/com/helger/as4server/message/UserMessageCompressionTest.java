@@ -28,9 +28,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.AS4FileAttachment;
 import com.helger.as4lib.attachment.EAS4CompressionMode;
-import com.helger.as4lib.attachment.IAS4Attachment;
+import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
+import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
@@ -61,10 +61,11 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML,
-                                             EAS4CompressionMode.GZIP));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     EAS4CompressionMode.GZIP,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
@@ -83,10 +84,11 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   {
 
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final ICommonsList <IAS4Attachment> aAttachments = new CommonsArrayList<> ();
-    aAttachments.add (new AS4FileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                             CMimeType.APPLICATION_XML,
-                                             EAS4CompressionMode.GZIP));
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     EAS4CompressionMode.GZIP,
+                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      aPayload,

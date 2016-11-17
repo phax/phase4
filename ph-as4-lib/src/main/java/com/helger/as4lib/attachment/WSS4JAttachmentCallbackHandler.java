@@ -28,6 +28,8 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
 
+import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsHashMap;
@@ -41,13 +43,15 @@ import com.helger.commons.collection.ext.ICommonsMap;
  *
  * @author Apache WSS4J
  */
-public class AttachmentCallbackHandler implements CallbackHandler
+public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
   private final ICommonsList <WSS4JAttachment> m_aOriginalRequestAttachments = new CommonsArrayList<> ();
   private final ICommonsMap <String, Attachment> m_aAttachmentMap = new CommonsHashMap<> ();
   private final ICommonsList <WSS4JAttachment> m_aResponseAttachments = new CommonsArrayList<> ();
+  private final AS4ResourceManager m_aResMgr;
 
-  public AttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments)
+  public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments,
+                                         @Nonnull final AS4ResourceManager aResMgr)
   {
     if (aAttachments != null)
       for (final WSS4JAttachment aAttachment : aAttachments)
@@ -55,6 +59,7 @@ public class AttachmentCallbackHandler implements CallbackHandler
         m_aOriginalRequestAttachments.add (aAttachment);
         m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
       }
+    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
   }
 
   // Try to match the Attachment Id. Otherwise, add all Attachments.
@@ -92,7 +97,7 @@ public class AttachmentCallbackHandler implements CallbackHandler
           final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
 
           // Convert
-          final WSS4JAttachment aRealAttachment = new WSS4JAttachment ();
+          final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResMgr);
           aRealAttachment.setId (aResponseAttachment.getId ());
           aRealAttachment.setMimeType (aResponseAttachment.getMimeType ());
           aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());

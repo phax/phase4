@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.attachment;
+package com.helger.as4lib.attachment.incoming;
 
 import java.io.InputStream;
 
@@ -29,11 +29,11 @@ import com.helger.commons.string.ToStringGenerator;
  * 
  * @author Philip Helger
  */
-public class IncomingInMemoryAttachment extends AbstractIncomingAttachment
+public class AS4IncomingInMemoryAttachment extends AbstractAS4IncomingAttachment
 {
   private final byte [] m_aData;
 
-  public IncomingInMemoryAttachment (@Nonnull final byte [] aData)
+  public AS4IncomingInMemoryAttachment (@Nonnull final byte [] aData)
   {
     m_aData = ValueEnforcer.notNull (aData, "Data");
   }

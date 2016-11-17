@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.as4lib.attachment.AttachmentCallbackHandler;
 import com.helger.as4lib.attachment.WSS4JAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
@@ -160,7 +160,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       {
         // Convert to WSS4J attachments
         final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler ();
-        final AttachmentCallbackHandler aAttachmentCallbackHandler = new AttachmentCallbackHandler (aAttachments);
+        final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
+                                                                                                              aState.getResourceMgr ());
 
         final RequestData aRequestData = new RequestData ();
         aRequestData.setCallbackHandler (aKeyStoreCallback);
