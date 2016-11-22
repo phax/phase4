@@ -50,6 +50,7 @@ import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.DefaultPMode;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -331,6 +332,42 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           }
         }
         final Node aPayloadNode = aBodyNode.getFirstChild ();
+
+        // Step 1 check if PMode Config exists
+        final String sConfigID = aState.getPMode ().getConfigID ();
+
+        if (StringHelper.hasNoText (sConfigID))
+        {
+          // Use default PMode if no PModeConfig ID is present
+          DefaultPMode.getDefaultPModeConfig ();
+          // TODO make default pmode interchangeable
+          // TODO Note to myself, how do you get until here (look at validation)
+          // and give the following steps the default configuration
+
+        }
+        if (MetaAS4Manager.getPModeConfigMgr ().containsWithID (sConfigID))
+        {
+          // Step 2: Check if P+P already exists, P+P should be C1-C4 but
+          // initiator and responder id itself are C2 and C3
+          // Sander Fieten said C1 and C4 id should be given with the help of
+          // properties which are contained in initiator and responder with
+          // originalSender and finalRecipient (Propertynames)
+
+        }
+        else
+        {
+          // Return bad request since pmodeconfigs can not be added dynamically
+          aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
+          return;
+        }
+
+        // Check if Partner+Partner combination is already present
+        // P+P neu + PConfig da = anlegen
+        // P+P neu + PConfig neu = Fehler
+        // P+P neu + PConfig Id fehlt = default
+        // P+P da + PConfig neu = fehler
+        // P+P da + PConfig da = nix tun
+        // P+P da + PConfig id fehlt = default
 
         // TODO choose right ID Initiator or ResponderID
         _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());

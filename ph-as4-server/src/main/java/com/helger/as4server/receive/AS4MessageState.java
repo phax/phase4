@@ -56,7 +56,6 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "as4.soap.decrypted.attachmentlist";
   private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
   private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "as4.soap.body.payload.present";
-  // TODO maybe not needed
   private static final String KEY_INITIATOR_ID = "as4.initiator.id";
   private static final String KEY_RESPONDER_ID = "as4.responder.id";
   private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
