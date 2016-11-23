@@ -19,10 +19,13 @@ package com.helger.as4server.servlet;
 import static org.junit.Assert.assertTrue;
 
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.mail.internet.MimeBodyPart;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +46,7 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4ErrorMessage;
@@ -51,6 +55,11 @@ import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.DefaultPMode;
+import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.model.pmode.PModeConfigManager;
+import com.helger.as4lib.model.pmode.PModeManager;
+import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -103,6 +112,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
   private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList<> ();
+
+  // C1
+  private String sOriginalSender = null;
+  // C4
+  private String sFinalRecipient = null;
 
   /**
    * Reload all SPI implementations of {@link IAS4ServletMessageProcessorSPI}.
@@ -333,8 +347,23 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         final Node aPayloadNode = aBodyNode.getFirstChild ();
 
+        // Check if originalSender and finalRecipient are present also saves
+        // them into variables
+        // TODO check with philip if needed, show him AS4 Profile section
+        final String sCheckResult = _checkProperties (aUserMessage.getMessageProperties ().getProperty ());
+        if (!StringHelper.hasNoText (sCheckResult))
+        {
+          aAS4Response.setBadRequest (sCheckResult);
+          return;
+        }
+
         // Step 1 check if PMode Config exists
+        // TODO check with test might call exception when null here
         final String sConfigID = aState.getPMode ().getConfigID ();
+
+        final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+        final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
+        final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
 
         if (StringHelper.hasNoText (sConfigID))
         {
@@ -345,21 +374,77 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           // and give the following steps the default configuration
 
         }
-        if (MetaAS4Manager.getPModeConfigMgr ().containsWithID (sConfigID))
-        {
-          // Step 2: Check if P+P already exists, P+P should be C1-C4 but
-          // initiator and responder id itself are C2 and C3
-          // Sander Fieten said C1 and C4 id should be given with the help of
-          // properties which are contained in initiator and responder with
-          // originalSender and finalRecipient (Propertynames)
-
-        }
         else
-        {
-          // Return bad request since pmodeconfigs can not be added dynamically
-          aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
-          return;
-        }
+          if (aPModeConfigMgr.containsWithID (sConfigID))
+          {
+            if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
+                aPartnerMgr.containsWithID (aState.getResponderID ()))
+            {
+              // Step 2: Check if P+P already exists, P+P should be C1-C4 but
+              // initiator and responder id itself are C2 and C3
+              // Sander Fieten said C1 and C4 id should be given with the help
+              // of
+              // properties which are contained in initiator and responder with
+              // originalSender and finalRecipient (Propertynames)
+              if (aPModeMgr.getAll (doesPartnerAndPartnerExist (aState.getInitiatorID (),
+                                                                aState.getResponderID (),
+                                                                sConfigID))
+                           .isEmpty ())
+              {
+                // TODO might need to add type also => check with tests
+                final PMode aPMode = new PMode (new PModeParty (null,
+                                                                aUserMessage.getPartyInfo ()
+                                                                            .getFrom ()
+                                                                            .getPartyId ()
+                                                                            .get (0)
+                                                                            .getValue (),
+                                                                aUserMessage.getPartyInfo ().getFrom ().getRole (),
+                                                                null,
+                                                                null),
+                                                new PModeParty (null,
+                                                                aUserMessage.getPartyInfo ()
+                                                                            .getTo ()
+                                                                            .getPartyId ()
+                                                                            .get (0)
+                                                                            .getValue (),
+                                                                aUserMessage.getPartyInfo ().getTo ().getRole (),
+                                                                null,
+                                                                null),
+                                                aPModeConfigMgr.getPModeConfigOfID (sConfigID));
+                aPModeMgr.createPMode (aPMode);
+              }
+              // If the PMode already exists we do not need to do anything
+            }
+            else
+            {
+              // Check if missing Partner is the initiator and check if the cert
+              // is valid
+              // if the message has no security, so no cert parameter => reject
+
+              // XXX Responder should always be our server
+              if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
+              {
+                aAS4Response.setBadRequest ("The specified responder " +
+                                            aState.getResponderID () +
+                                            " was not found, as registred partner.");
+                return;
+              }
+              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
+              {
+                if (aState.getUsedCertificate () != null)
+                {
+                  _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
+                }
+              }
+            }
+          }
+          else
+          {
+            // Return bad request since pmodeconfigs can not be added
+            // dynamically
+            aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
+            return;
+          }
 
         // Check if Partner+Partner combination is already present
         // P+P neu + PConfig da = anlegen
@@ -368,9 +453,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         // P+P da + PConfig neu = fehler
         // P+P da + PConfig da = nix tun
         // P+P da + PConfig id fehlt = default
-
-        // TODO choose right ID Initiator or ResponderID
-        _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
 
         for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
           try
@@ -440,6 +522,46 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (usedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
+  }
+
+  @Nullable
+  private String _checkProperties (@Nonnull final List <Ebms3Property> aPropertyList)
+  {
+    if (aPropertyList.isEmpty ())
+    {
+      return "No C1 and C4 are specified in the properties(originalSender and finalRecipient)!";
+    }
+
+    for (final Ebms3Property sProperty : aPropertyList)
+    {
+      if (sProperty.getName ().equals ("originalSender"))
+      {
+        sOriginalSender = sProperty.getValue ();
+      }
+      else
+        if (sProperty.getName ().equals ("finalRecipient"))
+        {
+          sFinalRecipient = sProperty.getValue ();
+        }
+    }
+    if (StringHelper.hasNoText (sOriginalSender))
+    {
+      return "originalSender property is empty or not existant but mandatory";
+    }
+    if (StringHelper.hasNoText (sFinalRecipient))
+    {
+      return "finalRecipient property is empty or not existant but mandatory";
+    }
+    return null;
+  }
+
+  public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nonnull final String sInitiatorID,
+                                                               @Nonnull final String sResponderID,
+                                                               @Nonnull final String sPModeConfigID)
+  {
+    return p -> p.getInitiator ().getID ().equals (sInitiatorID) &&
+                p.getResponder ().getID ().equals (sResponderID) &&
+                p.getConfigID ().equals (sPModeConfigID);
   }
 
   @Override
