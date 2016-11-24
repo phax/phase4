@@ -359,7 +359,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Step 1 check if PMode Config exists
         // TODO check with test might call exception when null here
-        final String sConfigID = aState.getPMode ().getConfigID ();
+        final String sConfigID = aState.getPModeConfig ().getID ();
 
         final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
         final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
@@ -421,7 +421,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
               // is valid
               // if the message has no security, so no cert parameter => reject
 
-              // XXX Responder should always be our server
+              // XXX Responder should always be our server?
               if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
               {
                 aAS4Response.setBadRequest ("The specified responder " +

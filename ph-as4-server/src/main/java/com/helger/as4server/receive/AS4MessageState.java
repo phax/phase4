@@ -29,7 +29,7 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.model.mpc.IMPC;
-import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
@@ -49,7 +49,7 @@ import com.helger.commons.datetime.PDTFactory;
 public class AS4MessageState extends MapBasedAttributeContainerAny <String>
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
-  private static final String KEY_PMODE = "as4.pmode";
+  private static final String KEY_PMODE_CONFIG = "as4.pmode.config";
   private static final String KEY_MPC = "as4.mpc";
   private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "as4.soap.attachmentlist";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
@@ -111,15 +111,15 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
   }
 
-  public void setPMode (@Nullable final IPMode aPMode)
+  public void setPModeConfig (@Nullable final IPModeConfig aPMode)
   {
-    setAttribute (KEY_PMODE, aPMode);
+    setAttribute (KEY_PMODE_CONFIG, aPMode);
   }
 
   @Nullable
-  public IPMode getPMode ()
+  public IPModeConfig getPModeConfig ()
   {
-    return getCastedAttribute (KEY_PMODE);
+    return getCastedAttribute (KEY_PMODE_CONFIG);
   }
 
   public void setOriginalAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)

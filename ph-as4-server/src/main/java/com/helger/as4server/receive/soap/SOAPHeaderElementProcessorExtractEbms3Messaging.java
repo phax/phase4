@@ -29,7 +29,6 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
-import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
@@ -38,9 +37,9 @@ import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.mpc.MPCManager;
-import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.IPModeConfig;
+import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeLeg;
-import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
@@ -65,7 +64,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                         @Nonnull final Locale aLocale)
   {
     final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -89,116 +88,30 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     // Check if the usermessage has a pmode in the collaboration info
-    IPMode aPMode = null;
+    IPModeConfig aPModeConfig = null;
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
-      String sPModeID = null;
+      String sPModeConfigID = null;
       if (aUserMessage.getCollaborationInfo () != null &&
           aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
       {
         // Find PMode
-        sPModeID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+        sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
         // Includes fallback to default PMode (if defined)
-        aPMode = aPModeMgr.getPModeOfID (sPModeID);
+        aPModeConfig = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
       }
-      if (aPMode == null)
+      if (aPModeConfig == null)
       {
-        LOG.warn ("Failed to resolve PMode '" + sPModeID + "'");
+        LOG.warn ("Failed to resolve PMode '" + sPModeConfigID + "'");
 
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
     }
 
-    // UserMessage does not need to get checked for null again since it got
-    // checked above
-    final Ebms3PartyInfo aPartyInfo = aUserMessage == null ? null : aUserMessage.getPartyInfo ();
-    if (aPartyInfo != null)
-    {
-      // Initiator is optional for push
-      if (aPMode != null && aPMode.getInitiator () == null)
-      {
-        if (aPMode.getConfig ().getMEPBinding ().isPull ())
-        {
-          LOG.warn ("Initiator is required for PULL message");
-
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
-      }
-      else
-      {
-        if (aPartyInfo.getFrom () != null && aPartyInfo.getFrom ().getPartyId () != null)
-        {
-          // Check if PartyID is correct for Initiator
-          final String sInitiatorID = aPMode.getInitiator ().getIDValue ();
-          if (CollectionHelper.containsNone (aPartyInfo.getFrom ().getPartyId (),
-                                             aID -> aID.getValue ().equals (sInitiatorID)))
-          {
-            LOG.warn ("Error processing the PMode, the Initiator/Sender PartyID is incorrect. Expected '" +
-                      sInitiatorID +
-                      "'");
-            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-            return ESuccess.FAILURE;
-          }
-
-          aState.setInitiatorID (sInitiatorID);
-        }
-        else
-        {
-          LOG.warn ("Error processing the usermessage, initiator part is present. But from PartyInfo is invalid.");
-
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
-      }
-
-      // Response is optional for pull
-      if (aPMode.getResponder () == null)
-      {
-        if (aPMode.getConfig ().getMEPBinding ().isPush ())
-        {
-          LOG.warn ("Responder is required for PUSH message");
-
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
-      }
-      else
-      {
-        if (aPartyInfo.getTo () != null && aPartyInfo.getTo ().getPartyId () != null)
-        {
-          // Check if PartyID is correct for Responder
-          final String sResponderID = aPMode.getResponder ().getIDValue ();
-          if (CollectionHelper.containsNone (aPartyInfo.getTo ().getPartyId (),
-                                             aID -> aID.getValue ().equals (sResponderID)))
-          {
-
-            LOG.warn ("Error processing the PMode, the Responder PartyID is incorrect. Expected '" +
-                      sResponderID +
-                      "'");
-
-            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-            return ESuccess.FAILURE;
-          }
-
-          aState.setResponderID (sResponderID);
-
-        }
-        else
-        {
-          LOG.warn ("Error processing the usermessage, to-PartyInfo is invalid.");
-
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
-      }
-    }
-
     // Check if MPC is contained in PMode and if so, if it is valid
-    // TODO move to PMode initialization
-    final PModeLeg aPModeLeg1 = aPMode.getConfig ().getLeg1 ();
+    final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();
     if (aPModeLeg1 != null)
     {
       if (aPModeLeg1.getBusinessInfo () != null)
@@ -373,7 +286,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // Remember in state
     aState.setMessaging (aMessaging);
-    aState.setPMode (aPMode);
+    aState.setPModeConfig (aPModeConfig);
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);

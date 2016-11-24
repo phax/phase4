@@ -37,8 +37,8 @@ import com.helger.as4lib.wss.EWSSVersion;
 
 public class ServletTestPMode
 {
-  public static String PMODE_ID_SOAP11_TEST = "pmode-test11";
-  public static String PMODE_ID_SOAP12_TEST = "pmode-test";
+  public static String PMODE_CONFIG_ID_SOAP11_TEST = "pmode-test11";
+  public static String PMODE_CONFIG_ID_SOAP12_TEST = "pmode-test";
 
   private ServletTestPMode ()
   {}
@@ -47,8 +47,8 @@ public class ServletTestPMode
   public static PModeConfig getTestPModeConfig (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     return getTestPModeConfigSetID (eSOAPVersion,
-                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_ID_SOAP12_TEST
-                                                                               : PMODE_ID_SOAP11_TEST);
+                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_CONFIG_ID_SOAP12_TEST
+                                                                               : PMODE_CONFIG_ID_SOAP11_TEST);
   }
 
   @Nonnull

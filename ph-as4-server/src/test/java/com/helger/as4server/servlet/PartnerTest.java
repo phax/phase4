@@ -130,8 +130,9 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                        @Nullable final String sDifferentPartyIdResponder) throws Exception
   {
     // If argument is set replace the default one
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
-                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_ID_SOAP12_TEST));
+    // final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
+    // .findFirst (_getFirstPModeWithID
+    // (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
     final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
     final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ? "APP_1000000101"
                                                                            : sDifferentPartyIdInitiator;
@@ -143,14 +144,14 @@ public class PartnerTest extends AbstractUserMessageSetUp
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
+    final Ebms3Property aOriginalSender = new Ebms3Property ();
+    aOriginalSender.setName ("originalSender");
+    aOriginalSender.setValue ("C1-test");
+    final Ebms3Property aFinalRecipient = new Ebms3Property ();
+    aFinalRecipient.setName ("finalRecipient");
+    aFinalRecipient.setValue ("C4-test");
+    aEbms3Properties.add (aFinalRecipient);
+    aEbms3Properties.add (aOriginalSender);
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
@@ -158,7 +159,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      aPModeID.getID (),
+                                                                                                      ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST,
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               sSetPartyIDInitiator,

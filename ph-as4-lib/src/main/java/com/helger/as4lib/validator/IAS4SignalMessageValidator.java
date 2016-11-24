@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.profile;
+package com.helger.as4lib.validator;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.error.list.ErrorList;
 
-public interface IAS4ProfileValidator
+public interface IAS4SignalMessageValidator
 {
   /**
    * Validation method
-   * 
-   * @param aPMode
-   *        The PMode to be validated. May not be <code>null</code>.
+   *
+   * @param aSignalMsg
+   *        The message to be validated. May not be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  void validatePMode (@Nonnull IPMode aPMode, @Nonnull ErrorList aErrorList);
+  void validateSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg, @Nonnull ErrorList aErrorList);
 }

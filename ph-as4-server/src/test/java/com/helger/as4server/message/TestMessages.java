@@ -249,7 +249,7 @@ public final class TestMessages
   private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
   {
     if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_ID_SOAP12_TEST);
-    return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_ID_SOAP11_TEST);
+      return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST);
+    return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_CONFIG_ID_SOAP11_TEST);
   }
 }

@@ -237,7 +237,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     // If argument is set replace the default one
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
-                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_ID_SOAP12_TEST));
+                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
     final String sSetPModeID = sWrongPModeID == null ? aPModeID.getID () : sWrongPModeID;
     final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? "APP_1000000101" : sWrongPartyIdInitiator;
     final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? "APP_1000000101" : sWrongPartyIdResponder;
