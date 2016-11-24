@@ -54,7 +54,9 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     m_aRWLock.writeLocked ( () -> m_aMap.clear ());
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
-    s_aLogger.info (getProfileCount () + " AS4 profiles are registered");
+
+    final int nCount = getProfileCount ();
+    s_aLogger.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
   }
 
   public AS4ProfileManager ()
@@ -99,7 +101,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 
   /**
    * Set the default profile to be used.
-   * 
+   *
    * @param sDefaultProfileID
    *        The ID of the default profile. May be <code>null</code>.
    * @return <code>null</code> if no such profile is registered, the resolve
