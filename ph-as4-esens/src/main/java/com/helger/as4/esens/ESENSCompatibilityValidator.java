@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.profile;
+package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
 
@@ -25,6 +25,8 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
@@ -49,7 +51,7 @@ import com.helger.commons.error.list.ErrorList;
  *
  * @author bayerlma
  */
-public class ESENSCompatibilityValidator implements IAS4ProfileValidator
+final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
   @SuppressWarnings ("unused")
   private static final Logger s_aLogger = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
@@ -281,5 +283,15 @@ public class ESENSCompatibilityValidator implements IAS4ProfileValidator
         // TODO no compression allowed in the implementation
       }
     }
+  }
+
+  public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
+  {
+    // TODO Auto-generated method stub
+  }
+
+  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
+  {
+    // TODO Auto-generated method stub
   }
 }

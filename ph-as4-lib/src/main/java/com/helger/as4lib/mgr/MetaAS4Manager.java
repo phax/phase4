@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeManager;
+import com.helger.as4lib.model.profile.AS4ProfileManager;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
@@ -44,6 +45,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private PartnerManager m_aPartnerMgr;
   private PModeConfigManager m_aPModeConfigMgr;
   private PModeManager m_aPModeMgr;
+  private AS4ProfileManager m_aProfileMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -63,6 +65,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aPartnerMgr = new PartnerManager (PARTNER_XML);
       m_aPModeConfigMgr = new PModeConfigManager (PMODE_CONFIG_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
+      m_aProfileMgr = new AS4ProfileManager ();
 
       _initCallbacks ();
 
@@ -110,5 +113,11 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static PModeManager getPModeMgr ()
   {
     return getInstance ().m_aPModeMgr;
+  }
+
+  @Nonnull
+  public static AS4ProfileManager getProfileMgr ()
+  {
+    return getInstance ().m_aProfileMgr;
   }
 }

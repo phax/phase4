@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4server.profile;
+package com.helger.as4.esens;
 
 import static org.junit.Assert.assertTrue;
 
@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
@@ -41,7 +42,6 @@ import com.helger.as4lib.model.pmode.PModeLegSecurity;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
-import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
@@ -68,7 +68,7 @@ public class ESENSCompatibilityValidatorTest
   public void setUp ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = ServletTestPMode.getTestPModeWithSecurity (ESOAPVersion.SOAP_12);
+    m_aPMode = MockPModeGenerator.getTestPModeWithSecurity (ESOAPVersion.SOAP_12);
   }
 
   @Nonnull

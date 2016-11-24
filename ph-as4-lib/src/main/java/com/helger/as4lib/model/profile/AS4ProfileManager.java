@@ -16,72 +16,129 @@
  */
 package com.helger.as4lib.model.profile;
 
+import java.io.Serializable;
+
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.state.EChange;
-import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
-import com.helger.photon.basic.app.dao.impl.DAOException;
-import com.helger.photon.basic.audit.AuditHelper;
+import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.lang.ServiceLoaderHelper;
+import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
-public class AS4ProfileManager extends AbstractMapBasedWALDAO <IAS4Profile, AS4Profile>
+/**
+ * AS4 profile manager. All profiles are registered by SPI -
+ * {@link IAS4ProfileRegistrarSPI}.
+ *
+ * @author Philip Helger
+ */
+public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 {
-  public AS4ProfileManager (@Nullable final String sFilename) throws DAOException
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ProfileManager.class);
+
+  private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
+  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap<> ();
+  private IAS4Profile m_aDefaultProfile;
+
+  private void _registerAll ()
   {
-    super (AS4Profile.class, sFilename);
+    m_aRWLock.writeLocked ( () -> m_aMap.clear ());
+    for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
+      aSPI.registerAS4Profile (this);
+    s_aLogger.info (getProfileCount () + " AS4 profiles are registered");
   }
 
-  @Nonnull
-  public IAS4Profile createAS4Profile (@Nonnull final AS4Profile aAS4Profile)
+  public AS4ProfileManager ()
+  {
+    _registerAll ();
+  }
+
+  public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
   {
     ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
 
+    final String sID = aAS4Profile.getID ();
     m_aRWLock.writeLocked ( () -> {
-      internalCreateItem (aAS4Profile);
+      if (m_aMap.containsKey (sID))
+        throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
+      m_aMap.put (sID, aAS4Profile);
     });
-    AuditHelper.onAuditCreateSuccess (AS4Profile.OT, aAS4Profile.getID ());
-
-    return aAS4Profile;
-  }
-
-  @Nonnull
-  public EChange updateAS4Profile (@Nonnull final IAS4Profile aAS4Profile)
-  {
-    ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
-    final AS4Profile aRealAS4Profile = getOfID (aAS4Profile.getID ());
-    if (aRealAS4Profile == null)
-    {
-      AuditHelper.onAuditModifyFailure (AS4Profile.OT, aAS4Profile.getID (), "no-such-id");
-      return EChange.UNCHANGED;
-    }
-
-    m_aRWLock.writeLock ().lock ();
-    try
-    {
-      internalUpdateItem (aRealAS4Profile);
-    }
-    finally
-    {
-      m_aRWLock.writeLock ().unlock ();
-    }
-    AuditHelper.onAuditModifySuccess (AS4Profile.OT, "all", aRealAS4Profile.getID ());
-
-    return EChange.CHANGED;
+    s_aLogger.info ("Registered AS4 profile '" + sID + "'");
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <IAS4Profile> getAllAS4Profiles ()
+  public ICommonsList <IAS4Profile> getAllProfiles ()
   {
-    return getAll ();
+    return m_aRWLock.readLocked ( () -> m_aMap.copyOfValues ());
+  }
+
+  @Nonnegative
+  public int getProfileCount ()
+  {
+    return m_aRWLock.readLocked ( () -> m_aMap.size ());
   }
 
   @Nullable
-  public IAS4Profile getAS4ProfileOfID (@Nullable final String sID)
+  public IAS4Profile getProfileOfID (@Nullable final String sID)
   {
-    return getOfID (sID);
+    if (StringHelper.hasNoText (sID))
+      return null;
+
+    return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
+  }
+
+  /**
+   * Set the default profile to be used.
+   * 
+   * @param sDefaultProfileID
+   *        The ID of the default profile. May be <code>null</code>.
+   * @return <code>null</code> if no such profile is registered, the resolve
+   *         profile otherwise.
+   */
+  @Nullable
+  public IAS4Profile setDefaultProfile (@Nullable final String sDefaultProfileID)
+  {
+    final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
+    m_aRWLock.writeLocked ( () -> m_aDefaultProfile = aDefault);
+    return aDefault;
+  }
+
+  /**
+   * @return The default profile. If none is set, and exactly one profile is
+   *         present, it is used. If no default profile is present and more than
+   *         one profile is present an Exception is thrown.
+   * @throws IllegalStateException
+   *         If no default is present and more than one profile is registered
+   */
+  @Nonnull
+  public IAS4Profile getDefaultProfile ()
+  {
+    return m_aRWLock.readLocked ( () -> {
+      IAS4Profile ret = m_aDefaultProfile;
+      if (ret == null)
+      {
+        if (m_aMap.size () == 1)
+          ret = m_aMap.getFirstValue ();
+        else
+          throw new IllegalStateException (m_aMap.size () + " AS4 profiles are present, but none is declared default!");
+      }
+      return ret;
+    });
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Map", m_aMap).append ("DefaultProfile", m_aDefaultProfile).toString ();
   }
 }

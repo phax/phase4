@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.mgr.MetaManager;
-import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
@@ -144,7 +144,7 @@ public final class AS4WebAppListener extends WebAppListener
     // TODO just for testing
     for (final ESOAPVersion e : ESOAPVersion.values ())
     {
-      final PMode aPMode = ServletTestPMode.getTestPModeWithSecurity (e);
+      final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
       if (!MetaAS4Manager.getPModeMgr ().containsWithID (aPMode.getID ()))
         MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
     }

@@ -44,11 +44,11 @@ import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
-import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -249,7 +249,7 @@ public final class TestMessages
   private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
   {
     if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST);
-    return p -> p.getConfigID ().equals (ServletTestPMode.PMODE_CONFIG_ID_SOAP11_TEST);
+      return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
+    return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
   }
 }

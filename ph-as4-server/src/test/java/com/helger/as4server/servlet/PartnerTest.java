@@ -45,6 +45,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.partner.IPartner;
 import com.helger.as4lib.partner.Partner;
@@ -53,7 +54,6 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.IOHelper;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -159,7 +159,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST,
+                                                                                                      MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST,
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               sSetPartyIDInitiator,

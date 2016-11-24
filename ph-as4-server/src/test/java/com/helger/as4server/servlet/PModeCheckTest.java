@@ -43,6 +43,7 @@ import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfig;
@@ -53,7 +54,6 @@ import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.mock.ServletTestPMode;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
@@ -134,7 +134,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   public void testPModeLegNullReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
     ((PModeConfig) aPMode.getConfig ()).setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
@@ -167,7 +167,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   public void testPModeLegProtocolReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
     ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (null, null, null, null, null));
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
@@ -198,7 +198,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   public void testPModeLegProtocolAddressReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = ServletTestPMode.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
     ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (new PModeLegProtocol ("TestsimulationAddressWrong",
                                                                                      ESOAPVersion.AS4_DEFAULT),
                                                                null,
@@ -237,7 +237,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     // If argument is set replace the default one
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
-                                          .findFirst (_getFirstPModeWithID (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
+                                          .findFirst (_getFirstPModeWithID (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST));
     final String sSetPModeID = sWrongPModeID == null ? aPModeID.getID () : sWrongPModeID;
     final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? "APP_1000000101" : sWrongPartyIdInitiator;
     final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? "APP_1000000101" : sWrongPartyIdResponder;

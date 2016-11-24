@@ -1,8 +1,9 @@
-package com.helger.as4server.profile;
+package com.helger.as4.esens;
 
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import com.helger.as4.esens.ESENSPMode;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
 
 public class ESENSPModeTest
@@ -13,6 +14,6 @@ public class ESENSPModeTest
   @Test
   public void testESENSPMode ()
   {
-    ESENSPMode.getESENSPMode ();
+    ESENSPMode.createESENSPMode ();
   }
 }

@@ -18,13 +18,17 @@ package com.helger.as4lib.model.profile;
 
 import java.io.Serializable;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 
 public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializable
 {
-  @Nullable
+  /**
+   * @return A non-<code>null</<code> validator. May not validate anything but
+   *         must be present.
+   */
+  @Nonnull
   IAS4ProfileValidator getValidator ();
 }

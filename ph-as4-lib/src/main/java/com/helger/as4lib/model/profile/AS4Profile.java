@@ -17,28 +17,24 @@
 package com.helger.as4lib.model.profile;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.lang.GenericReflection;
-import com.helger.commons.type.ObjectType;
 
 public class AS4Profile implements IAS4Profile
 {
-  public static final ObjectType OT = new ObjectType ("as4.profile");
-
   private final String m_sID;
   private final String m_sDisplayName;
   private final Class <? extends IAS4ProfileValidator> m_aValidatorClass;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
-                     @Nullable final Class <? extends IAS4ProfileValidator> aValidatorClass)
+                     @Nonnull final Class <? extends IAS4ProfileValidator> aValidatorClass)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
-    m_aValidatorClass = aValidatorClass;
+    m_aValidatorClass = ValueEnforcer.notNull (aValidatorClass, "ValidatorClass");
   }
 
   @Nonnull
@@ -55,15 +51,16 @@ public class AS4Profile implements IAS4Profile
     return m_sDisplayName;
   }
 
-  @Nullable
+  @Nonnull
+  @Nonempty
   public String getValidatorClassName ()
   {
-    return m_aValidatorClass == null ? null : m_aValidatorClass.getName ();
+    return m_aValidatorClass.getName ();
   }
 
-  @Nullable
+  @Nonnull
   public IAS4ProfileValidator getValidator ()
   {
-    return m_aValidatorClass == null ? null : GenericReflection.newInstance (m_aValidatorClass);
+    return GenericReflection.newInstance (m_aValidatorClass);
   }
 }
