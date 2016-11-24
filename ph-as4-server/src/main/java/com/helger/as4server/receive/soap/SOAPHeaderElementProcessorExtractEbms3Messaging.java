@@ -87,7 +87,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       return ESuccess.FAILURE;
     }
 
-    // Check if the usermessage has a pmode in the collaboration info
+    // Check if the usermessage has a pmodeconfig in the collaboration info
     IPModeConfig aPModeConfig = null;
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
@@ -99,6 +99,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         // Find PMode
         sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
         // Includes fallback to default PMode (if defined)
+        // TODO Check if above is still true
         aPModeConfig = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
       }
       if (aPModeConfig == null)

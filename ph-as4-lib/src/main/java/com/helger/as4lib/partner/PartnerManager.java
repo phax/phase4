@@ -31,36 +31,14 @@ import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.ObjectHelper;
-import com.helger.xml.microdom.IMicroDocument;
 
 public class PartnerManager extends AbstractMapBasedWALDAO <IPartner, Partner>
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (PartnerManager.class);
-  private static final String ATTR_DEFAULT_ID = "defaultpmode";
-
-  private String m_sDefaultID = null;
 
   public PartnerManager (@Nullable final String sFilename) throws DAOException
   {
     super (Partner.class, sFilename);
-  }
-
-  @Override
-  @Nonnull
-  protected EChange onRead (@Nonnull final IMicroDocument aDoc)
-  {
-    final EChange ret = super.onRead (aDoc);
-    m_sDefaultID = aDoc.getDocumentElement ().getAttributeValue (ATTR_DEFAULT_ID);
-    return ret;
-  }
-
-  @Override
-  @Nonnull
-  protected IMicroDocument createWriteData ()
-  {
-    final IMicroDocument ret = super.createWriteData ();
-    ret.getDocumentElement ().setAttribute (ATTR_DEFAULT_ID, m_sDefaultID);
-    return ret;
   }
 
   @Nonnull
@@ -156,24 +134,6 @@ public class PartnerManager extends AbstractMapBasedWALDAO <IPartner, Partner>
   @Nullable
   public IPartner getPartnerOfID (@Nullable final String sID)
   {
-    IPartner ret = getOfID (sID);
-    if (ret == null && m_sDefaultID != null)
-    {
-      // ID not found - try default
-      ret = getOfID (m_sDefaultID);
-    }
-    return ret;
+    return getOfID (sID);
   }
-
-  @Nullable
-  public String getDefaultPartnerID ()
-  {
-    return m_sDefaultID;
-  }
-
-  public void setDefaultPartnerID (@Nullable final String sDefaultPartnerID)
-  {
-    m_sDefaultID = sDefaultPartnerID;
-  }
-
 }

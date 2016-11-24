@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 
@@ -31,4 +32,10 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
    */
   @Nonnull
   IAS4ProfileValidator getValidator ();
+
+  /**
+   * @return A PMode config that is NOT yet in the manager!
+   */
+  @Nonnull
+  IPModeConfig createDefaultPModeConfig ();
 }

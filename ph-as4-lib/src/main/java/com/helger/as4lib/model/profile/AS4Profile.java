@@ -18,6 +18,7 @@ package com.helger.as4lib.model.profile;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.lang.GenericReflection;
@@ -62,5 +63,11 @@ public class AS4Profile implements IAS4Profile
   public IAS4ProfileValidator getValidator ()
   {
     return GenericReflection.newInstance (m_aValidatorClass);
+  }
+
+  public IPModeConfig createDefaultPModeConfig ()
+  {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

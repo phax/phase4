@@ -58,7 +58,6 @@ import com.helger.as4lib.model.pmode.DefaultPMode;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
-import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
@@ -72,6 +71,7 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.ValueEnforcer;
@@ -349,19 +349,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Check if originalSender and finalRecipient are present also saves
         // them into variables
-        // TODO check with philip if needed, show him AS4 Profile section
-        final String sCheckResult = _checkProperties (aUserMessage.getMessageProperties ().getProperty ());
+        final String sCheckResult = _checkAndSaveProperties (aUserMessage.getMessageProperties ().getProperty ());
         if (!StringHelper.hasNoText (sCheckResult))
         {
           aAS4Response.setBadRequest (sCheckResult);
           return;
         }
 
-        // Step 1 check if PMode Config exists
+        // Step 1 check if PModeConfig exists
         // TODO check with test might call exception when null here
         final String sConfigID = aState.getPModeConfig ().getID ();
 
-        final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
         final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
         final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
 
@@ -382,60 +380,30 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             {
               // Step 2: Check if P+P already exists, P+P should be C1-C4 but
               // initiator and responder id itself are C2 and C3
-              // Sander Fieten said C1 and C4 id should be given with the help
-              // of
-              // properties which are contained in initiator and responder with
-              // originalSender and finalRecipient (Propertynames)
-              if (aPModeMgr.getAll (doesPartnerAndPartnerExist (aState.getInitiatorID (),
-                                                                aState.getResponderID (),
-                                                                sConfigID))
-                           .isEmpty ())
-              {
-                // TODO might need to add type also => check with tests
-                final PMode aPMode = new PMode (new PModeParty (null,
-                                                                aUserMessage.getPartyInfo ()
-                                                                            .getFrom ()
-                                                                            .getPartyId ()
-                                                                            .get (0)
-                                                                            .getValue (),
-                                                                aUserMessage.getPartyInfo ().getFrom ().getRole (),
-                                                                null,
-                                                                null),
-                                                new PModeParty (null,
-                                                                aUserMessage.getPartyInfo ()
-                                                                            .getTo ()
-                                                                            .getPartyId ()
-                                                                            .get (0)
-                                                                            .getValue (),
-                                                                aUserMessage.getPartyInfo ().getTo ().getRole (),
-                                                                null,
-                                                                null),
-                                                aPModeConfigMgr.getPModeConfigOfID (sConfigID));
-                aPModeMgr.createPMode (aPMode);
-              }
-              // If the PMode already exists we do not need to do anything
+              _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
             }
             else
             {
-              // Check if missing Partner is the initiator and check if the cert
-              // is valid
-              // if the message has no security, so no cert parameter => reject
-
-              // XXX Responder should always be our server?
+              // TODO needs null checks maybe for the ids
+              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
+                  !aPartnerMgr.containsWithID (aState.getResponderID ()))
+              {
+                _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
+              }
               if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
               {
-                aAS4Response.setBadRequest ("The specified responder " +
-                                            aState.getResponderID () +
-                                            " was not found, as registred partner.");
-                return;
+                s_aLogger.info ("Default Responder used");
+                aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
+                _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
               }
-              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
-              {
-                if (aState.getUsedCertificate () != null)
+              else
+                if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
                 {
-                  _updatePartnership (aState.getUsedCertificate (), aState.getInitiatorID ());
+                  if (aState.getUsedCertificate () != null)
+                  {
+                    _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
+                  }
                 }
-              }
             }
           }
           else
@@ -514,7 +482,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
-  private void _updatePartnership (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
+  private void _createOrUpdatePartner (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
   {
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
@@ -525,7 +493,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   }
 
   @Nullable
-  private String _checkProperties (@Nonnull final List <Ebms3Property> aPropertyList)
+  private String _checkAndSaveProperties (@Nonnull final List <Ebms3Property> aPropertyList)
   {
     if (aPropertyList.isEmpty ())
     {
@@ -553,6 +521,41 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       return "finalRecipient property is empty or not existant but mandatory";
     }
     return null;
+  }
+
+  private void _createPModeIfNotPresent (@Nonnull final AS4MessageState aState,
+                                         @Nonnull final String sConfigID,
+                                         @Nonnull final Ebms3UserMessage aUserMessage)
+  {
+    if (MetaAS4Manager.getPModeMgr ()
+                      .getAll (doesPartnerAndPartnerExist (aState.getInitiatorID (),
+                                                           aState.getResponderID (),
+                                                           sConfigID))
+                      .isEmpty ())
+    {
+      // TODO might need to add type also => check with tests
+      final PMode aPMode = new PMode (new PModeParty (null,
+                                                      aUserMessage.getPartyInfo ()
+                                                                  .getFrom ()
+                                                                  .getPartyId ()
+                                                                  .get (0)
+                                                                  .getValue (),
+                                                      aUserMessage.getPartyInfo ().getFrom ().getRole (),
+                                                      null,
+                                                      null),
+                                      new PModeParty (null,
+                                                      aUserMessage.getPartyInfo ()
+                                                                  .getTo ()
+                                                                  .getPartyId ()
+                                                                  .get (0)
+                                                                  .getValue (),
+                                                      aUserMessage.getPartyInfo ().getTo ().getRole (),
+                                                      null,
+                                                      null),
+                                      MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID));
+      MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
+    }
+    // If the PMode already exists we do not need to do anything
   }
 
   public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nonnull final String sInitiatorID,

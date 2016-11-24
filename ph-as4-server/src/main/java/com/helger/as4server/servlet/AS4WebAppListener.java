@@ -16,6 +16,7 @@
  */
 package com.helger.as4server.servlet;
 
+import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -25,18 +26,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
+import org.apache.wss4j.common.crypto.CryptoType;
+import org.apache.wss4j.common.crypto.CryptoType.TYPE;
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.partner.Partner;
+import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4lib.util.IOHelper;
+import com.helger.as4lib.util.StringMap;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
+import com.helger.as4server.settings.AS4ServerSettings;
+import com.helger.commons.collection.ArrayHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -87,6 +98,32 @@ public final class AS4WebAppListener extends WebAppListener
     return false;
   }
 
+  private static void _createDefaultResponder (@Nonnull final String sDefaultPartnerID)
+  {
+    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
+    if (!aPartnerMgr.containsWithID (sDefaultPartnerID))
+    {
+      final StringMap aStringMap = new StringMap ();
+      aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sDefaultPartnerID);
+      try
+      {
+        final CryptoType aCT = new CryptoType (TYPE.ALIAS);
+        aCT.setAlias (AS4CryptoFactory.getKeyAlias ());
+        final X509Certificate [] aCertList = AS4CryptoFactory.createCrypto ().getX509Certificates (aCT);
+        if (ArrayHelper.isEmpty (aCertList))
+          throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
+                                           aCT.getAlias () +
+                                           "'");
+        aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (aCertList[0]));
+        aPartnerMgr.createOrUpdatePartner (sDefaultPartnerID, aStringMap);
+      }
+      catch (final WSSecurityException ex)
+      {
+        throw new IllegalStateException ("Error retrieving certificate", ex);
+      }
+    }
+  }
+
   @Override
   protected void afterContextInitialized (@Nonnull final ServletContext aSC)
   {
@@ -126,6 +163,7 @@ public final class AS4WebAppListener extends WebAppListener
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
     MetaManager.getInstance ();
+    _createDefaultResponder (AS4ServerSettings.getDefaultResponderID ());
 
     // Ensure user exists
     final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
