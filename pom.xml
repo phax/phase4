@@ -127,6 +127,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
+        <artifactId>ph-as4-esens</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
         <artifactId>ph-as4-server</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -138,6 +143,7 @@
   
   <modules>
     <module>ph-as4-lib</module>
+    <module>ph-as4-esens</module>
     <module>ph-as4-server</module>
   </modules>
   
