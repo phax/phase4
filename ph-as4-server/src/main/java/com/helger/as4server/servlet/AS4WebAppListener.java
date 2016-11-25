@@ -52,6 +52,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.web.mock.OfflineHttpServletRequest;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
@@ -114,7 +115,7 @@ public final class AS4WebAppListener extends WebAppListener
           throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
                                            aCT.getAlias () +
                                            "'");
-        aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (aCertList[0]));
+        aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aCertList[0]));
         aPartnerMgr.createOrUpdatePartner (sDefaultPartnerID, aStringMap);
       }
       catch (final WSSecurityException ex)

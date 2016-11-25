@@ -95,6 +95,7 @@ import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.login.ELoginResult;
 import com.helger.photon.security.login.LoggedInUserManager;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -487,7 +488,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
     if (usedCertificate != null)
-      aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (usedCertificate));
+      aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (usedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
   }

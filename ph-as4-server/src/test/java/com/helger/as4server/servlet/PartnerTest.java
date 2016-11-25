@@ -87,7 +87,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
     final byte [] aCertBytes = Files.readAllBytes (Paths.get (new ClassPathResource ("cert.txt").getAsFile ()
                                                                                                 .getAbsolutePath ()));
     final X509Certificate aUsedCertificate = CertificateHelper.convertByteArrayToCertficate (aCertBytes);
-    aStringMap.setAttribute (Partner.ATTR_CERT, IOHelper.getPEMEncodedCertificate (aUsedCertificate));
+    aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (PARTNER_ID, aStringMap);
   }
