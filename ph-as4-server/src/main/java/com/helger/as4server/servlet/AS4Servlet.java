@@ -63,7 +63,6 @@ import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
-import com.helger.as4lib.util.IOHelper;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachmentFactory;

@@ -40,7 +40,6 @@ import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.util.IOHelper;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
