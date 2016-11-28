@@ -68,6 +68,8 @@
           <instructions>
             <Export-Package>com.helger.as4.esens.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.as4.esens.AS4ESENSProfileRegistarSPI</Provide-Capability>
           </instructions>
         </configuration>
       </plugin>
