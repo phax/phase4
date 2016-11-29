@@ -46,6 +46,9 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   {
     ValueEnforcer.notNull (aPMode, "PMode");
 
+    // If not valid throws IllegalStateException
+    validatePMode (aPMode);
+
     m_aRWLock.writeLocked ( () -> {
       internalCreateItem (aPMode);
     });
@@ -161,6 +164,11 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     if (aPMode.getID () == null)
     {
       throw new IllegalStateException ("No PMode ID present");
+    }
+
+    if (aPMode.getConfigID () == null)
+    {
+      throw new IllegalStateException ("No PModeConfig ID present");
     }
 
     final PModeParty aInitiator = aPMode.getInitiator ();

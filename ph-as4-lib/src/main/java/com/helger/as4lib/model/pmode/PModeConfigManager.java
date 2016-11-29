@@ -16,6 +16,8 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -23,11 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.helger.as4lib.util.IOHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.EChange;
-import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
@@ -72,10 +76,24 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
       createPModeConfig (aPModeConfig);
   }
 
+  /**
+   * If the pmode config is invalid the method will return null
+   *
+   * @param aPModeConfig
+   *        the pmodeconfig that should be created
+   * @return pmode config or null
+   */
   @Nonnull
   public IPModeConfig createPModeConfig (@Nonnull final PModeConfig aPModeConfig)
   {
     ValueEnforcer.notNull (aPModeConfig, "PModeConfig");
+
+    final ErrorList aErrors = new ErrorList ();
+    validatePModeConfig (aPModeConfig, aErrors);
+    if (aErrors.isNotEmpty ())
+    {
+      return null;
+    }
 
     m_aRWLock.writeLocked ( () -> {
       internalCreateItem (aPModeConfig);
@@ -197,38 +215,55 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
     m_sDefaultID = sDefaultPModeConfigID;
   }
 
-  @Nonnull
-  public ESuccess validatePModeConfig (@Nullable final IPModeConfig aPModeConfig)
+  public void validatePModeConfig (@Nullable final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrors)
   {
 
     if (aPModeConfig == null)
     {
-      throw new IllegalStateException ("PModeConfig is null!");
+      aErrors.add (IOHelper.createError ("PModeConfig is null!"));
     }
-
-    // Needs ID
-    if (aPModeConfig.getID () == null)
+    else
     {
-      throw new IllegalStateException ("No PModeConfig ID present");
-    }
+      // Needs ID
+      if (aPModeConfig.getID () == null)
+      {
+        aErrors.add (IOHelper.createError ("No PModeConfig ID present"));
+      }
 
-    // MEPBINDING only push maybe push and pull
-    if (aPModeConfig.getMEPBinding () == null)
-    {
-      throw new IllegalStateException ("No PModeConfig MEPBinding present. (Push, Pull, Sync)");
-    }
+      // MEPBINDING only push maybe push and pull
+      if (aPModeConfig.getMEPBinding () == null)
+      {
+        aErrors.add (IOHelper.createError ("No PModeConfig MEPBinding present. (Push, Pull, Sync)"));
+      }
 
-    // Checking MEP all are allowed
-    if (aPModeConfig.getMEP () == null)
-    {
-      throw new IllegalStateException ("No PModeConfig MEP present");
+      // Checking MEP all are allowed
+      if (aPModeConfig.getMEP () == null)
+      {
+        aErrors.add (IOHelper.createError ("No PModeConfig MEP present"));
+      }
     }
-    return ESuccess.SUCCESS;
   }
 
-  public void validateAllPModeConfigs ()
+  public boolean isValidPModeConfig (@Nullable final IPModeConfig aPModeConfig)
+  {
+    final ErrorList aErrors = new ErrorList ();
+    validatePModeConfig (aPModeConfig, aErrors);
+    return aErrors.isEmpty ();
+  }
+
+  public void validateAllPModeConfigs (@Nonnull final Locale aDisplayLocale)
   {
     for (final IPModeConfig aPModeConfig : getAll ())
-      validatePModeConfig (aPModeConfig);
+    {
+      final ErrorList aErrors = new ErrorList ();
+      validatePModeConfig (aPModeConfig, aErrors);
+      if (aErrors.isNotEmpty ())
+        throw new IllegalStateException (StringHelper.getImploded ("\n",
+                                                                   aErrors,
+                                                                   x -> "PMode " +
+                                                                        aPModeConfig.getID () +
+                                                                        ": " +
+                                                                        x.getAsString (aDisplayLocale)));
+    }
   }
 }

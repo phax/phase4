@@ -46,6 +46,7 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.error.SingleError;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
 import com.helger.commons.io.file.FilenameHelper;
@@ -192,5 +193,11 @@ public final class IOHelper
     String s = StringHelper.removeAll (sMessageID, '<');
     s = StringHelper.removeAll (s, '>');
     return FilenameHelper.getAsSecureValidASCIIFilename (s);
+  }
+
+  @Nonnull
+  public static SingleError createError (@Nonnull final String sErrorText)
+  {
+    return SingleError.builderError ().setErrorText (sErrorText).build ();
   }
 }

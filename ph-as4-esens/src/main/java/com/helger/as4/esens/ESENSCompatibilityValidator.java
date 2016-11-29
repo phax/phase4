@@ -16,6 +16,8 @@
  */
 package com.helger.as4.esens;
 
+import static org.junit.Assert.assertTrue;
+
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -69,7 +71,9 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     assert MetaAS4Manager.getPModeMgr ().validatePMode (aPMode).isSuccess ();
-    assert MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPMode.getConfig ()).isSuccess ();
+    MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPMode.getConfig (), aErrorList);
+    assertTrue (aErrorList.isEmpty ());
+
     final IPModeConfig aConfig = aPMode.getConfig ();
 
     if (!aConfig.getMEP ().equals (EMEP.ONE_WAY) || aConfig.getMEP ().equals (EMEP.TWO_WAY))

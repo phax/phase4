@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -115,22 +116,6 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   }
 
   @Test
-  public void testSigningAlgorithm () throws Exception
-  {
-
-    final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (null, null, null),
-                                                                                 ESOAPVersion.AS4_DEFAULT,
-                                                                                 null,
-                                                                                 s_aResMgr,
-                                                                                 false,
-                                                                                 ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                 ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, "200");
-
-  }
-
-  @Test
   public void testPModeLegNullReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
@@ -163,37 +148,14 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     }
   }
 
-  @Test
-  public void testPModeLegProtocolReject () throws Exception
-  {
-    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (null, null, null, null, null));
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-    try
-    {
-      aPModeMgr.createPMode (aPMode);
-
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
-                                                                                                       null,
-                                                                                                       null),
-                                                                                   ESOAPVersion.AS4_DEFAULT,
-                                                                                   null,
-                                                                                   s_aResMgr,
-                                                                                   false,
-                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
-                        false,
-                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
-    }
-    finally
-    {
-      aPModeMgr.deletePMode (aPMode.getID ());
-    }
-  }
-
+  /**
+   * Is ESENS specific, EBMS3 specification is the protocol an optional element.
+   * Maybe refactoring into a test if http and smtp addresses later on get
+   * converted right
+   *
+   * @throws Exception
+   */
+  @Ignore
   @Test
   public void testPModeLegProtocolAddressReject () throws Exception
   {

@@ -16,6 +16,8 @@
  */
 package com.helger.as4lib.mgr;
 
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -70,7 +72,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       _initCallbacks ();
 
       // Validate content
-      m_aPModeConfigMgr.validateAllPModeConfigs ();
+      m_aPModeConfigMgr.validateAllPModeConfigs (Locale.getDefault ());
       m_aPModeMgr.validateAllPModes ();
 
       s_aLogger.info (ClassHelper.getClassLocalName (this) + " was initialized");
