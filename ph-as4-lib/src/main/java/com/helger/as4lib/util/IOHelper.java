@@ -36,8 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -47,9 +45,7 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.CGlobal;
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.base64.Base64;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
 import com.helger.commons.io.file.FilenameHelper;
@@ -58,7 +54,6 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mutable.MutableLong;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.timing.StopWatch;
-import com.helger.security.certificate.CertificateHelper;
 
 @Immutable
 public final class IOHelper
@@ -197,25 +192,5 @@ public final class IOHelper
     String s = StringHelper.removeAll (sMessageID, '<');
     s = StringHelper.removeAll (s, '>');
     return FilenameHelper.getAsSecureValidASCIIFilename (s);
-  }
-
-  // TODO Replace with CertificateHelper method in ph-security > 8.5.4
-  @Nonnull
-  @Nonempty
-  public static String getPEMEncodedCertificate (@Nonnull final Certificate aCert)
-  {
-    ValueEnforcer.notNull (aCert, "Cert");
-    try
-    {
-      return CertificateHelper.BEGIN_CERTIFICATE +
-             "\n" +
-             Base64.encodeBytes (aCert.getEncoded ()) +
-             "\n" +
-             CertificateHelper.END_CERTIFICATE;
-    }
-    catch (final CertificateEncodingException ex)
-    {
-      throw new IllegalArgumentException ("Failed to encode certificate " + aCert, ex);
-    }
   }
 }
