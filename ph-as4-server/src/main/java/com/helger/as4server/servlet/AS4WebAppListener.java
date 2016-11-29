@@ -35,11 +35,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.mgr.MetaAS4Manager;
-import com.helger.as4lib.mock.MockPModeGenerator;
-import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
-import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
@@ -178,14 +175,6 @@ public final class AS4WebAppListener extends WebAppListener
                                      Locale.US,
                                      null,
                                      false);
-
-    // TODO just for testing
-    for (final ESOAPVersion e : ESOAPVersion.values ())
-    {
-      final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
-      if (!MetaAS4Manager.getPModeMgr ().containsWithID (aPMode.getID ()))
-        MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
-    }
 
     s_aLogger.info ("AS4 server started");
   }

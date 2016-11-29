@@ -31,6 +31,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.After;
 import org.junit.Before;
 
+import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.mock.MockPModeGenerator;
+import com.helger.as4lib.model.pmode.PMode;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
@@ -92,6 +96,13 @@ public abstract class AbstractClientSetUp
                                       .setProxy (new HttpHost (PROPS.getAsString ("server.proxy.address"),
                                                                PROPS.getAsInt ("server.proxy.port")))
                                       .build ());
+    }
+
+    for (final ESOAPVersion e : ESOAPVersion.values ())
+    {
+      final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
+      if (!MetaAS4Manager.getPModeMgr ().containsWithID (aPMode.getID ()))
+        MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
     }
   }
 

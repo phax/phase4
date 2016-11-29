@@ -28,7 +28,6 @@ import com.helger.commons.type.ObjectType;
 import com.helger.photon.basic.object.AbstractBaseObject;
 import com.helger.photon.security.object.StubObject;
 
-// TODO remove public setters, needed for testing pmode in servlet
 public class PModeConfig extends AbstractBaseObject implements IPModeConfig
 {
   public static final ObjectType OT = new ObjectType ("as4.pmodeconfig");
