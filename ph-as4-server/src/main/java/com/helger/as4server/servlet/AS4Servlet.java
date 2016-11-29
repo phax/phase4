@@ -375,6 +375,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         else
           if (aPModeConfigMgr.containsWithID (sConfigID))
           {
+            if (aState.getResponderID () == null)
+            {
+              s_aLogger.info ("Default Responder used");
+              aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
+            }
+
+            if (aState.getInitiatorID () == null)
+            {
+              aAS4Response.setBadRequest ("No Initiator specifed, currently mandatory since only one way supported");
+              return;
+            }
+
             if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
                 aPartnerMgr.containsWithID (aState.getResponderID ()))
             {
@@ -385,25 +397,24 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
             {
               // TODO needs null checks maybe for the ids
-              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
-                  !aPartnerMgr.containsWithID (aState.getResponderID ()))
+              // if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
+              // !aPartnerMgr.containsWithID (aState.getResponderID ()))
+              // {
+              // _createOrUpdatePartner (aState.getUsedCertificate (),
+              // aState.getInitiatorID ());
+              // }
+              // else
+              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
               {
-                _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
-              }
-              if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
-              {
-                s_aLogger.info ("Default Responder used");
-                aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
-                _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
+                _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
               }
               else
-                if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
+                if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
                 {
-                  if (aState.getUsedCertificate () != null)
-                  {
-                    _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
-                  }
+                  s_aLogger.info ("Responder is not the default or an already registered one");
                 }
+
+              _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
             }
           }
           else

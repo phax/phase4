@@ -132,14 +132,14 @@ public final class TestMessages
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
+    final Ebms3Property aOriginalSender = new Ebms3Property ();
+    aOriginalSender.setName ("originalSender");
+    aOriginalSender.setValue ("C1-test");
+    final Ebms3Property aFinalRecipient = new Ebms3Property ();
+    aFinalRecipient.setName ("finalRecipient");
+    aFinalRecipient.setValue ("C4-test");
+    aEbms3Properties.add (aOriginalSender);
+    aEbms3Properties.add (aFinalRecipient);
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
@@ -149,7 +149,7 @@ public final class TestMessages
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      aPModeID.getID (),
+                                                                                                      aPModeID.getConfigID (),
                                                                                                       "http://agreements.holodeckb2b.org/examples/agreement0");
     final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
                                                                               "APP_1000000101",
@@ -175,14 +175,14 @@ public final class TestMessages
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
+    final Ebms3Property aOriginalSender = new Ebms3Property ();
+    aOriginalSender.setName ("originalSender");
+    aOriginalSender.setValue ("C1-test");
+    final Ebms3Property aFinalRecipient = new Ebms3Property ();
+    aFinalRecipient.setName ("finalRecipient");
+    aFinalRecipient.setValue ("C4-test");
+    aEbms3Properties.add (aOriginalSender);
+    aEbms3Properties.add (aFinalRecipient);
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 

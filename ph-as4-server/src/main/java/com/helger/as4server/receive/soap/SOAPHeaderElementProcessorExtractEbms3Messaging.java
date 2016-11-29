@@ -291,6 +291,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
+    // Setting Initiator and Responder id if usermessage contains them
+    aState.setInitiatorID (aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
+    aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
 
     return ESuccess.SUCCESS;
   }

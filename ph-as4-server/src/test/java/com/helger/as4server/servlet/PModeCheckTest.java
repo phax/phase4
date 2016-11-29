@@ -247,14 +247,14 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
-    aEbms3PropertyProcess.setName ("ProcessInst");
-    aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
-    final Ebms3Property aEbms3PropertyContext = new Ebms3Property ();
-    aEbms3PropertyContext.setName ("ContextID");
-    aEbms3PropertyContext.setValue ("987654321");
-    aEbms3Properties.add (aEbms3PropertyContext);
-    aEbms3Properties.add (aEbms3PropertyProcess);
+    final Ebms3Property aOriginalSender = new Ebms3Property ();
+    aOriginalSender.setName ("originalSender");
+    aOriginalSender.setValue ("C1-test");
+    final Ebms3Property aFinalRecipient = new Ebms3Property ();
+    aFinalRecipient.setName ("finalRecipient");
+    aFinalRecipient.setValue ("C4-test");
+    aEbms3Properties.add (aOriginalSender);
+    aEbms3Properties.add (aFinalRecipient);
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
