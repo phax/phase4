@@ -16,6 +16,8 @@
  */
 package com.helger.as4lib.model.pmode;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -137,6 +139,35 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
 
     return EChange.CHANGED;
+  }
+
+  @Nonnull
+  public IPMode createOrUpdatePMode (@Nonnull final PMode aPMode)
+  {
+    PMode ret = (PMode) findFirst (_getPModeFilter (aPMode.getConfigID (),
+                                                    aPMode.getInitiator ().getID (),
+                                                    aPMode.getResponder ().getID ()));
+
+    if (ret == null)
+    {
+      ret = new PMode (aPMode.getInitiator (), aPMode.getResponder (), aPMode.getConfig ());
+      createPMode (ret);
+    }
+    else
+    {
+      updatePMode (aPMode);
+    }
+    return ret;
+  }
+
+  @Nullable
+  private static Predicate <IPMode> _getPModeFilter (@Nonnull final String sConfigID,
+                                                     @Nonnull final String sIntiatorID,
+                                                     @Nonnull final String sResponderID)
+  {
+    return p -> p.getConfigID ().equals (sConfigID) &&
+                p.getInitiator ().getID ().equals (sIntiatorID) &&
+                p.getResponder ().getID ().equals (sResponderID);
   }
 
   @Nonnull

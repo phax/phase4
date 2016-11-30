@@ -102,7 +102,7 @@ public abstract class AbstractClientSetUp
     {
       final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
       if (!MetaAS4Manager.getPModeMgr ().containsWithID (aPMode.getID ()))
-        MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
+        MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     }
   }
 

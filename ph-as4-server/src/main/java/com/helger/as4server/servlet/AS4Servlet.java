@@ -564,7 +564,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                       null,
                                                       null),
                                       MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID));
-      MetaAS4Manager.getPModeMgr ().createPMode (aPMode);
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     }
     // If the PMode already exists we do not need to do anything
   }
