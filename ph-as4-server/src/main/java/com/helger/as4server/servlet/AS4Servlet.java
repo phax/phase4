@@ -54,7 +54,6 @@ import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
-import com.helger.as4lib.model.pmode.DefaultPMode;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
@@ -363,67 +362,49 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
         final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
 
-        if (StringHelper.hasNoText (sConfigID))
+        if (aPModeConfigMgr.containsWithID (sConfigID))
         {
-          // Use default PMode if no PModeConfig ID is present
-          DefaultPMode.getDefaultPModeConfig ();
-          // TODO make default pmode interchangeable
-          // TODO Note to myself, how do you get until here (look at validation)
-          // and give the following steps the default configuration
-
-        }
-        else
-          if (aPModeConfigMgr.containsWithID (sConfigID))
+          if (aState.getResponderID () == null)
           {
-            if (aState.getResponderID () == null)
-            {
-              s_aLogger.info ("Default Responder used");
-              aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
-            }
+            s_aLogger.info ("Default Responder used");
+            aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
+          }
 
-            if (aState.getInitiatorID () == null)
-            {
-              aAS4Response.setBadRequest ("No Initiator specifed, currently mandatory since only one way supported");
-              return;
-            }
+          if (aState.getInitiatorID () == null)
+          {
+            aAS4Response.setBadRequest ("No Initiator specifed, currently mandatory since only one way supported");
+            return;
+          }
 
-            if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
-                aPartnerMgr.containsWithID (aState.getResponderID ()))
-            {
-              // Step 2: Check if P+P already exists, P+P should be C1-C4 but
-              // initiator and responder id itself are C2 and C3
-              _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
-            }
-            else
-            {
-              // TODO needs null checks maybe for the ids
-              // if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
-              // !aPartnerMgr.containsWithID (aState.getResponderID ()))
-              // {
-              // _createOrUpdatePartner (aState.getUsedCertificate (),
-              // aState.getInitiatorID ());
-              // }
-              // else
-              if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
-              {
-                _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
-              }
-              else
-                if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
-                {
-                  s_aLogger.info ("Responder is not the default or an already registered one");
-                }
-
-              _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
-            }
+          if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
+              aPartnerMgr.containsWithID (aState.getResponderID ()))
+          {
+            // Step 2: Check if P+P already exists, P+P should be C1-C4 but
+            // initiator and responder id itself are C2 and C3
+            _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
           }
           else
           {
-            // Return bad request since pmodeconfigs can not be added
-            // dynamically
-            aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
-            return;
+            if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
+            {
+              _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
+            }
+            else
+              if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
+              {
+                s_aLogger.info ("Responder is not the default or an already registered one");
+              }
+
+            _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
           }
+        }
+        else
+        {
+          // Return bad request since pmodeconfigs can not be added
+          // dynamically
+          aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
+          return;
+        }
 
         // Check if Partner+Partner combination is already present
         // P+P neu + PConfig da = anlegen

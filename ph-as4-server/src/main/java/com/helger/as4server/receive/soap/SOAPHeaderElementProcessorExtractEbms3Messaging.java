@@ -37,6 +37,7 @@ import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.mpc.MPCManager;
+import com.helger.as4lib.model.pmode.DefaultPMode;
 import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeLeg;
@@ -98,16 +99,23 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       {
         // Find PMode
         sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
-        // Includes fallback to default PMode (if defined)
-        // TODO Check if above is still true
-        aPModeConfig = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
-      }
-      if (aPModeConfig == null)
-      {
-        LOG.warn ("Failed to resolve PMode '" + sPModeConfigID + "'");
+        if (StringHelper.hasNoText (sPModeConfigID))
+        {
+          // If the pmodeconfig id field is empty or null, set default pmode
+          // config
+          aPModeConfig = DefaultPMode.getDefaultPModeConfig ();
+        }
+        else
+        {
+          aPModeConfig = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
+          if (aPModeConfig == null)
+          {
+            LOG.warn ("Failed to resolve PMode '" + sPModeConfigID + "'");
 
-        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-        return ESuccess.FAILURE;
+            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+        }
       }
     }
 
