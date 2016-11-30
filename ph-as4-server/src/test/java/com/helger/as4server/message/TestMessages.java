@@ -49,6 +49,7 @@ import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.as4server.constants.AS4ServerTestHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -131,15 +132,7 @@ public final class TestMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName ("originalSender");
-    aOriginalSender.setValue ("C1-test");
-    final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName ("finalRecipient");
-    aFinalRecipient.setValue ("C4-test");
-    aEbms3Properties.add (aOriginalSender);
-    aEbms3Properties.add (aFinalRecipient);
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
@@ -150,11 +143,11 @@ public final class TestMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       aPModeID.getConfigID (),
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                              "APP_1000000101",
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                              "APP_1000000101");
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
@@ -174,15 +167,7 @@ public final class TestMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName ("originalSender");
-    aOriginalSender.setValue ("C1-test");
-    final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName ("finalRecipient");
-    aFinalRecipient.setValue ("C4-test");
-    aEbms3Properties.add (aOriginalSender);
-    aEbms3Properties.add (aFinalRecipient);
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
@@ -193,10 +178,10 @@ public final class TestMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       aPModeID.getID (),
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
                                                                               "testt",
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               "testt");
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

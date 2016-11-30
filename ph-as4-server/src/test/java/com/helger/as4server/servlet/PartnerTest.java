@@ -53,7 +53,7 @@ import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.as4server.constants.AS4ServerTestHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
@@ -116,7 +116,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   {
     final String sPartnerID = "TestPartnerUnkown";
 
-    final Document aDoc = _modifyUserMessage (sPartnerID, null);
+    final Document aDoc = _modifyUserMessage (sPartnerID, null, MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -124,33 +124,36 @@ public class PartnerTest extends AbstractUserMessageSetUp
     assertNotNull (aPartner);
   }
 
+  @Test
+  public void testPartnersExistShouldGetDefaultConfig () throws Exception
+  {
+
+    final Document aDoc = _modifyUserMessage (null, null, null);
+    assertNotNull (aDoc);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+  }
+
   @Nonnull
   private Document _modifyUserMessage (@Nullable final String sDifferentPartyIdInitiator,
-                                       @Nullable final String sDifferentPartyIdResponder) throws Exception
+                                       @Nullable final String sDifferentPartyIdResponder,
+                                       @Nullable final String sDifferentPModeConfigID) throws Exception
   {
     // If argument is set replace the default one
     // final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
     // .findFirst (_getFirstPModeWithID
     // (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
     final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
-    final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ? "APP_1000000101"
+    final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
                                                                            : sDifferentPartyIdInitiator;
-    final String sSetPartyIDResponder = sDifferentPartyIdResponder == null ? "APP_1000000101"
+    final String sSetPartyIDResponder = sDifferentPartyIdResponder == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
                                                                            : sDifferentPartyIdResponder;
 
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName ("originalSender");
-    aOriginalSender.setValue ("C1-test");
-    final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName ("finalRecipient");
-    aFinalRecipient.setValue ("C4-test");
-    aEbms3Properties.add (aFinalRecipient);
-    aEbms3Properties.add (aOriginalSender);
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
@@ -158,11 +161,11 @@ public class PartnerTest extends AbstractUserMessageSetUp
                                                                                                       "MyServiceTypes",
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
-                                                                                                      MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST,
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                                                      sDifferentPModeConfigID,
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
                                                                               sSetPartyIDInitiator,
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               sSetPartyIDResponder);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

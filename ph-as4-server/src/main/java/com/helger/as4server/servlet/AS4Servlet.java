@@ -452,13 +452,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
             {
               s_aLogger.warn ("Invoked AS4 message processor " + aProcessor + " returned a failure");
-              // TODO add error message
+              aAS4Response.setBadRequest ("Invoked AS4 message processor " + aProcessor + " returned a failure");
+              return;
             }
           }
           catch (final Throwable t)
           {
             s_aLogger.error ("Error processing incoming AS4 message with processor " + aProcessor, t);
-            // TODO add error message
+            aAS4Response.setBadRequest ("Error processing incoming AS4 message with processor " +
+                                        aProcessor +
+                                        ", Exception: " +
+                                        t.getLocalizedMessage ());
+            return;
           }
       }
 
@@ -569,6 +574,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // If the PMode already exists we do not need to do anything
   }
 
+  @Nullable
   public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nonnull final String sInitiatorID,
                                                                @Nonnull final String sResponderID,
                                                                @Nonnull final String sPModeConfigID)

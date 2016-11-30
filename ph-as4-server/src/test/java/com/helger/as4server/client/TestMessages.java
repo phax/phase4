@@ -45,6 +45,7 @@ import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.as4server.constants.AS4ServerTestHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -144,11 +145,11 @@ final class TestMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       "pm-esens-generic-resp",
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                                                                              "APP_1000000101",
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                                                                              "APP_1000000101");
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
@@ -185,10 +186,10 @@ final class TestMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       "pm-esens-generic-resp",
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
                                                                               "testt",
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               "testt");
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

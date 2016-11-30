@@ -55,7 +55,7 @@ import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.as4server.constants.AS4ServerTestHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -201,22 +201,16 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
                                           .findFirst (_getFirstPModeWithID (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST));
     final String sSetPModeID = sWrongPModeID == null ? aPModeID.getID () : sWrongPModeID;
-    final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? "APP_1000000101" : sWrongPartyIdInitiator;
-    final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? "APP_1000000101" : sWrongPartyIdResponder;
+    final String sSetPartyIDInitiator = sWrongPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+                                                                       : sWrongPartyIdInitiator;
+    final String sSetPartyIDResponder = sWrongPartyIdResponder == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+                                                                       : sWrongPartyIdResponder;
 
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName ("originalSender");
-    aOriginalSender.setValue ("C1-test");
-    final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName ("finalRecipient");
-    aFinalRecipient.setValue ("C4-test");
-    aEbms3Properties.add (aOriginalSender);
-    aEbms3Properties.add (aFinalRecipient);
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
@@ -225,10 +219,10 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       sSetPModeID,
-                                                                                                      "http://agreements.holodeckb2b.org/examples/agreement0");
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
                                                                               sSetPartyIDInitiator,
-                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               sSetPartyIDResponder);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
