@@ -254,8 +254,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
               }
 
               // Only needed check here since AS4 does not support another
-              // CompressionType
-              // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
+              // CompressionType http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
               final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
               if (eCompressionMode == null)
               {

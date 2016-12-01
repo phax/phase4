@@ -144,6 +144,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     }
     finally
     {
+      // The MockPModeGenerator generates automatically a PModeConfig we need to
+      // delete it after we are done with the test
+      MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
   }

@@ -56,7 +56,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
   /**
    * @param aHttpEntity
    *        the entity to send to the server
-   * @param bSuccess
+   * @param bExpectSuccess
    *        specifies if the test case expects a positive or negative response
    *        from the server
    * @param sStatusCode
@@ -65,7 +65,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
    * @throws IOException
    */
   protected void sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final boolean bSuccess,
+                                   @Nonnull final boolean bExpectSuccess,
                                    @Nullable final String sErrorCode) throws IOException
   {
     m_aPost.setEntity (aHttpEntity);
@@ -77,7 +77,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
       m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
       m_sResponse = EntityUtils.toString (aHttpResponse.getEntity ());
 
-      if (bSuccess)
+      if (bExpectSuccess)
       {
         assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
         assertEquals ("Server responded with an error code.", 200, m_nStatusCode);

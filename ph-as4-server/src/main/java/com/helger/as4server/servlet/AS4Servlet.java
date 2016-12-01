@@ -54,7 +54,9 @@ import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeParty;
@@ -356,7 +358,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
 
         // Step 1 check if PModeConfig exists
-        // TODO check with test might call exception when null here
         final String sConfigID = aState.getPModeConfig ().getID ();
 
         final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
@@ -451,32 +452,67 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // TODO build response according to handler result
       if (aErrorMessages.isNotEmpty ())
       {
-        final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
-        final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                  aCreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
-                                                                                  aErrorMessages);
+        if (_checkIfErrorResponseShouldBeSent (aState.getPModeConfig ()))
+        {
+          final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
+          final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                    aCreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                    aErrorMessages);
 
-        aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
-                                           CCharset.CHARSET_UTF_8_OBJ)
-                    .setMimeType (eSOAPVersion.getMimeType ());
+          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
+                                             CCharset.CHARSET_UTF_8_OBJ)
+                      .setMimeType (eSOAPVersion.getMimeType ());
+        }
       }
       else
       {
-        final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
-        final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
-        final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME, null);
-        final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                              aEbms3MessageInfo,
-                                                                                              aEbms3UserMessage,
-                                                                                              aSOAPDocument)
-                                                                       .setMustUnderstand (true);
+        if (_checkIfResponseShouldBeSent (aState.getPModeConfig ()))
+        {
+          final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
+          final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
+          final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME, null);
+          final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                                                aEbms3MessageInfo,
+                                                                                                aEbms3UserMessage,
+                                                                                                aSOAPDocument)
+                                                                         .setMustUnderstand (true);
 
-        // We've got our response
-        final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-        aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
-                    .setMimeType (eSOAPVersion.getMimeType ());
+          // We've got our response
+          final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                      .setMimeType (eSOAPVersion.getMimeType ());
+        }
       }
     }
+  }
+
+  private boolean _checkIfErrorResponseShouldBeSent (final IPModeConfig pModeConfig)
+  {
+    if (pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
+      return pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
+    // Default behaviour
+    return true;
+  }
+
+  private boolean _checkIfResponseShouldBeSent (final IPModeConfig pModeConfig)
+  {
+    try
+    {
+      if (pModeConfig.getLeg1 ()
+                     .getSecurity ()
+                     .getSendReceiptReplyPattern ()
+                     .equals (EPModeSendReceiptReplyPattern.RESPONSE))
+      {
+        return true;
+      }
+    }
+    catch (final NullPointerException ex)
+    {
+      // Default behaviour if the value is not set or no security is existing
+      return true;
+    }
+
+    return false;
   }
 
   private void _createOrUpdatePartner (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)

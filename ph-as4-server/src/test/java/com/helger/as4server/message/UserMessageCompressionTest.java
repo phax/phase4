@@ -21,7 +21,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -73,10 +72,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments,
                                                                                           null);
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
@@ -96,10 +92,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments,
                                                                                           null);
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
 }

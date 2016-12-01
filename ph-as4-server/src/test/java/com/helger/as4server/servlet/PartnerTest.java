@@ -42,6 +42,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
@@ -132,6 +133,18 @@ public class PartnerTest extends AbstractUserMessageSetUp
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
+  public void testPartnersExistShouldThrowFaultSinceNewPModeConfig () throws Exception
+  {
+
+    final Document aDoc = _modifyUserMessage (null, null, "testfaultconfig");
+    assertNotNull (aDoc);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Nonnull

@@ -190,14 +190,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (aCerts.size () > 1)
           LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+
         aState.setUsedCertificate (aCerts.getAtIndex (0));
-
-        // TODO remove since only for debugging purpose Too much output :)
-        if (false)
-        {
-          aResults.forEach (x -> x.forEach ( (k, v) -> LOG.info ("KeyValuePair: " + k + "=" + v)));
-        }
-
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
         final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getResponseAttachments ();
@@ -215,14 +209,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
             LOG.warn ("Found other IS: " + aIS);
         }
         aState.setDecryptedAttachments (aResponseAttachments);
-
-        // System.out.println ("Decryption Result ");
-        // System.out.println (XMLUtils.prettyDocumentToString (aSOAPDoc));
       }
       catch (final Exception ex)
       {
         // Decryption or Signature check failed
-
         LOG.info ("Error processing the WSSSecurity Header", ex);
 
         // TODO we need a way to distinct

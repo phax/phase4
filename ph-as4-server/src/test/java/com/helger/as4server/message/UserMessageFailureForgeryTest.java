@@ -28,7 +28,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
-import org.apache.http.util.EntityUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -172,10 +171,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
         aElement.setAttribute ("href", "cid:invalid");
     }
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments, null);
-    // TODO DELETE OUTPUT IF not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // False pmode settings
@@ -221,11 +217,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                 CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
     aMsg.saveChanges ();
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    if (false)
-      System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -291,10 +283,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     aMultipart.removeBodyPart (1);
 
     aMsg.saveChanges ();
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Test
@@ -313,10 +302,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                                                           aAttachments,
                                                                                           null);
     aMsg.saveChanges ();
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Test
@@ -341,9 +327,6 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                                                           aAttachments,
                                                                                           null);
     aMsg.saveChanges ();
-    // TODO remove when output not needed anymore
-    final HttpMimeMessageEntity aEntity = new HttpMimeMessageEntity (aMsg);
-    System.out.println (EntityUtils.toString (aEntity));
-    sendMimeMessage (aEntity, false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 }

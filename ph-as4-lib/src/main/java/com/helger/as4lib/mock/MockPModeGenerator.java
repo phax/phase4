@@ -88,10 +88,8 @@ public class MockPModeGenerator
 
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
-    aPModeLegSecurity.setX509SignatureCertificate ("TODO change to real cert");
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-    aPModeLegSecurity.setX509EncryptionCertificate ("TODO change to real cert");
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
