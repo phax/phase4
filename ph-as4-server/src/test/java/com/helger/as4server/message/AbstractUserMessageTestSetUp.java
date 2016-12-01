@@ -16,7 +16,6 @@
  */
 package com.helger.as4server.message;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -25,6 +24,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -93,12 +93,16 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       final CloseableHttpResponse aHttpResponse = m_aClient.execute (m_aPost);
 
       m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
-      m_sResponse = EntityUtils.toString (aHttpResponse.getEntity ());
+      final HttpEntity aEntity = aHttpResponse.getEntity ();
+      m_sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
 
       if (bExpectSuccess)
       {
         assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
-        assertEquals ("Server responded with an error code.", 200, m_nStatusCode);
+        assertTrue ("Server responded with an error code (" +
+                    m_nStatusCode +
+                    ").",
+                    m_nStatusCode == HttpServletResponse.SC_OK || m_nStatusCode == HttpServletResponse.SC_NO_CONTENT);
       }
       else
       {

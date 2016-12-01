@@ -82,6 +82,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.debug.GlobalDebug;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.mime.EMimeContentType;
@@ -450,9 +451,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
 
       // TODO build response according to handler result
+      final IPModeConfig aPModeConfig = aState.getPModeConfig ();
       if (aErrorMessages.isNotEmpty ())
       {
-        if (_checkIfErrorResponseShouldBeSent (aState.getPModeConfig ()))
+        if (_checkIfErrorResponseShouldBeSent (aPModeConfig))
         {
           final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
           final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -466,7 +468,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       else
       {
-        if (_checkIfResponseShouldBeSent (aState.getPModeConfig ()))
+        if (_checkIfResponseShouldBeSent (aPModeConfig))
         {
           final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
           final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
@@ -486,33 +488,27 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
-  private boolean _checkIfErrorResponseShouldBeSent (final IPModeConfig pModeConfig)
+  private boolean _checkIfErrorResponseShouldBeSent (@Nullable final IPModeConfig pModeConfig)
   {
-    if (pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
-      return pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
+    if (pModeConfig != null)
+      if (pModeConfig.getLeg1 () != null)
+        if (pModeConfig.getLeg1 ().getErrorHandling () != null)
+          if (pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
+            return pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
     // Default behaviour
     return true;
   }
 
-  private boolean _checkIfResponseShouldBeSent (final IPModeConfig pModeConfig)
+  private boolean _checkIfResponseShouldBeSent (@Nullable final IPModeConfig pModeConfig)
   {
-    try
-    {
-      if (pModeConfig.getLeg1 ()
-                     .getSecurity ()
-                     .getSendReceiptReplyPattern ()
-                     .equals (EPModeSendReceiptReplyPattern.RESPONSE))
-      {
-        return true;
-      }
-    }
-    catch (final NullPointerException ex)
-    {
-      // Default behaviour if the value is not set or no security is existing
-      return true;
-    }
+    if (pModeConfig != null)
+      if (pModeConfig.getLeg1 () != null)
+        if (pModeConfig.getLeg1 ().getSecurity () != null)
+          return EqualsHelper.equals (pModeConfig.getLeg1 ().getSecurity ().getSendReceiptReplyPattern (),
+                                      EPModeSendReceiptReplyPattern.RESPONSE);
 
-    return false;
+    // Default behaviour if the value is not set or no security is existing
+    return true;
   }
 
   private void _createOrUpdatePartner (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
