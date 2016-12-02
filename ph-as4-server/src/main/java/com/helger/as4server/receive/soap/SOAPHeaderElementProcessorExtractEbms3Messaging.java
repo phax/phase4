@@ -119,46 +119,51 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       }
     }
 
-    // Check if MPC is contained in PMode and if so, if it is valid
-    final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();
-    if (aPModeLeg1 != null)
+    PModeLeg aPModeLeg1 = null;
+    IMPC aEffectiveMPC = null;
+    if (aPModeConfig != null)
     {
-      if (aPModeLeg1.getBusinessInfo () != null)
+      // Check if MPC is contained in PMode and if so, if it is valid
+      aPModeLeg1 = aPModeConfig.getLeg1 ();
+      if (aPModeLeg1 != null)
       {
-        final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
-        if (sPModeMPC != null)
-          if (!aMPCMgr.containsWithID (sPModeMPC))
-          {
-            LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+        if (aPModeLeg1.getBusinessInfo () != null)
+        {
+          final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
+          if (sPModeMPC != null)
+            if (!aMPCMgr.containsWithID (sPModeMPC))
+            {
+              LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
-            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-            return ESuccess.FAILURE;
-          }
+              aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+              return ESuccess.FAILURE;
+            }
+        }
       }
-    }
-    else
-    {
-      LOG.warn ("Error processing the usermessage, PMode does not contain a leg!");
+      else
+      {
+        LOG.warn ("Error processing the usermessage, PMode does not contain a leg!");
 
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-      return ESuccess.FAILURE;
-    }
+        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+        return ESuccess.FAILURE;
+      }
 
-    // PMode is valid
-    // Check MPC - can be in user message or in PMode
-    String sEffectiveMPCID = aUserMessage.getMpc ();
-    if (sEffectiveMPCID == null)
-    {
-      if (aPModeLeg1.getBusinessInfo () != null)
-        sEffectiveMPCID = aPModeLeg1.getBusinessInfo ().getMPCID ();
-    }
-    final IMPC aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
-    if (aEffectiveMPC == null)
-    {
-      LOG.warn ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
+      // PMode is valid
+      // Check MPC - can be in user message or in PMode
+      String sEffectiveMPCID = aUserMessage.getMpc ();
+      if (sEffectiveMPCID == null)
+      {
+        if (aPModeLeg1.getBusinessInfo () != null)
+          sEffectiveMPCID = aPModeLeg1.getBusinessInfo ().getMPCID ();
+      }
+      aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
+      if (aEffectiveMPC == null)
+      {
+        LOG.warn ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
 
-      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-      return ESuccess.FAILURE;
+        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+        return ESuccess.FAILURE;
+      }
     }
 
     // Needed for the compression check, it is not allowed to have a compressed
@@ -167,13 +172,16 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
-    // Check if a SOAPBodyPayload exists
-    final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
-                                                                aPModeLeg1.getProtocol ()
-                                                                          .getSOAPVersion ()
-                                                                          .getBodyElementName ());
-    if (aBody != null && aBody.hasChildNodes ())
-      bHasSoapBodyPayload = true;
+    if (aPModeLeg1 != null)
+    {
+      // Check if a SOAPBodyPayload exists
+      final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
+                                                                  aPModeLeg1.getProtocol ()
+                                                                            .getSOAPVersion ()
+                                                                            .getBodyElementName ());
+      if (aBody != null && aBody.hasChildNodes ())
+        bHasSoapBodyPayload = true;
+    }
 
     // Remember in state
     aState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
