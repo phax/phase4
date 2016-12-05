@@ -16,6 +16,8 @@
  */
 package com.helger.as4lib.message;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,7 +39,7 @@ import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.string.StringHelper;
 
 /**
  * With the help of this class an usermessage or parts of it can be created.
@@ -110,12 +112,13 @@ public class CreateUserMessage
     return aEbms3PartyInfo;
   }
 
+  @Nonnull
   public Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nonnull final String sAction,
-                                                              @Nonnull final String sServiceType,
+                                                              @Nullable final String sServiceType,
                                                               @Nonnull final String sServiceValue,
                                                               @Nonnull final String sConversationID,
-                                                              @Nonnull final String sAgreementRefPMode,
-                                                              @Nonnull final String sAgreementRefValue)
+                                                              @Nullable final String sAgreementRefPMode,
+                                                              @Nullable final String sAgreementRefValue)
   {
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
     aEbms3CollaborationInfo.setAction (sAction);
@@ -126,6 +129,7 @@ public class CreateUserMessage
       aEbms3CollaborationInfo.setService (aEbms3Service);
     }
     aEbms3CollaborationInfo.setConversationId (sConversationID);
+    if (StringHelper.hasText (sAgreementRefPMode) || StringHelper.hasText (sAgreementRefValue))
     {
       final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
       aEbms3AgreementRef.setPmode (sAgreementRefPMode);
@@ -135,7 +139,8 @@ public class CreateUserMessage
     return aEbms3CollaborationInfo;
   }
 
-  public Ebms3MessageProperties createEbms3MessageProperties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
+  @Nonnull
+  public Ebms3MessageProperties createEbms3MessageProperties (@Nullable final List <Ebms3Property> aEbms3Properties)
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);

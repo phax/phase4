@@ -80,10 +80,10 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
    * If the pmode config is invalid the method will return null
    *
    * @param aPModeConfig
-   *        the pmodeconfig that should be created
-   * @return pmode config or null
+   *        the pmode config that should be created
+   * @return pmode config or <code>null</code>
    */
-  @Nonnull
+  @Nullable
   public IPModeConfig createPModeConfig (@Nonnull final PModeConfig aPModeConfig)
   {
     ValueEnforcer.notNull (aPModeConfig, "PModeConfig");
