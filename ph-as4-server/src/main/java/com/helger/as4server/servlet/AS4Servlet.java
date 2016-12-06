@@ -358,6 +358,15 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           return;
         }
 
+        // Additional Matrix on what should happen in certain scenarios
+        // Check if Partner+Partner combination is already present
+        // P+P neu + PConfig da = anlegen
+        // P+P neu + PConfig neu = Fehler
+        // P+P neu + PConfig Id fehlt = default
+        // P+P da + PConfig neu = fehler
+        // P+P da + PConfig da = nix tun
+        // P+P da + PConfig id fehlt = default
+
         // Step 1 check if PModeConfig exists
         final String sConfigID = aState.getPModeConfig ().getID ();
 
@@ -394,7 +403,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
               if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
               {
-                s_aLogger.info ("Responder is not the default or an already registered one");
+                s_aLogger.warn ("Responder is not the default or an already registered one");
+                _createOrUpdatePartner (null, aState.getResponderID ());
               }
 
             _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
@@ -407,14 +417,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
           return;
         }
-
-        // Check if Partner+Partner combination is already present
-        // P+P neu + PConfig da = anlegen
-        // P+P neu + PConfig neu = Fehler
-        // P+P neu + PConfig Id fehlt = default
-        // P+P da + PConfig neu = fehler
-        // P+P da + PConfig da = nix tun
-        // P+P da + PConfig id fehlt = default
 
         for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
           try
@@ -450,7 +452,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           }
       }
 
-      // TODO build response according to handler result
+      // TODO Profile checks here?
       final IPModeConfig aPModeConfig = aState.getPModeConfig ();
       if (aErrorMessages.isNotEmpty ())
       {
@@ -476,7 +478,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                                 aEbms3MessageInfo,
                                                                                                 aEbms3UserMessage,
-                                                                                                aSOAPDocument)
+                                                                                                aSOAPDocument,
+                                                                                                _getNonRepudiationInformation (aPModeConfig))
                                                                          .setMustUnderstand (true);
 
           // We've got our response
@@ -488,23 +491,35 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
-  private boolean _checkIfErrorResponseShouldBeSent (@Nullable final IPModeConfig pModeConfig)
+  private boolean _getNonRepudiationInformation (final IPModeConfig aPModeConfig)
   {
-    if (pModeConfig != null)
-      if (pModeConfig.getLeg1 () != null)
-        if (pModeConfig.getLeg1 ().getErrorHandling () != null)
-          if (pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
-            return pModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
+    if (aPModeConfig != null)
+      if (aPModeConfig.getLeg1 () != null)
+        if (aPModeConfig.getLeg1 ().getSecurity () != null)
+          if (aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiationDefined ())
+          {
+            return aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiation ();
+          }
+    return false;
+  }
+
+  private boolean _checkIfErrorResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
+  {
+    if (aPModeConfig != null)
+      if (aPModeConfig.getLeg1 () != null)
+        if (aPModeConfig.getLeg1 ().getErrorHandling () != null)
+          if (aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
+            return aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
     // Default behaviour
     return true;
   }
 
-  private boolean _checkIfResponseShouldBeSent (@Nullable final IPModeConfig pModeConfig)
+  private boolean _checkIfResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
   {
-    if (pModeConfig != null)
-      if (pModeConfig.getLeg1 () != null)
-        if (pModeConfig.getLeg1 ().getSecurity () != null)
-          return EqualsHelper.equals (pModeConfig.getLeg1 ().getSecurity ().getSendReceiptReplyPattern (),
+    if (aPModeConfig != null)
+      if (aPModeConfig.getLeg1 () != null)
+        if (aPModeConfig.getLeg1 ().getSecurity () != null)
+          return EqualsHelper.equals (aPModeConfig.getLeg1 ().getSecurity ().getSendReceiptReplyPattern (),
                                       EPModeSendReceiptReplyPattern.RESPONSE);
 
     // Default behaviour if the value is not set or no security is existing

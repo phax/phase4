@@ -111,7 +111,8 @@ public final class TestMessages
                                                                 aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
                                                                                                         null),
                                                                 null,
-                                                                aUserMessage)
+                                                                aUserMessage,
+                                                                true)
                                          .setMustUnderstand (false)
                                          .getAsSOAPDocument ();
 

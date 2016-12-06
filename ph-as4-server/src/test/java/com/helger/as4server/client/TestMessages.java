@@ -51,6 +51,11 @@ import com.helger.commons.collection.ext.ICommonsList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+/**
+ * Only used for SOAPClientSAAJ.java as test message constructor.
+ *
+ * @author bayerlma
+ */
 final class TestMessages
 {
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
@@ -107,7 +112,8 @@ final class TestMessages
                                                                 aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
                                                                                                         null),
                                                                 null,
-                                                                aUserMessage)
+                                                                aUserMessage,
+                                                                true)
                                          .setMustUnderstand (false)
                                          .getAsSOAPDocument ();
 

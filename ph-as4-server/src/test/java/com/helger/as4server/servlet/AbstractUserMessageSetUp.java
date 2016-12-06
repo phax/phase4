@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,10 +32,27 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
+import com.helger.as4lib.constants.CAS4;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
+import com.helger.as4lib.message.AS4UserMessage;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.message.MessageHelperMethods;
+import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.AbstractClientSetUp;
+import com.helger.as4server.constants.AS4ServerTestHelper;
+import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -111,5 +129,53 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
       // No such server running
       fail ("No target AS4 server reachable: " + ex.getMessage () + " \n Check your properties!");
     }
+  }
+
+  @Nonnull
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
+                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                         @Nullable final String sAnotherOrWrongPartyIdResponder) throws Exception
+  {
+    // If argument is set replace the default one
+    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+                                                                                : sAnotherOrWrongPartyIdInitiator;
+    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+                                                                                : sAnotherOrWrongPartyIdResponder;
+
+    final CreateUserMessage aUserMessage = new CreateUserMessage ();
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+
+    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                      "MyServiceTypes",
+                                                                                                      "QuoteToCollect",
+                                                                                                      "4321",
+                                                                                                      sAnotherOrWrongPModeID,
+                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+                                                                              sSetPartyIDInitiator,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              sSetPartyIDResponder);
+    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                aEbms3PayloadInfo,
+                                                                aEbms3CollaborationInfo,
+                                                                aEbms3PartyInfo,
+                                                                aEbms3MessageProperties,
+                                                                ESOAPVersion.AS4_DEFAULT)
+                                            .setMustUnderstand (false);
+
+    return aDoc.getAsSOAPDocument (aPayload);
+  }
+
+  @Nonnull
+  protected static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
+  {
+    return p -> p.getConfigID ().equals (sID);
   }
 }

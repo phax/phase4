@@ -123,7 +123,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
 
       // Encrypted header
-      // TODO need to check BodyPayload for right or wrong Algorithm
+      // TODO need to check BodyPayload for right or wrong Algorithm => maybe
+      // only ESens specific?
       final Element aEncryptedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.XENC_NS, "EncryptedKey");
       if (aEncryptedNode != null)
       {
@@ -137,7 +138,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       // Check if Attachment IDs are the same
       for (int i = 0; i < aAttachments.size (); i++)
       {
-        String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
+        String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID); 
         sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
 
         // Add +1 because the payload has index 0

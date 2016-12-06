@@ -62,11 +62,28 @@ public class CreateReceiptMessage
     return aDSRefs;
   }
 
+  /**
+   * This method creates a receipt message.
+   *
+   * @param eSOAPVersion
+   *        SOAP Version which should be used
+   * @param aEbms3MessageInfo
+   *        MessageInfo comes from the received usermessage
+   * @param aEbms3UserMessage
+   *        The received usermessage which should be responded too
+   * @param aSOAPDocument
+   *        If the SOAPDocument has WSS4j elements and the following parameter
+   *        is true NonRepudiation will be used if the message is signed
+   * @param bShouldUseNonRepudiation
+   *        If NonRepudiation should be used or not
+   * @return AS4ReceiptMessage
+   */
   @Nonnull
   public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                  @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                                 @Nullable final Node aSOAPDocument)
+                                                 @Nullable final Node aSOAPDocument,
+                                                 @Nonnull final boolean bShouldUseNonRepudiation)
   {
     if (aEbms3UserMessage != null)
       aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
@@ -81,7 +98,7 @@ public class CreateReceiptMessage
 
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
     // PullRequest
-    if (aDSRefs.isNotEmpty ())
+    if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
     {
 
       final NonRepudiationInformation aNonRepudiationInformation = new NonRepudiationInformation ();

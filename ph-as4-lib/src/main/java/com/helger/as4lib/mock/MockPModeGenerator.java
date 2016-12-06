@@ -24,16 +24,19 @@ import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
+import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
 import com.helger.as4lib.model.pmode.PModeLegReliability;
 import com.helger.as4lib.model.pmode.PModeLegSecurity;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.wss.EWSSVersion;
+import com.helger.commons.state.ETriState;
 
 public class MockPModeGenerator
 {
@@ -91,10 +94,12 @@ public class MockPModeGenerator
     aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
     aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
     aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+    aPModeLegSecurity.setSendReceiptNonRepudiation (true);
 
     aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                                    _generatePModeLegBusinessInformation (),
-                                   null,
+                                   _generatePModeLegErrorHandling (),
                                    null,
                                    aPModeLegSecurity));
     // Leg 2 stays null, because we only use one-way
@@ -109,9 +114,14 @@ public class MockPModeGenerator
     final PModeLegSecurity aPModeLegSecurity = null;
     return new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
                          _generatePModeLegBusinessInformation (),
-                         null,
+                         _generatePModeLegErrorHandling (),
                          aPModeLegReliability,
                          aPModeLegSecurity);
+  }
+
+  private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
+  {
+    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
   }
 
   @Nonnull

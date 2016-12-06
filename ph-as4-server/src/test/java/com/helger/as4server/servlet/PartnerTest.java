@@ -23,45 +23,26 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
-import com.helger.as4lib.constants.CAS4;
-import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
-import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
-import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
-import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.error.EEbmsError;
-import com.helger.as4lib.message.AS4UserMessage;
-import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.mock.MockPModeGenerator;
-import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.partner.IPartner;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
-import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.constants.AS4ServerTestHelper;
-import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * All essentials need to be set and need to be not null since they are getting
@@ -113,11 +94,24 @@ public class PartnerTest extends AbstractUserMessageSetUp
   }
 
   @Test
-  public void testAddingNewUnkownPartner () throws Exception
+  public void testAddingNewUnkownPartnerInitiator () throws Exception
   {
     final String sPartnerID = "TestPartnerUnkown";
 
-    final Document aDoc = _modifyUserMessage (sPartnerID, null, MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, sPartnerID, null);
+    assertNotNull (aDoc);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final IPartner aPartner = aPM.getPartnerOfID (sPartnerID);
+    assertNotNull (aPartner);
+  }
+
+  @Test
+  public void testAddingNewUnkownPartnerResponder () throws Exception
+  {
+    final String sPartnerID = "random_party_id121";
+
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, null, sPartnerID);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -139,7 +133,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   public void testPartnersExistShouldThrowFaultSinceNewPModeConfig () throws Exception
   {
 
-    final Document aDoc = _modifyUserMessage (null, null, "testfaultconfig");
+    final Document aDoc = _modifyUserMessage ("testfaultconfig", null, null);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
@@ -147,55 +141,61 @@ public class PartnerTest extends AbstractUserMessageSetUp
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
-  @Nonnull
-  private Document _modifyUserMessage (@Nullable final String sDifferentPartyIdInitiator,
-                                       @Nullable final String sDifferentPartyIdResponder,
-                                       @Nullable final String sDifferentPModeConfigID) throws Exception
-  {
-    // If argument is set replace the default one
-    // final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
-    // .findFirst (_getFirstPModeWithID
-    // (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
-    final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
-    final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
-                                                                           : sDifferentPartyIdInitiator;
-    final String sSetPartyIDResponder = sDifferentPartyIdResponder == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
-                                                                           : sDifferentPartyIdResponder;
+  // @Nonnull
+  // private Document _modifyUserMessage (@Nullable final String
+  // sDifferentPartyIdInitiator,
+  // @Nullable final String sDifferentPartyIdResponder,
+  // @Nullable final String sDifferentPModeConfigID) throws Exception
+  // {
+  // // If argument is set replace the default one
+  // // final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
+  // // .findFirst (_getFirstPModeWithID
+  // // (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
+  // final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  // final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ?
+  // AS4ServerTestHelper.DEFAULT_PARTY_ID
+  // : sDifferentPartyIdInitiator;
+  // final String sSetPartyIDResponder = sDifferentPartyIdResponder == null ?
+  // AS4ServerTestHelper.DEFAULT_PARTY_ID
+  // : sDifferentPartyIdResponder;
+  //
+  // final CreateUserMessage aUserMessage = new CreateUserMessage ();
+  // final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource
+  // ("SOAPBodyPayload.xml"));
+  //
+  // // Add properties
+  // final ICommonsList <Ebms3Property> aEbms3Properties =
+  // AS4ServerTestHelper.getEBMSProperties ();
+  //
+  // final Ebms3MessageInfo aEbms3MessageInfo =
+  // aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+  // final Ebms3PayloadInfo aEbms3PayloadInfo =
+  // aUserMessage.createEbms3PayloadInfo (aPayload, null);
+  // final Ebms3CollaborationInfo aEbms3CollaborationInfo =
+  // aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+  // "MyServiceTypes",
+  // "QuoteToCollect",
+  // "4321",
+  // sDifferentPModeConfigID,
+  // AS4ServerTestHelper.DEFAULT_AGREEMENT);
+  // final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo
+  // (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+  // sSetPartyIDInitiator,
+  // AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+  // sSetPartyIDResponder);
+  // final Ebms3MessageProperties aEbms3MessageProperties =
+  // aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+  //
+  // final AS4UserMessage aDoc = aUserMessage.createUserMessage
+  // (aEbms3MessageInfo,
+  // aEbms3PayloadInfo,
+  // aEbms3CollaborationInfo,
+  // aEbms3PartyInfo,
+  // aEbms3MessageProperties,
+  // eSetESOAPVersion)
+  // .setMustUnderstand (false);
+  //
+  // return aDoc.getAsSOAPDocument (aPayload);
+  // }
 
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
-
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                      "MyServiceTypes",
-                                                                                                      "QuoteToCollect",
-                                                                                                      "4321",
-                                                                                                      sDifferentPModeConfigID,
-                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
-                                                                              sSetPartyIDInitiator,
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
-                                                                              sSetPartyIDResponder);
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
-
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                eSetESOAPVersion)
-                                            .setMustUnderstand (false);
-
-    return aDoc.getAsSOAPDocument (aPayload);
-  }
-
-  @Nonnull
-  private static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
-  {
-    return p -> p.getConfigID ().equals (sID);
-  }
 }
