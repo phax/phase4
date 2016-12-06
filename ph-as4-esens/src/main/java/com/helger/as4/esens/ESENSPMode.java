@@ -44,8 +44,10 @@ public final class ESENSPMode
   {}
 
   @Nonnull
-  public static PMode createESENSPMode ()
+  public static PModeConfig createESENSPModeConfig ()
   {
+    // TODO use from manager if existing
+
     final PModeConfig aConfig = new PModeConfig ("pm-esens-default");
     aConfig.setMEP (EMEP.ONE_WAY);
     aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
@@ -57,7 +59,16 @@ public final class ESENSPMode
     // Leg 2 stays null, because we only use one-way
     aConfig.setReceptionAwareness (new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE));
 
+    // Ensure it is stored
     MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    return aConfig;
+  }
+
+  @Nonnull
+  public static PMode createESENSPMode ()
+  {
+    final PModeConfig aConfig = createESENSPModeConfig ();
+
     return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
   }
 

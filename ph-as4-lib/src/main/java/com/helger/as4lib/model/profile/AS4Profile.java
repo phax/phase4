@@ -16,26 +16,30 @@
  */
 package com.helger.as4lib.model.profile;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 
 import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.lang.GenericReflection;
 
 public class AS4Profile implements IAS4Profile
 {
   private final String m_sID;
   private final String m_sDisplayName;
-  private final Class <? extends IAS4ProfileValidator> m_aValidatorClass;
+  private final Supplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
+  private final Supplier <? extends IPModeConfig> m_aDefaultPModeConfigProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
-                     @Nonnull final Class <? extends IAS4ProfileValidator> aValidatorClass)
+                     @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
+                     @Nonnull final Supplier <? extends IPModeConfig> aDefaultPModeConfigProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
-    m_aValidatorClass = ValueEnforcer.notNull (aValidatorClass, "ValidatorClass");
+    m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
+    m_aDefaultPModeConfigProvider = ValueEnforcer.notNull (aDefaultPModeConfigProvider, "aDefaultPModeConfigProvider");
   }
 
   @Nonnull
@@ -53,21 +57,14 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Nonnull
-  @Nonempty
-  public String getValidatorClassName ()
+  public IAS4ProfileValidator getValidator ()
   {
-    return m_aValidatorClass.getName ();
+    return m_aProfileValidatorProvider.get ();
   }
 
   @Nonnull
-  public IAS4ProfileValidator getValidator ()
-  {
-    return GenericReflection.newInstance (m_aValidatorClass);
-  }
-
   public IPModeConfig createDefaultPModeConfig ()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return m_aDefaultPModeConfigProvider.get ();
   }
 }
