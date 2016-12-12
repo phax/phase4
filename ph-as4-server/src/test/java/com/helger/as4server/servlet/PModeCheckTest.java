@@ -118,6 +118,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
    * converted right
    *
    * @throws Exception
+   *         In case of an error
    */
   @Ignore
   @Test
