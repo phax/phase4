@@ -49,7 +49,7 @@ import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.web.mock.OfflineHttpServletRequest;
+import com.helger.servlet.mock.OfflineHttpServletRequest;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
 import com.helger.web.scope.mgr.DefaultWebScopeFactory;
