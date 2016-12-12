@@ -258,12 +258,12 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
       final ErrorList aErrors = new ErrorList ();
       validatePModeConfig (aPModeConfig, aErrors);
       if (aErrors.isNotEmpty ())
-        throw new IllegalStateException (StringHelper.getImploded ("\n",
-                                                                   aErrors,
-                                                                   x -> "PMode " +
-                                                                        aPModeConfig.getID () +
-                                                                        ": " +
-                                                                        x.getAsString (aDisplayLocale)));
+        throw new IllegalStateException (StringHelper.getImplodedMapped ("\n",
+                                                                         aErrors,
+                                                                         x -> "PMode " +
+                                                                              aPModeConfig.getID () +
+                                                                              ": " +
+                                                                              x.getAsString (aDisplayLocale)));
     }
   }
 }
