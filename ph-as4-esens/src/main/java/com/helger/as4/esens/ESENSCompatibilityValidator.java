@@ -47,6 +47,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.string.StringHelper;
 
 /**
  * Validate certain requirements imposed by the e-SENS project.
@@ -101,7 +102,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
       }
       else
       {
-        // PROTOCOL Address only http allowed
+        // PROTOCOL Address only https allowed
         final String sAddressProtocol = aLeg1Protocol.getAddressProtocol ();
         if (sAddressProtocol == null)
         {
@@ -126,10 +127,6 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
                                           eSOAPVersion.getVersion ()));
           }
       }
-
-      // BUSINESS INFO SERVICE
-
-      // BUSINESS INFO ACTION
 
       // Only check the security features if a Security Leg is currently present
       final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
@@ -219,10 +216,6 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
             {
               aErrorList.add (_createError ("Only response is allowed as pattern"));
             }
-
-            // TODO Send NonRepudiation => Only activate able when Send Receipt
-            // true and only when Sign on True and Message Signed
-            // Needs to interact with the implementation
           }
         }
       }
@@ -291,11 +284,31 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
-    // TODO Auto-generated method stub
+    ValueEnforcer.notNull (aUserMsg, "UserMsg");
+
+    if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+    {
+      aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+    }
+
+    if (aUserMsg.getPartyInfo ().getTo ().getPartyIdCount () > 1)
+    {
+      aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyTo - part"));
+    }
+
+    if (aUserMsg.getPartyInfo ().getFrom ().getPartyIdCount () > 1)
+    {
+      aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyFrom - part"));
+    }
   }
 
   public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
   {
-    // TODO Auto-generated method stub
+    ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
+
+    if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+    {
+      aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+    }
   }
 }

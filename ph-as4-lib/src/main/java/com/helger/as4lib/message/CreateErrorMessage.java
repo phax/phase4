@@ -45,6 +45,6 @@ public class CreateErrorMessage
 
   public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
+    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }
 }

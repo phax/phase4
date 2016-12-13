@@ -49,8 +49,6 @@
           <eb:PartInfo/>
         </eb:PayloadInfo>
       </eb:UserMessage>
-    </eb:Messaging>
-        <eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns2="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:ns3="http://www.w3.org/2000/09/xmldsig#" S12:mustUnderstand="false">
       <eb:UserMessage>
         <eb:MessageInfo>
           <eb:Timestamp>2016-02-21T15:03:40.314+02:00</eb:Timestamp>

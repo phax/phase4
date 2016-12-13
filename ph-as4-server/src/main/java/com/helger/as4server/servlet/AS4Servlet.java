@@ -474,7 +474,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         {
           final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
           final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
-          final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME, null);
+          final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
           final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                                 aEbms3MessageInfo,
                                                                                                 aEbms3UserMessage,
@@ -577,8 +577,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                            sConfigID))
                       .isEmpty ())
     {
-      // TODO might need to add type also => check with tests
-      final PMode aPMode = new PMode (new PModeParty (null,
+      final PMode aPMode = new PMode (new PModeParty (aUserMessage.getPartyInfo ()
+                                                                  .getFrom ()
+                                                                  .getPartyId ()
+                                                                  .get (0)
+                                                                  .getType (),
                                                       aUserMessage.getPartyInfo ()
                                                                   .getFrom ()
                                                                   .getPartyId ()
@@ -587,7 +590,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                       aUserMessage.getPartyInfo ().getFrom ().getRole (),
                                                       null,
                                                       null),
-                                      new PModeParty (null,
+                                      new PModeParty (aUserMessage.getPartyInfo ()
+                                                                  .getTo ()
+                                                                  .getPartyId ()
+                                                                  .get (0)
+                                                                  .getType (),
                                                       aUserMessage.getPartyInfo ()
                                                                   .getTo ()
                                                                   .getPartyId ()
@@ -759,4 +766,5 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       LoggedInUserManager.getInstance ().logoutCurrentUser ();
     }
   }
+
 }

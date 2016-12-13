@@ -50,6 +50,8 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.OfflineHttpServletRequest;
+import com.helger.settings.exchange.configfile.ConfigFile;
+import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
 import com.helger.web.scope.mgr.DefaultWebScopeFactory;
@@ -59,34 +61,35 @@ public final class AS4WebAppListener extends WebAppListener
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WebAppListener.class);
 
+  protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-as4.properties")
+                                                                    .addPath ("as4.properties")
+                                                                    .build ();
+
   @Override
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
-    // TODO read from config file
-    return "true";
+    return PROPS.getAsString ("server.debug");
   }
 
   @Override
   @Nullable
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
-    // TODO read from config file
-    return "false";
+    return PROPS.getAsString ("server.production");
   }
 
   @Override
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return "true";
+    return PROPS.getAsString ("server.nostartupinfo");
   }
 
   @Override
   protected String getDataPath (@Nonnull final ServletContext aSC)
   {
-    // TODO read from config file
-    return "/var/www/as4/data";
+    return PROPS.getAsString ("server.datapath");
   }
 
   @Override

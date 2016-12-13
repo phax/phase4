@@ -108,8 +108,7 @@ public final class TestMessages
     final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
-                                                                                                        null),
+                                                                aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
                                                                 null,
                                                                 aUserMessage,
                                                                 true)

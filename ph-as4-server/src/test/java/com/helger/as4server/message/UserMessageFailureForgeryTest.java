@@ -99,8 +99,6 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     fail ();
   }
 
-  // TODO NOT WORKING SINCE SOMEHOW THE SECOND USER MESSAGE GETS IGNORED!?!?!
-  @Ignore
   @Test
   public void testTwoUserMessageShouldFail () throws Exception
   {
@@ -110,7 +108,9 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TwoUserMessages.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // Tinkering with the signature
@@ -190,8 +190,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   // Encryption
 
   // Cannot be tested easily, since the error gets only thrown if the SPI tries
-  // to read the stream
-  // of the attachment
+  // to read the stream of the attachment
   @Ignore
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception

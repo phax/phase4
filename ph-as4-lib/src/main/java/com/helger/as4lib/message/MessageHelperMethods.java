@@ -59,8 +59,7 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix,
-                                                         @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix)
   {
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 
@@ -70,7 +69,6 @@ public final class MessageHelperMethods
     // TODO Change Timestamp or do we only want the present date when the
     // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
-    aMessageInfo.setRefToMessageId (sRefToMessageID);
     return aMessageInfo;
   }
 

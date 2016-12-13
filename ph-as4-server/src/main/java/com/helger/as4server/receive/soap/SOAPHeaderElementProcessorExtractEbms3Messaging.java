@@ -196,9 +196,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
         return ESuccess.FAILURE;
       }
-      // TODO NO attachment should be present if it is not a mime message,
-      // problem here is there can be n amount of other mime parts added to
-      // the message
 
       // For the case that there is no Payload/Part - Info but still
       // attachments in the message

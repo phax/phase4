@@ -207,6 +207,6 @@ public class CreateUserMessage
 
   public Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
   {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId, null);
+    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }
 }

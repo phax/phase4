@@ -129,11 +129,8 @@ public class CreateReceiptMessage
     return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }
 
-  // TODO ReftomessageID maybe not needed here since, it comes with the
-  // usermessage
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId,
-                                                  @Nullable final String sRefToMessageId)
+  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId, sRefToMessageId);
+    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }
 }

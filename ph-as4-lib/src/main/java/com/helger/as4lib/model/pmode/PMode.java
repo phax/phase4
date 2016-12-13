@@ -76,6 +76,12 @@ public class PMode extends AbstractBaseObject implements IPMode
    */
   private PModeParty m_aResponder;
 
+  /**
+   * Contains everything a PMOde should contain, outside of Initiator and
+   * Responder, which will be saved separately. This gets done so that a
+   * PModeConfig can be reused, many times when just the partners that
+   * communicate change.
+   */
   private final IPModeConfig m_aConfig;
 
   public PMode (@Nullable final PModeParty aInitiator,
