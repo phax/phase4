@@ -60,6 +60,7 @@ import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeParty;
+import com.helger.as4lib.model.profile.IAS4Profile;
 import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.soap.ESOAPVersion;
@@ -71,6 +72,7 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
+import com.helger.as4server.settings.AS4Configuration;
 import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
@@ -262,7 +264,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                           "; error details: " +
                           aErrorList);
 
-          // TODO Use AS4 Esens profile if appropriate
           aErrorList.forEach (error -> {
             final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (error.getErrorID ());
             if (ePredefinedError != null)
@@ -285,6 +286,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       // Now check if all must understand headers were processed
       Ebms3Messaging aMessaging = null;
+      Ebms3UserMessage aUserMessage = null;
       if (aErrorMessages.isEmpty ())
       {
         for (final AS4SOAPHeader aHeader : aHeaders)
@@ -310,7 +312,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                       aMessaging.getUserMessageCount ());
           return;
         }
-        final Ebms3UserMessage aUserMessage = aMessaging.getUserMessageAtIndex (0);
+        aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
         // Decompressing the attachments
         final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
@@ -351,10 +353,26 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Check if originalSender and finalRecipient are present also saves
         // them into variables
-        final String sCheckResult = _checkAndSaveProperties (aUserMessage.getMessageProperties ().getProperty ());
-        if (!StringHelper.hasNoText (sCheckResult))
+        if (aUserMessage.getMessageProperties () != null)
         {
-          aAS4Response.setBadRequest (sCheckResult);
+          if (aUserMessage.getMessageProperties ().getProperty () != null)
+          {
+            final String sCheckResult = _checkAndSaveProperties (aUserMessage.getMessageProperties ().getProperty ());
+            if (!StringHelper.hasNoText (sCheckResult))
+            {
+              aAS4Response.setBadRequest (sCheckResult);
+              return;
+            }
+          }
+          else
+          {
+            aAS4Response.setBadRequest ("Message Property element present but no properties");
+            return;
+          }
+        }
+        else
+        {
+          aAS4Response.setBadRequest ("No Message Properties present but OriginalSender and finalRecipient have to be present");
           return;
         }
 
@@ -451,9 +469,29 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             return;
           }
       }
-
-      // TODO Profile checks here?
+      // PModeConfig
       final IPModeConfig aPModeConfig = aState.getPModeConfig ();
+
+      // Only do profile checks if a profile is set
+      if (AS4Configuration.getAS4Profile () != null)
+      {
+        // Profile Checks gets set when started with Server
+        final ErrorList aErrorList = new ErrorList ();
+        final IAS4Profile aDefaultProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
+        aDefaultProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+        aDefaultProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+        if (aErrorList.isNotEmpty ())
+        {
+          s_aLogger.error ("Error validating incoming AS4 message with the profile " +
+                           aDefaultProfile.getDisplayName ());
+          aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
+                                      aDefaultProfile.getDisplayName () +
+                                      "\n Following errors are present: " +
+                                      aErrorList.getAllErrors ().getAllTexts (aLocale));
+          return;
+        }
+      }
+
       if (aErrorMessages.isNotEmpty ())
       {
         if (_checkIfErrorResponseShouldBeSent (aPModeConfig))

@@ -42,6 +42,7 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
+import com.helger.as4server.settings.AS4Configuration;
 import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -50,8 +51,6 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.OfflineHttpServletRequest;
-import com.helger.settings.exchange.configfile.ConfigFile;
-import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
 import com.helger.web.scope.mgr.DefaultWebScopeFactory;
@@ -61,35 +60,31 @@ public final class AS4WebAppListener extends WebAppListener
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WebAppListener.class);
 
-  protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-as4.properties")
-                                                                    .addPath ("as4.properties")
-                                                                    .build ();
-
   @Override
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
-    return PROPS.getAsString ("server.debug");
+    return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
-    return PROPS.getAsString ("server.production");
+    return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return PROPS.getAsString ("server.nostartupinfo");
+    return Boolean.toString (AS4Configuration.hasStartupInfo ());
   }
 
   @Override
   protected String getDataPath (@Nonnull final ServletContext aSC)
   {
-    return PROPS.getAsString ("server.datapath");
+    return AS4Configuration.getDataPath ();
   }
 
   @Override

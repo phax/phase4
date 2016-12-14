@@ -98,7 +98,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   {
     final String sPartnerID = "TestPartnerUnkown";
 
-    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, sPartnerID, null);
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, sPartnerID, null, true);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -111,7 +111,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   {
     final String sPartnerID = "random_party_id121";
 
-    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, null, sPartnerID);
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, null, sPartnerID, true);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -123,7 +123,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   public void testPartnersExistShouldGetDefaultConfig () throws Exception
   {
 
-    final Document aDoc = _modifyUserMessage (null, null, null);
+    final Document aDoc = _modifyUserMessage (null, null, null, true);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -133,7 +133,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   public void testPartnersExistShouldThrowFaultSinceNewPModeConfig () throws Exception
   {
 
-    final Document aDoc = _modifyUserMessage ("testfaultconfig", null, null);
+    final Document aDoc = _modifyUserMessage ("testfaultconfig", null, null, true);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),

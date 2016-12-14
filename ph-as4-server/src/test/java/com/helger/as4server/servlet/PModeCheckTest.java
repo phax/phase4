@@ -68,7 +68,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   @Test
   public void testWrongPModeID () throws Exception
   {
-    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null);
+    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, true);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
@@ -91,7 +91,8 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (aPModeID.getID (),
                                                                                                        null,
-                                                                                                       null),
+                                                                                                       null,
+                                                                                                       true),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
                                                                                    s_aResMgr,
@@ -110,6 +111,14 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
       MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
+  }
+
+  @Test
+  public void testUserMessageMissingPropertiesNoOriginalSender () throws Exception
+  {
+    final Document aDoc = _modifyUserMessage (null, null, null, false);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
   }
 
   /**
@@ -139,7 +148,8 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
                                                                                                        null,
-                                                                                                       null),
+                                                                                                       null,
+                                                                                                       true),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
                                                                                    s_aResMgr,

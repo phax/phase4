@@ -111,9 +111,9 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
   }
 
-  public void setPModeConfig (@Nullable final IPModeConfig aPMode)
+  public void setPModeConfig (@Nullable final IPModeConfig aPModeConfig)
   {
-    setAttribute (KEY_PMODE_CONFIG, aPMode);
+    setAttribute (KEY_PMODE_CONFIG, aPModeConfig);
   }
 
   @Nullable

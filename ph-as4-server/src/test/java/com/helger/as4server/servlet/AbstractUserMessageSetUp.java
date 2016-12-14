@@ -134,7 +134,8 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
   @Nonnull
   protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                         @Nullable final String sAnotherOrWrongPartyIdResponder) throws Exception
+                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                         final boolean setProperties) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
@@ -160,7 +161,8 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
                                                                               sSetPartyIDInitiator,
                                                                               AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               sSetPartyIDResponder);
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = setProperties == true ? aUserMessage.createEbms3MessageProperties (aEbms3Properties)
+                                                                                 : null;
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
                                                                 aEbms3PayloadInfo,

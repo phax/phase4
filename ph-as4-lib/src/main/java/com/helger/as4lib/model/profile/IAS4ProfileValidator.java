@@ -22,12 +22,12 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.model.pmode.IPMode;
+import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.commons.error.list.ErrorList;
 
 /**
  * Generic profile validator
- * 
+ *
  * @author bayerlma
  */
 public interface IAS4ProfileValidator extends Serializable
@@ -40,7 +40,7 @@ public interface IAS4ProfileValidator extends Serializable
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  default void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  default void validatePModeConfig (@Nonnull final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrorList)
   {}
 
   /**

@@ -33,7 +33,6 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
-import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
@@ -68,27 +67,24 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  public void validatePModeConfig (@Nonnull final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrorList)
   {
-    ValueEnforcer.notNull (aPMode, "PMode");
-    assert MetaAS4Manager.getPModeMgr ().validatePMode (aPMode).isSuccess ();
-    MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPMode.getConfig (), aErrorList);
+
+    MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPModeConfig, aErrorList);
     assertTrue (aErrorList.isEmpty ());
 
-    final IPModeConfig aConfig = aPMode.getConfig ();
-
-    if (!aConfig.getMEP ().equals (EMEP.ONE_WAY) || aConfig.getMEP ().equals (EMEP.TWO_WAY))
+    if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) || aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
     {
       aErrorList.add (_createError ("A non valid PMode MEP was specified, valid or only one-way and two-way."));
     }
 
-    if (!aConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
-        !aConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
+    if (!aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
+        !aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
     {
       aErrorList.add (_createError ("A non valid PMode MEP-Binding was specified, valid or only one-way and two-way."));
     }
 
-    final PModeLeg aPModeLeg1 = aConfig.getLeg1 ();
+    final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();
     if (aPModeLeg1 == null)
     {
       aErrorList.add (_createError ("PMode is missing Leg 1"));
@@ -265,7 +261,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 
       // Compression application/gzip ONLY
       // other possible states are absent or "" (No input)
-      final PModePayloadService aPayloadService = aConfig.getPayloadService ();
+      final PModePayloadService aPayloadService = aPModeConfig.getPayloadService ();
       if (aPayloadService != null)
       {
         final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
@@ -286,19 +282,39 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
-    if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+    if (aUserMsg.getMessageInfo () != null)
     {
-      aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+
+      if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
+      {
+        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+      }
+    }
+    else
+    {
+      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
     }
 
-    if (aUserMsg.getPartyInfo ().getTo ().getPartyIdCount () > 1)
+    if (aUserMsg.getPartyInfo () != null)
     {
-      aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyTo - part"));
+      if (aUserMsg.getPartyInfo ().getTo () != null)
+      {
+        if (aUserMsg.getPartyInfo ().getTo ().getPartyIdCount () > 1)
+        {
+          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyTo - part"));
+        }
+      }
+      if (aUserMsg.getPartyInfo ().getFrom () != null)
+      {
+        if (aUserMsg.getPartyInfo ().getFrom ().getPartyIdCount () > 1)
+        {
+          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyFrom - part"));
+        }
+      }
     }
-
-    if (aUserMsg.getPartyInfo ().getFrom ().getPartyIdCount () > 1)
+    else
     {
-      aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyFrom - part"));
+      aErrorList.add (_createError ("At least one PartyInfo element has to be present"));
     }
   }
 
