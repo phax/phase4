@@ -86,7 +86,7 @@ public final class TestMessages
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                aErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
                                                                                                aEbms3ErrorList)
-                                                                          .setMustUnderstand (false)
+                                                                          .setMustUnderstand (true)
                                                                           .getAsSOAPDocument (),
                                                              eSOAPVersion,
                                                              aAttachments,
@@ -112,7 +112,7 @@ public final class TestMessages
                                                                 null,
                                                                 aUserMessage,
                                                                 true)
-                                         .setMustUnderstand (false)
+                                         .setMustUnderstand (true)
                                          .getAsSOAPDocument ();
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc,
@@ -156,7 +156,7 @@ public final class TestMessages
                                                                 aEbms3PartyInfo,
                                                                 aEbms3MessageProperties,
                                                                 eSOAPVersion)
-                                            .setMustUnderstand (false);
+                                            .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -191,7 +191,7 @@ public final class TestMessages
                                                                 aEbms3PartyInfo,
                                                                 aEbms3MessageProperties,
                                                                 eSOAPVersion)
-                                            .setMustUnderstand (false);
+                                            .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -226,7 +226,7 @@ public final class TestMessages
                                                                 aEbms3PartyInfo,
                                                                 aEbms3MessageProperties,
                                                                 eSOAPVersion)
-                                            .setMustUnderstand (false);
+                                            .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 

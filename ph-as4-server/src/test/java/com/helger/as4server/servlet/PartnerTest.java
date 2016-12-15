@@ -98,7 +98,10 @@ public class PartnerTest extends AbstractUserMessageSetUp
   {
     final String sPartnerID = "TestPartnerUnkown";
 
-    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, sPartnerID, null, true);
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST,
+                                              sPartnerID,
+                                              null,
+                                              _defaultProperties ());
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -111,7 +114,10 @@ public class PartnerTest extends AbstractUserMessageSetUp
   {
     final String sPartnerID = "random_party_id121";
 
-    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST, null, sPartnerID, true);
+    final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST,
+                                              null,
+                                              sPartnerID,
+                                              _defaultProperties ());
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -123,7 +129,7 @@ public class PartnerTest extends AbstractUserMessageSetUp
   public void testPartnersExistShouldGetDefaultConfig () throws Exception
   {
 
-    final Document aDoc = _modifyUserMessage (null, null, null, true);
+    final Document aDoc = _modifyUserMessage (null, null, null, _defaultProperties ());
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -133,69 +139,11 @@ public class PartnerTest extends AbstractUserMessageSetUp
   public void testPartnersExistShouldThrowFaultSinceNewPModeConfig () throws Exception
   {
 
-    final Document aDoc = _modifyUserMessage ("testfaultconfig", null, null, true);
+    final Document aDoc = _modifyUserMessage ("testfaultconfig", null, null, _defaultProperties ());
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
-
-  // @Nonnull
-  // private Document _modifyUserMessage (@Nullable final String
-  // sDifferentPartyIdInitiator,
-  // @Nullable final String sDifferentPartyIdResponder,
-  // @Nullable final String sDifferentPModeConfigID) throws Exception
-  // {
-  // // If argument is set replace the default one
-  // // final IPMode aPModeID = MetaAS4Manager.getPModeMgr ()
-  // // .findFirst (_getFirstPModeWithID
-  // // (ServletTestPMode.PMODE_CONFIG_ID_SOAP12_TEST));
-  // final ESOAPVersion eSetESOAPVersion = ESOAPVersion.AS4_DEFAULT;
-  // final String sSetPartyIDInitiator = sDifferentPartyIdInitiator == null ?
-  // AS4ServerTestHelper.DEFAULT_PARTY_ID
-  // : sDifferentPartyIdInitiator;
-  // final String sSetPartyIDResponder = sDifferentPartyIdResponder == null ?
-  // AS4ServerTestHelper.DEFAULT_PARTY_ID
-  // : sDifferentPartyIdResponder;
-  //
-  // final CreateUserMessage aUserMessage = new CreateUserMessage ();
-  // final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource
-  // ("SOAPBodyPayload.xml"));
-  //
-  // // Add properties
-  // final ICommonsList <Ebms3Property> aEbms3Properties =
-  // AS4ServerTestHelper.getEBMSProperties ();
-  //
-  // final Ebms3MessageInfo aEbms3MessageInfo =
-  // aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-  // final Ebms3PayloadInfo aEbms3PayloadInfo =
-  // aUserMessage.createEbms3PayloadInfo (aPayload, null);
-  // final Ebms3CollaborationInfo aEbms3CollaborationInfo =
-  // aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-  // "MyServiceTypes",
-  // "QuoteToCollect",
-  // "4321",
-  // sDifferentPModeConfigID,
-  // AS4ServerTestHelper.DEFAULT_AGREEMENT);
-  // final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo
-  // (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
-  // sSetPartyIDInitiator,
-  // AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
-  // sSetPartyIDResponder);
-  // final Ebms3MessageProperties aEbms3MessageProperties =
-  // aUserMessage.createEbms3MessageProperties (aEbms3Properties);
-  //
-  // final AS4UserMessage aDoc = aUserMessage.createUserMessage
-  // (aEbms3MessageInfo,
-  // aEbms3PayloadInfo,
-  // aEbms3CollaborationInfo,
-  // aEbms3PartyInfo,
-  // aEbms3MessageProperties,
-  // eSetESOAPVersion)
-  // .setMustUnderstand (false);
-  //
-  // return aDoc.getAsSOAPDocument (aPayload);
-  // }
-
 }

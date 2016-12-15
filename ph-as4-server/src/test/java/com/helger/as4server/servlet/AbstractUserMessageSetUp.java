@@ -131,11 +131,24 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
     }
   }
 
+  /**
+   * Modify the standard user message to try special cases or provoke failure
+   * messages.
+   *
+   * @param sAnotherOrWrongPModeID
+   * @param sAnotherOrWrongPartyIdInitiator
+   * @param sAnotherOrWrongPartyIdResponder
+   * @param aEbms3MessageProperties
+   *        Default should be with _defaultProperties(), only if you do not want
+   *        them change this
+   * @return
+   * @throws Exception
+   */
   @Nonnull
   protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                         final boolean setProperties) throws Exception
+                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
@@ -145,9 +158,6 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
 
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
     final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
@@ -161,8 +171,6 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
                                                                               sSetPartyIDInitiator,
                                                                               AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
                                                                               sSetPartyIDResponder);
-    final Ebms3MessageProperties aEbms3MessageProperties = setProperties == true ? aUserMessage.createEbms3MessageProperties (aEbms3Properties)
-                                                                                 : null;
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
                                                                 aEbms3PayloadInfo,
@@ -170,7 +178,7 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
                                                                 aEbms3PartyInfo,
                                                                 aEbms3MessageProperties,
                                                                 ESOAPVersion.AS4_DEFAULT)
-                                            .setMustUnderstand (false);
+                                            .setMustUnderstand (true);
 
     return aDoc.getAsSOAPDocument (aPayload);
   }
@@ -179,5 +187,14 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
   protected static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
   {
     return p -> p.getConfigID ().equals (sID);
+  }
+
+  protected Ebms3MessageProperties _defaultProperties ()
+  {
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    aEbms3MessageProperties.setProperty (aEbms3Properties);
+    return aEbms3MessageProperties;
   }
 }

@@ -353,6 +353,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Check if originalSender and finalRecipient are present also saves
         // them into variables
+        // Since these two properties are mandatory
         if (aUserMessage.getMessageProperties () != null)
         {
           if (aUserMessage.getMessageProperties ().getProperty () != null)
@@ -475,19 +476,27 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // Only do profile checks if a profile is set
       if (AS4Configuration.getAS4Profile () != null)
       {
-        // Profile Checks gets set when started with Server
-        final ErrorList aErrorList = new ErrorList ();
-        final IAS4Profile aDefaultProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
-        aDefaultProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
-        aDefaultProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
-        if (aErrorList.isNotEmpty ())
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (AS4Configuration.getAS4Profile ());
+
+        if (aProfile != null)
         {
-          s_aLogger.error ("Error validating incoming AS4 message with the profile " +
-                           aDefaultProfile.getDisplayName ());
-          aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
-                                      aDefaultProfile.getDisplayName () +
-                                      "\n Following errors are present: " +
-                                      aErrorList.getAllErrors ().getAllTexts (aLocale));
+          // Profile Checks gets set when started with Server
+          final ErrorList aErrorList = new ErrorList ();
+          aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+          aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+          if (aErrorList.isNotEmpty ())
+          {
+            s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
+            aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
+                                        aProfile.getDisplayName () +
+                                        "\n Following errors are present: " +
+                                        aErrorList.getAllErrors ().getAllTexts (aLocale));
+            return;
+          }
+        }
+        else
+        {
+          aAS4Response.setBadRequest ("The profile " + AS4Configuration.getAS4Profile () + " does not exist.");
           return;
         }
       }

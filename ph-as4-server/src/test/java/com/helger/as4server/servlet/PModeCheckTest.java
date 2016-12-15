@@ -20,14 +20,24 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.IPMode;
@@ -40,9 +50,14 @@ import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.constants.AS4ServerTestHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.url.URLHelper;
 import com.helger.photon.jetty.JettyRunner;
+import com.helger.xml.serialize.read.DOMReader;
 
 public class PModeCheckTest extends AbstractUserMessageSetUp
 {
@@ -50,6 +65,11 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   private static final int STOP_PORT = PORT + 1000;
   private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
   private static AS4ResourceManager s_aResMgr;
+  private static final Logger s_aLogger = LoggerFactory.getLogger (PModeCheckTest.class);
+
+  private Ebms3UserMessage aEbms3UserMessage;
+  private CreateUserMessage aUserMessage;
+  private Node aPayload;
 
   @BeforeClass
   public static void startServer () throws Exception
@@ -65,10 +85,52 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     s_aJetty.shutDownServer ();
   }
 
+  @Before
+  public void setupMessage ()
+  {
+    aEbms3UserMessage = new Ebms3UserMessage ();
+    aUserMessage = new CreateUserMessage ();
+    // Default Payload for testing
+
+    try
+    {
+      aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      aEbms3UserMessage.setPayloadInfo (aUserMessage.createEbms3PayloadInfo (aPayload, null));
+    }
+    catch (final SAXException e)
+    {
+      s_aLogger.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup");
+    }
+
+    // Default MessageInfo for testing
+    aEbms3UserMessage.setMessageInfo (aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME));
+
+    // Default CollaborationInfo for testing
+    aEbms3UserMessage.setCollaborationInfo (aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                       "MyServiceTypes",
+                                                                                       "QuoteToCollect",
+                                                                                       "4321",
+                                                                                       null,
+                                                                                       AS4ServerTestHelper.DEFAULT_AGREEMENT));
+
+    // Default PartyInfo for testing
+    aEbms3UserMessage.setPartyInfo (aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+                                                                       AS4ServerTestHelper.DEFAULT_PARTY_ID,
+                                                                       AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                       AS4ServerTestHelper.DEFAULT_PARTY_ID));
+    // Default MessageProperties for testing
+    aEbms3UserMessage.setMessageProperties (_defaultProperties ());
+
+  }
+
   @Test
   public void testWrongPModeID () throws Exception
   {
-    final Document aDoc = _modifyUserMessage ("this-is-a-wrong-id", null, null, true);
+    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode ("this-is-a-wrong-id");
+
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
@@ -83,16 +145,18 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
     ((PModeConfig) aPMode.getConfig ()).setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+
     try
     {
       aPModeMgr.createPMode (aPMode);
 
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
+      aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (aPModeID.getID (),
-                                                                                                       null,
-                                                                                                       null,
-                                                                                                       true),
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                                                                                aEbms3UserMessage)
+                                                                                               .setMustUnderstand (true)
+                                                                                               .getAsSOAPDocument (aPayload),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
                                                                                    s_aResMgr,
@@ -106,20 +170,44 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     }
     finally
     {
-      // The MockPModeGenerator generates automatically a PModeConfig we need to
-      // delete it after we are done with the test
+      // The MockPModeGenerator generates automatically a PModeConfig, we need
+      // too delete it after we are done with the test
       MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
   }
 
   @Test
-  public void testUserMessageMissingPropertiesNoOriginalSender () throws Exception
+  public void testUserMessageMissingProperties () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (null, null, null, false);
+    aEbms3UserMessage.setMessageProperties (null);
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
   }
+
+  @Test
+  public void testUserMessageDifferentPropertiesValues () throws Exception
+  {
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final Ebms3Property aOriginalSender = new Ebms3Property ();
+    aOriginalSender.setName ("RandomProperty");
+    aOriginalSender.setValue ("randomStats");
+    aEbms3Properties.add (aOriginalSender);
+    aEbms3MessageProperties.setProperty (aEbms3Properties);
+
+    aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
+  }
+
+  // TODO Write test with coverage in AS4Servlert z.b. linenumber 395 onwards
 
   /**
    * Is ESENS specific, EBMS3 specification is the protocol an optional element.
@@ -149,7 +237,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
                                                                                                        null,
                                                                                                        null,
-                                                                                                       true),
+                                                                                                       _defaultProperties ()),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
                                                                                    s_aResMgr,
