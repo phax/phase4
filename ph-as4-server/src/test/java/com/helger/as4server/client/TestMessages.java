@@ -151,9 +151,9 @@ final class TestMessages
                                                                                                       "4321",
                                                                                                       "pm-esens-generic-resp",
                                                                                                       AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
                                                                               AS4ServerTestHelper.DEFAULT_PARTY_ID,
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
                                                                               AS4ServerTestHelper.DEFAULT_PARTY_ID);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
@@ -192,9 +192,9 @@ final class TestMessages
                                                                                                       "4321",
                                                                                                       "pm-esens-generic-resp",
                                                                                                       AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
                                                                               "testt",
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
                                                                               "testt");
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

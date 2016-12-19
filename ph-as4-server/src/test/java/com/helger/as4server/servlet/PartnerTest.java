@@ -107,6 +107,8 @@ public class PartnerTest extends AbstractUserMessageSetUp
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
     final IPartner aPartner = aPM.getPartnerOfID (sPartnerID);
     assertNotNull (aPartner);
+
+    aPM.deletePartner (aPartner.getID ());
   }
 
   @Test
@@ -123,6 +125,8 @@ public class PartnerTest extends AbstractUserMessageSetUp
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
     final IPartner aPartner = aPM.getPartnerOfID (sPartnerID);
     assertNotNull (aPartner);
+
+    aPM.deletePartner (aPartner.getID ());
   }
 
   @Test

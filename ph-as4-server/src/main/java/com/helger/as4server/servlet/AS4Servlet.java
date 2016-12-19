@@ -73,7 +73,6 @@ import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.settings.AS4Configuration;
-import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.ValueEnforcer;
@@ -116,11 +115,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
   private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList<> ();
-
-  // C1
-  private String sOriginalSender = null;
-  // C4
-  private String sFinalRecipient = null;
 
   /**
    * Reload all SPI implementations of {@link IAS4ServletMessageProcessorSPI}.
@@ -298,20 +292,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           }
 
         aMessaging = aState.getMessaging ();
-        if (aMessaging == null)
-        {
-          aAS4Response.setBadRequest ("No Ebms3 Messaging header was found");
-          return;
-        }
 
-        // Every message should only contain 1 UserMessage and n (0..n)
-        // SignalMessages
-        if (aMessaging.getUserMessageCount () != 1)
-        {
-          aAS4Response.setBadRequest ("Unexpected number of Ebms3 UserMessages found: " +
-                                      aMessaging.getUserMessageCount ());
-          return;
-        }
+        // Every message can only contain 1 Usermessage but 0..n signalmessages
         aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
         // Decompressing the attachments
@@ -351,8 +333,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         final Node aPayloadNode = aBodyNode.getFirstChild ();
 
-        // Check if originalSender and finalRecipient are present also saves
-        // them into variables
+        // Check if originalSender and finalRecipient
         // Since these two properties are mandatory
         if (aUserMessage.getMessageProperties () != null)
         {
@@ -394,18 +375,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         if (aPModeConfigMgr.containsWithID (sConfigID))
         {
-          if (aState.getResponderID () == null)
-          {
-            s_aLogger.info ("Default Responder used");
-            aState.setResponderID (AS4ServerSettings.getDefaultResponderID ());
-          }
-
-          if (aState.getInitiatorID () == null)
-          {
-            aAS4Response.setBadRequest ("No Initiator specifed, currently mandatory since only one way supported");
-            return;
-          }
-
           if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
               aPartnerMgr.containsWithID (aState.getResponderID ()))
           {
@@ -428,13 +397,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
           }
-        }
-        else
-        {
-          // Return bad request since pmodeconfigs can not be added
-          // dynamically
-          aAS4Response.setBadRequest ("PModeConfig could not be found with ID: " + sConfigID);
-          return;
         }
 
         for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
@@ -586,10 +548,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   @Nullable
   private String _checkAndSaveProperties (@Nonnull final List <Ebms3Property> aPropertyList)
   {
-    if (aPropertyList.isEmpty ())
-    {
-      return "No C1 and C4 are specified in the properties(originalSender and finalRecipient)!";
-    }
+    // C1
+    String sOriginalSender = null;
+    // C4
+    String sFinalRecipient = null;
 
     for (final Ebms3Property sProperty : aPropertyList)
     {

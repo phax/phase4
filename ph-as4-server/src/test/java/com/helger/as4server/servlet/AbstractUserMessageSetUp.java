@@ -167,9 +167,9 @@ public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
                                                                                                       "4321",
                                                                                                       sAnotherOrWrongPModeID,
                                                                                                       AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
                                                                               sSetPartyIDInitiator,
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
                                                                               sSetPartyIDResponder);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,

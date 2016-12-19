@@ -17,6 +17,12 @@
 package com.helger.as4server.servlet;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
@@ -114,9 +120,9 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                        AS4ServerTestHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
-    aEbms3UserMessage.setPartyInfo (aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ID,
+    aEbms3UserMessage.setPartyInfo (aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
                                                                        AS4ServerTestHelper.DEFAULT_PARTY_ID,
-                                                                       AS4ServerTestHelper.DEFAULT_RESPONDER_ID,
+                                                                       AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
                                                                        AS4ServerTestHelper.DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     aEbms3UserMessage.setMessageProperties (_defaultProperties ());
@@ -193,10 +199,8 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName ("RandomProperty");
-    aOriginalSender.setValue ("randomStats");
-    aEbms3Properties.add (aOriginalSender);
+
+    aEbms3Properties.add (getRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
@@ -207,7 +211,62 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
   }
 
-  // TODO Write test with coverage in AS4Servlert z.b. linenumber 395 onwards
+  @Test
+  public void testUserMessageFinalRecipientButNoOriginalSender () throws Exception
+  {
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (AS4ServerTestHelper.ORIGINAL_SENDER));
+
+    assertTrue (aEbms3Properties.size () == 1);
+
+    aEbms3Properties.add (getRandomProperty ());
+    aEbms3MessageProperties.setProperty (aEbms3Properties);
+
+    aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      "originalSender property is empty or not existant but mandatory");
+  }
+
+  @Test
+  public void testUserMessageOriginalSenderButNoFinalRecipient () throws Exception
+  {
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (AS4ServerTestHelper.FINAL_RECIPIENT));
+
+    assertTrue (aEbms3Properties.size () == 1);
+
+    aEbms3Properties.add (getRandomProperty ());
+    aEbms3MessageProperties.setProperty (aEbms3Properties);
+
+    aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      "finalRecipient property is empty or not existant but mandatory");
+  }
+
+  @Test
+  public void testNoResponderInMessageInvalidShouldReturnErrorMessage () throws Exception
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/NoResponder.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+  }
 
   /**
    * Is ESENS specific, EBMS3 specification is the protocol an optional element.
@@ -255,4 +314,12 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     }
   }
 
+  private Ebms3Property getRandomProperty ()
+  {
+    final Ebms3Property aRandomProperty = new Ebms3Property ();
+    aRandomProperty.setName ("randomname" + UUID.randomUUID ());
+    aRandomProperty.setValue ("randomvalue" + UUID.randomUUID ());
+
+    return aRandomProperty;
+  }
 }

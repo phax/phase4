@@ -46,6 +46,8 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.error.IError;
+import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -75,7 +77,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     if (aMessaging == null)
     {
-      aErrorList.addAll (aCVEH.getErrorList ());
+      // Errorcode/Id would be null => not conform with Ebms3ErrorMessage since
+      // the message always needs a errorcode =>
+      // Invalid Header == not wellformed/invalid xml
+      for (final IError aError : aCVEH.getErrorList ())
+      {
+        aErrorList.add (SingleError.builder (aError)
+                                   .setErrorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ())
+                                   .build ());
+      }
       return ESuccess.FAILURE;
     }
 
@@ -303,7 +313,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
-    // Setting Initiator and Responder id if usermessage contains them
+    // Setting Initiator and Responder id, Required values or else xsd will
+    // throw an error
     aState.setInitiatorID (aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
     aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
 
