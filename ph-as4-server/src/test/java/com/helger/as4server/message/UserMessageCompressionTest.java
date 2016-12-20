@@ -94,5 +94,4 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
                                                                                           null);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
-
 }

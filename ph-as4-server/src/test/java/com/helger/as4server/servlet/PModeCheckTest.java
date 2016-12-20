@@ -96,8 +96,8 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
   {
     aEbms3UserMessage = new Ebms3UserMessage ();
     aUserMessage = new CreateUserMessage ();
-    // Default Payload for testing
 
+    // Default Payload for testing
     try
     {
       aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
@@ -157,7 +157,7 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
       aPModeMgr.createPMode (aPMode);
 
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
-      aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
+      aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                                                                 aEbms3UserMessage)
@@ -169,6 +169,39 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
                                                                                    false,
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                        false,
+                        EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    }
+    finally
+    {
+      // The MockPModeGenerator generates automatically a PModeConfig, we need
+      // too delete it after we are done with the test
+      MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
+      aPModeMgr.deletePMode (aPMode.getID ());
+    }
+  }
+
+  @Test
+  public void testPModeWrongMPC () throws Exception
+  {
+    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    aPMode.getConfig ().getLeg1 ().getBusinessInfo ().setMPCID ("wrongmpcid");
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+
+    try
+    {
+      aPModeMgr.createPMode (aPMode);
+
+      final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
+      aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
+
+      final Document aSignedDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                               aEbms3UserMessage)
+                                              .setMustUnderstand (true)
+                                              .getAsSOAPDocument (aPayload);
 
       sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
                         false,
@@ -266,6 +299,19 @@ public class PModeCheckTest extends AbstractUserMessageSetUp
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+  }
+
+  @Test
+  public void testWrongMPCShouldReturnFailure () throws Exception
+  {
+    aEbms3UserMessage.setMpc ("http://random.com/testmpc");
+    final Document aDoc = aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage)
+                                      .setMustUnderstand (true)
+                                      .getAsSOAPDocument (aPayload);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**

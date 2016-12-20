@@ -271,10 +271,6 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
             aErrorList.add (_createError ("Only GZIP Compression is allowed"));
         }
       }
-      else
-      {
-        // TODO no compression allowed in the implementation
-      }
     }
   }
 

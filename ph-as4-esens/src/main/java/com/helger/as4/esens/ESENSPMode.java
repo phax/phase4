@@ -30,7 +30,6 @@ import com.helger.as4lib.model.pmode.PModeLeg;
 import com.helger.as4lib.model.pmode.PModeLegBusinessInformation;
 import com.helger.as4lib.model.pmode.PModeLegErrorHandling;
 import com.helger.as4lib.model.pmode.PModeLegProtocol;
-import com.helger.as4lib.model.pmode.PModeLegReliability;
 import com.helger.as4lib.model.pmode.PModeLegSecurity;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
@@ -46,8 +45,6 @@ public final class ESENSPMode
   @Nonnull
   public static PModeConfig createESENSPModeConfig ()
   {
-    // TODO use from manager if existing
-
     final PModeConfig aConfig = new PModeConfig ("pm-esens-default");
     aConfig.setMEP (EMEP.ONE_WAY);
     aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
@@ -90,18 +87,6 @@ public final class ESENSPMode
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
     return aPModeLegSecurity;
-  }
-
-  @Nonnull
-  private static PModeLeg _generatePModeLeg ()
-  {
-    final PModeLegReliability aPModeLegReliability = null;
-    final PModeLegSecurity aPModeLegSecurity = null;
-    return new PModeLeg (_generatePModeLegProtocol (),
-                         _generatePModeLegBusinessInformation (),
-                         null,
-                         aPModeLegReliability,
-                         aPModeLegSecurity);
   }
 
   @Nonnull

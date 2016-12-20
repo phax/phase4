@@ -162,7 +162,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     ValueEnforcer.notNull (aAS4Response, "AS4Response");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    // TODO remove if or entire statement so much output
+    // TODO remove if or entire statement, so much output
     if (GlobalDebug.isDebugMode () && false)
     {
       s_aLogger.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
@@ -281,6 +281,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // Now check if all must understand headers were processed
       Ebms3Messaging aMessaging = null;
       Ebms3UserMessage aUserMessage = null;
+
       if (aErrorMessages.isEmpty ())
       {
         for (final AS4SOAPHeader aHeader : aHeaders)
@@ -301,7 +302,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                                                                       : aState.getOriginalAttachments (),
                                                                                                     x -> new AS4IncomingWSS4JAttachment (x));
 
-        // Decompress attachments (if compress)
+        // Decompress attachments (if compressed)
         final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
         for (final IAS4IncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
         {
@@ -317,8 +318,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           }
         }
 
-        // Do something with the message
         final Document aDecryptedSOAPDoc = aState.getDecryptedSOAPDocument ();
+
         if (aDecryptedSOAPDoc != null)
         {
           // Re-evaluate body node from decrypted SOAP document
@@ -333,13 +334,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         final Node aPayloadNode = aBodyNode.getFirstChild ();
 
-        // Check if originalSender and finalRecipient
+        // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory
         if (aUserMessage.getMessageProperties () != null)
         {
           if (aUserMessage.getMessageProperties ().getProperty () != null)
           {
-            final String sCheckResult = _checkAndSaveProperties (aUserMessage.getMessageProperties ().getProperty ());
+            final String sCheckResult = _checkPropertiesOrignalSenderAndFinalRecipient (aUserMessage.getMessageProperties ()
+                                                                                                    .getProperty ());
             if (!StringHelper.hasNoText (sCheckResult))
             {
               aAS4Response.setBadRequest (sCheckResult);
@@ -367,7 +369,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         // P+P da + PConfig da = nix tun
         // P+P da + PConfig id fehlt = default
 
-        // Step 1 check if PModeConfig exists
         final String sConfigID = aState.getPModeConfig ().getID ();
 
         final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
@@ -378,8 +379,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
               aPartnerMgr.containsWithID (aState.getResponderID ()))
           {
-            // Step 2: Check if P+P already exists, P+P should be C1-C4 but
-            // initiator and responder id itself are C2 and C3
             _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
           }
           else
@@ -463,6 +462,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
       }
 
+      // Generate ErrorMessage if errors in the process are present and the
+      // partners declared in their pmodeconfig they want an errorresponse
       if (aErrorMessages.isNotEmpty ())
       {
         if (_checkIfErrorResponseShouldBeSent (aPModeConfig))
@@ -479,6 +480,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       else
       {
+        // If no Error is present check if partners declared if they want an
+        // response and if this response should contain
+        // nonrepudiationinformation if applicable
         if (_checkIfResponseShouldBeSent (aPModeConfig))
         {
           final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
@@ -500,6 +504,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
+  /**
+   * Checks if in the given PModeConfig the isSendReceiptNonRepudiation is set
+   * or not.
+   *
+   * @param aPModeConfig
+   *        to check the attribute
+   * @return Returns the value if set, else DEFAULT <code>FALSE</code>.
+   */
   private boolean _getNonRepudiationInformation (final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
@@ -512,6 +524,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return false;
   }
 
+  /**
+   * Checks if in the given PModeConfig isReportAsResponse is set.
+   *
+   * @param aPModeConfig
+   *        to check the attribute
+   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
+   */
   private boolean _checkIfErrorResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
@@ -523,6 +542,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return true;
   }
 
+  /**
+   * Checks if a ReceiptReplyPattern is set to Response or not.
+   *
+   * @param aPModeConfig
+   *        to check the attribute
+   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
+   */
   private boolean _checkIfResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
@@ -535,6 +561,15 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return true;
   }
 
+  /**
+   * Creates or Updates are Partner. Overwrites with the values in the parameter
+   * or creates a new Partner if not present in the PartnerManager already.
+   *
+   * @param usedCertificate,
+   *        Certificate that should be used
+   * @param sID,
+   *        ID of the Partner
+   */
   private void _createOrUpdatePartner (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
   {
     final StringMap aStringMap = new StringMap ();
@@ -545,8 +580,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
   }
 
+  /**
+   * Checks the mandatory properties OriginalSender and FinalRecipient if those
+   * two are set.
+   *
+   * @param aPropertyList,
+   *        the property list that should be checked for the two specific ones
+   * @return <code>null</code> if both properties are present, else returns the
+   *         error message that should be returned to the user.
+   */
   @Nullable
-  private String _checkAndSaveProperties (@Nonnull final List <Ebms3Property> aPropertyList)
+  private String _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList)
   {
     // C1
     String sOriginalSender = null;

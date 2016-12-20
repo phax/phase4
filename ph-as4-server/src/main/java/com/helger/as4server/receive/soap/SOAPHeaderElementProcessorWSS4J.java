@@ -69,6 +69,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final Locale aLocale)
   {
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
+    // Safety Check
     if (aPModeConfig == null)
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 
@@ -81,12 +82,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
       if (aSignedNode != null)
       {
+        // Go through ne security nodes to find the algorithm attribute
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignedInfo");
         final Element aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
                                                                                   CAS4.DS_NS,
                                                                                   "SignatureMethod");
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
+
         if (eSignAlgo == null)
         {
           LOG.info ("Error processing the Security Header, your signing algorithm '" +
@@ -108,6 +111,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "DigestMethod");
         sAlgorithm = aSignedNode == null ? null : aSignedNode.getAttribute ("Algorithm");
         final ECryptoAlgorithmSignDigest eSignDigestAlgo = ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm);
+
         if (eSignDigestAlgo == null)
         {
           LOG.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
@@ -133,6 +137,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
       final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);
       final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
+
       // Check if Attachment IDs are the same
       for (int i = 0; i < aAttachments.size (); i++)
       {
@@ -167,6 +172,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                               aState.getResourceMgr ());
 
+        // Configure RequestData needed for the check / decrpyt process!
         final RequestData aRequestData = new RequestData ();
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
@@ -190,9 +196,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (aCerts.size () > 1)
           LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
 
+        // Remember in State
         aState.setUsedCertificate (aCerts.getAtIndex (0));
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
+        // Decrypting the Attachments
         final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getResponseAttachments ();
         for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
         {
@@ -207,6 +215,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           else
             LOG.warn ("Found other IS: " + aIS);
         }
+
+        // Remember in State
         aState.setDecryptedAttachments (aResponseAttachments);
       }
       catch (final Exception ex)

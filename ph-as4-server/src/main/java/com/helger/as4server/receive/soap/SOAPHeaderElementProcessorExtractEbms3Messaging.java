@@ -75,6 +75,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                                         .setValidationEventHandler (aCVEH)
                                                         .read (aElement);
 
+    // If the ebms3reader above fails aMessageing will be null => invalid/not
+    // wellformed
     if (aMessaging == null)
     {
       // Errorcode/Id would be null => not conform with Ebms3ErrorMessage since
@@ -127,198 +129,207 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           }
         }
       }
-    }
 
-    PModeLeg aPModeLeg1 = null;
-    IMPC aEffectiveMPC = null;
-    if (aPModeConfig != null)
-    {
-      // Check if MPC is contained in PMode and if so, if it is valid
-      aPModeLeg1 = aPModeConfig.getLeg1 ();
-      if (aPModeLeg1 != null)
+      // TODO check for right leg in two way situation
+      PModeLeg aPModeLeg1 = null;
+      IMPC aEffectiveMPC = null;
+
+      if (aPModeConfig != null)
       {
-        if (aPModeLeg1.getBusinessInfo () != null)
+        // Check if MPC is contained in PMode and if so, if it is valid
+        aPModeLeg1 = aPModeConfig.getLeg1 ();
+        if (aPModeLeg1 != null)
         {
-          final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
-          if (sPModeMPC != null)
-            if (!aMPCMgr.containsWithID (sPModeMPC))
-            {
-              LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
-
-              aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-              return ESuccess.FAILURE;
-            }
-        }
-      }
-      else
-      {
-        LOG.warn ("Error processing the usermessage, PMode does not contain a leg!");
-
-        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-
-      // PMode is valid
-      // Check MPC - can be in user message or in PMode
-      String sEffectiveMPCID = aUserMessage.getMpc ();
-      if (sEffectiveMPCID == null)
-      {
-        if (aPModeLeg1.getBusinessInfo () != null)
-          sEffectiveMPCID = aPModeLeg1.getBusinessInfo ().getMPCID ();
-      }
-      aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
-      if (aEffectiveMPC == null)
-      {
-        LOG.warn ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
-
-        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-    }
-
-    // Needed for the compression check, it is not allowed to have a compressed
-    // attachment and a SOAPBodyPayload
-    boolean bHasSoapBodyPayload = false;
-
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
-
-    if (aPModeLeg1 != null)
-    {
-      // Check if a SOAPBodyPayload exists
-      final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
-                                                                  aPModeLeg1.getProtocol ()
-                                                                            .getSOAPVersion ()
-                                                                            .getBodyElementName ());
-      if (aBody != null && aBody.hasChildNodes ())
-        bHasSoapBodyPayload = true;
-    }
-
-    // Remember in state
-    aState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
-
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
-    if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
-    {
-      if (bHasSoapBodyPayload)
-      {
-        LOG.warn ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
-
-        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-
-      // For the case that there is no Payload/Part - Info but still
-      // attachments in the message
-      if (aAttachments.isNotEmpty ())
-      {
-        LOG.warn ("No PartInfo is specified, so no attachments are allowed.");
-
-        aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-    }
-    else
-    {
-      // Check if there are more Attachments then specified
-      if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
-      {
-        LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
-                  aEbms3PayloadInfo.getPartInfoCount () +
-                  "'" +
-                  " but was '" +
-                  aAttachments.size () +
-                  "'");
-
-        aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-
-      int nSpecifiedAttachments = 0;
-
-      for (final Ebms3PartInfo aPart : aEbms3PayloadInfo.getPartInfo ())
-      {
-        // If href is null or empty there has to be a SOAP Payload
-        if (StringHelper.hasNoText (aPart.getHref ()))
-        {
-          // Check if there is a BodyPayload as specified in the UserMessage
-          if (!bHasSoapBodyPayload)
+          if (aPModeLeg1.getBusinessInfo () != null)
           {
-            LOG.warn ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
+            final String sPModeMPC = aPModeLeg1.getBusinessInfo ().getMPCID ();
+            if (sPModeMPC != null)
+              if (!aMPCMgr.containsWithID (sPModeMPC))
+              {
+                LOG.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
 
-            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-            return ESuccess.FAILURE;
+                aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+                return ESuccess.FAILURE;
+              }
           }
         }
         else
         {
-          // Attachment
-          // To check attachments which are specified in the usermessage and
-          // the real amount in the mime message
-          nSpecifiedAttachments++;
+          LOG.warn ("Error processing the usermessage, PMode does not contain a leg!");
 
-          for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
-          {
-            if (aEbms3Property.getName ().toLowerCase ().equals ("compressiontype"))
-            {
-              if (bHasSoapBodyPayload)
-              {
-                LOG.warn ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
 
-                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-                return ESuccess.FAILURE;
-              }
+        // PMode is valid
+        // Now Check if MPC valid
+        String sEffectiveMPCID = aUserMessage.getMpc ();
+        if (sEffectiveMPCID == null)
+        {
+          if (aPModeLeg1.getBusinessInfo () != null)
+            sEffectiveMPCID = aPModeLeg1.getBusinessInfo ().getMPCID ();
+        }
+        aEffectiveMPC = aMPCMgr.getMPCOrDefaultOfID (sEffectiveMPCID);
+        if (aEffectiveMPC == null)
+        {
+          LOG.warn ("Error processing the usermessage, effective PMode-MPC ID '" + sEffectiveMPCID + "' is unknown!");
 
-              // Only needed check here since AS4 does not support another
-              // CompressionType http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
-              final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
-              if (eCompressionMode == null)
-              {
-                LOG.warn ("Error processing the UserMessage, CompressionType " +
-                          aEbms3Property.getValue () +
-                          " is not supported. ");
-
-                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-                return ESuccess.FAILURE;
-              }
-
-              final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), "cid:");
-              aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
-            }
-          }
+          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+          return ESuccess.FAILURE;
         }
       }
 
-      if (nSpecifiedAttachments != aAttachments.size ())
-      {
-        LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
-                  aEbms3PayloadInfo.getPartInfoCount () +
-                  "'" +
-                  " but was '" +
-                  aAttachments.size () +
-                  "'");
+      // Needed for the compression check: it is not allowed to have a
+      // compressed attachment and a SOAPBodyPayload
+      boolean bHasSoapBodyPayload = false;
 
-        aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
-        return ESuccess.FAILURE;
+      final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
+
+      if (aPModeLeg1 != null)
+      {
+        // Check if a SOAPBodyPayload exists
+        final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
+                                                                    aPModeLeg1.getProtocol ()
+                                                                              .getSOAPVersion ()
+                                                                              .getBodyElementName ());
+        if (aBody != null && aBody.hasChildNodes ())
+          bHasSoapBodyPayload = true;
       }
+
+      // Remember in state
+      aState.setSoapBodyPayloadPresent (bHasSoapBodyPayload);
+
+      final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.getPayloadInfo ();
+      if (aEbms3PayloadInfo == null || aEbms3PayloadInfo.getPartInfo ().isEmpty ())
+      {
+        if (bHasSoapBodyPayload)
+        {
+          LOG.warn ("No PartInfo is specified, so no SOAPBodyPayload is allowed.");
+
+          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+
+        // For the case that there is no Payload/Part - Info but still
+        // attachments in the message
+        if (aAttachments.isNotEmpty ())
+        {
+          LOG.warn ("No PartInfo is specified, so no attachments are allowed.");
+
+          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+      }
+      else
+      {
+        // Check if there are more Attachments then specified
+        if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
+        {
+          LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
+                    aEbms3PayloadInfo.getPartInfoCount () +
+                    "'" +
+                    " but was '" +
+                    aAttachments.size () +
+                    "'");
+
+          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+
+        int nSpecifiedAttachments = 0;
+
+        for (final Ebms3PartInfo aPart : aEbms3PayloadInfo.getPartInfo ())
+        {
+          // If href is null or empty there has to be a SOAP Payload
+          if (StringHelper.hasNoText (aPart.getHref ()))
+          {
+            // Check if there is a BodyPayload as specified in the UserMessage
+            if (!bHasSoapBodyPayload)
+            {
+              LOG.warn ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
+
+              aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+              return ESuccess.FAILURE;
+            }
+          }
+          else
+          {
+            // Attachment
+            // To check attachments which are specified in the usermessage and
+            // the real amount in the mime message
+            nSpecifiedAttachments++;
+
+            for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
+            {
+              if (aEbms3Property.getName ().toLowerCase ().equals ("compressiontype"))
+              {
+                if (bHasSoapBodyPayload)
+                {
+                  LOG.warn ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
+
+                  aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+                  return ESuccess.FAILURE;
+                }
+
+                // Only needed check here since AS4 does not support another
+                // CompressionType
+                // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
+                final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
+                if (eCompressionMode == null)
+                {
+                  LOG.warn ("Error processing the UserMessage, CompressionType " +
+                            aEbms3Property.getValue () +
+                            " is not supported. ");
+
+                  aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+                  return ESuccess.FAILURE;
+                }
+
+                final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), "cid:");
+                aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
+              }
+            }
+          }
+        }
+
+        // If PartInfo(Usermessage - header) specified attachments and attached
+        // attachment differ throw an error
+        if (nSpecifiedAttachments != aAttachments.size ())
+        {
+          LOG.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
+                    aEbms3PayloadInfo.getPartInfoCount () +
+                    "'" +
+                    " but was '" +
+                    aAttachments.size () +
+                    "'");
+
+          aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+      }
+
+      // TODO if pullrequest the methode for extracting the pmode needs to be
+      // different since the pullrequest itself does not contain the pmode, it
+      // is
+      // just reachable over the mpc where the usermessage is supposed to be
+      // stored
+
+      // Remember in state
+      aState.setMessaging (aMessaging);
+      aState.setPModeConfig (aPModeConfig);
+      aState.setOriginalAttachments (aAttachments);
+      aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
+      aState.setMPC (aEffectiveMPC);
+      // Setting Initiator and Responder id, Required values or else xsd will
+      // throw an error
+      aState.setInitiatorID (aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
+      aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
+
+      return ESuccess.SUCCESS;
     }
 
-    // TODO if pullrequest the methode for extracting the pmode needs to be
-    // different since the pullrequest itself does not contain the pmode, it is
-    // just reachable over the mpc where the usermessage is supposed to be
-    // stored
-
-    // Remember in state
-    aState.setMessaging (aMessaging);
-    aState.setPModeConfig (aPModeConfig);
-    aState.setOriginalAttachments (aAttachments);
-    aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
-    aState.setMPC (aEffectiveMPC);
-    // Setting Initiator and Responder id, Required values or else xsd will
-    // throw an error
-    aState.setInitiatorID (aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
-    aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
-
-    return ESuccess.SUCCESS;
+    // No UserMessage was found
+    return ESuccess.FAILURE;
   }
 
 }
