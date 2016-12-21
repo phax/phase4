@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope"><S12:Header><wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" S12:mustUnderstand="false"><wsse:BinarySecurityToken EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3" wsu:Id="X509-23d9c907-cef1-42f3-9333-2973033aedef">MIIEhTCCA22gAwIBAgIQV89muarYc7GGAzfaMbEjUjANBgkqhkiG9w0BAQsFADB9MQswCQYDVQQGEwJESzEnMCUGA1UEChMeTkFUSU9OQUwgSVQgQU5EIFRFTEVDT00gQUdFTkNZMR8wHQYDVQQLExZGT1IgVEVTVCBQVVJQT1NFUyBPTkxZMSQwIgYDVQQDExtQRVBQT0wgQUNDRVNTIFBPSU5UIFRFU1QgQ0EwHhcNMTUwMzA2MDAwMDAwWhcNMTcwMzA1MjM1OTU5WjBXMQswCQYDVQQGEwJBVDEvMC0GA1UECgwmQlJaIChGZWRlcmFsIENvbXB1dGluZyBDZW50ZXIgQXVzdHJpYSkxFzAVBgNVBAMMDkFQUF8xMDAwMDAwMTAxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1t+C86QTUyNx8s62eIl36ODl0dDk7ow3K9oqnNuMWMns9sR41NtDVIETWqaO7vj09whuveNeyZarxvyCPxDS9Ckqb8BxCqe5kExMSLuFiBprebL6RHOIRhXc1iGwyca55jhB1Z6g1VmRaSryWoNiDeQ57JLTQFpXp7ccDw+SRzpPAvdo9ye/1eXfp6IarxzK+wIv/5kw8wNgovgUan/iCUE+ofRhiOF14X+VjJUHfhTO3zO/eMEbHyom/pvzZ6nzkna0coKtQQKcdkQ8rrtdhLJoLWjJIIvXYIOE6zLds/L7IPIaSmL6WpJMz5d82pKgTreSx8/YKP0lzRvsQx4IuQIDAQABo4IBJTCCASEwCQYDVR0TBAIwADALBgNVHQ8EBAMCA7gwdgYDVR0fBG8wbTBroGmgZ4ZlaHR0cDovL3BpbG90b25zaXRlY3JsLnZlcmlzaWduLmNvbS9EaWdpdGFsaXNlcmluZ3NzdHlyZWxzZW5QaWxvdE9wZW5QRVBQT0xBQ0NFU1NQT0lOVENBL0xhdGVzdENSTC5jcmwwHwYDVR0jBBgwFoAU95aLGUyu4lYhAL6G/XpHrJ3KBXUwHQYDVR0OBBYEFJj27Mzpvx84LQjHJtiUm6eJCe+WMDoGCCsGAQUFBwEBBC4wLDAqBggrBgEFBQcwAYYeaHR0cDovL3BpbG90LW9jc3AudmVyaXNpZ24uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwMCMA0GCSqGSIb3DQEBCwUAA4IBAQBagbfyISlRfqH6VsPZo14W+X5E/H0UjvGMwp1wlEFA8AzhIztqKWbVnS84vF2F0UqRrh44BHnwZmMhjnnHRqYdvzUDGNAiM2zPl0tDDb/RkLRfXHaXVA/kjaAYPzagq2N23vDEiz2G1ZKb9ufD+en8mbdmzpyIPVqbzc/qcitUOS9E70wUT3hx7wj54UN8j3jibWArz6/jC8RSL1AlVKISU2NxrIX3O1sBbxX0UvDKED7e4bSZGOYJRC6BAGn4xCSxK4B6rmGWt1RtlFvMjf0GyFRgb5HKVkOQCauFOUp543EKFKWkBTfFURRenBo1MDYAmofo0RnJ81qPbhYQSfps</wsse:BinarySecurityToken><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-a852db19-581a-4b4f-a2b6-899acfb4bf59"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"><ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="S12"/></ds:CanonicalizationMethod><ds:SignatureMethod Algorithm="http://www.randomcrypt.com/random"/><ds:Reference URI="#id-5820f310-faf9-4d92-80b3-e6bee2facb37"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>qSANDXmogPU3C3M/cAQjkMQjZWiUG2zrMgUGYvmCZr8=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>GlcETdvXNgAl6zXOrnhobpDdPHx21x1ve45LmflbcofSS1JaOzIz7LNl+jLUCHTYX+/NKxK/5b4VBxDhhcwuvKpHaUCFyZCMu+6G0ixbT4RJTwz+6teNBCvkbqvE2Gaf7QWxVUjkMm24HbCEVd+F47MhTRKpy0KL9SgdWqJ2eu7KXsxIzYJ6yvZrnY2h7CEO1r31TArN0CLr7r5ddKfZ4OLGPc+fbUTY9hb/UltIy/87STsSt5eYBuaDQq7cZY83zt2M/TiQWf5c9uKfwY4vLIG8oHHbUq7uBBeaG5elyKT/mOzmqQptEvZ9vjuPo9xrKhPeP3UiXELpcwLrQWeCJg==</ds:SignatureValue><ds:KeyInfo Id="KI-ae343ffa-2116-4a35-8e4a-76a9074a9559"><wsse:SecurityTokenReference wsu:Id="STR-b1e8be13-6e7a-4a73-bf11-f506f13e659f"><wsse:Reference URI="#X509-23d9c907-cef1-42f3-9333-2973033aedef" ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/></wsse:SecurityTokenReference></ds:KeyInfo></ds:Signature></wsse:Security><eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink" S12:mustUnderstand="true"><eb:UserMessage><eb:MessageInfo><eb:Timestamp>2016-12-21T11:34:22.462+01:00</eb:Timestamp><eb:MessageId>0c5307dc-5f80-49f5-94ac-2422a8e0d595@ph-as4</eb:MessageId></eb:MessageInfo><eb:PartyInfo><eb:From><eb:PartyId>APP_1000000101</eb:PartyId><eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender</eb:Role></eb:From><eb:To><eb:PartyId>APP_1000000101</eb:PartyId><eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role></eb:To></eb:PartyInfo><eb:CollaborationInfo><eb:AgreementRef pmode="pmode-test">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef><eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service><eb:Action>NewPurchaseOrder</eb:Action><eb:ConversationId>4321</eb:ConversationId></eb:CollaborationInfo><eb:MessageProperties><eb:Property name="originalSender">C1-test</eb:Property><eb:Property name="finalRecipient">C4-test</eb:Property></eb:MessageProperties><eb:PayloadInfo><eb:PartInfo/></eb:PayloadInfo></eb:UserMessage></eb:Messaging></S12:Header><S12:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="id-5820f310-faf9-4d92-80b3-e6bee2facb37"><StandardBusinessDocument xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <StandardBusinessDocumentHeader>
+    <HeaderVersion>1.0</HeaderVersion>
+    <Sender>
+      <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
+    </Sender>
+    <Receiver>
+      <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
+    </Receiver>
+    <DocumentIdentification>
+      <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
+      <TypeVersion>2.1</TypeVersion>
+      <InstanceIdentifier>123123</InstanceIdentifier>
+      <Type>Invoice</Type>
+      <CreationDateAndTime>2013-02-19T05:10:10Z</CreationDateAndTime>
+    </DocumentIdentification>
+    <BusinessScope>
+      <Scope>
+        <Type>DOCUMENTID</Type>
+        <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1</InstanceIdentifier>
+      </Scope>
+      <Scope>
+        <Type>PROCESSID</Type>
+        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>
+      </Scope>
+    </BusinessScope>
+  </StandardBusinessDocumentHeader>
+  <ns4:Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ns2="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+    <UBLVersionID>2.0</UBLVersionID>
+    <CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
+    </CustomizationID>
+    <ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</ProfileID>
+    <ID>orderNumber</ID>
+    <IssueDate>2011-08-22Z</IssueDate>
+    <InvoiceTypeCode>380</InvoiceTypeCode>
+    <DocumentCurrencyCode languageID="de" name="Euro">EUR</DocumentCurrencyCode>
+    <ns3:AccountingSupplierParty>
+      <ns3:Party>
+        <EndpointID schemeID="GLN">ep1234567890123</EndpointID>
+        <ns3:PartyIdentification>
+          <ID schemeID="GLN">1234567890123</ID>
+        </ns3:PartyIdentification>
+        <ns3:PartyName>
+          <Name>MasterDataName</Name>
+        </ns3:PartyName>
+        <ns3:PostalAddress>
+          <Postbox>1234567</Postbox>
+          <StreetName>My street</StreetName>
+          <BuildingNumber>121/4</BuildingNumber>
+          <CityName>Wien</CityName>
+          <PostalZone>1140</PostalZone>
+          <ns3:Country>
+            <IdentificationCode>AT</IdentificationCode>
+          </ns3:Country>
+        </ns3:PostalAddress>
+        <ns3:PartyTaxScheme>
+          <CompanyID>masterdataVATIN</CompanyID>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:PartyTaxScheme>
+        <ns3:Contact>
+          <Telephone>+43/1/1234567</Telephone>
+          <ElectronicMail>philip.helger@brz.gv.at</ElectronicMail>
+        </ns3:Contact>
+      </ns3:Party>
+    </ns3:AccountingSupplierParty>
+    <ns3:AccountingCustomerParty>
+      <ns3:Party>
+        <EndpointID schemeID="GLN">ep1234567890123</EndpointID>
+        <ns3:PartyIdentification>
+          <ID schemeID="GLN">1234567890123</ID>
+        </ns3:PartyIdentification>
+        <ns3:PartyName>
+          <Name>CustomerName</Name>
+        </ns3:PartyName>
+        <ns3:PostalAddress>
+          <Postbox>1234567</Postbox>
+          <StreetName>My street</StreetName>
+          <BuildingNumber>121/4</BuildingNumber>
+          <CityName>Wien</CityName>
+          <PostalZone>1140</PostalZone>
+          <ns3:Country>
+            <IdentificationCode>AT</IdentificationCode>
+          </ns3:Country>
+        </ns3:PostalAddress>
+        <ns3:PartyTaxScheme>
+          <CompanyID>customerVATIN</CompanyID>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:PartyTaxScheme>
+      </ns3:Party>
+    </ns3:AccountingCustomerParty>
+    <ns3:PaymentMeans>
+      <PaymentMeansCode>31</PaymentMeansCode>
+      <PaymentDueDate>2011-08-22Z</PaymentDueDate>
+      <PaymentChannelCode>IBAN</PaymentChannelCode>
+      <ns3:PayeeFinancialAccount>
+        <ID schemeID="IBAN">masterdataIBAN</ID>
+        <ns3:FinancialInstitutionBranch>
+          <ns3:FinancialInstitution>
+            <ID schemeID="BIC">masterdataBIC</ID>
+          </ns3:FinancialInstitution>
+        </ns3:FinancialInstitutionBranch>
+      </ns3:PayeeFinancialAccount>
+    </ns3:PaymentMeans>
+    <ns3:TaxTotal>
+      <TaxAmount currencyID="EUR">483.08</TaxAmount>
+      <ns3:TaxSubtotal>
+        <TaxableAmount currencyID="EUR">1000</TaxableAmount>
+        <TaxAmount currencyID="EUR">200.00</TaxAmount>
+        <ns3:TaxCategory>
+          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
+          <Percent>20</Percent>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:TaxCategory>
+      </ns3:TaxSubtotal>
+      <ns3:TaxSubtotal>
+        <TaxableAmount currencyID="EUR">1111</TaxableAmount>
+        <TaxAmount currencyID="EUR">0.00</TaxAmount>
+        <ns3:TaxCategory>
+          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
+          <Percent>0</Percent>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:TaxCategory>
+      </ns3:TaxSubtotal>
+      <ns3:TaxSubtotal>
+        <TaxableAmount currencyID="EUR">1224</TaxableAmount>
+        <TaxAmount currencyID="EUR">122.40</TaxAmount>
+        <ns3:TaxCategory>
+          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
+          <Percent>10</Percent>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:TaxCategory>
+      </ns3:TaxSubtotal>
+      <ns3:TaxSubtotal>
+        <TaxableAmount currencyID="EUR">1339</TaxableAmount>
+        <TaxAmount currencyID="EUR">160.68</TaxAmount>
+        <ns3:TaxCategory>
+          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
+          <Percent>12</Percent>
+          <ns3:TaxScheme>
+            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
+          </ns3:TaxScheme>
+        </ns3:TaxCategory>
+      </ns3:TaxSubtotal>
+    </ns3:TaxTotal>
+    <ns3:LegalMonetaryTotal>
+      <LineExtensionAmount currencyID="EUR">4674</LineExtensionAmount>
+      <TaxExclusiveAmount currencyID="EUR">4674</TaxExclusiveAmount>
+      <TaxInclusiveAmount currencyID="EUR">5157.08</TaxInclusiveAmount>
+      <PayableAmount currencyID="EUR">5157.08</PayableAmount>
+    </ns3:LegalMonetaryTotal>
+    <ns3:InvoiceLine>
+      <ID>line1</ID>
+      <InvoicedQuantity unitCode="C62">10</InvoicedQuantity>
+      <LineExtensionAmount currencyID="EUR">1000</LineExtensionAmount>
+      <ns3:OrderLineReference>
+        <LineID>orderItem1</LineID>
+      </ns3:OrderLineReference>
+      <ns3:TaxTotal>
+        <TaxAmount currencyID="EUR">200.00</TaxAmount>
+      </ns3:TaxTotal>
+      <ns3:Item>
+        <Description>itemDescription1</Description>
+        <Name>itemDescription1</Name>
+      </ns3:Item>
+      <ns3:Price>
+        <PriceAmount currencyID="EUR">100</PriceAmount>
+        <BaseQuantity unitCode="C62">1</BaseQuantity>
+      </ns3:Price>
+    </ns3:InvoiceLine>
+    <ns3:InvoiceLine>
+      <ID>line2</ID>
+      <InvoicedQuantity unitCode="C62">11</InvoicedQuantity>
+      <LineExtensionAmount currencyID="EUR">1111</LineExtensionAmount>
+      <ns3:OrderLineReference>
+        <LineID>orderItem2</LineID>
+      </ns3:OrderLineReference>
+      <ns3:TaxTotal>
+        <TaxAmount currencyID="EUR">0.00</TaxAmount>
+      </ns3:TaxTotal>
+      <ns3:Item>
+        <Description>itemDescription2</Description>
+        <Name>itemDescription2</Name>
+      </ns3:Item>
+      <ns3:Price>
+        <PriceAmount currencyID="EUR">101</PriceAmount>
+        <BaseQuantity unitCode="C62">1</BaseQuantity>
+      </ns3:Price>
+    </ns3:InvoiceLine>
+    <ns3:InvoiceLine>
+      <ID>line3</ID>
+      <InvoicedQuantity unitCode="C62">12</InvoicedQuantity>
+      <LineExtensionAmount currencyID="EUR">1224</LineExtensionAmount>
+      <ns3:OrderLineReference>
+        <LineID>orderItem3</LineID>
+      </ns3:OrderLineReference>
+      <ns3:TaxTotal>
+        <TaxAmount currencyID="EUR">122.40</TaxAmount>
+      </ns3:TaxTotal>
+      <ns3:Item>
+        <Description>itemDescription3</Description>
+        <Name>itemDescription3</Name>
+      </ns3:Item>
+      <ns3:Price>
+        <PriceAmount currencyID="EUR">102</PriceAmount>
+        <BaseQuantity unitCode="C62">1</BaseQuantity>
+      </ns3:Price>
+    </ns3:InvoiceLine>
+    <ns3:InvoiceLine>
+      <ID>line4</ID>
+      <InvoicedQuantity unitCode="C62">13</InvoicedQuantity>
+      <LineExtensionAmount currencyID="EUR">1339</LineExtensionAmount>
+      <ns3:OrderLineReference>
+        <LineID>orderItem4</LineID>
+      </ns3:OrderLineReference>
+      <ns3:TaxTotal>
+        <TaxAmount currencyID="EUR">160.68</TaxAmount>
+      </ns3:TaxTotal>
+      <ns3:Item>
+        <Description>itemDescription4</Description>
+        <Name>itemDescription4</Name>
+      </ns3:Item>
+      <ns3:Price>
+        <PriceAmount currencyID="EUR">103</PriceAmount>
+        <BaseQuantity unitCode="C62">1</BaseQuantity>
+      </ns3:Price>
+    </ns3:InvoiceLine>
+  </ns4:Invoice>
+</StandardBusinessDocument></S12:Body></S12:Envelope>

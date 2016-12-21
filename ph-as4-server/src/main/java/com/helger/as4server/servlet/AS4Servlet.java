@@ -620,6 +620,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return null;
   }
 
+  /**
+   * Creates a PMode if it does not exist already.
+   *
+   * @param aState,
+   *        needed to get Responder and Initiator
+   * @param sConfigID,
+   *        needed to get the PModeConfig for the PMode
+   * @param aUserMessage,
+   *        needed to get full information of the Initiator and Responder
+   */
   private void _createPModeIfNotPresent (@Nonnull final AS4MessageState aState,
                                          @Nonnull final String sConfigID,
                                          @Nonnull final Ebms3UserMessage aUserMessage)
@@ -658,6 +668,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // If the PMode already exists we do not need to do anything
   }
 
+  /**
+   * This Predicate helps to find if a Partner (Initiator), Partner (Responder)
+   * with a specific PModeConfig already exists.
+   *
+   * @param sInitiatorID,
+   *        Initiator to check
+   * @param sResponderID,
+   *        Responder to check
+   * @param sPModeConfigID,
+   *        PModeConfig to check
+   * @return aPMode if it already exists with all 3 components
+   */
   @Nullable
   public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nonnull final String sInitiatorID,
                                                                @Nonnull final String sResponderID,

@@ -72,6 +72,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments,
                                                                                           null);
+
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -92,6 +93,15 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments,
                                                                                           null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithWrongCompressionType () throws Exception
+  {
+    final MimeMessage aMsg = new MimeMessage (null,
+                                              new ClassPathResource ("testfiles/WrongCompression.mime").getInputStream ());
+
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }

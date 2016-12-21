@@ -72,6 +72,7 @@ public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments,
                                                                                           null);
+
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 

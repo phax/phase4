@@ -328,4 +328,30 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     aMsg.saveChanges ();
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
+
+  @Test
+  public void testUserMessageWrongSigningAlgorithm () throws Exception
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningAlgorithm.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWrongSigningDigestAlgorithm () throws Exception
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningDigestAlgorithm.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+  }
 }

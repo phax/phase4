@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -73,6 +74,7 @@ public class UserMessageSoapBodyPayloadTests extends AbstractUserMessageTestSetU
 
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
+    System.out.println (EntityUtils.toString (new StringEntity (AS4XMLHelper.serializeXML (aDoc))));
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
