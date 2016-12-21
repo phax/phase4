@@ -565,17 +565,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * Creates or Updates are Partner. Overwrites with the values in the parameter
    * or creates a new Partner if not present in the PartnerManager already.
    *
-   * @param usedCertificate,
+   * @param aUsedCertificate
    *        Certificate that should be used
-   * @param sID,
+   * @param sID
    *        ID of the Partner
    */
-  private void _createOrUpdatePartner (@Nonnull final X509Certificate usedCertificate, @Nonnull final String sID)
+  private void _createOrUpdatePartner (@Nullable final X509Certificate aUsedCertificate, @Nonnull final String sID)
   {
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
-    if (usedCertificate != null)
-      aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (usedCertificate));
+    if (aUsedCertificate != null)
+      aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
   }
@@ -584,7 +584,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * Checks the mandatory properties OriginalSender and FinalRecipient if those
    * two are set.
    *
-   * @param aPropertyList,
+   * @param aPropertyList
    *        the property list that should be checked for the two specific ones
    * @return <code>null</code> if both properties are present, else returns the
    *         error message that should be returned to the user.
@@ -632,26 +632,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     {
       final PMode aPMode = new PMode (new PModeParty (aUserMessage.getPartyInfo ()
                                                                   .getFrom ()
-                                                                  .getPartyId ()
-                                                                  .get (0)
+                                                                  .getPartyIdAtIndex (0)
                                                                   .getType (),
                                                       aUserMessage.getPartyInfo ()
                                                                   .getFrom ()
-                                                                  .getPartyId ()
-                                                                  .get (0)
+                                                                  .getPartyIdAtIndex (0)
                                                                   .getValue (),
                                                       aUserMessage.getPartyInfo ().getFrom ().getRole (),
                                                       null,
                                                       null),
                                       new PModeParty (aUserMessage.getPartyInfo ()
                                                                   .getTo ()
-                                                                  .getPartyId ()
-                                                                  .get (0)
+                                                                  .getPartyIdAtIndex (0)
                                                                   .getType (),
                                                       aUserMessage.getPartyInfo ()
                                                                   .getTo ()
-                                                                  .getPartyId ()
-                                                                  .get (0)
+                                                                  .getPartyIdAtIndex (0)
                                                                   .getValue (),
                                                       aUserMessage.getPartyInfo ().getTo ().getRole (),
                                                       null,

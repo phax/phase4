@@ -35,8 +35,8 @@ public interface IAS4ProfileValidator extends Serializable
   /**
    * Validation method
    *
-   * @param aPMode
-   *        The PMode to be validated. May not be <code>null</code>.
+   * @param aPModeConfig
+   *        The PMode config to be validated. May not be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */

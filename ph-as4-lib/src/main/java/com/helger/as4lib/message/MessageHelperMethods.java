@@ -53,9 +53,6 @@ public final class MessageHelperMethods
    * @param sMessageIDSuffix
    *        The message ID suffix. If present, it is appended to the generated
    *        UUID, otherwise just the UUID is used.
-   * @param sRefToMessageID
-   *        Reference to message ID. May be <code>null</code>. Must be present
-   *        on receipt etc.
    * @return Never <code>null</code>.
    */
   @Nonnull
