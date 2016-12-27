@@ -63,7 +63,7 @@
 
   <properties>
     <wss4j.version>2.1.7</wss4j.version>
-    <bc.version>1.55</bc.version>
+    <bc.version>1.56</bc.version>
   </properties>
   
   <dependencyManagement>
@@ -78,7 +78,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>8.7.0</version>
+        <version>8.7.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
