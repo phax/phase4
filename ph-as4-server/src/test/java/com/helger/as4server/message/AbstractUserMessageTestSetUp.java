@@ -64,7 +64,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   }
 
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                                  @Nonnull final boolean bExpectSuccess,
+                                  final boolean bExpectSuccess,
                                   @Nullable final String sErrorCode) throws IOException, MessagingException
   {
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), m_aPost);
@@ -83,7 +83,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
    * @throws IOException
    */
   protected void sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final boolean bExpectSuccess,
+                                   final boolean bExpectSuccess,
                                    @Nullable final String sErrorCode) throws IOException
   {
     m_aPost.setEntity (aHttpEntity);
