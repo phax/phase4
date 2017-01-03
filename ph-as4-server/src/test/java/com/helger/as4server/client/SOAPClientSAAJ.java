@@ -84,7 +84,11 @@ public class SOAPClientSAAJ
   {
     try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
-      final String sURL = false ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/as4";
+      final String localHolodeckURL = "http://localhost:8080/msh/";
+      String sURL = false ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/as4";
+
+      // Deactivate if not sending to localholodekc
+      sURL = localHolodeckURL;
 
       SSLContext aSSLContext = null;
       if (sURL.startsWith ("https"))
@@ -127,7 +131,7 @@ public class SOAPClientSAAJ
         }
         // BodyPayload ENCRYPTED
         else
-          if (true)
+          if (false)
           {
             Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
             aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
@@ -135,7 +139,7 @@ public class SOAPClientSAAJ
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
           }
           else
-            if (false)
+            if (true)
             {
               aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                                CMimeType.APPLICATION_GZIP,
@@ -143,7 +147,7 @@ public class SOAPClientSAAJ
 
               final SignedMessageCreator aSigned = new SignedMessageCreator ();
               final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                                  aPayload,
+                                                                                                                                                                                  null,
                                                                                                                                                                                   aAttachments),
                                                                                                                                        ESOAPVersion.SOAP_12,
                                                                                                                                        aAttachments,

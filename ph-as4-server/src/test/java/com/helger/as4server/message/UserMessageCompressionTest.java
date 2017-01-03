@@ -79,7 +79,6 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithCompressedAttachmentFailureNoBodyPayloadAllowed () throws Exception
   {
-
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),

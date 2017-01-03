@@ -43,6 +43,13 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
+/**
+ * Run with many attachments. <br>
+ * Note: these tests will fail when testing against Holodeck with
+ * ESens-Connector enabled because it can only take exactly one payload!
+ *
+ * @author bayerlma
+ */
 @RunWith (Parameterized.class)
 public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
 {

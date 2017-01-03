@@ -262,7 +262,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageWithAttachmentInfoOnly () throws Exception
+  public void testUserMessageWithAttachmentPartInfoOnly () throws Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),

@@ -9,8 +9,7 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 @Immutable
 public final class AS4Configuration
 {
-  private static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-test-as4.properties")
-                                                                  .addPath ("private-as4.properties")
+  private static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-as4.properties")
                                                                   .addPath ("as4.properties")
                                                                   .build ();
 

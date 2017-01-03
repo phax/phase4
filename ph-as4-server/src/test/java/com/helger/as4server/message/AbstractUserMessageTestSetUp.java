@@ -16,6 +16,7 @@
  */
 package com.helger.as4server.message;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -37,30 +38,24 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4server.AbstractClientSetUp;
-import com.helger.commons.url.URLHelper;
-import com.helger.photon.core.requesttrack.RequestTracker;
-import com.helger.photon.jetty.JettyRunner;
+import com.helger.as4server.MockJettySetup;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
-  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
-  private static final int STOP_PORT = PORT + 1000;
-  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
   protected static AS4ResourceManager s_aResMgr;
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    s_aJetty.startServer ();
-    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
-    s_aResMgr = new AS4ResourceManager ();
+    MockJettySetup.startServer ();
+    s_aResMgr = MockJettySetup.getResourceManagerInstance ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    s_aResMgr.close ();
-    s_aJetty.shutDownServer ();
+    s_aResMgr = null;
+    MockJettySetup.shutDownServer ();
   }
 
   protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
@@ -101,18 +96,27 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
         assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
         assertTrue ("Server responded with an error code (" +
                     m_nStatusCode +
-                    ").",
+                    "). Content:\n" +
+                    m_sResponse,
                     m_nStatusCode == HttpServletResponse.SC_OK || m_nStatusCode == HttpServletResponse.SC_NO_CONTENT);
       }
       else
       {
-        // Status code may by 20x but may be an error anyway
-        assertTrue ("Server responded with success or different error message but failure was expected." +
-                    "StatusCode: " +
-                    m_nStatusCode +
-                    "\nResponse: " +
-                    m_sResponse,
-                    m_sResponse.contains (sErrorCode));
+        if (sErrorCode.equals ("500"))
+        {
+          // Expecting Internal Servlet error
+          assertEquals ("Server responded with internal servlet error", 500, m_nStatusCode);
+        }
+        else
+        {
+          // Status code may by 20x but may be an error anyway
+          assertTrue ("Server responded with success or different error message but failure was expected." +
+                      "StatusCode: " +
+                      m_nStatusCode +
+                      "\nResponse: " +
+                      m_sResponse,
+                      m_sResponse.contains (sErrorCode));
+        }
       }
     }
     catch (final HttpHostConnectException ex)

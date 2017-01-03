@@ -1,0 +1,81 @@
+/**
+ * Copyright (C) 2015-2016 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.helger.as4server;
+
+import java.io.File;
+
+import javax.annotation.Nonnull;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
+import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.commons.id.factory.FileIntIDFactory;
+import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.url.URLHelper;
+import com.helger.photon.basic.app.io.WebFileIO;
+import com.helger.photon.core.requesttrack.RequestTracker;
+import com.helger.photon.jetty.JettyRunner;
+import com.helger.servlet.mock.MockServletContext;
+import com.helger.web.scope.mgr.WebScopeManager;
+
+public final class MockJettySetup extends AbstractClientSetUp
+{
+  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
+  private static final int STOP_PORT = PORT + 1000;
+  private static final boolean RUN_JETTY = PROPS.getAsBoolean ("server.jetty.enabled", true);
+  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
+  protected static AS4ResourceManager s_aResMgr;
+
+  private MockJettySetup ()
+  {}
+
+  @BeforeClass
+  public static void startServer () throws Exception
+  {
+    if (RUN_JETTY)
+      s_aJetty.startServer ();
+    else
+    {
+      WebScopeManager.onGlobalBegin (MockServletContext.create ());
+      final File aPath = new File ("target/junittest").getAbsoluteFile ();
+      WebFileIO.initPaths (aPath, aPath, false);
+      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
+    }
+    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+    s_aResMgr = new AS4ResourceManager ();
+  }
+
+  @AfterClass
+  public static void shutDownServer () throws Exception
+  {
+    s_aResMgr.close ();
+    if (RUN_JETTY)
+      s_aJetty.shutDownServer ();
+    else
+    {
+      WebFileIO.resetPaths ();
+      WebScopeManager.onGlobalEnd ();
+    }
+  }
+
+  @Nonnull
+  public static AS4ResourceManager getResourceManagerInstance ()
+  {
+    return s_aResMgr;
+  }
+}

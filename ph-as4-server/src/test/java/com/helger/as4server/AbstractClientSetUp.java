@@ -53,7 +53,8 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 public abstract class AbstractClientSetUp
 {
   protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractClientSetUp.class);
-  protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-as4.properties")
+  protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-test-as4.properties")
+                                                                    .addPath ("private-as4.properties")
                                                                     .addPath ("as4.properties")
                                                                     .build ();
 

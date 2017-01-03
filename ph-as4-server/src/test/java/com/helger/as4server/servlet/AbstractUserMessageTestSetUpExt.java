@@ -16,22 +16,11 @@
  */
 package com.helger.as4server.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -42,14 +31,12 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
-import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
-import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.AbstractClientSetUp;
 import com.helger.as4server.constants.AS4ServerTestHelper;
+import com.helger.as4server.message.AbstractUserMessageTestSetUp;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
@@ -62,75 +49,8 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author bayerlma
  */
-public abstract class AbstractUserMessageSetUp extends AbstractClientSetUp
+public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessageTestSetUp
 {
-  protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                                  @Nonnull final boolean bSuccess,
-                                  @Nullable final String sErrorCode) throws IOException, MessagingException
-  {
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), m_aPost);
-    sendPlainMessage (aHttpEntity, bSuccess, sErrorCode);
-  }
-
-  /**
-   * @param aHttpEntity
-   *        the entity to send to the server
-   * @param bExpectSuccess
-   *        specifies if the test case expects a positive or negative response
-   *        from the server
-   * @param sStatusCode
-   *        if you expect a negative response, you must give the expected error
-   *        code as it will get searched for in the response.
-   * @throws IOException
-   */
-  protected void sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final boolean bExpectSuccess,
-                                   @Nullable final String sErrorCode) throws IOException
-  {
-    m_aPost.setEntity (aHttpEntity);
-
-    try
-    {
-      final CloseableHttpResponse aHttpResponse = m_aClient.execute (m_aPost);
-
-      m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
-      final HttpEntity aEntity = aHttpResponse.getEntity ();
-      m_sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
-
-      if (bExpectSuccess)
-      {
-        assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
-        assertTrue ("Server responded with an error code (" +
-                    m_nStatusCode +
-                    ").",
-                    m_nStatusCode == HttpServletResponse.SC_OK || m_nStatusCode == HttpServletResponse.SC_NO_CONTENT);
-      }
-      else
-      {
-        if (sErrorCode.equals ("500"))
-        {
-          // Expecting Internal Servlet error
-          assertEquals ("Server responded with internal servlet error", 500, m_nStatusCode);
-        }
-        else
-        {
-          // Status code may by 20x but may be an error anyway
-          assertTrue ("Server responded with success or different error message but failure was expected." +
-                      "StatusCode: " +
-                      m_nStatusCode +
-                      "\nResponse: " +
-                      m_sResponse,
-                      m_sResponse.contains (sErrorCode));
-        }
-      }
-    }
-    catch (final HttpHostConnectException ex)
-    {
-      // No such server running
-      fail ("No target AS4 server reachable: " + ex.getMessage () + " \n Check your properties!");
-    }
-  }
-
   /**
    * Modify the standard user message to try special cases or provoke failure
    * messages.

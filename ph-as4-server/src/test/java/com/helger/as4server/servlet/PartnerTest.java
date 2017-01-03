@@ -25,7 +25,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import org.apache.http.entity.StringEntity;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -38,10 +37,9 @@ import com.helger.as4lib.partner.Partner;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.message.AbstractUserMessageTestSetUp;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.url.URLHelper;
-import com.helger.photon.jetty.JettyRunner;
 import com.helger.security.certificate.CertificateHelper;
 
 /**
@@ -51,18 +49,15 @@ import com.helger.security.certificate.CertificateHelper;
  *
  * @author bayerlma
  */
-public class PartnerTest extends AbstractUserMessageSetUp
+public class PartnerTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
-  private static final int STOP_PORT = PORT + 1000;
-  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
   private final PartnerManager aPM = MetaAS4Manager.getPartnerMgr ();
   private static final String PARTNER_ID = "testpartner";
 
   @BeforeClass
   public static void startServer () throws Exception
   {
-    s_aJetty.startServer ();
+    AbstractUserMessageTestSetUp.startServer ();
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, PARTNER_ID);
     final byte [] aCertBytes = Files.readAllBytes (Paths.get (new ClassPathResource ("cert.txt").getAsFile ()
@@ -71,12 +66,6 @@ public class PartnerTest extends AbstractUserMessageSetUp
     aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (PARTNER_ID, aStringMap);
-  }
-
-  @AfterClass
-  public static void shutDownServer () throws Exception
-  {
-    s_aJetty.shutDownServer ();
   }
 
   @Test
