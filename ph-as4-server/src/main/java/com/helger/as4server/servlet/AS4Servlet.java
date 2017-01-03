@@ -16,8 +16,6 @@
  */
 package com.helger.as4server.servlet;
 
-import static org.junit.Assert.assertTrue;
-
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +24,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
 import javax.mail.internet.MimeBodyPart;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +56,7 @@ import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.model.pmode.IPModeConfig;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.model.pmode.PModeConfigManager;
+import com.helger.as4lib.model.pmode.PModeManager;
 import com.helger.as4lib.model.pmode.PModeParty;
 import com.helger.as4lib.model.profile.IAS4Profile;
 import com.helger.as4lib.partner.Partner;
@@ -74,18 +72,16 @@ import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
+import com.helger.as4server.spi.AS4ServletMessageProcessorManager;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.list.ErrorList;
-import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -111,41 +107,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
-
-  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("s_aRWLock")
-  private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList<> ();
-
-  /**
-   * Reload all SPI implementations of {@link IAS4ServletMessageProcessorSPI}.
-   */
-  public static void reinitProcessors ()
-  {
-    final ICommonsList <IAS4ServletMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletMessageProcessorSPI.class);
-    if (aProcessorSPIs.isEmpty ())
-      s_aLogger.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
-    else
-      s_aLogger.info ("Found " + aProcessorSPIs.size () + " AS4 message processors");
-
-    s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
-  }
-
-  static
-  {
-    // Init once at the beginning
-    reinitProcessors ();
-  }
-
-  /**
-   * @return A list of all registered receiver handlers. Never <code>null</code>
-   *         but maybe empty.
-   */
-  @Nonnull
-  @ReturnsMutableCopy
-  public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
-  {
-    return s_aRWLock.readLocked ( () -> s_aProcessors.getClone ());
-  }
 
   public AS4Servlet ()
   {}
@@ -379,7 +340,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
               aPartnerMgr.containsWithID (aState.getResponderID ()))
           {
-            _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
+            _ensurePModeIsPresent (aState, sConfigID, aUserMessage);
           }
           else
           {
@@ -394,11 +355,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                 _createOrUpdatePartner (null, aState.getResponderID ());
               }
 
-            _createPModeIfNotPresent (aState, sConfigID, aUserMessage);
+            _ensurePModeIsPresent (aState, sConfigID, aUserMessage);
           }
         }
 
-        for (final IAS4ServletMessageProcessorSPI aProcessor : getAllProcessors ())
+        for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
           try
           {
             if (s_aLogger.isDebugEnabled ())
@@ -437,7 +398,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // Only do profile checks if a profile is set
       if (AS4ServerConfiguration.getAS4Profile () != null)
       {
-        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (AS4ServerConfiguration.getAS4Profile ());
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ()
+                                                   .getProfileOfID (AS4ServerConfiguration.getAS4Profile ());
 
         if (aProfile != null)
         {
@@ -466,7 +428,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // partners declared in their pmodeconfig they want an errorresponse
       if (aErrorMessages.isNotEmpty ())
       {
-        if (_checkIfErrorResponseShouldBeSent (aPModeConfig))
+        if (_isSendErrorResponse (aPModeConfig))
         {
           final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
           final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -483,7 +445,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         // If no Error is present check if partners declared if they want an
         // response and if this response should contain
         // nonrepudiationinformation if applicable
-        if (_checkIfResponseShouldBeSent (aPModeConfig))
+        if (_isSendResponse (aPModeConfig))
         {
           final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
           final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
@@ -492,7 +454,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                                 aEbms3MessageInfo,
                                                                                                 aEbms3UserMessage,
                                                                                                 aSOAPDocument,
-                                                                                                _getNonRepudiationInformation (aPModeConfig))
+                                                                                                _isSendNonRepudiationInformation (aPModeConfig))
                                                                          .setMustUnderstand (true);
 
           // We've got our response
@@ -510,17 +472,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *
    * @param aPModeConfig
    *        to check the attribute
-   * @return Returns the value if set, else DEFAULT <code>FALSE</code>.
+   * @return Returns the value if set, else DEFAULT <code>false</code>.
    */
-  private boolean _getNonRepudiationInformation (final IPModeConfig aPModeConfig)
+  private static boolean _isSendNonRepudiationInformation (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
       if (aPModeConfig.getLeg1 () != null)
         if (aPModeConfig.getLeg1 ().getSecurity () != null)
           if (aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiationDefined ())
-          {
             return aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiation ();
-          }
+    // Default behavior
     return false;
   }
 
@@ -531,14 +492,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check the attribute
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private boolean _checkIfErrorResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendErrorResponse (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
       if (aPModeConfig.getLeg1 () != null)
         if (aPModeConfig.getLeg1 ().getErrorHandling () != null)
           if (aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
             return aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
-    // Default behaviour
+    // Default behavior
     return true;
   }
 
@@ -549,13 +510,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check the attribute
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private boolean _checkIfResponseShouldBeSent (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendResponse (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
       if (aPModeConfig.getLeg1 () != null)
         if (aPModeConfig.getLeg1 ().getSecurity () != null)
-          return EqualsHelper.equals (aPModeConfig.getLeg1 ().getSecurity ().getSendReceiptReplyPattern (),
-                                      EPModeSendReceiptReplyPattern.RESPONSE);
+          return EPModeSendReceiptReplyPattern.RESPONSE.equals (aPModeConfig.getLeg1 ()
+                                                                            .getSecurity ()
+                                                                            .getSendReceiptReplyPattern ());
 
     // Default behaviour if the value is not set or no security is existing
     return true;
@@ -570,7 +532,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @param sID
    *        ID of the Partner
    */
-  private void _createOrUpdatePartner (@Nullable final X509Certificate aUsedCertificate, @Nonnull final String sID)
+  private static void _createOrUpdatePartner (@Nullable final X509Certificate aUsedCertificate,
+                                              @Nonnull final String sID)
   {
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
@@ -590,30 +553,24 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *         error message that should be returned to the user.
    */
   @Nullable
-  private String _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList)
+  private static String _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList)
   {
-    // C1
-    String sOriginalSender = null;
-    // C4
-    String sFinalRecipient = null;
+    String sOriginalSenderC1 = null;
+    String sFinalRecipientC4 = null;
 
     for (final Ebms3Property sProperty : aPropertyList)
     {
       if (sProperty.getName ().equals ("originalSender"))
-      {
-        sOriginalSender = sProperty.getValue ();
-      }
+        sOriginalSenderC1 = sProperty.getValue ();
       else
         if (sProperty.getName ().equals ("finalRecipient"))
-        {
-          sFinalRecipient = sProperty.getValue ();
-        }
+          sFinalRecipientC4 = sProperty.getValue ();
     }
-    if (StringHelper.hasNoText (sOriginalSender))
+    if (StringHelper.hasNoText (sOriginalSenderC1))
     {
       return "originalSender property is empty or not existant but mandatory";
     }
-    if (StringHelper.hasNoText (sFinalRecipient))
+    if (StringHelper.hasNoText (sFinalRecipientC4))
     {
       return "finalRecipient property is empty or not existant but mandatory";
     }
@@ -630,15 +587,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @param aUserMessage
    *        needed to get full information of the Initiator and Responder
    */
-  private void _createPModeIfNotPresent (@Nonnull final AS4MessageState aState,
-                                         @Nonnull final String sConfigID,
-                                         @Nonnull final Ebms3UserMessage aUserMessage)
+  private static void _ensurePModeIsPresent (@Nonnull final AS4MessageState aState,
+                                             @Nonnull final String sConfigID,
+                                             @Nonnull final Ebms3UserMessage aUserMessage)
   {
-    if (MetaAS4Manager.getPModeMgr ()
-                      .getAll (doesPartnerAndPartnerExist (aState.getInitiatorID (),
-                                                           aState.getResponderID (),
-                                                           sConfigID))
-                      .isEmpty ())
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    if (aPModeMgr.containsNone (doesPartnerAndPartnerExist (aState.getInitiatorID (),
+                                                            aState.getResponderID (),
+                                                            sConfigID)))
     {
       final PMode aPMode = new PMode (new PModeParty (aUserMessage.getPartyInfo ()
                                                                   .getFrom ()
@@ -663,7 +619,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                       null,
                                                       null),
                                       MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID));
-      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+      aPModeMgr.createOrUpdatePMode (aPMode);
     }
     // If the PMode already exists we do not need to do anything
   }
@@ -681,13 +637,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @return aPMode if it already exists with all 3 components
    */
   @Nullable
-  public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nonnull final String sInitiatorID,
-                                                               @Nonnull final String sResponderID,
-                                                               @Nonnull final String sPModeConfigID)
+  public static Predicate <IPMode> doesPartnerAndPartnerExist (@Nullable final String sInitiatorID,
+                                                               @Nullable final String sResponderID,
+                                                               @Nullable final String sPModeConfigID)
   {
-    return p -> p.getInitiator ().getID ().equals (sInitiatorID) &&
-                p.getResponder ().getID ().equals (sResponderID) &&
-                p.getConfigID ().equals (sPModeConfigID);
+    return x -> EqualsHelper.equals (x.getInitiatorID (), sInitiatorID) &&
+                EqualsHelper.equals (x.getResponderID (), sResponderID) &&
+                x.getConfigID ().equals (sPModeConfigID);
   }
 
   @Override
@@ -707,15 +663,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
     // XXX By default login in admin user
+    // XXX why do we need a logged-in user?
     final ELoginResult e = LoggedInUserManager.getInstance ().loginUser (CSecurity.USER_ADMINISTRATOR_LOGIN,
                                                                          CSecurity.USER_ADMINISTRATOR_PASSWORD);
-    assertTrue (e.toString (), e.isSuccess ());
+    assert e.isSuccess () : "Login failed: " + e.toString ();
 
     try
     {
       // Determine content type
       final MimeType aMT = MimeTypeParser.parseMimeType (aHttpServletRequest.getContentType ());
-      s_aLogger.info ("Content-Type: " + aMT);
+      if (s_aLogger.isDebugEnabled ())
+        s_aLogger.debug ("Received Content-Type: " + aMT);
       if (aMT == null)
       {
         aHttpResponse.setBadRequest ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
@@ -726,8 +684,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       ESOAPVersion eSOAPVersion = null;
       final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
-      final IMimeType aPlainMT = aMT.getCopyWithoutParameters ();
-      if (aPlainMT.equals (MT_MULTIPART_RELATED))
+      final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
+      if (aPlainContentType.equals (MT_MULTIPART_RELATED))
       {
         // MIME message
         if (s_aLogger.isDebugEnabled ())
@@ -753,16 +711,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           int nIndex = 0;
           while (true)
           {
-            final boolean bNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-            if (!bNextPart)
+            final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+            if (!bHasNextPart)
               break;
-            s_aLogger.info ("Found part " + nIndex);
+
+            if (s_aLogger.isDebugEnabled ())
+              s_aLogger.debug ("Found MIME part " + nIndex);
             final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
 
             final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
             if (nIndex == 0)
             {
-              // SOAP document
+              // First MIME part -> SOAP document
               final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
                                                            .getCopyWithoutParameters ();
 
@@ -794,13 +754,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
 
         // Determine SOAP version from content type
-        eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainMT.equals (x.getMimeType ()));
+        eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainContentType.equals (x.getMimeType ()));
       }
 
       if (aSOAPDocument == null)
       {
+        // We don't have a SOAP document
         if (eSOAPVersion == null)
-          aHttpResponse.setBadRequest ("Failed to parse incoming document!");
+          aHttpResponse.setBadRequest ("Failed to parse incoming message!");
         else
           aHttpResponse.setBadRequest ("Failed to parse incoming SOAP " + eSOAPVersion.getVersion () + " document!");
       }
@@ -808,7 +769,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       {
         if (eSOAPVersion == null)
         {
-          // Determine from namespace URI of read document
+          // Determine from namespace URI of read document as the last fallback
           final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
           eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
                                                 x -> x.getNamespaceURI ().equals (sNamespaceURI));
@@ -837,5 +798,4 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       LoggedInUserManager.getInstance ().logoutCurrentUser ();
     }
   }
-
 }

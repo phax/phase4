@@ -54,6 +54,11 @@ import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.xml.XMLHelper;
 
+/**
+ * This class manages the EBMS Messaging SOAP header element
+ * 
+ * @author Philip Helger
+ */
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);

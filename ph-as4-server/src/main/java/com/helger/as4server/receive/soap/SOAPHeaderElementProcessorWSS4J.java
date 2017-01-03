@@ -56,6 +56,11 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.xml.XMLHelper;
 
+/**
+ * This class manages the WSS4J SOAP header
+ * 
+ * @author Philip Helger
+ */
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
@@ -93,10 +98,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (eSignAlgo == null)
         {
           s_aLogger.info ("Error processing the Security Header, your signing algorithm '" +
-                    sAlgorithm +
-                    "' is incorrect. Expected one of the following '" +
-                    Arrays.asList (ECryptoAlgorithmSign.values ()) +
-                    "' algorithms");
+                          sAlgorithm +
+                          "' is incorrect. Expected one of the following '" +
+                          Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                          "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
@@ -115,8 +120,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (eSignDigestAlgo == null)
         {
           s_aLogger.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                    Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
-                    "' algorithms");
+                          Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
+                          "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
@@ -151,9 +156,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (!sHref.contains (sAttachmentId))
         {
           s_aLogger.info ("Error processing the Attachments, the attachment" +
-                    sHref +
-                    " is not valid with what is specified in the usermessage.: " +
-                    sAttachmentId);
+                          sHref +
+                          " is not valid with what is specified in the usermessage.: " +
+                          sAttachmentId);
 
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
 

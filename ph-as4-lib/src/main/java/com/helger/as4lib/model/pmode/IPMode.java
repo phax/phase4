@@ -28,7 +28,21 @@ public interface IPMode extends IObject
   PModeParty getInitiator ();
 
   @Nullable
+  default String getInitiatorID ()
+  {
+    final PModeParty aParty = getInitiator ();
+    return aParty == null ? null : aParty.getID ();
+  }
+
+  @Nullable
   PModeParty getResponder ();
+
+  @Nullable
+  default String getResponderID ()
+  {
+    final PModeParty aParty = getResponder ();
+    return aParty == null ? null : aParty.getID ();
+  }
 
   @Nonnull
   IPModeConfig getConfig ();
