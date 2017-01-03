@@ -75,7 +75,7 @@ public final class MetaManager extends AbstractGlobalSingleton
         s_aLogger.info ("Deleting temporary file " + aFile.getAbsolutePath ());
         final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
         if (aError.isFailure ())
-          s_aLogger.warn ("Ooops");
+          s_aLogger.warn ("Ooops: " + aError.toString ());
       }
   }
 

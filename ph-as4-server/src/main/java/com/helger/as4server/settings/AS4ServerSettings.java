@@ -14,6 +14,8 @@ public class AS4ServerSettings
   private AS4ServerSettings ()
   {}
 
+  @Nonnull
+  @Nonempty
   public static String getDefaultResponderID ()
   {
     return m_sResponderID;

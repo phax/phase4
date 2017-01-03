@@ -27,12 +27,12 @@ import com.helger.commons.string.ToStringGenerator;
 
 /**
  * This class represents a single DOM element in a SOAP header with some
- * metadata.
+ * metadata. It is used to mark headers as processed or not.
  *
  * @author Philip Helger
  */
 @NotThreadSafe
-public class AS4SOAPHeader
+public class AS4SingleSOAPHeader
 {
   private final Element m_aNode;
   private final QName m_aQName;
@@ -49,7 +49,9 @@ public class AS4SOAPHeader
    *        <code>true</code> if this is a must understand header,
    *        <code>false</code> otherwise.
    */
-  public AS4SOAPHeader (@Nonnull final Element aNode, @Nonnull final QName aQName, final boolean bIsMustUnderstand)
+  public AS4SingleSOAPHeader (@Nonnull final Element aNode,
+                              @Nonnull final QName aQName,
+                              final boolean bIsMustUnderstand)
   {
     m_aNode = ValueEnforcer.notNull (aNode, "Node");
     m_aQName = ValueEnforcer.notNull (aQName, "QName");

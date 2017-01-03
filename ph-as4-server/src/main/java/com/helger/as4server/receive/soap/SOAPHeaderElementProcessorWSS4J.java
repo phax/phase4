@@ -58,7 +58,7 @@ import com.helger.xml.XMLHelper;
 
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
-  private static final Logger LOG = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
@@ -92,7 +92,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignAlgo == null)
         {
-          LOG.info ("Error processing the Security Header, your signing algorithm '" +
+          s_aLogger.info ("Error processing the Security Header, your signing algorithm '" +
                     sAlgorithm +
                     "' is incorrect. Expected one of the following '" +
                     Arrays.asList (ECryptoAlgorithmSign.values ()) +
@@ -103,8 +103,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           return ESuccess.FAILURE;
         }
 
-        if (LOG.isDebugEnabled ())
-          LOG.debug ("Using signature algorithm " + eSignAlgo);
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Using signature algorithm " + eSignAlgo);
 
         // Get Signature Digest Algorithm
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "Reference");
@@ -114,7 +114,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignDigestAlgo == null)
         {
-          LOG.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+          s_aLogger.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
                     Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
                     "' algorithms");
 
@@ -122,8 +122,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
           return ESuccess.FAILURE;
         }
-        if (LOG.isDebugEnabled ())
-          LOG.debug ("Using signature digest algorithm " + eSignDigestAlgo);
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
 
       // Encrypted header
@@ -150,7 +150,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                          .getHref ();
         if (!sHref.contains (sAttachmentId))
         {
-          LOG.info ("Error processing the Attachments, the attachment" +
+          s_aLogger.info ("Error processing the Attachments, the attachment" +
                     sHref +
                     " is not valid with what is specified in the usermessage.: " +
                     sAttachmentId);
@@ -194,7 +194,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         });
 
         if (aCerts.size () > 1)
-          LOG.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+          s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
 
         // Remember in State
         aState.setUsedCertificate (aCerts.getAtIndex (0));
@@ -207,13 +207,13 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           final InputStream aIS = aResponseAttachment.getSourceStream ();
           if (aIS instanceof CipherInputStream)
           {
-            LOG.warn ("Found CipherIS: " + aIS);
+            s_aLogger.warn ("Found CipherIS: " + aIS);
             final File aTempFile = aState.getResourceMgr ().createTempFile ();
             StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getOutputStream (aTempFile));
             aResponseAttachment.setSourceStreamProvider ( () -> FileHelper.getInputStream (aTempFile));
           }
           else
-            LOG.warn ("Found other IS: " + aIS);
+            s_aLogger.warn ("Found other IS: " + aIS);
         }
 
         // Remember in State
@@ -222,7 +222,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       catch (final Exception ex)
       {
         // Decryption or Signature check failed
-        LOG.info ("Error processing the WSSSecurity Header", ex);
+        s_aLogger.info ("Error processing the WSSSecurity Header", ex);
 
         // TODO we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing

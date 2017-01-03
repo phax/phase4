@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
@@ -33,7 +34,8 @@ import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 
 /**
  * This class manages the SOAP header element processors. This is used to
- * validate the "must understand" SOAP requirement.
+ * validate the "must understand" SOAP requirement. It manages all instances of
+ * {@link ISOAPHeaderElementProcessor}.
  *
  * @author Philip Helger
  */
@@ -77,7 +79,8 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
     return m_aRWLock.readLocked ( () -> m_aMap.get (aQName));
   }
 
-  @Nullable
+  @Nonnull
+  @ReturnsMutableCopy
   public ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
   {
     return m_aRWLock.readLocked ( () -> m_aMap.getClone ());

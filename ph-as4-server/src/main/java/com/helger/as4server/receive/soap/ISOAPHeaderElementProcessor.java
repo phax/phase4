@@ -35,6 +35,7 @@ import com.helger.commons.state.ESuccess;
  *
  * @author Philip Helger
  */
+@FunctionalInterface
 public interface ISOAPHeaderElementProcessor
 {
   /**

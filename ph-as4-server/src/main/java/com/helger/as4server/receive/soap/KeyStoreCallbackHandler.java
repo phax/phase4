@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 
-public class KeyStoreCallbackHandler implements CallbackHandler
+final class KeyStoreCallbackHandler implements CallbackHandler
 {
-  private static final Logger LOG = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
@@ -42,10 +42,10 @@ public class KeyStoreCallbackHandler implements CallbackHandler
         if (AS4CryptoFactory.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
         {
           aPasswordCallback.setPassword (AS4CryptoFactory.getKeyPassword ());
-          LOG.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
+          s_aLogger.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
         }
         else
-          LOG.info ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
+          s_aLogger.warn ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
       }
       else
       {

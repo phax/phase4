@@ -72,7 +72,7 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.as4server.settings.AS4Configuration;
+import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.ValueEnforcer;
@@ -192,13 +192,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
       final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
       final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
-      aHeaders.add (new AS4SOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+      aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
@@ -221,7 +221,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         final QName aQName = aEntry.getKey ();
 
         // Check if this message contains a header for the current handler
-        final AS4SOAPHeader aHeader = aHeaders.findFirst (x -> aQName.equals (x.getQName ()));
+        final AS4SingleSOAPHeader aHeader = aHeaders.findFirst (x -> aQName.equals (x.getQName ()));
         if (aHeader == null)
         {
           // no header element for current processor
@@ -284,7 +284,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       if (aErrorMessages.isEmpty ())
       {
-        for (final AS4SOAPHeader aHeader : aHeaders)
+        for (final AS4SingleSOAPHeader aHeader : aHeaders)
           if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
           {
             aAS4Response.setBadRequest ("Error processing required SOAP header element " +
@@ -435,9 +435,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       final IPModeConfig aPModeConfig = aState.getPModeConfig ();
 
       // Only do profile checks if a profile is set
-      if (AS4Configuration.getAS4Profile () != null)
+      if (AS4ServerConfiguration.getAS4Profile () != null)
       {
-        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (AS4Configuration.getAS4Profile ());
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (AS4ServerConfiguration.getAS4Profile ());
 
         if (aProfile != null)
         {
@@ -457,7 +457,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
-          aAS4Response.setBadRequest ("The profile " + AS4Configuration.getAS4Profile () + " does not exist.");
+          aAS4Response.setBadRequest ("The profile " + AS4ServerConfiguration.getAS4Profile () + " does not exist.");
           return;
         }
       }

@@ -45,7 +45,7 @@ public class AS4Response extends UnifiedResponse
                       @Nonnull final HttpServletRequest aHttpRequest)
   {
     super (eHTTPVersion, eHTTPMethod, aHttpRequest);
-    // Never cache the responses
+    // Never cache the responses on client side
     disableCaching ();
     setAllowContentOnStatusCode (true);
   }

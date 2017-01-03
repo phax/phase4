@@ -72,7 +72,8 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   }
 
   /**
-   * @return Date and time when the receipt started.
+   * @return Date and time when the receipt started. This is constantly set in
+   *         the constructor and never <code>null</code>.
    */
   @Nonnull
   public final LocalDateTime getReceiptDT ()

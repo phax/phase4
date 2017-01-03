@@ -25,6 +25,11 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * This class represents the result of a message processor SPI implementation.
+ * 
+ * @author Philip Helger
+ */
 public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
 {
   private final ESuccess m_eSuccess;

@@ -42,7 +42,7 @@ import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
-import com.helger.as4server.settings.AS4Configuration;
+import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -64,27 +64,27 @@ public final class AS4WebAppListener extends WebAppListener
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4Configuration.isGlobalDebug ());
+    return Boolean.toString (AS4ServerConfiguration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4Configuration.isGlobalProduction ());
+    return Boolean.toString (AS4ServerConfiguration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4Configuration.hasStartupInfo ());
+    return Boolean.toString (AS4ServerConfiguration.hasStartupInfo ());
   }
 
   @Override
   protected String getDataPath (@Nonnull final ServletContext aSC)
   {
-    return AS4Configuration.getDataPath ();
+    return AS4ServerConfiguration.getDataPath ();
   }
 
   @Override

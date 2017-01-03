@@ -24,6 +24,7 @@ import java.util.Enumeration;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -34,6 +35,7 @@ import com.helger.as4lib.attachment.incoming.AS4IncomingInMemoryAttachment;
 import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
 import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
 import com.helger.commons.CGlobal;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -49,12 +51,16 @@ import com.helger.commons.io.stream.StreamHelper;
 @ThreadSafe
 public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFactory
 {
+  public static final long DEFAULT_LIMIT_IN_MEMORY = 30 * CGlobal.BYTES_PER_KILOBYTE;
+
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
+  @GuardedBy ("m_aRWLock")
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
 
-  public boolean canKeepInMemory (@Nonnegative final long nSize)
+  @OverrideOnDemand
+  protected boolean canKeepInMemory (@Nonnegative final long nSize)
   {
-    return nSize >= 0 && nSize <= 30 * CGlobal.BYTES_PER_KILOBYTE;
+    return nSize >= 0 && nSize <= DEFAULT_LIMIT_IN_MEMORY;
   }
 
   @Nonnull
@@ -72,7 +78,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
     {
       // Write to temp file
       final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
-      try (OutputStream aOS = FileHelper.getOutputStream (aTempFile))
+      try (final OutputStream aOS = FileHelper.getOutputStream (aTempFile))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
@@ -94,9 +100,9 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   @Nonnull
   public IAS4IncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException
   {
-    // Write to temp file
+    // Always write to temp file because we don't know how big the content is
     final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
-    try (OutputStream aOS = FileHelper.getOutputStream (aTempFile))
+    try (final OutputStream aOS = FileHelper.getOutputStream (aTempFile))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
