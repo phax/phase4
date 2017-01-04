@@ -25,9 +25,11 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 public final class AS4ServerConfiguration
 {
   private static final Settings SETTINGS = new Settings ("as4-server");
+  private static boolean s_bTestMode = false;
 
   public static void reinit (final boolean bForTest)
   {
+    s_bTestMode = bForTest;
     final ConfigFileBuilder aBuilder = new ConfigFileBuilder ();
     if (bForTest)
       aBuilder.addPath ("private-test-as4.properties");
@@ -39,6 +41,12 @@ public final class AS4ServerConfiguration
       throw new InitializationException ("Failed to read AS4 server configuration file!");
     SETTINGS.clear ();
     SETTINGS.setValues (aCF.getSettings ());
+  }
+
+  public static void reinitForTestOnly ()
+  {
+    if (!s_bTestMode)
+      reinit (true);
   }
 
   static

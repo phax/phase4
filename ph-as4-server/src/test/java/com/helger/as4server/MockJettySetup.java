@@ -37,7 +37,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 public final class MockJettySetup extends AbstractClientSetUp
 {
   private static final boolean RUN_JETTY = AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled",
-                                                                                               true);
+                                                                                               false);
   private static final int PORT = URLHelper.getAsURL (AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address"))
                                            .getPort ();

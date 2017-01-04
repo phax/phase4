@@ -63,7 +63,7 @@ public abstract class AbstractClientSetUp
   @Before
   public void setUp () throws KeyManagementException, NoSuchAlgorithmException
   {
-    AS4ServerConfiguration.reinit (true);
+    AS4ServerConfiguration.reinitForTestOnly ();
     m_aSettings = AS4ServerConfiguration.getSettings ();
     final String sURL = m_aSettings.getAsString ("server.address");
 
