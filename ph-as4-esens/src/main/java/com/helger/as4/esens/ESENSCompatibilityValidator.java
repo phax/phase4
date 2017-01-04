@@ -16,8 +16,6 @@
  */
 package com.helger.as4.esens;
 
-import static org.junit.Assert.assertTrue;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -69,9 +67,8 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 
   public void validatePModeConfig (@Nonnull final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrorList)
   {
-
     MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPModeConfig, aErrorList);
-    assertTrue (aErrorList.isEmpty ());
+    assert aErrorList.isEmpty () : "Errors in global PMode config validation: " + aErrorList.toString ();
 
     if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) || aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
     {
