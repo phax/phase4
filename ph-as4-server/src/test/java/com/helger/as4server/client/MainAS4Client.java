@@ -60,9 +60,9 @@ import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class SOAPClientSAAJ
+public class MainAS4Client
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPClientSAAJ.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (MainAS4Client.class);
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
@@ -116,14 +116,14 @@ public class SOAPClientSAAJ
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
         aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
       }
       else
         // BodyPayload SIGNED
         if (false)
         {
-          final Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+          final Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
                                                                     aPayload,
                                                                     aAttachments,
                                                                     aResMgr);
@@ -133,7 +133,7 @@ public class SOAPClientSAAJ
         else
           if (false)
           {
-            Document aDoc = TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
             aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
 
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
@@ -146,7 +146,7 @@ public class SOAPClientSAAJ
                                                                aResMgr));
 
               final SignedMessageCreator aSigned = new SignedMessageCreator ();
-              final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
+              final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                                                                                                                                   null,
                                                                                                                                                                                   aAttachments),
                                                                                                                                        ESOAPVersion.SOAP_12,
@@ -165,7 +165,7 @@ public class SOAPClientSAAJ
             else
               if (false)
               {
-                Document aDoc = TestMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+                Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
                                                                     aPayload,
                                                                     aAttachments,
                                                                     aResMgr);

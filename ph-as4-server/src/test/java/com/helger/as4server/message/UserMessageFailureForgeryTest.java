@@ -95,7 +95,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test (expected = IllegalStateException.class)
   public void testEmptyUserMessage ()
   {
-    TestMessages.emptyUserMessage (m_eSOAPVersion, null, null);
+    MockMessages.emptyUserMessage (m_eSOAPVersion, null, null);
     fail ();
   }
 
@@ -118,7 +118,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, null, null, s_aResMgr);
+    final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, null, null, s_aResMgr);
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
@@ -128,7 +128,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
+    final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
     for (int i = 0; i < nList.getLength (); i++)
     {
@@ -152,7 +152,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
 
-    final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                   null,
                                                                                                   aAttachments),
                                                        m_eSOAPVersion,
@@ -180,7 +180,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testFalsePartyIDToTriggerPModeError () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -201,7 +201,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                      s_aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
-                                                                          TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                          MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments),
                                                                           true,
@@ -223,7 +223,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testUserMessageWithPayloadInfoOnly () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
     // the payload is missing
@@ -244,7 +244,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testUserMessageWithBodyPayloadOnlyNoInfo () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
     // the payload is missing
@@ -269,7 +269,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                      CMimeType.APPLICATION_GZIP,
                                                      s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
                                                                                                                                      aAttachments),
 
@@ -290,7 +290,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
 
-    final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
 
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                      CMimeType.APPLICATION_GZIP,
@@ -312,7 +312,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                      CMimeType.APPLICATION_GZIP,
                                                      s_aResMgr));
 
-    final Document aSoapDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
 
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
                                                      CMimeType.IMAGE_JPG,

@@ -1,4 +1,4 @@
-package com.helger.as4server.constants;
+package com.helger.as4server;
 
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -10,7 +10,7 @@ import com.helger.commons.collection.ext.ICommonsList;
  *
  * @author bayerlma
  */
-public class AS4ServerTestHelper
+public final class AS4ServerTestHelper
 {
 
   public static String DEFAULT_PARTY_ID = "APP_1000000101";
@@ -21,9 +21,12 @@ public class AS4ServerTestHelper
   public static String FINAL_RECIPIENT = "finalRecipient";
   public static String ORIGINAL_SENDER = "originalSender";
 
+  private AS4ServerTestHelper ()
+  {}
+
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aOriginalSender = new Ebms3Property ();
     aOriginalSender.setName (ORIGINAL_SENDER);
     aOriginalSender.setValue ("C1-test");

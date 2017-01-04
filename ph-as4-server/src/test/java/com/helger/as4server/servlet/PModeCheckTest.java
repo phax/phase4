@@ -53,7 +53,7 @@ import com.helger.as4lib.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.constants.AS4ServerTestHelper;
+import com.helger.as4server.AS4ServerTestHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;

@@ -36,25 +36,29 @@ import com.helger.web.scope.mgr.WebScopeManager;
 
 public final class MockJettySetup extends AbstractClientSetUp
 {
-  private static final boolean RUN_JETTY = AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled",
-                                                                                               false);
-  private static final int PORT = URLHelper.getAsURL (AS4ServerConfiguration.getSettings ()
-                                                                            .getAsString ("server.address"))
-                                           .getPort ();
-  private static final int STOP_PORT = PORT + 1000;
-
   private static JettyRunner s_aJetty;
   protected static AS4ResourceManager s_aResMgr;
 
   private MockJettySetup ()
   {}
 
+  private static final boolean _isRunJetty ()
+  {
+    return AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled", false);
+  }
+
+  private static final int _getJettyPort ()
+  {
+    return URLHelper.getAsURL (AS4ServerConfiguration.getSettings ().getAsString ("server.address")).getPort ();
+  }
+
   @BeforeClass
   public static void startServer () throws Exception
   {
-    if (AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled", true))
+    if (_isRunJetty ())
     {
-      s_aJetty = new JettyRunner (PORT, STOP_PORT);
+      final int nPort = _getJettyPort ();
+      s_aJetty = new JettyRunner (nPort, nPort + 1000);
       s_aJetty.startServer ();
     }
     else
@@ -73,7 +77,7 @@ public final class MockJettySetup extends AbstractClientSetUp
   public static void shutDownServer () throws Exception
   {
     s_aResMgr.close ();
-    if (RUN_JETTY)
+    if (_isRunJetty ())
     {
       if (s_aJetty != null)
         s_aJetty.shutDownServer ();

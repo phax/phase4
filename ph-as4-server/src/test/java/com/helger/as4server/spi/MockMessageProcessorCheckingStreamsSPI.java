@@ -41,9 +41,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Philip Helger
  */
 @IsSPIImplementation
-public class TestMessageProcessorCheckingStreamsSPI implements IAS4ServletMessageProcessorSPI
+public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessageProcessorSPI
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (TestMessageProcessorCheckingStreamsSPI.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
   @Nonnull
   @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")

@@ -1,2 +1,2 @@
-com.helger.as4server.spi.TestMessageProcessorSPI
-com.helger.as4server.spi.TestMessageProcessorCheckingStreamsSPI
+com.helger.as4server.spi.MockMessageProcessorSPI
+com.helger.as4server.spi.MockMessageProcessorCheckingStreamsSPI

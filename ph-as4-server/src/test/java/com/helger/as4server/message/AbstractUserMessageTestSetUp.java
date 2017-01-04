@@ -39,6 +39,7 @@ import com.helger.as4lib.message.MessageHelperMethods;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4server.AbstractClientSetUp;
 import com.helger.as4server.MockJettySetup;
+import com.helger.as4server.settings.AS4ServerConfiguration;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
@@ -47,6 +48,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @BeforeClass
   public static void startServer () throws Exception
   {
+    AS4ServerConfiguration.reinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
   }

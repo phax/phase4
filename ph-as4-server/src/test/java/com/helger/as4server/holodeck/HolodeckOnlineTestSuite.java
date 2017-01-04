@@ -7,16 +7,16 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.helger.as4server.message.ReceiptMessageTests;
-import com.helger.as4server.message.UserMessageOneAttachmentTests;
-import com.helger.as4server.message.UserMessageSoapBodyPayloadTests;
+import com.helger.as4server.message.ReceiptMessageTest;
+import com.helger.as4server.message.UserMessageOneAttachmentTest;
+import com.helger.as4server.message.UserMessageSoapBodyPayloadTest;
 import com.helger.as4server.settings.AS4ServerConfiguration;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)
-@SuiteClasses ({ UserMessageSoapBodyPayloadTests.class,
-                 UserMessageOneAttachmentTests.class,
-                 ReceiptMessageTests.class })
+@SuiteClasses ({ UserMessageSoapBodyPayloadTest.class,
+                 UserMessageOneAttachmentTest.class,
+                 ReceiptMessageTest.class })
 @Ignore
 public class HolodeckOnlineTestSuite
 {

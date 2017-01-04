@@ -69,7 +69,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
                                                      EAS4CompressionMode.GZIP,
                                                      s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
                                                                                                                                      aAttachments),
 
@@ -89,7 +89,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
                                                      EAS4CompressionMode.GZIP,
                                                      s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      aPayload,
                                                                                                                                      aAttachments),
 

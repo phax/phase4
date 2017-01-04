@@ -45,6 +45,10 @@ public final class AS4ServerConfiguration
 
   public static void reinitForTestOnly ()
   {
+    // Re-read the config file with precedence to "private-test-as4.properties"
+    // file but only if it wasn't read in test mode before.
+    // This is necessary to avoid that the dymnamic properties from the test
+    // suites are overwritten with each new test
     if (!s_bTestMode)
       reinit (true);
   }

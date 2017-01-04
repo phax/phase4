@@ -35,7 +35,7 @@ import com.helger.as4lib.message.AS4UserMessage;
 import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.model.pmode.IPMode;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.constants.AS4ServerTestHelper;
+import com.helger.as4server.AS4ServerTestHelper;
 import com.helger.as4server.message.AbstractUserMessageTestSetUp;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;

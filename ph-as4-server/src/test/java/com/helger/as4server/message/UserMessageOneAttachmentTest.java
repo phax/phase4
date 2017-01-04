@@ -21,8 +21,8 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -37,21 +37,16 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.holodeck.IHolodeckTests;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-/**
- * Run with many attachments. <br>
- * Note: these tests will fail when testing against Holodeck with
- * ESens-Connector enabled because it can only take exactly one payload!
- *
- * @author bayerlma
- */
 @RunWith (Parameterized.class)
-public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
+@Category (IHolodeckTests.class)
+public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -61,49 +56,39 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
 
   private final ESOAPVersion m_eSOAPVersion;
 
-  public UserMessageManyAttachmentTests (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageOneAttachmentTest (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }
 
   @Test
-  public void testUserMessageManyAttachmentsMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageOneAttachmentMimeSuccess () throws Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                                     CMimeType.IMAGE_JPG,
-                                                     s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
                                                                                                                                      aAttachments),
+
                                                                                           aAttachments,
                                                                                           null);
+
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   @Test
-  public void testUserMessageManyAttachmentsSignedMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                                     CMimeType.IMAGE_JPG,
-                                                     s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                                                   null,
                                                                                                                                                                   aAttachments),
                                                                                                                        m_eSOAPVersion,
@@ -118,21 +103,15 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageManyAttachmentsEncryptedMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageOneAttachmentEncryptedMimeSuccess () throws Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                                     CMimeType.IMAGE_JPG,
-                                                     s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     s_aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
-                                                                          TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                          MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                      null,
                                                                                                                      aAttachments),
                                                                           false,
@@ -142,21 +121,15 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageManyAttachmentsSignedEncryptedMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageMimeSignedEncryptedSuccess () throws Exception
   {
     final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
-                                                     CMimeType.IMAGE_JPG,
-                                                     s_aResMgr));
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
-    final Document aDoc = aSigned.createSignedMessage (TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                   null,
                                                                                                   aAttachments),
                                                        m_eSOAPVersion,
@@ -165,6 +138,7 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
                                                        false,
                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
                                                                           aDoc,
                                                                           false,
@@ -172,5 +146,4 @@ public class UserMessageManyAttachmentTests extends AbstractUserMessageTestSetUp
                                                                           s_aResMgr);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
-
 }

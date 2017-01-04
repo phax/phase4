@@ -40,7 +40,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
-public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
+public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
 {
 
   @Parameters (name = "{index}: {0}")
@@ -51,7 +51,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
 
   private final ESOAPVersion m_eSOAPVersion;
 
-  public ReceiptMessageTests (@Nonnull final ESOAPVersion eSOAPVersion)
+  public ReceiptMessageTest (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }
@@ -60,7 +60,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
   public void testReceiptReceivedFromUserMessageWithoutWSSecurity () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
@@ -71,7 +71,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
   public void testReceiptReceivedFromUserMessageWithWSSecurity () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
+    final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
@@ -82,7 +82,7 @@ public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
   public void testShouldNotGetAResponse () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = TestMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
+    final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
