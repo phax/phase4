@@ -35,12 +35,12 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.settings.exchange.configfile.ConfigFile;
-import com.helger.settings.exchange.configfile.ConfigFileBuilder;
+import com.helger.settings.ISettings;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -53,11 +53,8 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 public abstract class AbstractClientSetUp
 {
   protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractClientSetUp.class);
-  protected static final ConfigFile PROPS = new ConfigFileBuilder ().addPath ("private-test-as4.properties")
-                                                                    .addPath ("private-as4.properties")
-                                                                    .addPath ("as4.properties")
-                                                                    .build ();
 
+  protected ISettings m_aSettings;
   protected int m_nStatusCode;
   protected String m_sResponse;
   protected CloseableHttpClient m_aClient;
@@ -66,7 +63,9 @@ public abstract class AbstractClientSetUp
   @Before
   public void setUp () throws KeyManagementException, NoSuchAlgorithmException
   {
-    final String sURL = PROPS.getAsString ("server.address");
+    AS4ServerConfiguration.reinit (true);
+    m_aSettings = AS4ServerConfiguration.getSettings ();
+    final String sURL = m_aSettings.getAsString ("server.address");
 
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
@@ -91,11 +90,11 @@ public abstract class AbstractClientSetUp
 
     m_aPost = new HttpPost (sURL);
 
-    if (PROPS.getAsBoolean ("server.proxy.enabled", false))
+    if (m_aSettings.getAsBoolean ("server.proxy.enabled", false))
     {
       m_aPost.setConfig (RequestConfig.custom ()
-                                      .setProxy (new HttpHost (PROPS.getAsString ("server.proxy.address"),
-                                                               PROPS.getAsInt ("server.proxy.port")))
+                                      .setProxy (new HttpHost (m_aSettings.getAsString ("server.proxy.address"),
+                                                               m_aSettings.getAsInt ("server.proxy.port")))
                                       .build ());
     }
 

@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.mgr.MetaAS4Manager;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;

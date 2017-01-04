@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.pmode;
+package com.helger.as4lib.model.pmode.leg;
 
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.model.pmode.PModePayloadProfile;
+import com.helger.as4lib.model.pmode.PModeProperty;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;

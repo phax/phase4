@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4lib.AS4TestRule;
+import com.helger.as4lib.model.pmode.config.PModeConfig;
 
 /**
  * Test class for class {@link PModeConfig}.

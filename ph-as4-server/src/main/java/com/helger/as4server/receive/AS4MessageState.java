@@ -29,7 +29,7 @@ import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.model.mpc.IMPC;
-import com.helger.as4lib.model.pmode.IPModeConfig;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;

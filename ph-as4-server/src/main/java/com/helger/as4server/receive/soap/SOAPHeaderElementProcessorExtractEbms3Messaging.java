@@ -37,11 +37,10 @@ import com.helger.as4lib.marshaller.Ebms3ReaderBuilder;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.mpc.MPCManager;
-import com.helger.as4lib.model.pmode.DefaultPMode;
-import com.helger.as4lib.model.pmode.IPModeConfig;
-import com.helger.as4lib.model.pmode.PModeConfigManager;
-import com.helger.as4lib.model.pmode.PModeLeg;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
+import com.helger.as4lib.model.pmode.leg.PModeLeg;
 import com.helger.as4server.receive.AS4MessageState;
+import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -56,7 +55,7 @@ import com.helger.xml.XMLHelper;
 
 /**
  * This class manages the EBMS Messaging SOAP header element
- * 
+ *
  * @author Philip Helger
  */
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
@@ -72,7 +71,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                         @Nonnull final Locale aLocale)
   {
     final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
-    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -119,22 +117,16 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       // Find PMode
       final String sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
-      if (StringHelper.hasNoText (sPModeConfigID))
+      aPModeConfig = AS4ServerSettings.getPModeConfigResolver ().getPModeConfigOfID (sPModeConfigID);
+      if (aPModeConfig == null)
       {
-        // If the pmodeconfig id field is empty or null, set default pmode
-        // config
-        aPModeConfig = DefaultPMode.getDefaultPModeConfig ();
-      }
-      else
-      {
-        aPModeConfig = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
-        if (aPModeConfig == null)
-        {
-          s_aLogger.warn ("Failed to resolve PMode '" + sPModeConfigID + "'");
+        s_aLogger.warn ("Failed to resolve PMode '" +
+                        sPModeConfigID +
+                        "' using resolver " +
+                        AS4ServerSettings.getPModeConfigResolver ());
 
-          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-          return ESuccess.FAILURE;
-        }
+        aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+        return ESuccess.FAILURE;
       }
     }
 

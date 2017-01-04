@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.as4lib.model.pmode.IPModeConfig;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.commons.error.list.ErrorList;
 
 /**

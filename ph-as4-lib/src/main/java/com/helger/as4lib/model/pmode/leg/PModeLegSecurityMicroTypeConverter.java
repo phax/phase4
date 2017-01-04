@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.pmode;
+package com.helger.as4lib.model.pmode.leg;
 
 import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.model.pmode.AbstractPModeMicroTypeConverter;
+import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.wss.EWSSVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;

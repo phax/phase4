@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.pmode;
+package com.helger.as4lib.model.pmode.leg;
 
+import com.helger.as4lib.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ETriState;

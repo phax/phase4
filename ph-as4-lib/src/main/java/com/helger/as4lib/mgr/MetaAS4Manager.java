@@ -24,8 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.as4lib.model.mpc.MPCManager;
-import com.helger.as4lib.model.pmode.PModeConfigManager;
 import com.helger.as4lib.model.pmode.PModeManager;
+import com.helger.as4lib.model.pmode.config.PModeConfigManager;
 import com.helger.as4lib.model.profile.AS4ProfileManager;
 import com.helger.as4lib.partner.PartnerManager;
 import com.helger.commons.annotation.UsedViaReflection;

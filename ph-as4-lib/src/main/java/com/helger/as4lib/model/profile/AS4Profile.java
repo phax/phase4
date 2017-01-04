@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4lib.model.pmode.IPModeConfig;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 

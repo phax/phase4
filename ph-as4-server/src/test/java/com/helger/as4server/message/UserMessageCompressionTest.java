@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -34,6 +35,7 @@ import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.holodeck.IHolodeckTests;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -57,6 +59,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
     m_eSOAPVersion = eSOAPVersion;
   }
 
+  @Category (IHolodeckTests.class)
   @Test
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {

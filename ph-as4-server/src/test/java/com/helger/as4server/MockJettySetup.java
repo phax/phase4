@@ -24,6 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;
@@ -35,10 +36,14 @@ import com.helger.web.scope.mgr.WebScopeManager;
 
 public final class MockJettySetup extends AbstractClientSetUp
 {
-  private static final int PORT = URLHelper.getAsURL (PROPS.getAsString ("server.address")).getPort ();
+  private static final boolean RUN_JETTY = AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled",
+                                                                                               true);
+  private static final int PORT = URLHelper.getAsURL (AS4ServerConfiguration.getSettings ()
+                                                                            .getAsString ("server.address"))
+                                           .getPort ();
   private static final int STOP_PORT = PORT + 1000;
-  private static final boolean RUN_JETTY = PROPS.getAsBoolean ("server.jetty.enabled", true);
-  private static JettyRunner s_aJetty = new JettyRunner (PORT, STOP_PORT);
+
+  private static JettyRunner s_aJetty;
   protected static AS4ResourceManager s_aResMgr;
 
   private MockJettySetup ()
@@ -47,10 +52,14 @@ public final class MockJettySetup extends AbstractClientSetUp
   @BeforeClass
   public static void startServer () throws Exception
   {
-    if (RUN_JETTY)
+    if (AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled", true))
+    {
+      s_aJetty = new JettyRunner (PORT, STOP_PORT);
       s_aJetty.startServer ();
+    }
     else
     {
+      s_aJetty = null;
       WebScopeManager.onGlobalBegin (MockServletContext.create ());
       final File aPath = new File ("target/junittest").getAbsoluteFile ();
       WebFileIO.initPaths (aPath, aPath, false);
@@ -65,7 +74,11 @@ public final class MockJettySetup extends AbstractClientSetUp
   {
     s_aResMgr.close ();
     if (RUN_JETTY)
-      s_aJetty.shutDownServer ();
+    {
+      if (s_aJetty != null)
+        s_aJetty.shutDownServer ();
+      s_aJetty = null;
+    }
     else
     {
       WebFileIO.resetPaths ();

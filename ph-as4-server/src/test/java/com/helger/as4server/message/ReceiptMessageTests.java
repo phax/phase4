@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,11 +33,13 @@ import org.w3c.dom.Node;
 
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.holodeck.IHolodeckTests;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
+@Category (IHolodeckTests.class)
 public class ReceiptMessageTests extends AbstractUserMessageTestSetUp
 {
 

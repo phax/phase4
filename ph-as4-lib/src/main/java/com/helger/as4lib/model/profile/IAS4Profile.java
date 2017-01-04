@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4lib.model.pmode.IPModeConfig;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 

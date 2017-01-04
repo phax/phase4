@@ -19,6 +19,7 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.photon.basic.object.IObject;
 

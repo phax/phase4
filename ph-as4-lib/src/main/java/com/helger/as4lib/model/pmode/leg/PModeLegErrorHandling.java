@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.pmode;
+package com.helger.as4lib.model.pmode.leg;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.model.pmode.PModeAddressList;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;

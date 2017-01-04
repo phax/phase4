@@ -22,6 +22,13 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
 import com.helger.as4lib.model.mpc.MPCManager;
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
+import com.helger.as4lib.model.pmode.config.PModeConfig;
+import com.helger.as4lib.model.pmode.leg.PModeLeg;
+import com.helger.as4lib.model.pmode.leg.PModeLegBusinessInformation;
+import com.helger.as4lib.model.pmode.leg.PModeLegProtocol;
+import com.helger.as4lib.model.pmode.leg.PModeLegReliability;
+import com.helger.as4lib.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4lib.soap.ESOAPVersion;
 
 /**

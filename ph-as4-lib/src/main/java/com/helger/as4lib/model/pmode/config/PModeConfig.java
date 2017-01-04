@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4lib.model.pmode;
+package com.helger.as4lib.model.pmode.config;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4lib.model.EMEP;
 import com.helger.as4lib.model.ETransportChannelBinding;
+import com.helger.as4lib.model.pmode.PModePayloadService;
+import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
+import com.helger.as4lib.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;

@@ -19,6 +19,7 @@ package com.helger.as4lib.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;

@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -36,6 +37,7 @@ import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.as4server.holodeck.IHolodeckTests;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -43,6 +45,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
 @RunWith (Parameterized.class)
+@Category (IHolodeckTests.class)
 public class UserMessageOneAttachmentTests extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
