@@ -1,6 +1,7 @@
 package com.helger.as4server.holodeck;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import com.helger.as4server.settings.AS4ServerConfiguration;
 @SuiteClasses ({ UserMessageSoapBodyPayloadTests.class,
                  UserMessageOneAttachmentTests.class,
                  ReceiptMessageTests.class })
+@Ignore
 public class HolodeckTestSuite
 {
   /** The default URL where Holodeck is supposed to run */

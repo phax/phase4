@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.helger.as4lib.attachment.EAS4CompressionModeFuncTest;
 import com.helger.as4server.message.ReceiptMessageTests;
 import com.helger.as4server.message.UserMessageCompressionTest;
 import com.helger.as4server.message.UserMessageFailureForgeryTest;
@@ -16,7 +17,6 @@ import com.helger.as4server.servlet.PartnerTest;
 import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.supplementary.test.EncryptionTest;
 import com.helger.as4server.supplementary.test.SignatureTest;
-import com.helger.compression.CompressionTest;
 
 @RunWith (Suite.class)
 @SuiteClasses ({ SPITest.class,
@@ -30,7 +30,7 @@ import com.helger.compression.CompressionTest;
                  PModeCheckTest.class,
                  EncryptionTest.class,
                  SignatureTest.class,
-                 CompressionTest.class,
+                 EAS4CompressionModeFuncTest.class,
                  ReceiptMessageTests.class })
 public class PHAS4ServerTestSuite
 {

@@ -17,9 +17,7 @@
 package com.helger.as4lib.attachment.outgoing;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -38,6 +36,7 @@ import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.http.CHTTPHeader;
 
@@ -82,9 +81,10 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
     {
       // Create temporary file with compressed content
       final File aCompressedFile = m_aResMgr.createTempFile ();
-      try (final OutputStream aOS = getCompressionMode ().getCompressStream (new FileOutputStream (aCompressedFile)))
+      try (
+          final OutputStream aOS = getCompressionMode ().getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aCompressedFile))))
       {
-        aOS.write (Files.readAllBytes (m_aFile.toPath ()));
+        StreamHelper.copyInputStreamToOutputStream (FileHelper.getInputStream (m_aFile), aOS);
       }
       aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
     }
@@ -100,7 +100,7 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
   @Nonnull
   public WSS4JAttachment getAsWSS4JAttachment ()
   {
-    final ICommonsMap <String, String> aHeaders = new CommonsHashMap<> ();
+    final ICommonsMap <String, String> aHeaders = new CommonsHashMap <> ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (m_aFile) + "\"");
