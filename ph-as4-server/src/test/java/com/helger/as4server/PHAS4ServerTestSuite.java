@@ -1,6 +1,7 @@
 package com.helger.as4server;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -30,6 +31,7 @@ import com.helger.as4server.supplementary.test.SignatureTest;
                  EncryptionTest.class,
                  SignatureTest.class,
                  ReceiptMessageTest.class })
+@Ignore
 public class PHAS4ServerTestSuite
 {
   @BeforeClass

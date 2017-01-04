@@ -21,8 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wss4j.common.crypto.Crypto;
@@ -39,6 +37,7 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * A set of test-cases for signing and verifying SOAP requests.
@@ -103,9 +102,6 @@ public class SignatureTest
 
   private Document _getSoapEnvelope11 () throws SAXException, IOException, ParserConfigurationException
   {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
+    return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
 }
