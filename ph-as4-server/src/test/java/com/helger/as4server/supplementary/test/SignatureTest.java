@@ -19,10 +19,6 @@ package com.helger.as4server.supplementary.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -100,7 +96,7 @@ public class SignatureTest
     return secEngine.processSecurityHeader (doc, null, null, crypto);
   }
 
-  private Document _getSoapEnvelope11 () throws SAXException, IOException, ParserConfigurationException
+  private Document _getSoapEnvelope11 () throws SAXException
   {
     return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
