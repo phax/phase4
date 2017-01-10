@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
-import javax.crypto.CipherInputStream;
 
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -211,15 +210,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
         {
           final InputStream aIS = aResponseAttachment.getSourceStream ();
-          if (aIS instanceof CipherInputStream)
-          {
-            s_aLogger.warn ("Found CipherIS: " + aIS);
-            final File aTempFile = aState.getResourceMgr ().createTempFile ();
-            StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getOutputStream (aTempFile));
-            aResponseAttachment.setSourceStreamProvider ( () -> FileHelper.getInputStream (aTempFile));
-          }
-          else
-            s_aLogger.warn ("Found other IS: " + aIS);
+
+          // Always copy to a temporary file, so that decrypted content can be
+          // read more than once.
+          // Not nice, but working :)
+          final File aTempFile = aState.getResourceMgr ().createTempFile ();
+          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS,
+                                                                StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)));
+          aResponseAttachment.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aTempFile)));
         }
 
         // Remember in State

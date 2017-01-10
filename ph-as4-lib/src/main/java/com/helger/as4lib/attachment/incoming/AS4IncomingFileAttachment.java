@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -49,7 +50,7 @@ public class AS4IncomingFileAttachment extends AbstractAS4IncomingAttachment
   @Nonnull
   public InputStream getInputStream ()
   {
-    return FileHelper.getInputStream (m_aFile);
+    return StreamHelper.getBuffered (FileHelper.getInputStream (m_aFile));
   }
 
   @Override

@@ -78,7 +78,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
     {
       // Write to temp file
       final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
-      try (final OutputStream aOS = FileHelper.getOutputStream (aTempFile))
+      try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
@@ -102,7 +102,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   {
     // Always write to temp file because we don't know how big the content is
     final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
-    try (final OutputStream aOS = FileHelper.getOutputStream (aTempFile))
+    try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }

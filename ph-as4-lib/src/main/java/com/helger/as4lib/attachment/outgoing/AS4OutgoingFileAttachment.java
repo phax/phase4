@@ -84,7 +84,8 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
       try (
           final OutputStream aOS = getCompressionMode ().getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aCompressedFile))))
       {
-        StreamHelper.copyInputStreamToOutputStream (FileHelper.getInputStream (m_aFile), aOS);
+        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (m_aFile)),
+                                                    aOS);
       }
       aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
     }
@@ -111,7 +112,7 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
     aAttachment.setMimeType (getMimeType ().getAsString ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getID ());
-    aAttachment.setSourceStreamProvider ( () -> FileHelper.getInputStream (m_aFile));
+    aAttachment.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (m_aFile)));
     return aAttachment;
   }
 }

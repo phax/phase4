@@ -27,14 +27,16 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.ext.AttachmentRequestCallback;
 import org.apache.wss4j.common.ext.AttachmentResultCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.CommonsHashMap;
+import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.collection.ext.ICommonsOrderedMap;
 
 /**
  * A Callback Handler implementation for the case of signing/encrypting
@@ -45,9 +47,9 @@ import com.helger.commons.collection.ext.ICommonsMap;
  */
 public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
-  private final ICommonsList <WSS4JAttachment> m_aOriginalRequestAttachments = new CommonsArrayList<> ();
-  private final ICommonsMap <String, Attachment> m_aAttachmentMap = new CommonsHashMap<> ();
-  private final ICommonsList <WSS4JAttachment> m_aResponseAttachments = new CommonsArrayList<> ();
+  private static final Logger s_aLogger = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
+
+  private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
   private final AS4ResourceManager m_aResMgr;
 
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments,
@@ -55,28 +57,32 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   {
     if (aAttachments != null)
       for (final WSS4JAttachment aAttachment : aAttachments)
-      {
-        m_aOriginalRequestAttachments.add (aAttachment);
         m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
-      }
     m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
   }
 
-  // Try to match the Attachment Id. Otherwise, add all Attachments.
+  /**
+   * Try to match the Attachment Id. Otherwise, add all Attachments.
+   *
+   * @param sID
+   *        Attachment ID to search
+   * @return Never <code>null</code>.
+   */
   @Nonnull
   @ReturnsMutableCopy
-  private ICommonsList <Attachment> _getAttachmentsToAdd (final String sID)
+  private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sID)
   {
-    final ICommonsList <Attachment> attachments = new CommonsArrayList<> ();
     if (m_aAttachmentMap.containsKey (sID))
-      attachments.add (m_aAttachmentMap.get (sID));
-    else
-      attachments.addAll (m_aOriginalRequestAttachments);
-    return attachments;
+      return new CommonsArrayList <> (m_aAttachmentMap.get (sID));
+
+    return new CommonsArrayList <> (m_aAttachmentMap.values ());
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
+    // m_aResponseAttachments.clear ();
+    // m_aAttachmentMap.clear ();
+
     for (final Callback aCallback : aCallbacks)
     {
       if (aCallback instanceof AttachmentRequestCallback)
@@ -84,6 +90,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         final AttachmentRequestCallback aAttachmentRequestCallback = (AttachmentRequestCallback) aCallback;
 
         final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Requesting attachment ID '" + sAttachmentID + "'");
         final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
         if (aAttachments.isEmpty ())
           throw new RuntimeException ("wrong attachment requested (ID=" + sAttachmentID + ")");
@@ -96,15 +104,18 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
           final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
           final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
 
+          final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
+          if (s_aLogger.isDebugEnabled ())
+            s_aLogger.debug (" Resulting attachment ID '" + sAttachmentID + "'");
+
           // Convert
           final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResMgr);
-          aRealAttachment.setId (aResponseAttachment.getId ());
+          aRealAttachment.setId (sAttachmentID);
           aRealAttachment.setMimeType (aResponseAttachment.getMimeType ());
           aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
           aRealAttachment.setSourceStreamProvider ( () -> aResponseAttachment.getSourceStream ());
 
-          m_aResponseAttachments.add (aRealAttachment);
-          m_aAttachmentMap.put (aResponseAttachment.getId (), aResponseAttachment);
+          m_aAttachmentMap.put (sAttachmentID, aRealAttachment);
         }
         else
         {
@@ -117,6 +128,6 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   @ReturnsMutableCopy
   public ICommonsList <WSS4JAttachment> getResponseAttachments ()
   {
-    return m_aResponseAttachments.getClone ();
+    return m_aAttachmentMap.copyOfValues ();
   }
 }

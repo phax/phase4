@@ -45,6 +45,7 @@ import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorWSS4J;
 import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.photon.core.requesttrack.RequestTracker;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -159,6 +160,7 @@ public final class AS4WebAppListener extends WebAppListener
     MetaAS4Manager.getInstance ();
     MetaManager.getInstance ();
     _createDefaultResponder (AS4ServerSettings.getDefaultResponderID ());
+    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
     // Ensure user exists
     final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
