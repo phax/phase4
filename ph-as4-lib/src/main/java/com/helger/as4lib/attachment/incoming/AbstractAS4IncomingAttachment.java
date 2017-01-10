@@ -16,7 +16,11 @@
  */
 package com.helger.as4lib.attachment.incoming;
 
+import javax.annotation.Nonnull;
+
 import com.helger.commons.collection.attr.MapBasedAttributeContainer;
+import com.helger.commons.state.EChange;
+import com.helger.commons.string.StringHelper;
 
 /**
  * Abstract base class for incoming attachments.
@@ -26,5 +30,21 @@ import com.helger.commons.collection.attr.MapBasedAttributeContainer;
 public abstract class AbstractAS4IncomingAttachment extends MapBasedAttributeContainer <String, String>
                                                     implements IAS4IncomingAttachment
 {
-  /* empty */
+  @Override
+  @Nonnull
+  public EChange setAttribute (final String sName, final String sValue)
+  {
+    String sRealValue;
+    if ("Content-ID".equalsIgnoreCase (sName))
+    {
+      // Reference in header is: <ID>
+      // See
+      // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
+      // chapter 5.2
+      sRealValue = StringHelper.trimStartAndEnd (sValue, '<', '>');
+    }
+    else
+      sRealValue = sValue;
+    return super.setAttribute (sName, sRealValue);
+  }
 }

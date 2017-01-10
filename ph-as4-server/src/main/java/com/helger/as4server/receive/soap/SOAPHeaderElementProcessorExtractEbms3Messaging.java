@@ -290,7 +290,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                 return ESuccess.FAILURE;
               }
 
-              final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), "cid:");
+              final String sAttachmentID = true ? aPart.getHref () : StringHelper.trimStart (aPart.getHref (), "cid:");
               aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
             }
           }

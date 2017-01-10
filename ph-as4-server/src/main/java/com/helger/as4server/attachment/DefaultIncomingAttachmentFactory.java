@@ -55,7 +55,7 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
-  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
+  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
 
   @OverrideOnDemand
   protected boolean canKeepInMemory (@Nonnegative final long nSize)
