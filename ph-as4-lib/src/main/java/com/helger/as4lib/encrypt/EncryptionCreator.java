@@ -119,7 +119,7 @@ public class EncryptionCreator
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!
     final ICommonsList <WSS4JAttachment> aEncryptedAttachments = aAttachmentCallbackHandler == null ? null
-                                                                                                    : aAttachmentCallbackHandler.getResponseAttachments ();
+                                                                                                    : aAttachmentCallbackHandler.getAllResponseAttachments ();
 
     // Use the encrypted attachments!
     return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aEncryptedDoc, null, aEncryptedAttachments);

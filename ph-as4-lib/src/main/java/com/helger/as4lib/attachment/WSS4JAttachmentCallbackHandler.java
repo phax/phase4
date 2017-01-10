@@ -80,9 +80,6 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
-    // m_aResponseAttachments.clear ();
-    // m_aAttachmentMap.clear ();
-
     for (final Callback aCallback : aCallbacks)
     {
       if (aCallback instanceof AttachmentRequestCallback)
@@ -92,9 +89,10 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
         if (s_aLogger.isDebugEnabled ())
           s_aLogger.debug ("Requesting attachment ID '" + sAttachmentID + "'");
+
         final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
         if (aAttachments.isEmpty ())
-          throw new RuntimeException ("wrong attachment requested (ID=" + sAttachmentID + ")");
+          throw new RuntimeException ("No attachments present");
 
         aAttachmentRequestCallback.setAttachments (aAttachments);
       }
@@ -126,7 +124,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <WSS4JAttachment> getResponseAttachments ()
+  public ICommonsList <WSS4JAttachment> getAllResponseAttachments ()
   {
     return m_aAttachmentMap.copyOfValues ();
   }

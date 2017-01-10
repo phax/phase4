@@ -206,7 +206,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
         // Decrypting the Attachments
-        final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getResponseAttachments ();
+        final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
         for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
         {
           final InputStream aIS = aResponseAttachment.getSourceStream ();

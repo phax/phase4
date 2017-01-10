@@ -25,7 +25,15 @@ import org.apache.wss4j.common.ext.Attachment;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.IHasInputStream;
+import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * Special WSS4J attachment with an InputStream provider instead of a fixed
+ * InputStream
+ * 
+ * @author bayerlma
+ * @author Philip Helger
+ */
 public class WSS4JAttachment extends Attachment
 {
   private final AS4ResourceManager m_aResMgr;
@@ -57,5 +65,16 @@ public class WSS4JAttachment extends Attachment
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("ID", getId ())
+                                       .append ("MimeType", getMimeType ())
+                                       .append ("Headers", getHeaders ())
+                                       .append ("ResourceManager", m_aResMgr)
+                                       .append ("ISP", m_aISP)
+                                       .toString ();
   }
 }
