@@ -113,10 +113,13 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     IPModeConfig aPModeConfig = null;
-    if (aUserMessage.getCollaborationInfo () != null && aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
+    if (aUserMessage.getCollaborationInfo () != null)
     {
       // Find PMode
-      final String sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+      String sPModeConfigID = null;
+      if (aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
+        sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+
       aPModeConfig = AS4ServerSettings.getPModeConfigResolver ().getPModeConfigOfID (sPModeConfigID);
       if (aPModeConfig == null)
       {
@@ -185,7 +188,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
 
     if (aPModeLeg1 != null)
     {

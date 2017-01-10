@@ -39,7 +39,7 @@
       </Scope>
       <Scope>
         <Type>PROCESSID</Type>
-        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>
+        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver2.0</InstanceIdentifier>
       </Scope>
     </BusinessScope>
   </StandardBusinessDocumentHeader>
@@ -47,7 +47,7 @@
     <UBLVersionID>2.0</UBLVersionID>
     <CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
     </CustomizationID>
-    <ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</ProfileID>
+    <ProfileID>urn:www.cenbii.eu:profile:bii04:ver2.0</ProfileID>
     <ID>orderNumber</ID>
     <IssueDate>2011-08-22Z</IssueDate>
     <InvoiceTypeCode>380</InvoiceTypeCode>

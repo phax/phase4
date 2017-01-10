@@ -58,7 +58,7 @@ import com.helger.xml.XMLHelper;
 
 /**
  * This class manages the WSS4J SOAP header
- * 
+ *
  * @author Philip Helger
  */
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
@@ -155,10 +155,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                          .getHref ();
         if (!sHref.contains (sAttachmentId))
         {
-          s_aLogger.info ("Error processing the Attachments, the attachment" +
+          s_aLogger.info ("Error processing the Attachments, the attachment '" +
                           sHref +
-                          " is not valid with what is specified in the usermessage.: " +
-                          sAttachmentId);
+                          "' is not valid with what is specified in the usermessage ('" +
+                          sAttachmentId +
+                          "')");
 
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
 
@@ -191,7 +192,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
         // Collect all used certificates
-        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet<> ();
+        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet <> ();
         aResults.forEach (x -> {
           final X509Certificate aCert = (X509Certificate) x.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
           if (aCert != null)

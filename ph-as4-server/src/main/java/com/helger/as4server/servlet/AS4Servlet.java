@@ -79,7 +79,6 @@ import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.EMimeContentType;
@@ -124,7 +123,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     ValueEnforcer.notNull (aLocale, "Locale");
 
     // TODO remove if or entire statement, so much output
-    if (GlobalDebug.isDebugMode () && false)
+    if (true)
     {
       s_aLogger.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
       s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
@@ -153,7 +152,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -162,14 +161,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
       // Convert all attachments to WSS4J attachments
       // Need to check, since not every message will have attachments
-      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> (aIncomingAttachments,
-                                                                                       x -> x.getAsWSS4JAttachment (aResMgr));
+      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList <> (aIncomingAttachments,
+                                                                                        x -> x.getAsWSS4JAttachment (aResMgr));
 
       // This is where all data from the SOAP headers is stored to
       final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -259,9 +258,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
         // Decompressing the attachments
-        final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList<> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                                                      : aState.getOriginalAttachments (),
-                                                                                                    x -> new AS4IncomingWSS4JAttachment (x));
+        final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList <> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                                                       : aState.getOriginalAttachments (),
+                                                                                                     x -> new AS4IncomingWSS4JAttachment (x));
 
         // Decompress attachments (if compressed)
         final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
@@ -682,7 +681,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
