@@ -27,7 +27,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
@@ -59,7 +59,7 @@ public final class MockMessages
 {
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
-                                                @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
@@ -77,12 +77,12 @@ public final class MockMessages
   }
 
   public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                           @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                aErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
                                                                                                aEbms3ErrorList)
@@ -99,7 +99,7 @@ public final class MockMessages
 
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                              @Nullable final Node aPayload,
-                                             @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException,
                                                                                         DOMException
   {
@@ -127,7 +127,7 @@ public final class MockMessages
 
   public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
                                                        @Nullable final Node aPayload,
-                                                       @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
+                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -162,7 +162,7 @@ public final class MockMessages
 
   public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESOAPVersion eSOAPVersion,
                                                                       @Nullable final Node aPayload,
-                                                                      @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
+                                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
@@ -199,12 +199,12 @@ public final class MockMessages
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                            @Nullable final Node aPayload,
-                                           @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
+                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 

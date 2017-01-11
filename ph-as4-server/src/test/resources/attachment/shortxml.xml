@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
     Copyright (C) 2015-2017 Philip Helger (www.helger.com)
@@ -16,18 +17,6 @@
     limitations under the License.
 
 -->
-<ebbp:NonRepudiationInformation
-  xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0">
-  <ebbp:MessagePartNRInformation>
-    <ds:Reference
-      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-      URI="#id-ba025036-a014-4920-a09e-790b16e0395e">
-      <ds:Transforms>
-        <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
-      </ds:Transforms>
-      <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-      <ds:DigestValue>RIcni4sbaa+5g6cpTI00hCy9PBN9kzI4CZizkbsF5jI=
-      </ds:DigestValue>
-    </ds:Reference>
-  </ebbp:MessagePartNRInformation>
-</ebbp:NonRepudiationInformation>
+<root>
+  <dummy>This is a test XML</dummy>
+</root>

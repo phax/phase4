@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
@@ -39,6 +39,7 @@ import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -158,7 +159,7 @@ public class CreateUserMessage
    */
   @Nullable
   public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
-                                                  @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments)
+                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
@@ -166,13 +167,13 @@ public class CreateUserMessage
       aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
 
     if (aAttachments != null)
-      for (final IAS4OutgoingAttachment aAttachment : aAttachments)
+      for (final WSS4JAttachment aAttachment : aAttachments)
       {
         final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
         {
           final Ebms3Property aMimeType = new Ebms3Property ();
           aMimeType.setName ("MimeType");
-          aMimeType.setValue (aAttachment.getMimeType ().getAsString ());
+          aMimeType.setValue (aAttachment.getMimeType ());
           aEbms3PartProperties.addProperty (aMimeType);
         }
         if (aAttachment.hasCharset ())
@@ -191,7 +192,7 @@ public class CreateUserMessage
         }
 
         final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
-        aEbms3PartInfo.setHref ("cid:" + aAttachment.getID ());
+        aEbms3PartInfo.setHref ("cid:" + aAttachment.getId ());
         aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
         aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
       }

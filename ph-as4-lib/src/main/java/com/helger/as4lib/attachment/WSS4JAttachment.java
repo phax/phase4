@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -56,6 +57,8 @@ public class WSS4JAttachment extends Attachment
   private final AS4ResourceManager m_aResMgr;
   private IHasInputStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
+  private EAS4CompressionMode m_eCM;
+  private Charset m_aCharset;
 
   public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
   {
@@ -102,6 +105,42 @@ public class WSS4JAttachment extends Attachment
     return this;
   }
 
+  @Nullable
+  public final EAS4CompressionMode getCompressionMode ()
+  {
+    return m_eCM;
+  }
+
+  public final boolean hasCompressionMode ()
+  {
+    return m_eCM != null;
+  }
+
+  @Nonnull
+  public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCM)
+  {
+    m_eCM = ValueEnforcer.notNull (eCM, "CompressionMode");
+    return this;
+  }
+
+  @Nonnull
+  public final Charset getCharset ()
+  {
+    return m_aCharset;
+  }
+
+  public final boolean hasCharset ()
+  {
+    return m_aCharset != null;
+  }
+
+  @Nonnull
+  public final WSS4JAttachment setCharset (@Nonnull final Charset aCharset)
+  {
+    m_aCharset = ValueEnforcer.notNull (aCharset, "Charset");
+    return this;
+  }
+
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
@@ -124,7 +163,18 @@ public class WSS4JAttachment extends Attachment
                                        .append ("Headers", getHeaders ())
                                        .append ("ResourceManager", m_aResMgr)
                                        .append ("ISP", m_aISP)
+                                       .append ("CTE", m_eCTE)
+                                       .append ("CM", m_eCM)
+                                       .append ("Charset", m_aCharset)
                                        .toString ();
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aFile,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
+  {
+    return createOutgoingFileAttachment (aFile, aMimeType, null, aResMgr);
   }
 
   /**
@@ -169,10 +219,12 @@ public class WSS4JAttachment extends Attachment
     File aRealFile;
     if (eCompressionMode != null)
     {
+      ret.setCompressionMode (eCompressionMode);
+
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
       try (
-          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aFile))))
+          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
         StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
       }

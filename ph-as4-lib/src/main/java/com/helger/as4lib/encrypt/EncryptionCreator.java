@@ -31,13 +31,12 @@ import org.w3c.dom.Document;
 
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
@@ -83,7 +82,7 @@ public class EncryptionCreator
   public MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                          @Nonnull final Document aDoc,
                                          final boolean bMustUnderstand,
-                                         @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
+                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                          @Nonnull final AS4ResourceManager aResMgr) throws Exception
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
@@ -98,13 +97,9 @@ public class EncryptionCreator
     aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
-    if (aAttachments != null)
+    if (CollectionHelper.isNotEmpty (aAttachments))
     {
-      // Convert to WSS4J attachments
-      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList <> (aAttachments,
-                                                                                        IAS4OutgoingAttachment::getAsWSS4JAttachment);
-
-      aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aWSS4JAttachments, aResMgr);
+      aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResMgr);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
@@ -124,6 +119,7 @@ public class EncryptionCreator
     if (aAttachmentCallbackHandler != null)
     {
       aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
+      // MIME Type and CTE must be set!
       aEncryptedAttachments.forEach (x -> {
         x.setMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
         x.setContentTransferEncoding (EContentTransferEncoding.BINARY);
@@ -131,6 +127,6 @@ public class EncryptionCreator
     }
 
     // Use the encrypted attachments!
-    return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aEncryptedDoc, null, aEncryptedAttachments);
+    return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aEncryptedDoc, aEncryptedAttachments);
   }
 }

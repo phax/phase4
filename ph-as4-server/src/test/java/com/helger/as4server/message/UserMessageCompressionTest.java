@@ -30,8 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
-import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
-import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
@@ -68,18 +67,17 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
-    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     EAS4CompressionMode.GZIP,
-                                                     s_aResMgr));
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
                                                                                                                                      aAttachments),
 
-                                                                                          aAttachments,
-                                                                                          null);
+                                                                                          aAttachments);
 
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
@@ -87,11 +85,11 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageCompressedSignedEncrpyted () throws Exception
   {
-    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     EAS4CompressionMode.GZIP,
-                                                     s_aResMgr));
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
     final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -116,18 +114,17 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   public void testUserMessageWithCompressedAttachmentFailureNoBodyPayloadAllowed () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
-                                                     CMimeType.APPLICATION_XML,
-                                                     EAS4CompressionMode.GZIP,
-                                                     s_aResMgr));
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      aPayload,
                                                                                                                                      aAttachments),
 
-                                                                                          aAttachments,
-                                                                                          null);
+                                                                                          aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 

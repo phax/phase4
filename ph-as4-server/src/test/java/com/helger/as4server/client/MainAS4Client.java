@@ -39,8 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
-import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4lib.encrypt.EncryptionCreator;
@@ -107,7 +106,7 @@ public class MainAS4Client
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
         aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
@@ -116,7 +115,9 @@ public class MainAS4Client
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
+                                                                               aPayload,
+                                                                               aAttachments);
         aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
       }
       else
@@ -124,16 +125,18 @@ public class MainAS4Client
         if (false)
         {
           final Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
-                                                                    aPayload,
-                                                                    aAttachments,
-                                                                    aResMgr);
+                                                                          aPayload,
+                                                                          aAttachments,
+                                                                          aResMgr);
           aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
         }
         // BodyPayload ENCRYPTED
         else
           if (false)
           {
-            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12, aPayload, aAttachments);
+            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
+                                                                             aPayload,
+                                                                             aAttachments);
             aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
 
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
@@ -141,22 +144,22 @@ public class MainAS4Client
           else
             if (true)
             {
-              aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
-                                                               CMimeType.APPLICATION_GZIP,
-                                                               aResMgr));
+              aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                                              CMimeType.APPLICATION_GZIP,
+                                                                              null,
+                                                                              aResMgr));
 
               final SignedMessageCreator aSigned = new SignedMessageCreator ();
               final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                                  null,
-                                                                                                                                                                                  aAttachments),
+                                                                                                                                                                                        null,
+                                                                                                                                                                                        aAttachments),
                                                                                                                                        ESOAPVersion.SOAP_12,
                                                                                                                                        aAttachments,
                                                                                                                                        aResMgr,
                                                                                                                                        false,
                                                                                                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
-                                                                                                          aAttachments,
-                                                                                                          null);
+                                                                                                          aAttachments);
 
               // Move all global mime headers to the POST request
               MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
@@ -166,9 +169,9 @@ public class MainAS4Client
               if (false)
               {
                 Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
-                                                                    aPayload,
-                                                                    aAttachments,
-                                                                    aResMgr);
+                                                                          aPayload,
+                                                                          aAttachments,
+                                                                          aResMgr);
                 aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
                 aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
               }
