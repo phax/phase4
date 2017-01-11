@@ -27,6 +27,7 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 /**
@@ -37,17 +38,21 @@ import com.helger.mail.cte.EContentTransferEncoding;
 public abstract class AbstractAS4OutgoingAttachment implements IAS4OutgoingAttachment
 {
   private final String m_sID;
-  private Charset m_aCharset;
+  private final IMimeType m_aOriginalMimeType;
   private final IMimeType m_aMimeType;
-  private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private final EAS4CompressionMode m_eCompressionMode;
+  private Charset m_aCharset;
+  private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
 
   public AbstractAS4OutgoingAttachment (@Nonnull final IMimeType aMimeType,
                                         @Nullable final EAS4CompressionMode eCompressionMode)
   {
     ValueEnforcer.notNull (aMimeType, "MimeType");
     m_sID = CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
-    m_aMimeType = aMimeType;
+    m_aOriginalMimeType = aMimeType;
+    // Important to change the MIME type, so that signature calculation uses the
+    // wrong mechanism!
+    m_aMimeType = eCompressionMode != null ? eCompressionMode.getMimeType () : aMimeType;
     m_eCompressionMode = eCompressionMode;
   }
 
@@ -56,6 +61,18 @@ public abstract class AbstractAS4OutgoingAttachment implements IAS4OutgoingAttac
   public final String getID ()
   {
     return m_sID;
+  }
+
+  @Nonnull
+  public final IMimeType getMimeType ()
+  {
+    return m_aMimeType;
+  }
+
+  @Nullable
+  public final EAS4CompressionMode getCompressionMode ()
+  {
+    return m_eCompressionMode;
   }
 
   @Nonnull
@@ -72,12 +89,6 @@ public abstract class AbstractAS4OutgoingAttachment implements IAS4OutgoingAttac
   }
 
   @Nonnull
-  public final IMimeType getMimeType ()
-  {
-    return m_aMimeType;
-  }
-
-  @Nonnull
   public final EContentTransferEncoding getContentTransferEncoding ()
   {
     return m_eCTE;
@@ -90,9 +101,15 @@ public abstract class AbstractAS4OutgoingAttachment implements IAS4OutgoingAttac
     return this;
   }
 
-  @Nullable
-  public final EAS4CompressionMode getCompressionMode ()
+  @Override
+  public String toString ()
   {
-    return m_eCompressionMode;
+    return new ToStringGenerator (this).append ("ID", m_sID)
+                                       .appendIf ("OriginalMimeType", m_aOriginalMimeType, x -> x != m_aMimeType)
+                                       .append ("MimeType", m_aMimeType)
+                                       .append ("CompressionMode", m_eCompressionMode)
+                                       .append ("Charset", m_aCharset)
+                                       .append ("CTE", m_eCTE)
+                                       .toString ();
   }
 }

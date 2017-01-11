@@ -99,8 +99,8 @@ public class EncryptionCreator
     if (aAttachments != null)
     {
       // Convert to WSS4J attachments
-      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList<> (aAttachments,
-                                                                                       IAS4OutgoingAttachment::getAsWSS4JAttachment);
+      final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList <> (aAttachments,
+                                                                                        IAS4OutgoingAttachment::getAsWSS4JAttachment);
 
       aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aWSS4JAttachments, aResMgr);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);

@@ -17,6 +17,7 @@
 package com.helger.as4lib.attachment.outgoing;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.activation.DataHandler;
@@ -48,23 +49,68 @@ import com.helger.http.CHTTPHeader;
 public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
 {
   private final File m_aFile;
+  private final String m_sOrigFilename;
   private final AS4ResourceManager m_aResMgr;
 
   public AS4OutgoingFileAttachment (@Nonnull final File aFile,
                                     @Nonnull final IMimeType aMimeType,
-                                    @Nonnull final AS4ResourceManager aTempFileHdl)
+                                    @Nonnull final AS4ResourceManager aResMgr) throws IOException
   {
-    this (aFile, aMimeType, (EAS4CompressionMode) null, aTempFileHdl);
+    this (aFile, aMimeType, (EAS4CompressionMode) null, aResMgr);
   }
 
+  /**
+   * Constructor. Performs compression internally.
+   *
+   * @param aFile
+   *        Source, uncompressed, unencrypted file.
+   * @param aMimeType
+   *        Original mime type of the file.
+   * @param aEAS4CompressionMode
+   *        Optional compression mode to use. May be <code>null</code>.
+   * @param aResMgr
+   *        The resource manager to use. May not be <code>null</code>.
+   * @throws IOException
+   *         In case something goes wrong during compression
+   */
   public AS4OutgoingFileAttachment (@Nonnull final File aFile,
                                     @Nonnull final IMimeType aMimeType,
                                     @Nullable final EAS4CompressionMode aEAS4CompressionMode,
-                                    @Nonnull final AS4ResourceManager aResMgr)
+                                    @Nonnull final AS4ResourceManager aResMgr) throws IOException
   {
     super (aMimeType, aEAS4CompressionMode);
-    m_aFile = ValueEnforcer.notNull (aFile, "File");
+    ValueEnforcer.notNull (aFile, "File");
     m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+    m_sOrigFilename = FilenameHelper.getWithoutPath (aFile);
+
+    // If the attachment has an compressionMode do it directly, so that
+    // encryption later on works on the compressed content
+    if (hasCompressionMode ())
+    {
+      // Create temporary file with compressed content
+      m_aFile = m_aResMgr.createTempFile ();
+      try (
+          final OutputStream aOS = getCompressionMode ().getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (m_aFile))))
+      {
+        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
+      }
+    }
+    else
+    {
+      // No compression - use file as-is
+      m_aFile = aFile;
+    }
+  }
+
+  /**
+   * @return The underlying file this attachment operates on. May already
+   *         contained the compressed content if compression is enabled. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public File getFile ()
+  {
+    return m_aFile;
   }
 
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
@@ -75,25 +121,7 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
 
     aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, getID ());
-    // If the attachment has an compressionMode assigned the compressed file
-    // will be set as DataSource
-    if (hasCompressionMode ())
-    {
-      // Create temporary file with compressed content
-      final File aCompressedFile = m_aResMgr.createTempFile ();
-      try (
-          final OutputStream aOS = getCompressionMode ().getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aCompressedFile))))
-      {
-        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (m_aFile)),
-                                                    aOS);
-      }
-      aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (aCompressedFile)));
-    }
-    else
-    {
-      // Use source file
-      aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
-    }
+    aMimeBodyPart.setDataHandler (new DataHandler (new FileDataSource (m_aFile)));
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
@@ -103,8 +131,7 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
   {
     final ICommonsMap <String, String> aHeaders = new CommonsHashMap <> ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
-                  "attachment; filename=\"" + FilenameHelper.getWithoutPath (m_aFile) + "\"");
+    aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION, "attachment; filename=\"" + m_sOrigFilename + "\"");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ().getAsString ());
 

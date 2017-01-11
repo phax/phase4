@@ -26,14 +26,19 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.outgoing.AS4OutgoingFileAttachment;
 import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
+import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.encrypt.EncryptionCreator;
 import com.helger.as4lib.error.EEbmsError;
 import com.helger.as4lib.httpclient.HttpMimeMessageEntity;
 import com.helger.as4lib.mime.MimeMessageCreator;
+import com.helger.as4lib.signing.SignedMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4server.holodeck.IHolodeckTests;
 import com.helger.commons.collection.CollectionHelper;
@@ -63,7 +68,7 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
-    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      EAS4CompressionMode.GZIP,
@@ -80,10 +85,38 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
+  public void testUserMessageCompressedSignedEncrpyted () throws Exception
+  {
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                     CMimeType.APPLICATION_XML,
+                                                     EAS4CompressionMode.GZIP,
+                                                     s_aResMgr));
+
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
+    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                  null,
+                                                                                                  aAttachments),
+                                                       m_eSOAPVersion,
+                                                       aAttachments,
+                                                       s_aResMgr,
+                                                       false,
+                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
+                                                                          aDoc,
+                                                                          false,
+                                                                          aAttachments,
+                                                                          s_aResMgr);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+  }
+
+  @Test
   public void testUserMessageWithCompressedAttachmentFailureNoBodyPayloadAllowed () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <IAS4OutgoingAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (new AS4OutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                      CMimeType.APPLICATION_XML,
                                                      EAS4CompressionMode.GZIP,
