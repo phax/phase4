@@ -102,17 +102,6 @@ public class AS4OutgoingFileAttachment extends AbstractAS4OutgoingAttachment
     }
   }
 
-  /**
-   * @return The underlying file this attachment operates on. May already
-   *         contained the compressed content if compression is enabled. Never
-   *         <code>null</code>.
-   */
-  @Nonnull
-  public File getFile ()
-  {
-    return m_aFile;
-  }
-
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");

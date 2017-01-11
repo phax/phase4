@@ -39,6 +39,8 @@ import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.mime.CMimeType;
+import com.helger.mail.cte.EContentTransferEncoding;
 
 public class EncryptionCreator
 {
@@ -118,8 +120,15 @@ public class EncryptionCreator
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!
-    final ICommonsList <WSS4JAttachment> aEncryptedAttachments = aAttachmentCallbackHandler == null ? null
-                                                                                                    : aAttachmentCallbackHandler.getAllResponseAttachments ();
+    ICommonsList <WSS4JAttachment> aEncryptedAttachments = null;
+    if (aAttachmentCallbackHandler != null)
+    {
+      aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
+      aEncryptedAttachments.forEach (x -> {
+        x.setMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+        x.setContentTransferEncoding (EContentTransferEncoding.BINARY);
+      });
+    }
 
     // Use the encrypted attachments!
     return new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aEncryptedDoc, null, aEncryptedAttachments);

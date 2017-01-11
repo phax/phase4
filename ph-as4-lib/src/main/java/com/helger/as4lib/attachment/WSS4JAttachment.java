@@ -16,21 +16,38 @@
  */
 package com.helger.as4lib.attachment;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
+import javax.activation.DataHandler;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.Attachment;
+import org.apache.wss4j.common.util.AttachmentUtils;
 
+import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.IHasInputStream;
+import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.http.CHTTPHeader;
+import com.helger.mail.cte.EContentTransferEncoding;
+import com.helger.mail.datasource.InputStreamDataSource;
 
 /**
  * Special WSS4J attachment with an InputStream provider instead of a fixed
  * InputStream
- * 
+ *
  * @author bayerlma
  * @author Philip Helger
  */
@@ -38,6 +55,7 @@ public class WSS4JAttachment extends Attachment
 {
   private final AS4ResourceManager m_aResMgr;
   private IHasInputStream m_aISP;
+  private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
 
   public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
   {
@@ -67,6 +85,37 @@ public class WSS4JAttachment extends Attachment
     m_aISP = aISP;
   }
 
+  /**
+   * @return The content transfer encoding to be used. Required for MIME
+   *         multipart handling only.
+   */
+  @Nonnull
+  public final EContentTransferEncoding getContentTransferEncoding ()
+  {
+    return m_eCTE;
+  }
+
+  @Nonnull
+  public final WSS4JAttachment setContentTransferEncoding (@Nonnull final EContentTransferEncoding eCTE)
+  {
+    m_eCTE = ValueEnforcer.notNull (eCTE, "CTE");
+    return this;
+  }
+
+  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
+  {
+    ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
+
+    final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
+
+    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, getId ());
+    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ());
+    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
+    aMimeBodyPart.setDataHandler (new DataHandler (new InputStreamDataSource (getSourceStream (),
+                                                                              getId ()).getEncodingAware (getContentTransferEncoding ())));
+    aMimeMultipart.addBodyPart (aMimeBodyPart);
+  }
+
   @Override
   public String toString ()
   {
@@ -76,5 +125,64 @@ public class WSS4JAttachment extends Attachment
                                        .append ("ResourceManager", m_aResMgr)
                                        .append ("ISP", m_aISP)
                                        .toString ();
+  }
+
+  /**
+   * Constructor. Performs compression internally.
+   *
+   * @param aFile
+   *        Source, uncompressed, unencrypted file.
+   * @param aMimeType
+   *        Original mime type of the file.
+   * @param eCompressionMode
+   *        Optional compression mode to use. May be <code>null</code>.
+   * @param aResMgr
+   *        The resource manager to use. May not be <code>null</code>.
+   * @throws IOException
+   *         In case something goes wrong during compression
+   */
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aFile,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
+  {
+    ValueEnforcer.notNull (aFile, "File");
+    ValueEnforcer.notNull (aMimeType, "MimeType");
+
+    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr);
+    ret.setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());
+    // Important to change the MIME type, so that signature calculation uses the
+    // wrong mechanism!
+    final IMimeType aRealMimeType = eCompressionMode != null ? eCompressionMode.getMimeType () : aMimeType;
+    ret.setMimeType (aRealMimeType.getAsString ());
+
+    // Set after ID and MimeType!
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
+                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (aFile) + "\"");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + ">");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
+
+    // If the attachment has an compressionMode do it directly, so that
+    // encryption later on works on the compressed content
+    File aRealFile;
+    if (eCompressionMode != null)
+    {
+      // Create temporary file with compressed content
+      aRealFile = aResMgr.createTempFile ();
+      try (
+          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aFile))))
+      {
+        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
+      }
+    }
+    else
+    {
+      // No compression - use file as-is
+      aRealFile = aFile;
+    }
+    ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aRealFile)));
+    return ret;
   }
 }

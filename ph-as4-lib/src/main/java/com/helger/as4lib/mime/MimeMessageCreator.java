@@ -23,10 +23,10 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.w3c.dom.Document;
 
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.attachment.outgoing.IAS4OutgoingAttachment;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.xml.AS4XMLHelper;
@@ -51,7 +51,7 @@ public final class MimeMessageCreator
   @Nonnull
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
                                           @Nullable final Iterable <? extends IAS4OutgoingAttachment> aAttachments,
-                                          @Nullable final ICommonsList <? extends Attachment> aEncryptedAttachments) throws Exception
+                                          @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws Exception
   {
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
@@ -71,20 +71,29 @@ public final class MimeMessageCreator
         aAttachment.addToMimeMultipart (aMimeMultipart);
 
     if (aEncryptedAttachments != null)
-      for (final Attachment aEncryptedAttachment : aEncryptedAttachments)
+      for (final WSS4JAttachment aEncryptedAttachment : aEncryptedAttachments)
       {
-        final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
-        // Important: don't add the other attachment headers to the mime body
-        // part, otherwise decryption is likely to fail!
+        if (true)
+        {
+          // New version
+          aEncryptedAttachment.addToMimeMultipart (aMimeMultipart);
+        }
+        else
+        {
+          // Old version
+          final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
+          // Important: don't add the other attachment headers to the mime body
+          // part, otherwise decryption is likely to fail!
 
-        // Content-ID is required
-        aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, aEncryptedAttachment.getId ());
-        // Use application/octet-stream manually
-        aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
-                                 CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
-        aMimeBodyPart.setDataHandler (new DataHandler (new InputStreamDataSource (aEncryptedAttachment.getSourceStream (),
-                                                                                  aEncryptedAttachment.getId ()).getEncodingAware (eCTE)));
-        aMimeMultipart.addBodyPart (aMimeBodyPart);
+          // Content-ID is required
+          aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, aEncryptedAttachment.getId ());
+          // Use application/octet-stream manually
+          aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
+                                   CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+          aMimeBodyPart.setDataHandler (new DataHandler (new InputStreamDataSource (aEncryptedAttachment.getSourceStream (),
+                                                                                    aEncryptedAttachment.getId ()).getEncodingAware (eCTE)));
+          aMimeMultipart.addBodyPart (aMimeBodyPart);
+        }
       }
 
     // Build main message
