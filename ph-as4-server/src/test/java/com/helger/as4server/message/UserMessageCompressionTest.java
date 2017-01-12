@@ -83,7 +83,50 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageCompressedSignedEncrpyted () throws Exception
+  public void testUserMessageWithCompressedSignedSuccessful () throws Exception
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
+    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                  null,
+                                                                                                  aAttachments),
+                                                       m_eSOAPVersion,
+                                                       aAttachments,
+                                                       s_aResMgr,
+                                                       false,
+                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+  }
+
+  @Test
+  public void testUserMessageCompressedEncrpytedSuccessful () throws Exception
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
+                                                                          aDoc,
+                                                                          false,
+                                                                          aAttachments,
+                                                                          s_aResMgr);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+  }
+
+  @Test
+  public void testUserMessageCompressedSignedEncrpytedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
