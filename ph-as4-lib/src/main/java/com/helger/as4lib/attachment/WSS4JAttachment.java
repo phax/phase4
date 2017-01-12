@@ -158,11 +158,6 @@ public class WSS4JAttachment extends Attachment
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ());
     aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
 
-    // final Enumeration headers = aMimeBodyPart.getAllHeaderLines ();
-    // while (headers.hasMoreElements ())
-    // {
-    // System.out.println ((String) headers.nextElement ());
-    // }
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
 
