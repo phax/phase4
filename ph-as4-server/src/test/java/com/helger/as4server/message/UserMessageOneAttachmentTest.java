@@ -96,6 +96,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
                                                                                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
                                                                                           aAttachments);
+
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 

@@ -69,6 +69,7 @@ public final class MimeMessageCreator
     final MimeMessage aMsg = new MimeMessage ((Session) null);
     aMsg.setContent (aMimeMultipart);
     aMsg.saveChanges ();
+
     return aMsg;
   }
 }
