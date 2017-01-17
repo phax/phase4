@@ -1,12 +1,12 @@
-# as4-lib
+# ph-as4
 
 A library to send and receive AS4 messages. 
 Licensed under the Apache 2 License!
 
 It consists of the following sub-projects:
-  * **as4-lib** - basic data structures for AS4 handling
-  * **as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
-  * **as4-server** - AS4 servlet based server component to be integrated into an existing server
+  * **ph-as4-lib** - basic data structures for AS4 handling
+  * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
+  * **ph-as4-server** - AS4 servlet based server component to be integrated into an existing server
 
 ## News and noteworthy
 
