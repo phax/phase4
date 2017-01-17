@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -34,12 +34,9 @@ import com.helger.as4lib.attachment.incoming.AS4IncomingFileAttachment;
 import com.helger.as4lib.attachment.incoming.AS4IncomingInMemoryAttachment;
 import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
 import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
+import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.CGlobal;
 import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
 
@@ -53,10 +50,6 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
 {
   public static final long DEFAULT_LIMIT_IN_MEMORY = 30 * CGlobal.BYTES_PER_KILOBYTE;
 
-  private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
-  @GuardedBy ("m_aRWLock")
-  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
-
   @OverrideOnDemand
   protected boolean canKeepInMemory (@Nonnegative final long nSize)
   {
@@ -64,7 +57,8 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   }
 
   @Nonnull
-  public IAS4IncomingAttachment createAttachment (@Nonnull final MimeBodyPart aBodyPart) throws IOException,
+  public IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMgr,
+                                                  @Nonnull final MimeBodyPart aBodyPart) throws IOException,
                                                                                          MessagingException
   {
     final int nSize = aBodyPart.getSize ();
@@ -77,12 +71,11 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
     else
     {
       // Write to temp file
-      final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
+      final File aTempFile = aResMgr.createTempFile ();
       try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
       ret = new AS4IncomingFileAttachment (aTempFile);
     }
 
@@ -98,26 +91,19 @@ public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFact
   }
 
   @Nonnull
-  public IAS4IncomingAttachment createAttachment (@Nonnull final InputStream aIS) throws IOException
+  public IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMgr,
+                                                  @Nonnull final InputStream aIS,
+                                                  @Nonnull final Map <String, String> aHeaders) throws IOException
   {
     // Always write to temp file because we don't know how big the content is
-    final File aTempFile = File.createTempFile ("as4-incoming", ".attachment");
+    final File aTempFile = aResMgr.createTempFile ();
     try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
-    m_aRWLock.writeLocked ( () -> m_aTempFiles.add (aTempFile));
-    return new AS4IncomingFileAttachment (aTempFile);
-  }
 
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <File> getAndRemoveAllTempFiles ()
-  {
-    return m_aRWLock.writeLocked ( () -> {
-      final ICommonsList <File> ret = m_aTempFiles.getClone ();
-      m_aTempFiles.clear ();
-      return ret;
-    });
+    final AS4IncomingFileAttachment ret = new AS4IncomingFileAttachment (aTempFile);
+    ret.setAttributes (aHeaders);
+    return ret;
   }
 }

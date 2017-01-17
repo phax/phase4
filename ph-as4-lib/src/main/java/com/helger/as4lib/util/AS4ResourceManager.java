@@ -31,16 +31,17 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.file.FileOperationManager;
+import com.helger.commons.io.file.LoggingFileOperationCallback;
 import com.helger.commons.io.stream.StreamHelper;
 
 public class AS4ResourceManager implements Closeable
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ResourceManager.class);
-  private static final FileOperationManager s_aFOP = new FileOperationManager ();
+  private static final FileOperationManager s_aFOP = new FileOperationManager (new LoggingFileOperationCallback ());
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
-  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
-  private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList<> ();
+  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
+  private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList <> ();
 
   public AS4ResourceManager ()
   {}

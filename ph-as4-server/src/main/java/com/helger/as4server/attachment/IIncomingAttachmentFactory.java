@@ -16,18 +16,17 @@
  */
 package com.helger.as4server.attachment;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
 import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.as4lib.util.AS4ResourceManager;
 
 /**
  * Factory interface for {@link IAS4IncomingAttachment} objects.
@@ -36,13 +35,38 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public interface IIncomingAttachmentFactory extends Serializable
 {
+  /**
+   * Create an attachment if the source message is a MIME message
+   *
+   * @param aResMg
+   *        The resource manager to use. May not be <code>null</code>.
+   * @param aBodyPart
+   *        The attachment body part
+   * @return The internal attachment representation. Never <code>null</code>.
+   * @throws IOException
+   *         In case of IO error
+   * @throws MessagingException
+   *         In case MIME part reading fails.
+   */
   @Nonnull
-  IAS4IncomingAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
+  IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMg,
+                                           @Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
 
+  /**
+   * Solely for decompression of attachments used.
+   *
+   * @param aResMg
+   *        The resource manager to use. May not be <code>null</code>.
+   * @param aIS
+   *        Input stream
+   * @param aHeaders
+   *        Existing headers
+   * @return The decompressed attachment. Never <code>null</code>.
+   * @throws IOException
+   *         In case of IO error
+   */
   @Nonnull
-  IAS4IncomingAttachment createAttachment (@Nonnull InputStream aIS) throws IOException;
-
-  @Nonnull
-  @ReturnsMutableCopy
-  ICommonsList <File> getAndRemoveAllTempFiles ();
+  IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMg,
+                                           @Nonnull InputStream aIS,
+                                           @Nonnull Map <String, String> aHeaders) throws IOException;
 }
