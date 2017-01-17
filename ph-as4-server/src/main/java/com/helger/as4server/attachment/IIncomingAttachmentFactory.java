@@ -38,7 +38,7 @@ public interface IIncomingAttachmentFactory extends Serializable
   /**
    * Create an attachment if the source message is a MIME message
    *
-   * @param aResMg
+   * @param aResMgr
    *        The resource manager to use. May not be <code>null</code>.
    * @param aBodyPart
    *        The attachment body part
@@ -49,13 +49,13 @@ public interface IIncomingAttachmentFactory extends Serializable
    *         In case MIME part reading fails.
    */
   @Nonnull
-  IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMg,
+  IAS4IncomingAttachment createAttachment (@Nonnull AS4ResourceManager aResMgr,
                                            @Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
 
   /**
    * Solely for decompression of attachments used.
    *
-   * @param aResMg
+   * @param aResMgr
    *        The resource manager to use. May not be <code>null</code>.
    * @param aIS
    *        Input stream
@@ -66,7 +66,7 @@ public interface IIncomingAttachmentFactory extends Serializable
    *         In case of IO error
    */
   @Nonnull
-  IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMg,
+  IAS4IncomingAttachment createAttachment (@Nonnull AS4ResourceManager aResMgr,
                                            @Nonnull InputStream aIS,
                                            @Nonnull Map <String, String> aHeaders) throws IOException;
 }

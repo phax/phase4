@@ -19,6 +19,7 @@ package com.helger.as4lib.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 
@@ -40,6 +41,7 @@ public class AS4ResourceManager implements Closeable
   private static final FileOperationManager s_aFOP = new FileOperationManager (new LoggingFileOperationCallback ());
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
+  private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
   private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList <> ();
 
@@ -49,6 +51,9 @@ public class AS4ResourceManager implements Closeable
   @Nonnull
   public File createTempFile () throws IOException
   {
+    if (m_aInClose.get ())
+      throw new IllegalStateException ("ResourceManager is already closing/closed!");
+
     // Create
     final File ret = File.createTempFile ("as4-", ".tmp");
     // And remember
@@ -59,11 +64,17 @@ public class AS4ResourceManager implements Closeable
   public void addCloseable (@Nonnull final Closeable aCloseable)
   {
     ValueEnforcer.notNull (aCloseable, "Closeable");
+
+    if (m_aInClose.get ())
+      throw new IllegalStateException ("ResourceManager is already closing/closed!");
+
     m_aCloseables.add (aCloseable);
   }
 
   public void close ()
   {
+    m_aInClose.set (true);
+
     // Get and delete all temp files
     final ICommonsList <File> aFiles = m_aRWLock.writeLocked ( () -> {
       final ICommonsList <File> ret = m_aTempFiles.getClone ();
