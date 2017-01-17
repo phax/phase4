@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
+import org.apache.wss4j.common.util.AttachmentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -44,6 +45,7 @@ import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
+import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.error.EEbmsError;
@@ -278,6 +280,23 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             // Copy all headers manually
             ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttributes (aIncomingAttachment);
+
+            final Ebms3PartInfo aPart = aUserMessage.getPayloadInfo ()
+                                                    .getPartInfo ()
+                                                    .stream ()
+                                                    .filter (p -> p.getHref ()
+                                                                   .contains (StringHelper.trimStart (aIncomingAttachment.getContentID (),
+                                                                                                      "attachment=")))
+                                                    .findFirst ()
+                                                    .get ();
+            final Ebms3Property aProperty = aPart.getPartProperties ()
+                                                 .getProperty ()
+                                                 .stream ()
+                                                 .filter (x -> x.getName ().equals ("MimeType"))
+                                                 .findFirst ()
+                                                 .get ();
+            ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttribute (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
+                                                                                    aProperty.getValue ());
 
             aDecryptedAttachments.add (aDecompressedAttachment);
           }
