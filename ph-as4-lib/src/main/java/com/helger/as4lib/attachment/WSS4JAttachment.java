@@ -21,11 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.mail.Header;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
@@ -35,11 +38,11 @@ import org.apache.wss4j.common.util.AttachmentUtils;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.http.CHTTPHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
@@ -54,8 +57,13 @@ import com.helger.mail.datasource.InputStreamDataSource;
  */
 public class WSS4JAttachment extends Attachment
 {
+  public static interface IHasAttachmentSourceStream
+  {
+    InputStream getInputStream () throws IOException;
+  }
+
   private final AS4ResourceManager m_aResMgr;
-  private IHasInputStream m_aISP;
+  private IHasAttachmentSourceStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private EAS4CompressionMode m_eCM;
   private Charset m_aCharset;
@@ -83,6 +91,7 @@ public class WSS4JAttachment extends Attachment
   {
     super.setMimeType (sMimeType);
     m_sUncompressedMimeType = sMimeType;
+    addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, sMimeType);
   }
 
   /**
@@ -97,7 +106,15 @@ public class WSS4JAttachment extends Attachment
   @Override
   public InputStream getSourceStream ()
   {
-    final InputStream ret = m_aISP.getInputStream ();
+    InputStream ret;
+    try
+    {
+      ret = m_aISP.getInputStream ();
+    }
+    catch (final IOException ex)
+    {
+      throw new IllegalStateException ("Failed to get InputStream from " + m_aISP, ex);
+    }
     if (ret == null)
       throw new IllegalStateException ("Failed to get InputStream from " + m_aISP);
     m_aResMgr.addCloseable (ret);
@@ -111,7 +128,13 @@ public class WSS4JAttachment extends Attachment
     throw new UnsupportedOperationException ("Use setSourceStreamProvider instead");
   }
 
-  public void setSourceStreamProvider (@Nonnull final IHasInputStream aISP)
+  @Nullable
+  public IHasAttachmentSourceStream getInputStreamProvider ()
+  {
+    return m_aISP;
+  }
+
+  public void setSourceStreamProvider (@Nonnull final IHasAttachmentSourceStream aISP)
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
@@ -270,6 +293,52 @@ public class WSS4JAttachment extends Attachment
       aRealFile = aFile;
     }
     ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aRealFile)));
+    return ret;
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createIncomingFileAttachment (@Nonnull final MimeBodyPart aBodyPart,
+                                                              @Nonnull final AS4ResourceManager aResMgr) throws MessagingException,
+                                                                                                         IOException
+  {
+    ValueEnforcer.notNull (aBodyPart, "BodyPart");
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
+
+    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aBodyPart.getContentType ());
+
+    {
+      // Reference in header is: <ID>
+      // See
+      // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
+      // chapter 5.2
+      final String sRealContentID = StringHelper.trimStartAndEnd (aBodyPart.getContentID (), '<', '>');
+      ret.setId (sRealContentID);
+    }
+
+    // Write to temp file
+    // TODO maybe keep some parts in memory??
+    {
+      final File aTempFile = aResMgr.createTempFile ();
+      try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
+      {
+        aBodyPart.getDataHandler ().writeTo (aOS);
+      }
+      ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aTempFile)));
+    }
+
+    // Convert all headers to attributes
+    final Enumeration <?> aEnum = aBodyPart.getAllHeaders ();
+    while (aEnum.hasMoreElements ())
+    {
+      final Header aHeader = (Header) aEnum.nextElement ();
+      ret.addHeader (aHeader.getName (), aHeader.getValue ());
+    }
+
+    // These headers are mandatory and overwrite headers from the MIME body part
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + ">");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
+
     return ret;
   }
 }

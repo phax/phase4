@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -50,5 +50,5 @@ public interface IAS4ServletMessageProcessorSPI
   @Nonnull
   AS4MessageProcessorResult processAS4Message (@Nullable Ebms3UserMessage aUserMessage,
                                                @Nullable Node aPayload,
-                                               @Nullable ICommonsList <IAS4IncomingAttachment> aIncomingAttachments);
+                                               @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
 }

@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
-import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -49,7 +49,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
   public AS4MessageProcessorResult processAS4Message (@Nullable final Ebms3UserMessage aUserMessage,
                                                       @Nullable final Node aPayload,
-                                                      @Nullable final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments)
+                                                      @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
     s_aLogger.info ("Received AS4 message:");
     s_aLogger.info ("  UserMessage: " + aUserMessage);
@@ -57,12 +57,12 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     if (aIncomingAttachments != null)
     {
       s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
-      for (final IAS4IncomingAttachment x : aIncomingAttachments)
+      for (final WSS4JAttachment x : aIncomingAttachments)
       {
-        s_aLogger.info ("    Attachment Content Type: " + x.getContentType ());
-        if (x.getContentType ().startsWith ("text"))
+        s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
+        if (x.getMimeType ().startsWith ("text"))
           s_aLogger.info ("    Attachment Content: " +
-                          StreamHelper.getAllBytesAsString (x.getInputStream (), StandardCharsets.ISO_8859_1));
+                          StreamHelper.getAllBytesAsString (x.getSourceStream (), StandardCharsets.ISO_8859_1));
       }
     }
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);

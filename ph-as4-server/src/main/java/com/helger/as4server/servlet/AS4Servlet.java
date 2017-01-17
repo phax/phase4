@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
-import org.apache.wss4j.common.util.AttachmentUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -38,9 +37,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.WSS4JAttachment;
-import com.helger.as4lib.attachment.incoming.AS4IncomingWSS4JAttachment;
-import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
-import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
+import com.helger.as4lib.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -69,7 +66,6 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
-import com.helger.as4server.attachment.IIncomingAttachmentFactory;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
@@ -118,7 +114,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
                                    @Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
-                                   @Nonnull final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments,
+                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                    @Nonnull final AS4Response aAS4Response,
                                    @Nonnull final Locale aLocale) throws Exception
   {
@@ -169,11 +165,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
-    // Convert all attachments to WSS4J attachments
-    // Need to check, since not every message will have attachments
-    final ICommonsList <WSS4JAttachment> aWSS4JAttachments = new CommonsArrayList <> (aIncomingAttachments,
-                                                                                      x -> x.getAsWSS4JAttachment (aResMgr));
-
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
 
@@ -202,7 +193,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       final ErrorList aErrorList = new ErrorList ();
       if (aProcessor.processHeaderElement (aSOAPDocument,
                                            aHeader.getNode (),
-                                           aWSS4JAttachments,
+                                           aIncomingAttachments,
                                            aState,
                                            aErrorList,
                                            aLocale)
@@ -262,27 +253,19 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
       // Decompressing the attachments
-      final ICommonsList <IAS4IncomingAttachment> aDecryptedAttachments = new CommonsArrayList <> (aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                                                     : aState.getOriginalAttachments (),
-                                                                                                   x -> new AS4IncomingWSS4JAttachment (x));
+      final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                     : aState.getOriginalAttachments ();
 
       // Decompress attachments (if compressed)
-      final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
-      for (final IAS4IncomingAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
+      for (final WSS4JAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
       {
-        final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getContentID ());
+        final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
         if (eCompressionMode != null)
         {
-          // Remove the old one
-          aDecryptedAttachments.remove (aIncomingAttachment);
+          final IHasAttachmentSourceStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
+          aIncomingAttachment.setSourceStreamProvider ( () -> eCompressionMode.getDecompressStream (aOldISP.getInputStream ()));
 
-          // Add the new one with decompressing InputStream
-          final IAS4IncomingAttachment aDecompressedAttachment = aIAF.createAttachment (aResMgr,
-                                                                                        eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()),
-                                                                                        aIncomingAttachment.getAllAttributes ());
-
-          final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getContentID (),
-                                                                      "attachment=");
+          final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getId (), "attachment=");
           final Ebms3PartInfo aPart = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                   x -> x.getHref ().contains (sAttachmentContentID));
           if (aPart != null)
@@ -292,12 +275,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                               .equals (CreateUserMessage.PART_PROPERTY_MIME_TYPE));
             if (aProperty != null)
             {
-              ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttribute (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
-                                                                                      aProperty.getValue ());
+              aIncomingAttachment.overwriteMimeType (aProperty.getValue ());
             }
           }
-
-          aDecryptedAttachments.add (aDecompressedAttachment);
         }
       }
 
@@ -703,7 +683,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <IAS4IncomingAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
@@ -757,8 +737,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
             {
               // MIME Attachment (index is gt 0)
-              final IAS4IncomingAttachment aAttachment = MetaManager.getIncomingAttachmentFactory ()
-                                                                    .createAttachment (aResMgr, aBodyPart);
+              final WSS4JAttachment aAttachment = MetaManager.getIncomingAttachmentFactory ()
+                                                             .createAttachment (aResMgr, aBodyPart);
               aIncomingAttachments.add (aAttachment);
             }
             nIndex++;
