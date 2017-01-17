@@ -71,8 +71,7 @@ public interface IAS4IncomingAttachment extends IHasInputStream, IAttributeConta
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + getContentID () + ">");
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getContentType ());
 
-    final WSS4JAttachment aAttachment = new WSS4JAttachment (aResMgr);
-    aAttachment.setMimeType (getContentType ());
+    final WSS4JAttachment aAttachment = new WSS4JAttachment (aResMgr, getContentType ());
     aAttachment.addHeaders (aHeaders);
     aAttachment.setId (getContentID ());
     aAttachment.setSourceStreamProvider (this);

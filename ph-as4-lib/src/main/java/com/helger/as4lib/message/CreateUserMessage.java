@@ -173,7 +173,7 @@ public class CreateUserMessage
         {
           final Ebms3Property aMimeType = new Ebms3Property ();
           aMimeType.setName ("MimeType");
-          aMimeType.setValue (aAttachment.getMimeType ());
+          aMimeType.setValue (aAttachment.getUncompressedMimeType ());
           aEbms3PartProperties.addProperty (aMimeType);
         }
         if (aAttachment.hasCharset ())

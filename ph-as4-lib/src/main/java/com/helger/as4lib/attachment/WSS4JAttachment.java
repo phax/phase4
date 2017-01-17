@@ -59,10 +59,29 @@ public class WSS4JAttachment extends Attachment
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private EAS4CompressionMode m_eCM;
   private Charset m_aCharset;
+  private final String m_sUncompressedMimeType;
 
-  public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
+  public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr, @Nullable final String sMimeType)
   {
     m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+    super.setMimeType (sMimeType);
+    m_sUncompressedMimeType = sMimeType;
+  }
+
+  @Override
+  @Deprecated
+  public void setMimeType (@Nullable final String sMimeType)
+  {
+    throw new UnsupportedOperationException ();
+  }
+
+  /**
+   * @return The MIME type of the uncompressed attachment.
+   */
+  @Nullable
+  public String getUncompressedMimeType ()
+  {
+    return m_sUncompressedMimeType;
   }
 
   @Override
@@ -119,7 +138,18 @@ public class WSS4JAttachment extends Attachment
   @Nonnull
   public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCM)
   {
-    m_eCM = ValueEnforcer.notNull (eCM, "CompressionMode");
+    ValueEnforcer.notNull (eCM, "CompressionMode");
+    m_eCM = eCM;
+    if (eCM != null)
+    {
+      // Main MIME type is now the compression type MIME type
+      super.setMimeType (eCM.getMimeType ().getAsString ());
+    }
+    else
+    {
+      // Main MIME type is the uncompressed one (which may be null)
+      super.setMimeType (m_sUncompressedMimeType);
+    }
     return this;
   }
 
@@ -206,12 +236,8 @@ public class WSS4JAttachment extends Attachment
     ValueEnforcer.notNull (aFile, "File");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
-    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr);
+    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
     ret.setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());
-    // Important to change the MIME type, so that signature calculation uses the
-    // wrong mechanism!
-    final IMimeType aRealMimeType = eCompressionMode != null ? eCompressionMode.getMimeType () : aMimeType;
-    ret.setMimeType (aRealMimeType.getAsString ());
 
     // Set after ID and MimeType!
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
@@ -229,8 +255,7 @@ public class WSS4JAttachment extends Attachment
 
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
-      try (
-          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
+      try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
         StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
       }
