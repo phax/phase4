@@ -26,7 +26,6 @@ import org.apache.wss4j.common.util.AttachmentUtils;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.collection.attr.IAttributeContainer;
-import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FilenameHelper;
@@ -60,7 +59,8 @@ public interface IAS4IncomingAttachment extends IHasInputStream, IAttributeConta
   @Nonnull
   default WSS4JAttachment getAsWSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr)
   {
-    final ICommonsMap <String, String> aHeaders = new CommonsHashMap<> ();
+    // Copy all existing attributes
+    final ICommonsMap <String, String> aHeaders = getAllAttributes ();
     aHeaders.put (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
     if (this instanceof AS4IncomingFileAttachment)
     {

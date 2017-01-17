@@ -38,6 +38,7 @@ import org.w3c.dom.Node;
 import com.helger.as4lib.attachment.EAS4CompressionMode;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.attachment.incoming.AS4IncomingWSS4JAttachment;
+import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
 import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Error;
@@ -274,6 +275,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             // Add the new one with decompressing InputStream
             final IAS4IncomingAttachment aDecompressedAttachment = aIAF.createAttachment (eCompressionMode.getDecompressStream (aIncomingAttachment.getInputStream ()));
+
+            // Copy all headers manually
+            ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttributes (aIncomingAttachment);
+
             aDecryptedAttachments.add (aDecompressedAttachment);
           }
         }

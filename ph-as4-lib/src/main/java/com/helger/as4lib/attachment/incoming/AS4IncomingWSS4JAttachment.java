@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.http.CHTTPHeader;
 
 /**
  * Wraps an existing (decrypted) WSS4J attachment.
@@ -38,18 +37,13 @@ public class AS4IncomingWSS4JAttachment extends AbstractAS4IncomingAttachment
   public AS4IncomingWSS4JAttachment (@Nonnull final WSS4JAttachment aSrc)
   {
     m_aSrc = ValueEnforcer.notNull (aSrc, "SrcAttachment");
+    setAttributes (aSrc.getHeaders ());
   }
 
   @Nullable
   public String getContentID ()
   {
     return m_aSrc.getId ();
-  }
-
-  @Nullable
-  public String getContentTransferEncoding ()
-  {
-    return m_aSrc.getHeaders ().get (CHTTPHeader.CONTENT_TRANSFER_ENCODING);
   }
 
   @Nullable

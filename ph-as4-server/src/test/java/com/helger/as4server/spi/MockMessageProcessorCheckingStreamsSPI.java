@@ -58,8 +58,12 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     {
       s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
       for (final IAS4IncomingAttachment x : aIncomingAttachments)
-        s_aLogger.info ("    Attachment: " +
-                        StreamHelper.getAllBytesAsString (x.getInputStream (), StandardCharsets.ISO_8859_1));
+      {
+        s_aLogger.info ("    Attachment Content Type: " + x.getContentType ());
+        if (x.getContentType ().startsWith ("text"))
+          s_aLogger.info ("    Attachment Content: " +
+                          StreamHelper.getAllBytesAsString (x.getInputStream (), StandardCharsets.ISO_8859_1));
+      }
     }
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);
   }
