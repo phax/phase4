@@ -18,6 +18,8 @@ package com.helger.as4lib.attachment.incoming;
 
 import javax.annotation.Nonnull;
 
+import org.apache.wss4j.common.util.AttachmentUtils;
+
 import com.helger.commons.collection.attr.MapBasedAttributeContainer;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
@@ -35,7 +37,7 @@ public abstract class AbstractAS4IncomingAttachment extends MapBasedAttributeCon
   public EChange setAttribute (final String sName, final String sValue)
   {
     String sRealValue;
-    if ("Content-ID".equalsIgnoreCase (sName))
+    if (AttachmentUtils.MIME_HEADER_CONTENT_ID.equalsIgnoreCase (sName))
     {
       // Reference in header is: <ID>
       // See

@@ -210,14 +210,6 @@ public class WSS4JAttachment extends Attachment
                                        .toString ();
   }
 
-  @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aFile,
-                                                              @Nonnull final IMimeType aMimeType,
-                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
-  {
-    return createOutgoingFileAttachment (aFile, aMimeType, null, aResMgr);
-  }
-
   /**
    * Constructor. Performs compression internally.
    *
