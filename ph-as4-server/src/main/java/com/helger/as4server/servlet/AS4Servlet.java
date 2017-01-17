@@ -756,7 +756,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             }
             else
             {
-              // MIME Attachment
+              // MIME Attachment (index is gt 0)
               final IAS4IncomingAttachment aAttachment = MetaManager.getIncomingAttachmentFactory ()
                                                                     .createAttachment (aResMgr, aBodyPart);
               aIncomingAttachments.add (aAttachment);

@@ -67,6 +67,11 @@ public class WSS4JAttachment extends Attachment
     overwriteMimeType (sMimeType);
   }
 
+  public void setUniqueID ()
+  {
+    setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());
+  }
+
   @Override
   @Deprecated
   public void setMimeType (@Nullable final String sMimeType)
@@ -190,6 +195,7 @@ public class WSS4JAttachment extends Attachment
     aMimeBodyPart.setDataHandler (new DataHandler (new InputStreamDataSource (getSourceStream (),
                                                                               getId ()).getEncodingAware (getContentTransferEncoding ())));
 
+    // After DataHandler!!
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ());
     aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
 
@@ -234,7 +240,7 @@ public class WSS4JAttachment extends Attachment
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
-    ret.setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());
+    ret.setUniqueID ();
 
     // Set after ID and MimeType!
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");

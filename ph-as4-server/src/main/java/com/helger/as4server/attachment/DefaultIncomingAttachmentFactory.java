@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.mail.Header;
@@ -31,12 +30,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
 import com.helger.as4lib.attachment.incoming.AS4IncomingFileAttachment;
-import com.helger.as4lib.attachment.incoming.AS4IncomingInMemoryAttachment;
-import com.helger.as4lib.attachment.incoming.AbstractAS4IncomingAttachment;
 import com.helger.as4lib.attachment.incoming.IAS4IncomingAttachment;
 import com.helger.as4lib.util.AS4ResourceManager;
-import com.helger.commons.CGlobal;
-import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
 
@@ -48,36 +43,18 @@ import com.helger.commons.io.stream.StreamHelper;
 @ThreadSafe
 public class DefaultIncomingAttachmentFactory implements IIncomingAttachmentFactory
 {
-  public static final long DEFAULT_LIMIT_IN_MEMORY = 30 * CGlobal.BYTES_PER_KILOBYTE;
-
-  @OverrideOnDemand
-  protected boolean canKeepInMemory (@Nonnegative final long nSize)
-  {
-    return nSize >= 0 && nSize <= DEFAULT_LIMIT_IN_MEMORY;
-  }
-
   @Nonnull
   public IAS4IncomingAttachment createAttachment (@Nonnull final AS4ResourceManager aResMgr,
                                                   @Nonnull final MimeBodyPart aBodyPart) throws IOException,
                                                                                          MessagingException
   {
-    final int nSize = aBodyPart.getSize ();
-    AbstractAS4IncomingAttachment ret;
-    if (canKeepInMemory (nSize))
+    // Write to temp file
+    final File aTempFile = aResMgr.createTempFile ();
+    try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
     {
-      // Store in memory
-      ret = new AS4IncomingInMemoryAttachment (StreamHelper.getAllBytes (aBodyPart.getInputStream ()));
+      aBodyPart.getDataHandler ().writeTo (aOS);
     }
-    else
-    {
-      // Write to temp file
-      final File aTempFile = aResMgr.createTempFile ();
-      try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
-      {
-        aBodyPart.getDataHandler ().writeTo (aOS);
-      }
-      ret = new AS4IncomingFileAttachment (aTempFile);
-    }
+    final AS4IncomingFileAttachment ret = new AS4IncomingFileAttachment (aTempFile);
 
     // Convert all headers to attributes
     final Enumeration <?> aEnum = aBodyPart.getAllHeaders ();
