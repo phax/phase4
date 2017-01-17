@@ -59,6 +59,11 @@
       <email>ph(at)helger.com</email>
       <url>http://www.helger.com</url>
     </developer>
+    <developer>
+      <id>axan94</id>
+      <name>Martin Bayerl</name>
+      <url>https://github.com/axan94</url>
+    </developer>
   </developers>
 
   <properties>
