@@ -55,7 +55,7 @@ public class AS4ResourceManager implements Closeable
       throw new IllegalStateException ("ResourceManager is already closing/closed!");
 
     // Create
-    final File ret = File.createTempFile ("as4-", ".tmp");
+    final File ret = File.createTempFile ("as4-res-", ".tmp");
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
     return ret;
@@ -75,26 +75,8 @@ public class AS4ResourceManager implements Closeable
   {
     m_aInClose.set (true);
 
-    // Get and delete all temp files
-    final ICommonsList <File> aFiles = m_aRWLock.writeLocked ( () -> {
-      final ICommonsList <File> ret = m_aTempFiles.getClone ();
-      m_aTempFiles.clear ();
-      return ret;
-    });
-    if (aFiles.isNotEmpty ())
-    {
-      s_aLogger.info ("Deleting" + aFiles.size () + " temporary files");
-      for (final File aFile : aFiles)
-      {
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
-        final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
-        if (aError.isFailure ())
-          s_aLogger.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
-      }
-    }
-
-    // Close all closeables
+    // Close all closeables before deleting files, because the closables might
+    // be the files to be deleted :)
     final ICommonsList <Closeable> aCloseables = m_aRWLock.writeLocked ( () -> {
       final ICommonsList <Closeable> ret = m_aCloseables.getClone ();
       m_aCloseables.clear ();
@@ -105,6 +87,25 @@ public class AS4ResourceManager implements Closeable
       s_aLogger.info ("Closing " + aCloseables.size () + " stream handles");
       for (final Closeable aCloseable : aCloseables)
         StreamHelper.close (aCloseable);
+    }
+
+    // Get and delete all temp files
+    final ICommonsList <File> aFiles = m_aRWLock.writeLocked ( () -> {
+      final ICommonsList <File> ret = m_aTempFiles.getClone ();
+      m_aTempFiles.clear ();
+      return ret;
+    });
+    if (aFiles.isNotEmpty ())
+    {
+      s_aLogger.info ("Deleting " + aFiles.size () + " temporary files");
+      for (final File aFile : aFiles)
+      {
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
+        final FileIOError aError = s_aFOP.deleteFileIfExisting (aFile);
+        if (aError.isFailure ())
+          s_aLogger.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
+      }
     }
   }
 }
