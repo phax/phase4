@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mime.MimeMessageCreator;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
@@ -94,7 +95,7 @@ public class EncryptionCreator
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
 
-    aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
+    aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
     if (CollectionHelper.isNotEmpty (aAttachments))
@@ -119,9 +120,9 @@ public class EncryptionCreator
     if (aAttachmentCallbackHandler != null)
     {
       aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
-      // MIME Type and CTE must be set!
+      // MIME Type and CTE must be set for encrypted attachments!
       aEncryptedAttachments.forEach (x -> {
-        x.setMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+        x.overwriteMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
         x.setContentTransferEncoding (EContentTransferEncoding.BINARY);
       });
     }

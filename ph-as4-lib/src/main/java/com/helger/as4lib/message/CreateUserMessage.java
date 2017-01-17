@@ -49,6 +49,14 @@ import com.helger.commons.string.StringHelper;
  */
 public class CreateUserMessage
 {
+  public static final String PART_PROPERTY_MIME_TYPE = "MimeType";
+  public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
+  public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
+  public static final String PREFIX_CID = "cid:";
+
+  public CreateUserMessage ()
+  {}
+
   public AS4UserMessage getUserMessageAsAS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                         @Nonnull final Ebms3UserMessage aUserMessage)
   {
@@ -172,27 +180,27 @@ public class CreateUserMessage
         final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
         {
           final Ebms3Property aMimeType = new Ebms3Property ();
-          aMimeType.setName ("MimeType");
+          aMimeType.setName (PART_PROPERTY_MIME_TYPE);
           aMimeType.setValue (aAttachment.getUncompressedMimeType ());
           aEbms3PartProperties.addProperty (aMimeType);
         }
         if (aAttachment.hasCharset ())
         {
           final Ebms3Property aCharacterSet = new Ebms3Property ();
-          aCharacterSet.setName ("CharacterSet");
+          aCharacterSet.setName (PART_PROPERTY_CHARACTER_SET);
           aCharacterSet.setValue (aAttachment.getCharset ().name ());
           aEbms3PartProperties.addProperty (aCharacterSet);
         }
         if (aAttachment.hasCompressionMode ())
         {
           final Ebms3Property aCompressionType = new Ebms3Property ();
-          aCompressionType.setName ("CompressionType");
+          aCompressionType.setName (PART_PROPERTY_COMPRESSION_TYPE);
           aCompressionType.setValue (aAttachment.getCompressionMode ().getMimeTypeAsString ());
           aEbms3PartProperties.addProperty (aCompressionType);
         }
 
         final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
-        aEbms3PartInfo.setHref ("cid:" + aAttachment.getId ());
+        aEbms3PartInfo.setHref (PREFIX_CID + aAttachment.getId ());
         aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
         aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
       }

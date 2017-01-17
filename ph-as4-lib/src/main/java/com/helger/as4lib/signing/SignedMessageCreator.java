@@ -33,6 +33,7 @@ import com.helger.as4lib.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4lib.crypto.AS4CryptoFactory;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
 import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
@@ -98,7 +99,7 @@ public class SignedMessageCreator
       // Modify builder for attachments
       aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
       // XXX where is this ID used????
-      aBuilder.getParts ().add (new WSEncryptionPart ("cid:Attachments", "Content"));
+      aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
 
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aResMgr);

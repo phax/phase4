@@ -53,6 +53,7 @@ import com.helger.as4lib.message.AS4ErrorMessage;
 import com.helger.as4lib.message.AS4ReceiptMessage;
 import com.helger.as4lib.message.CreateErrorMessage;
 import com.helger.as4lib.message.CreateReceiptMessage;
+import com.helger.as4lib.message.CreateUserMessage;
 import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4lib.model.pmode.IPMode;
@@ -80,6 +81,7 @@ import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -281,22 +283,21 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             // Copy all headers manually
             ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttributes (aIncomingAttachment);
 
-            final Ebms3PartInfo aPart = aUserMessage.getPayloadInfo ()
-                                                    .getPartInfo ()
-                                                    .stream ()
-                                                    .filter (p -> p.getHref ()
-                                                                   .contains (StringHelper.trimStart (aIncomingAttachment.getContentID (),
-                                                                                                      "attachment=")))
-                                                    .findFirst ()
-                                                    .get ();
-            final Ebms3Property aProperty = aPart.getPartProperties ()
-                                                 .getProperty ()
-                                                 .stream ()
-                                                 .filter (x -> x.getName ().equals ("MimeType"))
-                                                 .findFirst ()
-                                                 .get ();
-            ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttribute (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
-                                                                                    aProperty.getValue ());
+            final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getContentID (),
+                                                                        "attachment=");
+            final Ebms3PartInfo aPart = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
+                                                                    x -> x.getHref ().contains (sAttachmentContentID));
+            if (aPart != null)
+            {
+              final Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
+                                                                          x -> x.getName ()
+                                                                                .equals (CreateUserMessage.PART_PROPERTY_MIME_TYPE));
+              if (aProperty != null)
+              {
+                ((AbstractAS4IncomingAttachment) aDecompressedAttachment).setAttribute (AttachmentUtils.MIME_HEADER_CONTENT_TYPE,
+                                                                                        aProperty.getValue ());
+              }
+            }
 
             aDecryptedAttachments.add (aDecompressedAttachment);
           }
