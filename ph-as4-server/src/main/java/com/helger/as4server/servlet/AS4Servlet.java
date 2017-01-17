@@ -66,6 +66,7 @@ import com.helger.as4lib.soap.ESOAPVersion;
 import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
+import com.helger.as4server.attachment.IIncomingAttachmentFactory;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
@@ -708,6 +709,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
                                                               sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
                                                               (MultipartProgressNotifier) null);
+          final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
 
           int nIndex = 0;
           while (true)
@@ -737,8 +739,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
             {
               // MIME Attachment (index is gt 0)
-              final WSS4JAttachment aAttachment = MetaManager.getIncomingAttachmentFactory ()
-                                                             .createAttachment (aResMgr, aBodyPart);
+              final WSS4JAttachment aAttachment = aIAF.createAttachment (aResMgr, aBodyPart);
               aIncomingAttachments.add (aAttachment);
             }
             nIndex++;

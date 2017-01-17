@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.UUID;
 
@@ -37,6 +38,7 @@ import org.apache.wss4j.common.util.AttachmentUtils;
 
 import com.helger.as4lib.constants.CAS4;
 import com.helger.as4lib.util.AS4ResourceManager;
+import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
@@ -59,7 +61,7 @@ public class WSS4JAttachment extends Attachment
 {
   public static interface IHasAttachmentSourceStream
   {
-    InputStream getInputStream () throws IOException;
+    InputStream getInputStream () throws Exception;
   }
 
   private final AS4ResourceManager m_aResMgr;
@@ -111,12 +113,12 @@ public class WSS4JAttachment extends Attachment
     {
       ret = m_aISP.getInputStream ();
     }
-    catch (final IOException ex)
+    catch (final Exception ex)
     {
       throw new IllegalStateException ("Failed to get InputStream from " + m_aISP, ex);
     }
     if (ret == null)
-      throw new IllegalStateException ("Failed to get InputStream from " + m_aISP);
+      throw new IllegalStateException ("Got no InputStream from " + m_aISP);
     m_aResMgr.addCloseable (ret);
     return ret;
   }
@@ -189,7 +191,7 @@ public class WSS4JAttachment extends Attachment
   @Nonnull
   public final Charset getCharset ()
   {
-    return m_aCharset;
+    return m_aCharset == null ? StandardCharsets.ISO_8859_1 : m_aCharset;
   }
 
   public final boolean hasCharset ()
@@ -315,9 +317,14 @@ public class WSS4JAttachment extends Attachment
       ret.setId (sRealContentID);
     }
 
-    // Write to temp file
-    // TODO maybe keep some parts in memory??
+    // keep some small parts in memory
+    if (aBodyPart.getSize () < 64 * CGlobal.BYTES_PER_KILOBYTE)
     {
+      ret.setSourceStreamProvider ( () -> aBodyPart.getDataHandler ().getInputStream ());
+    }
+    else
+    {
+      // Write to temp file
       final File aTempFile = aResMgr.createTempFile ();
       try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
       {

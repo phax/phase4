@@ -16,7 +16,7 @@
  */
 package com.helger.as4server.spi;
 
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,17 +52,22 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
                                                       @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
     s_aLogger.info ("Received AS4 message:");
-    s_aLogger.info ("  UserMessage: " + aUserMessage);
-    s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getXMLString (aPayload)));
+    if (false)
+      s_aLogger.info ("  UserMessage: " + aUserMessage);
+    if (false)
+      s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getXMLString (aPayload)));
     if (aIncomingAttachments != null)
     {
       s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
       for (final WSS4JAttachment x : aIncomingAttachments)
       {
         s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
-        if (x.getMimeType ().startsWith ("text"))
-          s_aLogger.info ("    Attachment: " +
-                          StreamHelper.getAllBytesAsString (x.getSourceStream (), StandardCharsets.ISO_8859_1));
+        if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
+        {
+          final InputStream aIS = x.getSourceStream ();
+          s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
+          s_aLogger.info ("    Attachment Content: " + StreamHelper.getAllBytesAsString (aIS, x.getCharset ()));
+        }
       }
     }
     return new AS4MessageProcessorResult (ESuccess.SUCCESS);
