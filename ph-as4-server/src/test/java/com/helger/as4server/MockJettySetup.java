@@ -24,7 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.helger.as4lib.util.AS4ResourceManager;
-import com.helger.as4server.settings.AS4ServerConfiguration;
+import com.helger.as4server.mgr.AS4ServerConfiguration;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;

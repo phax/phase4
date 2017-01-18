@@ -35,7 +35,7 @@ import com.helger.as4lib.mgr.MetaAS4Manager;
 import com.helger.as4lib.mock.MockPModeGenerator;
 import com.helger.as4lib.model.pmode.PMode;
 import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4server.settings.AS4ServerConfiguration;
+import com.helger.as4server.mgr.AS4ServerConfiguration;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;

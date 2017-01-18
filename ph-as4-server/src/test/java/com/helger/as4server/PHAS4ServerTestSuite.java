@@ -28,9 +28,9 @@ import com.helger.as4server.message.UserMessageFailureForgeryTest;
 import com.helger.as4server.message.UserMessageManyAttachmentTest;
 import com.helger.as4server.message.UserMessageOneAttachmentTest;
 import com.helger.as4server.message.UserMessageSoapBodyPayloadTest;
+import com.helger.as4server.mgr.AS4ServerConfiguration;
 import com.helger.as4server.servlet.PModeCheckTest;
 import com.helger.as4server.servlet.PartnerTest;
-import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.supplementary.test.EncryptionTest;
 import com.helger.as4server.supplementary.test.SignatureTest;
 

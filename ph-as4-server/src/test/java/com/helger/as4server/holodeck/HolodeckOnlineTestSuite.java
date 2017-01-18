@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.helger.as4server.message.ReceiptMessageTest;
 import com.helger.as4server.message.UserMessageOneAttachmentTest;
 import com.helger.as4server.message.UserMessageSoapBodyPayloadTest;
-import com.helger.as4server.settings.AS4ServerConfiguration;
+import com.helger.as4server.mgr.AS4ServerConfiguration;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)

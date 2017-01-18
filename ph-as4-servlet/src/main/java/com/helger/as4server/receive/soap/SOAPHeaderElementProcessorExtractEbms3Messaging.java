@@ -40,8 +40,8 @@ import com.helger.as4lib.model.mpc.IMPC;
 import com.helger.as4lib.model.mpc.MPCManager;
 import com.helger.as4lib.model.pmode.config.IPModeConfig;
 import com.helger.as4lib.model.pmode.leg.PModeLeg;
+import com.helger.as4server.mgr.AS4ServerSettings;
 import com.helger.as4server.receive.AS4MessageState;
-import com.helger.as4server.settings.AS4ServerSettings;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     if (aPModeLeg1 != null)
     {

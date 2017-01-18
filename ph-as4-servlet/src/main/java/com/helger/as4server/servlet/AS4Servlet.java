@@ -67,11 +67,11 @@ import com.helger.as4lib.util.AS4ResourceManager;
 import com.helger.as4lib.util.StringMap;
 import com.helger.as4lib.xml.AS4XMLHelper;
 import com.helger.as4server.attachment.IIncomingAttachmentFactory;
+import com.helger.as4server.mgr.AS4ServerConfiguration;
 import com.helger.as4server.mgr.MetaManager;
 import com.helger.as4server.receive.AS4MessageState;
 import com.helger.as4server.receive.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4server.receive.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.as4server.settings.AS4ServerConfiguration;
 import com.helger.as4server.spi.AS4MessageProcessorResult;
 import com.helger.as4server.spi.AS4ServletMessageProcessorManager;
 import com.helger.as4server.spi.IAS4ServletMessageProcessorSPI;
@@ -155,7 +155,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -164,7 +164,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -399,10 +399,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
 
     // Only do profile checks if a profile is set
-    if (AS4ServerConfiguration.getAS4ProfileName () != null)
+    final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
+    if (StringHelper.hasText (sProfileName))
     {
-      final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ()
-                                                 .getProfileOfID (AS4ServerConfiguration.getAS4ProfileName ());
+      final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
 
       if (aProfile != null)
       {
@@ -422,7 +422,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       else
       {
-        aAS4Response.setBadRequest ("The profile " + AS4ServerConfiguration.getAS4ProfileName () + " does not exist.");
+        aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
         return;
       }
     }
@@ -684,7 +684,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
       final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
