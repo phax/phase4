@@ -26,7 +26,7 @@
   </parent>
   <artifactId>ph-as4-server</artifactId>
   <packaging>war</packaging>
-  <name>ph-as4-lib</name>
+  <name>ph-as4-server</name>
   <description>AS4 common library</description>
   <url>https://github.com/phax/ph-as4/ph-as4-server</url>
   <inceptionYear>2015</inceptionYear>
