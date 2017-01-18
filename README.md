@@ -31,12 +31,13 @@ The configuration of ph-as4 is based on 2 different files:
 Use the following file as a template and fill in your key structure:
 ```
 org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
+org.apache.wss4j.crypto.merlin.keystore.file=keys/dummy-pw-test.jks
+org.apache.wss4j.crypto.merlin.keystore.password=test
 org.apache.wss4j.crypto.merlin.keystore.type=jks
-org.apache.wss4j.crypto.merlin.keystore.file=XXX
-org.apache.wss4j.crypto.merlin.keystore.alias=XXX
-org.apache.wss4j.crypto.merlin.keystore.password=XXX
+org.apache.wss4j.crypto.merlin.keystore.alias=ph-as4
+org.apache.wss4j.crypto.merlin.keystore.private.password=test
 ```
-The file is a classpath relative path like `keystore/private-keys.jks`. 
+The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
 
 PEPPOL users: the key store must contain the AccessPoint private key.
 
