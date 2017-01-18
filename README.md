@@ -18,7 +18,41 @@ It consists of the following sub-projects:
     * Supports encrypted messages
     * Supports compressed messages
     * Targets to be easily integrateable into existing solutions
-    * Requires Java 8 for building and execution 
+    * Requires Java 8 for building and execution
+    
+## Configuration
+
+The configuration of ph-as4 is based on 2 different files:
+  * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
+  * `as4.properties` - ph-as4-server specific configuration file
+  
+### crypto.properties
+
+Use the following file as a template and fill in your key structure:
+```
+org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
+org.apache.wss4j.crypto.merlin.keystore.type=jks
+org.apache.wss4j.crypto.merlin.keystore.file=XXX
+org.apache.wss4j.crypto.merlin.keystore.alias=XXX
+org.apache.wss4j.crypto.merlin.keystore.password=XXX
+```
+The file is a classpath relative path like `keystore/private-keys.jks`. 
+
+PEPPOL users: the key store must contain the AccessPoint private key.
+
+### as4.properties
+
+This AS4 server specific file contains the following properties:
+```
+server.debug=true
+server.production=false
+server.nostartupinfo=true
+server.datapath=/var/www/as4/data
+
+server.proxy.enabled=false
+server.proxy.address=10.0.0.1
+server.proxy.port=8080
+``` 
     
 ## Known limitations
 
