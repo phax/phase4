@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.helger.as4.util.IOHelper;
+import com.helger.as4.util.AS4IOHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -220,26 +220,26 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
 
     if (aPModeConfig == null)
     {
-      aErrors.add (IOHelper.createError ("PModeConfig is null!"));
+      aErrors.add (AS4IOHelper.createError ("PModeConfig is null!"));
     }
     else
     {
       // Needs ID
       if (aPModeConfig.getID () == null)
       {
-        aErrors.add (IOHelper.createError ("No PModeConfig ID present"));
+        aErrors.add (AS4IOHelper.createError ("No PModeConfig ID present"));
       }
 
       // MEPBINDING only push maybe push and pull
       if (aPModeConfig.getMEPBinding () == null)
       {
-        aErrors.add (IOHelper.createError ("No PModeConfig MEPBinding present. (Push, Pull, Sync)"));
+        aErrors.add (AS4IOHelper.createError ("No PModeConfig MEPBinding present. (Push, Pull, Sync)"));
       }
 
       // Checking MEP all are allowed
       if (aPModeConfig.getMEP () == null)
       {
-        aErrors.add (IOHelper.createError ("No PModeConfig MEP present"));
+        aErrors.add (AS4IOHelper.createError ("No PModeConfig MEP present"));
       }
     }
   }

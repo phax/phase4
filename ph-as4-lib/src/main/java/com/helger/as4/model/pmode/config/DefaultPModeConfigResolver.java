@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.DefaultPMode;
-import com.helger.as4.model.profile.IAS4Profile;
+import com.helger.as4.profile.IAS4Profile;
 import com.helger.commons.string.StringHelper;
 
 /**

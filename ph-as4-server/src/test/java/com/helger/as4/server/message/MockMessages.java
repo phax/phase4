@@ -27,20 +27,20 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.constants.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.message.AS4UserMessage;
-import com.helger.as4.message.CreateErrorMessage;
-import com.helger.as4.message.CreateReceiptMessage;
-import com.helger.as4.message.CreateUserMessage;
+import com.helger.as4.messaging.domain.AS4UserMessage;
+import com.helger.as4.messaging.domain.CreateErrorMessage;
+import com.helger.as4.messaging.domain.CreateReceiptMessage;
+import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.AS4ServerTestHelper;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.signing.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -132,7 +132,7 @@ public final class MockMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
@@ -143,11 +143,11 @@ public final class MockMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       aPModeID.getConfigID (),
-                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
-                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID,
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
-                                                                              AS4ServerTestHelper.DEFAULT_PARTY_ID);
+                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_PARTY_ID);
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
@@ -167,7 +167,7 @@ public final class MockMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
@@ -178,10 +178,10 @@ public final class MockMessages
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       aPModeID.getID (),
-                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
+                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
                                                                               "testt",
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
                                                                               "testt");
     final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

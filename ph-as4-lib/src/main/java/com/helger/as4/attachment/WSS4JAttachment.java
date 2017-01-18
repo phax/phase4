@@ -36,7 +36,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
-import com.helger.as4.constants.CAS4;
+import com.helger.as4.CAS4;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;

@@ -19,8 +19,9 @@ package com.helger.as4.error;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.name.IHasDisplayName;
 
-public enum EErrorCategory
+public enum EErrorCategory implements IHasDisplayName
 {
   CONTENT ("Content"),
   COMMUNICATION ("Communication"),
@@ -36,7 +37,7 @@ public enum EErrorCategory
 
   @Nonnull
   @Nonempty
-  public String getContent ()
+  public String getDisplayName ()
   {
     return m_sContent;
   }

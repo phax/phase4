@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.validation.Schema;
 
-import com.helger.as4.constants.CAS4;
+import com.helger.as4.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.NonRepudiationInformation;
 import com.helger.as4lib.soap11.Soap11Envelope;

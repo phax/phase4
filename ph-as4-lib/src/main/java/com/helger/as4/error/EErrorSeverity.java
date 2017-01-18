@@ -21,8 +21,9 @@ import javax.annotation.Nonnull;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.level.EErrorLevel;
 import com.helger.commons.error.level.IErrorLevel;
+import com.helger.commons.error.level.IHasErrorLevelComparable;
 
-public enum EErrorSeverity
+public enum EErrorSeverity implements IHasErrorLevelComparable <EErrorSeverity>
 {
   FAILURE ("failure", EErrorLevel.ERROR),
   WARNING ("warning", EErrorLevel.WARN);
@@ -36,6 +37,9 @@ public enum EErrorSeverity
     m_aErrorLevel = aErrorLevel;
   }
 
+  /**
+   * @return The token for the EBMS3 message
+   */
   @Nonnull
   @Nonempty
   public String getSeverity ()
@@ -47,10 +51,5 @@ public enum EErrorSeverity
   public IErrorLevel getErrorLevel ()
   {
     return m_aErrorLevel;
-  }
-
-  public boolean isFailure ()
-  {
-    return this == FAILURE;
   }
 }

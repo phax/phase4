@@ -31,12 +31,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.encrypt.EncryptionCreator;
 import com.helger.as4.httpclient.HttpMimeMessageEntity;
-import com.helger.as4.mime.MimeMessageCreator;
+import com.helger.as4.messaging.encrypt.EncryptionCreator;
+import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.holodeck.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.xml.AS4XMLHelper;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;

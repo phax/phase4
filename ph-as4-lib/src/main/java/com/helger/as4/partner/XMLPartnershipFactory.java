@@ -28,10 +28,10 @@ import javax.annotation.WillClose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.util.IOHelper;
+import com.helger.as4.util.AS4XMLHelper;
+import com.helger.as4.util.AS4IOHelper;
 import com.helger.as4.util.IStringMap;
 import com.helger.as4.util.StringMap;
-import com.helger.as4.util.XMLHelper;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.string.StringHelper;
@@ -121,10 +121,10 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
     final String sNodeName = "attribute";
     final String sNodeKeyName = "name";
     final String sNodeValueName = "value";
-    final ICommonsOrderedMap <String, String> aAttributes = XMLHelper.mapAttributeNodes (aNode,
-                                                                                         sNodeName,
-                                                                                         sNodeKeyName,
-                                                                                         sNodeValueName);
+    final ICommonsOrderedMap <String, String> aAttributes = AS4XMLHelper.mapAttributeNodes (aNode,
+                                                                                            sNodeName,
+                                                                                            sNodeKeyName,
+                                                                                            sNodeValueName);
     aPartnership.addAllAttributes (aAttributes);
   }
 
@@ -132,7 +132,7 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
   public Partner loadPartner (@Nonnull final IMicroElement ePartner)
   {
     // Name is required
-    final StringMap aAttrs = XMLHelper.getAllAttrsWithLowercaseNameWithRequired (ePartner, PARTNER_NAME);
+    final StringMap aAttrs = AS4XMLHelper.getAllAttrsWithLowercaseNameWithRequired (ePartner, PARTNER_NAME);
     // TODO id should get here somehow if we decide to use partnerships
     return new Partner ("id", aAttrs);
   }
@@ -151,7 +151,7 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
                                        sPartnerType +
                                        "' child element");
 
-    final IStringMap aPartnerAttrs = XMLHelper.getAllAttrsWithLowercaseName (ePartner);
+    final IStringMap aPartnerAttrs = AS4XMLHelper.getAllAttrsWithLowercaseName (ePartner);
 
     // check for a partner name, and look up in partners list if one is found
     final String sPartnerName = aPartnerAttrs.getAttributeAsString (PARTNER_NAME);
@@ -190,8 +190,8 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
                                       @Nonnull final IPartnerMap aAllPartners)
   {
     // Name attribute is required
-    final IStringMap aPartnershipAttrs = XMLHelper.getAllAttrsWithLowercaseNameWithRequired (ePartnership,
-                                                                                             PARTNERSHIP_NAME);
+    final IStringMap aPartnershipAttrs = AS4XMLHelper.getAllAttrsWithLowercaseNameWithRequired (ePartnership,
+                                                                                                PARTNERSHIP_NAME);
 
     final Partnership aPartnership = new Partnership (aPartnershipAttrs.getAttributeAsString (PARTNERSHIP_NAME));
 
@@ -235,7 +235,7 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
       s_aLogger.info ("backing up " + sFilename + " to " + aBackupFile.getName ());
 
       final File aSourceFile = new File (sFilename);
-      IOHelper.getFileOperationManager ().renameFile (aSourceFile, aBackupFile);
+      AS4IOHelper.getFileOperationManager ().renameFile (aSourceFile, aBackupFile);
     }
 
     final IMicroDocument aDoc = new MicroDocument ();

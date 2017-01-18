@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSS4JConstants;
 
-import com.helger.as4.constants.CAS4;
+import com.helger.as4.CAS4;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;

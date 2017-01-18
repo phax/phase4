@@ -78,7 +78,7 @@ public interface IEbmsError extends Serializable
                       .setErrorLevel (getSeverity ().getErrorLevel ())
                       .setErrorID (getErrorCode ())
                       .setErrorText ("[" +
-                                     getCategory ().getContent () +
+                                     getCategory ().getDisplayName () +
                                      "] " +
                                      StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
                                                               getShortDescription ()))
@@ -103,7 +103,7 @@ public interface IEbmsError extends Serializable
     aEbms3Error.setErrorCode (getErrorCode ());
     aEbms3Error.setSeverity (getSeverity ().getSeverity ());
     aEbms3Error.setShortDescription (getShortDescription ());
-    aEbms3Error.setCategory (getCategory ().getContent ());
+    aEbms3Error.setCategory (getCategory ().getDisplayName ());
     aEbms3Error.setRefToMessageInError (sRefToMessageInError);
     aEbms3Error.setOrigin (sOrigin);
     return aEbms3Error;

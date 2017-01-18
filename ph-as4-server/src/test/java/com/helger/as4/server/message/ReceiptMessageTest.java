@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.server.holodeck.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.xml.AS4XMLHelper;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;

@@ -34,13 +34,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.helger.as4.constants.CAS4;
+import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.message.CreateUserMessage;
+import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.AS4ServerTestHelper;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
@@ -48,9 +49,8 @@ import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
-import com.helger.as4.signing.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.xml.AS4XMLHelper;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
@@ -94,13 +94,13 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                            "QuoteToCollect",
                                                                                            "4321",
                                                                                            null,
-                                                                                           AS4ServerTestHelper.DEFAULT_AGREEMENT));
+                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
-    m_aEbms3UserMessage.setPartyInfo (m_aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
-                                                                           AS4ServerTestHelper.DEFAULT_PARTY_ID,
-                                                                           AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
-                                                                           AS4ServerTestHelper.DEFAULT_PARTY_ID));
+    m_aEbms3UserMessage.setPartyInfo (m_aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                           MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                           MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                           MockEbmsHelper.DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
@@ -238,8 +238,8 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageFinalRecipientButNoOriginalSender () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
-    aEbms3Properties.removeIf (prop -> prop.getName ().equals (AS4ServerTestHelper.ORIGINAL_SENDER));
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    aEbms3Properties.removeIf (prop -> prop.getName ().equals (MockEbmsHelper.ORIGINAL_SENDER));
 
     assertTrue (aEbms3Properties.size () == 1);
 
@@ -260,8 +260,8 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageOriginalSenderButNoFinalRecipient () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
-    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (AS4ServerTestHelper.FINAL_RECIPIENT));
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (MockEbmsHelper.FINAL_RECIPIENT));
 
     assertTrue (aEbms3Properties.size () == 1);
 

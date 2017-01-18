@@ -24,10 +24,10 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4.constants.CAS4;
-import com.helger.as4.message.AS4UserMessage;
-import com.helger.as4.message.CreateUserMessage;
-import com.helger.as4.mock.AS4ServerTestHelper;
+import com.helger.as4.CAS4;
+import com.helger.as4.messaging.domain.AS4UserMessage;
+import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.soap.ESOAPVersion;
@@ -71,9 +71,9 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? MockEbmsHelper.DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdInitiator;
-    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? AS4ServerTestHelper.DEFAULT_PARTY_ID
+    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? MockEbmsHelper.DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdResponder;
 
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
@@ -86,10 +86,10 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                                       "QuoteToCollect",
                                                                                                       "4321",
                                                                                                       sAnotherOrWrongPModeID,
-                                                                                                      AS4ServerTestHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (AS4ServerTestHelper.DEFAULT_INITIATOR_ROLE,
+                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
                                                                               sSetPartyIDInitiator,
-                                                                              AS4ServerTestHelper.DEFAULT_RESPONDER_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
                                                                               sSetPartyIDResponder);
 
     final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
@@ -112,7 +112,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   protected Ebms3MessageProperties _defaultProperties ()
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);
     return aEbms3MessageProperties;

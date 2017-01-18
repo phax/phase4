@@ -35,7 +35,7 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.model.profile.IAS4ProfileValidator;
+import com.helger.as4.profile.IAS4ProfileValidator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;

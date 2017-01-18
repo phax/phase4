@@ -17,7 +17,6 @@
 package com.helger.as4.validator;
 
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.exception.Ebms3Exception;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.string.StringHelper;
 
@@ -28,24 +27,24 @@ import com.helger.commons.string.StringHelper;
  */
 public class UserMessageValidator
 {
-  public void validateUserMessage (final Ebms3UserMessage aUserMessage) throws Ebms3Exception
+  public void validateUserMessage (final Ebms3UserMessage aUserMessage) throws Ebms3ValidationException
   {
     if (StringHelper.hasNoText (aUserMessage.getMessageInfo ().getMessageId ()))
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER, "MessageInfo contains no MessageId", null);
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER, "MessageInfo contains no MessageId", null);
 
     final String sRefToMessageId = aUserMessage.getMessageInfo ().getRefToMessageId ();
 
     if (StringHelper.hasNoText (aUserMessage.getMpc ()))
-      throw new Ebms3Exception (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED, "MPC value is not recognizable", sRefToMessageId);
+      throw new Ebms3ValidationException (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED, "MPC value is not recognizable", sRefToMessageId);
 
     if (aUserMessage.getMessageInfo ().getTimestamp ().isValid ())
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER, "Timestamp is not valid", sRefToMessageId);
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER, "Timestamp is not valid", sRefToMessageId);
 
     if (aUserMessage.getPartyInfo ().getFrom ().getPartyId ().isEmpty ())
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER, "PartyId is missing", sRefToMessageId);
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER, "PartyId is missing", sRefToMessageId);
 
     if (aUserMessage.getCollaborationInfo ().getConversationId ().isEmpty ())
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER,
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER,
                                 "ConversationId from CollaborationInfo is missing",
                                 sRefToMessageId);
   }

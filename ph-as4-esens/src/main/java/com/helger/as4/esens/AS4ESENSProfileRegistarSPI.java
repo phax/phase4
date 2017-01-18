@@ -18,9 +18,9 @@ package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.model.profile.AS4Profile;
-import com.helger.as4.model.profile.IAS4ProfileRegistrar;
-import com.helger.as4.model.profile.IAS4ProfileRegistrarSPI;
+import com.helger.as4.profile.AS4Profile;
+import com.helger.as4.profile.IAS4ProfileRegistrar;
+import com.helger.as4.profile.IAS4ProfileRegistrarSPI;
 import com.helger.commons.annotation.IsSPIImplementation;
 
 @IsSPIImplementation

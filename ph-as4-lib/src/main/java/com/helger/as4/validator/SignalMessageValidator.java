@@ -19,7 +19,6 @@ package com.helger.as4.validator;
 import javax.annotation.Nonnull;
 
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.exception.Ebms3Exception;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 
 /**
@@ -29,10 +28,10 @@ import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
  */
 public class SignalMessageValidator
 {
-  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage) throws Ebms3Exception
+  public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage) throws Ebms3ValidationException
   {
     if (aSignalMessage.getMessageInfo ().getMessageId ().isEmpty ())
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER, "MessageInfo messageId is missing", null);
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER, "MessageInfo messageId is missing", null);
 
     final String sRefToMessageId = aSignalMessage.getMessageInfo ().getRefToMessageId ();
     if (!aSignalMessage.getError ().isEmpty () ||
@@ -43,7 +42,7 @@ public class SignalMessageValidator
     }
     else
     {
-      throw new Ebms3Exception (EEbmsError.EBMS_INVALID_HEADER,
+      throw new Ebms3ValidationException (EEbmsError.EBMS_INVALID_HEADER,
                                 "No Messages are inside the SignalMessage",
                                 sRefToMessageId);
     }

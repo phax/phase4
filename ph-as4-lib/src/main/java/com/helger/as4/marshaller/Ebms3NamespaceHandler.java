@@ -16,7 +16,7 @@
  */
 package com.helger.as4.marshaller;
 
-import com.helger.as4.constants.CAS4;
+import com.helger.as4.CAS4;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
