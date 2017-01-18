@@ -13,12 +13,19 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
+/**
+ * AS4 standalone client invoker.
+ *
+ * @author Philip Helger
+ */
+@WorkInProgress
 public class AS4Client
 {
-  private ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+  private ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
   private Node aPayload;
   private ESOAPVersion eSOAPVersion;
 
@@ -27,7 +34,7 @@ public class AS4Client
 
   // Document related attributes
   private Document aDoc;
-  private ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+  private ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
   // For Message Info
   private String sMessageIDPrefix;
   // CollaborationInfo
