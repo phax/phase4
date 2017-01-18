@@ -21,8 +21,6 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +34,6 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
-import com.helger.servlet.mock.OfflineHttpServletRequest;
-import com.helger.web.scope.IRequestWebScope;
-import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
-import com.helger.web.scope.mgr.DefaultWebScopeFactory;
-import com.helger.web.scope.mgr.WebScopeFactoryProvider;
 
 public final class AS4WebAppListener extends WebAppListener
 {
@@ -85,24 +78,6 @@ public final class AS4WebAppListener extends WebAppListener
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
-
-    WebScopeFactoryProvider.setWebScopeFactory (new DefaultWebScopeFactory ()
-    {
-      @Override
-      @Nonnull
-      public IRequestWebScope createRequestScope (@Nonnull final HttpServletRequest aHttpRequest,
-                                                  @Nonnull final HttpServletResponse aHttpResponse)
-      {
-        // TODO hard coded AS4 servlet path
-        if (!(aHttpRequest instanceof OfflineHttpServletRequest) && aHttpRequest.getServletPath ().equals ("/as4"))
-        {
-          // Ensure to create request scopes not using Multipart handling so
-          // that the MIME parsing can happen in the Servlet
-          return new RequestWebScopeNoMultipart (aHttpRequest, aHttpResponse);
-        }
-        return super.createRequestScope (aHttpRequest, aHttpResponse);
-      }
-    });
 
     AS4ServerInitializer.initAS4Server ();
 
