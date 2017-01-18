@@ -105,7 +105,7 @@ public final class AS4WebAppListener extends WebAppListener
       {
         final CryptoType aCT = new CryptoType (TYPE.ALIAS);
         aCT.setAlias (AS4CryptoFactory.getKeyAlias ());
-        final X509Certificate [] aCertList = AS4CryptoFactory.createCrypto ().getX509Certificates (aCT);
+        final X509Certificate [] aCertList = AS4CryptoFactory.getCrypto ().getX509Certificates (aCT);
         if (ArrayHelper.isEmpty (aCertList))
           throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
                                            aCT.getAlias () +

@@ -45,7 +45,7 @@ public class SignatureTest
 
   public SignatureTest () throws Exception
   {
-    crypto = AS4CryptoFactory.createCrypto ();
+    crypto = AS4CryptoFactory.getCrypto ();
   }
 
   /**

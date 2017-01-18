@@ -55,7 +55,7 @@ public class EncryptionTest
 
   public EncryptionTest () throws Exception
   {
-    crypto = AS4CryptoFactory.createCrypto ();
+    crypto = AS4CryptoFactory.getCrypto ();
   }
 
   /**

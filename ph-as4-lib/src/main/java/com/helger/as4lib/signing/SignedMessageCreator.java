@@ -46,7 +46,7 @@ public class SignedMessageCreator
 
   public SignedMessageCreator ()
   {
-    this (AS4CryptoFactory.createCrypto ());
+    this (AS4CryptoFactory.getCrypto ());
   }
 
   public SignedMessageCreator (@Nonnull final Crypto aCrypto)

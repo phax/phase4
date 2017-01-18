@@ -65,7 +65,7 @@ public final class AS4CryptoFactory
   {}
 
   @Nonnull
-  public static Crypto createCrypto ()
+  public static Crypto getCrypto ()
   {
     return s_aCrypto;
   }

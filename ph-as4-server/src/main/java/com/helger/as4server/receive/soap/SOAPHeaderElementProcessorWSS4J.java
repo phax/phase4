@@ -182,8 +182,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-        aRequestData.setSigVerCrypto (AS4CryptoFactory.createCrypto ());
-        aRequestData.setDecCrypto (AS4CryptoFactory.createCrypto ());
+        aRequestData.setSigVerCrypto (AS4CryptoFactory.getCrypto ());
+        aRequestData.setDecCrypto (AS4CryptoFactory.getCrypto ());
         aRequestData.setWssConfig (WSSConfig.getNewInstance ());
 
         // Upon success, the SOAP document contains the decrypted content

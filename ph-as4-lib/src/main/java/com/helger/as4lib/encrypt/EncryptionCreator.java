@@ -48,7 +48,7 @@ public class EncryptionCreator
 
   public EncryptionCreator ()
   {
-    this (AS4CryptoFactory.createCrypto ());
+    this (AS4CryptoFactory.getCrypto ());
   }
 
   public EncryptionCreator (@Nonnull final Crypto aCrypto)
