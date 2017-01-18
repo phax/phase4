@@ -19,6 +19,8 @@ package com.helger.as4.servlet.mgr;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.as4.attachment.DefaultIncomingAttachmentFactory;
+import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.model.pmode.config.DefaultPModeConfigResolver;
 import com.helger.as4.model.pmode.config.IPModeConfigResolver;
 import com.helger.commons.ValueEnforcer;
@@ -30,6 +32,7 @@ public class AS4ServerSettings
   private final static String DEFAULT_RESPONDER_ID = "default";
 
   private static String m_sResponderID = DEFAULT_RESPONDER_ID;
+  private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = new DefaultIncomingAttachmentFactory ();
   private static IPModeConfigResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver ();
 
   private AS4ServerSettings ()
@@ -46,6 +49,18 @@ public class AS4ServerSettings
   {
     ValueEnforcer.notEmpty (sResponderID, "ResponderID");
     m_sResponderID = sResponderID;
+  }
+
+  @Nonnull
+  public static IIncomingAttachmentFactory getIncomingAttachmentFactory ()
+  {
+    return s_aIncomingAttachmentFactory;
+  }
+
+  public static void setIncomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIncomingAttachmentFactory)
+  {
+    ValueEnforcer.notNull (aIncomingAttachmentFactory, "IncomingAttachmentFactory");
+    s_aIncomingAttachmentFactory = aIncomingAttachmentFactory;
   }
 
   @Nonnull

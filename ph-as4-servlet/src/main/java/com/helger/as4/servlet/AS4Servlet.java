@@ -37,6 +37,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
+import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.error.EEbmsError;
@@ -56,10 +57,9 @@ import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.IAS4Profile;
-import com.helger.as4.servlet.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.mgr.AS4ServletMessageProcessorManager;
-import com.helger.as4.servlet.mgr.MetaManager;
 import com.helger.as4.servlet.soap.AS4SingleSOAPHeader;
 import com.helger.as4.servlet.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
@@ -104,6 +104,25 @@ import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * AS4 receiving servlet.<br>
+ * Use a configuration like the following in your <code>WEB-INF/web.xm</code>
+ * file:
+ *
+ * <pre>
+&lt;servlet&gt;
+  &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;
+  &lt;servlet-class&gt;com.helger.as4.servlet.AS4Servlet&lt;/servlet-class&gt;
+&lt;/servlet&gt;
+&lt;servlet-mapping&gt;
+  &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;
+  &lt;url-pattern&gt;/as4&lt;/url-pattern&gt;
+&lt;/servlet-mapping&gt;
+ * </pre>
+ *
+ * @author Martin Bayerl
+ * @author Philip Helger
+ */
 public final class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
@@ -709,7 +728,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
                                                               sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
                                                               (MultipartProgressNotifier) null);
-          final IIncomingAttachmentFactory aIAF = MetaManager.getIncomingAttachmentFactory ();
+          final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
 
           int nIndex = 0;
           while (true)

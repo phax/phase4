@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.servlet.attachment;
+package com.helger.as4.attachment;
 
 import java.io.IOException;
 
@@ -23,7 +23,6 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
-import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.util.AS4ResourceManager;
 
 /**

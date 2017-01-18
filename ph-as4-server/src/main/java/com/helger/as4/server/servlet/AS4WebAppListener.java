@@ -16,7 +16,6 @@
  */
 package com.helger.as4.server.servlet;
 
-import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -24,33 +23,19 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 
-import org.apache.wss4j.common.crypto.CryptoType;
-import org.apache.wss4j.common.crypto.CryptoType.TYPE;
-import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.partner.Partner;
-import com.helger.as4.partner.PartnerManager;
+import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
-import com.helger.as4.servlet.mgr.MetaManager;
-import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
-import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
-import com.helger.as4.util.StringMap;
-import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.photon.core.requesttrack.RequestTracker;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
-import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.OfflineHttpServletRequest;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.impl.RequestWebScopeNoMultipart;
@@ -94,49 +79,12 @@ public final class AS4WebAppListener extends WebAppListener
     return false;
   }
 
-  private static void _createDefaultResponder (@Nonnull final String sDefaultPartnerID)
-  {
-    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
-    if (!aPartnerMgr.containsWithID (sDefaultPartnerID))
-    {
-      final StringMap aStringMap = new StringMap ();
-      aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sDefaultPartnerID);
-      try
-      {
-        final CryptoType aCT = new CryptoType (TYPE.ALIAS);
-        aCT.setAlias (AS4CryptoFactory.getKeyAlias ());
-        final X509Certificate [] aCertList = AS4CryptoFactory.getCrypto ().getX509Certificates (aCT);
-        if (ArrayHelper.isEmpty (aCertList))
-          throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
-                                           aCT.getAlias () +
-                                           "'");
-        aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aCertList[0]));
-        aPartnerMgr.createOrUpdatePartner (sDefaultPartnerID, aStringMap);
-      }
-      catch (final WSSecurityException ex)
-      {
-        throw new IllegalStateException ("Error retrieving certificate", ex);
-      }
-    }
-  }
-
   @Override
   protected void afterContextInitialized (@Nonnull final ServletContext aSC)
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
-
-    // Register all SOAP header element processors
-    // Registration order matches execution order!
-    final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
-    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
-                                                    "Messaging"),
-                                         new SOAPHeaderElementProcessorExtractEbms3Messaging ());
-    // WSS4J must be after Ebms3Messaging handler!
-    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-                                                    "Security"),
-                                         new SOAPHeaderElementProcessorWSS4J ());
 
     WebScopeFactoryProvider.setWebScopeFactory (new DefaultWebScopeFactory ()
     {
@@ -156,11 +104,10 @@ public final class AS4WebAppListener extends WebAppListener
       }
     });
 
-    // Ensure all managers are initialized
-    MetaAS4Manager.getInstance ();
-    MetaManager.getInstance ();
-    _createDefaultResponder (AS4ServerSettings.getDefaultResponderID ());
-    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+    AS4ServerInitializer.initAS4Server ();
+
+    if (GlobalDebug.isDebugMode ())
+      RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
     // Ensure user exists
     final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
