@@ -29,9 +29,9 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.client.HttpMimeMessageEntity;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.httpclient.HttpMimeMessageEntity;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;

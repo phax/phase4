@@ -66,6 +66,7 @@ server.proxy.port=8080
 Per now the following known limitations exist:
   * Only one-way communication is supported - of course `ErrorMessage`s and `Receipt`s are sent.
   * Multi-hop does not work (and is imho not relevant for a usage in PEPPOL)
+  * Pull requests are currently not supported
   
 ## Differences to Holodeck
 
