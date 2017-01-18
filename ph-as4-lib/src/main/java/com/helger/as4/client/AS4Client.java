@@ -23,6 +23,7 @@ public class AS4Client
   private ESOAPVersion eSOAPVersion;
 
   // Keystore attributes
+  // TODO look at AS2 Client / ClientSettinggs /ClientRequest
 
   // Document related attributes
   private Document aDoc;
