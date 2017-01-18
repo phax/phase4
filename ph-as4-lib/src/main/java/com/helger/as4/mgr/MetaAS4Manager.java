@@ -60,6 +60,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   @Override
   protected void onAfterInstantiation (@Nonnull final IScope aScope)
   {
+    // TODO chose wisely :)
+    final Locale aLocale = Locale.getDefault ();
     try
     {
       // MPC manager before PMode manager
@@ -72,7 +74,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       _initCallbacks ();
 
       // Validate content
-      m_aPModeConfigMgr.validateAllPModeConfigs (Locale.getDefault ());
+      m_aPModeConfigMgr.validateAllPModeConfigs (aLocale);
       m_aPModeMgr.validateAllPModes ();
 
       s_aLogger.info (ClassHelper.getClassLocalName (this) + " was initialized");
