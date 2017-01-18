@@ -48,11 +48,18 @@ public final class AS4ServerConfiguration
     s_bTestMode = bForTest;
     final ConfigFileBuilder aBuilder = new ConfigFileBuilder ();
     if (bForTest)
-      aBuilder.addPath ("private-test-as4.properties");
-    final ConfigFile aCF = aBuilder.addPathFromSystemProperty ("as4.server.configfile")
-                                   .addPath ("private-as4.properties")
-                                   .addPath ("as4.properties")
-                                   .build ();
+    {
+      aBuilder.addPathFromSystemProperty ("as4.server.test.configfile")
+              .addPath ("private-test-as4.properties")
+              .addPath ("test-as4.properties");
+    }
+    else
+    {
+      aBuilder.addPathFromSystemProperty ("as4.server.configfile")
+              .addPath ("private-as4.properties")
+              .addPath ("as4.properties");
+    }
+    final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
       throw new InitializationException ("Failed to read AS4 server configuration file!");
     SETTINGS.clear ();

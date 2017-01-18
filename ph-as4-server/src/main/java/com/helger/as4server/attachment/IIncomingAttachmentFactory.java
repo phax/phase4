@@ -27,7 +27,8 @@ import com.helger.as4lib.attachment.WSS4JAttachment;
 import com.helger.as4lib.util.AS4ResourceManager;
 
 /**
- * Factory interface for {@link IAS4IncomingAttachment} objects.
+ * Factory interface for {@link WSS4JAttachment} objects for handling incoming
+ * attachments.
  *
  * @author Philip Helger
  */
