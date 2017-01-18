@@ -142,7 +142,7 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
-        <artifactId>ph-as4-server</artifactId>
+        <artifactId>ph-as4-server-webapp-demo</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
@@ -155,7 +155,7 @@
     <module>ph-as4-lib</module>
     <module>ph-as4-esens</module>
     <module>ph-as4-servlet</module>
-    <module>ph-as4-server</module>
+    <module>ph-as4-server-webapp-demo</module>
   </modules>
   
   <build>

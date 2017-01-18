@@ -1,0 +1,30 @@
+Message-ID: <745962066.1.1482314477307@PC65063.brzg.local>
+MIME-Version: 1.0
+Content-Type: multipart/related; 
+	boundary="----=_Part_0_581318631.1482314477236"; 
+	type="application/soap+xml"
+
+------=_Part_0_581318631.1482314477236
+Content-Type: application/soap+xml;charset=UTF-8
+Content-Transfer-Encoding: binary
+
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope"><S12:Header><eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink" S12:mustUnderstand="true"><eb:UserMessage><eb:MessageInfo><eb:Timestamp>2016-12-21T11:01:16.795+01:00</eb:Timestamp><eb:MessageId>c42e883b-aab1-47bf-b2f4-4e89ce309591@ph-as4</eb:MessageId></eb:MessageInfo><eb:PartyInfo><eb:From><eb:PartyId>APP_1000000101</eb:PartyId><eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender</eb:Role></eb:From><eb:To><eb:PartyId>APP_1000000101</eb:PartyId><eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role></eb:To></eb:PartyInfo><eb:CollaborationInfo><eb:AgreementRef pmode="pmode-test">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef><eb:Service type="MyServiceTypes">QuoteToCollect</eb:Service><eb:Action>NewPurchaseOrder</eb:Action><eb:ConversationId>4321</eb:ConversationId></eb:CollaborationInfo><eb:MessageProperties><eb:Property name="originalSender">C1-test</eb:Property><eb:Property name="finalRecipient">C4-test</eb:Property></eb:MessageProperties><eb:PayloadInfo><eb:PartInfo href="cid:ph-as4-0026b807-e599-40e2-af67-22f2e6fe4ddd"><eb:PartProperties><eb:Property name="MimeType">application/xml</eb:Property><eb:Property name="CompressionType">application/rar</eb:Property></eb:PartProperties></eb:PartInfo></eb:PayloadInfo></eb:UserMessage></eb:Messaging></S12:Header><S12:Body/></S12:Envelope>
+------=_Part_0_581318631.1482314477236
+Content-Type: application/xml
+Content-Transfer-Encoding: base64
+Content-ID: ph-as4-0026b807-e599-40e2-af67-22f2e6fe4ddd
+
+H4sIAAAAAAAAAI1TXU/bMBR976+4Cy+gkSYtbacyqNQVpkWDgNoCYogHJ7lNvKW2Z7sr5dfvxglV
+0Ya2PLSO77nnnPuRk3e+32oBPROpNprnhYX9yQF0w07fp58BXBe85Aq+YJmjhv31et0u3LmdyuWB
+S1UO8sDsYx15yKR9pGhNfMFTFAYzWImMGGyBMFYspb8mcgi3qA2XArrtEPYrgNeEvIOPjmMjV7Bk
+GxDSwsogkXADC14i4FOKygIXQIKq5EykCGtuCyfU0LQdyX1DIhPLCM8oQ9HbYhcJzNauX57CWnUc
+BFXZzLluS50HZY02wUU0OY9n5z45r/NuRInGgMafK66p6GQDTJGvlCXktmRrkBpYrpFiVla+15pb
+LvJDMHJh10yj48m4sZonK/uqcS8uqfpdALWOCfDGM4hmHnwaz6LZoWO5i+Zfrm7mcDeeTsfxPDqf
+wdUUJlfxWTSPrmJ6+wzj+B6+RvHZISC1jYTwSemqBjLKq5ZiVvdvhvjKxELWpozClC94StWJfMVy
+hFz+Qi2oKFCol9xUwzVkMXM8JV9yy6y7+6O0dqvl+6PWCSaJOo6lmKJaZdyhI0GKS3cknqdlKcxx
+BTv1miFlMjVtyQw3vlQo3KQwIaCfqKBC+obngpWmGpc3IpJa5pKqJdvXTNt4uqMycnZPMnM8xQVq
+pNVqdqMWz8xWutqP9ZFT7IZhGITDgDAZ6e15Tc7NNDr19njmJyzs9sOjgc/CTs/vDbshnYbofxiG
+SWeA4dGwj96oyarU55oJU7kyo+1uvrqHcZlLWqNi+YahTtAJK0M+fS5+2umJPS/YKgR/lagEzniO
+xl6iLWT2Hxphr9KgNu2ZgnX7gx2NLdktK1c4mkap4D2TMPa+nw9SNY/CsJhshtef4uGP56g3+caf
+fyTmc/97dLprc5ejtb3dTseNNPjHTBvAm7s1+g1Cwoi6FAUAAA==
+------=_Part_0_581318631.1482314477236--

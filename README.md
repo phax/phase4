@@ -7,14 +7,15 @@ It consists of the following sub-projects:
   * **ph-as4-lib** - basic data structures for AS4 handling
   * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
   * **ph-as4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
-  * **ph-as4-server** - AS4 servlet based server component to be integrated into an existing server
+  * **ph-as4-server-webapp-demo** - AS4 servlet based server component to be integrated into an existing server
 
 ## News and noteworthy
-
+-
   * v0.6.0
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects
     * Requires ph-web 8.7.2 or higher
+    * Renamed `ph-as4-server` to `ph-as4-server-webapp-demo`
   * v0.5.0 - 2017-01-18
     * Initial release
     * Has everything needs for sending and receiving using the eSENS P-Mode profiles
