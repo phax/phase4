@@ -14,17 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.server.standalone;
+package com.helger.as4.servlet;
 
-import com.helger.photon.jetty.JettyRunner;
+import org.junit.Test;
 
-public class Jetty9090
+import com.helger.commons.mock.SPITestHelper;
+
+/**
+ * Test SPI definitions
+ *
+ * @author Philip Helger
+ */
+public final class SPITest
 {
-
-  public static void main (final String [] args) throws Exception
+  @Test
+  public void testBasic () throws Exception
   {
-    final int nPort = 9090;
-    final JettyRunner s_aJetty = new JettyRunner (nPort, nPort + 1000);
-    s_aJetty.startServer ();
+    SPITestHelper.testIfAllSPIImplementationsAreValid ();
   }
 }

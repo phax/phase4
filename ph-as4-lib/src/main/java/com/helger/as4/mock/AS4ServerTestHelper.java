@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.server;
+package com.helger.as4.mock;
 
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.ext.CommonsArrayList;

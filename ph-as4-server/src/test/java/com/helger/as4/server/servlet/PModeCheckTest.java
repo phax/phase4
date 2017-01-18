@@ -40,6 +40,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.message.CreateUserMessage;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.mock.AS4ServerTestHelper;
 import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
@@ -47,7 +48,6 @@ import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
-import com.helger.as4.server.AS4ServerTestHelper;
 import com.helger.as4.signing.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.xml.AS4XMLHelper;
@@ -221,7 +221,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
 
     aEbms3Properties.add (getRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
@@ -239,7 +239,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4ServerTestHelper.getEBMSProperties ();
-    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (AS4ServerTestHelper.ORIGINAL_SENDER));
+    aEbms3Properties.removeIf (prop -> prop.getName ().equals (AS4ServerTestHelper.ORIGINAL_SENDER));
 
     assertTrue (aEbms3Properties.size () == 1);
 

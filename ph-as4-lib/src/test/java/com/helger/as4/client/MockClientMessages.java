@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.server.client;
+package com.helger.as4.client;
 
 import java.util.Locale;
 
@@ -35,7 +35,7 @@ import com.helger.as4.message.AS4UserMessage;
 import com.helger.as4.message.CreateErrorMessage;
 import com.helger.as4.message.CreateReceiptMessage;
 import com.helger.as4.message.CreateUserMessage;
-import com.helger.as4.server.AS4ServerTestHelper;
+import com.helger.as4.mock.AS4ServerTestHelper;
 import com.helger.as4.signing.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -83,7 +83,7 @@ final class MockClientMessages
   {
     final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                aErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
                                                                                                aEbms3ErrorList)
@@ -133,7 +133,7 @@ final class MockClientMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -174,7 +174,7 @@ final class MockClientMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -217,7 +217,7 @@ final class MockClientMessages
     final CreateUserMessage aUserMessage = new CreateUserMessage ();
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 
