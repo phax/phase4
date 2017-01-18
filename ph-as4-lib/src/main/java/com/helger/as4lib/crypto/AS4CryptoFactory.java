@@ -16,6 +16,7 @@
  */
 package com.helger.as4lib.crypto;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -42,14 +43,20 @@ public final class AS4CryptoFactory
     WSSConfig.init ();
 
     // Uses crypto.properties => needs exact name crypto.properties
-    final IReadableResource aRes = new ClassPathResource ("crypto.properties");
+    IReadableResource aRes = new ClassPathResource ("private-crypto.properties");
     if (!aRes.exists ())
-      throw new InitializationException ("Failed to locate crypto.properties");
+      aRes = new ClassPathResource ("crypto.properties");
+
+    if (!aRes.exists ())
+      throw new InitializationException ("Failed to locate crypto properties");
 
     try
     {
       s_aProps = new Properties ();
-      s_aProps.load (aRes.getInputStream ());
+      try (final InputStream aIS = aRes.getInputStream ())
+      {
+        s_aProps.load (aIS);
+      }
       s_aCrypto = CryptoFactory.getInstance (s_aProps);
     }
     catch (final Throwable t)
