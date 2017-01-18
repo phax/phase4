@@ -39,19 +39,19 @@ public class PMode extends AbstractBaseObject implements IPMode
    * contain the same <code>PartyId</code> elements as the <code>PartyId</code>
    * elements defined in this parameter. Any user message sent to the initiator
    * must have its <code>eb:PartyInfo/eb:To</code> map to or be compatible with
-   * this parameter.<br />
+   * this parameter.<br>
    * Role: Name of the role assumed by the party sending the first message of
    * this MEP. Either the message element
    * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or
    * the element
    * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each
    * message in this MEP must have this value, depending on the direction of
-   * message transfer.<br/>
+   * message transfer.<br>
    * Authorization: Describe authorization information for messages sent by
    * Initiator. These parameters need to be matched by a
    * <code>wsse:UsernameToken</code> element in a message (in a security header
    * only intended for authorization) for this message to be processed
-   * successfully on receiver side � here by Responder MSH.
+   * successfully on receiver side - here by Responder MSH.
    */
   private PModeParty m_aInitiator;
 
@@ -61,19 +61,19 @@ public class PMode extends AbstractBaseObject implements IPMode
    * MEP. Any user message sent to the responder must have its
    * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To</code> element contain
    * the same <code>PartyId</code> elements as the <code>PartyId</code> elements
-   * defined in this parameter.<br />
+   * defined in this parameter.<br>
    * Role: Name of the role assumed by the party receiving the first message of
    * this MEP. Either the message element
    * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:From/eb:Role</code> or
    * the element
    * <code>eb:Messaging/eb:UserMessage/eb:PartyInfo/eb:To/eb:Role</code> of each
    * message in this MEP must have this value, depending on the direction of
-   * message transfer.<br/>
+   * message transfer.<br>
    * Authorization: Describe authorization information for messages sent by
    * Responder. These parameters need to be matched by a
    * <code>wsse:UsernameToken</code> element in a message (in a security header
    * only intended for authorization) for this message to be processed
-   * successfully on receiver side � here by Initiator MSH.
+   * successfully on receiver side - here by Initiator MSH.
    */
   private PModeParty m_aResponder;
 
