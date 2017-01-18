@@ -26,11 +26,11 @@
     <welcome-file>secure</welcome-file>
   </welcome-file-list>
   <listener>
-    <listener-class>com.helger.as4server.servlet.AS4WebAppListener</listener-class>
+    <listener-class>com.helger.as4.server.servlet.AS4WebAppListener</listener-class>
   </listener>
   <servlet>
     <servlet-name>AS4Servlet</servlet-name>
-    <servlet-class>com.helger.as4server.servlet.AS4Servlet</servlet-class>
+    <servlet-class>com.helger.as4.servlet.AS4Servlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AS4Servlet</servlet-name>

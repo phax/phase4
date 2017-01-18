@@ -18,23 +18,23 @@ package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4lib.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSign;
-import com.helger.as4lib.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4lib.mgr.MetaAS4Manager;
-import com.helger.as4lib.model.EMEP;
-import com.helger.as4lib.model.ETransportChannelBinding;
-import com.helger.as4lib.model.pmode.PMode;
-import com.helger.as4lib.model.pmode.PModeParty;
-import com.helger.as4lib.model.pmode.PModeReceptionAwareness;
-import com.helger.as4lib.model.pmode.config.PModeConfig;
-import com.helger.as4lib.model.pmode.leg.PModeLeg;
-import com.helger.as4lib.model.pmode.leg.PModeLegBusinessInformation;
-import com.helger.as4lib.model.pmode.leg.PModeLegErrorHandling;
-import com.helger.as4lib.model.pmode.leg.PModeLegProtocol;
-import com.helger.as4lib.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4lib.soap.ESOAPVersion;
-import com.helger.as4lib.wss.EWSSVersion;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.EMEP;
+import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.PModeParty;
+import com.helger.as4.model.pmode.PModeReceptionAwareness;
+import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
+import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
+import com.helger.as4.model.pmode.leg.PModeLegProtocol;
+import com.helger.as4.model.pmode.leg.PModeLegSecurity;
+import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
 
 public final class ESENSPMode
