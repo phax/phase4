@@ -44,7 +44,7 @@ import com.helger.settings.ISettings;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
- * Since alle these classes need the same setup and a helpermethod, this class
+ * Since all these classes need the same setup and a helper method, this class
  * was created. Also with the help of Parameterized.class, each test will be
  * done for both SOAP Versions.
  *
@@ -64,8 +64,9 @@ public abstract class AbstractClientSetUp
   public void setUp () throws KeyManagementException, NoSuchAlgorithmException
   {
     AS4ServerConfiguration.reinitForTestOnly ();
+
     m_aSettings = AS4ServerConfiguration.getSettings ();
-    final String sURL = m_aSettings.getAsString ("server.address");
+    final String sURL = m_aSettings.getAsString ("server.address", "http://localhost:8080/as4");
 
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");

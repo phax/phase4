@@ -399,10 +399,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
 
     // Only do profile checks if a profile is set
-    if (AS4ServerConfiguration.getAS4Profile () != null)
+    if (AS4ServerConfiguration.getAS4ProfileName () != null)
     {
       final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ()
-                                                 .getProfileOfID (AS4ServerConfiguration.getAS4Profile ());
+                                                 .getProfileOfID (AS4ServerConfiguration.getAS4ProfileName ());
 
       if (aProfile != null)
       {
@@ -422,7 +422,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
       else
       {
-        aAS4Response.setBadRequest ("The profile " + AS4ServerConfiguration.getAS4Profile () + " does not exist.");
+        aAS4Response.setBadRequest ("The profile " + AS4ServerConfiguration.getAS4ProfileName () + " does not exist.");
         return;
       }
     }

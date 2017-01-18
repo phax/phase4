@@ -90,7 +90,7 @@ public final class AS4ServerConfiguration
   }
 
   @Nullable
-  public static String getAS4Profile ()
+  public static String getAS4ProfileName ()
   {
     return getSettings ().getAsString ("server.profile");
   }
@@ -105,7 +105,7 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsBoolean ("server.production", false);
   }
 
-  public static boolean hasStartupInfo ()
+  public static boolean isNoStartupInfo ()
   {
     return getSettings ().getAsBoolean ("server.nostartupinfo", false);
   }

@@ -79,7 +79,7 @@ public final class AS4WebAppListener extends WebAppListener
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.hasStartupInfo ());
+    return Boolean.toString (AS4ServerConfiguration.isNoStartupInfo ());
   }
 
   @Override
