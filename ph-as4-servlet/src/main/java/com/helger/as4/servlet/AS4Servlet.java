@@ -174,7 +174,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -183,7 +183,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -452,10 +452,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     {
       if (_isSendErrorResponse (aPModeConfig))
       {
-        final CreateErrorMessage aCreateErrorMessage = new CreateErrorMessage ();
-        final AS4ErrorMessage aErrorMsg = aCreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                  aCreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
-                                                                                  aErrorMessages);
+        final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                 CreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                 aErrorMessages);
 
         aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
                                            CCharset.CHARSET_UTF_8_OBJ)
@@ -470,14 +469,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (_isSendResponse (aPModeConfig))
       {
         final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
-        final CreateReceiptMessage aCreateReceiptMessage = new CreateReceiptMessage ();
-        final Ebms3MessageInfo aEbms3MessageInfo = aCreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-        final AS4ReceiptMessage aReceiptMessage = aCreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                              aEbms3MessageInfo,
-                                                                                              aEbms3UserMessage,
-                                                                                              aSOAPDocument,
-                                                                                              _isSendNonRepudiationInformation (aPModeConfig))
-                                                                       .setMustUnderstand (true);
+        final Ebms3MessageInfo aEbms3MessageInfo = CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+        final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                                             aEbms3MessageInfo,
+                                                                                             aEbms3UserMessage,
+                                                                                             aSOAPDocument,
+                                                                                             _isSendNonRepudiationInformation (aPModeConfig))
+                                                                      .setMustUnderstand (true);
 
         // We've got our response
         final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
@@ -703,7 +701,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))

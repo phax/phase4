@@ -81,14 +81,13 @@ final class MockClientMessages
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final CreateErrorMessage aErrorMessage = new CreateErrorMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
-    final Document aSignedDoc = aClient.createSignedMessage (aErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                               aErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
-                                                                                               aEbms3ErrorList)
-                                                                          .setMustUnderstand (true)
-                                                                          .getAsSOAPDocument (),
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
+    final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                                    CreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                                    aEbms3ErrorList)
+                                                                               .setMustUnderstand (true)
+                                                                               .getAsSOAPDocument (),
                                                              eSOAPVersion,
                                                              aAttachments,
                                                              aResMgr,
@@ -106,15 +105,14 @@ final class MockClientMessages
   {
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
-    final CreateReceiptMessage aReceiptMessage = new CreateReceiptMessage ();
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final Document aDoc = aReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                aReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
-                                                                null,
-                                                                aUserMessage,
-                                                                true)
-                                         .setMustUnderstand (true)
-                                         .getAsSOAPDocument ();
+    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                     CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                     null,
+                                                                     aUserMessage,
+                                                                     true)
+                                              .setMustUnderstand (true)
+                                              .getAsSOAPDocument ();
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc,
                                                              eSOAPVersion,
@@ -130,10 +128,8 @@ final class MockClientMessages
                                                        @Nullable final Node aPayload,
                                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -143,27 +139,27 @@ final class MockClientMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                      "MyServiceTypes",
-                                                                                                      "QuoteToCollect",
-                                                                                                      "4321",
-                                                                                                      "pm-esens-generic-resp",
-                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
-                                                                              MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
-                                                                              MockEbmsHelper.DEFAULT_PARTY_ID);
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                           "MyServiceTypes",
+                                                                                                           "QuoteToCollect",
+                                                                                                           "4321",
+                                                                                                           "pm-esens-generic-resp",
+                                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                                   MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   MockEbmsHelper.DEFAULT_PARTY_ID);
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                eSOAPVersion)
-                                            .setMustUnderstand (true);
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     eSOAPVersion)
+                                                 .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -171,10 +167,8 @@ final class MockClientMessages
                                                                       @Nullable final Node aPayload,
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -184,27 +178,27 @@ final class MockClientMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                      "MyServiceTypes",
-                                                                                                      "QuoteToCollect",
-                                                                                                      "4321",
-                                                                                                      "pm-esens-generic-resp",
-                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
-                                                                              "testt",
-                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
-                                                                              "testt");
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                           "MyServiceTypes",
+                                                                                                           "QuoteToCollect",
+                                                                                                           "4321",
+                                                                                                           "pm-esens-generic-resp",
+                                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                                   "testt",
+                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   "testt");
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                eSOAPVersion)
-                                            .setMustUnderstand (true);
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     eSOAPVersion)
+                                                 .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -214,32 +208,30 @@ final class MockClientMessages
                                            @Nullable final Node aPayload,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
-
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     // Use an empty message info by purpose
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (null);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo (null,
-                                                                                                      null,
-                                                                                                      null,
-                                                                                                      null,
-                                                                                                      null,
-                                                                                                      null);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (null, null, null, null);
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (null,
+                                                                                                           null,
+                                                                                                           null,
+                                                                                                           null,
+                                                                                                           null,
+                                                                                                           null);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (null, null, null, null);
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                eSOAPVersion)
-                                            .setMustUnderstand (true);
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     eSOAPVersion)
+                                                 .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 }

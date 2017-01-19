@@ -55,11 +55,13 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 
   public boolean isRepeatable ()
   {
+    // Is it always repeatable? Depends on the underlying DataHandler
     return true;
   }
 
   public long getContentLength ()
   {
+    // length unknown - negative number
     return -1;
   }
 

@@ -38,16 +38,16 @@ import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
-@SuppressFBWarnings ("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
-public class CreateReceiptMessage
+public final class CreateReceiptMessage
 {
+  private CreateReceiptMessage ()
+  {}
+
   @Nonnull
   @ReturnsMutableCopy
-  private ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
+  private static ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
-    final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
+    final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
     Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
@@ -79,11 +79,11 @@ public class CreateReceiptMessage
    * @return AS4ReceiptMessage
    */
   @Nonnull
-  public AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                 @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                 @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                                 @Nullable final Node aSOAPDocument,
-                                                 @Nonnull final boolean bShouldUseNonRepudiation)
+  public static AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                        @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                                        @Nullable final Ebms3UserMessage aEbms3UserMessage,
+                                                        @Nullable final Node aSOAPDocument,
+                                                        @Nonnull final boolean bShouldUseNonRepudiation)
   {
     if (aEbms3UserMessage != null)
       aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
@@ -120,16 +120,17 @@ public class CreateReceiptMessage
     {
       // If the original usermessage is not signed, the receipt will contain the
       // original message part with out wss4j security
-      aEbms3Receipt.addAny (new CreateUserMessage ().getUserMessageAsAS4UserMessage (eSOAPVersion, aEbms3UserMessage)
-                                                    .getAsSOAPDocument ()
-                                                    .getDocumentElement ());
+      aEbms3Receipt.addAny (CreateUserMessage.getUserMessageAsAS4UserMessage (eSOAPVersion, aEbms3UserMessage)
+                                             .getAsSOAPDocument ()
+                                             .getDocumentElement ());
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
     return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }

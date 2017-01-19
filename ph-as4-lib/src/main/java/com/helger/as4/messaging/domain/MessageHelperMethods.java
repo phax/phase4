@@ -36,8 +36,7 @@ import com.helger.http.HTTPStringHelper;
 
 /**
  * This class contains every method, static variables which are used by more
- * than one message creating classes in the package
- * com.helger.as4server.message.
+ * than one message creating classes in this package.
  *
  * @author bayerlma
  */

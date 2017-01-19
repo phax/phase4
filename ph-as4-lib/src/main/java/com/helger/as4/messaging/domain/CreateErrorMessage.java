@@ -24,12 +24,15 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.collection.ext.ICommonsList;
 
-public class CreateErrorMessage
+public final class CreateErrorMessage
 {
+  private CreateErrorMessage ()
+  {}
+
   @Nonnull
-  public AS4ErrorMessage createErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                             @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                             @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
+  public static AS4ErrorMessage createErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                    @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                                    @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -43,7 +46,8 @@ public class CreateErrorMessage
     return ret;
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }

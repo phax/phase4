@@ -25,7 +25,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 @WorkInProgress
 public class AS4Client
 {
-  private ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+  private ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
   private Node aPayload;
   private ESOAPVersion eSOAPVersion;
 
@@ -34,7 +34,7 @@ public class AS4Client
 
   // Document related attributes
   private Document aDoc;
-  private ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+  private ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
   // For Message Info
   private String sMessageIDPrefix;
   // CollaborationInfo
@@ -58,30 +58,28 @@ public class AS4Client
 
   public Document buildMessage ()
   {
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (sMessageIDPrefix);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (sAction,
+                                                                                                           sServiceType,
+                                                                                                           sServiceValue,
+                                                                                                           sConversationID,
+                                                                                                           sAgreementRefPMode,
+                                                                                                           sAgreementRefValue);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (sFromRole,
+                                                                                   sFromPartyID,
+                                                                                   sToRole,
+                                                                                   sToPartyID);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (sMessageIDPrefix);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo (sAction,
-                                                                                                      sServiceType,
-                                                                                                      sServiceValue,
-                                                                                                      sConversationID,
-                                                                                                      sAgreementRefPMode,
-                                                                                                      sAgreementRefValue);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (sFromRole,
-                                                                              sFromPartyID,
-                                                                              sToRole,
-                                                                              sToPartyID);
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = aUserMessage.createEbms3MessageProperties (aEbms3Properties);
-
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                eSOAPVersion)
-                                            .setMustUnderstand (true);
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     eSOAPVersion)
+                                                 .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 

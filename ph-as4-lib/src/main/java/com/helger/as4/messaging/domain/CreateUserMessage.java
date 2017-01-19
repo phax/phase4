@@ -47,29 +47,29 @@ import com.helger.commons.string.StringHelper;
  *
  * @author bayerlma
  */
-public class CreateUserMessage
+public final class CreateUserMessage
 {
   public static final String PART_PROPERTY_MIME_TYPE = "MimeType";
   public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = "cid:";
 
-  public CreateUserMessage ()
+  private CreateUserMessage ()
   {}
 
-  public AS4UserMessage getUserMessageAsAS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                        @Nonnull final Ebms3UserMessage aUserMessage)
+  public static AS4UserMessage getUserMessageAsAS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                               @Nonnull final Ebms3UserMessage aUserMessage)
   {
     return new AS4UserMessage (eSOAPVersion, aUserMessage);
   }
 
   @Nonnull
-  public AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
-                                           @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
-                                           @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
-                                           @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
-                                           @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                           @Nonnull final ESOAPVersion eSOAPVersion)
+  public static AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
+                                                  @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
+                                                  @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
+                                                  @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
+                                                  @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                                  @Nonnull final ESOAPVersion eSOAPVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
@@ -92,10 +92,10 @@ public class CreateUserMessage
     return ret;
   }
 
-  public Ebms3PartyInfo createEbms3PartyInfo (@Nonnull final String sFromRole,
-                                              @Nonnull final String sFromPartyID,
-                                              @Nonnull final String sToRole,
-                                              @Nonnull final String sToPartyID)
+  public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull final String sFromRole,
+                                                     @Nonnull final String sFromPartyID,
+                                                     @Nonnull final String sToRole,
+                                                     @Nonnull final String sToPartyID)
   {
     final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
 
@@ -122,12 +122,12 @@ public class CreateUserMessage
   }
 
   @Nonnull
-  public Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nonnull final String sAction,
-                                                              @Nullable final String sServiceType,
-                                                              @Nonnull final String sServiceValue,
-                                                              @Nonnull final String sConversationID,
-                                                              @Nullable final String sAgreementRefPMode,
-                                                              @Nullable final String sAgreementRefValue)
+  public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nonnull final String sAction,
+                                                                     @Nullable final String sServiceType,
+                                                                     @Nonnull final String sServiceValue,
+                                                                     @Nonnull final String sConversationID,
+                                                                     @Nullable final String sAgreementRefPMode,
+                                                                     @Nullable final String sAgreementRefValue)
   {
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
     aEbms3CollaborationInfo.setAction (sAction);
@@ -149,7 +149,7 @@ public class CreateUserMessage
   }
 
   @Nonnull
-  public Ebms3MessageProperties createEbms3MessageProperties (@Nullable final List <Ebms3Property> aEbms3Properties)
+  public static Ebms3MessageProperties createEbms3MessageProperties (@Nullable final List <Ebms3Property> aEbms3Properties)
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);
@@ -166,8 +166,8 @@ public class CreateUserMessage
    * @return <code>null</code> if no attachments are present.
    */
   @Nullable
-  public Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
-                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
+                                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
@@ -214,7 +214,8 @@ public class CreateUserMessage
     return aEbms3PayloadInfo;
   }
 
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }

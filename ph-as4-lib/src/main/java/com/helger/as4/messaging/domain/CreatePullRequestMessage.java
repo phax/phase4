@@ -23,8 +23,12 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 
-public class CreatePullRequestMessage
+public final class CreatePullRequestMessage
 {
+  private CreatePullRequestMessage ()
+  {}
+
+  @Nonnull
   public AS4PullRequestMessage createPullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                          @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                          @Nonnull final String aMPC)
@@ -43,6 +47,7 @@ public class CreatePullRequestMessage
     return ret;
   }
 
+  @Nonnull
   public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);

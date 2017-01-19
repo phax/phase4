@@ -65,20 +65,18 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   private static final Logger s_aLogger = LoggerFactory.getLogger (PModeCheckTest.class);
 
   private Ebms3UserMessage m_aEbms3UserMessage;
-  private CreateUserMessage m_aUserMessage;
   private Node m_aPayload;
 
   @Before
   public void setupMessage ()
   {
     m_aEbms3UserMessage = new Ebms3UserMessage ();
-    m_aUserMessage = new CreateUserMessage ();
 
     // Default Payload for testing
     try
     {
       m_aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-      m_aEbms3UserMessage.setPayloadInfo (m_aUserMessage.createEbms3PayloadInfo (m_aPayload, null));
+      m_aEbms3UserMessage.setPayloadInfo (CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null));
     }
     catch (final SAXException ex)
     {
@@ -86,21 +84,21 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
 
     // Default MessageInfo for testing
-    m_aEbms3UserMessage.setMessageInfo (m_aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME));
+    m_aEbms3UserMessage.setMessageInfo (CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME));
 
     // Default CollaborationInfo for testing
-    m_aEbms3UserMessage.setCollaborationInfo (m_aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                           "MyServiceTypes",
-                                                                                           "QuoteToCollect",
-                                                                                           "4321",
-                                                                                           null,
-                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT));
+    m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                              "MyServiceTypes",
+                                                                                              "QuoteToCollect",
+                                                                                              "4321",
+                                                                                              null,
+                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
-    m_aEbms3UserMessage.setPartyInfo (m_aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
-                                                                           MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                           MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
-                                                                           MockEbmsHelper.DEFAULT_PARTY_ID));
+    m_aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                              MockEbmsHelper.DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
@@ -111,9 +109,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode ("this-is-a-wrong-id");
 
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
@@ -136,10 +135,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
       m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
-                                                                                                                                  m_aEbms3UserMessage)
-                                                                                                 .setMustUnderstand (true)
-                                                                                                 .getAsSOAPDocument (m_aPayload),
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                                                                                     m_aEbms3UserMessage)
+                                                                                                    .setMustUnderstand (true)
+                                                                                                    .getAsSOAPDocument (m_aPayload),
                                                                                    ESOAPVersion.AS4_DEFAULT,
                                                                                    null,
                                                                                    s_aResMgr,
@@ -175,10 +174,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
       m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
 
-      final Document aSignedDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
-                                                                                 m_aEbms3UserMessage)
-                                                .setMustUnderstand (true)
-                                                .getAsSOAPDocument (m_aPayload);
+      final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                                    m_aEbms3UserMessage)
+                                                   .setMustUnderstand (true)
+                                                   .getAsSOAPDocument (m_aPayload);
 
       sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
                         false,
@@ -197,9 +196,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testWrongMPCShouldReturnFailure () throws Exception
   {
     m_aEbms3UserMessage.setMpc ("http://random.com/testmpc");
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -210,9 +210,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageMissingProperties () throws Exception
   {
     m_aEbms3UserMessage.setMessageProperties (null);
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
   }
@@ -221,15 +222,16 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
 
     aEbms3Properties.add (getRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
   }
@@ -247,9 +249,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
@@ -269,9 +272,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = m_aUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,

@@ -76,29 +76,28 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? MockEbmsHelper.DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdResponder;
 
-    final CreateUserMessage aUserMessage = new CreateUserMessage ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final Ebms3MessageInfo aEbms3MessageInfo = aUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = aUserMessage.createEbms3PayloadInfo (aPayload, null);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                      "MyServiceTypes",
-                                                                                                      "QuoteToCollect",
-                                                                                                      "4321",
-                                                                                                      sAnotherOrWrongPModeID,
-                                                                                                      MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = aUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
-                                                                              sSetPartyIDInitiator,
-                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
-                                                                              sSetPartyIDResponder);
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                                           "MyServiceTypes",
+                                                                                                           "QuoteToCollect",
+                                                                                                           "4321",
+                                                                                                           sAnotherOrWrongPModeID,
+                                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+                                                                                   sSetPartyIDInitiator,
+                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   sSetPartyIDResponder);
 
-    final AS4UserMessage aDoc = aUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                aEbms3PayloadInfo,
-                                                                aEbms3CollaborationInfo,
-                                                                aEbms3PartyInfo,
-                                                                aEbms3MessageProperties,
-                                                                ESOAPVersion.AS4_DEFAULT)
-                                            .setMustUnderstand (true);
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     ESOAPVersion.AS4_DEFAULT)
+                                                 .setMustUnderstand (true);
 
     return aDoc.getAsSOAPDocument (aPayload);
   }
