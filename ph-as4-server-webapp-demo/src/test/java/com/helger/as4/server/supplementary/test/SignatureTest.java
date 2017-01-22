@@ -17,7 +17,7 @@
 package com.helger.as4.server.supplementary.test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
@@ -79,7 +79,7 @@ public class SignatureTest
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
-    assertTrue (referenceType == REFERENCE_TYPE.DIRECT_REF);
+    assertSame (referenceType, REFERENCE_TYPE.DIRECT_REF);
   }
 
   /**

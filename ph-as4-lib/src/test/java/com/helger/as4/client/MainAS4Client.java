@@ -58,7 +58,7 @@ import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class MainAS4Client
+public final class MainAS4Client
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (MainAS4Client.class);
 

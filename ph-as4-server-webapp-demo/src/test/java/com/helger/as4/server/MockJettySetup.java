@@ -37,7 +37,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 public final class MockJettySetup extends AbstractClientSetUp
 {
   private static JettyRunner s_aJetty;
-  protected static AS4ResourceManager s_aResMgr;
+  private static AS4ResourceManager s_aResMgr;
 
   private MockJettySetup ()
   {}

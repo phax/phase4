@@ -16,6 +16,7 @@
  */
 package com.helger.as4.server.servlet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -243,7 +244,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     aEbms3Properties.removeIf (prop -> prop.getName ().equals (MockEbmsHelper.ORIGINAL_SENDER));
 
-    assertTrue (aEbms3Properties.size () == 1);
+    assertEquals (1, aEbms3Properties.size ());
 
     aEbms3Properties.add (getRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
