@@ -54,13 +54,13 @@ public class PModeLegBusinessInformation
   /**
    * The value of this parameter is a list of properties.
    */
-  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
+  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap <> ();
 
   /**
    * This parameter allows for specifying some constraint or profile on the
    * payload. It specifies a list of payload parts.
    */
-  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap<> ();
+  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap <> ();
 
   /**
    * This parameter allows for specifying a maximum size in kilobytes for the
@@ -104,7 +104,7 @@ public class PModeLegBusinessInformation
     return m_sService;
   }
 
-  public void setService (@Nullable final String sService)
+  public final void setService (@Nullable final String sService)
   {
     m_sService = sService;
   }
@@ -115,7 +115,7 @@ public class PModeLegBusinessInformation
     return m_sAction;
   }
 
-  public void setAction (@Nullable final String sAction)
+  public final void setAction (@Nullable final String sAction)
   {
     m_sAction = sAction;
   }
@@ -132,12 +132,12 @@ public class PModeLegBusinessInformation
     m_aProperties.forEachValue (aConsumer);
   }
 
-  public void setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
+  public final void setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
   {
     m_aProperties.setAll (aProperties);
   }
 
-  public void addProperty (@Nonnull final PModeProperty aProperty)
+  public final void addProperty (@Nonnull final PModeProperty aProperty)
   {
     ValueEnforcer.notNull (aProperty, "Property");
     final String sKey = aProperty.getName ();
@@ -158,12 +158,12 @@ public class PModeLegBusinessInformation
     m_aPayloadProfiles.forEachValue (aConsumer);
   }
 
-  public void setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
+  public final void setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
   {
     m_aPayloadProfiles.setAll (aPayloadProfiles);
   }
 
-  public void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
+  public final void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
   {
     ValueEnforcer.notNull (aPayloadProfile, "PayloadProfile");
     final String sKey = aPayloadProfile.getName ();
@@ -178,7 +178,7 @@ public class PModeLegBusinessInformation
     return m_nPayloadProfileMaxKB;
   }
 
-  public void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
+  public final void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
   {
     m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
   }
@@ -189,7 +189,7 @@ public class PModeLegBusinessInformation
     return m_sMPCID;
   }
 
-  public void setMPCID (@Nullable final String sMPCID)
+  public final void setMPCID (@Nullable final String sMPCID)
   {
     m_sMPCID = sMPCID;
   }

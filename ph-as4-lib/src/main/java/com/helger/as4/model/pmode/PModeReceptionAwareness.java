@@ -29,9 +29,7 @@ public class PModeReceptionAwareness
   public static final boolean DEFAULT_DUPLICATE_DETECTION = true;
 
   private ETriState m_eReceptionAwareness;
-
   private ETriState m_eRetry;
-
   private ETriState m_eDuplicateDetection;
 
   public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
@@ -59,7 +57,7 @@ public class PModeReceptionAwareness
     setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
   }
 
-  public void setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
+  public final void setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
   {
     ValueEnforcer.notNull (eReceptionAwareness, "ReceptionAwareness");
     m_eReceptionAwareness = eReceptionAwareness;
@@ -81,7 +79,7 @@ public class PModeReceptionAwareness
     setRetry (ETriState.valueOf (bRetry));
   }
 
-  public void setRetry (@Nonnull final ETriState eRetry)
+  public final void setRetry (@Nonnull final ETriState eRetry)
   {
     ValueEnforcer.notNull (eRetry, "Retry");
     m_eRetry = eRetry;
@@ -103,7 +101,7 @@ public class PModeReceptionAwareness
     setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
   }
 
-  public void setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
+  public final void setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
   {
     ValueEnforcer.notNull (eDuplicateDetection, "DuplicateDetection");
     m_eDuplicateDetection = eDuplicateDetection;

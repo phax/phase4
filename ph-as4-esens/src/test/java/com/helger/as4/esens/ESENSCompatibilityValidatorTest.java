@@ -111,7 +111,11 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigNoProtocolAddress ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (new PModeLegProtocol (), null, null, null, null));
+    m_aPModeConfig.setLeg1 (new PModeLeg (new PModeLegProtocol (null, ESOAPVersion.AS4_DEFAULT),
+                                          null,
+                                          null,
+                                          null,
+                                          null));
     aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
   }

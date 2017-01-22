@@ -27,7 +27,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 
 @NotThreadSafe
-public class AS4ServerSettings
+public final class AS4ServerSettings
 {
   private final static String DEFAULT_RESPONDER_ID = "default";
 

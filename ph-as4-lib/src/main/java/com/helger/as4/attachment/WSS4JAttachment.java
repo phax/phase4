@@ -59,7 +59,7 @@ import com.helger.mail.datasource.InputStreamDataSource;
  */
 public class WSS4JAttachment extends Attachment
 {
-  public static interface IHasAttachmentSourceStream
+  public interface IHasAttachmentSourceStream
   {
     InputStream getInputStream () throws Exception;
   }
@@ -84,7 +84,7 @@ public class WSS4JAttachment extends Attachment
 
   @Override
   @Deprecated
-  public void setMimeType (@Nullable final String sMimeType)
+  public final void setMimeType (@Nullable final String sMimeType)
   {
     throw new UnsupportedOperationException ();
   }
@@ -94,6 +94,12 @@ public class WSS4JAttachment extends Attachment
     super.setMimeType (sMimeType);
     m_sUncompressedMimeType = sMimeType;
     addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, sMimeType);
+  }
+
+  @Override
+  public final void addHeader (final String sName, final String sValue)
+  {
+    super.addHeader (sName, sValue);
   }
 
   /**
@@ -283,8 +289,7 @@ public class WSS4JAttachment extends Attachment
 
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
-      try (
-          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
+      try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
         StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
       }

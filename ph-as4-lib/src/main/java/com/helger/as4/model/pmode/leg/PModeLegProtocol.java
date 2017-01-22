@@ -56,11 +56,6 @@ public class PModeLegProtocol
    */
   private ESOAPVersion m_eSOAPVersion;
 
-  public PModeLegProtocol ()
-  {
-    this (null, ESOAPVersion.AS4_DEFAULT);
-  }
-
   public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESOAPVersion eSOAPVersion)
   {
     setAddress (sAddress);
@@ -80,7 +75,7 @@ public class PModeLegProtocol
     return aURL == null ? null : aURL.getProtocol ();
   }
 
-  public void setAddress (@Nullable final String sAddress)
+  public final void setAddress (@Nullable final String sAddress)
   {
     m_sAddress = sAddress;
   }
@@ -91,7 +86,7 @@ public class PModeLegProtocol
     return m_eSOAPVersion;
   }
 
-  public void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  public final void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eSOAPVersion = eSOAPVersion;

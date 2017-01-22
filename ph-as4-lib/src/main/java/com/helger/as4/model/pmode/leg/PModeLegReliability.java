@@ -124,7 +124,7 @@ public class PModeLegReliability
    * associated with the values in Reliability.Correlation for a message under
    * this P-Mode, then a new group/sequence is started.
    */
-  private ICommonsList <String> m_aCorrelation = new CommonsArrayList<> ();
+  private ICommonsList <String> m_aCorrelation = new CommonsArrayList <> ();
 
   /**
    * This parameter is a Boolean value that may be used to indicate if messages
@@ -132,11 +132,6 @@ public class PModeLegReliability
    * sequence with which they correlate.
    */
   private ETriState m_eTerminateGroup = ETriState.UNDEFINED;
-
-  public PModeLegReliability ()
-  {
-
-  }
 
   public PModeLegReliability (@Nonnull final ETriState eAtLeastOnceContract,
                               @Nonnull final ETriState eAtLeastOnceAckOnDelivery,

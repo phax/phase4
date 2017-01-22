@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.w3c.dom.Element;
 
-import com.helger.as4.marshaller.Ebms3ReaderBuilder;
-import com.helger.as4.marshaller.Ebms3WriterBuilder;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.soap11.Soap11Envelope;
 import com.helger.commons.io.resource.ClassPathResource;

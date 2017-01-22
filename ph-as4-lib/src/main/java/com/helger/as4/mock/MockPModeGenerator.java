@@ -38,7 +38,7 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
 
-public class MockPModeGenerator
+public final class MockPModeGenerator
 {
   public static String PMODE_CONFIG_ID_SOAP11_TEST = "pmode-test11";
   public static String PMODE_CONFIG_ID_SOAP12_TEST = "pmode-test";

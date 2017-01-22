@@ -56,7 +56,7 @@ public class Partnership implements Serializable
     setName (sName);
   }
 
-  public void setName (@Nonnull final String sName)
+  public final void setName (@Nonnull final String sName)
   {
     m_sName = ValueEnforcer.notNull (sName, "Name");
   }

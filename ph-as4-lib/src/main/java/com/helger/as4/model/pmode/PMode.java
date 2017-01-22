@@ -115,7 +115,7 @@ public class PMode extends AbstractBaseObject implements IPMode
     return m_aInitiator;
   }
 
-  public void setInitiator (@Nullable final PModeParty aInitiator)
+  public final void setInitiator (@Nullable final PModeParty aInitiator)
   {
     m_aInitiator = aInitiator;
   }
@@ -126,7 +126,7 @@ public class PMode extends AbstractBaseObject implements IPMode
     return m_aResponder;
   }
 
-  public void setResponder (@Nullable final PModeParty aResponder)
+  public final void setResponder (@Nullable final PModeParty aResponder)
   {
     m_aResponder = aResponder;
   }

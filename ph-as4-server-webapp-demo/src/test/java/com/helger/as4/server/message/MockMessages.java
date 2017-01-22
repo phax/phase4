@@ -57,6 +57,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public final class MockMessages
 {
+  private MockMessages ()
+  {}
+
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,

@@ -24,7 +24,6 @@ import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.pmode.PModeManager;
 
 /**
  * Test class for class {@link PModeManager}.

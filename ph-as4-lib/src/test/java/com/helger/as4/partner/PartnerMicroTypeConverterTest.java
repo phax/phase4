@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
-import com.helger.as4.partner.Partner;
 import com.helger.as4.util.StringMap;
 import com.helger.xml.mock.XMLTestHelper;
 

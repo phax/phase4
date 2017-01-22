@@ -29,9 +29,9 @@ public final class CreatePullRequestMessage
   {}
 
   @Nonnull
-  public AS4PullRequestMessage createPullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                         @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                         @Nonnull final String aMPC)
+  public static AS4PullRequestMessage createPullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                                @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                                                @Nonnull final String aMPC)
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -48,7 +48,7 @@ public final class CreatePullRequestMessage
   }
 
   @Nonnull
-  public Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
   }

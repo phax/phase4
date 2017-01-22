@@ -42,12 +42,12 @@ public final class MockJettySetup extends AbstractClientSetUp
   private MockJettySetup ()
   {}
 
-  private static final boolean _isRunJetty ()
+  private static boolean _isRunJetty ()
   {
     return AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled", false);
   }
 
-  private static final int _getJettyPort ()
+  private static int _getJettyPort ()
   {
     return URLHelper.getAsURL (AS4ServerConfiguration.getSettings ().getAsString ("server.address")).getPort ();
   }

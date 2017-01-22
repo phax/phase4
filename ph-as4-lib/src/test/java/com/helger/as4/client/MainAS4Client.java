@@ -40,7 +40,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.client.HttpMimeMessageEntity;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -62,6 +61,9 @@ import com.helger.xml.serialize.read.DOMReader;
 public class MainAS4Client
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (MainAS4Client.class);
+
+  private MainAS4Client ()
+  {}
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
                                                                                 IOException,
@@ -179,19 +181,18 @@ public class MainAS4Client
                 throw new IllegalStateException ("Some test message should be selected :)");
 
       // XXX reinstate if you wanna see the request that is getting sent
-      System.out.println (EntityUtils.toString (aPost.getEntity ()));
+      s_aLogger.info (EntityUtils.toString (aPost.getEntity ()));
 
       final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);
 
-      System.out.println ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
+      s_aLogger.info ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
 
       // print result
-      System.out.println (EntityUtils.toString (aHttpResponse.getEntity ()));
+      s_aLogger.info (EntityUtils.toString (aHttpResponse.getEntity ()));
     }
     catch (final Exception e)
     {
-      System.err.println ("Error occurred while sending SOAP Request to Server");
-      e.printStackTrace ();
+      s_aLogger.error ("Error occurred while sending SOAP Request to Server", e);
     }
   }
 }

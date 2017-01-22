@@ -224,7 +224,7 @@ public class PModeLegSecurity
     return m_eWSSVersion == null ? null : m_eWSSVersion.getVersion ();
   }
 
-  public void setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
+  public final void setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
   {
     m_eWSSVersion = eWSSVersion;
   }
@@ -233,10 +233,10 @@ public class PModeLegSecurity
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignElement ()
   {
-    return new CommonsArrayList<> (m_aX509SignElement);
+    return new CommonsArrayList <> (m_aX509SignElement);
   }
 
-  public void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
+  public final void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
   {
     m_aX509SignElement = aX509SignElement;
   }
@@ -245,10 +245,10 @@ public class PModeLegSecurity
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignAttachment ()
   {
-    return new CommonsArrayList<> (m_aX509SignAttachment);
+    return new CommonsArrayList <> (m_aX509SignAttachment);
   }
 
-  public void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
+  public final void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
   {
     m_aX509SignAttachment = aX509SignAttachment;
   }
@@ -259,7 +259,7 @@ public class PModeLegSecurity
     return m_sX509SignatureCertificate;
   }
 
-  public void setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
+  public final void setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
   {
     m_sX509SignatureCertificate = sX509SignatureCertificate;
   }
@@ -276,7 +276,7 @@ public class PModeLegSecurity
     return m_eX509SignatureHashFunction == null ? null : m_eX509SignatureHashFunction.getID ();
   }
 
-  public void setX509SignatureHashFunction (@Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction)
+  public final void setX509SignatureHashFunction (@Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction)
   {
     m_eX509SignatureHashFunction = eX509SignatureHashFunction;
   }
@@ -293,7 +293,7 @@ public class PModeLegSecurity
     return m_eX509SignatureAlgorithm == null ? null : m_eX509SignatureAlgorithm.getID ();
   }
 
-  public void setX509SignatureAlgorithm (@Nullable final ECryptoAlgorithmSign eX509SignatureAlgorithm)
+  public final void setX509SignatureAlgorithm (@Nullable final ECryptoAlgorithmSign eX509SignatureAlgorithm)
   {
     m_eX509SignatureAlgorithm = eX509SignatureAlgorithm;
   }
@@ -302,10 +302,10 @@ public class PModeLegSecurity
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptElement ()
   {
-    return new CommonsArrayList<> (m_aX509EncryptionEncryptElement);
+    return new CommonsArrayList <> (m_aX509EncryptionEncryptElement);
   }
 
-  public void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
+  public final void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
   {
     m_aX509EncryptionEncryptElement = aX509EncryptionEncryptElement;
   }
@@ -314,10 +314,10 @@ public class PModeLegSecurity
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptAttachment ()
   {
-    return new CommonsArrayList<> (m_aX509EncryptionEncryptAttachment);
+    return new CommonsArrayList <> (m_aX509EncryptionEncryptAttachment);
   }
 
-  public void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
+  public final void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
   {
     m_aX509EncryptionEncryptAttachment = aX509EncryptionEncryptAttachment;
   }
@@ -328,7 +328,7 @@ public class PModeLegSecurity
     return m_sX509EncryptionCertificate;
   }
 
-  public void setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
+  public final void setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
   {
     m_sX509EncryptionCertificate = sX509EncryptionCertificate;
   }
@@ -345,7 +345,7 @@ public class PModeLegSecurity
     return m_eX509EncryptionAlgorithm == null ? null : m_eX509EncryptionAlgorithm.getID ();
   }
 
-  public void setX509EncryptionAlgorithm (@Nullable final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm)
+  public final void setX509EncryptionAlgorithm (@Nullable final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm)
   {
     m_eX509EncryptionAlgorithm = eX509EncryptionAlgorithm;
   }
@@ -361,7 +361,7 @@ public class PModeLegSecurity
     return m_aX509EncryptionMinimumStrength;
   }
 
-  public void setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
+  public final void setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
   {
     m_aX509EncryptionMinimumStrength = aX509EncryptionMinimumStrength;
   }
@@ -372,7 +372,7 @@ public class PModeLegSecurity
     return m_sUsernameTokenUsername;
   }
 
-  public void setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
+  public final void setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
   {
     m_sUsernameTokenUsername = sUsernameTokenUsername;
   }
@@ -383,7 +383,7 @@ public class PModeLegSecurity
     return m_sUsernameTokenPassword;
   }
 
-  public void setUsernameTokenPassword (@Nullable final String sUsernameTokenPassword)
+  public final void setUsernameTokenPassword (@Nullable final String sUsernameTokenPassword)
   {
     m_sUsernameTokenPassword = sUsernameTokenPassword;
   }
@@ -404,7 +404,7 @@ public class PModeLegSecurity
     setUsernameTokenDigest (ETriState.valueOf (bUsernameTokenDigest));
   }
 
-  public void setUsernameTokenDigest (@Nonnull final ETriState eUsernameTokenDigest)
+  public final void setUsernameTokenDigest (@Nonnull final ETriState eUsernameTokenDigest)
   {
     ValueEnforcer.notNull (eUsernameTokenDigest, "UsernameTokenDigest");
     m_eUsernameTokenDigest = eUsernameTokenDigest;
@@ -426,7 +426,7 @@ public class PModeLegSecurity
     setUsernameTokenNonce (ETriState.valueOf (bUsernameTokenNonce));
   }
 
-  public void setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
+  public final void setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
   {
     ValueEnforcer.notNull (eUsernameTokenNonce, "UsernameTokenNonce");
     m_eUsernameTokenNonce = eUsernameTokenNonce;
@@ -448,7 +448,7 @@ public class PModeLegSecurity
     setUsernameTokenCreated (ETriState.valueOf (bUsernameTokenCreated));
   }
 
-  public void setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
+  public final void setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
   {
     ValueEnforcer.notNull (eUsernameTokenCreated, "UsernameTokenCreated");
     m_eUsernameTokenCreated = eUsernameTokenCreated;
@@ -470,7 +470,7 @@ public class PModeLegSecurity
     setPModeAuthorize (ETriState.valueOf (bPModeAuthorize));
   }
 
-  public void setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
+  public final void setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
   {
     ValueEnforcer.notNull (ePModeAuthorize, "PModeAuthorize");
     m_ePModeAuthorize = ePModeAuthorize;
@@ -492,7 +492,7 @@ public class PModeLegSecurity
     setSendReceipt (ETriState.valueOf (bSendReceipt));
   }
 
-  public void setSendReceipt (@Nonnull final ETriState eSendReceipt)
+  public final void setSendReceipt (@Nonnull final ETriState eSendReceipt)
   {
     ValueEnforcer.notNull (eSendReceipt, "SendReceipt");
     m_eSendReceipt = eSendReceipt;
@@ -510,7 +510,7 @@ public class PModeLegSecurity
     return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
   }
 
-  public void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
+  public final void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
   {
     m_eSendReceiptReplyPattern = eSendReceiptReplyPattern;
   }
@@ -531,7 +531,7 @@ public class PModeLegSecurity
     setSendReceiptNonRepudiation (ETriState.valueOf (bSendReceiptNonRepudiation));
   }
 
-  public void setSendReceiptNonRepudiation (@Nonnull final ETriState eSendReceiptNonRepudiation)
+  public final void setSendReceiptNonRepudiation (@Nonnull final ETriState eSendReceiptNonRepudiation)
   {
     ValueEnforcer.notNull (eSendReceiptNonRepudiation, "SendReceiptNonRepudiation");
     m_eSendReceiptNonRepudiation = eSendReceiptNonRepudiation;

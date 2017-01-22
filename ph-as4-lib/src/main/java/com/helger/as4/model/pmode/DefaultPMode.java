@@ -17,6 +17,7 @@
 package com.helger.as4.model.pmode;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
@@ -38,7 +39,8 @@ import com.helger.as4.soap.ESOAPVersion;
  *
  * @author bayerlma
  */
-public class DefaultPMode
+@Immutable
+public final class DefaultPMode
 {
   private DefaultPMode ()
   {}

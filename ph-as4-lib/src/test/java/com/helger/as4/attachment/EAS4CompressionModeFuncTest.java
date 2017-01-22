@@ -30,7 +30,6 @@ import javax.annotation.WillClose;
 
 import org.junit.Test;
 
-import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;

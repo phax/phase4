@@ -28,8 +28,8 @@ import javax.annotation.WillClose;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.AS4IOHelper;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.IStringMap;
 import com.helger.as4.util.StringMap;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
@@ -74,7 +74,7 @@ public class XMLPartnershipFactory extends AbstractPartnershipFactoryWithPartner
     }
     catch (final Exception ex)
     {
-      throw new RuntimeException (ex);
+      throw new IllegalStateException (ex);
     }
   }
 

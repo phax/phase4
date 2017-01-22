@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
 
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
 
     if (aPModeLeg1 != null)
     {
@@ -267,7 +267,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
           for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
           {
-            if (aEbms3Property.getName ().toLowerCase ().equals ("compressiontype"))
+            if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
             {
               if (bHasSoapBodyPayload)
               {

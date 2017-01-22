@@ -27,7 +27,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.helger.as4.testfiles.CAS4TestFiles;
-import com.helger.as4.validator.MessageValidator;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;

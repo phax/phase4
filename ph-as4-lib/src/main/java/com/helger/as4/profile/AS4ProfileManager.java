@@ -46,7 +46,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ProfileManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
-  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap<> ();
+  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap <> ();
   private IAS4Profile m_aDefaultProfile;
 
   private void _registerAll ()
@@ -85,7 +85,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   }
 
   @Nonnegative
-  public int getProfileCount ()
+  public final int getProfileCount ()
   {
     return m_aRWLock.readLocked ( () -> m_aMap.size ());
   }

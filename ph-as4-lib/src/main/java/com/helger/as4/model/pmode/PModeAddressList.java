@@ -34,7 +34,7 @@ public class PModeAddressList
 {
   public static final char ADDRESS_SEPARATOR = ',';
 
-  private final ICommonsList <String> m_aAddresses = new CommonsArrayList<> ();
+  private final ICommonsList <String> m_aAddresses = new CommonsArrayList <> ();
 
   public PModeAddressList ()
   {}
@@ -52,7 +52,7 @@ public class PModeAddressList
       m_aAddresses.addAll (aAddresses);
   }
 
-  public void addAddress (@Nonnull @Nonempty final String sAddress)
+  public final void addAddress (@Nonnull @Nonempty final String sAddress)
   {
     ValueEnforcer.notEmpty (sAddress, "Address");
     m_aAddresses.add (sAddress);
