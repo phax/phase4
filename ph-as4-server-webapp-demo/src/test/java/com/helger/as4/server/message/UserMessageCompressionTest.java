@@ -16,6 +16,7 @@
  */
 package com.helger.as4.server.message;
 
+import java.io.InputStream;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -174,9 +175,11 @@ public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithWrongCompressionType () throws Exception
   {
-    final MimeMessage aMsg = new MimeMessage (null,
-                                              new ClassPathResource ("testfiles/WrongCompression.mime").getInputStream ());
+    try (final InputStream aIS = ClassPathResource.getInputStream ("testfiles/WrongCompression.mime"))
+    {
+      final MimeMessage aMsg = new MimeMessage (null, aIS);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    }
   }
 }

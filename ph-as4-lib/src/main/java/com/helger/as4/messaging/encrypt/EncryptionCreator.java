@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
@@ -45,15 +46,19 @@ import com.helger.mail.cte.EContentTransferEncoding;
 public class EncryptionCreator
 {
   private final Crypto m_aCrypto;
+  private final AS4CryptoFactory m_aAS4CryptoFactory;
+  private final CryptoProperties cryptoProperties;
 
   public EncryptionCreator ()
   {
-    this (AS4CryptoFactory.getCrypto ());
+    this (null);
   }
 
-  public EncryptionCreator (@Nonnull final Crypto aCrypto)
+  public EncryptionCreator (@Nullable final String sCryptoProperties)
   {
-    m_aCrypto = ValueEnforcer.notNull (aCrypto, "Crypto");
+    m_aAS4CryptoFactory = new AS4CryptoFactory (sCryptoProperties);
+    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
+    cryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
   @Nonnull
@@ -67,7 +72,7 @@ public class EncryptionCreator
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
-    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
@@ -93,7 +98,7 @@ public class EncryptionCreator
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
 

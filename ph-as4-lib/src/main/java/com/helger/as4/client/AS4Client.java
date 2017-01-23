@@ -1,5 +1,9 @@
 package com.helger.as4.client;
 
+import java.io.File;
+
+import javax.annotation.Nullable;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -16,6 +20,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.string.StringHelper;
 
 /**
  * AS4 standalone client invoker.
@@ -31,6 +36,8 @@ public class AS4Client
 
   // Keystore attributes
   // TODO look at AS2 Client / ClientSettinggs /ClientRequest
+  private File m_aKeyStoreFile;
+  private String m_sKeyStorePassword;
 
   // Document related attributes
   private Document aDoc;
@@ -56,6 +63,26 @@ public class AS4Client
   private String sToRole;
   private String sToPartyID;
 
+  /**
+   * @return The encrypted Document or null if something failed.
+   */
+  @Nullable
+  public Document encryptDocument ()
+  {
+    if (StringHelper.hasNoText (m_sKeyStorePassword))
+    {
+
+    }
+
+    return null;
+  }
+
+  /**
+   * Only returns something appropriate if the attributes got set before. Not
+   * every attribute needs to be set.
+   *
+   * @return Document that is produced with the current settings.
+   */
   public Document buildMessage ()
   {
     final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (sMessageIDPrefix);
@@ -111,6 +138,26 @@ public class AS4Client
   public void seteSOAPVersion (final ESOAPVersion eSOAPVersion)
   {
     this.eSOAPVersion = eSOAPVersion;
+  }
+
+  public File getKeyStoreFile ()
+  {
+    return m_aKeyStoreFile;
+  }
+
+  public void setKeyStoreFile (final File m_aKeyStoreFile)
+  {
+    this.m_aKeyStoreFile = m_aKeyStoreFile;
+  }
+
+  public String getKeyStorePassword ()
+  {
+    return m_sKeyStorePassword;
+  }
+
+  public void setKeyStorePassword (final String m_sKeyStorePassword)
+  {
+    this.m_sKeyStorePassword = m_sKeyStorePassword;
   }
 
   public Document getDoc ()

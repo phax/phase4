@@ -10,7 +10,6 @@ import org.apache.wss4j.common.crypto.CryptoType;
 import org.apache.wss4j.common.crypto.CryptoType.TYPE;
 import org.apache.wss4j.common.ext.WSSecurityException;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
@@ -38,8 +37,10 @@ public final class AS4ServerInitializer
       try
       {
         final CryptoType aCT = new CryptoType (TYPE.ALIAS);
-        aCT.setAlias (AS4CryptoFactory.getKeyAlias ());
-        final X509Certificate [] aCertList = AS4CryptoFactory.getCrypto ().getX509Certificates (aCT);
+        aCT.setAlias (AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ());
+        final X509Certificate [] aCertList = AS4ServerSettings.getAS4CryptoFactory ()
+                                                              .getCrypto ()
+                                                              .getX509Certificates (aCT);
         if (ArrayHelper.isEmpty (aCertList))
           throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
                                            aCT.getAlias () +

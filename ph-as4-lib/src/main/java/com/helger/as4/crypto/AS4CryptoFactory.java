@@ -16,9 +16,6 @@
  */
 package com.helger.as4.crypto;
 
-import java.io.InputStream;
-import java.util.Properties;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -29,35 +26,79 @@ import org.apache.wss4j.dom.engine.WSSConfig;
 
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.string.StringHelper;
 
 @Immutable
 public final class AS4CryptoFactory
 {
-  private static Properties s_aProps;
-  private static Crypto s_aCrypto;
+  private Crypto m_aCrypto;
+  private CryptoProperties m_aCryptoProps;
 
-  static
+  // static
+  // {
+  // // Init once
+  // WSSConfig.init ();
+  //
+  // // Uses crypto.properties => needs exact name crypto.properties
+  // CryptoProperties aCryptoProps = new CryptoProperties (new ClassPathResource
+  // ("private-crypto.properties"));
+  // if (!aCryptoProps.isRead ())
+  // aCryptoProps = new CryptoProperties (new ClassPathResource
+  // ("crypto.properties"));
+  // if (!aCryptoProps.isRead ())
+  // throw new InitializationException ("Failed to locate crypto properties");
+  //
+  // try
+  // {
+  // s_aCrypto = CryptoFactory.getInstance (aCryptoProps.getProperties ());
+  // }
+  // catch (final Throwable t)
+  // {
+  // throw new InitializationException ("Failed to init crypto properties!", t);
+  // }
+  // }
+
+  /**
+   * If this constructor is used the default properties get used.
+   */
+  public AS4CryptoFactory ()
+  {
+    this (null);
+  }
+
+  /**
+   * Should be used if you want to use a non-default crypto properties to create
+   * your Crypto-Instance.
+   *
+   * @param sCryptoProperties
+   *        when this parameter is <code>null</code>, the default values will
+   *        get used. Else it will try to invoke the given properties and read
+   *        them throws an exception if it does not work.
+   */
+  public AS4CryptoFactory (@Nullable final String sCryptoProperties)
   {
     // Init once
     WSSConfig.init ();
 
-    // Uses crypto.properties => needs exact name crypto.properties
-    IReadableResource aRes = new ClassPathResource ("private-crypto.properties");
-    if (!aRes.exists ())
-      aRes = new ClassPathResource ("crypto.properties");
+    if (StringHelper.hasNoText (sCryptoProperties))
+    {
 
-    if (!aRes.exists ())
+      // Uses crypto.properties => needs exact name crypto.properties
+      m_aCryptoProps = new CryptoProperties (new ClassPathResource ("private-crypto.properties"));
+      if (!m_aCryptoProps.isRead ())
+        m_aCryptoProps = new CryptoProperties (new ClassPathResource ("crypto.properties"));
+    }
+    else
+    {
+      m_aCryptoProps = new CryptoProperties (new ClassPathResource (sCryptoProperties));
+    }
+
+    if (!m_aCryptoProps.isRead ())
       throw new InitializationException ("Failed to locate crypto properties");
 
     try
     {
-      s_aProps = new Properties ();
-      try (final InputStream aIS = aRes.getInputStream ())
-      {
-        s_aProps.load (aIS);
-      }
-      s_aCrypto = CryptoFactory.getInstance (s_aProps);
+      m_aCrypto = CryptoFactory.getInstance (m_aCryptoProps.getProperties ());
     }
     catch (final Throwable t)
     {
@@ -65,27 +106,15 @@ public final class AS4CryptoFactory
     }
   }
 
-  /** Default encrypt algorithm */
-  public static final ECryptoAlgorithmCrypt ENCRYPT_DEFAULT_ALGORITHM = ECryptoAlgorithmCrypt.AES_128_GCM;
-
-  private AS4CryptoFactory ()
-  {}
+  @Nonnull
+  public Crypto getCrypto ()
+  {
+    return m_aCrypto;
+  }
 
   @Nonnull
-  public static Crypto getCrypto ()
+  public CryptoProperties getCryptoProperties ()
   {
-    return s_aCrypto;
-  }
-
-  @Nullable
-  public static String getKeyAlias ()
-  {
-    return s_aProps.getProperty ("org.apache.wss4j.crypto.merlin.keystore.alias");
-  }
-
-  @Nullable
-  public static String getKeyPassword ()
-  {
-    return s_aProps.getProperty ("org.apache.wss4j.crypto.merlin.keystore.password");
+    return m_aCryptoProps;
   }
 }

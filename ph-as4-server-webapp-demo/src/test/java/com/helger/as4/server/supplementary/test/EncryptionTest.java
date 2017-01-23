@@ -40,6 +40,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 
@@ -51,11 +52,15 @@ public class EncryptionTest
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
 
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
-  private final Crypto crypto;
+  private final Crypto m_aCrypto;
+  private final AS4CryptoFactory m_aAS4CryptoFactory;
+  private final CryptoProperties m_aCryptoProperties;
 
   public EncryptionTest () throws Exception
   {
-    crypto = AS4CryptoFactory.getCrypto ();
+    m_aAS4CryptoFactory = new AS4CryptoFactory (null);
+    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
+    m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
   /**
@@ -87,7 +92,7 @@ public class EncryptionTest
     builder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     builder.setSymmetricKey (null);
-    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
 
     final Document doc = _getSoapEnvelope11 ();
     WSSecHeader secHeader = new WSSecHeader (doc);
@@ -101,7 +106,7 @@ public class EncryptionTest
     secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
     LOG.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = builder.build (doc, crypto, secHeader);
+    final Document encryptedDoc = builder.build (doc, m_aCrypto, secHeader);
     LOG.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
@@ -122,13 +127,13 @@ public class EncryptionTest
   {
     final WSSecEncrypt builder = new WSSecEncrypt ();
     // builder.setUserInfo ("wss40");
-    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
-    final Document encryptedDoc = builder.build (doc, crypto, secHeader);
+    final Document encryptedDoc = builder.build (doc, m_aCrypto, secHeader);
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     // System.out.println (outputString);
