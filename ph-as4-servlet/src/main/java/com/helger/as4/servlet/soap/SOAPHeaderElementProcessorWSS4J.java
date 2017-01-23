@@ -38,13 +38,13 @@ import org.w3c.dom.Element;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -182,8 +182,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-        aRequestData.setSigVerCrypto (AS4CryptoFactory.getCrypto ());
-        aRequestData.setDecCrypto (AS4CryptoFactory.getCrypto ());
+        aRequestData.setSigVerCrypto (AS4ServerSettings.getAS4CryptoFactory ().getCrypto ());
+        aRequestData.setDecCrypto (AS4ServerSettings.getAS4CryptoFactory ().getCrypto ());
         aRequestData.setWssConfig (WSSConfig.getNewInstance ());
 
         // Upon success, the SOAP document contains the decrypted content

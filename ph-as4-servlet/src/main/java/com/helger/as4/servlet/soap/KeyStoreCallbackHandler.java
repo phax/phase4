@@ -26,7 +26,7 @@ import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 
 final class KeyStoreCallbackHandler implements CallbackHandler
 {
@@ -39,9 +39,14 @@ final class KeyStoreCallbackHandler implements CallbackHandler
       if (aCallback instanceof WSPasswordCallback)
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
-        if (AS4CryptoFactory.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
+        if (AS4ServerSettings.getAS4CryptoFactory ()
+                             .getCryptoProperties ()
+                             .getKeyAlias ()
+                             .equals (aPasswordCallback.getIdentifier ()))
         {
-          aPasswordCallback.setPassword (AS4CryptoFactory.getKeyPassword ());
+          aPasswordCallback.setPassword (AS4ServerSettings.getAS4CryptoFactory ()
+                                                          .getCryptoProperties ()
+                                                          .getKeyPassword ());
           s_aLogger.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
         }
         else

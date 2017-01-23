@@ -31,27 +31,31 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 
 public class SignedMessageCreator
 {
   private final Crypto m_aCrypto;
+  private final AS4CryptoFactory m_aAS4CryptoFactory;
+  private final CryptoProperties cryptoProperties;
 
   public SignedMessageCreator ()
   {
-    this (AS4CryptoFactory.getCrypto ());
+    this (null);
   }
 
-  public SignedMessageCreator (@Nonnull final Crypto aCrypto)
+  public SignedMessageCreator (@Nullable final String sCryptoProperties)
   {
-    m_aCrypto = ValueEnforcer.notNull (aCrypto, "Crypto");
+    m_aAS4CryptoFactory = new AS4CryptoFactory (sCryptoProperties);
+    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
+    cryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
   @Nonnull
@@ -59,7 +63,7 @@ public class SignedMessageCreator
                                            @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
   {
     final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (eECryptoAlgorithmSign.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function

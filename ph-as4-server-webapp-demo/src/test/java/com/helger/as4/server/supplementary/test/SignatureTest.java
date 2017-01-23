@@ -32,6 +32,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.CryptoProperties;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -41,11 +42,15 @@ import com.helger.xml.serialize.read.DOMReader;
 public class SignatureTest
 {
   private final WSSecurityEngine secEngine = new WSSecurityEngine ();
-  private final Crypto crypto;
+  private final Crypto m_aCrypto;
+  private final AS4CryptoFactory m_aAS4CryptoFactory;
+  private final CryptoProperties m_aCryptoProperties;
 
   public SignatureTest () throws Exception
   {
-    crypto = AS4CryptoFactory.getCrypto ();
+    m_aAS4CryptoFactory = new AS4CryptoFactory (null);
+    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
+    m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
   /**
@@ -59,7 +64,7 @@ public class SignatureTest
   public void testX509SignatureIS () throws Exception
   {
     final WSSecSignature builder = new WSSecSignature ();
-    builder.setUserInfo (AS4CryptoFactory.getKeyAlias (), AS4CryptoFactory.getKeyPassword ());
+    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
     // PMode indicates the DigestAlgorithmen as Hash Function
@@ -67,7 +72,7 @@ public class SignatureTest
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
-    final Document signedDoc = builder.build (doc, crypto, secHeader);
+    final Document signedDoc = builder.build (doc, m_aCrypto, secHeader);
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
@@ -93,7 +98,7 @@ public class SignatureTest
    */
   private WSHandlerResult verify (final Document doc) throws Exception
   {
-    return secEngine.processSecurityHeader (doc, null, null, crypto);
+    return secEngine.processSecurityHeader (doc, null, null, m_aCrypto);
   }
 
   private Document _getSoapEnvelope11 () throws SAXException

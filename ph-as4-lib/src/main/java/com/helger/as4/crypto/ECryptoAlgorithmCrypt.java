@@ -48,6 +48,7 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
   AES_256_CCM ("aes256-ccm", CMSAlgorithm.AES256_CCM),
   AES_256_GCM ("aes256-gcm", CMSAlgorithm.AES256_GCM);
 
+  /** Default encrypt algorithm */
   public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = ECryptoAlgorithmCrypt.AES_128_GCM;
 
   private final String m_sID;
