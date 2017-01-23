@@ -31,32 +31,14 @@ import com.helger.commons.string.StringHelper;
 @Immutable
 public final class AS4CryptoFactory
 {
+  static
+  {
+    // Init once
+    WSSConfig.init ();
+  }
+
   private Crypto m_aCrypto;
   private CryptoProperties m_aCryptoProps;
-
-  // static
-  // {
-  // // Init once
-  // WSSConfig.init ();
-  //
-  // // Uses crypto.properties => needs exact name crypto.properties
-  // CryptoProperties aCryptoProps = new CryptoProperties (new ClassPathResource
-  // ("private-crypto.properties"));
-  // if (!aCryptoProps.isRead ())
-  // aCryptoProps = new CryptoProperties (new ClassPathResource
-  // ("crypto.properties"));
-  // if (!aCryptoProps.isRead ())
-  // throw new InitializationException ("Failed to locate crypto properties");
-  //
-  // try
-  // {
-  // s_aCrypto = CryptoFactory.getInstance (aCryptoProps.getProperties ());
-  // }
-  // catch (final Throwable t)
-  // {
-  // throw new InitializationException ("Failed to init crypto properties!", t);
-  // }
-  // }
 
   /**
    * If this constructor is used the default properties get used.
@@ -77,12 +59,8 @@ public final class AS4CryptoFactory
    */
   public AS4CryptoFactory (@Nullable final String sCryptoProperties)
   {
-    // Init once
-    WSSConfig.init ();
-
     if (StringHelper.hasNoText (sCryptoProperties))
     {
-
       // Uses crypto.properties => needs exact name crypto.properties
       m_aCryptoProps = new CryptoProperties (new ClassPathResource ("private-crypto.properties"));
       if (!m_aCryptoProps.isRead ())
