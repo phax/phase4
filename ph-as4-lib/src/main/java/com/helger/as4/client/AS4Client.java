@@ -31,6 +31,7 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -52,13 +53,6 @@ public class AS4Client
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
-
-  // Keystore attributes
-  // TODO look at AS2 Client / ClientSettinggs /ClientRequest
-  private File m_aKeyStoreFile;
-  private String m_sKeyStoreType = "jks";
-  private String m_sKeyStoreAlias;
-  private String m_sKeyStorePassword;
 
   // Document related attributes
   private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
@@ -83,6 +77,13 @@ public class AS4Client
   private String m_sToRole;
   private String m_sToPartyID;
 
+  // Keystore attributes
+  // TODO look at AS2 Client / ClientSettinggs /ClientRequest
+  private File m_aKeyStoreFile;
+  private String m_sKeyStoreType = "jks";
+  private String m_sKeyStoreAlias;
+  private String m_sKeyStorePassword;
+
   // Signing additional attributes
   private ECryptoAlgorithmSign m_eCryptoAlgorithmSign;
   private ECryptoAlgorithmSignDigest m_eCryptoAlgorithmSignDigest;
@@ -103,8 +104,9 @@ public class AS4Client
   }
 
   /**
-   * Only returns something appropriate if the attributes got set before. Not
-   * every attribute needs to be set.
+   * Build the AS4 message to be send. It uses all the attributes of this class
+   * to build the final message. Compression, signing and encryption happens in
+   * this methods.
    *
    * @return The HTTP entity to be send - never <code>null</code>.
    * @throws Exception
@@ -143,7 +145,8 @@ public class AS4Client
 
     // 1. compress
 
-    AS4CryptoFactory aCryptoFactory = null;
+    // 2. sign and/or encrpyt
+    MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
     {
       _checkKeystoreAttributes ();
@@ -154,41 +157,40 @@ public class AS4Client
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", m_sKeyStorePassword);
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", m_sKeyStoreAlias);
-      aCryptoFactory = new AS4CryptoFactory (aCryptoProps);
-    }
+      final AS4CryptoFactory aCryptoFactory = new AS4CryptoFactory (aCryptoProps);
 
-    // 2. sign
-    if (bSign)
-    {
-      final Document aSignedDoc = new SignedMessageCreator (aCryptoFactory).createSignedMessage (aDoc,
-                                                                                                 m_eSOAPVersion,
-                                                                                                 m_aAttachments,
-                                                                                                 m_aResMgr,
-                                                                                                 true,
-                                                                                                 m_eCryptoAlgorithmSign,
-                                                                                                 m_eCryptoAlgorithmSignDigest);
-      aDoc = aSignedDoc;
-    }
-
-    // 3. encrypt
-    MimeMessage aMimeMsg = null;
-    if (bEncrypt)
-    {
-      _checkKeystoreAttributes ();
-      final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
-      // MustUnderstand always set to true
-      if (bAttachmentsPresent)
+      // 2a. sign
+      if (bSign)
       {
-        aMimeMsg = aEncCreator.encryptMimeMessage (m_eSOAPVersion,
-                                                   aDoc,
-                                                   true,
-                                                   m_aAttachments,
-                                                   m_aResMgr,
-                                                   m_eCryptoAlgorithmCrypt);
+        final Document aSignedDoc = new SignedMessageCreator (aCryptoFactory).createSignedMessage (aDoc,
+                                                                                                   m_eSOAPVersion,
+                                                                                                   m_aAttachments,
+                                                                                                   m_aResMgr,
+                                                                                                   true,
+                                                                                                   m_eCryptoAlgorithmSign,
+                                                                                                   m_eCryptoAlgorithmSignDigest);
+        aDoc = aSignedDoc;
       }
-      else
+
+      // 2b. encrypt
+      if (bEncrypt)
       {
-        aDoc = aEncCreator.encryptSoapBodyPayload (m_eSOAPVersion, aDoc, true, m_eCryptoAlgorithmCrypt);
+        _checkKeystoreAttributes ();
+        final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
+        // MustUnderstand always set to true
+        if (bAttachmentsPresent)
+        {
+          aMimeMsg = aEncCreator.encryptMimeMessage (m_eSOAPVersion,
+                                                     aDoc,
+                                                     true,
+                                                     m_aAttachments,
+                                                     m_aResMgr,
+                                                     m_eCryptoAlgorithmCrypt);
+        }
+        else
+        {
+          aDoc = aEncCreator.encryptSoapBodyPayload (m_eSOAPVersion, aDoc, true, m_eCryptoAlgorithmCrypt);
+        }
       }
     }
 
@@ -238,46 +240,6 @@ public class AS4Client
   public void setAllAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     m_aAttachments.setAll (aAttachments);
-  }
-
-  public File getKeyStoreFile ()
-  {
-    return m_aKeyStoreFile;
-  }
-
-  public void setKeyStoreFile (final File aKeyStoreFile)
-  {
-    m_aKeyStoreFile = aKeyStoreFile;
-  }
-
-  public String getKeyStoreType ()
-  {
-    return m_sKeyStoreType;
-  }
-
-  public void setKeyStoreType (final String sKeyStoreType)
-  {
-    m_sKeyStoreType = sKeyStoreType;
-  }
-
-  public String getKeyStoreAlias ()
-  {
-    return m_sKeyStoreAlias;
-  }
-
-  public void setKeyStoreAlias (final String sKeyStoreAlias)
-  {
-    m_sKeyStoreAlias = sKeyStoreAlias;
-  }
-
-  public String getKeyStorePassword ()
-  {
-    return m_sKeyStorePassword;
-  }
-
-  public void setKeyStorePassword (final String sKeyStorePassword)
-  {
-    m_sKeyStorePassword = sKeyStorePassword;
   }
 
   @Nonnull
@@ -400,6 +362,49 @@ public class AS4Client
   public void setToPartyID (final String sToPartyID)
   {
     m_sToPartyID = sToPartyID;
+  }
+
+  public File getKeyStoreFile ()
+  {
+    return m_aKeyStoreFile;
+  }
+
+  public void setKeyStoreFile (final File aKeyStoreFile)
+  {
+    m_aKeyStoreFile = aKeyStoreFile;
+  }
+
+  @Nonnull
+  @Nonempty
+  public String getKeyStoreType ()
+  {
+    return m_sKeyStoreType;
+  }
+
+  public void setKeyStoreType (@Nonnull @Nonempty final String sKeyStoreType)
+  {
+    ValueEnforcer.notEmpty (sKeyStoreType, "KeyStoreType");
+    m_sKeyStoreType = sKeyStoreType;
+  }
+
+  public String getKeyStoreAlias ()
+  {
+    return m_sKeyStoreAlias;
+  }
+
+  public void setKeyStoreAlias (final String sKeyStoreAlias)
+  {
+    m_sKeyStoreAlias = sKeyStoreAlias;
+  }
+
+  public String getKeyStorePassword ()
+  {
+    return m_sKeyStorePassword;
+  }
+
+  public void setKeyStorePassword (final String sKeyStorePassword)
+  {
+    m_sKeyStorePassword = sKeyStorePassword;
   }
 
   @Nullable
