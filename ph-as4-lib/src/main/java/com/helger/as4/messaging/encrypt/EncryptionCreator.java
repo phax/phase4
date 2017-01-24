@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -33,6 +32,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
@@ -64,14 +64,16 @@ public class EncryptionCreator
   @Nonnull
   public Document encryptSoapBodyPayload (@Nonnull final ESOAPVersion eSOAPVersion,
                                           @Nonnull final Document aDoc,
-                                          final boolean bMustUnderstand) throws Exception
+                                          final boolean bMustUnderstand,
+                                          @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws Exception
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
+    ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
     aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
@@ -89,14 +91,15 @@ public class EncryptionCreator
                                          @Nonnull final Document aDoc,
                                          final boolean bMustUnderstand,
                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                         @Nonnull final AS4ResourceManager aResMgr) throws Exception
+                                         @Nonnull final AS4ResourceManager aResMgr,
+                                         @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws Exception
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    aBuilder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
 

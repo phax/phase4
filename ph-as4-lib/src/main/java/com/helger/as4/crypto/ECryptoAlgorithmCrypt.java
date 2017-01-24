@@ -19,6 +19,7 @@ package com.helger.as4.crypto;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.wss4j.common.WSS4JConstants;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSAlgorithm;
@@ -34,30 +35,28 @@ import com.helger.commons.lang.EnumHelper;
  */
 public enum ECryptoAlgorithmCrypt implements IHasID <String>
 {
-  CRYPT_3DES ("3des", PKCSObjectIdentifiers.des_EDE3_CBC),
-  CRYPT_CAST5 ("cast5", CMSAlgorithm.CAST5_CBC),
-  CRYPT_IDEA ("idea", CMSAlgorithm.IDEA_CBC),
-  CRYPT_RC2 ("rc2", PKCSObjectIdentifiers.RC2_CBC),
-  AES_128_CBC ("aes128-cbc", CMSAlgorithm.AES128_CBC),
-  AES_128_CCM ("aes128-ccm", CMSAlgorithm.AES128_CCM),
-  AES_128_GCM ("aes128-gcm", CMSAlgorithm.AES128_GCM),
-  AES_192_CBC ("aes192-cbc", CMSAlgorithm.AES192_CBC),
-  AES_192_CCM ("aes192-ccm", CMSAlgorithm.AES192_CCM),
-  AES_192_GCM ("aes192-gcm", CMSAlgorithm.AES192_GCM),
-  AES_256_CBC ("aes256-cbc", CMSAlgorithm.AES256_CBC),
-  AES_256_CCM ("aes256-ccm", CMSAlgorithm.AES256_CCM),
-  AES_256_GCM ("aes256-gcm", CMSAlgorithm.AES256_GCM);
+  CRYPT_3DES ("3des", PKCSObjectIdentifiers.des_EDE3_CBC, WSS4JConstants.TRIPLE_DES),
+  AES_128_CBC ("aes128-cbc", CMSAlgorithm.AES128_CBC, WSS4JConstants.AES_128),
+  AES_128_GCM ("aes128-gcm", CMSAlgorithm.AES128_GCM, WSS4JConstants.AES_128_GCM),
+  AES_192_CBC ("aes192-cbc", CMSAlgorithm.AES192_CBC, WSS4JConstants.AES_192),
+  AES_192_GCM ("aes192-gcm", CMSAlgorithm.AES192_GCM, WSS4JConstants.AES_192_GCM),
+  AES_256_CBC ("aes256-cbc", CMSAlgorithm.AES256_CBC, WSS4JConstants.AES_256),
+  AES_256_GCM ("aes256-gcm", CMSAlgorithm.AES256_GCM, WSS4JConstants.AES_256_GCM);
 
   /** Default encrypt algorithm */
   public static final ECryptoAlgorithmCrypt ENCRPYTION_ALGORITHM_DEFAULT = ECryptoAlgorithmCrypt.AES_128_GCM;
 
   private final String m_sID;
   private final ASN1ObjectIdentifier m_aOID;
+  private final String m_sXMLID;
 
-  private ECryptoAlgorithmCrypt (@Nonnull @Nonempty final String sID, @Nonnull final ASN1ObjectIdentifier aOID)
+  private ECryptoAlgorithmCrypt (@Nonnull @Nonempty final String sID,
+                                 @Nonnull final ASN1ObjectIdentifier aOID,
+                                 @Nonnull @Nonempty final String sXMLID)
   {
     m_sID = sID;
     m_aOID = aOID;
+    m_sXMLID = sXMLID;
   }
 
   @Nonnull
@@ -71,6 +70,16 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
   public ASN1ObjectIdentifier getOID ()
   {
     return m_aOID;
+  }
+
+  /**
+   * @return The algorithm ID for XMLDsig base encryption
+   */
+  @Nonnull
+  @Nonempty
+  public String getXMLID ()
+  {
+    return m_sXMLID;
   }
 
   @Nullable

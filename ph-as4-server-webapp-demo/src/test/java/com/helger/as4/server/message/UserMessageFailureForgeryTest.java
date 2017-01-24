@@ -41,6 +41,7 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.client.HttpMimeMessageEntity;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
@@ -128,7 +129,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
     for (int i = 0; i < nList.getLength (); i++)
@@ -146,9 +147,12 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testWrongAttachmentIDShouldFail () throws Exception
   {
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"), CMimeType.APPLICATION_GZIP, null, aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                                    CMimeType.APPLICATION_GZIP,
+                                                                    null,
+                                                                    aResMgr));
 
     final SignedMessageCreator aSigned = new SignedMessageCreator ();
 
@@ -195,9 +199,12 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"), CMimeType.APPLICATION_XML, null, aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    aResMgr));
 
     final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
@@ -205,7 +212,8 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                                                                                                                      aAttachments),
                                                                           true,
                                                                           aAttachments,
-                                                                          s_aResMgr);
+                                                                          s_aResMgr,
+                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
     // Since we want to change the attachment
@@ -263,9 +271,12 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithAttachmentPartInfoOnly () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"), CMimeType.APPLICATION_GZIP, null, aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                                    CMimeType.APPLICATION_GZIP,
+                                                                    null,
+                                                                    aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                                      null,
@@ -285,12 +296,15 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithOnlyAttachmentsNoPartInfo () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
 
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4ResourceManager aResMgr = s_aResMgr;
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"), CMimeType.APPLICATION_GZIP, null, aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                                    CMimeType.APPLICATION_GZIP,
+                                                                    null,
+                                                                    aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
 
@@ -302,16 +316,25 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"), CMimeType.APPLICATION_GZIP, null, aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+                                                                    CMimeType.APPLICATION_GZIP,
+                                                                    null,
+                                                                    aResMgr));
 
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4ResourceManager aResMgr1 = s_aResMgr;
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"), CMimeType.IMAGE_JPG, null, aResMgr1));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    null,
+                                                                    aResMgr1));
     final AS4ResourceManager aResMgr2 = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"), CMimeType.IMAGE_JPG, null, aResMgr2));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    null,
+                                                                    aResMgr2));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aSoapDoc,
 

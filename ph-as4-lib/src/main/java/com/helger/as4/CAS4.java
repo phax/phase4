@@ -37,10 +37,6 @@ public final class CAS4
   public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
   public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
 
-  // Algorithm
-  public static final String SIGNATURE_ALGORITHM_RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-  public static final String ENCRYPTION_ALGORITHM_AES_128_GCM = "http://www.w3.org/2009/xmlenc11#aes128-gcm";
-
   public static final String LIB_NAME = "ph-as4";
 
   private CAS4 ()

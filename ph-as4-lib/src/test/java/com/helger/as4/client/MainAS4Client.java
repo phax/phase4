@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -108,7 +109,7 @@ public final class MainAS4Client
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
         aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
@@ -139,7 +140,10 @@ public final class MainAS4Client
             Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                              aPayload,
                                                                              aAttachments);
-            aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
+            aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+                                                                    aDoc,
+                                                                    false,
+                                                                    ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
             aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
           }
@@ -174,7 +178,10 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-                aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12, aDoc, false);
+                aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+                                                                        aDoc,
+                                                                        false,
+                                                                        ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
                 aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
               }
               else

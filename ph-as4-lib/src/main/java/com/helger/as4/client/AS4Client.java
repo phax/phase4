@@ -2,12 +2,17 @@ package com.helger.as4.client;
 
 import java.io.File;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -17,12 +22,15 @@ import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -36,11 +44,11 @@ import com.helger.commons.string.StringHelper;
 @WorkInProgress
 public class AS4Client
 {
-  private final AS4ResourceManager aResMgr = new AS4ResourceManager ();
+  private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
 
-  private ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-  private Node aPayload;
-  private ESOAPVersion eSOAPVersion;
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private Node m_aPayload;
+  private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
   // Keystore attributes
   // TODO look at AS2 Client / ClientSettinggs /ClientRequest
@@ -51,88 +59,32 @@ public class AS4Client
   private String m_sKeyStoreProvider = "org.apache.wss4j.common.crypto.Merlin";
 
   // Document related attributes
-  private Document aDoc;
-  private MimeMessage aMsg;
-  private ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
   // For Message Info
-  private String sMessageIDPrefix;
+  private String m_sMessageIDPrefix;
   // CollaborationInfo
   // TODO group accordingly if more then 1 parameter z.b group ServiceType and
   // Value in one setter
-  private String sAction;
+  private String m_sAction;
 
-  private String sServiceType;
-  private String sServiceValue;
+  private String m_sServiceType;
+  private String m_sServiceValue;
 
-  private String sConversationID;
+  private String m_sConversationID;
 
-  private String sAgreementRefPMode;
-  private String sAgreementRefValue;
+  private String m_sAgreementRefPMode;
+  private String m_sAgreementRefValue;
 
-  private String sFromRole;
-  private String sFromPartyID;
+  private String m_sFromRole;
+  private String m_sFromPartyID;
 
-  private String sToRole;
-  private String sToPartyID;
+  private String m_sToRole;
+  private String m_sToPartyID;
 
   // Signing additional attributes
-  private ECryptoAlgorithmSign eECryptoAlgorithmSign = ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT;
-  private ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest = ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT;
-
-  /**
-   * This method encrypts the current Document and is producing a encrypted
-   * Document or a MimeMessage. Encrypted Document if only a SOAP BodyPaylod is
-   * present MimeMessage if Attachments are present
-   *
-   * @throws Exception
-   *         if something goes wrong in the encryption process
-   */
-  public void encryptDocument () throws Exception
-  {
-    if (aDoc == null)
-    {
-      throw new IllegalStateException ("No Document is set.");
-    }
-    else
-    {
-      _checkKeystoreAttributes ();
-
-      final EncryptionCreator aEncCreator = new EncryptionCreator ();
-      // MustUnderstand always set to true
-      if (aAttachments.isNotEmpty ())
-      {
-        aMsg = aEncCreator.encryptMimeMessage (eSOAPVersion, aDoc, true, aAttachments, aResMgr);
-      }
-      else
-      {
-        aDoc = aEncCreator.encryptSoapBodyPayload (eSOAPVersion, aDoc, true);
-      }
-    }
-  }
-
-  public void signDocument () throws Exception
-  {
-    if (aDoc == null)
-    {
-      throw new IllegalStateException ("No Document is set.");
-    }
-    else
-    {
-      _checkKeystoreAttributes ();
-      aDoc = new SignedMessageCreator ().createSignedMessage (aDoc,
-                                                              eSOAPVersion,
-                                                              aAttachments,
-                                                              aResMgr,
-                                                              true,
-                                                              eECryptoAlgorithmSign,
-                                                              eECryptoAlgorithmSignDigest);
-      if (aAttachments.isNotEmpty ())
-      {
-        aMsg = new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
-      }
-
-    }
-  }
+  private ECryptoAlgorithmSign m_eCryptoAlgorithmSign;
+  private ECryptoAlgorithmSignDigest m_eCryptoAlgorithmSignDigest;
+  private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
   private void _checkKeystoreAttributes ()
   {
@@ -154,63 +106,119 @@ public class AS4Client
    * Only returns something appropriate if the attributes got set before. Not
    * every attribute needs to be set.
    *
-   * @return Document that is produced with the current settings.
+   * @return The HTTP entity to be send - never <code>null</code>.
+   * @throws Exception
+   *         in case something goes wrong
    */
-  public Document buildMessage ()
+  @Nonnull
+  public HttpEntity buildMessage () throws Exception
   {
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (sMessageIDPrefix);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (sAction,
-                                                                                                           sServiceType,
-                                                                                                           sServiceValue,
-                                                                                                           sConversationID,
-                                                                                                           sAgreementRefPMode,
-                                                                                                           sAgreementRefValue);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (sFromRole,
-                                                                                   sFromPartyID,
-                                                                                   sToRole,
-                                                                                   sToPartyID);
+    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (m_sMessageIDPrefix);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (m_sAction,
+                                                                                                           m_sServiceType,
+                                                                                                           m_sServiceValue,
+                                                                                                           m_sConversationID,
+                                                                                                           m_sAgreementRefPMode,
+                                                                                                           m_sAgreementRefValue);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (m_sFromRole,
+                                                                                   m_sFromPartyID,
+                                                                                   m_sToRole,
+                                                                                   m_sToPartyID);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (m_aEbms3Properties);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     eSOAPVersion)
-                                                 .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    final AS4UserMessage aUserMsg = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                         aEbms3PayloadInfo,
+                                                                         aEbms3CollaborationInfo,
+                                                                         aEbms3PartyInfo,
+                                                                         aEbms3MessageProperties,
+                                                                         m_eSOAPVersion)
+                                                     .setMustUnderstand (true);
+    Document aDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
+
+    // 1. compress
+
+    // 2. sign
+    if (m_eCryptoAlgorithmSign != null && m_eCryptoAlgorithmSignDigest != null)
+    {
+      _checkKeystoreAttributes ();
+      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (aDoc,
+                                                                                   m_eSOAPVersion,
+                                                                                   m_aAttachments,
+                                                                                   m_aResMgr,
+                                                                                   true,
+                                                                                   m_eCryptoAlgorithmSign,
+                                                                                   m_eCryptoAlgorithmSignDigest);
+      aDoc = aSignedDoc;
+    }
+
+    // 3. encrypt
+    MimeMessage aMimeMsg = null;
+    if (m_eCryptoAlgorithmCrypt != null)
+    {
+      _checkKeystoreAttributes ();
+      final EncryptionCreator aEncCreator = new EncryptionCreator ();
+      // MustUnderstand always set to true
+      if (m_aAttachments.isNotEmpty ())
+      {
+        aMimeMsg = aEncCreator.encryptMimeMessage (m_eSOAPVersion,
+                                                   aDoc,
+                                                   true,
+                                                   m_aAttachments,
+                                                   m_aResMgr,
+                                                   m_eCryptoAlgorithmCrypt);
+      }
+      else
+      {
+        aDoc = aEncCreator.encryptSoapBodyPayload (m_eSOAPVersion, aDoc, true, m_eCryptoAlgorithmCrypt);
+      }
+    }
+
+    if (m_aAttachments.isNotEmpty () && aMimeMsg == null)
+    {
+      aMimeMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, m_aAttachments);
+    }
+
+    if (aMimeMsg != null)
+      return new HttpMimeMessageEntity (aMimeMsg);
+
+    // Wrap SOAP XML
+    return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
   }
 
-  public ICommonsList <WSS4JAttachment> getAttachments ()
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <WSS4JAttachment> getAllAttachments ()
   {
-    return aAttachments;
+    return m_aAttachments;
   }
 
-  public void setAttachments (final ICommonsList <WSS4JAttachment> aAttachments)
+  public void setAllAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    this.aAttachments = aAttachments;
+    m_aAttachments.setAll (aAttachments);
   }
 
   public Node getPayload ()
   {
-    return aPayload;
+    return m_aPayload;
   }
 
   public void setPayload (final Node aPayload)
   {
-    this.aPayload = aPayload;
+    m_aPayload = aPayload;
   }
 
-  public ESOAPVersion geteSOAPVersion ()
+  @Nonnull
+  public ESOAPVersion getSOAPVersion ()
   {
-    return eSOAPVersion;
+    return m_eSOAPVersion;
   }
 
-  public void seteSOAPVersion (final ESOAPVersion eSOAPVersion)
+  public void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    this.eSOAPVersion = eSOAPVersion;
+    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_eSOAPVersion = eSOAPVersion;
   }
 
   public File getKeyStoreFile ()
@@ -218,9 +226,9 @@ public class AS4Client
     return m_aKeyStoreFile;
   }
 
-  public void setKeyStoreFile (final File m_aKeyStoreFile)
+  public void setKeyStoreFile (final File aKeyStoreFile)
   {
-    this.m_aKeyStoreFile = m_aKeyStoreFile;
+    m_aKeyStoreFile = aKeyStoreFile;
   }
 
   public String getKeyStoreAlias ()
@@ -228,9 +236,9 @@ public class AS4Client
     return m_sKeyStoreAlias;
   }
 
-  public void setKeyStoreAlias (final String m_sKeyStoreAlias)
+  public void setKeyStoreAlias (final String sKeyStoreAlias)
   {
-    this.m_sKeyStoreAlias = m_sKeyStoreAlias;
+    m_sKeyStoreAlias = sKeyStoreAlias;
   }
 
   public String getKeyStorePassword ()
@@ -238,9 +246,9 @@ public class AS4Client
     return m_sKeyStorePassword;
   }
 
-  public void setKeyStorePassword (final String m_sKeyStorePassword)
+  public void setKeyStorePassword (final String sKeyStorePassword)
   {
-    this.m_sKeyStorePassword = m_sKeyStorePassword;
+    m_sKeyStorePassword = sKeyStorePassword;
   }
 
   public String getKeyStoreProvider ()
@@ -248,159 +256,163 @@ public class AS4Client
     return m_sKeyStoreProvider;
   }
 
-  public void setKeyStoreProvider (final String m_sKeyStoreAlias)
+  public void setKeyStoreProvider (final String sKeyStoreAlias)
   {
-    this.m_sKeyStoreProvider = m_sKeyStoreAlias;
+    m_sKeyStoreProvider = sKeyStoreAlias;
   }
 
-  public Document getDoc ()
-  {
-    return aDoc;
-  }
-
-  public void setDoc (final Document aDoc)
-  {
-    this.aDoc = aDoc;
-  }
-
+  @Nonnull
+  @ReturnsMutableCopy
   public ICommonsList <Ebms3Property> getEbms3Properties ()
   {
-    return aEbms3Properties;
+    return m_aEbms3Properties.getClone ();
   }
 
   public void setEbms3Properties (final ICommonsList <Ebms3Property> aEbms3Properties)
   {
-    this.aEbms3Properties = aEbms3Properties;
+    m_aEbms3Properties.setAll (aEbms3Properties);
   }
 
   public String getMessageIDPrefix ()
   {
-    return sMessageIDPrefix;
+    return m_sMessageIDPrefix;
   }
 
   public void setMessageIDPrefix (final String sMessageIDPrefix)
   {
-    this.sMessageIDPrefix = sMessageIDPrefix;
+    m_sMessageIDPrefix = sMessageIDPrefix;
   }
 
   public String getction ()
   {
-    return sAction;
+    return m_sAction;
   }
 
   public void setction (final String sAction)
   {
-    this.sAction = sAction;
+    m_sAction = sAction;
   }
 
   public String getServiceType ()
   {
-    return sServiceType;
+    return m_sServiceType;
   }
 
   public void setServiceType (final String sServiceType)
   {
-    this.sServiceType = sServiceType;
+    m_sServiceType = sServiceType;
   }
 
   public String getServiceValue ()
   {
-    return sServiceValue;
+    return m_sServiceValue;
   }
 
   public void setServiceValue (final String sServiceValue)
   {
-    this.sServiceValue = sServiceValue;
+    m_sServiceValue = sServiceValue;
   }
 
   public String getConversationID ()
   {
-    return sConversationID;
+    return m_sConversationID;
   }
 
   public void setConversationID (final String sConversationID)
   {
-    this.sConversationID = sConversationID;
+    m_sConversationID = sConversationID;
   }
 
   public String getgreementRefPMode ()
   {
-    return sAgreementRefPMode;
+    return m_sAgreementRefPMode;
   }
 
   public void setgreementRefPMode (final String sAgreementRefPMode)
   {
-    this.sAgreementRefPMode = sAgreementRefPMode;
+    m_sAgreementRefPMode = sAgreementRefPMode;
   }
 
   public String getgreementRefValue ()
   {
-    return sAgreementRefValue;
+    return m_sAgreementRefValue;
   }
 
   public void setgreementRefValue (final String sAgreementRefValue)
   {
-    this.sAgreementRefValue = sAgreementRefValue;
+    m_sAgreementRefValue = sAgreementRefValue;
   }
 
   public String getFromRole ()
   {
-    return sFromRole;
+    return m_sFromRole;
   }
 
   public void setFromRole (final String sFromRole)
   {
-    this.sFromRole = sFromRole;
+    m_sFromRole = sFromRole;
   }
 
   public String getFromPartyID ()
   {
-    return sFromPartyID;
+    return m_sFromPartyID;
   }
 
   public void setFromPartyID (final String sFromPartyID)
   {
-    this.sFromPartyID = sFromPartyID;
+    m_sFromPartyID = sFromPartyID;
   }
 
   public String getToRole ()
   {
-    return sToRole;
+    return m_sToRole;
   }
 
   public void setToRole (final String sToRole)
   {
-    this.sToRole = sToRole;
+    m_sToRole = sToRole;
   }
 
   public String getToPartyID ()
   {
-    return sToPartyID;
+    return m_sToPartyID;
   }
 
   public void setToPartyID (final String sToPartyID)
   {
-    this.sToPartyID = sToPartyID;
+    m_sToPartyID = sToPartyID;
   }
 
-  public ECryptoAlgorithmSign getECryptoAlgorithmSign ()
+  @Nullable
+  public ECryptoAlgorithmSign getCryptoAlgorithmSign ()
   {
-    return eECryptoAlgorithmSign;
+    return m_eCryptoAlgorithmSign;
   }
 
-  public void setECryptoAlgorithmSign (final ECryptoAlgorithmSign eECryptoAlgorithmSign)
+  public void setCryptoAlgorithmSign (@Nullable final ECryptoAlgorithmSign eCryptoAlgorithmSign)
   {
-    this.eECryptoAlgorithmSign = eECryptoAlgorithmSign;
+    m_eCryptoAlgorithmSign = eCryptoAlgorithmSign;
   }
 
+  @Nullable
   public ECryptoAlgorithmSignDigest getECryptoAlgorithmSignDigest ()
   {
-    return eECryptoAlgorithmSignDigest;
+    return m_eCryptoAlgorithmSignDigest;
   }
 
-  public void seeECryptoAlgorithmSignDigest (final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
+  public void seeECryptoAlgorithmSignDigest (@Nullable final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
   {
-    this.eECryptoAlgorithmSignDigest = eECryptoAlgorithmSignDigest;
+    m_eCryptoAlgorithmSignDigest = eECryptoAlgorithmSignDigest;
   }
 
+  @Nullable
+  public ECryptoAlgorithmCrypt getCryptoAlgorithmCrypt ()
+  {
+    return m_eCryptoAlgorithmCrypt;
+  }
+
+  public void setCryptoAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eCryptoAlgorithmCrypt)
+  {
+    m_eCryptoAlgorithmCrypt = eCryptoAlgorithmCrypt;
+  }
 }

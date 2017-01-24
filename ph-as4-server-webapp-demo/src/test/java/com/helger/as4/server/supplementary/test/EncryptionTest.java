@@ -26,7 +26,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
@@ -41,6 +40,7 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 
@@ -90,7 +90,7 @@ public class EncryptionTest
   {
     final WSSecEncrypt builder = new WSSecEncrypt ();
     builder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getXMLID ());
     builder.setSymmetricKey (null);
     builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
 
@@ -129,7 +129,7 @@ public class EncryptionTest
     // builder.setUserInfo ("wss40");
     builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    builder.setSymmetricEncAlgorithm (WSS4JConstants.AES_128_GCM);
+    builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getXMLID ());
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();

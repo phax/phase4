@@ -234,7 +234,7 @@ public class ESENSCompatibilityValidatorTest
   public void testValidatePModeConfigSecurityWrongX509EncryptionAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
-    aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.CRYPT_CAST5);
+    aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_192_CBC);
     m_aPModeConfig.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
                                           null,
                                           null,
