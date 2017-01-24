@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -45,20 +44,17 @@ import com.helger.mail.cte.EContentTransferEncoding;
 
 public class EncryptionCreator
 {
-  private final Crypto m_aCrypto;
-  private final AS4CryptoFactory m_aAS4CryptoFactory;
-  private final CryptoProperties cryptoProperties;
+  private final AS4CryptoFactory m_aCryptoFactory;
 
   public EncryptionCreator ()
   {
-    this (null);
+    this (new AS4CryptoFactory ());
   }
 
-  public EncryptionCreator (@Nullable final String sCryptoProperties)
+  public EncryptionCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
   {
-    m_aAS4CryptoFactory = new AS4CryptoFactory (sCryptoProperties);
-    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
-    cryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    m_aCryptoFactory = aCryptoFactory;
   }
 
   @Nonnull
@@ -71,10 +67,12 @@ public class EncryptionCreator
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
 
+    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
+
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
-    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
@@ -83,7 +81,7 @@ public class EncryptionCreator
                                                                                      "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
-    return aBuilder.build (aDoc, m_aCrypto, aSecHeader);
+    return aBuilder.build (aDoc, m_aCryptoFactory.getCrypto (), aSecHeader);
   }
 
   @Nonnull
@@ -97,11 +95,13 @@ public class EncryptionCreator
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
 
+    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
+
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
 
@@ -120,7 +120,7 @@ public class EncryptionCreator
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (aDoc, m_aCrypto, aSecHeader);
+    final Document aEncryptedDoc = aBuilder.build (aDoc, m_aCryptoFactory.getCrypto (), aSecHeader);
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!

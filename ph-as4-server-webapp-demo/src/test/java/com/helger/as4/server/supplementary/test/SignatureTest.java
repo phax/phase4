@@ -48,7 +48,7 @@ public class SignatureTest
 
   public SignatureTest () throws Exception
   {
-    m_aAS4CryptoFactory = new AS4CryptoFactory (null);
+    m_aAS4CryptoFactory = new AS4CryptoFactory ();
     m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
     m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }

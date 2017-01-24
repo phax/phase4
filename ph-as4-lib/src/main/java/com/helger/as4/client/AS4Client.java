@@ -12,6 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -33,7 +34,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -46,17 +49,16 @@ public class AS4Client
 {
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
 
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
-  private Node m_aPayload;
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  private Node m_aPayload;
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Keystore attributes
   // TODO look at AS2 Client / ClientSettinggs /ClientRequest
   private File m_aKeyStoreFile;
+  private String m_sKeyStoreType = "jks";
   private String m_sKeyStoreAlias;
   private String m_sKeyStorePassword;
-  // org.apache.wss4j.common.crypto.Merlin is the default value
-  private String m_sKeyStoreProvider = "org.apache.wss4j.common.crypto.Merlin";
 
   // Document related attributes
   private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
@@ -88,18 +90,16 @@ public class AS4Client
 
   private void _checkKeystoreAttributes ()
   {
-    if (StringHelper.hasNoText (m_sKeyStoreAlias) ||
-        StringHelper.hasNoText (m_sKeyStorePassword) ||
-        !m_aKeyStoreFile.exists ())
-    {
-      throw new IllegalStateException ("At least one of the following Alias: " +
-                                       m_sKeyStoreAlias +
-                                       ", Password: " +
-                                       m_sKeyStorePassword +
-                                       " or the KeyStoreFile:(rue if the file exists) " +
-                                       m_aKeyStoreFile.exists () +
-                                       "are not set.");
-    }
+    if (m_aKeyStoreFile == null)
+      throw new IllegalStateException ("Key store file is not configured.");
+    if (!m_aKeyStoreFile.exists ())
+      throw new IllegalStateException ("Key store file does not exist: " + m_aKeyStoreFile.getAbsolutePath ());
+    if (StringHelper.hasNoText (m_sKeyStoreType))
+      throw new IllegalStateException ("Key store type is configured.");
+    if (StringHelper.hasNoText (m_sKeyStoreAlias))
+      throw new IllegalStateException ("Key store alias is configured.");
+    if (StringHelper.hasNoText (m_sKeyStorePassword))
+      throw new IllegalStateException ("Key store password is configured.");
   }
 
   /**
@@ -113,6 +113,10 @@ public class AS4Client
   @Nonnull
   public HttpEntity buildMessage () throws Exception
   {
+    final boolean bSign = m_eCryptoAlgorithmSign != null && m_eCryptoAlgorithmSignDigest != null;
+    final boolean bEncrypt = m_eCryptoAlgorithmCrypt != null;
+    final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
+
     final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (m_sMessageIDPrefix);
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (m_sAction,
@@ -139,28 +143,41 @@ public class AS4Client
 
     // 1. compress
 
-    // 2. sign
-    if (m_eCryptoAlgorithmSign != null && m_eCryptoAlgorithmSignDigest != null)
+    AS4CryptoFactory aCryptoFactory = null;
+    if (bSign || bEncrypt)
     {
       _checkKeystoreAttributes ();
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (aDoc,
-                                                                                   m_eSOAPVersion,
-                                                                                   m_aAttachments,
-                                                                                   m_aResMgr,
-                                                                                   true,
-                                                                                   m_eCryptoAlgorithmSign,
-                                                                                   m_eCryptoAlgorithmSignDigest);
+
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
+      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
+      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
+      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", m_sKeyStorePassword);
+      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", m_sKeyStoreAlias);
+      aCryptoFactory = new AS4CryptoFactory (aCryptoProps);
+    }
+
+    // 2. sign
+    if (bSign)
+    {
+      final Document aSignedDoc = new SignedMessageCreator (aCryptoFactory).createSignedMessage (aDoc,
+                                                                                                 m_eSOAPVersion,
+                                                                                                 m_aAttachments,
+                                                                                                 m_aResMgr,
+                                                                                                 true,
+                                                                                                 m_eCryptoAlgorithmSign,
+                                                                                                 m_eCryptoAlgorithmSignDigest);
       aDoc = aSignedDoc;
     }
 
     // 3. encrypt
     MimeMessage aMimeMsg = null;
-    if (m_eCryptoAlgorithmCrypt != null)
+    if (bEncrypt)
     {
       _checkKeystoreAttributes ();
-      final EncryptionCreator aEncCreator = new EncryptionCreator ();
+      final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
       // MustUnderstand always set to true
-      if (m_aAttachments.isNotEmpty ())
+      if (bAttachmentsPresent)
       {
         aMimeMsg = aEncCreator.encryptMimeMessage (m_eSOAPVersion,
                                                    aDoc,
@@ -175,8 +192,10 @@ public class AS4Client
       }
     }
 
-    if (m_aAttachments.isNotEmpty () && aMimeMsg == null)
+    if (bAttachmentsPresent && aMimeMsg == null)
     {
+      // * not encrypted, not signed
+      // * not encrypted, signed
       aMimeMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, m_aAttachments);
     }
 
@@ -185,28 +204,6 @@ public class AS4Client
 
     // Wrap SOAP XML
     return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <WSS4JAttachment> getAllAttachments ()
-  {
-    return m_aAttachments;
-  }
-
-  public void setAllAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
-  {
-    m_aAttachments.setAll (aAttachments);
-  }
-
-  public Node getPayload ()
-  {
-    return m_aPayload;
-  }
-
-  public void setPayload (final Node aPayload)
-  {
-    m_aPayload = aPayload;
   }
 
   @Nonnull
@@ -221,6 +218,28 @@ public class AS4Client
     m_eSOAPVersion = eSOAPVersion;
   }
 
+  public Node getPayload ()
+  {
+    return m_aPayload;
+  }
+
+  public void setPayload (final Node aPayload)
+  {
+    m_aPayload = aPayload;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <WSS4JAttachment> getAllAttachments ()
+  {
+    return m_aAttachments;
+  }
+
+  public void setAllAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  {
+    m_aAttachments.setAll (aAttachments);
+  }
+
   public File getKeyStoreFile ()
   {
     return m_aKeyStoreFile;
@@ -229,6 +248,16 @@ public class AS4Client
   public void setKeyStoreFile (final File aKeyStoreFile)
   {
     m_aKeyStoreFile = aKeyStoreFile;
+  }
+
+  public String getKeyStoreType ()
+  {
+    return m_sKeyStoreType;
+  }
+
+  public void setKeyStoreType (final String sKeyStoreType)
+  {
+    m_sKeyStoreType = sKeyStoreType;
   }
 
   public String getKeyStoreAlias ()
@@ -251,24 +280,14 @@ public class AS4Client
     m_sKeyStorePassword = sKeyStorePassword;
   }
 
-  public String getKeyStoreProvider ()
-  {
-    return m_sKeyStoreProvider;
-  }
-
-  public void setKeyStoreProvider (final String sKeyStoreAlias)
-  {
-    m_sKeyStoreProvider = sKeyStoreAlias;
-  }
-
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <Ebms3Property> getEbms3Properties ()
+  public ICommonsList <Ebms3Property> getAllEbms3Properties ()
   {
     return m_aEbms3Properties.getClone ();
   }
 
-  public void setEbms3Properties (final ICommonsList <Ebms3Property> aEbms3Properties)
+  public void setEbms3Properties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
   {
     m_aEbms3Properties.setAll (aEbms3Properties);
   }
@@ -283,12 +302,12 @@ public class AS4Client
     m_sMessageIDPrefix = sMessageIDPrefix;
   }
 
-  public String getction ()
+  public String getAction ()
   {
     return m_sAction;
   }
 
-  public void setction (final String sAction)
+  public void setAction (final String sAction)
   {
     m_sAction = sAction;
   }
@@ -323,22 +342,22 @@ public class AS4Client
     m_sConversationID = sConversationID;
   }
 
-  public String getgreementRefPMode ()
+  public String getAgreementRefPMode ()
   {
     return m_sAgreementRefPMode;
   }
 
-  public void setgreementRefPMode (final String sAgreementRefPMode)
+  public void setAgreementRefPMode (final String sAgreementRefPMode)
   {
     m_sAgreementRefPMode = sAgreementRefPMode;
   }
 
-  public String getgreementRefValue ()
+  public String getAgreementRefValue ()
   {
     return m_sAgreementRefValue;
   }
 
-  public void setgreementRefValue (final String sAgreementRefValue)
+  public void setAgreementRefValue (final String sAgreementRefValue)
   {
     m_sAgreementRefValue = sAgreementRefValue;
   }

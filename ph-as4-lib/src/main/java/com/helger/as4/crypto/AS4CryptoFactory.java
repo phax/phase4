@@ -16,6 +16,9 @@
  */
 package com.helger.as4.crypto;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -29,7 +32,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
 
 @Immutable
-public final class AS4CryptoFactory
+public final class AS4CryptoFactory implements Serializable
 {
   static
   {
@@ -37,62 +40,79 @@ public final class AS4CryptoFactory
     WSSConfig.init ();
   }
 
-  private Crypto m_aCrypto;
-  private CryptoProperties m_aCryptoProps;
+  private final CryptoProperties m_aCryptoProps;
+  private transient Crypto m_aCrypto;
 
   /**
    * If this constructor is used the default properties get used.
    */
   public AS4CryptoFactory ()
   {
-    this (null);
+    // Read the default file
+    this ((String) null);
+  }
+
+  @Nonnull
+  private static CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)
+  {
+    CryptoProperties aCryptoProps;
+    if (StringHelper.hasNoText (sCryptoPropertiesPath))
+    {
+      // Uses crypto.properties => needs exact name crypto.properties
+      aCryptoProps = new CryptoProperties (new ClassPathResource ("private-crypto.properties"));
+      if (!aCryptoProps.isRead ())
+        aCryptoProps = new CryptoProperties (new ClassPathResource ("crypto.properties"));
+    }
+    else
+    {
+      aCryptoProps = new CryptoProperties (new ClassPathResource (sCryptoPropertiesPath));
+    }
+    return aCryptoProps;
   }
 
   /**
    * Should be used if you want to use a non-default crypto properties to create
    * your Crypto-Instance.
    *
-   * @param sCryptoProperties
+   * @param sCryptoPropertiesPath
    *        when this parameter is <code>null</code>, the default values will
    *        get used. Else it will try to invoke the given properties and read
    *        them throws an exception if it does not work.
    */
-  public AS4CryptoFactory (@Nullable final String sCryptoProperties)
+  public AS4CryptoFactory (@Nullable final String sCryptoPropertiesPath)
   {
-    if (StringHelper.hasNoText (sCryptoProperties))
-    {
-      // Uses crypto.properties => needs exact name crypto.properties
-      m_aCryptoProps = new CryptoProperties (new ClassPathResource ("private-crypto.properties"));
-      if (!m_aCryptoProps.isRead ())
-        m_aCryptoProps = new CryptoProperties (new ClassPathResource ("crypto.properties"));
-    }
-    else
-    {
-      m_aCryptoProps = new CryptoProperties (new ClassPathResource (sCryptoProperties));
-    }
-
+    m_aCryptoProps = _createPropsFromFile (sCryptoPropertiesPath);
     if (!m_aCryptoProps.isRead ())
       throw new InitializationException ("Failed to locate crypto properties");
-
-    try
-    {
-      m_aCrypto = CryptoFactory.getInstance (m_aCryptoProps.getProperties ());
-    }
-    catch (final Throwable t)
-    {
-      throw new InitializationException ("Failed to init crypto properties!", t);
-    }
   }
 
-  @Nonnull
-  public Crypto getCrypto ()
+  public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
   {
-    return m_aCrypto;
+    m_aCryptoProps = new CryptoProperties (aProps);
   }
 
   @Nonnull
   public CryptoProperties getCryptoProperties ()
   {
     return m_aCryptoProps;
+  }
+
+  @Nonnull
+  public Crypto getCrypto ()
+  {
+    Crypto ret = m_aCrypto;
+    if (ret == null)
+    {
+      try
+      {
+        ret = CryptoFactory.getInstance (m_aCryptoProps.getProperties ());
+      }
+      catch (final Throwable t)
+      {
+        throw new InitializationException ("Failed to init crypto properties!", t);
+      }
+      m_aCrypto = ret;
+    }
+    return ret;
   }
 }

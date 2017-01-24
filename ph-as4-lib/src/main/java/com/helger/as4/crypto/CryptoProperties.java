@@ -17,6 +17,8 @@
 package com.helger.as4.crypto;
 
 import java.io.InputStream;
+import java.io.Serializable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -26,6 +28,7 @@ import javax.annotation.concurrent.Immutable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * Wrapper around the crypto properties file.
@@ -33,9 +36,17 @@ import com.helger.commons.io.resource.IReadableResource;
  * @author bayerlma
  */
 @Immutable
-public class CryptoProperties
+public class CryptoProperties implements Serializable
 {
   private Properties m_aProps;
+
+  public CryptoProperties (@Nullable final Map <String, String> aProps)
+  {
+    m_aProps = new Properties ();
+    if (aProps != null)
+      for (final Map.Entry <String, String> aEntry : aProps.entrySet ())
+        m_aProps.put (aEntry.getKey (), aEntry.getValue ());
+  }
 
   public CryptoProperties (@Nonnull final IReadableResource aRes)
   {
@@ -51,7 +62,7 @@ public class CryptoProperties
       }
       catch (final Throwable t)
       {
-        throw new InitializationException ("Failed to init CryptoProperties from " + aRes + "!", t);
+        throw new InitializationException ("Failed to init CryptoProperties from resource " + aRes + "!", t);
       }
   }
 
@@ -84,5 +95,11 @@ public class CryptoProperties
   public String getKeyPassword ()
   {
     return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.password");
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Props", m_aProps).toString ();
   }
 }

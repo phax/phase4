@@ -36,7 +36,7 @@ public final class AS4ServerSettings
   private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = new DefaultIncomingAttachmentFactory ();
   private static IPModeConfigResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver ();
 
-  private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory (null);
+  private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory ();
 
   private AS4ServerSettings ()
   {}

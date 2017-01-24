@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -37,33 +36,33 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.ICommonsList;
 
 public class SignedMessageCreator
 {
-  private final Crypto m_aCrypto;
-  private final AS4CryptoFactory m_aAS4CryptoFactory;
-  private final CryptoProperties cryptoProperties;
+  private final AS4CryptoFactory m_aCryptoFactory;
 
   public SignedMessageCreator ()
   {
-    this (null);
+    this (new AS4CryptoFactory ());
   }
 
-  public SignedMessageCreator (@Nullable final String sCryptoProperties)
+  public SignedMessageCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
   {
-    m_aAS4CryptoFactory = new AS4CryptoFactory (sCryptoProperties);
-    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
-    cryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    m_aCryptoFactory = aCryptoFactory;
   }
 
   @Nonnull
   private WSSecSignature _getBasicBuilder (@Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
                                            @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
   {
+    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
+
     final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (cryptoProperties.getKeyAlias (), cryptoProperties.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (eECryptoAlgorithmSign.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
@@ -119,6 +118,6 @@ public class SignedMessageCreator
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
-    return aBuilder.build (aPreSigningMessage, m_aCrypto, aSecHeader);
+    return aBuilder.build (aPreSigningMessage, m_aCryptoFactory.getCrypto (), aSecHeader);
   }
 }
