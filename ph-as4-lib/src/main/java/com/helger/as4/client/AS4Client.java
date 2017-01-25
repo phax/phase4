@@ -5,12 +5,10 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -40,6 +38,7 @@ import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -47,10 +46,10 @@ import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.mime.MimeType;
-import com.helger.commons.random.RandomHelper;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.IHttpClientProvider;
+import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 
 /**
  * AS4 standalone client invoker.
@@ -59,16 +58,18 @@ import com.helger.httpclient.HttpClientFactory;
  * @author bayerlma
  */
 @WorkInProgress
+@NotThreadSafe
 public class AS4Client
 {
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
+  private IHttpClientProvider m_aHTTPClientProvider = new HttpClientFactory ();
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
   // For Message Info
   private String m_sMessageIDPrefix;
   // CollaborationInfo
@@ -102,6 +103,42 @@ public class AS4Client
   // Encryption attribute
   private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
+  public AS4Client ()
+  {}
+
+  /**
+   * @return The internal http client provider used in
+   *         {@link #sendMessage(String, HttpEntity)}.
+   */
+  @Nonnull
+  protected IHttpClientProvider getHttpClientProvider ()
+  {
+    return m_aHTTPClientProvider;
+  }
+
+  /**
+   * Set the HTTP client provider to be used. This is e.g. necessary when a
+   * custom SSL context is to be used. See {@link HttpClientFactory} as the
+   * default implementation of {@link IHttpClientProvider}. This provider is
+   * used in {@link #sendMessage(String, HttpEntity)}.
+   *
+   * @param aHttpClientProvider
+   *        The HTTP client provider to be used. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public AS4Client setHttpClientProvider (@Nonnull final IHttpClientProvider aHttpClientProvider)
+  {
+    ValueEnforcer.notNull (aHttpClientProvider, "HttpClientProvider");
+    m_aHTTPClientProvider = aHttpClientProvider;
+    return this;
+  }
+
+  private void _checkMandatoryAttributes ()
+  {
+    // TODO
+  }
+
   private void _checkKeystoreAttributes ()
   {
     if (m_aKeyStoreFile == null)
@@ -117,17 +154,19 @@ public class AS4Client
   }
 
   /**
-   * Build the AS4 message to be send. It uses all the attributes of this class
+   * Build the AS4 message to be sent. It uses all the attributes of this class
    * to build the final message. Compression, signing and encryption happens in
    * this methods.
    *
-   * @return The HTTP entity to be send - never <code>null</code>.
+   * @return The HTTP entity to be sent. Never <code>null</code>.
    * @throws Exception
    *         in case something goes wrong
    */
   @Nonnull
   public HttpEntity buildMessage () throws Exception
   {
+    _checkMandatoryAttributes ();
+
     final boolean bSign = m_eCryptoAlgorithmSign != null && m_eCryptoAlgorithmSignDigest != null;
     final boolean bEncrypt = m_eCryptoAlgorithmCrypt != null;
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
@@ -165,7 +204,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
@@ -176,11 +215,12 @@ public class AS4Client
       // 2a. sign
       if (bSign)
       {
+        final boolean bMustUnderstand = true;
         final Document aSignedDoc = new SignedMessageCreator (aCryptoFactory).createSignedMessage (aDoc,
                                                                                                    m_eSOAPVersion,
                                                                                                    m_aAttachments,
                                                                                                    m_aResMgr,
-                                                                                                   true,
+                                                                                                   bMustUnderstand,
                                                                                                    m_eCryptoAlgorithmSign,
                                                                                                    m_eCryptoAlgorithmSignDigest);
         aDoc = aSignedDoc;
@@ -192,18 +232,19 @@ public class AS4Client
         _checkKeystoreAttributes ();
         final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
         // MustUnderstand always set to true
+        final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
           aMimeMsg = aEncCreator.encryptMimeMessage (m_eSOAPVersion,
                                                      aDoc,
-                                                     true,
+                                                     bMustUnderstand,
                                                      m_aAttachments,
                                                      m_aResMgr,
                                                      m_eCryptoAlgorithmCrypt);
         }
         else
         {
-          aDoc = aEncCreator.encryptSoapBodyPayload (m_eSOAPVersion, aDoc, true, m_eCryptoAlgorithmCrypt);
+          aDoc = aEncCreator.encryptSoapBodyPayload (m_eSOAPVersion, aDoc, bMustUnderstand, m_eCryptoAlgorithmCrypt);
         }
       }
     }
@@ -224,37 +265,35 @@ public class AS4Client
     return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
   }
 
-  public void sendMessage (@Nonnull final String sURL, @Nonnull final HttpEntity aHttpEntity) throws Exception
+  /**
+   * Customize the HTTP Post before it is to be sent.
+   *
+   * @param aPost
+   *        The post to be modified. Never <code>null</code>.
+   */
+  @OverrideOnDemand
+  protected void customizeHttpPost (@Nonnull final HttpPost aPost)
+  {}
+
+  @Nullable
+  public HttpEntity sendMessage (@Nonnull final String sURL, @Nonnull final HttpEntity aHttpEntity) throws Exception
   {
-    sendMessage (sURL, aHttpEntity, null);
-  }
+    ValueEnforcer.notEmpty (sURL, "URL");
+    ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
-  public void sendMessage (@Nonnull final String sURL,
-                           @Nonnull final HttpEntity aHttpEntity,
-                           @Nullable final RequestConfig aRequestConfig) throws Exception
-  {
-    SSLContext aSSLContext = null;
-    if (sURL.startsWith ("https"))
+    try (final CloseableHttpClient aClient = m_aHTTPClientProvider.createHttpClient ())
     {
-      aSSLContext = SSLContext.getInstance ("TLS");
-      aSSLContext.init (null,
-                        new TrustManager [] { new TrustManagerTrustAll (false) },
-                        RandomHelper.getSecureRandom ());
+      final HttpPost aPost = new HttpPost (sURL);
+      if (aHttpEntity instanceof HttpMimeMessageEntity)
+        MessageHelperMethods.moveMIMEHeadersToHTTPHeader (((HttpMimeMessageEntity) aHttpEntity).getMimeMessage (),
+                                                          aPost);
+      aPost.setEntity (aHttpEntity);
+
+      // Overridable method
+      customizeHttpPost (aPost);
+
+      return aClient.execute (aPost, ResponseHandlerHttpEntity.INSTANCE);
     }
-
-    final CloseableHttpClient aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
-    final HttpPost aPost = new HttpPost (sURL);
-
-    if (aRequestConfig != null)
-    {
-      aPost.setConfig (aRequestConfig);
-    }
-
-    if (aHttpEntity instanceof HttpMimeMessageEntity)
-      MessageHelperMethods.moveMIMEHeadersToHTTPHeader (((HttpMimeMessageEntity) aHttpEntity).getMimeMessage (), aPost);
-    aPost.setEntity (aHttpEntity);
-
-    aClient.execute (aPost);
   }
 
   @Nonnull
@@ -296,44 +335,65 @@ public class AS4Client
   @ReturnsMutableCopy
   public ICommonsList <WSS4JAttachment> getAllAttachments ()
   {
-    return m_aAttachments;
+    return m_aAttachments.getClone ();
   }
 
   /**
    * Adds a file as attachment to the message.
    *
    * @param aAttachment
-   *        file which should be added
+   *        Attachment to be added. May not be <code>null</code>.
    * @param aMimeType
-   *        mimetype of the given file
+   *        MIME type of the given file. May not be <code>null</code>.
+   * @return this for chaining
    * @throws IOException,
    *         if something goes wrong in the adding process
    */
-  public void addAttachment (@Nonnull final File aAttachment, @Nonnull final MimeType aMimeType) throws IOException
+  @Nonnull
+  public AS4Client addAttachment (@Nonnull final File aAttachment, @Nonnull final MimeType aMimeType) throws IOException
   {
-    addAttachment (aAttachment, aMimeType, null);
+    return addAttachment (aAttachment, aMimeType, null);
   }
 
   /**
    * Adds a file as attachment to the message.
    *
    * @param aAttachment
-   *        file which should be added
+   *        Attachment to be added. May not be <code>null</code>.
    * @param aMimeType
-   *        mimetype of the given file
+   *        MIME type of the given file. May not be <code>null</code>.
    * @param eAS4CompressionMode
-   *        which compression type should be used to compress the attachment
+   *        which compression type should be used to compress the attachment.
+   *        May be <code>null</code>.
+   * @return this for chaining
    * @throws IOException
    *         if something goes wrong in the adding process or the compression
    */
-  public void addAttachment (@Nonnull final File aAttachment,
-                             @Nonnull final MimeType aMimeType,
-                             @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
+  @Nonnull
+  public AS4Client addAttachment (@Nonnull final File aAttachment,
+                                  @Nonnull final MimeType aMimeType,
+                                  @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
-    m_aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
-                                                                      aMimeType,
-                                                                      eAS4CompressionMode,
-                                                                      m_aResMgr));
+    return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
+                                                                        aMimeType,
+                                                                        eAS4CompressionMode,
+                                                                        m_aResMgr));
+  }
+
+  /**
+   * Adds a file as attachment to the message. The caller of the method must
+   * ensure the attachment is already compressed (if desired)!
+   *
+   * @param aAttachment
+   *        Attachment to be added. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public AS4Client addAttachment (@Nonnull final WSS4JAttachment aAttachment)
+  {
+    ValueEnforcer.notNull (aAttachment, "Attachment");
+    m_aAttachments.add (aAttachment);
+    return this;
   }
 
   @Nonnull
