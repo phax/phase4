@@ -66,10 +66,10 @@ public class AS4Client
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
   // For Message Info
   private String m_sMessageIDPrefix;
   // CollaborationInfo
@@ -136,7 +136,39 @@ public class AS4Client
 
   private void _checkMandatoryAttributes ()
   {
-    // TODO
+    if (StringHelper.hasNoText (m_sAction))
+      throw new IllegalStateException ("Action needs to be set");
+
+    if (StringHelper.hasNoText (m_sServiceType))
+      throw new IllegalStateException ("ServiceType needs to be set");
+
+    if (StringHelper.hasNoText (m_sServiceValue))
+      throw new IllegalStateException ("ServiceValue needs to be set");
+
+    if (StringHelper.hasNoText (m_sConversationID))
+      throw new IllegalStateException ("ConversationID needs to be set");
+
+    if (StringHelper.hasNoText (m_sAgreementRefPMode))
+      throw new IllegalStateException ("AgreementRefPMode needs to be set");
+
+    if (StringHelper.hasNoText (m_sAgreementRefValue))
+      throw new IllegalStateException ("AgreementRefValue needs to be set");
+
+    if (StringHelper.hasNoText (m_sFromRole))
+      throw new IllegalStateException ("FromRole needs to be set");
+
+    if (StringHelper.hasNoText (m_sFromPartyID))
+      throw new IllegalStateException ("FromPartyID needs to be set");
+
+    if (StringHelper.hasNoText (m_sToRole))
+      throw new IllegalStateException ("ToRole needs to be set");
+
+    if (StringHelper.hasNoText (m_sToPartyID))
+      throw new IllegalStateException ("ToPartyID needs to be set");
+
+    if (m_aEbms3Properties.isEmpty ())
+      throw new IllegalStateException ("finalRecipient and originalSender are mandatory properties");
+
   }
 
   private void _checkKeystoreAttributes ()
@@ -204,7 +236,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
