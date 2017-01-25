@@ -258,6 +258,7 @@ public class WSS4JAttachment extends Attachment
    *        Optional compression mode to use. May be <code>null</code>.
    * @param aResMgr
    *        The resource manager to use. May not be <code>null</code>.
+   * @return The newly created attachment instance. Never <code>null</code>.
    * @throws IOException
    *         In case something goes wrong during compression
    */

@@ -56,17 +56,17 @@ public class SignedMessageCreator
   }
 
   @Nonnull
-  private WSSecSignature _getBasicBuilder (@Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
-                                           @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest)
+  private WSSecSignature _getBasicBuilder (@Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
+                                           @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest)
   {
     final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature ();
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm (eECryptoAlgorithmSign.getAlgorithmURI ());
+    aBuilder.setSignatureAlgorithm (eCryptoAlgorithmSign.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (eECryptoAlgorithmSignDigest.getAlgorithmURI ());
+    aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
     return aBuilder;
   }
 
@@ -80,8 +80,14 @@ public class SignedMessageCreator
    *        SOAP version to use
    * @param aAttachments
    *        Optional list of attachments
+   * @param aResMgr
+   *        Resource manager to be used.
    * @param bMustUnderstand
-   *        Must understand
+   *        Must understand?
+   * @param eCryptoAlgorithmSign
+   *        Signing algorithm
+   * @param eCryptoAlgorithmSignDigest
+   *        Signing digest algorithm
    * @return The created signed SOAP document
    * @throws WSSecurityException
    *         If an error occurs during signing
@@ -92,10 +98,10 @@ public class SignedMessageCreator
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                        @Nonnull final AS4ResourceManager aResMgr,
                                        final boolean bMustUnderstand,
-                                       @Nonnull final ECryptoAlgorithmSign eECryptoAlgorithmSign,
-                                       @Nonnull final ECryptoAlgorithmSignDigest eECryptoAlgorithmSignDigest) throws WSSecurityException
+                                       @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
+                                       @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
   {
-    final WSSecSignature aBuilder = _getBasicBuilder (eECryptoAlgorithmSign, eECryptoAlgorithmSignDigest);
+    final WSSecSignature aBuilder = _getBasicBuilder (eCryptoAlgorithmSign, eCryptoAlgorithmSignDigest);
 
     if (CollectionHelper.isNotEmpty (aAttachments))
     {

@@ -414,7 +414,7 @@ public class AS4Client
    * @param aMimeType
    *        MIME type of the given file. May not be <code>null</code>.
    * @return this for chaining
-   * @throws IOException,
+   * @throws IOException
    *         if something goes wrong in the adding process
    */
   @Nonnull
@@ -511,7 +511,7 @@ public class AS4Client
    * The element is a string identifying an operation or an activity within a
    * Service that may support several of these.<br>
    * Example of what will be written in the usermessage:
-   * <eb:Action>NewPurchaseOrder</eb:Action> <br>
+   * <code>&lt;eb:Action&gt;NewPurchaseOrder&lt;/eb:Action&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAction
@@ -531,7 +531,7 @@ public class AS4Client
    * It is a string identifying the servicetype of the service specified in
    * servicevalue.<br>
    * Example of what will be written in the usermessage:
-   * <eb:Service type= "MyServiceTypes">QuoteToCollect</eb:Service><br>
+   * <code>&lt;eb:Service type= "MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    *
    * @param sServiceType
    *        serviceType that should be set
@@ -549,8 +549,8 @@ public class AS4Client
   /**
    * It is a string identifying the service that acts on the message 1639 and it
    * is specified by the designer of the service.<br>
-   * Example of what will be written in the usermessage:
-   * <eb:Service type= "MyServiceTypes">QuoteToCollect</eb:Service><br>
+   * Example of what will be written in the usermessage: <code>&lt;eb:Service
+   * type="MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sServiceValue
@@ -570,7 +570,7 @@ public class AS4Client
    * The element is a string identifying the set of related messages that make
    * up a conversation between Parties.<br>
    * Example of what will be written in the usermessage:
-   * <eb:ConversationId>4321</eb:ConversationId><br>
+   * <code>&lt;eb:ConversationId&gt;4321&lt;/eb:ConversationId&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sConversationID
@@ -589,8 +589,9 @@ public class AS4Client
   /**
    * The AgreementRef element requires a PModeID which can be set with this
    * method.<br>
-   * Example of what will be written in the usermessage: <eb:AgreementRef pmode=
-   * "pm-esens-generic-resp">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef><br>
+   * Example of what will be written in the usermessage:
+   * <code>&lt;eb:AgreementRef pmode=
+   * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAgreementRefPMode
@@ -650,7 +651,7 @@ public class AS4Client
    * The PartyID is an ID that identifies the C2 over which the message gets
    * sent.<br>
    * Example of what will be written in the usermessage:
-   * <eb:PartyId>ImAPartyID</eb:PartyId><br>
+   * <code>&lt;eb:PartyId&gt;ImAPartyID&lt;/eb:PartyId&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sFromPartyID
@@ -718,10 +719,11 @@ public class AS4Client
 
   /**
    * The type of the keystore needs to be set if a keystore is used.<br>
-   * MANDATORY if you want to use sign or encryption of an usermessage.
+   * MANDATORY if you want to use sign or encryption of an user message.
+   * Defaults to "jks".
    *
    * @param sKeyStoreType
-   *        keystoretype that should be set, e.g. jks
+   *        keystore type that should be set, e.g. "jks"
    */
   public void setKeyStoreType (@Nonnull @Nonempty final String sKeyStoreType)
   {
@@ -752,7 +754,7 @@ public class AS4Client
   }
 
   /**
-   * Keystorepassword needs to be set if a keystore is used<<br>
+   * Keystore password needs to be set if a keystore is used<br>
    * MANDATORY if you want to use sign or encryption of an usermessage.
    *
    * @param sKeyStorePassword
