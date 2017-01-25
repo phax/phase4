@@ -1,3 +1,19 @@
+/**
+ * Copyright (C) 2015-2017 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.helger.as4.client;
 
 import java.io.File;
@@ -15,6 +31,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
@@ -40,7 +57,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.annotation.WorkInProgress;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -57,19 +73,18 @@ import com.helger.httpclient.response.ResponseHandlerHttpEntity;
  * @author Philip Helger
  * @author bayerlma
  */
-@WorkInProgress
 @NotThreadSafe
 public class AS4Client
 {
-  private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
+  private final AS4ResourceManager m_aResMgr;
   private IHttpClientProvider m_aHTTPClientProvider = new HttpClientFactory ();
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
   // For Message Info
   private String m_sMessageIDPrefix;
   // CollaborationInfo
@@ -85,10 +100,10 @@ public class AS4Client
   private String m_sAgreementRefPMode;
   private String m_sAgreementRefValue;
 
-  private String m_sFromRole;
+  private String m_sFromRole = CAS4.DEFAULT_ROLE;
   private String m_sFromPartyID;
 
-  private String m_sToRole;
+  private String m_sToRole = CAS4.DEFAULT_ROLE;
   private String m_sToPartyID;
 
   // Keystore attributes
@@ -104,7 +119,21 @@ public class AS4Client
   private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
   public AS4Client ()
-  {}
+  {
+    this (new AS4ResourceManager ());
+  }
+
+  public AS4Client (@Nonnull final AS4ResourceManager aResMgr)
+  {
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    m_aResMgr = aResMgr;
+  }
+
+  @Nonnull
+  protected AS4ResourceManager getResourceMgr ()
+  {
+    return m_aResMgr;
+  }
 
   /**
    * @return The internal http client provider used in
@@ -120,7 +149,7 @@ public class AS4Client
    * Set the HTTP client provider to be used. This is e.g. necessary when a
    * custom SSL context is to be used. See {@link HttpClientFactory} as the
    * default implementation of {@link IHttpClientProvider}. This provider is
-   * used in {@link #sendMessage(String, HttpEntity)}.
+   * used in {@link #sendMessage(String)}.
    *
    * @param aHttpClientProvider
    *        The HTTP client provider to be used. May not be <code>null</code>.
@@ -236,7 +265,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
@@ -308,7 +337,14 @@ public class AS4Client
   {}
 
   @Nullable
-  public HttpEntity sendMessage (@Nonnull final String sURL, @Nonnull final HttpEntity aHttpEntity) throws Exception
+  public HttpEntity sendMessage (@Nonnull final String sURL) throws Exception
+  {
+    final HttpEntity aRequestEntity = buildMessage ();
+    return sendMessage (sURL, aRequestEntity);
+  }
+
+  @Nullable
+  protected HttpEntity sendMessage (@Nonnull final String sURL, @Nonnull final HttpEntity aHttpEntity) throws Exception
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -571,10 +607,11 @@ public class AS4Client
   }
 
   /**
-   * The AgreementRef element is a string that identifies 1636 the entity or
-   * artifact governing the exchange of messages between the parties.<br>
-   * Example of what will be written in the usermessage: <eb:AgreementRef pmode=
-   * "pm-esens-generic-resp">http://agreements.holodeckb2b.org/examples/agreement0</eb:AgreementRef><br>
+   * The AgreementRef element is a string that identifies the entity or artifact
+   * governing the exchange of messages between the parties.<br>
+   * Example of what will be written in the usermessage:
+   * <code>&lt;eb:AgreementRef pmode=
+   * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAgreementRefValue
@@ -593,7 +630,8 @@ public class AS4Client
   /**
    * The value of the Role element is a non-empty string, with a default value
    * of
-   * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole .
+   * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole</code>
+   * .
    *
    * @param sFromRole
    *        the role that should be set

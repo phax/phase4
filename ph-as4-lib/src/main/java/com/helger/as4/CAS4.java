@@ -18,6 +18,11 @@ package com.helger.as4;
 
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * AS4 constants
+ * 
+ * @author Philip Helger
+ */
 @Immutable
 public final class CAS4
 {
@@ -38,6 +43,9 @@ public final class CAS4
   public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
 
   public static final String LIB_NAME = "ph-as4";
+
+  // Constants
+  public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
 
   private CAS4 ()
   {}
