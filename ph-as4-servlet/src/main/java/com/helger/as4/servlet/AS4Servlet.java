@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -131,6 +132,12 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   public AS4Servlet ()
   {}
 
+  @Override
+  protected Set <EHTTPMethod> getAllowedHTTPMethods ()
+  {
+    return ALLOWED_METHDOS_POST;
+  }
+
   private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
                                    @Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -174,7 +181,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -183,7 +190,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -690,27 +697,34 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
       // Determine content type
-      final MimeType aMT = MimeTypeParser.parseMimeType (aHttpServletRequest.getContentType ());
-      if (s_aLogger.isDebugEnabled ())
-        s_aLogger.debug ("Received Content-Type: " + aMT);
-      if (aMT == null)
+      final String sContentType = aHttpServletRequest.getContentType ();
+      if (StringHelper.hasNoText (sContentType))
       {
-        aHttpResponse.setBadRequest ("Failed to parse Content-Type '" + aHttpServletRequest.getContentType () + "'");
+        aHttpResponse.setBadRequest ("Content-Type header is missing");
+        return;
+      }
+
+      final MimeType aContentType = MimeTypeParser.parseMimeType (sContentType);
+      if (s_aLogger.isDebugEnabled ())
+        s_aLogger.debug ("Received Content-Type: " + aContentType);
+      if (aContentType == null)
+      {
+        aHttpResponse.setBadRequest ("Failed to parse Content-Type '" + sContentType + "'");
         return;
       }
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
-      final IMimeType aPlainContentType = aMT.getCopyWithoutParameters ();
+      final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
       {
         // MIME message
         if (s_aLogger.isDebugEnabled ())
           s_aLogger.debug ("Received MIME message");
 
-        final String sBoundary = aMT.getParameterValueWithName ("boundary");
+        final String sBoundary = aContentType.getParameterValueWithName ("boundary");
         if (StringHelper.hasNoText (sBoundary))
         {
           aHttpResponse.setBadRequest ("Content-Type '" +
@@ -766,7 +780,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       else
       {
         if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Received plain message with Content-Type " + aMT.getAsString ());
+          s_aLogger.debug ("Received plain message with Content-Type " + aContentType.getAsString ());
 
         // Expect plain SOAP - read whole request to DOM
         // Note: this may require a huge amount of memory for large requests
