@@ -25,9 +25,9 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -61,11 +61,14 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
-import com.helger.commons.mime.MimeType;
+import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
-import com.helger.httpclient.response.ResponseHandlerHttpEntity;
+import com.helger.httpclient.response.ResponseHandlerMicroDom;
+import com.helger.httpclient.response.ResponseHandlerXml;
+import com.helger.xml.microdom.IMicroDocument;
 
 /**
  * AS4 standalone client invoker.
@@ -81,10 +84,10 @@ public class AS4Client
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
   // For Message Info
   private String m_sMessageIDPrefix;
   // CollaborationInfo
@@ -149,7 +152,7 @@ public class AS4Client
    * Set the HTTP client provider to be used. This is e.g. necessary when a
    * custom SSL context is to be used. See {@link HttpClientFactory} as the
    * default implementation of {@link IHttpClientProvider}. This provider is
-   * used in {@link #sendMessage(String)}.
+   * used in {@link #sendMessage(String, ResponseHandler)}.
    *
    * @param aHttpClientProvider
    *        The HTTP client provider to be used. May not be <code>null</code>.
@@ -265,7 +268,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
@@ -337,19 +340,14 @@ public class AS4Client
   {}
 
   @Nullable
-  public HttpEntity sendMessage (@Nonnull final String sURL) throws Exception
-  {
-    final HttpEntity aRequestEntity = buildMessage ();
-    return sendMessage (sURL, aRequestEntity);
-  }
-
-  @Nullable
-  protected HttpEntity sendMessage (@Nonnull final String sURL, @Nonnull final HttpEntity aHttpEntity) throws Exception
+  protected <T> T internalSendMessage (@Nonnull final String sURL,
+                                       @Nonnull final HttpEntity aHttpEntity,
+                                       @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
-    try (final CloseableHttpClient aClient = m_aHTTPClientProvider.createHttpClient ())
+    try (final HttpClientManager aClient = new HttpClientManager (m_aHTTPClientProvider))
     {
       final HttpPost aPost = new HttpPost (sURL);
       if (aHttpEntity instanceof HttpMimeMessageEntity)
@@ -360,8 +358,28 @@ public class AS4Client
       // Overridable method
       customizeHttpPost (aPost);
 
-      return aClient.execute (aPost, ResponseHandlerHttpEntity.INSTANCE);
+      return aClient.execute (aPost, aResponseHandler);
     }
+  }
+
+  @Nullable
+  public <T> T sendMessage (@Nonnull final String sURL,
+                            @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+  {
+    final HttpEntity aRequestEntity = buildMessage ();
+    return internalSendMessage (sURL, aRequestEntity, aResponseHandler);
+  }
+
+  @Nullable
+  public Document sendMessageAndGetDOMDocument (@Nonnull final String sURL) throws Exception
+  {
+    return sendMessage (sURL, new ResponseHandlerXml ());
+  }
+
+  @Nullable
+  public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
+  {
+    return sendMessage (sURL, new ResponseHandlerMicroDom ());
   }
 
   @Nonnull
@@ -418,7 +436,8 @@ public class AS4Client
    *         if something goes wrong in the adding process
    */
   @Nonnull
-  public AS4Client addAttachment (@Nonnull final File aAttachment, @Nonnull final MimeType aMimeType) throws IOException
+  public AS4Client addAttachment (@Nonnull final File aAttachment,
+                                  @Nonnull final IMimeType aMimeType) throws IOException
   {
     return addAttachment (aAttachment, aMimeType, null);
   }
@@ -439,7 +458,7 @@ public class AS4Client
    */
   @Nonnull
   public AS4Client addAttachment (@Nonnull final File aAttachment,
-                                  @Nonnull final MimeType aMimeType,
+                                  @Nonnull final IMimeType aMimeType,
                                   @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,

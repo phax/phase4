@@ -25,11 +25,20 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.client.AS4Client;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.mime.CMimeType;
+import com.helger.xml.microdom.IMicroDocument;
+import com.helger.xml.microdom.serialize.MicroWriter;
+import com.helger.xml.serialize.read.DOMReader;
 
 public class AS4ClientTest
 {
@@ -51,49 +60,7 @@ public class AS4ClientTest
     MockJettySetup.shutDownServer ();
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4Client aClient) throws Exception
-  {
-    try
-    {
-      aClient.buildMessage ();
-      fail ();
-    }
-    catch (final IllegalStateException ex)
-    {
-      // expected
-    }
-  }
-
-  @Test
-  public void buildMessageMandatoryCheck () throws Exception
-  {
-    final AS4Client aClient = new AS4Client (s_aResMgr);
-    _ensureInvalidState (aClient);
-    aClient.setAction ("AnAction");
-    _ensureInvalidState (aClient);
-    aClient.setServiceType ("MyServiceType");
-    _ensureInvalidState (aClient);
-    aClient.setServiceValue ("OrderPaper");
-    _ensureInvalidState (aClient);
-    aClient.setConversationID ("9898");
-    _ensureInvalidState (aClient);
-    aClient.setAgreementRefPMode ("pm-esens-generic-resp");
-    _ensureInvalidState (aClient);
-    aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
-    _ensureInvalidState (aClient);
-    aClient.setFromRole (CAS4.DEFAULT_ROLE);
-    _ensureInvalidState (aClient);
-    aClient.setFromPartyID ("MyPartyIDforSending");
-    _ensureInvalidState (aClient);
-    aClient.setToRole (CAS4.DEFAULT_ROLE);
-    _ensureInvalidState (aClient);
-    aClient.setToPartyID ("MyPartyIDforReceving");
-    _ensureInvalidState (aClient);
-    // IllegalState still occurs since properties are missing
-  }
-
-  @Test
-  public void sendBodyPayloadMessageSuccessful () throws Exception
+  private AS4Client getMandatoryAttributesSuccessMessage ()
   {
     final AS4Client aClient = new AS4Client (s_aResMgr);
     aClient.setAction ("AnAction");
@@ -107,6 +74,313 @@ public class AS4ClientTest
     aClient.setToRole (CAS4.DEFAULT_ROLE);
     aClient.setToPartyID ("MyPartyIDforReceving");
     aClient.setEbms3Properties (MockEbmsHelper.getEBMSProperties ());
-    aClient.sendMessage (SERVER_URL);
+
+    return aClient;
+  }
+
+  private AS4Client setKeyStoreTestData (final AS4Client aClient)
+  {
+    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStorePassword ("test");
+    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
+    aClient.setKeyStoreType ("jks");
+    return aClient;
+  }
+
+  private static void _ensureInvalidState (@Nonnull final AS4Client aClient) throws Exception
+  {
+    try
+    {
+      aClient.buildMessage ();
+      fail ();
+    }
+    catch (final IllegalStateException ex)
+    {
+      // expected
+    }
+  }
+
+  private static void _ensureValidState (@Nonnull final AS4Client aClient) throws Exception
+  {
+    try
+    {
+      aClient.buildMessage ();
+    }
+    catch (final IllegalStateException ex)
+    {
+      fail ();
+    }
+  }
+
+  @Test
+  public void buildMessageMandatoryCheckFailure () throws Exception
+  {
+    final AS4Client aClient = new AS4Client (s_aResMgr);
+    _ensureInvalidState (aClient);
+    aClient.setAction ("AnAction");
+    _ensureInvalidState (aClient);
+    aClient.setServiceType ("MyServiceType");
+    _ensureInvalidState (aClient);
+    aClient.setServiceValue ("OrderPaper");
+    _ensureInvalidState (aClient);
+    aClient.setConversationID ("9898");
+    _ensureInvalidState (aClient);
+    aClient.setAgreementRefPMode ("pm-esens-generic-resp");
+    _ensureInvalidState (aClient);
+    aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
+    _ensureInvalidState (aClient);
+    aClient.setFromRole (CAS4.DEFAULT_ROLE);
+    _ensureInvalidState (aClient);
+    aClient.setFromPartyID ("MyPartyIDforSending");
+    _ensureInvalidState (aClient);
+    aClient.setToRole (CAS4.DEFAULT_ROLE);
+    _ensureInvalidState (aClient);
+    aClient.setToPartyID ("MyPartyIDforReceving");
+    _ensureInvalidState (aClient);
+    aClient.setEbms3Properties (MockEbmsHelper.getEBMSProperties ());
+    _ensureValidState (aClient);
+  }
+
+  @Test
+  public void buildMessageKeystoreCheckFailure () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+
+    // Set sign attributes, to get to the check, the check only gets called if
+    // sign or encrypt needs to be done for the usermessage
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // No Keystore attributes set
+    _ensureInvalidState (aClient);
+    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
+    _ensureInvalidState (aClient);
+    aClient.setKeyStoreType ("jks");
+    _ensureInvalidState (aClient);
+    aClient.setKeyStoreAlias ("ph-as4");
+    _ensureInvalidState (aClient);
+    aClient.setKeyStorePassword ("test");
+    _ensureValidState (aClient);
+
+  }
+
+  @Test
+  public void sendBodyPayloadMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendBodyPayloadSignedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendBodyPayloadEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendBodyPayloadSignedEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendOneAttachmentSignedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendOneAttachmentEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendManyAttachmentSignedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendManyAttachmentEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
+                           CMimeType.APPLICATION_XML,
+                           EAS4CompressionMode.GZIP);
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (),
+                           CMimeType.APPLICATION_XML,
+                           EAS4CompressionMode.GZIP);
+    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (),
+                           CMimeType.IMAGE_JPG,
+                           EAS4CompressionMode.GZIP);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+  }
+
+  @Test
+  public void sendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
+                           CMimeType.APPLICATION_XML,
+                           EAS4CompressionMode.GZIP);
+    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (),
+                           CMimeType.APPLICATION_XML,
+                           EAS4CompressionMode.GZIP);
+    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (),
+                           CMimeType.IMAGE_JPG,
+                           EAS4CompressionMode.GZIP);
+
+    // Keystore
+    setKeyStoreTestData (aClient);
+
+    // Sign specific
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
+    aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+
+    // Encrypt specific
+    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
+
   }
 }
