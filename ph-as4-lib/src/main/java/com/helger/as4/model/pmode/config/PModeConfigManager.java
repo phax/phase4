@@ -76,6 +76,16 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
       createPModeConfig (aPModeConfig);
   }
 
+  public void createOrUpdatePModeConfig (@Nonnull final PModeConfig aPModeConfig)
+  {
+    ValueEnforcer.notNull (aPModeConfig, "PModeConfig");
+    final String sID = aPModeConfig.getID ();
+    if (containsWithID (sID))
+      updatePModeConfig (aPModeConfig);
+    else
+      createPModeConfig (aPModeConfig);
+  }
+
   /**
    * If the pmode config is invalid the method will return null
    *

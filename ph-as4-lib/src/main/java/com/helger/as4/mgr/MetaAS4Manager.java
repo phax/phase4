@@ -36,10 +36,10 @@ import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
-  private static final String MPC_XML = "mpc.xml";
-  private static final String PARTNER_XML = "partner.xml";
-  private static final String PMODE_CONFIG_XML = "pmodeconfig.xml";
-  private static final String PMODE_XML = "pmode.xml";
+  private static final String MPC_XML = "as4-mpc.xml";
+  private static final String PARTNER_XML = "as4-partner.xml";
+  private static final String PMODE_CONFIG_XML = "as4-pmodeconfig.xml";
+  private static final String PMODE_XML = "as4-pmode.xml";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 

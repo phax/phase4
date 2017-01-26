@@ -24,6 +24,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
@@ -32,6 +33,7 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
+import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
@@ -53,13 +55,13 @@ public final class ESENSPMode
     aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),
                                    _generatePModeLegBusinessInformation (),
                                    _generatePModeLegErrorHandling (),
-                                   null,
+                                   (PModeLegReliability) null,
                                    _generatePModeLegSecurity ()));
     // Leg 2 stays null, because we only use one-way
     aConfig.setReceptionAwareness (new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE));
 
     // Ensure it is stored
-    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aConfig);
     return aConfig;
   }
 
@@ -77,6 +79,7 @@ public final class ESENSPMode
     return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
   }
 
+  @Nonnull
   private static PModeLegSecurity _generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
@@ -88,6 +91,7 @@ public final class ESENSPMode
     aPModeLegSecurity.setPModeAuthorize (false);
     aPModeLegSecurity.setSendReceipt (true);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
+    aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     return aPModeLegSecurity;
   }
 
@@ -105,6 +109,7 @@ public final class ESENSPMode
   @Nonnull
   private static PModeLegProtocol _generatePModeLegProtocol ()
   {
+    // TODO make endpoint URL configurable
     return new PModeLegProtocol ("http://localhost:8080", ESOAPVersion.SOAP_12);
   }
 

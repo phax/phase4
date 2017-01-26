@@ -41,6 +41,7 @@ import com.helger.as4.wss.EWSSVersion;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
@@ -107,11 +108,20 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("PMode Leg 1 is missing AddressProtocol"));
         }
         else
-          if (!sAddressProtocol.equalsIgnoreCase ("https"))
+          if (sAddressProtocol.equalsIgnoreCase ("https"))
           {
-            // Non https?
-            aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
+            // Always okay
           }
+          else
+            if (sAddressProtocol.equalsIgnoreCase ("http") && GlobalDebug.isDebugMode ())
+            {
+              // Okay in debug mode only
+            }
+            else
+            {
+              // Other protocol
+              aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
+            }
 
         final ESOAPVersion eSOAPVersion = aLeg1Protocol.getSOAPVersion ();
         if (eSOAPVersion == null)
@@ -130,12 +140,13 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
       final PModeLegSecurity aPModeLegSecurity = aPModeLeg1.getSecurity ();
       if (aPModeLegSecurity != null)
       {
-
         // Check Certificate
-        if (aPModeLegSecurity.getX509SignatureCertificate () == null)
-        {
-          aErrorList.add (_createError ("A signature certificate is required"));
-        }
+        // TODO certificate is in Partner - therefore not here :)
+        if (false)
+          if (aPModeLegSecurity.getX509SignatureCertificate () == null)
+          {
+            aErrorList.add (_createError ("A signature certificate is required"));
+          }
 
         // Check Signature Algorithm
         if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)

@@ -26,6 +26,7 @@ import com.helger.xml.microdom.MicroElement;
 public class PartnerMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
   private static final String ELEMENT_PARTNER_ATTRIBUTES = "PartnerAttribute";
+  private static final String ATTR_NAME = "name";
 
   public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
   {
@@ -33,10 +34,11 @@ public class PartnerMicroTypeConverter extends AbstractObjectMicroTypeConverter
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
 
-    for (final Map.Entry <String, String> entry : aValue.getAllAttributes ().entrySet ())
+    for (final Map.Entry <String, String> aEntry : aValue.getAllAttributes ().entrySet ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_PARTNER_ATTRIBUTES)
-         .appendText (entry.getKey () + ":" + entry.getValue ());
+         .setAttribute (ATTR_NAME, aEntry.getKey ())
+         .appendText (aEntry.getValue ());
     }
 
     return ret;
@@ -48,8 +50,8 @@ public class PartnerMicroTypeConverter extends AbstractObjectMicroTypeConverter
 
     for (final IMicroElement aAttribute : aElement.getAllChildElements (ELEMENT_PARTNER_ATTRIBUTES))
     {
-      final String [] aTmp = aAttribute.getTextContentTrimmed ().split (":");
-      aSM.setAttribute (aTmp[0], aTmp[1]);
+      final String sName = aAttribute.getAttributeValue (ATTR_NAME);
+      aSM.setAttribute (sName, aAttribute.getTextContentTrimmed ());
     }
 
     return new Partner (getStubObject (aElement), aSM);
