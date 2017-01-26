@@ -16,25 +16,32 @@
  */
 package com.helger.as4.profile;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.function.ISupplier;
+import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * Default implementation of {@link IAS4Profile}.
+ * 
+ * @author Philip Helger
+ */
+@Immutable
 public class AS4Profile implements IAS4Profile
 {
   private final String m_sID;
   private final String m_sDisplayName;
-  private final Supplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
-  private final Supplier <? extends IPModeConfig> m_aDefaultPModeConfigProvider;
+  private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
+  private final ISupplier <? extends IPModeConfig> m_aDefaultPModeConfigProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
-                     @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final Supplier <? extends IPModeConfig> aDefaultPModeConfigProvider)
+                     @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
+                     @Nonnull final ISupplier <? extends IPModeConfig> aDefaultPModeConfigProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
@@ -66,5 +73,15 @@ public class AS4Profile implements IAS4Profile
   public IPModeConfig createDefaultPModeConfig ()
   {
     return m_aDefaultPModeConfigProvider.get ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("ID", m_sID)
+                                       .append ("DisplayName", m_sDisplayName)
+                                       .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
+                                       .append ("DefaultPModeConfigProvider", m_aDefaultPModeConfigProvider)
+                                       .toString ();
   }
 }

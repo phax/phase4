@@ -31,6 +31,6 @@ public class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
     aRegistrar.registerProfile (new AS4Profile ("esens",
                                                 "e-SENS",
                                                 () -> new ESENSCompatibilityValidator (),
-                                                () -> ESENSPMode.createESENSPModeConfig ()));
+                                                () -> ESENSPMode.createESENSPModeConfig ("https://test.example.org")));
   }
 }

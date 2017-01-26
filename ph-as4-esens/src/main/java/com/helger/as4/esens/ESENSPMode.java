@@ -47,12 +47,12 @@ public final class ESENSPMode
   {}
 
   @Nonnull
-  public static PModeConfig createESENSPModeConfig ()
+  public static PModeConfig createESENSPModeConfig (@Nonnull final String sAddress)
   {
     final PModeConfig aConfig = new PModeConfig (ESENS_PMODE_CONFIG_ID);
     aConfig.setMEP (EMEP.ONE_WAY);
     aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
-    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),
+    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (sAddress),
                                    _generatePModeLegBusinessInformation (),
                                    _generatePModeLegErrorHandling (),
                                    (PModeLegReliability) null,
@@ -66,9 +66,9 @@ public final class ESENSPMode
   }
 
   @Nonnull
-  public static PMode createESENSPMode ()
+  public static PMode createESENSPMode (@Nonnull final String sAddress)
   {
-    final PModeConfig aConfig = createESENSPModeConfig ();
+    final PModeConfig aConfig = createESENSPModeConfig (sAddress);
 
     return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
   }
@@ -107,10 +107,9 @@ public final class ESENSPMode
   }
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol ()
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nonnull final String sAddress)
   {
-    // TODO make endpoint URL configurable
-    return new PModeLegProtocol ("http://localhost:8080", ESOAPVersion.SOAP_12);
+    return new PModeLegProtocol (sAddress, ESOAPVersion.SOAP_12);
   }
 
   @Nonnull

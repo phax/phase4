@@ -21,6 +21,8 @@ import java.io.Serializable;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +43,15 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Philip Helger
  */
+@ThreadSafe
 public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ProfileManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
-  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap <> ();
+  @GuardedBy ("m_aRWLock")
+  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap<> ();
+  @GuardedBy ("m_aRWLock")
   private IAS4Profile m_aDefaultProfile;
 
   private void _registerAll ()
