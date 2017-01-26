@@ -16,10 +16,14 @@
  */
 package com.helger.as4.lib.client;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
+import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,9 +34,13 @@ import com.helger.as4.client.AS4Client;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
+import com.helger.as4.mock.MockPModeGenerator;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
@@ -60,14 +68,26 @@ public class AS4ClientTest
     MockJettySetup.shutDownServer ();
   }
 
+  @Nonnull
+  private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
+  {
+    if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
+      return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
+    return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
+  }
+
   private AS4Client getMandatoryAttributesSuccessMessage ()
   {
+
     final AS4Client aClient = new AS4Client (s_aResMgr);
+    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (aClient.getSOAPVersion ()));
+
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");
     aClient.setConversationID ("9898");
-    aClient.setAgreementRefPMode ("pm-esens-generic-resp");
+    aClient.setAgreementRefPMode (aPModeID.getConfigID ());
     aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID ("MyPartyIDforSending");
@@ -169,7 +189,8 @@ public class AS4ClientTest
   {
     final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -185,7 +206,8 @@ public class AS4ClientTest
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
     aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -200,7 +222,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -219,7 +242,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -235,7 +259,8 @@ public class AS4ClientTest
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
     aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -250,7 +275,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -269,7 +295,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -287,7 +314,8 @@ public class AS4ClientTest
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
     aClient.setECryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -304,7 +332,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -325,7 +354,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -352,7 +382,8 @@ public class AS4ClientTest
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
-    aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
+    System.out.println (MicroWriter.getXMLString (aDoc));
   }
 
   @Test
@@ -382,5 +413,15 @@ public class AS4ClientTest
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     System.out.println (MicroWriter.getXMLString (aDoc));
 
+  }
+
+  @Test
+  public void buildMessageWithOwnPrefix () throws Exception
+  {
+    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose";
+    aClient.setMessageIDPrefix (sMessageIDPrefix);
+
+    assertTrue (EntityUtils.toString (aClient.buildMessage ()).contains (sMessageIDPrefix));
   }
 }
