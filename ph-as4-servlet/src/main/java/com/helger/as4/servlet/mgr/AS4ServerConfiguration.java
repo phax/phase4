@@ -20,6 +20,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.exception.InitializationException;
 import com.helger.settings.ISettings;
 import com.helger.settings.Settings;
@@ -40,6 +43,7 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 @NotThreadSafe
 public final class AS4ServerConfiguration
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ServerConfiguration.class);
   private static final Settings SETTINGS = new Settings ("as4-server");
   private static boolean s_bTestMode = false;
 
@@ -62,6 +66,7 @@ public final class AS4ServerConfiguration
     final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
       throw new InitializationException ("Failed to read AS4 server configuration file!");
+    s_aLogger.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
     SETTINGS.clear ();
     SETTINGS.setValues (aCF.getSettings ());
   }
