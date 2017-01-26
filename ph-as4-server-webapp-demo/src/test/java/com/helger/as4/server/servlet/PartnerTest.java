@@ -19,8 +19,6 @@ package com.helger.as4.server.servlet;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -39,6 +37,7 @@ import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.StringMap;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.security.certificate.CertificateHelper;
 
@@ -60,8 +59,7 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
     AbstractUserMessageTestSetUp.startServer ();
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, PARTNER_ID);
-    final byte [] aCertBytes = Files.readAllBytes (Paths.get (new ClassPathResource ("cert.txt").getAsFile ()
-                                                                                                .getAbsolutePath ()));
+    final byte [] aCertBytes = StreamHelper.getAllBytes (new ClassPathResource ("partner-cert.txt"));
     final X509Certificate aUsedCertificate = CertificateHelper.convertByteArrayToCertficate (aCertBytes);
     aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();

@@ -444,38 +444,41 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
     }
 
-    // PModeConfig - determine inside SPI providers!
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
-    if (aPModeConfig == null)
+    if (aErrorMessages.isEmpty ())
     {
-      aAS4Response.setBadRequest ("No AS4 P-Mode configuration found!");
-      return;
-    }
-
-    {
-      // Only do profile checks if a profile is set
-      final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
-      if (StringHelper.hasText (sProfileName))
+      // PModeConfig - determine inside SPI providers!
+      if (aPModeConfig == null)
       {
-        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
-        if (aProfile == null)
-        {
-          aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
-          return;
-        }
+        aAS4Response.setBadRequest ("No AS4 P-Mode configuration found!");
+        return;
+      }
 
-        // Profile Checks gets set when started with Server
-        final ErrorList aErrorList = new ErrorList ();
-        aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
-        aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
-        if (aErrorList.isNotEmpty ())
+      {
+        // Only do profile checks if a profile is set
+        final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
+        if (StringHelper.hasText (sProfileName))
         {
-          s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
-          aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
-                                      aProfile.getDisplayName () +
-                                      "\n Following errors are present: " +
-                                      aErrorList.getAllErrors ().getAllTexts (aLocale));
-          return;
+          final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
+          if (aProfile == null)
+          {
+            aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
+            return;
+          }
+
+          // Profile Checks gets set when started with Server
+          final ErrorList aErrorList = new ErrorList ();
+          aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+          aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+          if (aErrorList.isNotEmpty ())
+          {
+            s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
+            aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
+                                        aProfile.getDisplayName () +
+                                        "\n Following errors are present: " +
+                                        aErrorList.getAllErrors ().getAllTexts (aLocale));
+            return;
+          }
         }
       }
     }
