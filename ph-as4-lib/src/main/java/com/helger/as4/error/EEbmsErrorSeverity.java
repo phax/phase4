@@ -19,26 +19,37 @@ package com.helger.as4.error;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.name.IHasDisplayName;
+import com.helger.commons.error.level.EErrorLevel;
+import com.helger.commons.error.level.IErrorLevel;
+import com.helger.commons.error.level.IHasErrorLevelComparable;
 
-public enum EErrorCategory implements IHasDisplayName
+public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSeverity>
 {
-  CONTENT ("Content"),
-  COMMUNICATION ("Communication"),
-  UNPACKAGING ("Unpackaging"),
-  PROCESSING ("Processing");
+  FAILURE ("failure", EErrorLevel.ERROR),
+  WARNING ("warning", EErrorLevel.WARN);
 
-  private final String m_sContent;
+  private final String m_sSeverity;
+  private final IErrorLevel m_aErrorLevel;
 
-  private EErrorCategory (@Nonnull @Nonempty final String sContent)
+  private EEbmsErrorSeverity (@Nonnull @Nonempty final String sSeverity, @Nonnull final IErrorLevel aErrorLevel)
   {
-    m_sContent = sContent;
+    m_sSeverity = sSeverity;
+    m_aErrorLevel = aErrorLevel;
+  }
+
+  /**
+   * @return The token for the EBMS3 message
+   */
+  @Nonnull
+  @Nonempty
+  public String getSeverity ()
+  {
+    return m_sSeverity;
   }
 
   @Nonnull
-  @Nonempty
-  public String getDisplayName ()
+  public IErrorLevel getErrorLevel ()
   {
-    return m_sContent;
+    return m_aErrorLevel;
   }
 }

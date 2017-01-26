@@ -16,6 +16,7 @@
  */
 package com.helger.as4.lib.client;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -48,7 +49,12 @@ import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4ClientTest
+/**
+ * Test class for class {@link AS4Client}
+ *
+ * @author Martin Bayerl
+ */
+public final class AS4ClientTest
 {
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
@@ -93,14 +99,15 @@ public class AS4ClientTest
    *
    * @return the AS4Client with the set attributes to continue
    */
-  private AS4Client getMandatoryAttributesSuccessMessage ()
+  @Nonnull
+  private static AS4Client _getMandatoryAttributesSuccessMessage ()
   {
-
     final AS4Client aClient = new AS4Client (s_aResMgr);
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
     // Use a pmode that you know is currently running on the server your trying
     // to send the message too
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (aClient.getSOAPVersion ()));
+    assertNotNull (aPModeID);
 
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
@@ -125,7 +132,8 @@ public class AS4ClientTest
    *        the client on which these attributes should be set
    * @return the client to continue working with it
    */
-  private AS4Client setKeyStoreTestData (final AS4Client aClient)
+  @Nonnull
+  private static AS4Client _setKeyStoreTestData (@Nonnull final AS4Client aClient)
   {
     aClient.setKeyStoreAlias ("ph-as4");
     aClient.setKeyStorePassword ("test");
@@ -191,7 +199,7 @@ public class AS4ClientTest
   @Test
   public void buildMessageKeystoreCheckFailure () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
 
     // Set sign attributes, to get to the check, the check only gets called if
     // sign or encrypt needs to be done for the usermessage
@@ -214,7 +222,7 @@ public class AS4ClientTest
   @Test
   public void sendBodyPayloadMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
@@ -223,11 +231,11 @@ public class AS4ClientTest
   @Test
   public void sendBodyPayloadSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -240,11 +248,11 @@ public class AS4ClientTest
   @Test
   public void sendBodyPayloadEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -256,11 +264,11 @@ public class AS4ClientTest
   @Test
   public void sendBodyPayloadSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -276,11 +284,11 @@ public class AS4ClientTest
   @Test
   public void sendOneAttachmentSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -293,11 +301,11 @@ public class AS4ClientTest
   @Test
   public void sendOneAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -309,11 +317,11 @@ public class AS4ClientTest
   @Test
   public void sendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -329,13 +337,13 @@ public class AS4ClientTest
   @Test
   public void sendManyAttachmentSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -348,13 +356,13 @@ public class AS4ClientTest
   @Test
   public void sendManyAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -366,13 +374,13 @@ public class AS4ClientTest
   @Test
   public void sendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -388,7 +396,7 @@ public class AS4ClientTest
   @Test
   public void sendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -400,7 +408,7 @@ public class AS4ClientTest
                            EAS4CompressionMode.GZIP);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -416,7 +424,7 @@ public class AS4ClientTest
   @Test
   public void sendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -428,7 +436,7 @@ public class AS4ClientTest
                            EAS4CompressionMode.GZIP);
 
     // Keystore
-    setKeyStoreTestData (aClient);
+    _setKeyStoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -444,7 +452,7 @@ public class AS4ClientTest
   @Test
   public void buildMessageWithOwnPrefix () throws Exception
   {
-    final AS4Client aClient = getMandatoryAttributesSuccessMessage ();
+    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose";
     aClient.setMessageIDPrefix (sMessageIDPrefix);
 

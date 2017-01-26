@@ -45,7 +45,7 @@ public interface IEbmsError extends Serializable
    * @return possible object is {@link String }
    */
   @Nonnull
-  EErrorSeverity getSeverity ();
+  EEbmsErrorSeverity getSeverity ();
 
   /**
    * Gets the value of the shortDescription property.
@@ -66,10 +66,10 @@ public interface IEbmsError extends Serializable
   /**
    * Gets the value of the category property.
    *
-   * @return possible object is {@link EErrorCategory }
+   * @return possible object is {@link EEbmsErrorCategory }
    */
   @Nonnull
-  EErrorCategory getCategory ();
+  EEbmsErrorCategory getCategory ();
 
   @Nonnull
   default IError getAsError (@Nonnull final Locale aContentLocale)

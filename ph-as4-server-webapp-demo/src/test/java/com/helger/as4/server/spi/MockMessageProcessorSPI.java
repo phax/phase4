@@ -32,7 +32,6 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.state.ESuccess;
 import com.helger.xml.serialize.write.XMLWriter;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -72,6 +71,6 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
         }
       }
     }
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS);
+    return AS4MessageProcessorResult.createSuccess ();
   }
 }

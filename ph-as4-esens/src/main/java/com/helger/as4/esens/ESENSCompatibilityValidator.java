@@ -70,15 +70,20 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPModeConfig, aErrorList);
     assert aErrorList.isEmpty () : "Errors in global PMode config validation: " + aErrorList.toString ();
 
-    if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) || aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
+    if (aPModeConfig.getMEP () == null)
     {
-      aErrorList.add (_createError ("A non valid PMode MEP was specified, valid or only one-way and two-way."));
+      aErrorList.add (_createError ("No PMode MEP was specified."));
     }
+    else
+      if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) || aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
+      {
+        aErrorList.add (_createError ("An invalid PMode MEP was specified, valid or only one-way and two-way."));
+      }
 
     if (!aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
         !aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
     {
-      aErrorList.add (_createError ("A non valid PMode MEP-Binding was specified, valid or only one-way and two-way."));
+      aErrorList.add (_createError ("An invalid PMode MEP-Binding was specified, valid or only one-way and two-way."));
     }
 
     final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();

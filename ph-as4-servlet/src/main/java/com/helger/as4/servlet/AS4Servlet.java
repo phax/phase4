@@ -42,6 +42,7 @@ import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.error.EEbmsErrorSeverity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
@@ -70,6 +71,7 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.StringMap;
+import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -263,6 +265,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // Now check if all must understand headers were processed
     Ebms3Messaging aMessaging = null;
     Ebms3UserMessage aUserMessage = null;
+    Node aPayloadNode = null;
+    ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
 
     if (aErrorMessages.isEmpty ())
     {
@@ -279,9 +283,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // Every message can only contain 1 Usermessage but 0..n signalmessages
       aUserMessage = aMessaging.getUserMessageAtIndex (0);
 
-      // Decompressing the attachments
-      final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                     : aState.getOriginalAttachments ();
+      // Ensure the decrypted attachments are used
+      aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                : aState.getOriginalAttachments ();
 
       // Decompress attachments (if compressed)
       for (final WSS4JAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
@@ -322,7 +326,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           return;
         }
       }
-      final Node aPayloadNode = aBodyNode.getFirstChild ();
+      aPayloadNode = aBodyNode.getFirstChild ();
 
       // Check if originalSender and finalRecipient are present
       // Since these two properties are mandatory
@@ -387,7 +391,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           _ensurePModeIsPresent (aState, sConfigID, aUserMessage);
         }
       }
+    }
 
+    if (aErrorMessages.isEmpty ())
+    {
+      // Invoke all SPIs
       for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
         try
         {
@@ -399,6 +407,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                   aDecryptedAttachments);
           if (aResult == null)
             throw new IllegalStateException ("No result object present!");
+
           if (aResult.isSuccess ())
           {
             if (s_aLogger.isDebugEnabled ())
@@ -406,9 +415,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           }
           else
           {
-            s_aLogger.warn ("Invoked AS4 message processor " + aProcessor + " returned a failure");
-            aAS4Response.setBadRequest ("Invoked AS4 message processor " + aProcessor + " returned a failure");
-            return;
+            s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
+
+            final Ebms3Error aError = new Ebms3Error ();
+            aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
+            aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
+            if (aUserMessage != null && aUserMessage.getMessageInfo () != null)
+              aError.setRefToMessageInError (aUserMessage.getMessageInfo ().getMessageId ());
+            final Ebms3Description aDesc = new Ebms3Description ();
+            aDesc.setValue (aResult.getErrorMessage ());
+            // XXX assume "english" for now
+            aDesc.setLang ("en");
+            aError.setDescription (aDesc);
+            aErrorMessages.add (aError);
+
+            // Stop processing
+            break;
           }
         }
         catch (final Throwable t)
@@ -421,35 +443,43 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           return;
         }
     }
-    // PModeConfig
+
+    // PModeConfig - determine inside SPI providers!
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
-
-    // Only do profile checks if a profile is set
-    final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
-    if (StringHelper.hasText (sProfileName))
+    if (aPModeConfig == null)
     {
-      final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
+      aAS4Response.setBadRequest ("No AS4 P-Mode configuration found!");
+      return;
+    }
 
-      if (aProfile != null)
+    {
+      // Only do profile checks if a profile is set
+      final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
+      if (StringHelper.hasText (sProfileName))
       {
-        // Profile Checks gets set when started with Server
-        final ErrorList aErrorList = new ErrorList ();
-        aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
-        aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
-        if (aErrorList.isNotEmpty ())
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
+
+        if (aProfile != null)
         {
-          s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
-          aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
-                                      aProfile.getDisplayName () +
-                                      "\n Following errors are present: " +
-                                      aErrorList.getAllErrors ().getAllTexts (aLocale));
+          // Profile Checks gets set when started with Server
+          final ErrorList aErrorList = new ErrorList ();
+          aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+          aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+          if (aErrorList.isNotEmpty ())
+          {
+            s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
+            aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
+                                        aProfile.getDisplayName () +
+                                        "\n Following errors are present: " +
+                                        aErrorList.getAllErrors ().getAllTexts (aLocale));
+            return;
+          }
+        }
+        else
+        {
+          aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
           return;
         }
-      }
-      else
-      {
-        aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
-        return;
       }
     }
 
@@ -467,6 +497,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            CCharset.CHARSET_UTF_8_OBJ)
                     .setMimeType (eSOAPVersion.getMimeType ());
       }
+      else
+        s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
     }
     else
     {
@@ -489,6 +521,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
                     .setMimeType (eSOAPVersion.getMimeType ());
       }
+      else
+        s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
     }
   }
 

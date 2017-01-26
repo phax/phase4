@@ -28,111 +28,111 @@ public enum EEbmsError implements IEbmsError
 {
   // ebMs Processing Errors - from OASIS ebXML Messaging Service
   EBMS_VALUE_NOT_RECOGNIZED ("EBMS:0001",
-                             EErrorSeverity.FAILURE,
+                             EEbmsErrorSeverity.FAILURE,
                              "ValueNotRecognized",
-                             EErrorText.VALUE_NOT_RECOGNIZED,
-                             EErrorCategory.CONTENT),
+                             EEbmsErrorText.VALUE_NOT_RECOGNIZED,
+                             EEbmsErrorCategory.CONTENT),
   EBMS_FEATURE_NOT_SUPPORTED ("EBMS:0002",
-                              EErrorSeverity.WARNING,
+                              EEbmsErrorSeverity.WARNING,
                               "FeatureNotSupported",
-                              EErrorText.FEATURE_NOT_SUPPORTED,
-                              EErrorCategory.CONTENT),
+                              EEbmsErrorText.FEATURE_NOT_SUPPORTED,
+                              EEbmsErrorCategory.CONTENT),
   EBMS_VALUE_INCONSISTENT ("EBMS:0003",
-                           EErrorSeverity.FAILURE,
+                           EEbmsErrorSeverity.FAILURE,
                            "ValueInConsistent",
-                           EErrorText.VALUE_INCONSISTENT,
-                           EErrorCategory.CONTENT),
-  EBMS_OTHER ("EBMS:0004", EErrorSeverity.FAILURE, "Other", EErrorText.OTHER, EErrorCategory.CONTENT),
+                           EEbmsErrorText.VALUE_INCONSISTENT,
+                           EEbmsErrorCategory.CONTENT),
+  EBMS_OTHER ("EBMS:0004", EEbmsErrorSeverity.FAILURE, "Other", EEbmsErrorText.OTHER, EEbmsErrorCategory.CONTENT),
   EBMS_CONNECTION_FAIlURE ("EBMS:0005",
-                           EErrorSeverity.WARNING,
+                           EEbmsErrorSeverity.WARNING,
                            "ConnectionFailure",
-                           EErrorText.CONNECTION_FAILURE,
-                           EErrorCategory.COMMUNICATION),
+                           EEbmsErrorText.CONNECTION_FAILURE,
+                           EEbmsErrorCategory.COMMUNICATION),
   EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL ("EBMS:0006",
-                                        EErrorSeverity.FAILURE,
+                                        EEbmsErrorSeverity.FAILURE,
                                         "EmptyMessagePartitionChannel",
-                                        EErrorText.EMPTY_MESSAGE_PARTITION_CHANNEL,
-                                        EErrorCategory.COMMUNICATION),
+                                        EEbmsErrorText.EMPTY_MESSAGE_PARTITION_CHANNEL,
+                                        EEbmsErrorCategory.COMMUNICATION),
   EBMS_MIME_INCONSISTENCY ("EBMS:0007",
-                           EErrorSeverity.FAILURE,
+                           EEbmsErrorSeverity.FAILURE,
                            "MimeInconsistency",
-                           EErrorText.MIME_INCONSISTENCY,
-                           EErrorCategory.UNPACKAGING),
+                           EEbmsErrorText.MIME_INCONSISTENCY,
+                           EEbmsErrorCategory.UNPACKAGING),
   EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENT ("EBMS:0008",
-                                           EErrorSeverity.FAILURE,
+                                           EEbmsErrorSeverity.FAILURE,
                                            "FeatureNotSupportedInconsistency",
-                                           EErrorText.FEATURE_NOT_SUPPORTED_INCONSISTENT,
-                                           EErrorCategory.UNPACKAGING),
+                                           EEbmsErrorText.FEATURE_NOT_SUPPORTED_INCONSISTENT,
+                                           EEbmsErrorCategory.UNPACKAGING),
   EBMS_INVALID_HEADER ("EBMS:0009",
-                       EErrorSeverity.FAILURE,
+                       EEbmsErrorSeverity.FAILURE,
                        "InvalidHeader",
-                       EErrorText.INVALID_HEADER,
-                       EErrorCategory.UNPACKAGING),
+                       EEbmsErrorText.INVALID_HEADER,
+                       EEbmsErrorCategory.UNPACKAGING),
   EBMS_PROCESSING_MODE_MISMATCH ("EBMS:0010",
-                                 EErrorSeverity.FAILURE,
+                                 EEbmsErrorSeverity.FAILURE,
                                  "ProcessingModeMismatch",
-                                 EErrorText.PROCESSING_MODE_MISMATCH,
-                                 EErrorCategory.PROCESSING),
+                                 EEbmsErrorText.PROCESSING_MODE_MISMATCH,
+                                 EEbmsErrorCategory.PROCESSING),
   EBMS_EXTERNAL_PAYLOAD_ERROR ("EBMS:0011",
-                               EErrorSeverity.FAILURE,
+                               EEbmsErrorSeverity.FAILURE,
                                "ExternalPayloadError",
-                               EErrorText.EXTERNAL_PAYLOAD_ERROR,
-                               EErrorCategory.PROCESSING),
+                               EEbmsErrorText.EXTERNAL_PAYLOAD_ERROR,
+                               EEbmsErrorCategory.PROCESSING),
   // Security Processing Errors - from OASIS ebXML Messaging Service
   EBMS_FAILED_AUTHENTICATION ("EBMS:0101",
-                              EErrorSeverity.FAILURE,
+                              EEbmsErrorSeverity.FAILURE,
                               "FailedAuthentication",
-                              EErrorText.FAILED_AUTHENTICATION,
-                              EErrorCategory.PROCESSING),
+                              EEbmsErrorText.FAILED_AUTHENTICATION,
+                              EEbmsErrorCategory.PROCESSING),
   EBMS_FAILED_DECRYPTION ("EBMS:0102",
-                          EErrorSeverity.FAILURE,
+                          EEbmsErrorSeverity.FAILURE,
                           "FailedDecyrption",
-                          EErrorText.FAILED_DECRYPTION,
-                          EErrorCategory.PROCESSING),
+                          EEbmsErrorText.FAILED_DECRYPTION,
+                          EEbmsErrorCategory.PROCESSING),
   EBMS_POLICY_NONCOMPLIANCE ("EBMS:0103",
-                             EErrorSeverity.FAILURE,
+                             EEbmsErrorSeverity.FAILURE,
                              "PolicyNoncompliance",
-                             EErrorText.POLICY_NONCOMPLIANCE,
-                             EErrorCategory.PROCESSING),
+                             EEbmsErrorText.POLICY_NONCOMPLIANCE,
+                             EEbmsErrorCategory.PROCESSING),
   // Reliable Messaging Errors - from OASIS ebXML Messaging Service
   EBMS_DYSFUNCTIONAL_RELIABILITY ("EBMS:0201",
-                                  EErrorSeverity.FAILURE,
+                                  EEbmsErrorSeverity.FAILURE,
                                   "DysfunctionalReliability",
-                                  EErrorText.DYSFUNCTIONAL_RELIABILITY,
-                                  EErrorCategory.PROCESSING),
+                                  EEbmsErrorText.DYSFUNCTIONAL_RELIABILITY,
+                                  EEbmsErrorCategory.PROCESSING),
   EBMS_DELIVERY_FAILURE ("EBMS:0202",
-                         EErrorSeverity.FAILURE,
+                         EEbmsErrorSeverity.FAILURE,
                          "DeliveryFailure",
-                         EErrorText.DELIVERY_FAILURE,
-                         EErrorCategory.COMMUNICATION),
+                         EEbmsErrorText.DELIVERY_FAILURE,
+                         EEbmsErrorCategory.COMMUNICATION),
   // Additional Feature Errors - from AS4 Profile of ebMs 3.0 Version 1.0
   EBMS_MISSING_RECEIPT ("EBMS:0301",
-                        EErrorSeverity.FAILURE,
+                        EEbmsErrorSeverity.FAILURE,
                         "MissingReceipt",
-                        EErrorText.MISSING_RECEIPT,
-                        EErrorCategory.COMMUNICATION),
+                        EEbmsErrorText.MISSING_RECEIPT,
+                        EEbmsErrorCategory.COMMUNICATION),
   EBMS_INVALID_RECEIPT ("EBMS:0302",
-                        EErrorSeverity.FAILURE,
+                        EEbmsErrorSeverity.FAILURE,
                         "InvalidReceipt",
-                        EErrorText.INVALID_RECEIPT,
-                        EErrorCategory.COMMUNICATION),
+                        EEbmsErrorText.INVALID_RECEIPT,
+                        EEbmsErrorCategory.COMMUNICATION),
   EBMS_DECOMPRESSION_FAILURE ("EBMS:0303",
-                              EErrorSeverity.FAILURE,
+                              EEbmsErrorSeverity.FAILURE,
                               "DecompressionFailure",
-                              EErrorText.DECOMPRESSION_FAILURE,
-                              EErrorCategory.COMMUNICATION);
+                              EEbmsErrorText.DECOMPRESSION_FAILURE,
+                              EEbmsErrorCategory.COMMUNICATION);
 
   private final String m_sErrorCode;
-  private final EErrorSeverity m_eSeverity;
+  private final EEbmsErrorSeverity m_eSeverity;
   private final String m_sShortDescription;
   private final IHasDisplayText m_aErrorDetail;
-  private final EErrorCategory m_eCategory;
+  private final EEbmsErrorCategory m_eCategory;
 
   private EEbmsError (@Nonnull final String sErrorCode,
-                      @Nonnull final EErrorSeverity eSeverity,
+                      @Nonnull final EEbmsErrorSeverity eSeverity,
                       @Nonnull final String sShortDescription,
                       @Nonnull final IHasDisplayText aErrorDetail,
-                      @Nonnull final EErrorCategory eCategory)
+                      @Nonnull final EEbmsErrorCategory eCategory)
   {
     m_sErrorCode = sErrorCode;
     m_eSeverity = eSeverity;
@@ -148,7 +148,7 @@ public enum EEbmsError implements IEbmsError
   }
 
   @Nonnull
-  public EErrorSeverity getSeverity ()
+  public EEbmsErrorSeverity getSeverity ()
   {
     return m_eSeverity;
   }
@@ -166,7 +166,7 @@ public enum EEbmsError implements IEbmsError
   }
 
   @Nonnull
-  public EErrorCategory getCategory ()
+  public EEbmsErrorCategory getCategory ()
   {
     return m_eCategory;
   }

@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.text.display.IHasDisplayText;
 
-public enum EErrorText implements IHasDisplayText
+public enum EEbmsErrorText implements IHasDisplayText
 {
   VALUE_NOT_RECOGNIZED ("Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by th MSH."),
   FEATURE_NOT_SUPPORTED ("Although the message document is well formed and schema valid, some element/attribute value cannot be processed as expected because the related feature is not supported by the MSH."),
@@ -48,7 +48,7 @@ public enum EErrorText implements IHasDisplayText
 
   private final String m_sErrorText;
 
-  private EErrorText (@Nonnull @Nonempty final String sErrorText)
+  private EEbmsErrorText (@Nonnull @Nonempty final String sErrorText)
   {
     m_sErrorText = sErrorText;
   }

@@ -19,24 +19,28 @@ package com.helger.as4.servlet.spi;
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
  * This class represents the result of a message processor SPI implementation.
- * 
+ *
  * @author Philip Helger
  */
 public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
 {
   private final ESuccess m_eSuccess;
+  private final String m_sErrorMsg;
 
-  public AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess)
+  protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess, @Nullable final String sErrorMsg)
   {
     m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
+    m_sErrorMsg = sErrorMsg;
   }
 
   public boolean isSuccess ()
@@ -44,9 +48,29 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
     return m_eSuccess.isSuccess ();
   }
 
+  @Nullable
+  public String getErrorMessage ()
+  {
+    return m_sErrorMsg;
+  }
+
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Success", m_eSuccess).toString ();
+    return new ToStringGenerator (this).append ("Success", m_eSuccess)
+                                       .appendIf ("ErrorMsg", m_sErrorMsg, StringHelper::hasText)
+                                       .toString ();
+  }
+
+  @Nonnull
+  public static AS4MessageProcessorResult createSuccess ()
+  {
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null);
+  }
+
+  @Nonnull
+  public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
+  {
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg);
   }
 }
