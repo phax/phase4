@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>ph-as4-parent-pom</artifactId>
-    <version>0.6.0</version>
+    <version>0.6.1-SNAPSHOT</version>
   </parent>
   <artifactId>ph-as4-esens</artifactId>
   <packaging>bundle</packaging>
