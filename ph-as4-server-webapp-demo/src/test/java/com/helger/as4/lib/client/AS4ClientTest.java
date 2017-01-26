@@ -16,11 +16,8 @@
  */
 package com.helger.as4.lib.client;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
@@ -35,10 +32,8 @@ import com.helger.as4.client.AS4Client;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.mock.MockPModeGenerator;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
@@ -67,6 +62,7 @@ public final class AS4ClientTest
     AS4ServerConfiguration.reinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
+    MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass
@@ -74,22 +70,6 @@ public final class AS4ClientTest
   {
     s_aResMgr = null;
     MockJettySetup.shutDownServer ();
-  }
-
-  /**
-   * A Filter that searches for the PModeID from the given MockPmode with the
-   * right SOAPVersion
-   *
-   * @param eESOAPVersion
-   *        declares which pmode should be chosen depending on the SOAP Version
-   * @return a PMode
-   */
-  @Nonnull
-  private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
-  {
-    if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
-    return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
   }
 
   /**
@@ -103,17 +83,17 @@ public final class AS4ClientTest
   private static AS4Client _getMandatoryAttributesSuccessMessage ()
   {
     final AS4Client aClient = new AS4Client (s_aResMgr);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
+
     // Use a pmode that you know is currently running on the server your trying
     // to send the message too
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (aClient.getSOAPVersion ()));
-    assertNotNull (aPModeID);
+    final String sPModeID = MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST;
 
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");
     aClient.setConversationID ("9898");
-    aClient.setAgreementRefPMode (aPModeID.getConfigID ());
+    aClient.setAgreementRefPMode (sPModeID);
     aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID ("MyPartyIDforSending");

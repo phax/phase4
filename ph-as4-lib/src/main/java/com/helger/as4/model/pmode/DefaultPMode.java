@@ -53,7 +53,7 @@ public final class DefaultPMode
     aDefaultConfig.setMEPBinding (ETransportChannelBinding.PUSH);
     aDefaultConfig.setLeg1 (_generatePModeLeg ());
     // Leg 2 stays null, because we only use one-way
-    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aDefaultConfig);
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aDefaultConfig);
     return aDefaultConfig;
   }
 

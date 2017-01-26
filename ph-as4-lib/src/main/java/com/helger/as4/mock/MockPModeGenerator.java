@@ -26,6 +26,7 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.ETransportChannelBinding;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -40,8 +41,8 @@ import com.helger.commons.state.ETriState;
 
 public final class MockPModeGenerator
 {
-  public static String PMODE_CONFIG_ID_SOAP11_TEST = "pmode-test11";
-  public static String PMODE_CONFIG_ID_SOAP12_TEST = "pmode-test";
+  public static String PMODE_CONFIG_ID_SOAP11_TEST = "mock-pmode-soap11";
+  public static String PMODE_CONFIG_ID_SOAP12_TEST = "mock-pmode-soap12";
 
   private MockPModeGenerator ()
   {}
@@ -68,7 +69,7 @@ public final class MockPModeGenerator
   @Nonnull
   private static PMode _createTestPMode (@Nonnull final PModeConfig aConfig)
   {
-    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aConfig);
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aConfig);
     return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
   }
 
@@ -155,5 +156,16 @@ public final class MockPModeGenerator
                            "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
                            null,
                            null);
+  }
+
+  public static void ensureMockPModesArePresent ()
+  {
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    for (final ESOAPVersion e : ESOAPVersion.values ())
+    {
+      final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
+      if (!aPModeMgr.containsWithID (aPMode.getID ()))
+        aPModeMgr.createPMode (aPMode);
+    }
   }
 }

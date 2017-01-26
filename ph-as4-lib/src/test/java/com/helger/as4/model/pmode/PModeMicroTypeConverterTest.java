@@ -83,7 +83,7 @@ public final class PModeMicroTypeConverterTest
       XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg1 ());
       XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg2 ());
     }
-    MetaAS4Manager.getPModeConfigMgr ().createPModeConfigIfNotExisting (aPModeConfig);
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
 
     {
       final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
