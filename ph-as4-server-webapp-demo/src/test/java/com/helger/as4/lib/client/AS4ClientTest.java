@@ -70,6 +70,14 @@ public class AS4ClientTest
     MockJettySetup.shutDownServer ();
   }
 
+  /**
+   * A Filter that searches for the PModeID from the given MockPmode with the
+   * right SOAPVersion
+   *
+   * @param eESOAPVersion
+   *        declares which pmode should be chosen depending on the SOAP Version
+   * @return a PMode
+   */
   @Nonnull
   private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
   {
@@ -78,11 +86,20 @@ public class AS4ClientTest
     return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
   }
 
+  /**
+   * To reduce the amount of code in each test, this method sets the basic
+   * attributes that are needed for a successful message to build. <br>
+   * Only needed for positive messages.
+   *
+   * @return the AS4Client with the set attributes to continue
+   */
   private AS4Client getMandatoryAttributesSuccessMessage ()
   {
 
     final AS4Client aClient = new AS4Client (s_aResMgr);
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    // Use a pmode that you know is currently running on the server your trying
+    // to send the message too
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (aClient.getSOAPVersion ()));
 
     aClient.setAction ("AnAction");
@@ -100,6 +117,14 @@ public class AS4ClientTest
     return aClient;
   }
 
+  /**
+   * Sets the keystore attributes, it uses the dummy keystore
+   * keys/dummy-pw-test.jks
+   *
+   * @param aClient
+   *        the client on which these attributes should be set
+   * @return the client to continue working with it
+   */
   private AS4Client setKeyStoreTestData (final AS4Client aClient)
   {
     aClient.setKeyStoreAlias ("ph-as4");

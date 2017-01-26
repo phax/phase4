@@ -90,9 +90,8 @@ public class AS4Client
   private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
   // For Message Info
   private String m_sMessageIDPrefix;
+
   // CollaborationInfo
-  // TODO group accordingly if more then 1 parameter z.b group ServiceType and
-  // Value in one setter
   private String m_sAction;
 
   private String m_sServiceType;
@@ -200,7 +199,6 @@ public class AS4Client
 
     if (m_aEbms3Properties.isEmpty ())
       throw new IllegalStateException ("finalRecipient and originalSender are mandatory properties");
-
   }
 
   private void _checkKeystoreAttributes ()
