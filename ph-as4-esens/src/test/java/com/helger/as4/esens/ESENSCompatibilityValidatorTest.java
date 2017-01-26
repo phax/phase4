@@ -16,6 +16,7 @@
  */
 package com.helger.as4.esens;
 
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
@@ -176,7 +177,8 @@ public class ESENSCompatibilityValidatorTest
   public void testValidatePModeConfigSecurityWrongX509SignatureAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
-    aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_512);
+    aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
+    assertNotSame (aSecurityLeg.getX509SignatureAlgorithm (), ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT);
     m_aPModeConfig.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.AS4_DEFAULT),
                                           null,
                                           null,
