@@ -137,6 +137,7 @@ osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.model.profile.IA
             <exclude>**/NOTICE</exclude>
             <exclude>**/LICENSE</exclude>
             <exclude>**/*.txt</exclude>
+            <exclude>**/*.jks</exclude>
             <exclude>src/main/resources/schemas/*</exclude>
           </excludes>
         </configuration>
