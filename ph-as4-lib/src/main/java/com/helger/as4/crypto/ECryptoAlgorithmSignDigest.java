@@ -37,7 +37,7 @@ public enum ECryptoAlgorithmSignDigest implements IHasID <String>
   DIGEST_SHA_384 ("sha-384", WSS4JConstants.SHA384),
   DIGEST_SHA_512 ("sha-512", WSS4JConstants.SHA512);
 
-  public static final ECryptoAlgorithmSignDigest SIGN_DIGEST_ALGORITHM_DEFAULT = ECryptoAlgorithmSignDigest.DIGEST_SHA_256;
+  public static final ECryptoAlgorithmSignDigest SIGN_DIGEST_ALGORITHM_DEFAULT = DIGEST_SHA_256;
 
   private final String m_sID;
   private final String m_sAlgorithmURI;

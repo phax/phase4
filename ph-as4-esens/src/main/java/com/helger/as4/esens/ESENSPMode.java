@@ -39,13 +39,15 @@ import com.helger.commons.state.ETriState;
 
 public final class ESENSPMode
 {
+  public static final String ESENS_PMODE_CONFIG_ID = "pm-esens-default";
+
   private ESENSPMode ()
   {}
 
   @Nonnull
   public static PModeConfig createESENSPModeConfig ()
   {
-    final PModeConfig aConfig = new PModeConfig ("pm-esens-default");
+    final PModeConfig aConfig = new PModeConfig (ESENS_PMODE_CONFIG_ID);
     aConfig.setMEP (EMEP.ONE_WAY);
     aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
     aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (),

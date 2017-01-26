@@ -20,9 +20,10 @@ import javax.annotation.Nonnull;
 
 /**
  * Base interface for AS4 profile registrar
- * 
+ *
  * @author Philip Helger
  */
+@FunctionalInterface
 public interface IAS4ProfileRegistrar
 {
   void registerProfile (@Nonnull IAS4Profile aAS4Profile);

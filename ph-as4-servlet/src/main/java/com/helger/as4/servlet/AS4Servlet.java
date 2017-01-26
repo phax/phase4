@@ -458,26 +458,23 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (StringHelper.hasText (sProfileName))
       {
         final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
-
-        if (aProfile != null)
-        {
-          // Profile Checks gets set when started with Server
-          final ErrorList aErrorList = new ErrorList ();
-          aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
-          aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
-          if (aErrorList.isNotEmpty ())
-          {
-            s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
-            aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
-                                        aProfile.getDisplayName () +
-                                        "\n Following errors are present: " +
-                                        aErrorList.getAllErrors ().getAllTexts (aLocale));
-            return;
-          }
-        }
-        else
+        if (aProfile == null)
         {
           aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
+          return;
+        }
+
+        // Profile Checks gets set when started with Server
+        final ErrorList aErrorList = new ErrorList ();
+        aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+        aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+        if (aErrorList.isNotEmpty ())
+        {
+          s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
+          aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
+                                      aProfile.getDisplayName () +
+                                      "\n Following errors are present: " +
+                                      aErrorList.getAllErrors ().getAllTexts (aLocale));
           return;
         }
       }

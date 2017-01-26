@@ -143,11 +143,11 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("No signature algorithm is specified but is required"));
         }
         else
-          if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT))
+          if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.RSA_SHA_256))
           {
             aErrorList.add (_createError ("AS4 Profile only allows " +
-                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getID () +
-                                          "as signing algorithm"));
+                                          ECryptoAlgorithmSign.RSA_SHA_256.getID () +
+                                          " as signing algorithm"));
           }
 
         // Check Hash Function
@@ -156,12 +156,11 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("No hash function (Digest Algorithm) is specified but is required"));
         }
         else
-          if (!aPModeLegSecurity.getX509SignatureHashFunction ()
-                                .equals (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT))
+          if (!aPModeLegSecurity.getX509SignatureHashFunction ().equals (ECryptoAlgorithmSignDigest.DIGEST_SHA_256))
           {
             aErrorList.add (_createError ("AS4 Profile only allows " +
-                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getID () +
-                                          "as hash function"));
+                                          ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID () +
+                                          " as hash function"));
           }
 
         // Check Encrypt algorithm
@@ -170,12 +169,11 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
           aErrorList.add (_createError ("No encryption algorithm is specified but is required"));
         }
         else
-          if (!aPModeLegSecurity.getX509EncryptionAlgorithm ()
-                                .equals (ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT))
+          if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
           {
             aErrorList.add (_createError ("AS4 Profile only allows " +
-                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT.getID () +
-                                          "as encryption algorithm"));
+                                          ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
+                                          " as encryption algorithm"));
           }
 
         // Check WSS Version = 1.1.1
