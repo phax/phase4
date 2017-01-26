@@ -84,10 +84,10 @@ public class AS4Client
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
   // For Message Info
   private String m_sMessageIDPrefix;
 
@@ -139,7 +139,7 @@ public class AS4Client
 
   /**
    * @return The internal http client provider used in
-   *         {@link #sendMessage(String, HttpEntity)}.
+   *         {@link #sendMessage(String, ResponseHandler)}.
    */
   @Nonnull
   protected IHttpClientProvider getHttpClientProvider ()
@@ -266,7 +266,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
