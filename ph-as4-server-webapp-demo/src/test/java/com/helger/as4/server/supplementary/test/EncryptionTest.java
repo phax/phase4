@@ -18,22 +18,12 @@ package com.helger.as4.server.supplementary.test;
 
 import static org.junit.Assert.assertFalse;
 
-import java.io.IOException;
-
-import javax.crypto.KeyGenerator;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
-import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
-import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -43,15 +33,15 @@ import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * A set of test-cases for encrypting and decrypting SOAP requests.
  */
-public class EncryptionTest
+public final class EncryptionTest
 {
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
 
-  private final WSSecurityEngine secEngine = new WSSecurityEngine ();
   private final Crypto m_aCrypto;
   private final AS4CryptoFactory m_aAS4CryptoFactory;
   private final CryptoProperties m_aCryptoProperties;
@@ -63,18 +53,9 @@ public class EncryptionTest
     m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
-  /**
-   * Setup method
-   *
-   * @throws java.lang.Exception
-   *         Thrown when there is a problem in setup
-   */
-  @Before
-  public void setUp () throws Exception
+  private static Document _getSoapEnvelope11 () throws SAXException
   {
-    final KeyGenerator keyGen = KeyGenerator.getInstance ("AES");
-    keyGen.init (128);
-    secEngine.setWssConfig (WSSConfig.getNewInstance ());
+    return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
 
   /**
@@ -88,11 +69,11 @@ public class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final WSSecEncrypt builder = new WSSecEncrypt ();
-    builder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getXMLID ());
-    builder.setSymmetricKey (null);
-    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
+    final WSSecEncrypt aBuilder = new WSSecEncrypt ();
+    aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
+    aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
+    aBuilder.setSymmetricKey (null);
+    aBuilder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
 
     final Document doc = _getSoapEnvelope11 ();
     WSSecHeader secHeader = new WSSecHeader (doc);
@@ -102,24 +83,15 @@ public class EncryptionTest
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
     // "Element");
     final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESOAPVersion.SOAP_11.getNamespaceURI (), "Element");
-    builder.getParts ().add (encP);
+    aBuilder.getParts ().add (encP);
     secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
     LOG.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = builder.build (doc, m_aCrypto, secHeader);
+    final Document encryptedDoc = aBuilder.build (doc, m_aCrypto, secHeader);
     LOG.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
     assertFalse (outputString.contains ("counter_port_type"));
-
-  }
-
-  private Document _getSoapEnvelope11 () throws SAXException, IOException, ParserConfigurationException
-  {
-    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
-    domFactory.setNamespaceAware (true); // never forget this!
-    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
-    return builder.parse (new ClassPathResource ("UserMessageWithoutWSSE.xml").getInputStream ());
   }
 
   @Test
@@ -129,7 +101,7 @@ public class EncryptionTest
     // builder.setUserInfo ("wss40");
     builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getXMLID ());
+    builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();

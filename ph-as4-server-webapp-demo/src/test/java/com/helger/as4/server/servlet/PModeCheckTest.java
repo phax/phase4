@@ -18,7 +18,6 @@ package com.helger.as4.server.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -267,7 +266,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (MockEbmsHelper.FINAL_RECIPIENT));
 
-    assertTrue (aEbms3Properties.size () == 1);
+    assertEquals (1, aEbms3Properties.size ());
 
     aEbms3Properties.add (getRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
@@ -298,7 +297,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
   /**
    * Is ESENS specific, EBMS3 specification is the protocol an optional element.
-   * Maybe refactoring into a test if http and smtp addresses later on get
+   * Maybe refactoring into a test if http and SMTP addresses later on get
    * converted right
    *
    * @throws Exception

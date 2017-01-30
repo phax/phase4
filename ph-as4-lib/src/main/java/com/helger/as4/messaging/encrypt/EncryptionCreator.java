@@ -71,7 +71,7 @@ public class EncryptionCreator
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
+    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
@@ -99,7 +99,7 @@ public class EncryptionCreator
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt ();
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getXMLID ());
+    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
 
