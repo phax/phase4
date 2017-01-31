@@ -33,24 +33,19 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * A set of test-cases for signing and verifying SOAP requests.
  */
-public class SignatureTest
+public final class SignatureTest
 {
-  private final WSSecurityEngine secEngine = new WSSecurityEngine ();
-  private final Crypto m_aCrypto;
-  private final AS4CryptoFactory m_aAS4CryptoFactory;
-  private final CryptoProperties m_aCryptoProperties;
-
-  public SignatureTest () throws Exception
+  private static Document _getSoapEnvelope11 () throws SAXException
   {
-    m_aAS4CryptoFactory = new AS4CryptoFactory ();
-    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
-    m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
+    return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
 
   /**
@@ -63,46 +58,35 @@ public class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final WSSecSignature builder = new WSSecSignature ();
-    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
-    builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    builder.setSignatureAlgorithm ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+    final AS4CryptoFactory aAS4CryptoFactory = new AS4CryptoFactory ();
+    final Crypto aCrypto = aAS4CryptoFactory.getCrypto ();
+    final CryptoProperties aCryptoProperties = aAS4CryptoFactory.getCryptoProperties ();
+
+    final WSSecSignature aBuilder = new WSSecSignature ();
+    aBuilder.setUserInfo (aCryptoProperties.getKeyAlias (), aCryptoProperties.getKeyPassword ());
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
-    builder.setDigestAlgo ("http://www.w3.org/2001/04/xmlenc#sha256");
+    aBuilder.setDigestAlgo (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
-    final Document signedDoc = builder.build (doc, m_aCrypto, secHeader);
+    final Document signedDoc = aBuilder.build (doc, aCrypto, secHeader);
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
-    final WSHandlerResult results = verify (signedDoc);
+    WSHandlerResult aResults;
+    {
+      final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
+      aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCrypto);
+    }
 
-    final WSSecurityEngineResult actionResult = results.getActionResults ()
+    final WSSecurityEngineResult actionResult = aResults.getActionResults ()
                                                        .get (Integer.valueOf (WSConstants.SIGN))
                                                        .get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
     assertSame (referenceType, REFERENCE_TYPE.DIRECT_REF);
-  }
-
-  /**
-   * Verifies the soap envelope. This method verifies all the signature
-   * generated.
-   *
-   * @param env
-   *        soap envelope
-   * @throws java.lang.Exception
-   *         Thrown when there is a problem in verification
-   */
-  private WSHandlerResult verify (final Document doc) throws Exception
-  {
-    return secEngine.processSecurityHeader (doc, null, null, m_aCrypto);
-  }
-
-  private Document _getSoapEnvelope11 () throws SAXException
-  {
-    return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
 }

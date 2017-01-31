@@ -48,15 +48,15 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
 
   private final String m_sID;
   private final ASN1ObjectIdentifier m_aOID;
-  private final String m_sXMLID;
+  private final String m_sAlgorithmURI;
 
   private ECryptoAlgorithmCrypt (@Nonnull @Nonempty final String sID,
                                  @Nonnull final ASN1ObjectIdentifier aOID,
-                                 @Nonnull @Nonempty final String sXMLID)
+                                 @Nonnull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_aOID = aOID;
-    m_sXMLID = sXMLID;
+    m_sAlgorithmURI = sAlgorithmURI;
   }
 
   @Nonnull
@@ -77,9 +77,9 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
    */
   @Nonnull
   @Nonempty
-  public String getXMLID ()
+  public String getAlgorithmURI ()
   {
-    return m_sXMLID;
+    return m_sAlgorithmURI;
   }
 
   @Nullable
