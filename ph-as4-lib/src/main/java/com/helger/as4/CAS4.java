@@ -20,7 +20,7 @@ import javax.annotation.concurrent.Immutable;
 
 /**
  * AS4 constants
- * 
+ *
  * @author Philip Helger
  */
 @Immutable
@@ -46,6 +46,10 @@ public final class CAS4
 
   // Constants
   public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
+
+  // Constant Names
+  public static final String FINAL_RECIPIENT = "finalRecipient";
+  public static final String ORIGINAL_SENDER = "originalSender";
 
   private CAS4 ()
   {}

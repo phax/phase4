@@ -45,10 +45,12 @@ import com.helger.as4.error.EEbmsError;
 import com.helger.as4.error.EEbmsErrorSeverity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
+import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
@@ -71,11 +73,15 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.StringMap;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
@@ -183,7 +189,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
     {
       final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -192,7 +198,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
     }
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -508,18 +514,84 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (_isSendResponse (aPModeConfig))
       {
         final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
-        final Ebms3MessageInfo aEbms3MessageInfo = CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
-        final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                             aEbms3MessageInfo,
-                                                                                             aEbms3UserMessage,
-                                                                                             aSOAPDocument,
-                                                                                             _isSendNonRepudiationInformation (aPModeConfig))
-                                                                      .setMustUnderstand (true);
+        if (aPModeConfig.getMEP ().equals (EMEP.ONE_WAY))
+        {
+          final Ebms3MessageInfo aEbms3MessageInfo = CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+          final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                                               aEbms3MessageInfo,
+                                                                                               aEbms3UserMessage,
+                                                                                               aSOAPDocument,
+                                                                                               _isSendNonRepudiationInformation (aPModeConfig))
+                                                                        .setMustUnderstand (true);
 
-        // We've got our response
-        final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-        aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
-                    .setMimeType (eSOAPVersion.getMimeType ());
+          // We've got our response
+          final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                      .setMimeType (eSOAPVersion.getMimeType ());
+        }
+        else
+        {
+          // TWO - WAY - SELECTED
+          final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
+                                                                                               aUserMessage.getMessageInfo ()
+                                                                                                           .getMessageId ());
+          // TODO how to get attachments payload from SPI?
+          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, null);
+
+          // Invert from and to role from original user message
+          final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()
+                                                                                                     .getTo ()
+                                                                                                     .getRole (),
+                                                                                         aUserMessage.getPartyInfo ()
+                                                                                                     .getTo ()
+                                                                                                     .getPartyIdAtIndex (0)
+                                                                                                     .getValue (),
+                                                                                         aUserMessage.getPartyInfo ()
+                                                                                                     .getFrom ()
+                                                                                                     .getRole (),
+                                                                                         aUserMessage.getPartyInfo ()
+                                                                                                     .getFrom ()
+                                                                                                     .getPartyIdAtIndex (0)
+                                                                                                     .getValue ());
+
+          // Should be exactly the same as incoming message
+          final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
+
+          // Need to switch C1 and C4 around from the original usermessage
+          final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+          Ebms3Property aFinalRecipient = null;
+          Ebms3Property aOriginalSender = null;
+          for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
+          {
+            if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+            {
+              aOriginalSender = aProp;
+            }
+            else
+              if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
+              {
+                aFinalRecipient = aProp;
+              }
+          }
+          aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
+          aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
+
+          aEbms3MessageProperties.addProperty (aFinalRecipient);
+          aEbms3MessageProperties.addProperty (aOriginalSender);
+
+          final AS4UserMessage aResponeUserMesage = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                                         aEbms3PayloadInfo,
+                                                                                         aEbms3CollaborationInfo,
+                                                                                         aEbms3PartyInfo,
+                                                                                         aEbms3MessageProperties,
+                                                                                         eSOAPVersion);
+          // TODO when we get attachments from the SPI we need to change this
+          // message into a mime message with mimemessagecreator
+          // We've got our response
+          final Document aResponseDoc = aResponeUserMesage.getAsSOAPDocument ();
+          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                      .setMimeType (eSOAPVersion.getMimeType ());
+        }
       }
       else
         s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
@@ -749,7 +821,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))

@@ -18,6 +18,7 @@ package com.helger.as4.mock;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -36,9 +37,6 @@ public final class MockEbmsHelper
   public static final String DEFAULT_RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
   public static final String DEFAULT_AGREEMENT = "http://agreements.holodeckb2b.org/examples/agreement0";
 
-  public static final String FINAL_RECIPIENT = "finalRecipient";
-  public static final String ORIGINAL_SENDER = "originalSender";
-
   private MockEbmsHelper ()
   {}
 
@@ -46,14 +44,14 @@ public final class MockEbmsHelper
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName (ORIGINAL_SENDER);
+    aOriginalSender.setName (CAS4.ORIGINAL_SENDER);
     aOriginalSender.setValue ("C1-test");
     aEbms3Properties.add (aOriginalSender);
 
     final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName (FINAL_RECIPIENT);
+    aFinalRecipient.setName (CAS4.FINAL_RECIPIENT);
     aFinalRecipient.setValue ("C4-test");
     aEbms3Properties.add (aFinalRecipient);
 

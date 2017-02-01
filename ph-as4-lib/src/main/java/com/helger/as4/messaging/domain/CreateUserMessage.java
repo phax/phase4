@@ -64,7 +64,7 @@ public final class CreateUserMessage
   }
 
   @Nonnull
-  public static AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aMessageInfo,
+  public static AS4UserMessage createUserMessage (@Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                   @Nullable final Ebms3PayloadInfo aEbms3PayloadInfo,
                                                   @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                                   @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
@@ -86,7 +86,7 @@ public final class CreateUserMessage
     aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
 
     // Message Info
-    aUserMessage.setMessageInfo (aMessageInfo);
+    aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final AS4UserMessage ret = new AS4UserMessage (eSOAPVersion, aUserMessage);
     return ret;
@@ -218,5 +218,12 @@ public final class CreateUserMessage
   public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
   {
     return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
+  }
+
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId,
+                                                         @Nullable final String sRefToMessageID)
+  {
+    return MessageHelperMethods.createEbms3MessageInfo (sMessageId, sRefToMessageID);
   }
 }

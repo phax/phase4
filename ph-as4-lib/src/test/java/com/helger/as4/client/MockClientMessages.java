@@ -148,7 +148,7 @@ final class MockClientMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           "pm-esens-generic-resp",
+                                                                                                           "pmode-twoway",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
                                                                                    MockEbmsHelper.DEFAULT_PARTY_ID,

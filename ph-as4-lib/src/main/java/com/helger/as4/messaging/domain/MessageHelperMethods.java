@@ -57,10 +57,30 @@ public final class MessageHelperMethods
   @Nonnull
   public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix)
   {
+    return createEbms3MessageInfo (sMessageIDSuffix, null);
+  }
+
+  /**
+   * Create a new message info.
+   *
+   * @param sMessageIDSuffix
+   *        The message ID suffix. If present, it is appended to the generated
+   *        UUID, otherwise just the UUID is used.
+   * @param sRefToMessageID
+   *        to set the reference to the previous message needed for two way
+   *        exchanges
+   * @return Never <code>null</code>.
+   */
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix,
+                                                         @Nullable final String sRefToMessageID)
+  {
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 
     final UUID aUUID = UUID.randomUUID ();
     aMessageInfo.setMessageId (StringHelper.getConcatenatedOnDemand (aUUID.toString (), '@', sMessageIDSuffix));
+    if (StringHelper.hasText (sRefToMessageID))
+      aMessageInfo.setRefToMessageId (sRefToMessageID);
 
     // TODO Change Timestamp or do we only want the present date when the
     // message gets sent/replied
