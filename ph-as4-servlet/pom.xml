@@ -59,7 +59,6 @@
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -81,6 +80,8 @@
           <instructions>
             <Export-Package>com.helger.as4.servlet.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI)"; cardinality:=multiple</Require-Capability>
           </instructions>
         </configuration>
       </plugin>
