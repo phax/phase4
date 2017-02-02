@@ -80,8 +80,8 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test",
-                                            null,
+    return new PModeLegBusinessInformation ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service",
+                                            "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test",
                                             null,
                                             null,
                                             null,
