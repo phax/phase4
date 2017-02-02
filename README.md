@@ -10,8 +10,11 @@ It consists of the following sub-projects:
   * **ph-as4-server-webapp-demo** - AS4 servlet based server component to be integrated into an existing server
 
 ## News and noteworthy
--
-  * v0.6.0
+
+  * v0.6.1
+    * Added HTTP retry for client
+    * Added (very simple) server duplicate detection
+  * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects
     * Requires ph-web 8.7.2 or higher
