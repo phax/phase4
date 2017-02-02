@@ -422,11 +422,19 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     if (aErrorMessages.isEmpty () && _isPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
-      final boolean bCanInvokeSPI = AS4DuplicateChecker.registerAndCheck (sMessageID).isContinue ();
+      final boolean bIsDuplicate = AS4DuplicateChecker.registerAndCheck (sMessageID).isBreak ();
 
-      // Invoke all SPIs
-      if (bCanInvokeSPI)
+      if (bIsDuplicate)
       {
+        s_aLogger.info ("Not invoking SPIs, because message was already handled!");
+        final Ebms3Description aDesc = new Ebms3Description ();
+        aDesc.setLang (aLocale.getLanguage ());
+        aDesc.setValue ("Another message with the same ID was already received!");
+        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aLocale, sMessageID, "", aDesc));
+      }
+      else
+      {
+        // Invoke all SPIs
         for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
           try
           {
@@ -451,12 +459,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
               final Ebms3Error aError = new Ebms3Error ();
               aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
               aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
-              if (aUserMessage != null && aUserMessage.getMessageInfo () != null)
-                aError.setRefToMessageInError (aUserMessage.getMessageInfo ().getMessageId ());
+              aError.setRefToMessageInError (sMessageID);
               final Ebms3Description aDesc = new Ebms3Description ();
               aDesc.setValue (aResult.getErrorMessage ());
-              // XXX assume "english" for now
-              aDesc.setLang ("en");
+              aDesc.setLang (aLocale.getLanguage ());
               aError.setDescription (aDesc);
               aErrorMessages.add (aError);
 
@@ -473,10 +479,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                         t.getLocalizedMessage ());
             return;
           }
-      }
-      else
-      {
-        s_aLogger.info ("Not invoking SPIs, because message was already handled!");
       }
     }
 
@@ -837,6 +839,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final AS4Response aHttpResponse = (AS4Response) aUnifiedResponse;
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
+    // TODO make locale dynamic
+    final Locale aLocale = Locale.US;
+
     // XXX By default login in admin user
     // XXX why do we need a logged-in user?
     final ELoginResult e = LoggedInUserManager.getInstance ().loginUser (CSecurity.USER_ADMINISTRATOR_LOGIN,
@@ -964,8 +969,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         else
         {
           // SOAP document and SOAP version are determined
-          // TODO make locale dynamic
-          _handleSOAPMessage (aResMgr, aSOAPDocument, eSOAPVersion, aIncomingAttachments, aHttpResponse, Locale.US);
+          _handleSOAPMessage (aResMgr, aSOAPDocument, eSOAPVersion, aIncomingAttachments, aHttpResponse, aLocale);
         }
       }
     }
