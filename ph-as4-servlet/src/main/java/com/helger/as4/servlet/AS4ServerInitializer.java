@@ -71,9 +71,12 @@ public final class AS4ServerInitializer
     }
   }
 
+  /**
+   * Call this method in your AS4 server to initialize everything that is
+   * necessary to use the {@link AS4Servlet}.
+   */
   public static void initAS4Server ()
   {
-
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
