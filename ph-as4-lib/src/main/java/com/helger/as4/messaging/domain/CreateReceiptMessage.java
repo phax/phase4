@@ -128,10 +128,4 @@ public final class CreateReceiptMessage
 
     return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
   }
-
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
-  {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
-  }
 }

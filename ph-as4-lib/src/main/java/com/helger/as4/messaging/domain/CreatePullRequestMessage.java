@@ -46,10 +46,4 @@ public final class CreatePullRequestMessage
     final AS4PullRequestMessage ret = new AS4PullRequestMessage (eSOAPVersion, aSignalMessage);
     return ret;
   }
-
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
-  {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
-  }
 }

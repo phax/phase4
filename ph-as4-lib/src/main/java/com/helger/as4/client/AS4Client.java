@@ -80,14 +80,14 @@ import com.helger.xml.microdom.IMicroDocument;
 public class AS4Client
 {
   private final AS4ResourceManager m_aResMgr;
-  private IHttpClientProvider m_aHTTPClientProvider = new HttpClientFactory ();
+  private IHttpClientProvider m_aHTTPClientProvider = new AS4HttpClientFactory ();
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
   // For Message Info
   private String m_sMessageIDPrefix;
 
@@ -233,7 +233,12 @@ public class AS4Client
     final boolean bEncrypt = m_eCryptoAlgorithmCrypt != null;
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (m_sMessageIDPrefix);
+    // Create a new message ID for each build!
+    final String sMessageID = StringHelper.getConcatenatedOnDemand (m_sMessageIDPrefix,
+                                                                    '@',
+                                                                    MessageHelperMethods.createRandomMessageID ());
+
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (m_sAction,
                                                                                                            m_sServiceType,
@@ -266,7 +271,7 @@ public class AS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", m_aKeyStoreFile.getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", m_sKeyStoreType);
@@ -502,6 +507,7 @@ public class AS4Client
     m_aEbms3Properties.setAll (aEbms3Properties);
   }
 
+  @Nullable
   public String getMessageIDPrefix ()
   {
     return m_sMessageIDPrefix;
@@ -512,9 +518,10 @@ public class AS4Client
    * here.
    *
    * @param sMessageIDPrefix
-   *        Prefix that will be at the start of the MessageID
+   *        Prefix that will be at the start of the MessageID. May be
+   *        <code>null</code>.
    */
-  public void setMessageIDPrefix (final String sMessageIDPrefix)
+  public void setMessageIDPrefix (@Nullable final String sMessageIDPrefix)
   {
     m_sMessageIDPrefix = sMessageIDPrefix;
   }

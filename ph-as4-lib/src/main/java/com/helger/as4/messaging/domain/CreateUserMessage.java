@@ -213,17 +213,4 @@ public final class CreateUserMessage
 
     return aEbms3PayloadInfo;
   }
-
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId)
-  {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
-  }
-
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageId,
-                                                         @Nullable final String sRefToMessageID)
-  {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId, sRefToMessageID);
-  }
 }

@@ -39,6 +39,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
@@ -84,7 +85,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
 
     // Default MessageInfo for testing
-    m_aEbms3UserMessage.setMessageInfo (CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME));
+    m_aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Default CollaborationInfo for testing
     m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",

@@ -28,8 +28,10 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.http.HttpMessage;
 
+import com.helger.as4.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
 import com.helger.http.HTTPStringHelper;
@@ -46,39 +48,43 @@ public final class MessageHelperMethods
   private MessageHelperMethods ()
   {}
 
+  @Nonnull
+  @Nonempty
+  public static String createRandomMessageID ()
+  {
+    return CAS4.LIB_NAME + "@" + UUID.randomUUID ().toString ();
+  }
+
   /**
-   * Create a new message info.
+   * Create a new message info with a UUID as message ID.
    *
-   * @param sMessageIDSuffix
-   *        The message ID suffix. If present, it is appended to the generated
-   *        UUID, otherwise just the UUID is used.
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix)
+  public static Ebms3MessageInfo createEbms3MessageInfo ()
   {
-    return createEbms3MessageInfo (sMessageIDSuffix, null);
+    return createEbms3MessageInfo (createRandomMessageID (), null);
   }
 
   /**
    * Create a new message info.
    *
-   * @param sMessageIDSuffix
-   *        The message ID suffix. If present, it is appended to the generated
-   *        UUID, otherwise just the UUID is used.
+   * @param sMessageID
+   *        The message ID. May neither be <code>null</code> nor empty.
    * @param sRefToMessageID
    *        to set the reference to the previous message needed for two way
    *        exchanges
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sMessageIDSuffix,
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
                                                          @Nullable final String sRefToMessageID)
   {
+    ValueEnforcer.notEmpty (sMessageID, "MessageID");
+
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 
-    final UUID aUUID = UUID.randomUUID ();
-    aMessageInfo.setMessageId (StringHelper.getConcatenatedOnDemand (aUUID.toString (), '@', sMessageIDSuffix));
+    aMessageInfo.setMessageId (sMessageID);
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
 

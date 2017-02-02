@@ -26,7 +26,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -35,6 +34,7 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.soap.ESOAPVersion;
@@ -87,7 +87,7 @@ final class MockClientMessages
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                                    CreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                                    MessageHelperMethods.createEbms3MessageInfo (),
                                                                                                     aEbms3ErrorList)
                                                                                .setMustUnderstand (true)
                                                                                .getAsSOAPDocument (),
@@ -110,7 +110,7 @@ final class MockClientMessages
 
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                     CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                      null,
                                                                      aUserMessage,
                                                                      true)
@@ -142,7 +142,7 @@ final class MockClientMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                            "MyServiceTypes",
@@ -181,7 +181,7 @@ final class MockClientMessages
     aEbms3Properties.add (aEbms3PropertyContext);
     aEbms3Properties.add (aEbms3PropertyProcess);
 
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                            "MyServiceTypes",
@@ -217,7 +217,7 @@ final class MockClientMessages
     aEbms3Properties.add (aEbms3PropertyProcess);
 
     // Use an empty message info by purpose
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (null);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (null,
                                                                                                            null,

@@ -45,10 +45,4 @@ public final class CreateErrorMessage
     final AS4ErrorMessage ret = new AS4ErrorMessage (eSOAPVersion, aSignalMessage);
     return ret;
   }
-
-  @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull final String sMessageId)
-  {
-    return MessageHelperMethods.createEbms3MessageInfo (sMessageId);
-  }
 }

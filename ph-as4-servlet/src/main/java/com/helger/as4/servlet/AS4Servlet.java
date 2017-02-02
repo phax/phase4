@@ -49,6 +49,7 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
@@ -496,7 +497,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (_isSendErrorResponse (aPModeConfig))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                 CreateErrorMessage.createEbms3MessageInfo (CAS4.LIB_NAME),
+                                                                                 MessageHelperMethods.createEbms3MessageInfo (),
                                                                                  aErrorMessages);
 
         aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
@@ -508,7 +509,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     else
     {
-      // If no Error is present check if partners declared if they want an
+      // If no Error is present check if partners declared if they want a
       // response and if this response should contain
       // nonrepudiationinformation if applicable
       if (_isSendResponse (aPModeConfig))
@@ -516,7 +517,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         final Ebms3UserMessage aEbms3UserMessage = aMessaging.getUserMessageAtIndex (0);
         if (aPModeConfig.getMEP ().equals (EMEP.ONE_WAY))
         {
-          final Ebms3MessageInfo aEbms3MessageInfo = CreateReceiptMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+          final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
           final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                                aEbms3MessageInfo,
                                                                                                aEbms3UserMessage,
@@ -532,9 +533,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         else
         {
           // TWO - WAY - SELECTED
-          final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME,
-                                                                                               aUserMessage.getMessageInfo ()
-                                                                                                           .getMessageId ());
+          final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
+                                                                                                  aUserMessage.getMessageInfo ()
+                                                                                                              .getMessageId ());
           // TODO how to get attachments payload from SPI?
           final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, null);
 

@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.as4.CAS4;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
@@ -78,7 +78,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
 
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final Ebms3MessageInfo aEbms3MessageInfo = CreateUserMessage.createEbms3MessageInfo (CAS4.LIB_NAME);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                            "MyServiceTypes",
