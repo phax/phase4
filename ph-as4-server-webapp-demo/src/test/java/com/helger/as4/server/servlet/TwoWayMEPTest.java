@@ -8,6 +8,8 @@ import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.PMode;
 
+// TODO fix this up if we know what we wanna do with twoway
+
 public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
   private static PMode aPMode;

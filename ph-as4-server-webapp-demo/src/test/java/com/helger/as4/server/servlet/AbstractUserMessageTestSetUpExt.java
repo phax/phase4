@@ -55,7 +55,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * Modify the standard user message to try special cases or provoke failure
    * messages.
    *
-   * @param sAnotherOrWrongPModeID
+   * @param sAnotherOrWrongPModeConfigID
    * @param sAnotherOrWrongPartyIdInitiator
    * @param sAnotherOrWrongPartyIdResponder
    * @param aEbms3MessageProperties
@@ -65,7 +65,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    */
   @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeConfigID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
@@ -84,7 +84,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           sAnotherOrWrongPModeID,
+                                                                                                           sAnotherOrWrongPModeConfigID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
                                                                                    sSetPartyIDInitiator,

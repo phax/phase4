@@ -59,6 +59,7 @@ import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfigManager;
+import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.IAS4Profile;
@@ -418,7 +419,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
-    if (aErrorMessages.isEmpty ())
+    if (aErrorMessages.isEmpty () && _isPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
       final boolean bCanInvokeSPI = AS4DuplicateChecker.registerAndCheck (sMessageID).isContinue ();
@@ -624,6 +625,29 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       else
         s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
     }
+  }
+
+  /**
+   * EBMS core specification 4.2 details these default values. In eSENS they get
+   * used to implement a ping service, we took this over even outside of eSENS.
+   * If you use these default values you can try to "ping" the server, the
+   * method just checks if the pmode got these exact values set. If true, no SPI
+   * processing is done.
+   *
+   * @param aPModeConfig
+   *        to check
+   * @return true if the default values to ping are not used else false
+   */
+  private boolean _isPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
+  {
+    final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
+
+    if (aBInfo.getAction ().equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test") &&
+        aBInfo.getService ().equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service"))
+    {
+      return false;
+    }
+    return true;
   }
 
   /**
