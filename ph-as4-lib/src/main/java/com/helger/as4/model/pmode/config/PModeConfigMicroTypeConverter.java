@@ -27,7 +27,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeConfigMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class PModeConfigMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
   private static final String ATTR_AGREEMENT = "Agreement";
   private static final String ATTR_MEP = "MEP";

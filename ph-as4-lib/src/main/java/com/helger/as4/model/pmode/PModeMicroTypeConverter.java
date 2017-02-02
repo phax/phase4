@@ -26,7 +26,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";

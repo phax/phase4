@@ -23,7 +23,7 @@ import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PartnerMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class PartnerMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
   private static final String ELEMENT_PARTNER_ATTRIBUTES = "PartnerAttribute";
   private static final String ATTR_NAME = "name";

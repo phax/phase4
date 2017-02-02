@@ -20,12 +20,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.convert.IMicroTypeConverter;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModePayloadServiceMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeConverter
 {
   private static final String ELEMENT_COMPRESSION_MODE = "CompressionMode";
 
