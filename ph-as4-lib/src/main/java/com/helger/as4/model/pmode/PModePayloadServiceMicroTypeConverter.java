@@ -23,11 +23,10 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
-import com.helger.xml.microdom.convert.MicroTypeConverter;
 
 public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeConverter
 {
-  private static final String ELEMENT_COMPRESSION_MODE = "CompressionMode";
+  private static final String ATTR_COMPRESSION_MODE = "CompressionMode";
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -36,17 +35,19 @@ public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeCo
   {
     final PModePayloadService aValue = (PModePayloadService) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getCompressionMode (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_COMPRESSION_MODE));
+    ret.setAttribute (ATTR_COMPRESSION_MODE, aValue.getCompressionModeID ());
     return ret;
   }
 
   @Nonnull
   public PModePayloadService convertToNative (@Nonnull final IMicroElement aElement)
   {
-    return new PModePayloadService (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_COMPRESSION_MODE),
-                                                                        EAS4CompressionMode.class));
+    final String sCompressionModeID = aElement.getAttributeValue (ATTR_COMPRESSION_MODE);
+    final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromIDOrNull (sCompressionModeID);
+    if (sCompressionModeID != null && eCompressionMode == null)
+      throw new IllegalStateException ("Invalid compression mode ID '" + sCompressionModeID + "' provided!");
+
+    return new PModePayloadService (eCompressionMode);
 
   }
 }

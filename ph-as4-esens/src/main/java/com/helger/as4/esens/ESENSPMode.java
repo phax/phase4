@@ -23,7 +23,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
@@ -51,7 +51,7 @@ public final class ESENSPMode
   {
     final PModeConfig aConfig = new PModeConfig (ESENS_PMODE_CONFIG_ID);
     aConfig.setMEP (EMEP.ONE_WAY);
-    aConfig.setMEPBinding (ETransportChannelBinding.PUSH);
+    aConfig.setMEPBinding (EMEPBinding.PUSH);
     aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (sAddress),
                                    _generatePModeLegBusinessInformation (),
                                    _generatePModeLegErrorHandling (),

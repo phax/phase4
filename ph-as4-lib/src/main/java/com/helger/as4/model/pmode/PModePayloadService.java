@@ -23,22 +23,28 @@ import com.helger.commons.hashcode.HashCodeGenerator;
 
 public class PModePayloadService
 {
+  private EAS4CompressionMode m_eCompressionMode;
 
-  private EAS4CompressionMode m_aCompressionMode;
-
-  public PModePayloadService (@Nullable final EAS4CompressionMode aCompressionMode)
+  public PModePayloadService (@Nullable final EAS4CompressionMode eCompressionMode)
   {
-    m_aCompressionMode = aCompressionMode;
+    setCompressionMode (eCompressionMode);
   }
 
+  @Nullable
   public EAS4CompressionMode getCompressionMode ()
   {
-    return m_aCompressionMode;
+    return m_eCompressionMode;
   }
 
-  public void setCompressionMode (final EAS4CompressionMode aCompressionMode)
+  @Nullable
+  public String getCompressionModeID ()
   {
-    m_aCompressionMode = aCompressionMode;
+    return m_eCompressionMode == null ? null : m_eCompressionMode.getID ();
+  }
+
+  public void setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
+  {
+    m_eCompressionMode = eCompressionMode;
   }
 
   @Override
@@ -49,12 +55,12 @@ public class PModePayloadService
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModePayloadService rhs = (PModePayloadService) o;
-    return m_aCompressionMode.equals (rhs.m_aCompressionMode);
+    return m_eCompressionMode.equals (rhs.m_eCompressionMode);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aCompressionMode).getHashCode ();
+    return new HashCodeGenerator (this).append (m_eCompressionMode).getHashCode ();
   }
 }

@@ -235,10 +235,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     _extractAllHeaders (eSOAPVersion, aHeaderNode, aHeaders);
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -640,16 +640,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check
    * @return true if the default values to ping are not used else false
    */
-  private boolean _isPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
+  private static boolean _isPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
   {
     final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
 
-    if (aBInfo.getAction ().equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test") &&
-        aBInfo.getService ().equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service"))
+    if (aBInfo != null &&
+        "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test".equals (aBInfo.getAction ()) &&
+        "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service".equals (aBInfo.getService ()))
     {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   /**
@@ -869,7 +870,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))

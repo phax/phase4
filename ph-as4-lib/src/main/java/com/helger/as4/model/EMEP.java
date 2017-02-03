@@ -67,6 +67,8 @@ public enum EMEP implements IHasID <String>
    */
   TWO_WAY_PULL_PUSH ("pullpush", 2, "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pullAndPush");
 
+  public static final EMEP DEFAULT_EBMS = ONE_WAY;
+
   private final String m_sID;
   private final int m_nMsgCount;
   private final String m_sURI;

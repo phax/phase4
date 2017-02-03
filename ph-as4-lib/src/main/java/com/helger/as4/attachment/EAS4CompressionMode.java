@@ -112,4 +112,10 @@ public enum EAS4CompressionMode implements IHasID <String>
       return null;
     return EnumHelper.findFirst (EAS4CompressionMode.class, x -> x.getMimeTypeAsString ().equals (sMimeType));
   }
+
+  @Nullable
+  public static EAS4CompressionMode getFromIDOrNull (final String sID)
+  {
+    return EnumHelper.getFromIDOrNull (EAS4CompressionMode.class, sID);
+  }
 }

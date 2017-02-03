@@ -29,7 +29,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
@@ -74,7 +74,7 @@ public final class PModeMicroTypeConverterTest
     {
       aPModeConfig.setAgreement ("Agreement");
       aPModeConfig.setMEP (EMEP.TWO_WAY_PUSH_PULL);
-      aPModeConfig.setMEPBinding (ETransportChannelBinding.SYNC);
+      aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
       aPModeConfig.setLeg1 (_generatePModeLeg ());
       aPModeConfig.setLeg2 (_generatePModeLeg ());
       aPModeConfig.setPayloadService (_generatePayloadService ());

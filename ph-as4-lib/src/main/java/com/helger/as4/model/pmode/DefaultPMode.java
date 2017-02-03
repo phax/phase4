@@ -21,7 +21,7 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfig;
@@ -49,8 +49,8 @@ public final class DefaultPMode
   public static IPModeConfig getDefaultPModeConfig ()
   {
     final PModeConfig aDefaultConfig = new PModeConfig ("default-pmode");
-    aDefaultConfig.setMEP (EMEP.ONE_WAY);
-    aDefaultConfig.setMEPBinding (ETransportChannelBinding.PUSH);
+    aDefaultConfig.setMEP (EMEP.DEFAULT_EBMS);
+    aDefaultConfig.setMEPBinding (EMEPBinding.DEFAULT_EBMS);
     aDefaultConfig.setLeg1 (_generatePModeLeg ());
     // Leg 2 stays null, because we only use one-way
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aDefaultConfig);

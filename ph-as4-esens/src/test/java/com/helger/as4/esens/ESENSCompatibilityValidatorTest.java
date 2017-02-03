@@ -31,7 +31,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -88,7 +88,7 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigWrongMEPBinding ()
   {
-    m_aPModeConfig.setMEPBinding (ETransportChannelBinding.SYNC);
+    m_aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
     aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP-Binding")));

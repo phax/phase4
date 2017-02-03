@@ -27,7 +27,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.config.IPModeConfig;
@@ -76,13 +76,13 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
       aErrorList.add (_createError ("No PMode MEP was specified."));
     }
     else
-      if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) || aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
+      if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) && !aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
       {
         aErrorList.add (_createError ("An invalid PMode MEP was specified, valid or only one-way and two-way."));
       }
 
-    if (!aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH) &&
-        !aPModeConfig.getMEPBinding ().equals (ETransportChannelBinding.PUSH_AND_PULL))
+    if (!aPModeConfig.getMEPBinding ().equals (EMEPBinding.PUSH) &&
+        !aPModeConfig.getMEPBinding ().equals (EMEPBinding.PUSH_AND_PULL))
     {
       aErrorList.add (_createError ("An invalid PMode MEP-Binding was specified, valid or only one-way and two-way."));
     }

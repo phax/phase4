@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
@@ -58,7 +58,7 @@ public final class PModeConfigMicroTypeConverter extends AbstractObjectMicroType
     final PModeConfig ret = new PModeConfig (getStubObject (aElement));
     ret.setAgreement (aElement.getAttributeValue (ATTR_AGREEMENT));
     ret.setMEP (EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)));
-    ret.setMEPBinding (ETransportChannelBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));
+    ret.setMEPBinding (EMEPBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)));
     ret.setLeg1 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1), PModeLeg.class));
     ret.setLeg2 (MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2), PModeLeg.class));
     return ret;

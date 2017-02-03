@@ -17,7 +17,6 @@
 package com.helger.as4.model.pmode;
 
 import com.helger.commons.state.EMandatory;
-import com.helger.commons.string.StringParser;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
@@ -44,9 +43,7 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
     final String sName = aElement.getAttributeValue (ATTR_NAME);
     final String sDescription = aElement.getAttributeValue (ATTR_DESCRIPTION);
     final String sDataType = aElement.getAttributeValue (ATTR_DATA_TYPE);
-    final EMandatory eMandatory = EMandatory.valueOf (StringParser.parseBool (aElement.getAttributeValue (ATTR_MANDATORY),
-                                                                              false));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY, false));
     return new PModeProperty (sName, sDescription, sDataType, eMandatory);
   }
-
 }

@@ -20,10 +20,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
@@ -54,13 +55,13 @@ public class PModeConfig extends AbstractBaseObject implements IPModeConfig
   private String m_sAgreement;
 
   /** The type of ebMS MEP associated with this P-Mode. */
-  private EMEP m_eMEP;
+  private EMEP m_eMEP = EMEP.DEFAULT_EBMS;
 
   /**
    * The transport channel binding assigned to the MEP (push, pull, sync,
    * push-and-push, push-and-pull, pull-and-push, pull-and-pull, ...).
    */
-  private ETransportChannelBinding m_eMEPBinding;
+  private EMEPBinding m_eMEPBinding = EMEPBinding.DEFAULT_EBMS;
 
   private PModeLeg m_aLeg1;
   private PModeLeg m_aLeg2;
@@ -100,25 +101,27 @@ public class PModeConfig extends AbstractBaseObject implements IPModeConfig
     m_sAgreement = sAgreement;
   }
 
-  @Nullable
+  @Nonnull
   public EMEP getMEP ()
   {
     return m_eMEP;
   }
 
-  public void setMEP (@Nullable final EMEP eMEP)
+  public void setMEP (@Nonnull final EMEP eMEP)
   {
+    ValueEnforcer.notNull (eMEP, "MEP");
     m_eMEP = eMEP;
   }
 
-  @Nullable
-  public ETransportChannelBinding getMEPBinding ()
+  @Nonnull
+  public EMEPBinding getMEPBinding ()
   {
     return m_eMEPBinding;
   }
 
-  public void setMEPBinding (@Nullable final ETransportChannelBinding eMEPBinding)
+  public void setMEPBinding (@Nonnull final EMEPBinding eMEPBinding)
   {
+    ValueEnforcer.notNull (eMEPBinding, "MEPBinding");
     m_eMEPBinding = eMEPBinding;
   }
 

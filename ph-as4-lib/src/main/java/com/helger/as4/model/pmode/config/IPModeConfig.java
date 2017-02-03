@@ -16,10 +16,11 @@
  */
 package com.helger.as4.model.pmode.config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.model.EMEP;
-import com.helger.as4.model.ETransportChannelBinding;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -30,24 +31,23 @@ public interface IPModeConfig extends IObject
   @Nullable
   String getAgreement ();
 
-  @Nullable
+  @Nonnull
   EMEP getMEP ();
 
-  @Nullable
+  @Nonnull
   default String getMEPID ()
   {
     final EMEP eMEP = getMEP ();
     return eMEP == null ? null : eMEP.getID ();
   }
 
-  @Nullable
-  ETransportChannelBinding getMEPBinding ();
+  @Nonnull
+  EMEPBinding getMEPBinding ();
 
-  @Nullable
+  @Nonnull
   default String getMEPBindingID ()
   {
-    final ETransportChannelBinding eMEPBinding = getMEPBinding ();
-    return eMEPBinding == null ? null : eMEPBinding.getID ();
+    return getMEPBinding ().getID ();
   }
 
   @Nullable

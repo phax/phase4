@@ -29,7 +29,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public enum ETransportChannelBinding implements IHasID <String>
+public enum EMEPBinding implements IHasID <String>
 {
   /**
    * maps an MEP User message to the 1st leg of an underlying 2-way transport
@@ -53,10 +53,12 @@ public enum ETransportChannelBinding implements IHasID <String>
    */
   PUSH_AND_PULL ("sync", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPull");
 
+  public static final EMEPBinding DEFAULT_EBMS = PUSH;
+
   private final String m_sID;
   private final String m_sURI;
 
-  private ETransportChannelBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
+  private EMEPBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
   {
     m_sID = sID;
     m_sURI = sURI;
@@ -87,16 +89,16 @@ public enum ETransportChannelBinding implements IHasID <String>
   }
 
   @Nullable
-  public static ETransportChannelBinding getFromIDOrNull (@Nullable final String sID)
+  public static EMEPBinding getFromIDOrNull (@Nullable final String sID)
   {
-    return EnumHelper.getFromIDOrNull (ETransportChannelBinding.class, sID);
+    return EnumHelper.getFromIDOrNull (EMEPBinding.class, sID);
   }
 
   @Nullable
-  public static ETransportChannelBinding getFromURIOrNull (@Nullable final String sURI)
+  public static EMEPBinding getFromURIOrNull (@Nullable final String sURI)
   {
     if (StringHelper.hasNoText (sURI))
       return null;
-    return EnumHelper.findFirst (ETransportChannelBinding.class, x -> sURI.equals (x.getURI ()));
+    return EnumHelper.findFirst (EMEPBinding.class, x -> sURI.equals (x.getURI ()));
   }
 }
