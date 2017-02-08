@@ -419,7 +419,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
-    if (aErrorMessages.isEmpty () && _isPingPModeConfig (aState.getPModeConfig ()))
+    if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
       final boolean bIsDuplicate = AS4DuplicateChecker.registerAndCheck (sMessageID).isBreak ();
@@ -640,7 +640,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check
    * @return true if the default values to ping are not used else false
    */
-  private static boolean _isPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
+  private static boolean _isNotPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
   {
     final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
 
@@ -648,9 +648,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test".equals (aBInfo.getAction ()) &&
         "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service".equals (aBInfo.getService ()))
     {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   /**

@@ -29,6 +29,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
+import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
@@ -91,5 +92,6 @@ public final class AS4ServerInitializer
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
     _createDefaultResponder (AS4ServerSettings.getDefaultResponderID ());
+    AS4DuplicateChecker.startDuplicateService (AS4ServerConfiguration.getMinutesForDuplicateDisposal ());
   }
 }
