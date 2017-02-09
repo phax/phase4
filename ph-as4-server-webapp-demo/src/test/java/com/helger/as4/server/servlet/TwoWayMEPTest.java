@@ -1,13 +1,18 @@
 package com.helger.as4.server.servlet;
 
+import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.util.AS4XMLHelper;
 
 // TODO fix this up if we know what we wanna do with twoway
 
@@ -19,8 +24,18 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public static void createTwoWayPMode ()
   {
     s_aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
-                                                                .getAsString ("server.address",
-                                                                              "http://localhost:8080/as4"));
+                                                                  .getAsString ("server.address",
+                                                                                "http://localhost:8080/as4"));
+    // ESENS PMode is One Way on default settings need to change to two way
+    final PModeConfig aPModeConfig = new PModeConfig ("esens-two-way");
+    aPModeConfig.setMEP (EMEP.TWO_WAY_PUSH_PUSH);
+    aPModeConfig.setAgreement (s_aPMode.getConfig ().getAgreement ());
+    aPModeConfig.setLeg1 (s_aPMode.getConfig ().getLeg1 ());
+    aPModeConfig.setMEPBinding (s_aPMode.getConfig ().getMEPBinding ());
+    aPModeConfig.setPayloadService (s_aPMode.getConfig ().getPayloadService ());
+    aPModeConfig.setReceptionAwareness (s_aPMode.getConfig ().getReceptionAwareness ());
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
+    s_aPMode = new PMode (s_aPMode.getInitiator (), s_aPMode.getResponder (), aPModeConfig);
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (s_aPMode);
   }
 
@@ -31,8 +46,10 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void receiveUserMessageAsResponseSuccess ()
+  public void receiveUserMessageAsResponseSuccess () throws Exception
   {
-
+    final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties ());
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    System.out.println (m_sResponse);
   }
 }

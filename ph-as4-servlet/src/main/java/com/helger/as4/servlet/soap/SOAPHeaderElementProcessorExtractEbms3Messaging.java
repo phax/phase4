@@ -252,7 +252,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           // Check if there is a BodyPayload as specified in the UserMessage
           if (!bHasSoapBodyPayload)
           {
-            s_aLogger.warn ("Error processing the UserMessage, Expected a BodyPayload but there is one present. ");
+            s_aLogger.warn ("Error processing the UserMessage, Expected a BodyPayload but there is none present. ");
 
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
             return ESuccess.FAILURE;

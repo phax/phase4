@@ -419,6 +419,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
+    // Storing for two-way response messages
+    Node aResponsePayload = null;
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+
     if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
@@ -449,8 +453,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             if (aResult.isSuccess ())
             {
+
+              // Add response attachments, payloads
+              if (aResult.hasAttachments ())
+              {
+                aResponseAttachments.addAll (aResult.getAttachments ());
+              }
+              if (aResult.hasPayload ())
+              {
+                if (aResponsePayload == null)
+                  aResponsePayload = aResult.getPayload ();
+                else
+                  aResponsePayload.appendChild (aResult.getPayload ());
+              }
               if (s_aLogger.isDebugEnabled ())
                 s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+
             }
             else
             {
@@ -562,12 +580,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
-          // TWO - WAY - SELECTED
+          // TWO - WAY
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                                   aUserMessage.getMessageInfo ()
                                                                                                               .getMessageId ());
           // TODO how to get attachments payload from SPI?
-          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, null);
+          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aResponsePayload,
+                                                                                               aResponseAttachments);
 
           // Invert from and to role from original user message
           final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()

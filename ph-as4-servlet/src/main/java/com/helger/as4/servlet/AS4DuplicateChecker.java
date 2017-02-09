@@ -104,8 +104,6 @@ public final class AS4DuplicateChecker
       clearDisposableMessages ();
     }
 
-    aSaveFile.getAbsolutePath ();
-
     s_nMinutesToRefresh = nMinutesToRefresh;
     final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor ();
     service.scheduleWithFixedDelay ( () -> clearDisposableMessages (), 0, nMinutesToRefresh, TimeUnit.MINUTES);

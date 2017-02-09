@@ -21,7 +21,11 @@ import java.io.Serializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.w3c.dom.Node;
+
+import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
@@ -36,11 +40,19 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
 {
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
+  private final Node m_aPayload;
+  private final ICommonsList <WSS4JAttachment> m_aAttachments;
 
-  protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess, @Nullable final String sErrorMsg)
+  protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
+                                       @Nullable final String sErrorMsg,
+                                       @Nullable final Node aPayload,
+                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
     m_sErrorMsg = sErrorMsg;
+    m_aPayload = aPayload;
+    m_aAttachments = aAttachments;
+
   }
 
   public boolean isSuccess ()
@@ -54,6 +66,26 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
     return m_sErrorMsg;
   }
 
+  public boolean hasPayload ()
+  {
+    return m_aPayload != null ? true : false;
+  }
+
+  public Node getPayload ()
+  {
+    return m_aPayload;
+  }
+
+  public boolean hasAttachments ()
+  {
+    return m_aAttachments != null ? true : false;
+  }
+
+  public ICommonsList <WSS4JAttachment> getAttachments ()
+  {
+    return m_aAttachments;
+  }
+
   @Override
   public String toString ()
   {
@@ -65,12 +97,24 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, null);
+  }
+
+  @Nonnull
+  public static AS4MessageProcessorResult createSuccess (@Nullable final Node aPayload)
+  {
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aPayload, null);
+  }
+
+  @Nonnull
+  public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  {
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, aAttachments);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
   }
 }
