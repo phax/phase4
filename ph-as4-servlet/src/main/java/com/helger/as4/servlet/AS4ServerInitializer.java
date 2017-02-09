@@ -16,6 +16,7 @@
  */
 package com.helger.as4.servlet;
 
+import java.io.IOException;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
@@ -92,6 +93,13 @@ public final class AS4ServerInitializer
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
     _createDefaultResponder (AS4ServerSettings.getDefaultResponderID ());
-    AS4DuplicateChecker.startDuplicateService (AS4ServerConfiguration.getMinutesForDuplicateDisposal ());
+    try
+    {
+      AS4DuplicateChecker.startDuplicateService (AS4ServerConfiguration.getMinutesForDuplicateDisposal ());
+    }
+    catch (final IOException e)
+    {
+      e.printStackTrace ();
+    }
   }
 }

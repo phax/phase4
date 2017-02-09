@@ -82,30 +82,29 @@ public final class AS4DuplicateChecker
     s_aRWLock.writeLocked ( () -> s_aMap.clear ());
   }
 
-  public static void startDuplicateService (final long nMinutesToRefresh)
+  public static void startDuplicateService (final long nMinutesToRefresh) throws IOException
   {
-    final String sFilepath = "ReceivedUserMessages.txt";
+    final String sFilepath = "receivedMessages/ReceivedUserMessages.txt";
     aSaveFile = ClassPathResource.getAsFile (sFilepath);
     // Create file if it does not exist, else clear messages
     if (aSaveFile == null)
+    {
       aSaveFile = new File (sFilepath);
+      aSaveFile.createNewFile ();
+    }
     else
     {
-      try
+      final List <String> aList = Files.readAllLines (aSaveFile.toPath ());
+      for (final String sEntry : aList)
       {
-        final List <String> aList = Files.readAllLines (aSaveFile.toPath ());
-        for (final String sEntry : aList)
-        {
-          final String [] aKeyValuePair = sEntry.split (" ");
-          s_aMap.put (aKeyValuePair[0], Long.parseLong (aKeyValuePair[1]));
-        }
+        final String [] aKeyValuePair = sEntry.split (" ");
+        s_aMap.put (aKeyValuePair[0], Long.parseLong (aKeyValuePair[1]));
       }
-      catch (final IOException e)
-      {
-        e.printStackTrace ();
-      }
+
       clearDisposableMessages ();
     }
+
+    aSaveFile.getAbsolutePath ();
 
     s_nMinutesToRefresh = nMinutesToRefresh;
     final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor ();
@@ -117,7 +116,8 @@ public final class AS4DuplicateChecker
     // Current time - 60000 (which equals 1 Minute) times the minutes
     // specified
     final long nTimeToCheckAgainst = System.currentTimeMillis () - ONE_MINUTE * s_nMinutesToRefresh;
-    for (final String aKey : s_aMap.keySet ())
+
+    for (final String aKey : s_aMap.copyOfKeySet ())
     {
       final Long aValue = s_aMap.get (aKey);
 
@@ -126,6 +126,7 @@ public final class AS4DuplicateChecker
         s_aMap.remove (aKey);
       }
     }
+
   }
 
 }
