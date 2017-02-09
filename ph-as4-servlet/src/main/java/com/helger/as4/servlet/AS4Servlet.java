@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -50,6 +51,7 @@ import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
@@ -584,7 +586,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                                   aUserMessage.getMessageInfo ()
                                                                                                               .getMessageId ());
-          // TODO how to get attachments payload from SPI?
           final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aResponsePayload,
                                                                                                aResponseAttachments);
 
@@ -635,12 +636,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                          aEbms3PartyInfo,
                                                                                          aEbms3MessageProperties,
                                                                                          eSOAPVersion);
-          // TODO when we get attachments from the SPI we need to change this
-          // message into a mime message with mimemessagecreator
           // We've got our response
           final Document aResponseDoc = aResponeUserMesage.getAsSOAPDocument ();
-          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
-                      .setMimeType (eSOAPVersion.getMimeType ());
+
+          if (aResponseAttachments.isNotEmpty ())
+          {
+            final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
+                                                                                                        aResponseAttachments);
+            // TODO how to send mime with unified response?
+            // aAS4Response.setContent (aMsg.getInputStream ()); ? or how would
+            // this be done
+          }
+          else
+          {
+            aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                        .setMimeType (eSOAPVersion.getMimeType ());
+          }
         }
       }
       else

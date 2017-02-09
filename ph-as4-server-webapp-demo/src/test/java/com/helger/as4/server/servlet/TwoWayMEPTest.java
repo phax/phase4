@@ -1,5 +1,8 @@
 package com.helger.as4.server.servlet;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.http.entity.StringEntity;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,6 +53,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties ());
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
-    System.out.println (m_sResponse);
+    assertTrue (m_sResponse.contains ("UserMessage"));
+    assertFalse (m_sResponse.contains ("Receipt"));
   }
 }
