@@ -122,7 +122,6 @@ public final class AS4ClientTest
     return aClient;
   }
 
-  @SuppressWarnings ("unused")
   private static void _ensureInvalidState (@Nonnull final AS4Client aClient) throws Exception
   {
     try
@@ -136,7 +135,6 @@ public final class AS4ClientTest
     }
   }
 
-  @SuppressWarnings ("unused")
   private static void _ensureValidState (@Nonnull final AS4Client aClient) throws Exception
   {
     try
