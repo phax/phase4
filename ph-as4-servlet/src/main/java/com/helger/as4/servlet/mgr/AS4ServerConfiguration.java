@@ -46,6 +46,7 @@ public final class AS4ServerConfiguration
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ServerConfiguration.class);
   private static final Settings SETTINGS = new Settings ("as4-server");
   private static boolean s_bTestMode = false;
+  private static final long DEFAULT_RESET_MINUTES = 10;
 
   public static void reinit (final boolean bForTest)
   {
@@ -107,19 +108,31 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsString ("server.profile");
   }
 
+  @Nonnull
   public static boolean isGlobalDebug ()
   {
     return getSettings ().getAsBoolean ("server.debug", true);
   }
 
+  @Nonnull
   public static boolean isGlobalProduction ()
   {
     return getSettings ().getAsBoolean ("server.production", false);
   }
 
+  @Nonnull
   public static boolean isNoStartupInfo ()
   {
     return getSettings ().getAsBoolean ("server.nostartupinfo", false);
+  }
+
+  @Nullable
+  public static long getMinutesForDuplicateDisposal ()
+  {
+    final String sFieldName = "server.disposalminutes";
+    if (getSettings ().getValue (sFieldName) != null)
+      return getSettings ().getAsLong (sFieldName);
+    return DEFAULT_RESET_MINUTES;
   }
 
   @Nonnull

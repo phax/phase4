@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -50,6 +51,7 @@ import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
@@ -419,7 +421,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
-    if (aErrorMessages.isEmpty () && _isPingPModeConfig (aState.getPModeConfig ()))
+    // Storing for two-way response messages
+    Node aResponsePayload = null;
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+
+    if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
       final boolean bIsDuplicate = AS4DuplicateChecker.registerAndCheck (sMessageID).isBreak ();
@@ -449,8 +455,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             if (aResult.isSuccess ())
             {
+
+              // Add response attachments, payloads
+              if (aResult.hasAttachments ())
+              {
+                aResponseAttachments.addAll (aResult.getAttachments ());
+              }
+              if (aResult.hasPayload ())
+              {
+                if (aResponsePayload == null)
+                  aResponsePayload = aResult.getPayload ();
+                else
+                  aResponsePayload.appendChild (aResult.getPayload ());
+              }
               if (s_aLogger.isDebugEnabled ())
                 s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+
             }
             else
             {
@@ -562,12 +582,12 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
-          // TWO - WAY - SELECTED
+          // TWO - WAY
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                                   aUserMessage.getMessageInfo ()
                                                                                                               .getMessageId ());
-          // TODO how to get attachments payload from SPI?
-          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, null);
+          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aResponsePayload,
+                                                                                               aResponseAttachments);
 
           // Invert from and to role from original user message
           final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()
@@ -616,12 +636,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                          aEbms3PartyInfo,
                                                                                          aEbms3MessageProperties,
                                                                                          eSOAPVersion);
-          // TODO when we get attachments from the SPI we need to change this
-          // message into a mime message with mimemessagecreator
           // We've got our response
           final Document aResponseDoc = aResponeUserMesage.getAsSOAPDocument ();
-          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
-                      .setMimeType (eSOAPVersion.getMimeType ());
+
+          if (aResponseAttachments.isNotEmpty ())
+          {
+            final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
+                                                                                                        aResponseAttachments);
+            // TODO how to send mime with unified response?
+            // aAS4Response.setContent (aMsg.getInputStream ()); ? or how would
+            // this be done
+          }
+          else
+          {
+            aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+                        .setMimeType (eSOAPVersion.getMimeType ());
+          }
         }
       }
       else
@@ -640,7 +670,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check
    * @return true if the default values to ping are not used else false
    */
-  private static boolean _isPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
+  private static boolean _isNotPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
   {
     final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
 
@@ -648,9 +678,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test".equals (aBInfo.getAction ()) &&
         "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service".equals (aBInfo.getService ()))
     {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   /**

@@ -12,6 +12,7 @@ import com.helger.as4.util.AS4XMLHelper;
 public class PModePingTest extends AbstractUserMessageTestSetUpExt
 {
 
+  // Can only check success, since we cannot check if SPIs got called or not
   @Test
   public void usePModePingSuccessful () throws Exception
   {
