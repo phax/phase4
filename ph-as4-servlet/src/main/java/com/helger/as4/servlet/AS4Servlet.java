@@ -16,6 +16,8 @@
  */
 package com.helger.as4.servlet;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +27,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
@@ -643,13 +646,21 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           {
             final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
                                                                                                         aResponseAttachments);
-            // TODO how to send mime with unified response?
-            // aAS4Response.setContent (aMsg.getInputStream ()); ? or how would
-            // this be done
+            // send mime with unified response?
+            aAS4Response.setContent ( () -> {
+              try
+              {
+                return aMsg.getInputStream ();
+              }
+              catch (IOException | MessagingException ex)
+              {
+                throw new IllegalStateException ("Failed to get MIME input stream", ex);
+              }
+            }).setMimeType (MT_MULTIPART_RELATED);
           }
           else
           {
-            aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+            aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
                         .setMimeType (eSOAPVersion.getMimeType ());
           }
         }

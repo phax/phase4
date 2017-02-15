@@ -2,9 +2,11 @@ package com.helger.as4.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,11 +15,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
+import com.helger.commons.CGlobal;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsHashMap;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.state.EContinue;
+import com.helger.commons.string.StringHelper;
 
 /**
  * This is the duplicate checker for receiving. <br>
@@ -32,8 +38,6 @@ import com.helger.commons.state.EContinue;
  */
 public final class AS4DuplicateChecker
 {
-  private static final long ONE_MINUTE = 60000;
-
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
   private static final ICommonsMap <String, Long> s_aMap = new CommonsHashMap <> ();
@@ -54,16 +58,20 @@ public final class AS4DuplicateChecker
   @Nonnull
   public static EContinue registerAndCheck (@Nullable final String sMessageID)
   {
+    // TODO not thread-safe
     if (s_aMap.containsKey (sMessageID))
     {
       return EContinue.BREAK;
     }
+    final long nValue = System.currentTimeMillis ();
+
     s_aRWLock.writeLocked ( () -> {
-      final long aValue = System.currentTimeMillis ();
-      s_aMap.put (sMessageID, aValue);
+      s_aMap.put (sMessageID, Long.valueOf (nValue));
       try
       {
-        Files.write (aSaveFile.toPath (), (sMessageID + " " + aValue + "\n").getBytes (), StandardOpenOption.APPEND);
+        Files.write (aSaveFile.toPath (),
+                     (sMessageID + " " + nValue + "\n").getBytes (StandardCharsets.ISO_8859_1),
+                     StandardOpenOption.APPEND);
       }
       catch (final IOException e)
       {
@@ -97,34 +105,39 @@ public final class AS4DuplicateChecker
       final List <String> aList = Files.readAllLines (aSaveFile.toPath ());
       for (final String sEntry : aList)
       {
-        final String [] aKeyValuePair = sEntry.split (" ");
-        s_aMap.put (aKeyValuePair[0], Long.parseLong (aKeyValuePair[1]));
+        final String [] aKeyValuePair = StringHelper.getExplodedArray (' ', sEntry, 2);
+        // TODO not thread-safe
+        s_aMap.put (aKeyValuePair[0], Long.valueOf (aKeyValuePair[1]));
       }
 
-      clearDisposableMessages ();
+      _clearDisposableMessages ();
     }
 
     s_nMinutesToRefresh = nMinutesToRefresh;
     final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor ();
-    service.scheduleWithFixedDelay ( () -> clearDisposableMessages (), 0, nMinutesToRefresh, TimeUnit.MINUTES);
+    service.scheduleWithFixedDelay ( () -> _clearDisposableMessages (), 0, nMinutesToRefresh, TimeUnit.MINUTES);
   }
 
-  private static void clearDisposableMessages ()
+  private static void _clearDisposableMessages ()
   {
     // Current time - 60000 (which equals 1 Minute) times the minutes
     // specified
-    final long nTimeToCheckAgainst = System.currentTimeMillis () - ONE_MINUTE * s_nMinutesToRefresh;
+    final long nTimeToCheckAgainst = System.currentTimeMillis () -
+                                     (CGlobal.MILLISECONDS_PER_MINUTE * s_nMinutesToRefresh);
 
-    for (final String aKey : s_aMap.copyOfKeySet ())
+    // TODO not thread-safe
+    final ICommonsList <String> aKeysToDel = new CommonsArrayList <> ();
+    for (final Map.Entry <String, Long> aEntry : s_aMap.entrySet ())
     {
-      final Long aValue = s_aMap.get (aKey);
+      final long nValue = aEntry.getValue ().longValue ();
 
-      if (aValue < nTimeToCheckAgainst)
-      {
-        s_aMap.remove (aKey);
-      }
+      if (nValue < nTimeToCheckAgainst)
+        aKeysToDel.add (aEntry.getKey ());
     }
 
+    s_aRWLock.writeLocked ( () -> {
+      for (final String sKey : aKeysToDel)
+        s_aMap.remove (sKey);
+    });
   }
-
 }
