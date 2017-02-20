@@ -99,6 +99,6 @@ public class CryptoProperties implements Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Props", m_aProps).toString ();
+    return new ToStringGenerator (this).append ("Props", m_aProps).getToString ();
   }
 }

@@ -88,6 +88,6 @@ public final class PartnerMap implements IPartnerMap
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Map", m_aMap).toString ();
+    return new ToStringGenerator (this).append ("Map", m_aMap).getToString ();
   }
 }

@@ -870,7 +870,7 @@ public class Partnership implements Serializable
                                        .append ("senderIDs", m_aSenderIDs)
                                        .append ("receiverIDs", m_aReceiverIDs)
                                        .append ("attributes", m_aAttributes)
-                                       .toString ();
+                                       .getToString ();
   }
 
   @Nonnull

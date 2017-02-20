@@ -142,6 +142,6 @@ public abstract class AbstractPartnershipFactory extends MapBasedAttributeContai
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("Partnerships", m_aPartnerships).toString ();
+    return ToStringGenerator.getDerived (super.toString ()).append ("Partnerships", m_aPartnerships).getToString ();
   }
 }

@@ -195,6 +195,6 @@ public class PModeConfig extends AbstractBaseObject implements IPModeConfig
                             .append ("Leg2", m_aLeg2)
                             .append ("PayloadService", m_aPayloadService)
                             .append ("ReceptionAwareness", m_aReceptionAwareness)
-                            .toString ();
+                            .getToString ();
   }
 }

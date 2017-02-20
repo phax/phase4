@@ -107,7 +107,7 @@ public class Partner extends AbstractBaseObject implements IPartner
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Attrs", m_aAttrs).toString ();
+    return new ToStringGenerator (this).append ("Attrs", m_aAttrs).getToString ();
   }
 
   public ObjectType getObjectType ()

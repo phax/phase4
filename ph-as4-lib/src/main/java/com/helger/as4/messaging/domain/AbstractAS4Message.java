@@ -110,6 +110,6 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion).toString ();
+    return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion).getToString ();
   }
 }

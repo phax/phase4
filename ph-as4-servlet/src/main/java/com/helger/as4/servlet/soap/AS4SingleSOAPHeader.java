@@ -91,6 +91,6 @@ public class AS4SingleSOAPHeader
     return new ToStringGenerator (this).append ("QName", m_aQName)
                                        .append ("MustUnderstand", m_bIsMustUnderstand)
                                        .append ("Processed", m_bProcessed)
-                                       .toString ();
+                                       .getToString ();
   }
 }

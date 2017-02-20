@@ -161,6 +161,6 @@ public class PMode extends AbstractBaseObject implements IPMode
                             .append ("Initiator", m_aInitiator)
                             .append ("Responder", m_aResponder)
                             .append ("Config", m_aConfig)
-                            .toString ();
+                            .getToString ();
   }
 }

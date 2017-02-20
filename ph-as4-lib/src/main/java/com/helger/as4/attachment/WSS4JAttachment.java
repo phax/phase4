@@ -247,7 +247,7 @@ public class WSS4JAttachment extends Attachment
                                        .append ("CTE", m_eCTE)
                                        .append ("CM", m_eCM)
                                        .append ("Charset", m_aCharset)
-                                       .toString ();
+                                       .getToString ();
   }
 
   /**

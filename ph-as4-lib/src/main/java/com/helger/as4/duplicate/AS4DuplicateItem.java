@@ -84,6 +84,6 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("DT", m_aDT).append ("MessageID", m_sMessageID).toString ();
+    return new ToStringGenerator (null).append ("DT", m_aDT).append ("MessageID", m_sMessageID).getToString ();
   }
 }

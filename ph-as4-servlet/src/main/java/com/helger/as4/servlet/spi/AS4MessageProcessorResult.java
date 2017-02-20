@@ -90,7 +90,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   {
     return new ToStringGenerator (this).append ("Success", m_eSuccess)
                                        .appendIf ("ErrorMsg", m_sErrorMsg, StringHelper::hasText)
-                                       .toString ();
+                                       .getToString ();
   }
 
   @Nonnull

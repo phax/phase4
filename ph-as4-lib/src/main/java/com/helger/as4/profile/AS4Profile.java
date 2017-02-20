@@ -82,6 +82,6 @@ public class AS4Profile implements IAS4Profile
                                        .append ("DisplayName", m_sDisplayName)
                                        .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
                                        .append ("DefaultPModeConfigProvider", m_aDefaultPModeConfigProvider)
-                                       .toString ();
+                                       .getToString ();
   }
 }

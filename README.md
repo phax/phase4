@@ -13,7 +13,8 @@ It consists of the following sub-projects:
 
   * v0.6.1
     * Added HTTP retry for client
-    * Added (very simple) server duplicate detection
+    * Added server duplicate message detection for incoming messages
+    * `MessageInfo/Timestamp` uses UTC - thanks Sander
   * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects
@@ -48,7 +49,7 @@ org.apache.wss4j.crypto.merlin.keystore.private.password=test
 ```
 The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
 
-PEPPOL users: the key store must contain the AccessPoint private key.
+PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
 
 ### as4.properties
 
