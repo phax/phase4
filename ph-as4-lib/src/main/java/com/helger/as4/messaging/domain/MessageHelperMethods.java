@@ -90,7 +90,7 @@ public final class MessageHelperMethods
 
     // TODO Change Timestamp or do we only want the present date when the
     // message gets sent/replied
-    aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNow ());
+    aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNowUTC ());
     return aMessageInfo;
   }
 
