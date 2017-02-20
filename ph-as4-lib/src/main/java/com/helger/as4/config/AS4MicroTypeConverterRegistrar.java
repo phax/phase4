@@ -19,6 +19,8 @@ package com.helger.as4.config;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.as4.duplicate.AS4DuplicateItem;
+import com.helger.as4.duplicate.AS4DuplicateItemMicroTypeConverter;
 import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.model.mpc.MPCMicroTypeConverter;
 import com.helger.as4.model.pmode.PMode;
@@ -86,5 +88,6 @@ public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverter
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
 
     aRegistry.registerMicroElementTypeConverter (Partner.class, new PartnerMicroTypeConverter ());
+    aRegistry.registerMicroElementTypeConverter (AS4DuplicateItem.class, new AS4DuplicateItemMicroTypeConverter ());
   }
 }

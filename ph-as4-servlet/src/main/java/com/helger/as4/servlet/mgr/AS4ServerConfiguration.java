@@ -23,6 +23,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.VisibleForTesting;
 import com.helger.commons.exception.InitializationException;
 import com.helger.settings.ISettings;
 import com.helger.settings.Settings;
@@ -72,7 +73,8 @@ public final class AS4ServerConfiguration
     SETTINGS.setValues (aCF.getSettings ());
   }
 
-  public static void reinitForTestOnly ()
+  @VisibleForTesting
+  public static void internalReinitForTestOnly ()
   {
     // Re-read the config file with precedence to "private-test-as4.properties"
     // file but only if it wasn't read in test mode before.
@@ -126,19 +128,16 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsBoolean ("server.nostartupinfo", false);
   }
 
-  @Nullable
-  public static long getMinutesForDuplicateDisposal ()
-  {
-    final String sFieldName = "server.disposalminutes";
-    if (getSettings ().getValue (sFieldName) != null)
-      return getSettings ().getAsLong (sFieldName);
-    return DEFAULT_RESET_MINUTES;
-  }
-
   @Nonnull
   public static String getDataPath ()
   {
     // "conf" relative to application startup directory
     return getSettings ().getAsString ("server.datapath", "conf");
+  }
+
+  public static long getIncomingDuplicateDisposalMinutes ()
+  {
+    final String sFieldName = "server.incoming.duplicatedisposal.minutes";
+    return getSettings ().getAsLong (sFieldName, DEFAULT_RESET_MINUTES);
   }
 }

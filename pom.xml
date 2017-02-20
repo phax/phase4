@@ -76,7 +76,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>8.6.1</version>
+        <version>8.6.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -98,6 +98,13 @@
         <groupId>com.helger</groupId>
         <artifactId>ph-xsds-parent-pom</artifactId>
         <version>1.0.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-schedule-parent-pom</artifactId>
+        <version>3.6.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

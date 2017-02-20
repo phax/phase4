@@ -94,7 +94,6 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -240,10 +239,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     _extractAllHeaders (eSOAPVersion, aHeaderNode, aHeaders);
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -426,13 +425,12 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
     // Storing for two-way response messages
     Node aResponsePayload = null;
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
 
     if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
-      final boolean bIsDuplicate = AS4DuplicateChecker.registerAndCheck (sMessageID).isBreak ();
-
+      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
       if (bIsDuplicate)
       {
         s_aLogger.info ("Not invoking SPIs, because message was already handled!");
@@ -555,7 +553,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                  aErrorMessages);
 
         aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aErrorMsg.getAsSOAPDocument ()),
-                                           CCharset.CHARSET_UTF_8_OBJ)
+                                           StandardCharsets.UTF_8)
                     .setMimeType (eSOAPVersion.getMimeType ());
       }
       else
@@ -580,7 +578,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
           // We've got our response
           final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), CCharset.CHARSET_UTF_8_OBJ)
+          aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
                       .setMimeType (eSOAPVersion.getMimeType ());
         }
         else
@@ -767,6 +765,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
     if (aUsedCertificate != null)
       aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
+
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
   }
@@ -911,7 +910,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
@@ -934,7 +933,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
           // PARSING MIME Message via MultiPartStream
           final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
-                                                              sBoundary.getBytes (CCharset.CHARSET_ISO_8859_1_OBJ),
+                                                              sBoundary.getBytes (StandardCharsets.ISO_8859_1),
                                                               (MultipartProgressNotifier) null);
           final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
 
@@ -966,7 +965,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             else
             {
               // MIME Attachment (index is gt 0)
-              final WSS4JAttachment aAttachment = aIAF.createAttachment (aResMgr, aBodyPart);
+              final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResMgr);
               aIncomingAttachments.add (aAttachment);
             }
             nIndex++;

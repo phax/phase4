@@ -49,6 +49,7 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsSet;
+import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
@@ -191,15 +192,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
         // Collect all used certificates
-        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet <> ();
+        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet<> ();
         aResults.forEach (x -> {
           final X509Certificate aCert = (X509Certificate) x.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
           if (aCert != null)
             aCerts.add (aCert);
         });
-
         if (aCerts.size () > 1)
-          s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+        {
+          if (GlobalDebug.isDebugMode ())
+            s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+          else
+            s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message!");
+        }
 
         // Remember in State
         aState.setUsedCertificate (aCerts.getAtIndex (0));

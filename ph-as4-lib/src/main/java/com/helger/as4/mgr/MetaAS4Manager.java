@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.config.PModeConfigManager;
@@ -40,6 +41,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private static final String PARTNER_XML = "as4-partner.xml";
   private static final String PMODE_CONFIG_XML = "as4-pmodeconfig.xml";
   private static final String PMODE_XML = "as4-pmode.xml";
+  private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 
@@ -48,6 +50,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private PModeConfigManager m_aPModeConfigMgr;
   private PModeManager m_aPModeMgr;
   private AS4ProfileManager m_aProfileMgr;
+  private AS4DuplicateManager m_aIncomingDuplicateMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -70,6 +73,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aPModeConfigMgr = new PModeConfigManager (PMODE_CONFIG_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
       m_aProfileMgr = new AS4ProfileManager ();
+      m_aIncomingDuplicateMgr = new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
 
       _initCallbacks ();
 
@@ -123,5 +127,11 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static AS4ProfileManager getProfileMgr ()
   {
     return getInstance ().m_aProfileMgr;
+  }
+
+  @Nonnull
+  public static AS4DuplicateManager getIncomingDuplicateMgr ()
+  {
+    return getInstance ().m_aIncomingDuplicateMgr;
   }
 }

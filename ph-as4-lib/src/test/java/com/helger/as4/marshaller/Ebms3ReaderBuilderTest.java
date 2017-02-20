@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
+
 import org.junit.Test;
 import org.w3c.dom.Element;
 
@@ -33,6 +35,10 @@ import com.helger.jaxb.validation.CollectingValidationEventHandler;
 public final class Ebms3ReaderBuilderTest
 {
   private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (Ebms3ReaderBuilderTest.class);
+  static
+  {
+    Locale.setDefault (Locale.US);
+  }
 
   @Test
   public void testSoap ()

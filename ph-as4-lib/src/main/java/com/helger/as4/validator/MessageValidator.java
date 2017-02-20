@@ -49,6 +49,7 @@ public class MessageValidator
 
   // TODO Check P-Modes they should define which SOAP Version should be used for
   // the conversation
+  // XXX this method is highly redundant! Resource -> Domain -> DOM Node
   public Document getSoapEnvelope (@Nonnull final IReadableResource aXML, @Nonnull final Locale aContentLocale)
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();

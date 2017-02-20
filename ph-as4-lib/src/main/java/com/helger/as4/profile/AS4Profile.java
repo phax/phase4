@@ -27,7 +27,7 @@ import com.helger.commons.string.ToStringGenerator;
 
 /**
  * Default implementation of {@link IAS4Profile}.
- * 
+ *
  * @author Philip Helger
  */
 @Immutable

@@ -16,6 +16,8 @@
  */
 package com.helger.as4.messaging.mime;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.Session;
@@ -28,7 +30,6 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.charset.CCharset;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.mail.cte.EContentTransferEncoding;
 
@@ -54,7 +55,7 @@ public final class MimeMessageCreator
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       final String aDoc = AS4XMLHelper.serializeXML (aSOAPEnvelope);
-      aMessagePart.setContent (aDoc, m_eSOAPVersion.getMimeType (CCharset.CHARSET_UTF_8_OBJ).getAsString ());
+      aMessagePart.setContent (aDoc, m_eSOAPVersion.getMimeType (StandardCharsets.UTF_8).getAsString ());
       aMessagePart.setHeader (CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }

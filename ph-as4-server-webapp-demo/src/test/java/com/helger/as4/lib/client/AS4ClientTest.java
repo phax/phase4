@@ -59,7 +59,7 @@ public final class AS4ClientTest
   @BeforeClass
   public static void startServer () throws Exception
   {
-    AS4ServerConfiguration.reinitForTestOnly ();
+    AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MockPModeGenerator.ensureMockPModesArePresent ();

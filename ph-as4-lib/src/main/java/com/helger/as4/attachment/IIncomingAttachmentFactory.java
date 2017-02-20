@@ -31,15 +31,16 @@ import com.helger.as4.util.AS4ResourceManager;
  *
  * @author Philip Helger
  */
+@FunctionalInterface
 public interface IIncomingAttachmentFactory extends Serializable
 {
   /**
    * Create an attachment if the source message is a MIME message
-   *
-   * @param aResMgr
-   *        The resource manager to use. May not be <code>null</code>.
    * @param aBodyPart
    *        The attachment body part
+   * @param aResMgr
+   *        The resource manager to use. May not be <code>null</code>.
+   *
    * @return The internal attachment representation. Never <code>null</code>.
    * @throws IOException
    *         In case of IO error
@@ -47,6 +48,6 @@ public interface IIncomingAttachmentFactory extends Serializable
    *         In case MIME part reading fails.
    */
   @Nonnull
-  WSS4JAttachment createAttachment (@Nonnull AS4ResourceManager aResMgr,
-                                    @Nonnull MimeBodyPart aBodyPart) throws IOException, MessagingException;
+  WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart,
+                                    @Nonnull AS4ResourceManager aResMgr) throws IOException, MessagingException;
 }

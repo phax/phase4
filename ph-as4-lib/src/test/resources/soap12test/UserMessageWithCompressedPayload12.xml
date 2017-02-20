@@ -1,14 +1,3 @@
-
-Content-Type: Multipart/Related; boundary=MIME_boundary;
-type=application/soap+xml;
-start="
-<as4msg @ example.com>
-	"
-	--MIME_boundary
-	Content-Type: application/soap+xml; charset=UTF-8
-	Content-Transfer-Encoding: 8bit
-	Content-ID:
-	<as4msg @ example.com>
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
@@ -76,12 +65,3 @@ start="
 			</S12:Header>
 			<S12:Body wsu:Id="_f8aa8b55-b31c-4364-94d0-3615ca65aa40" />
 		</S12:Envelope>
-		--MIME_boundary
-		Content-Type: application/gzip
-		Content-ID:
-		<attachment1234 @ example.com>
-			Content-Description: Compressed XML payload
-			Content-Disposition: attachment; filename=invoice.xml
-			Content-Transfer-Encoding: binary
-			#‹##ºB.O#ÿ <!-- remaining binary content omitted -->
-			--MIME_boundary

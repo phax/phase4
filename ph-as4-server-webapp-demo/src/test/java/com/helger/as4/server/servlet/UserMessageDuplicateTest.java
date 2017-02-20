@@ -47,7 +47,7 @@ public class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
     // test file is configured for 1 minute can take LONGER if configured
     // differently
-    Thread.sleep (AS4ServerConfiguration.getMinutesForDuplicateDisposal () * 60000 * 2 + 10000);
+    Thread.sleep (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes () * 60000 * 2 + 10000);
 
     sendPlainMessage (aEntity, true, null);
   }

@@ -52,13 +52,16 @@ import com.helger.mail.datasource.InputStreamDataSource;
 
 /**
  * Special WSS4J attachment with an InputStream provider instead of a fixed
- * InputStream
+ * InputStream<br>
+ * Note: cannot be serializable because base class is not serializable and
+ * because we're dealing with InputStreams
  *
  * @author bayerlma
  * @author Philip Helger
  */
 public class WSS4JAttachment extends Attachment
 {
+  @FunctionalInterface
   public interface IHasAttachmentSourceStream
   {
     InputStream getInputStream () throws Exception;

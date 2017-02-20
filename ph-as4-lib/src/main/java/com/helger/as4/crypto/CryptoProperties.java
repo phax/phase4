@@ -44,8 +44,7 @@ public class CryptoProperties implements Serializable
   {
     m_aProps = new Properties ();
     if (aProps != null)
-      for (final Map.Entry <String, String> aEntry : aProps.entrySet ())
-        m_aProps.put (aEntry.getKey (), aEntry.getValue ());
+      m_aProps.putAll (aProps);
   }
 
   public CryptoProperties (@Nonnull final IReadableResource aRes)

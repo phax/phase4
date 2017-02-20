@@ -16,8 +16,6 @@
  */
 package com.helger.as4.servlet.spi;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,11 +30,13 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
- * This class represents the result of a message processor SPI implementation.
+ * This class represents the result of a message processor SPI
+ * implementation.<br>
+ * Note: cannot be serializable because WSS4JAttachment is not serializable
  *
  * @author Philip Helger
  */
-public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
+public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
@@ -52,7 +52,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
     m_sErrorMsg = sErrorMsg;
     m_aPayload = aPayload;
     m_aAttachments = aAttachments;
-
   }
 
   public boolean isSuccess ()
