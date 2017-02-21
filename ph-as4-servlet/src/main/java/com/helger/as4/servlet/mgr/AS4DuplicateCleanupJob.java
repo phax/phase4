@@ -14,6 +14,7 @@ import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.photon.core.app.CApplication;
+import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
 import com.helger.quartz.JobExecutionException;
@@ -22,6 +23,7 @@ import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
 
+@DisallowConcurrentExecution
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
