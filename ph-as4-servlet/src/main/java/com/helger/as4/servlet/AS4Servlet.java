@@ -17,6 +17,7 @@
 package com.helger.as4.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.List;
@@ -68,6 +69,8 @@ import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.IAS4Profile;
+import com.helger.as4.servlet.debug.AS4DebugInputStream;
+import com.helger.as4.servlet.debug.IAS4DebugIncomingCallback;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.mgr.AS4ServletMessageProcessorManager;
@@ -108,11 +111,13 @@ import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
+import com.helger.http.HTTPHeaderMap;
 import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.login.ELoginResult;
 import com.helger.photon.security.login.LoggedInUserManager;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.servlet.request.RequestHelper;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
@@ -145,9 +150,21 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Servlet.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
+  private static IAS4DebugIncomingCallback s_aDebugIncomingCB;
 
   public AS4Servlet ()
   {}
+
+  @Nullable
+  public static IAS4DebugIncomingCallback getDebugIncomingCallback ()
+  {
+    return s_aDebugIncomingCB;
+  }
+
+  public static void setDebugIncomingCallback (@Nullable final IAS4DebugIncomingCallback aCB)
+  {
+    s_aDebugIncomingCB = aCB;
+  }
 
   @Override
   protected Set <EHTTPMethod> getAllowedHTTPMethods ()
@@ -239,10 +256,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     _extractAllHeaders (eSOAPVersion, aHeaderNode, aHeaders);
 
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -425,7 +442,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
     // Storing for two-way response messages
     Node aResponsePayload = null;
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
 
     if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
     {
@@ -873,6 +890,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);
   }
 
+  @Nonnull
+  private InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
+  {
+    InputStream aIS = aHttpServletRequest.getInputStream ();
+    if (s_aDebugIncomingCB != null)
+    {
+      // Pass through all headers
+      final HTTPHeaderMap aHeaders = RequestHelper.getRequestHeaderMap (aHttpServletRequest);
+      s_aDebugIncomingCB.onRequestBegin (aHeaders);
+
+      // Enable incoming debugging
+      aIS = new AS4DebugInputStream (aIS, s_aDebugIncomingCB);
+    }
+    return aIS;
+  }
+
   @Override
   protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                                 @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
@@ -910,7 +943,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
@@ -932,7 +965,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             s_aLogger.debug ("MIME Boundary = " + sBoundary);
 
           // PARSING MIME Message via MultiPartStream
-          final MultipartStream aMulti = new MultipartStream (aHttpServletRequest.getInputStream (),
+          final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
                                                               sBoundary.getBytes (StandardCharsets.ISO_8859_1),
                                                               (MultipartProgressNotifier) null);
           final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
@@ -979,7 +1012,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         // Expect plain SOAP - read whole request to DOM
         // Note: this may require a huge amount of memory for large requests
-        aSOAPDocument = DOMReader.readXMLDOM (aHttpServletRequest.getInputStream ());
+        aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpServletRequest));
 
         // Determine SOAP version from content type
         eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainContentType.equals (x.getMimeType ()));
@@ -1022,6 +1055,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     finally
     {
+      if (s_aDebugIncomingCB != null)
+        s_aDebugIncomingCB.onRequestEnd ();
+
       LoggedInUserManager.getInstance ().logoutCurrentUser ();
     }
   }
