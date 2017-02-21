@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -51,6 +52,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessageTestSetUp
 {
+
   /**
    * Modify the standard user message to try special cases or provoke failure
    * messages.
@@ -70,16 +72,51 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
   {
+    return _modifyUserMessage (sAnotherOrWrongPModeConfigID,
+                               sAnotherOrWrongPartyIdInitiator,
+                               sAnotherOrWrongPartyIdResponder,
+                               aEbms3MessageProperties,
+                               null);
+  }
+
+  /**
+   * Modify the standard user message to try special cases or provoke failure
+   * messages.
+   *
+   * @param sAnotherOrWrongPModeConfigID
+   * @param sAnotherOrWrongPartyIdInitiator
+   * @param sAnotherOrWrongPartyIdResponder
+   * @param aEbms3MessageProperties
+   *        Default should be with _defaultProperties(), only if you do not want
+   *        them change this
+   * @return
+   * @throws Exception
+   */
+  @Nonnull
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeConfigID,
+                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments) throws Exception
+  {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? MockEbmsHelper.DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdInitiator;
     final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? MockEbmsHelper.DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdResponder;
-
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    Ebms3PayloadInfo aEbms3PayloadInfo;
+    Node aPayload = null;
+    if (aAttachments == null)
+    {
+      aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+    }
+    else
+    {
+      aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, aAttachments);
+    }
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
@@ -99,7 +136,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                      ESOAPVersion.AS4_DEFAULT)
                                                  .setMustUnderstand (true);
 
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aAttachments != null ? aDoc.getAsSOAPDocument (null) : aDoc.getAsSOAPDocument (aPayload);
   }
 
   @Nonnull

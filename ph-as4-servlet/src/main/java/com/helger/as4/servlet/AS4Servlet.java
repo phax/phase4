@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,6 +29,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -112,6 +114,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
 import com.helger.http.HTTPHeaderMap;
+import com.helger.http.HTTPStringHelper;
 import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.login.ELoginResult;
@@ -659,13 +662,27 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
           if (aResponseAttachments.isNotEmpty ())
           {
-            final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
-                                                                                                        aResponseAttachments);
+            final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
+                                                                                                            aResponseAttachments);
+
+            // Move all mime headers to the HTTP request
+            final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
+            while (aEnum.hasMoreElements ())
+            {
+              final Header h = (Header) aEnum.nextElement ();
+              // Make a single-line HTTP header value!
+              aAS4Response.addCustomResponseHeader (h.getName (),
+                                                    HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
+
+              // Remove from MIME message!
+              aMimeMsg.removeHeader (h.getName ());
+            }
+
             // send mime with unified response?
             aAS4Response.setContent ( () -> {
               try
               {
-                return aMsg.getInputStream ();
+                return aMimeMsg.getInputStream ();
               }
               catch (IOException | MessagingException ex)
               {
