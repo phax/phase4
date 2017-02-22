@@ -24,6 +24,7 @@ import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.photon.basic.object.IObject;
 
 public interface IPModeConfig extends IObject
@@ -35,16 +36,17 @@ public interface IPModeConfig extends IObject
   EMEP getMEP ();
 
   @Nonnull
+  @Nonempty
   default String getMEPID ()
   {
-    final EMEP eMEP = getMEP ();
-    return eMEP == null ? null : eMEP.getID ();
+    return getMEP ().getID ();
   }
 
   @Nonnull
   EMEPBinding getMEPBinding ();
 
   @Nonnull
+  @Nonempty
   default String getMEPBindingID ()
   {
     return getMEPBinding ().getID ();

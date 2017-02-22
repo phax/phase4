@@ -79,7 +79,9 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigWrongMEP ()
   {
-    m_aPModeConfig.setMEP (EMEP.TWO_WAY_PULL_PUSH);
+    m_aPModeConfig.setMEP (EMEP.TWO_WAY);
+    // Only 2-way push-push allowed
+    m_aPModeConfig.setMEPBinding (EMEPBinding.PULL);
     aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
@@ -88,10 +90,11 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigWrongMEPBinding ()
   {
+    // SYNC not allowed
     m_aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
     aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
 
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP-Binding")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
 
   @Test

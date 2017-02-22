@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -116,6 +117,8 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
     aPM.deletePartner (aPartner.getID ());
   }
 
+  // Currently Default PMode is not supported / wanted
+  @Ignore
   @Test
   public void testPartnersExistShouldGetDefaultConfig () throws Exception
   {

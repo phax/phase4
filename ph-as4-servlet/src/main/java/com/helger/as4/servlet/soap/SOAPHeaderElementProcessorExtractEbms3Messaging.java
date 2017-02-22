@@ -37,6 +37,7 @@ import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
@@ -114,14 +115,18 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     IPModeConfig aPModeConfig = null;
-    if (aUserMessage.getCollaborationInfo () != null)
+    final Ebms3CollaborationInfo aCollaborationInfo = aUserMessage.getCollaborationInfo ();
+    if (aCollaborationInfo != null)
     {
       // Find PMode
       String sPModeConfigID = null;
-      if (aUserMessage.getCollaborationInfo ().getAgreementRef () != null)
-        sPModeConfigID = aUserMessage.getCollaborationInfo ().getAgreementRef ().getPmode ();
+      if (aCollaborationInfo.getAgreementRef () != null)
+        sPModeConfigID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
-      aPModeConfig = AS4ServerSettings.getPModeConfigResolver ().getPModeConfigOfID (sPModeConfigID);
+      aPModeConfig = AS4ServerSettings.getPModeConfigResolver ().getPModeConfigOfID (sPModeConfigID,
+                                                                                     aCollaborationInfo.getService ()
+                                                                                                       .getValue (),
+                                                                                     aCollaborationInfo.getAction ());
       if (aPModeConfig == null)
       {
         s_aLogger.warn ("Failed to resolve PMode '" +

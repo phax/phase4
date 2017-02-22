@@ -24,14 +24,14 @@ import com.helger.commons.ValueEnforcer;
 
 /**
  * AS4 error message
- * 
+ *
  * @author Philip Helger
  */
 public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
   public AS4ErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    super (eSOAPVersion);
+    super (eSOAPVersion, EAS4MessageType.ERROR_MESSAGE);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
   }

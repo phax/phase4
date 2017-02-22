@@ -32,7 +32,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
   public AS4PullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                 @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    super (eSOAPVersion);
+    super (eSOAPVersion, EAS4MessageType.PULL_REQUEST);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
   }

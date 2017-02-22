@@ -17,6 +17,7 @@ import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -42,10 +43,10 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                                 "http://localhost:8080/as4"));
     // ESENS PMode is One Way on default settings need to change to two way
     final PModeConfig aPModeConfig = new PModeConfig ("esens-two-way");
-    aPModeConfig.setMEP (EMEP.TWO_WAY_PUSH_PUSH);
+    aPModeConfig.setMEP (EMEP.TWO_WAY);
+    aPModeConfig.setMEPBinding (EMEPBinding.PUSH_PUSH);
     aPModeConfig.setAgreement (s_aPMode.getConfig ().getAgreement ());
     aPModeConfig.setLeg1 (s_aPMode.getConfig ().getLeg1 ());
-    aPModeConfig.setMEPBinding (s_aPMode.getConfig ().getMEPBinding ());
     aPModeConfig.setPayloadService (s_aPMode.getConfig ().getPayloadService ());
     aPModeConfig.setReceptionAwareness (s_aPMode.getConfig ().getReceptionAwareness ());
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
@@ -68,6 +69,8 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     assertFalse (m_sResponse.contains ("Receipt"));
   }
 
+  // Adapt MOCK SPI processor so he adds some rnd attachment
+  // Check if usermessage contains said attachment
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {

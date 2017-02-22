@@ -40,6 +40,12 @@ public interface IAS4Message extends Serializable
   ESOAPVersion getSOAPVersion ();
 
   /**
+   * @return The type of the underlying message.
+   */
+  @Nonnull
+  EAS4MessageType getMessageType ();
+
+  /**
    * Set the "mustUnderstand" value depending on the used SOAP version.
    *
    * @param bMustUnderstand
@@ -51,7 +57,7 @@ public interface IAS4Message extends Serializable
 
   /**
    * Create a SOAP document from this message without a payload.
-   * 
+   *
    * @return The created DOM document
    */
   @Nonnull

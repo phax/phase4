@@ -73,7 +73,7 @@ public final class PModeMicroTypeConverterTest
     final PModeConfig aPModeConfig = new PModeConfig ("id");
     {
       aPModeConfig.setAgreement ("Agreement");
-      aPModeConfig.setMEP (EMEP.TWO_WAY_PUSH_PULL);
+      aPModeConfig.setMEP (EMEP.TWO_WAY);
       aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
       aPModeConfig.setLeg1 (_generatePModeLeg ());
       aPModeConfig.setLeg2 (_generatePModeLeg ());
@@ -147,7 +147,7 @@ public final class PModeMicroTypeConverterTest
                                                                               "xsdfilename",
                                                                               20001,
                                                                               EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap <> ();
     aPModePayloadProfiles.put (aPModePayloadProfile.getName (), aPModePayloadProfile);
     return aPModePayloadProfiles;
   }
@@ -160,7 +160,7 @@ public final class PModeMicroTypeConverterTest
                                                             "description",
                                                             PModeProperty.DATA_TYPE_STRING,
                                                             EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
   }
@@ -191,7 +191,7 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegReliability _generatePModeLegReliability ()
   {
-    final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation", "correlation2");
+    final ICommonsList <String> aCorrelation = new CommonsArrayList <> ("correlation", "correlation2");
     return new PModeLegReliability (ETriState.TRUE,
                                     ETriState.TRUE,
                                     "ack",
@@ -208,9 +208,9 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",
-                                                                                 "X509EncryptionEncrypt2");
-    final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign", "X509Sign2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
+                                                                                  "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,
                                  aX509Sign,

@@ -34,7 +34,7 @@ public final class AS4ServerSettings
 
   private static String m_sResponderID = DEFAULT_RESPONDER_ID;
   private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = WSS4JAttachment::createIncomingFileAttachment;
-  private static IPModeConfigResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver ();
+  private static IPModeConfigResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver (false);
 
   private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory ();
 

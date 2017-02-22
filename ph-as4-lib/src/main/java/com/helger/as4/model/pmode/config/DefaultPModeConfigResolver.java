@@ -16,6 +16,7 @@
  */
 package com.helger.as4.model.pmode.config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.mgr.MetaAS4Manager;
@@ -31,22 +32,51 @@ import com.helger.commons.string.StringHelper;
  */
 public class DefaultPModeConfigResolver implements IPModeConfigResolver
 {
-  @Nullable
-  public IPModeConfig getPModeConfigOfID (@Nullable final String sPModeConfigID)
-  {
-    if (StringHelper.hasNoText (sPModeConfigID))
-    {
-      // If the pmodeconfig id field is empty or null, set default pmode
-      // config
-      final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
-      if (aProfile != null)
-        return aProfile.createDefaultPModeConfig ();
+  private final boolean m_bUseDefaultAsFallback;
 
-      return DefaultPMode.getDefaultPModeConfig ();
+  public DefaultPModeConfigResolver (final boolean bUseDefaultAsFallback)
+  {
+    m_bUseDefaultAsFallback = bUseDefaultAsFallback;
+  }
+
+  @Nullable
+  public IPModeConfig getPModeConfigOfID (@Nullable final String sPModeConfigID,
+                                          @Nonnull final String sService,
+                                          @Nonnull final String sAction)
+  {
+    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
+    IPModeConfig ret = null;
+    if (StringHelper.hasText (sPModeConfigID))
+    {
+      // An ID is present - resolve this ID
+      // If provided ID is not present than the incoming message is rejected
+      // with an error!
+      ret = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
     }
 
-    // An ID is present - resolve this ID
-    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
-    return aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
+    if (ret == null)
+    {
+      // the pmodeconfig id field is empty or null (or invalid)
+      // Use combination of service and action
+      ret = aPModeConfigMgr.getPModeConfigOfServiceAndAction (sService, sAction);
+    }
+
+    if (ret != null)
+      return ret;
+
+    if (!m_bUseDefaultAsFallback)
+    {
+      // Not found and no default -> null
+      return null;
+    }
+
+    // Use default pmode config
+    // 1. Based on profile
+    // 2. Default default
+    final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
+    if (aProfile != null)
+      return aProfile.createDefaultPModeConfig ();
+
+    return DefaultPMode.getDefaultPModeConfig ();
   }
 }

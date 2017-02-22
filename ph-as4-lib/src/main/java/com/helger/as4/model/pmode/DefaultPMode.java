@@ -19,6 +19,7 @@ package com.helger.as4.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
@@ -42,13 +43,15 @@ import com.helger.as4.soap.ESOAPVersion;
 @Immutable
 public final class DefaultPMode
 {
+  public static final String DEFAULT_PMODE_ID = "default-pmode";
+
   private DefaultPMode ()
   {}
 
   @Nonnull
   public static IPModeConfig getDefaultPModeConfig ()
   {
-    final PModeConfig aDefaultConfig = new PModeConfig ("default-pmode");
+    final PModeConfig aDefaultConfig = new PModeConfig (DEFAULT_PMODE_ID);
     aDefaultConfig.setMEP (EMEP.DEFAULT_EBMS);
     aDefaultConfig.setMEPBinding (EMEPBinding.DEFAULT_EBMS);
     aDefaultConfig.setLeg1 (_generatePModeLeg ());
@@ -80,8 +83,8 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service",
-                                            "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test",
+    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
+                                            CAS4.DEFAULT_ACTION_URL,
                                             null,
                                             null,
                                             null,
@@ -98,15 +101,7 @@ public final class DefaultPMode
   private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty (null,
-                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultFrom",
-                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                             null,
-                             null);
-    return new PModeParty (null,
-                           "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultTo",
-                           "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                           null,
-                           null);
+      return new PModeParty (null, CAS4.DEFAULT_FROM_URL, CAS4.DEFAULT_SENDER_URL, null, null);
+    return new PModeParty (null, CAS4.DEFAULT_TO_URL, CAS4.DEFAULT_RESPONDER_URL, null, null);
   }
 }

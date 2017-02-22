@@ -26,6 +26,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -150,9 +151,9 @@ final class MockClientMessages
                                                                                                            "4321",
                                                                                                            "pmode-twoway",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   CAS4.DEFAULT_RESPONDER_URL,
                                                                                    MockEbmsHelper.DEFAULT_PARTY_ID);
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
@@ -189,9 +190,9 @@ final class MockClientMessages
                                                                                                            "4321",
                                                                                                            "pm-esens-generic-resp",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    "testt",
-                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   CAS4.DEFAULT_RESPONDER_URL,
                                                                                    "testt");
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

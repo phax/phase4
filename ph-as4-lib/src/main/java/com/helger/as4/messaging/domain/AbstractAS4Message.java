@@ -39,17 +39,25 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          implements IAS4Message, IGenericImplTrait <IMPLTYPE>
 {
   private final ESOAPVersion m_eSOAPVersion;
+  private final EAS4MessageType m_eMsgType;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
-  public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion)
+  public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
   {
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
   }
 
   @Nonnull
   public final ESOAPVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
+  }
+
+  @Nonnull
+  public final EAS4MessageType getMessageType ()
+  {
+    return m_eMsgType;
   }
 
   @Nonnull

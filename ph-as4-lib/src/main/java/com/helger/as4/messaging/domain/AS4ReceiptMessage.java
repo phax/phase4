@@ -24,14 +24,14 @@ import com.helger.commons.ValueEnforcer;
 
 /**
  * AS4 receipt message
- * 
+ *
  * @author Philip Helger
  */
 public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
   public AS4ReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    super (eSOAPVersion);
+    super (eSOAPVersion, EAS4MessageType.RECEIPT);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
   }

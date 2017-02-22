@@ -42,5 +42,4 @@ public class MPC extends AbstractObject implements IMPC
   {
     return OT;
   }
-
 }

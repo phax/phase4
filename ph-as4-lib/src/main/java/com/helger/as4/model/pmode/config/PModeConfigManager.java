@@ -24,10 +24,13 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.util.AS4IOHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
@@ -35,36 +38,14 @@ import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.ObjectHelper;
-import com.helger.xml.microdom.IMicroDocument;
 
 public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PModeConfig>
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (PModeConfigManager.class);
-  private static final String ATTR_DEFAULT_ID = "defaultpmode";
-
-  private String m_sDefaultID = null;
 
   public PModeConfigManager (@Nullable final String sFilename) throws DAOException
   {
     super (PModeConfig.class, sFilename);
-  }
-
-  @Override
-  @Nonnull
-  protected EChange onRead (@Nonnull final IMicroDocument aDoc)
-  {
-    final EChange ret = super.onRead (aDoc);
-    m_sDefaultID = aDoc.getDocumentElement ().getAttributeValue (ATTR_DEFAULT_ID);
-    return ret;
-  }
-
-  @Override
-  @Nonnull
-  protected IMicroDocument createWriteData ()
-  {
-    final IMicroDocument ret = super.createWriteData ();
-    ret.getDocumentElement ().setAttribute (ATTR_DEFAULT_ID, m_sDefaultID);
-    return ret;
   }
 
   public void createOrUpdatePModeConfig (@Nonnull final PModeConfig aPModeConfig)
@@ -196,29 +177,28 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
   @Nullable
   public IPModeConfig getPModeConfigOfID (@Nullable final String sID)
   {
-    IPModeConfig ret = getOfID (sID);
-    if (ret == null && m_sDefaultID != null)
-    {
-      // ID not found - try default
-      ret = getOfID (m_sDefaultID);
-    }
-    return ret;
+    return getOfID (sID);
   }
 
   @Nullable
-  public String getDefaultPModeConfigID ()
+  public IPModeConfig getPModeConfigOfServiceAndAction (@Nullable final String sService, @Nullable final String sAction)
   {
-    return m_sDefaultID;
-  }
-
-  public void setDefaultPModeConfigID (@Nullable final String sDefaultPModeConfigID)
-  {
-    m_sDefaultID = sDefaultPModeConfigID;
+    return findFirst (x -> {
+      final PModeLeg aLeg = x.getLeg1 ();
+      if (aLeg != null)
+      {
+        final PModeLegBusinessInformation aBI = aLeg.getBusinessInfo ();
+        if (aBI != null)
+        {
+          return EqualsHelper.equals (aBI.getService (), sService) && EqualsHelper.equals (aBI.getAction (), sAction);
+        }
+      }
+      return false;
+    });
   }
 
   public void validatePModeConfig (@Nullable final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrors)
   {
-
     if (aPModeConfig == null)
     {
       aErrors.add (AS4IOHelper.createError ("PModeConfig is null!"));

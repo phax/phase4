@@ -71,22 +71,24 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPModeConfig, aErrorList);
     assert aErrorList.isEmpty () : "Errors in global PMode config validation: " + aErrorList.toString ();
 
-    if (aPModeConfig.getMEP () == null)
+    final EMEP eMEP = aPModeConfig.getMEP ();
+    final EMEPBinding eMEPBinding = aPModeConfig.getMEPBinding ();
+
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
-      aErrorList.add (_createError ("No PMode MEP was specified."));
+      // Valid
     }
     else
-      if (!aPModeConfig.getMEP ().equals (EMEP.ONE_WAY) && !aPModeConfig.getMEP ().equals (EMEP.TWO_WAY))
-      {
-        aErrorList.add (_createError ("An invalid PMode MEP was specified, valid or only one-way and two-way."));
-      }
-
-    if (!aPModeConfig.getMEPBinding ().equals (EMEPBinding.PUSH) &&
-        !aPModeConfig.getMEPBinding ().equals (EMEPBinding.PUSH_AND_PULL))
     {
-      aErrorList.add (_createError ("An invalid PMode MEP-Binding was specified, valid or only one-way and two-way."));
+      aErrorList.add (_createError ("An invalid combination of PMode MEP (" +
+                                    eMEP +
+                                    ") and MEP binding (" +
+                                    eMEPBinding +
+                                    ") was specified, valid are only one-way/push and two-way/push-push."));
     }
 
+    // Leg1 must be present
     final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();
     if (aPModeLeg1 == null)
     {
@@ -282,6 +284,11 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
             aErrorList.add (_createError ("Only GZIP Compression is allowed"));
         }
       }
+    }
+
+    if (eMEP.isTwoWay ())
+    {
+      // TODO check leg 2
     }
   }
 

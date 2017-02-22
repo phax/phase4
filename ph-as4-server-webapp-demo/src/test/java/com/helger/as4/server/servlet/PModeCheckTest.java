@@ -54,6 +54,7 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -88,17 +89,17 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Default CollaborationInfo for testing
-    m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                              "MyServiceTypes",
-                                                                                              "QuoteToCollect",
+    m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
+                                                                                              null,
+                                                                                              CAS4.DEFAULT_SERVICE_URL,
                                                                                               "4321",
                                                                                               null,
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
-    m_aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+    m_aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                               MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                              MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                              CAS4.DEFAULT_RESPONDER_URL,
                                                                               MockEbmsHelper.DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
@@ -109,6 +110,11 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testWrongPModeID () throws Exception
   {
     m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode ("this-is-a-wrong-id");
+    // Needed to set since also Action and Service combination gets checked if
+    // they are already in the pmode pool
+    final Ebms3Service aService = new Ebms3Service ();
+    aService.setValue ("Random Value");
+    m_aEbms3UserMessage.getCollaborationInfo ().setService (aService);
 
     final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                             m_aEbms3UserMessage)

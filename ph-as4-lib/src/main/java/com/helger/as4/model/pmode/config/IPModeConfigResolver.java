@@ -16,6 +16,7 @@
  */
 package com.helger.as4.model.pmode.config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -28,11 +29,17 @@ public interface IPModeConfigResolver
 {
   /**
    * Get the PMode config of the passed ID.
-   * 
-   * @param sID
-   *        The ID to be resolved. May be <code>null</code>.
+   *
+   * @param sPModeID
+   *        The direct PMode ID to be resolved. May be <code>null</code>.
+   * @param sService
+   *        The service as specified in the EBMS CollaborationInformation. May
+   *        not be <code>null</code>.
+   * @param sAction
+   *        The action as specified in the EBMS CollaborationInformation. May
+   *        not be <code>null</code>.
    * @return <code>null</code> if resolution failed.
    */
   @Nullable
-  IPModeConfig getPModeConfigOfID (@Nullable String sID);
+  IPModeConfig getPModeConfigOfID (@Nullable String sPModeID, @Nonnull String sService, @Nonnull String sAction);
 }

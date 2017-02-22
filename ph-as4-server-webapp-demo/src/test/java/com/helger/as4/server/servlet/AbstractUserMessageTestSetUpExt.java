@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
@@ -123,9 +124,9 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                                            "4321",
                                                                                                            sAnotherOrWrongPModeConfigID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (MockEbmsHelper.DEFAULT_INITIATOR_ROLE,
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    sSetPartyIDInitiator,
-                                                                                   MockEbmsHelper.DEFAULT_RESPONDER_ROLE,
+                                                                                   CAS4.DEFAULT_RESPONDER_URL,
                                                                                    sSetPartyIDResponder);
 
     final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,

@@ -18,12 +18,14 @@ package com.helger.as4.mock;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
@@ -128,12 +130,7 @@ public final class MockPModeGenerator
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test",
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC");
+    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, null, null, MPCManager.DEFAULT_MPC_ID);
   }
 
   @Nonnull
@@ -146,16 +143,8 @@ public final class MockPModeGenerator
   private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty (null,
-                             "APP_1000000101",
-                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender",
-                             null,
-                             null);
-    return new PModeParty (null,
-                           "APP_1000000101",
-                           "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder",
-                           null,
-                           null);
+      return new PModeParty (null, "APP_1000000101", CAS4.DEFAULT_SENDER_URL, null, null);
+    return new PModeParty (null, "APP_1000000101", CAS4.DEFAULT_RESPONDER_URL, null, null);
   }
 
   public static void ensureMockPModesArePresent ()

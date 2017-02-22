@@ -33,8 +33,6 @@ import com.helger.commons.collection.ext.ICommonsList;
 public final class MockEbmsHelper
 {
   public static final String DEFAULT_PARTY_ID = "APP_1000000101";
-  public static final String DEFAULT_INITIATOR_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender";
-  public static final String DEFAULT_RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
   public static final String DEFAULT_AGREEMENT = "http://agreements.holodeckb2b.org/examples/agreement0";
 
   private MockEbmsHelper ()

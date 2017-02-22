@@ -718,8 +718,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
 
     if (aBInfo != null &&
-        "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test".equals (aBInfo.getAction ()) &&
-        "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service".equals (aBInfo.getService ()))
+        CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
+        CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
     {
       return false;
     }
