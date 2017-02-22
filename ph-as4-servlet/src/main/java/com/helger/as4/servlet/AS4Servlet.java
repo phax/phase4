@@ -569,8 +569,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     else
     {
       // If no Error is present check if partners declared if they want a
-      // response and if this response should contain
-      // nonrepudiationinformation if applicable
+      // response and if this response should contain non-repudiation
+      // information if applicable
       if (_isSendReceiptAsResponse (aPModeConfig))
       {
         if (aPModeConfig.getMEP ().isOneWay ())
@@ -591,6 +591,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         else
         {
           // TWO - WAY
+          // TODO determine leg1/leg2 of message
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                                   aUserMessage.getMessageInfo ()
                                                                                                               .getMessageId ());
@@ -632,6 +633,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                 aFinalRecipient = aProp;
               }
           }
+
           aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
           aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
 
@@ -649,8 +651,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
           if (aResponseAttachments.isNotEmpty ())
           {
-            final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aResponseDoc,
-                                                                                                            aResponseAttachments);
+            // TODO SOAP version from correct leg
+            final MimeMessage aMimeMsg = new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aResponseDoc,
+                                                                                                    aResponseAttachments);
 
             // Move all mime headers to the HTTP request
             final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
@@ -665,7 +668,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
               aMimeMsg.removeHeader (h.getName ());
             }
 
-            // send mime with unified response?
+            // send mime with unified response
             aAS4Response.setContent ( () -> {
               try
               {
