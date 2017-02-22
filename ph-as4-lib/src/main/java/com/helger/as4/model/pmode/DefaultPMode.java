@@ -20,25 +20,27 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.CAS4;
-import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.mpc.MPCManager;
-import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
+import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.commons.state.ETriState;
 
 /**
- * Default MPC Specification from
+ * Default PMode configuration Specification from
  * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.
- * pdf Only use if necessary and nothing is used/defined.
+ * pdf <br>
+ * Automatically generated in PModeConfigManager upon initialization
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 @Immutable
 public final class DefaultPMode
@@ -49,35 +51,36 @@ public final class DefaultPMode
   {}
 
   @Nonnull
-  public static IPModeConfig getDefaultPModeConfig ()
+  public static PModeConfig createDefaultPModeConfig ()
   {
     final PModeConfig aDefaultConfig = new PModeConfig (DEFAULT_PMODE_ID);
-    aDefaultConfig.setMEP (EMEP.DEFAULT_EBMS);
-    aDefaultConfig.setMEPBinding (EMEPBinding.DEFAULT_EBMS);
+    aDefaultConfig.setMEP (EMEP.ONE_WAY);
+    aDefaultConfig.setMEPBinding (EMEPBinding.PUSH);
     aDefaultConfig.setLeg1 (_generatePModeLeg ());
     // Leg 2 stays null, because we only use one-way
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aDefaultConfig);
     return aDefaultConfig;
-  }
-
-  @Nonnull
-  public static IPMode getDefaultPMode ()
-  {
-    return new PMode (_generateInitiatorOrResponder (true),
-                      _generateInitiatorOrResponder (false),
-                      getDefaultPModeConfig ());
   }
 
   @Nonnull
   private static PModeLeg _generatePModeLeg ()
   {
-    final PModeLegReliability aPModeLegReliability = null;
-    final PModeLegSecurity aPModeLegSecurity = null;
+    final PModeLegReliability aReliability = null;
+    final PModeLegSecurity aSecurity = new PModeLegSecurity ();
+    {
+      aSecurity.setSendReceipt (true);
+      aSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+    }
+    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
+                                                                           null,
+                                                                           ETriState.TRUE,
+                                                                           ETriState.UNDEFINED,
+                                                                           ETriState.UNDEFINED,
+                                                                           ETriState.UNDEFINED);
     return new PModeLeg (_generatePModeLegProtocol (),
                          _generatePModeLegBusinessInformation (),
-                         null,
-                         aPModeLegReliability,
-                         aPModeLegSecurity);
+                         aErrorHandler,
+                         aReliability,
+                         aSecurity);
   }
 
   @Nonnull
@@ -95,13 +98,5 @@ public final class DefaultPMode
   private static PModeLegProtocol _generatePModeLegProtocol ()
   {
     return new PModeLegProtocol ("HTTP 1.1", ESOAPVersion.AS4_DEFAULT);
-  }
-
-  @Nonnull
-  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
-  {
-    if (bInitiator)
-      return new PModeParty (null, CAS4.DEFAULT_FROM_URL, CAS4.DEFAULT_SENDER_URL, null, null);
-    return new PModeParty (null, CAS4.DEFAULT_TO_URL, CAS4.DEFAULT_RESPONDER_URL, null, null);
   }
 }

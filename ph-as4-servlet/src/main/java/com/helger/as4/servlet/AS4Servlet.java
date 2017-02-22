@@ -59,7 +59,6 @@ import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.EMEP;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
@@ -444,10 +443,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Storing for two-way response messages
-    Node aResponsePayload = null;
+    final Node aResponsePayload = null;
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
 
-    if (aErrorMessages.isEmpty () && _isNotPingPModeConfig (aState.getPModeConfig ()))
+    if (aErrorMessages.isEmpty () && _isNotPingMessage (aState.getPModeConfig ()))
     {
       final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
@@ -476,22 +475,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
             if (aResult.isSuccess ())
             {
-
               // Add response attachments, payloads
-              if (aResult.hasAttachments ())
-              {
-                aResponseAttachments.addAll (aResult.getAttachments ());
-              }
-              if (aResult.hasPayload ())
-              {
-                if (aResponsePayload == null)
-                  aResponsePayload = aResult.getPayload ();
-                else
-                  aResponsePayload.appendChild (aResult.getPayload ());
-              }
+              aResult.addAllAttachmentsTo (aResponseAttachments);
               if (s_aLogger.isDebugEnabled ())
                 s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
-
             }
             else
             {
@@ -526,7 +513,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
     if (aErrorMessages.isEmpty ())
     {
-      // PModeConfig - determine inside SPI providers!
+      // PModeConfig - determined inside SPI providers!
       if (aPModeConfig == null)
       {
         aAS4Response.setBadRequest ("No AS4 P-Mode configuration found!");
@@ -566,7 +553,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // partners declared in their pmode config they want an error response
     if (aErrorMessages.isNotEmpty ())
     {
-      if (_isSendErrorResponse (aPModeConfig))
+      if (_isSendErrorAsResponse (aPModeConfig))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                  MessageHelperMethods.createEbms3MessageInfo (),
@@ -584,9 +571,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // If no Error is present check if partners declared if they want a
       // response and if this response should contain
       // nonrepudiationinformation if applicable
-      if (_isSendResponse (aPModeConfig))
+      if (_isSendReceiptAsResponse (aPModeConfig))
       {
-        if (aPModeConfig.getMEP ().equals (EMEP.ONE_WAY))
+        if (aPModeConfig.getMEP ().isOneWay ())
         {
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
           final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
@@ -713,7 +700,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check
    * @return true if the default values to ping are not used else false
    */
-  private static boolean _isNotPingPModeConfig (@Nonnull final IPModeConfig aPModeConfig)
+  private static boolean _isNotPingMessage (@Nonnull final IPModeConfig aPModeConfig)
   {
     final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
 
@@ -752,13 +739,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check the attribute
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private static boolean _isSendErrorResponse (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendErrorAsResponse (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
       if (aPModeConfig.getLeg1 () != null)
         if (aPModeConfig.getLeg1 ().getErrorHandling () != null)
           if (aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
+          {
+            // Note: this is enabled in Default PMode
             return aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
+          }
     // Default behavior
     return true;
   }
@@ -770,15 +760,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        to check the attribute
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private static boolean _isSendResponse (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendReceiptAsResponse (@Nullable final IPModeConfig aPModeConfig)
   {
     if (aPModeConfig != null)
       if (aPModeConfig.getLeg1 () != null)
         if (aPModeConfig.getLeg1 ().getSecurity () != null)
+        {
+          // Note: this is enabled in Default PMode
           return EPModeSendReceiptReplyPattern.RESPONSE.equals (aPModeConfig.getLeg1 ()
                                                                             .getSecurity ()
                                                                             .getSendReceiptReplyPattern ());
-
+        }
     // Default behaviour if the value is not set or no security is existing
     return true;
   }
@@ -821,20 +813,20 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
     for (final Ebms3Property sProperty : aPropertyList)
     {
-      if (sProperty.getName ().equals ("originalSender"))
+      if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
         sOriginalSenderC1 = sProperty.getValue ();
       else
-        if (sProperty.getName ().equals ("finalRecipient"))
+        if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
           sFinalRecipientC4 = sProperty.getValue ();
     }
 
     if (StringHelper.hasNoText (sOriginalSenderC1))
     {
-      return "originalSender property is empty or not existant but mandatory";
+      return CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory";
     }
     if (StringHelper.hasNoText (sFinalRecipientC4))
     {
-      return "finalRecipient property is empty or not existant but mandatory";
+      return CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory";
     }
     return null;
   }
@@ -933,8 +925,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // TODO make locale dynamic
     final Locale aLocale = Locale.US;
 
-    // XXX By default login in admin user
-    // XXX why do we need a logged-in user?
+    // XXX By default login in admin user; why do we need a logged-in user?
     final ELoginResult e = LoggedInUserManager.getInstance ().loginUser (CSecurity.USER_ADMINISTRATOR_LOGIN,
                                                                          CSecurity.USER_ADMINISTRATOR_PASSWORD);
     assert e.isSuccess () : "Login failed: " + e.toString ();

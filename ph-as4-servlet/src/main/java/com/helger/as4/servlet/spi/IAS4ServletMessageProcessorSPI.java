@@ -41,7 +41,9 @@ public interface IAS4ServletMessageProcessorSPI
    *        The received user message. May be <code>null</code>.
    * @param aPayload
    *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
-   *        <code>null</code>.
+   *        <code>null</code>. May also be <code>null</code> if a MIME message
+   *        comes in - in that case the SOAP body MUST be empty and the main
+   *        payload can be found in aIncomingAttachments[0].
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.

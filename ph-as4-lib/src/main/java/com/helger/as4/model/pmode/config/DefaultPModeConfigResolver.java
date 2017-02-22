@@ -77,6 +77,6 @@ public class DefaultPModeConfigResolver implements IPModeConfigResolver
     if (aProfile != null)
       return aProfile.createDefaultPModeConfig ();
 
-    return DefaultPMode.getDefaultPModeConfig ();
+    return aPModeConfigMgr.getPModeConfigOfID (DefaultPMode.DEFAULT_PMODE_ID);
   }
 }

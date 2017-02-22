@@ -43,11 +43,17 @@ public final class MEPHelper
           case SYNC:
             return eMsgType.isUserMessage ();
           case PUSH_PUSH:
-            return eMsgType.isUserMessage ();
+            if (bLeg1)
+              return eMsgType.isReceiptOrError ();
+            return eMsgType.isReceiptOrError ();
           case PUSH_PULL:
+            if (bLeg1)
+              return eMsgType.isReceiptOrError ();
             return eMsgType.isUserMessage ();
           case PULL_PUSH:
-            return eMsgType.isUserMessage ();
+            if (bLeg1)
+              return eMsgType.isUserMessage ();
+            return eMsgType.isReceiptOrError ();
         }
         break;
       }

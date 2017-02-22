@@ -24,10 +24,12 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.model.pmode.DefaultPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.util.AS4IOHelper;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -46,6 +48,16 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
   public PModeConfigManager (@Nullable final String sFilename) throws DAOException
   {
     super (PModeConfig.class, sFilename);
+  }
+
+  @Override
+  @Nonnull
+  @OverrideOnDemand
+  protected EChange onInit ()
+  {
+    // Ensure default (for testing) is always present
+    createPModeConfig (DefaultPMode.createDefaultPModeConfig ());
+    return EChange.CHANGED;
   }
 
   public void createOrUpdatePModeConfig (@Nonnull final PModeConfig aPModeConfig)

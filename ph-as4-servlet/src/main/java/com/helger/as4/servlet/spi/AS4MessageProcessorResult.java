@@ -19,14 +19,14 @@ package com.helger.as4.servlet.spi;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.w3c.dom.Node;
-
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
-import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -40,17 +40,14 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
-  private final Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
 
   protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                        @Nullable final String sErrorMsg,
-                                       @Nullable final Node aPayload,
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
     m_sErrorMsg = sErrorMsg;
-    m_aPayload = aPayload;
     m_aAttachments = aAttachments;
   }
 
@@ -65,55 +62,49 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return m_sErrorMsg;
   }
 
-  public boolean hasPayload ()
-  {
-    return m_aPayload != null ? true : false;
-  }
-
-  public Node getPayload ()
-  {
-    return m_aPayload;
-  }
-
   public boolean hasAttachments ()
   {
-    return m_aAttachments != null ? true : false;
+    return CollectionHelper.isNotEmpty (m_aAttachments);
   }
 
-  public ICommonsList <WSS4JAttachment> getAttachments ()
+  public void addAllAttachmentsTo (@Nonnull final ICommonsList <WSS4JAttachment> aTarget)
   {
-    return m_aAttachments;
+    if (m_aAttachments != null)
+      aTarget.addAll (m_aAttachments);
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <WSS4JAttachment> getAllAttachments ()
+  {
+    return new CommonsArrayList <> (m_aAttachments);
   }
 
   @Override
   public String toString ()
   {
     return new ToStringGenerator (this).append ("Success", m_eSuccess)
-                                       .appendIf ("ErrorMsg", m_sErrorMsg, StringHelper::hasText)
+                                       .appendIf ("ErrorMsg", m_sErrorMsg, x -> m_eSuccess.isFailure ())
+                                       .appendIf ("Attachments", m_aAttachments, x -> m_eSuccess.isSuccess ())
                                        .getToString ();
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, null);
-  }
-
-  @Nonnull
-  public static AS4MessageProcessorResult createSuccess (@Nullable final Node aPayload)
-  {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aPayload, null);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, aAttachments);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
+    ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null);
   }
 }
