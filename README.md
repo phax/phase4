@@ -15,6 +15,7 @@ It consists of the following sub-projects:
     * Added HTTP retry for client
     * Added server duplicate message detection for incoming messages
     * `MessageInfo/Timestamp` uses UTC - thanks Sander
+    * Started two-way handling
   * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects

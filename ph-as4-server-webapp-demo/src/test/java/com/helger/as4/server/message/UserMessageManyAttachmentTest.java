@@ -16,10 +16,14 @@
  */
 package com.helger.as4.server.message;
 
+import java.io.IOException;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.Test;
@@ -68,7 +72,10 @@ public class UserMessageManyAttachmentTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageManyAttachmentsMimeSuccess () throws WSSecurityException, Exception
+  public void testUserMessageManyAttachmentsMimeSuccess () throws IOException,
+                                                           TransformerFactoryConfigurationError,
+                                                           TransformerException,
+                                                           MessagingException
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
