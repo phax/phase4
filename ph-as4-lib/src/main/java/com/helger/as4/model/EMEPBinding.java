@@ -115,6 +115,26 @@ public enum EMEPBinding implements IHasID <String>
     return true;
   }
 
+  /**
+   * @return <code>true</code> if the processing is synchronous,
+   *         <code>false</code> otherwise.
+   * @see #isAsynchronous()
+   */
+  public boolean isSynchronous ()
+  {
+    return this == PUSH || this == PULL || this == SYNC;
+  }
+
+  /**
+   * @return <code>true</code> if the processing is asynchronous,
+   *         <code>false</code> otherwise.
+   * @see #isSynchronous()
+   */
+  public boolean isAsynchronous ()
+  {
+    return this == PUSH_PUSH || this == PUSH_PULL || this == PULL_PUSH;
+  }
+
   @Nullable
   public static EMEPBinding getFromIDOrNull (@Nullable final String sID)
   {
