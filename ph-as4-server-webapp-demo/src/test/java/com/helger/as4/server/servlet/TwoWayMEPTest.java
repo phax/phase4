@@ -20,6 +20,7 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -46,7 +47,9 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aPModeConfig.setAgreement (s_aPMode.getConfig ().getAgreement ());
     aPModeConfig.setLeg1 (s_aPMode.getConfig ().getLeg1 ());
     // Setting second leg to the same as first
-    aPModeConfig.setLeg2 (s_aPMode.getConfig ().getLeg1 ());
+    final PModeLeg aLeg2 = s_aPMode.getConfig ().getLeg1 ();
+    aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
+    aPModeConfig.setLeg2 (aLeg2);
     aPModeConfig.setPayloadService (s_aPMode.getConfig ().getPayloadService ());
     aPModeConfig.setReceptionAwareness (s_aPMode.getConfig ().getReceptionAwareness ());
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
