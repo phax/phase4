@@ -215,7 +215,7 @@ public class WSS4JAttachment extends Attachment
     return this;
   }
 
-  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws Exception
+  public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws MessagingException
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
 

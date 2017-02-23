@@ -36,7 +36,10 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -103,6 +106,7 @@ import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
@@ -182,24 +186,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     return ALLOWED_METHDOS_POST;
   }
 
-  private static void _extractAllHeaders (@Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nonnull final Node aHeaderNode,
-                                          @Nonnull final ICommonsList <AS4SingleSOAPHeader> aHeaders)
-  {
-    for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
-    {
-      final QName aQName = XMLHelper.getQName (aHeaderChild);
-      final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
-      final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
-      aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
-    }
-  }
-
   private static void _decompressAttachments (@Nonnull final Ebms3UserMessage aUserMessage,
                                               @Nonnull final AS4MessageState aState,
-                                              @Nonnull final ICommonsList <WSS4JAttachment> aDecryptedAttachments)
+                                              @Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments)
   {
-    for (final WSS4JAttachment aIncomingAttachment : aDecryptedAttachments.getClone ())
+    for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
     {
       final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
       if (eCompressionMode != null)
@@ -224,55 +215,31 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
-  private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
-                                   @Nonnull final Document aSOAPDocument,
-                                   @Nonnull final ESOAPVersion eSOAPVersion,
-                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                   @Nonnull final AS4Response aAS4Response,
-                                   @Nonnull final Locale aLocale) throws Exception
+  private void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
+                                           @Nonnull final ESOAPVersion eSOAPVersion,
+                                           @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                           @Nonnull final Locale aDisplayLocale,
+                                           @Nonnull final AS4MessageState aState,
+                                           @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-    ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
-    ValueEnforcer.notNull (aAS4Response, "AS4Response");
-    ValueEnforcer.notNull (aLocale, "Locale");
-
-    if (s_aLogger.isDebugEnabled ())
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     {
-      s_aLogger.debug ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
-      s_aLogger.debug (AS4XMLHelper.serializeXML (aSOAPDocument));
-      s_aLogger.debug ("Including the following attachments:");
-      s_aLogger.debug (aIncomingAttachments.toString ());
+      // Find SOAP header
+      final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
+                                                                     eSOAPVersion.getNamespaceURI (),
+                                                                     eSOAPVersion.getHeaderElementName ());
+      if (aHeaderNode == null)
+        throw new BadRequestException ("SOAP document is missing a Header element");
+
+      // Extract all header elements including their mustUnderstand value
+      for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
+      {
+        final QName aQName = XMLHelper.getQName (aHeaderChild);
+        final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
+        final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
+        aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
+      }
     }
-
-    // Find SOAP header
-    final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
-                                                                   eSOAPVersion.getNamespaceURI (),
-                                                                   eSOAPVersion.getHeaderElementName ());
-    if (aHeaderNode == null)
-    {
-      aAS4Response.setBadRequest ("SOAP document is missing a Header element");
-      return;
-    }
-
-    // Find SOAP body
-    Node aBodyNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
-                                                           eSOAPVersion.getNamespaceURI (),
-                                                           eSOAPVersion.getBodyElementName ());
-    if (aBodyNode == null)
-    {
-      aAS4Response.setBadRequest ("SOAP document is missing a Body element");
-      return;
-    }
-
-    // Extract all header elements including their mustUnderstand value
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
-    _extractAllHeaders (eSOAPVersion, aHeaderNode, aHeaders);
-
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
-
-    // This is where all data from the SOAP headers is stored to
-    final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
 
     // handle all headers in the order of the registered handlers!
     for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getInstance ()
@@ -302,7 +269,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            aIncomingAttachments,
                                            aState,
                                            aErrorList,
-                                           aLocale)
+                                           aDisplayLocale)
                     .isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
@@ -323,11 +290,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         {
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
           if (ePredefinedError != null)
-            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale));
+            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aDisplayLocale));
           else
           {
             final Ebms3Error aEbms3Error = new Ebms3Error ();
-            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
+            aEbms3Error.setErrorDetail (aError.getErrorText (aDisplayLocale));
             aEbms3Error.setErrorCode (aError.getErrorID ());
             aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
             aEbms3Error.setOrigin (aError.getErrorFieldName ());
@@ -340,75 +307,108 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       }
     }
 
-    // Now check if all must understand headers were processed
-    Ebms3UserMessage aUserMessage = null;
-    Node aPayloadNode = null;
-    ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
-
+    // If an error message is present, send it back gracefully
     if (aErrorMessages.isEmpty ())
     {
+      // Now check if all must understand headers were processed
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-        {
-          aAS4Response.setBadRequest ("Error processing required SOAP header element " +
-                                      aHeader.getQName ().toString ());
-          return;
-        }
+          throw new BadRequestException ("Error processing required SOAP header element " +
+                                         aHeader.getQName ().toString ());
+    }
+  }
 
-      // Every message can only contain 1 Usermessage but 0..n signalmessages
+  private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
+                                   @Nonnull final Document aSOAPDocument,
+                                   @Nonnull final ESOAPVersion eSOAPVersion,
+                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                   @Nonnull final AS4Response aAS4Response,
+                                   @Nonnull final Locale aLocale) throws TransformerFactoryConfigurationError,
+                                                                  TransformerException,
+                                                                  WSSecurityException,
+                                                                  MessagingException
+  {
+    ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
+    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
+    ValueEnforcer.notNull (aAS4Response, "AS4Response");
+    ValueEnforcer.notNull (aLocale, "Locale");
+
+    if (s_aLogger.isDebugEnabled ())
+    {
+      s_aLogger.debug ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
+      s_aLogger.debug (AS4XMLHelper.serializeXML (aSOAPDocument));
+      s_aLogger.debug ("Including the following attachments:");
+      s_aLogger.debug (aIncomingAttachments.toString ());
+    }
+
+    // Collect all runtime errors
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+
+    // This is where all data from the SOAP headers is stored to
+    final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
+
+    // Handle all headers
+    _processSOAPHeaderElements (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aLocale, aState, aErrorMessages);
+
+    Ebms3UserMessage aUserMessage = null;
+    Ebms3PullRequest aPullRequest = null;
+    Node aPayloadNode = null;
+    ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
+    // Storing for two-way response messages
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
+
+    if (aErrorMessages.isEmpty ())
+    {
+      // Every message can only contain 1 User message or 1 pull message
+      // aUserMessage can be null on incoming Pull-Message!
       aUserMessage = aState.getMessaging ().getUserMessageAtIndex (0);
+      aPullRequest = aState.getMessaging ().getSignalMessageCount () > 0 ? aState.getMessaging ()
+                                                                                 .getSignalMessageAtIndex (0)
+                                                                                 .getPullRequest ()
+                                                                         : null;
+      if (aUserMessage == null && aPullRequest == null)
+        throw new BadRequestException ("UserMessage or PullRequest must be present!");
+      if (aUserMessage != null && aPullRequest != null)
+        throw new BadRequestException ("Only UserMessage or PullRequest may be present!");
 
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
 
-      // Decompress attachments (if compressed)
-      _decompressAttachments (aUserMessage, aState, aDecryptedAttachments);
-
-      final Document aDecryptedSOAPDoc = aState.getDecryptedSOAPDocument ();
-
-      if (aDecryptedSOAPDoc != null)
+      if (aUserMessage != null)
       {
-        // Re-evaluate body node from decrypted SOAP document
-        aBodyNode = XMLHelper.getFirstChildElementOfName (aDecryptedSOAPDoc.getDocumentElement (),
-                                                          eSOAPVersion.getNamespaceURI (),
-                                                          eSOAPVersion.getBodyElementName ());
-        if (aBodyNode == null)
-        {
-          aAS4Response.setBadRequest ("Decrypted SOAP document is missing a Body element");
-          return;
-        }
+        // Decompress attachments (if compressed)
+        // Result is directly in the decrypted attachments list!
+        _decompressAttachments (aUserMessage, aState, aDecryptedAttachments);
       }
+
+      final boolean bUseDecryptedSOAP = aState.hasDecryptedSOAPDocument ();
+      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSOAPDocument () : aSOAPDocument;
+      assert aRealSOAPDoc != null;
+
+      // Find SOAP body
+      final Node aBodyNode = XMLHelper.getFirstChildElementOfName (aRealSOAPDoc.getDocumentElement (),
+                                                                   eSOAPVersion.getNamespaceURI (),
+                                                                   eSOAPVersion.getBodyElementName ());
+      if (aBodyNode == null)
+        throw new BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+                                       " SOAP document is missing a Body element");
       aPayloadNode = aBodyNode.getFirstChild ();
-    }
 
-    if (aErrorMessages.isEmpty ())
-    {
-      // Check if originalSender and finalRecipient are present
-      // Since these two properties are mandatory
-      if (aUserMessage.getMessageProperties () != null)
+      if (aUserMessage != null)
       {
+        // Check if originalSender and finalRecipient are present
+        // Since these two properties are mandatory
+        if (aUserMessage.getMessageProperties () == null)
+          throw new BadRequestException ("No Message Properties present but OriginalSender and finalRecipient have to be present");
+
         final List <Ebms3Property> aProps = aUserMessage.getMessageProperties ().getProperty ();
-        if (!aProps.isEmpty ())
-        {
-          final String sErrorText = _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
-          if (StringHelper.hasText (sErrorText))
-          {
-            aAS4Response.setBadRequest (sErrorText);
-            return;
-          }
-        }
-        else
-        {
-          aAS4Response.setBadRequest ("Message Property element present but no properties");
-          return;
-        }
-      }
-      else
-      {
-        aAS4Response.setBadRequest ("No Message Properties present but OriginalSender and finalRecipient have to be present");
-        return;
+        if (aProps.isEmpty ())
+          throw new BadRequestException ("Message Property element present but no properties");
+
+        _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }
 
       // Additional Matrix on what should happen in certain scenarios
@@ -448,72 +448,64 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           _ensurePModeIsPresent (aState, sConfigID, aUserMessage.getPartyInfo ());
         }
       }
-    }
 
-    // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
-
-    if (aErrorMessages.isEmpty () && _isNotPingMessage (aState.getPModeConfig ()))
-    {
-      final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
-      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
-      if (bIsDuplicate)
+      if (_isNotPingMessage (aState.getPModeConfig ()))
       {
-        s_aLogger.info ("Not invoking SPIs, because message was already handled!");
-        final Ebms3Description aDesc = new Ebms3Description ();
-        aDesc.setLang (aLocale.getLanguage ());
-        aDesc.setValue ("Another message with the same ID was already received!");
-        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aLocale, sMessageID, "", aDesc));
-      }
-      else
-      {
-        // Invoke all SPIs
-        for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
-          try
-          {
-            if (s_aLogger.isDebugEnabled ())
-              s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
-
-            final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
-                                                                                    aPayloadNode,
-                                                                                    aDecryptedAttachments);
-            if (aResult == null)
-              throw new IllegalStateException ("No result object present!");
-
-            if (aResult.isSuccess ())
+        final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+        final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
+        if (bIsDuplicate)
+        {
+          s_aLogger.info ("Not invoking SPIs, because message was already handled!");
+          final Ebms3Description aDesc = new Ebms3Description ();
+          aDesc.setLang (aLocale.getLanguage ());
+          aDesc.setValue ("Another message with the same ID was already received!");
+          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aLocale, sMessageID, "", aDesc));
+        }
+        else
+        {
+          // Invoke all SPIs
+          for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
+            try
             {
-              // Add response attachments, payloads
-              aResult.addAllAttachmentsTo (aResponseAttachments);
               if (s_aLogger.isDebugEnabled ())
-                s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+                s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
+
+              final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
+                                                                                      aPayloadNode,
+                                                                                      aDecryptedAttachments);
+              if (aResult == null)
+                throw new IllegalStateException ("No result object present!");
+
+              if (aResult.isSuccess ())
+              {
+                // Add response attachments, payloads
+                aResult.addAllAttachmentsTo (aResponseAttachments);
+                if (s_aLogger.isDebugEnabled ())
+                  s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+              }
+              else
+              {
+                s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
+
+                final Ebms3Error aError = new Ebms3Error ();
+                aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
+                aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
+                aError.setRefToMessageInError (sMessageID);
+                final Ebms3Description aDesc = new Ebms3Description ();
+                aDesc.setValue (aResult.getErrorMessage ());
+                aDesc.setLang (aLocale.getLanguage ());
+                aError.setDescription (aDesc);
+                aErrorMessages.add (aError);
+
+                // Stop processing
+                break;
+              }
             }
-            else
+            catch (final Throwable t)
             {
-              s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
-
-              final Ebms3Error aError = new Ebms3Error ();
-              aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
-              aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
-              aError.setRefToMessageInError (sMessageID);
-              final Ebms3Description aDesc = new Ebms3Description ();
-              aDesc.setValue (aResult.getErrorMessage ());
-              aDesc.setLang (aLocale.getLanguage ());
-              aError.setDescription (aDesc);
-              aErrorMessages.add (aError);
-
-              // Stop processing
-              break;
+              throw new BadRequestException ("Error processing incoming AS4 message with processor " + aProcessor, t);
             }
-          }
-          catch (final Throwable t)
-          {
-            s_aLogger.error ("Error processing incoming AS4 message with processor " + aProcessor, t);
-            aAS4Response.setBadRequest ("Error processing incoming AS4 message with processor " +
-                                        aProcessor +
-                                        ", Exception: " +
-                                        t.getLocalizedMessage ());
-            return;
-          }
+        }
       }
     }
 
@@ -523,8 +515,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // PModeConfig - determined inside SPI providers!
       if (aPModeConfig == null)
       {
-        aAS4Response.setBadRequest ("No AS4 P-Mode configuration found!");
-        return;
+        throw new BadRequestException ("No AS4 P-Mode configuration found!");
       }
 
       {
@@ -535,8 +526,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
           if (aProfile == null)
           {
-            aAS4Response.setBadRequest ("The AS4 profile " + sProfileName + " does not exist.");
-            return;
+            throw new BadRequestException ("The AS4 profile " + sProfileName + " does not exist.");
           }
 
           // Profile Checks gets set when started with Server
@@ -545,12 +535,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
           if (aErrorList.isNotEmpty ())
           {
-            s_aLogger.error ("Error validating incoming AS4 message with the profile " + aProfile.getDisplayName ());
-            aAS4Response.setBadRequest ("Error validating incoming AS4 message with the profile " +
-                                        aProfile.getDisplayName () +
-                                        "\n Following errors are present: " +
-                                        aErrorList.getAllErrors ().getAllTexts (aLocale));
-            return;
+            throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
+                                           aProfile.getDisplayName () +
+                                           "\n Following errors are present: " +
+                                           aErrorList.getAllErrors ().getAllTexts (aLocale));
           }
         }
       }
@@ -744,15 +732,21 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @param aLeg2
    *        Leg2 to get necessary information, EncryptionAlgorithm, SOAPVersion
    * @param aResponseDoc
-   *        the document that conntains the user message
+   *        the document that contains the user message
    * @return a MimeMessage to be sent
-   * @throws Exception
+   * @throws MessagingException
+   * @throws TransformerException
+   * @throws TransformerFactoryConfigurationError
+   * @throws WSSecurityException
    */
   @Nonnull
   private MimeMessage _generateMimeMessageForResponse (final AS4ResourceManager aResMgr,
                                                        final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                        final PModeLeg aLeg2,
-                                                       final Document aResponseDoc) throws Exception
+                                                       final Document aResponseDoc) throws WSSecurityException,
+                                                                                    TransformerFactoryConfigurationError,
+                                                                                    TransformerException,
+                                                                                    MessagingException
   {
     MimeMessage aMimeMsg = null;
     if (aLeg2.getSecurity () != null)
@@ -767,6 +761,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                        aResMgr,
                                                        aLeg2.getSecurity ().getX509EncryptionAlgorithm ());
       }
+      else
+        throw new IllegalStateException ("Unexpected");
     }
     else
     {
@@ -890,11 +886,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *
    * @param aPropertyList
    *        the property list that should be checked for the two specific ones
-   * @return <code>null</code> if both properties are present, else returns the
-   *         error message that should be returned to the user.
+   * @throws BadRequestException
+   *         on error
    */
-  @Nullable
-  private static String _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList)
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws BadRequestException
   {
     String sOriginalSenderC1 = null;
     String sFinalRecipientC4 = null;
@@ -909,14 +904,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     if (StringHelper.hasNoText (sOriginalSenderC1))
-    {
-      return CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory";
-    }
+      throw new BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
     if (StringHelper.hasNoText (sFinalRecipientC4))
-    {
-      return CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory";
-    }
-    return null;
+      throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
   /**
@@ -1023,23 +1013,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // Determine content type
       final String sContentType = aHttpServletRequest.getContentType ();
       if (StringHelper.hasNoText (sContentType))
-      {
-        aHttpResponse.setBadRequest ("Content-Type header is missing");
-        return;
-      }
+        throw new BadRequestException ("Content-Type header is missing");
 
       final MimeType aContentType = MimeTypeParser.parseMimeType (sContentType);
       if (s_aLogger.isDebugEnabled ())
         s_aLogger.debug ("Received Content-Type: " + aContentType);
       if (aContentType == null)
-      {
-        aHttpResponse.setBadRequest ("Failed to parse Content-Type '" + sContentType + "'");
-        return;
-      }
+        throw new BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
@@ -1051,54 +1035,51 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         final String sBoundary = aContentType.getParameterValueWithName ("boundary");
         if (StringHelper.hasNoText (sBoundary))
         {
-          aHttpResponse.setBadRequest ("Content-Type '" +
-                                       aHttpServletRequest.getContentType () +
-                                       "' misses boundary parameter");
+          throw new BadRequestException ("Content-Type '" +
+                                         aHttpServletRequest.getContentType () +
+                                         "' misses boundary parameter");
         }
-        else
+
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("MIME Boundary = " + sBoundary);
+
+        // PARSING MIME Message via MultiPartStream
+        final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
+                                                            sBoundary.getBytes (StandardCharsets.ISO_8859_1),
+                                                            (MultipartProgressNotifier) null);
+        final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
+
+        int nIndex = 0;
+        while (true)
         {
+          final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+          if (!bHasNextPart)
+            break;
+
           if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug ("MIME Boundary = " + sBoundary);
+            s_aLogger.debug ("Found MIME part " + nIndex);
+          final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
 
-          // PARSING MIME Message via MultiPartStream
-          final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
-                                                              sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                              (MultipartProgressNotifier) null);
-          final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
-
-          int nIndex = 0;
-          while (true)
+          final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
+          if (nIndex == 0)
           {
-            final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-            if (!bHasNextPart)
-              break;
+            // First MIME part -> SOAP document
+            final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
+                                                         .getCopyWithoutParameters ();
 
-            if (s_aLogger.isDebugEnabled ())
-              s_aLogger.debug ("Found MIME part " + nIndex);
-            final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
+            // Determine SOAP version from MIME part content type
+            eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainPartMT.equals (x.getMimeType ()));
 
-            final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
-            if (nIndex == 0)
-            {
-              // First MIME part -> SOAP document
-              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
-                                                           .getCopyWithoutParameters ();
-
-              // Determine SOAP version from MIME part content type
-              eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
-                                                    x -> aPlainPartMT.equals (x.getMimeType ()));
-
-              // Read SOAP document
-              aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
-            }
-            else
-            {
-              // MIME Attachment (index is gt 0)
-              final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResMgr);
-              aIncomingAttachments.add (aAttachment);
-            }
-            nIndex++;
+            // Read SOAP document
+            aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
           }
+          else
+          {
+            // MIME Attachment (index is gt 0)
+            final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResMgr);
+            aIncomingAttachments.add (aAttachment);
+          }
+          nIndex++;
         }
       }
       else
@@ -1117,31 +1098,28 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (aSOAPDocument == null)
       {
         // We don't have a SOAP document
-        if (eSOAPVersion == null)
-          aHttpResponse.setBadRequest ("Failed to parse incoming message!");
-        else
-          aHttpResponse.setBadRequest ("Failed to parse incoming SOAP " + eSOAPVersion.getVersion () + " document!");
+        throw new BadRequestException (eSOAPVersion == null ? "Failed to parse incoming message!"
+                                                            : "Failed to parse incoming SOAP " +
+                                                              eSOAPVersion.getVersion () +
+                                                              " document!");
       }
-      else
-      {
-        if (eSOAPVersion == null)
-        {
-          // Determine from namespace URI of read document as the last fallback
-          final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
-          eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
-                                                x -> x.getNamespaceURI ().equals (sNamespaceURI));
-        }
 
+      if (eSOAPVersion == null)
+      {
+        // Determine SOAP version from namespace URI of read document as the
+        // last fallback
+        final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
+        eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
         if (eSOAPVersion == null)
-        {
-          aHttpResponse.setBadRequest ("Failed to determine SOAP version from XML document!");
-        }
-        else
-        {
-          // SOAP document and SOAP version are determined
-          _handleSOAPMessage (aResMgr, aSOAPDocument, eSOAPVersion, aIncomingAttachments, aHttpResponse, aLocale);
-        }
+          throw new BadRequestException ("Failed to determine SOAP version from XML document!");
       }
+
+      // SOAP document and SOAP version are determined
+      _handleSOAPMessage (aResMgr, aSOAPDocument, eSOAPVersion, aIncomingAttachments, aHttpResponse, aLocale);
+    }
+    catch (final BadRequestException ex)
+    {
+      aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST, ex.getMessage (), ex.getCause ());
     }
     catch (final Throwable t)
     {

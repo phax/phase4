@@ -22,7 +22,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +58,5 @@ public class AS4Response extends UnifiedResponse
     setContentAndCharset (sMsg, StandardCharsets.UTF_8);
     setMimeType (CMimeType.TEXT_PLAIN);
     setStatus (nStatusCode);
-  }
-
-  public void setBadRequest (@Nonnull final String sMsg)
-  {
-    setResponseError (HttpServletResponse.SC_BAD_REQUEST, sMsg, null);
   }
 }
