@@ -141,12 +141,24 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // TODO check for right leg in two way situation
     PModeLeg aPModeLeg1 = null;
+    PModeLeg aPModeLeg2 = null;
     IMPC aEffectiveMPC = null;
 
     if (aPModeConfig != null)
     {
-      // Check if MPC is contained in PMode and if so, if it is valid
       aPModeLeg1 = aPModeConfig.getLeg1 ();
+      aPModeLeg2 = aPModeConfig.getLeg2 ();
+      if (aPModeConfig.getMEPBinding ().getRequiredLegs () == 2)
+      {
+        if (aPModeLeg1 == null || aPModeLeg2 == null)
+        {
+          s_aLogger.warn ("Error processing the usermessage, PMode does not contain a enough legs!");
+
+          aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+      }
+      // Check if MPC is contained in PMode and if so, if it is valid
       if (aPModeLeg1 != null)
       {
         if (aPModeLeg1.getBusinessInfo () != null)

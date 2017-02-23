@@ -29,8 +29,6 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-// TODO fix this up if we know what we wanna do with twoway
-
 public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
   private static PMode s_aPMode;
@@ -44,9 +42,11 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // ESENS PMode is One Way on default settings need to change to two way
     final PModeConfig aPModeConfig = new PModeConfig ("esens-two-way");
     aPModeConfig.setMEP (EMEP.TWO_WAY);
-    aPModeConfig.setMEPBinding (EMEPBinding.PUSH_PUSH);
+    aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
     aPModeConfig.setAgreement (s_aPMode.getConfig ().getAgreement ());
     aPModeConfig.setLeg1 (s_aPMode.getConfig ().getLeg1 ());
+    // Setting second leg to the same as first
+    aPModeConfig.setLeg2 (s_aPMode.getConfig ().getLeg1 ());
     aPModeConfig.setPayloadService (s_aPMode.getConfig ().getPayloadService ());
     aPModeConfig.setReceptionAwareness (s_aPMode.getConfig ().getReceptionAwareness ());
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
@@ -67,10 +67,13 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
     assertTrue (m_sResponse.contains ("UserMessage"));
     assertFalse (m_sResponse.contains ("Receipt"));
+    assertTrue (m_sResponse.contains (s_aPMode.getConfig ()
+                                              .getLeg2 ()
+                                              .getSecurity ()
+                                              .getX509SignatureAlgorithm ()
+                                              .getAlgorithmURI ()));
   }
 
-  // Adapt MOCK SPI processor so he adds some rnd attachment
-  // Check if usermessage contains said attachment
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
@@ -84,5 +87,16 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    assertTrue (m_sResponse.contains ("UserMessage"));
+    assertFalse (m_sResponse.contains ("Receipt"));
+    assertTrue (m_sResponse.contains (s_aPMode.getConfig ()
+                                              .getLeg2 ()
+                                              .getSecurity ()
+                                              .getX509SignatureAlgorithm ()
+                                              .getAlgorithmURI ()));
+    // Checking if he adds the attachment to the response message, the mock spi
+    // just adds the xml that gets send to the response
+    assertTrue (m_sResponse.contains ("<dummy>This is a test XML</dummy>"));
+
   }
 }

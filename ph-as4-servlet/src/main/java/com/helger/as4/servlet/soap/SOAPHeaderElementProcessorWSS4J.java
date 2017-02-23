@@ -87,7 +87,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       Element aSignedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.DS_NS, "Signature");
       if (aSignedNode != null)
       {
-        // Go through ne security nodes to find the algorithm attribute
+        // Go through the security nodes to find the algorithm attribute
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignedInfo");
         final Element aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
                                                                                   CAS4.DS_NS,
@@ -192,7 +192,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
         // Collect all used certificates
-        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet<> ();
+        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet <> ();
         aResults.forEach (x -> {
           final X509Certificate aCert = (X509Certificate) x.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
           if (aCert != null)

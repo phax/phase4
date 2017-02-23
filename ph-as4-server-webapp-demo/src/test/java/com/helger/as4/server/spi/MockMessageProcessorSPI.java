@@ -71,6 +71,6 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
         }
       }
     }
-    return AS4MessageProcessorResult.createSuccess ();
+    return AS4MessageProcessorResult.createSuccess (aIncomingAttachments);
   }
 }

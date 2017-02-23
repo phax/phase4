@@ -35,49 +35,53 @@ public enum EMEPBinding implements IHasID <String>
    * maps an MEP User message to the 1st leg of an underlying 2-way transport
    * protocol, or of a 1-way protocol.
    */
-  PUSH ("push", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push"),
+  PUSH ("push", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/push", 1),
   /**
    * maps an MEP User message to the second leg of an underlying two-way
    * transport protocol, as a result of an ebMS Pull Signal sent over the first
    * leg.
    */
-  PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull"),
+  PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull", 1),
   /**
    * maps an exchange of two User messages respectively to the first and second
    * legs of a two-way underlying transport protocol.
    */
-  SYNC ("sync", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sync"),
+  SYNC ("sync", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sync", 2),
   /**
    * The Two-Way/Push-and-Push MEP composes the choreographies of two
    * One-Way/Push MEPs in opposite directions, the User Message unit of the
    * second referring to the User Message unit of the first via
    * eb:RefToMessageId.
    */
-  PUSH_PUSH ("pushpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush"),
+  PUSH_PUSH ("pushpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush", 1),
   /**
    * The Two-Way/Push-and-Pull MEP composes the choreography of a One-Way/Push
    * MEP followed by the choreography of a One-Way/Pull MEP, both initiated from
    * the same MSH (Initiator). The User Message unit in the "pulled" message
    * must refer to the previously "pushed" User Message unit.
    */
-  PUSH_PULL ("pushpull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPull"),
+  PUSH_PULL ("pushpull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPull", 2),
   /**
    * The Two-Way/Pull-and-Push MEP composes the choreography of a One-Way/Pull
    * MEP followed by the choreography of a One-Way/Push MEP, with both MEPs
    * initiated from the same MSH. The User Message unit in the "pushed" message
    * must refer to the previously "pulled" User Message unit.
    */
-  PULL_PUSH ("pullpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pullAndPush");
+  PULL_PUSH ("pullpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pullAndPush", 2);
 
   public static final EMEPBinding DEFAULT_EBMS = PUSH;
 
   private final String m_sID;
   private final String m_sURI;
+  private final int m_nRequiredLegs;
 
-  private EMEPBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
+  private EMEPBinding (@Nonnull @Nonempty final String sID,
+                       @Nonnull @Nonempty final String sURI,
+                       @Nonnull final int nRequiredLegs)
   {
     m_sID = sID;
     m_sURI = sURI;
+    m_nRequiredLegs = nRequiredLegs;
   }
 
   @Nonnull
@@ -92,6 +96,12 @@ public enum EMEPBinding implements IHasID <String>
   public String getURI ()
   {
     return m_sURI;
+  }
+
+  @Nonnull
+  public int getRequiredLegs ()
+  {
+    return m_nRequiredLegs;
   }
 
   public boolean isUsableInOneWay ()

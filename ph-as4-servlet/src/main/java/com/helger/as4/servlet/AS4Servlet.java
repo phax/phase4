@@ -48,6 +48,9 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.error.EEbmsErrorSeverity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
@@ -56,9 +59,13 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.EAS4MessageType;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
+import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.MEPHelper;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
@@ -66,6 +73,7 @@ import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfigManager;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
@@ -443,7 +451,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Storing for two-way response messages
-    final Node aResponsePayload = null;
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
 
     if (aErrorMessages.isEmpty () && _isNotPingMessage (aState.getPModeConfig ()))
@@ -590,106 +597,184 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
+          // TODO twowaypushpush
           // TWO - WAY
-          // TODO determine leg1/leg2 of message
-          final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
-                                                                                                  aUserMessage.getMessageInfo ()
-                                                                                                              .getMessageId ());
-          final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aResponsePayload,
-                                                                                               aResponseAttachments);
-
-          // Invert from and to role from original user message
-          final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()
-                                                                                                     .getTo ()
-                                                                                                     .getRole (),
-                                                                                         aUserMessage.getPartyInfo ()
-                                                                                                     .getTo ()
-                                                                                                     .getPartyIdAtIndex (0)
-                                                                                                     .getValue (),
-                                                                                         aUserMessage.getPartyInfo ()
-                                                                                                     .getFrom ()
-                                                                                                     .getRole (),
-                                                                                         aUserMessage.getPartyInfo ()
-                                                                                                     .getFrom ()
-                                                                                                     .getPartyIdAtIndex (0)
-                                                                                                     .getValue ());
-
-          // Should be exactly the same as incoming message
-          final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
-
-          // Need to switch C1 and C4 around from the original usermessage
-          final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-          Ebms3Property aFinalRecipient = null;
-          Ebms3Property aOriginalSender = null;
-          for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
+          // Except for two way push push, every response as usermessage is
+          // always on leg 2
+          final PModeLeg aLeg2 = aPModeConfig.getLeg2 ();
+          if (aLeg2 != null)
           {
-            if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+            if (MEPHelper.isValidResponseType (aPModeConfig.getMEP (),
+                                               aPModeConfig.getMEPBinding (),
+                                               EAS4MessageType.USER_MESSAGE,
+                                               false))
             {
-              aOriginalSender = aProp;
+
+              final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
+                                                                                                      aUserMessage.getMessageInfo ()
+                                                                                                                  .getMessageId ());
+              final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null,
+                                                                                                   aResponseAttachments);
+
+              // Invert from and to role from original user message
+              final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()
+                                                                                                         .getTo ()
+                                                                                                         .getRole (),
+                                                                                             aUserMessage.getPartyInfo ()
+                                                                                                         .getTo ()
+                                                                                                         .getPartyIdAtIndex (0)
+                                                                                                         .getValue (),
+                                                                                             aUserMessage.getPartyInfo ()
+                                                                                                         .getFrom ()
+                                                                                                         .getRole (),
+                                                                                             aUserMessage.getPartyInfo ()
+                                                                                                         .getFrom ()
+                                                                                                         .getPartyIdAtIndex (0)
+                                                                                                         .getValue ());
+
+              // Should be exactly the same as incoming message
+              final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
+
+              // Need to switch C1 and C4 around from the original usermessage
+              final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+              Ebms3Property aFinalRecipient = null;
+              Ebms3Property aOriginalSender = null;
+              for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
+              {
+                if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+                {
+                  aOriginalSender = aProp;
+                }
+                else
+                  if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
+                  {
+                    aFinalRecipient = aProp;
+                  }
+              }
+
+              aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
+              aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
+
+              aEbms3MessageProperties.addProperty (aFinalRecipient);
+              aEbms3MessageProperties.addProperty (aOriginalSender);
+
+              final AS4UserMessage aResponeUserMesage = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                                             aEbms3PayloadInfo,
+                                                                                             aEbms3CollaborationInfo,
+                                                                                             aEbms3PartyInfo,
+                                                                                             aEbms3MessageProperties,
+                                                                                             eSOAPVersion);
+              // We've got our response
+              Document aResponseDoc = aResponeUserMesage.getAsSOAPDocument ();
+
+              if (aLeg2.getSecurity () != null)
+              {
+                if (ECryptoAlgorithmSign.getFromIDOrNull (aLeg2.getSecurity ()
+                                                               .getX509SignatureAlgorithmID ()) != null &&
+                    ECryptoAlgorithmSignDigest.getFromIDOrNull (aLeg2.getSecurity ()
+                                                                     .getX509SignatureHashFunctionID ()) != null)
+                {
+                  final SignedMessageCreator aCreator = new SignedMessageCreator ();
+                  aResponseDoc = aCreator.createSignedMessage (aResponseDoc,
+                                                               aLeg2.getProtocol ().getSOAPVersion (),
+                                                               aResponseAttachments,
+                                                               aResMgr,
+                                                               true,
+                                                               aLeg2.getSecurity ().getX509SignatureAlgorithm (),
+                                                               aLeg2.getSecurity ().getX509SignatureHashFunction ());
+                }
+              }
+
+              if (aResponseAttachments.isNotEmpty ())
+              {
+
+                final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResMgr,
+                                                                              aResponseAttachments,
+                                                                              aLeg2,
+                                                                              aResponseDoc);
+
+                // Move all mime headers to the HTTP request
+                final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
+                while (aEnum.hasMoreElements ())
+                {
+                  final Header h = (Header) aEnum.nextElement ();
+                  // Make a single-line HTTP header value!
+                  aAS4Response.addCustomResponseHeader (h.getName (),
+                                                        HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
+
+                  // Remove from MIME message!
+                  aMimeMsg.removeHeader (h.getName ());
+                }
+
+                // send mime with unified response
+                aAS4Response.setContent ( () -> {
+                  try
+                  {
+                    return aMimeMsg.getInputStream ();
+                  }
+                  catch (IOException | MessagingException ex)
+                  {
+                    throw new IllegalStateException ("Failed to get MIME input stream", ex);
+                  }
+                }).setMimeType (MT_MULTIPART_RELATED);
+              }
+              else
+              {
+                aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
+                            .setMimeType (eSOAPVersion.getMimeType ());
+              }
             }
-            else
-              if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
-              {
-                aFinalRecipient = aProp;
-              }
-          }
-
-          aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
-          aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
-
-          aEbms3MessageProperties.addProperty (aFinalRecipient);
-          aEbms3MessageProperties.addProperty (aOriginalSender);
-
-          final AS4UserMessage aResponeUserMesage = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                                         aEbms3PayloadInfo,
-                                                                                         aEbms3CollaborationInfo,
-                                                                                         aEbms3PartyInfo,
-                                                                                         aEbms3MessageProperties,
-                                                                                         eSOAPVersion);
-          // We've got our response
-          final Document aResponseDoc = aResponeUserMesage.getAsSOAPDocument ();
-
-          if (aResponseAttachments.isNotEmpty ())
-          {
-            // TODO SOAP version from correct leg
-            final MimeMessage aMimeMsg = new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aResponseDoc,
-                                                                                                    aResponseAttachments);
-
-            // Move all mime headers to the HTTP request
-            final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
-            while (aEnum.hasMoreElements ())
-            {
-              final Header h = (Header) aEnum.nextElement ();
-              // Make a single-line HTTP header value!
-              aAS4Response.addCustomResponseHeader (h.getName (),
-                                                    HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
-
-              // Remove from MIME message!
-              aMimeMsg.removeHeader (h.getName ());
-            }
-
-            // send mime with unified response
-            aAS4Response.setContent ( () -> {
-              try
-              {
-                return aMimeMsg.getInputStream ();
-              }
-              catch (IOException | MessagingException ex)
-              {
-                throw new IllegalStateException ("Failed to get MIME input stream", ex);
-              }
-            }).setMimeType (MT_MULTIPART_RELATED);
-          }
-          else
-          {
-            aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
-                        .setMimeType (eSOAPVersion.getMimeType ());
           }
         }
       }
       else
         s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
     }
+  }
+
+  /**
+   * Returns the MimeMessage with encrypted attachment or without depending on
+   * what is configured in the pmodeconfig within Leg2.
+   *
+   * @param aResMgr
+   *        ResourceManager needed for the encryption process, needs to be
+   *        passed down
+   * @param aResponseAttachments
+   *        The Attachments that should be encrypted
+   * @param aLeg2
+   *        Leg2 to get necessary information, EncryptionAlgorithm, SOAPVersion
+   * @param aResponseDoc
+   *        the document that conntains the user message
+   * @return a MimeMessage to be sent
+   * @throws Exception
+   */
+  @Nonnull
+  private MimeMessage _generateMimeMessageForResponse (final AS4ResourceManager aResMgr,
+                                                       final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                       final PModeLeg aLeg2,
+                                                       final Document aResponseDoc) throws Exception
+  {
+    MimeMessage aMimeMsg = null;
+    if (aLeg2.getSecurity () != null)
+    {
+      if (ECryptoAlgorithmCrypt.getFromIDOrNull (aLeg2.getSecurity ().getX509EncryptionAlgorithmID ()) != null)
+      {
+        final EncryptionCreator aEncryptCreator = new EncryptionCreator ();
+        aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg2.getProtocol ().getSOAPVersion (),
+                                                       aResponseDoc,
+                                                       true,
+                                                       aResponseAttachments,
+                                                       aResMgr,
+                                                       aLeg2.getSecurity ().getX509EncryptionAlgorithm ());
+      }
+    }
+    else
+    {
+      aMimeMsg = new MimeMessageCreator (aLeg2.getProtocol ()
+                                              .getSOAPVersion ()).generateMimeMessage (aResponseDoc,
+                                                                                       aResponseAttachments);
+    }
+    return aMimeMsg;
   }
 
   /**
