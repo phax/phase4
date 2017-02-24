@@ -86,11 +86,13 @@ public final class MainAS4Client
   {
     try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
     {
-      final String localHolodeckURL = "http://localhost:8080/msh/";
-      String sURL = false ? "http://msh.holodeck-b2b.org:8080/msh" : "http://127.0.0.1:8080/as4";
+      String sURL = "http://127.0.0.1:8080/as4";
+      if (false)
+        sURL = "http://msh.holodeck-b2b.org:8080/msh";
 
-      // Deactivate if not sending to localholodekc
-      sURL = localHolodeckURL;
+      // Deactivate if not sending to localholodeck
+      if (false)
+        sURL = "http://localhost:8080/msh/";
 
       SSLContext aSSLContext = null;
       if (sURL.startsWith ("https"))
@@ -109,7 +111,7 @@ public final class MainAS4Client
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
         aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
