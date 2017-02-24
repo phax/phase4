@@ -20,7 +20,7 @@
   <StandardBusinessDocumentHeader>
     <HeaderVersion>1.0</HeaderVersion>
     <Sender>
-      <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
+      <Identifier Authority="iso6523-actorid-upis">9999:you</Identifier>
     </Sender>
     <Receiver>
       <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
@@ -39,218 +39,160 @@
       </Scope>
       <Scope>
         <Type>PROCESSID</Type>
-        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver1.0</InstanceIdentifier>
+        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver2.0</InstanceIdentifier>
       </Scope>
     </BusinessScope>
   </StandardBusinessDocumentHeader>
-  <ns4:Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ns2="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:ns3="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:ns4="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
-    <UBLVersionID>2.0</UBLVersionID>
-    <CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
-    </CustomizationID>
-    <ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</ProfileID>
-    <ID>orderNumber</ID>
-    <IssueDate>2011-08-22Z</IssueDate>
-    <InvoiceTypeCode>380</InvoiceTypeCode>
-    <DocumentCurrencyCode languageID="de" name="Euro">EUR</DocumentCurrencyCode>
-    <ns3:AccountingSupplierParty>
-      <ns3:Party>
-        <EndpointID schemeID="GLN">ep1234567890123</EndpointID>
-        <ns3:PartyIdentification>
-          <ID schemeID="GLN">1234567890123</ID>
-        </ns3:PartyIdentification>
-        <ns3:PartyName>
-          <Name>MasterDataName</Name>
-        </ns3:PartyName>
-        <ns3:PostalAddress>
-          <Postbox>1234567</Postbox>
-          <StreetName>My street</StreetName>
-          <BuildingNumber>121/4</BuildingNumber>
-          <CityName>Wien</CityName>
-          <PostalZone>1140</PostalZone>
-          <ns3:Country>
-            <IdentificationCode>AT</IdentificationCode>
-          </ns3:Country>
-        </ns3:PostalAddress>
-        <ns3:PartyTaxScheme>
-          <CompanyID>masterdataVATIN</CompanyID>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:PartyTaxScheme>
-        <ns3:Contact>
-          <Telephone>+43/1/1234567</Telephone>
-          <ElectronicMail>philip.helger@brz.gv.at</ElectronicMail>
-        </ns3:Contact>
-      </ns3:Party>
-    </ns3:AccountingSupplierParty>
-    <ns3:AccountingCustomerParty>
-      <ns3:Party>
-        <EndpointID schemeID="GLN">ep1234567890123</EndpointID>
-        <ns3:PartyIdentification>
-          <ID schemeID="GLN">1234567890123</ID>
-        </ns3:PartyIdentification>
-        <ns3:PartyName>
-          <Name>CustomerName</Name>
-        </ns3:PartyName>
-        <ns3:PostalAddress>
-          <Postbox>1234567</Postbox>
-          <StreetName>My street</StreetName>
-          <BuildingNumber>121/4</BuildingNumber>
-          <CityName>Wien</CityName>
-          <PostalZone>1140</PostalZone>
-          <ns3:Country>
-            <IdentificationCode>AT</IdentificationCode>
-          </ns3:Country>
-        </ns3:PostalAddress>
-        <ns3:PartyTaxScheme>
-          <CompanyID>customerVATIN</CompanyID>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:PartyTaxScheme>
-      </ns3:Party>
-    </ns3:AccountingCustomerParty>
-    <ns3:PaymentMeans>
-      <PaymentMeansCode>31</PaymentMeansCode>
-      <PaymentDueDate>2011-08-22Z</PaymentDueDate>
-      <PaymentChannelCode>IBAN</PaymentChannelCode>
-      <ns3:PayeeFinancialAccount>
-        <ID schemeID="IBAN">masterdataIBAN</ID>
-        <ns3:FinancialInstitutionBranch>
-          <ns3:FinancialInstitution>
-            <ID schemeID="BIC">masterdataBIC</ID>
-          </ns3:FinancialInstitution>
-        </ns3:FinancialInstitutionBranch>
-      </ns3:PayeeFinancialAccount>
-    </ns3:PaymentMeans>
-    <ns3:TaxTotal>
-      <TaxAmount currencyID="EUR">483.08</TaxAmount>
-      <ns3:TaxSubtotal>
-        <TaxableAmount currencyID="EUR">1000</TaxableAmount>
-        <TaxAmount currencyID="EUR">200.00</TaxAmount>
-        <ns3:TaxCategory>
-          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
-          <Percent>20</Percent>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:TaxCategory>
-      </ns3:TaxSubtotal>
-      <ns3:TaxSubtotal>
-        <TaxableAmount currencyID="EUR">1111</TaxableAmount>
-        <TaxAmount currencyID="EUR">0.00</TaxAmount>
-        <ns3:TaxCategory>
-          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
-          <Percent>0</Percent>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:TaxCategory>
-      </ns3:TaxSubtotal>
-      <ns3:TaxSubtotal>
-        <TaxableAmount currencyID="EUR">1224</TaxableAmount>
-        <TaxAmount currencyID="EUR">122.40</TaxAmount>
-        <ns3:TaxCategory>
-          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
-          <Percent>10</Percent>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:TaxCategory>
-      </ns3:TaxSubtotal>
-      <ns3:TaxSubtotal>
-        <TaxableAmount currencyID="EUR">1339</TaxableAmount>
-        <TaxAmount currencyID="EUR">160.68</TaxAmount>
-        <ns3:TaxCategory>
-          <ID schemeAgencyID="6" schemeID="UN/ECE 5305">C</ID>
-          <Percent>12</Percent>
-          <ns3:TaxScheme>
-            <ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</ID>
-          </ns3:TaxScheme>
-        </ns3:TaxCategory>
-      </ns3:TaxSubtotal>
-    </ns3:TaxTotal>
-    <ns3:LegalMonetaryTotal>
-      <LineExtensionAmount currencyID="EUR">4674</LineExtensionAmount>
-      <TaxExclusiveAmount currencyID="EUR">4674</TaxExclusiveAmount>
-      <TaxInclusiveAmount currencyID="EUR">5157.08</TaxInclusiveAmount>
-      <PayableAmount currencyID="EUR">5157.08</PayableAmount>
-    </ns3:LegalMonetaryTotal>
-    <ns3:InvoiceLine>
-      <ID>line1</ID>
-      <InvoicedQuantity unitCode="C62">10</InvoicedQuantity>
-      <LineExtensionAmount currencyID="EUR">1000</LineExtensionAmount>
-      <ns3:OrderLineReference>
-        <LineID>orderItem1</LineID>
-      </ns3:OrderLineReference>
-      <ns3:TaxTotal>
-        <TaxAmount currencyID="EUR">200.00</TaxAmount>
-      </ns3:TaxTotal>
-      <ns3:Item>
-        <Description>itemDescription1</Description>
-        <Name>itemDescription1</Name>
-      </ns3:Item>
-      <ns3:Price>
-        <PriceAmount currencyID="EUR">100</PriceAmount>
-        <BaseQuantity unitCode="C62">1</BaseQuantity>
-      </ns3:Price>
-    </ns3:InvoiceLine>
-    <ns3:InvoiceLine>
-      <ID>line2</ID>
-      <InvoicedQuantity unitCode="C62">11</InvoicedQuantity>
-      <LineExtensionAmount currencyID="EUR">1111</LineExtensionAmount>
-      <ns3:OrderLineReference>
-        <LineID>orderItem2</LineID>
-      </ns3:OrderLineReference>
-      <ns3:TaxTotal>
-        <TaxAmount currencyID="EUR">0.00</TaxAmount>
-      </ns3:TaxTotal>
-      <ns3:Item>
-        <Description>itemDescription2</Description>
-        <Name>itemDescription2</Name>
-      </ns3:Item>
-      <ns3:Price>
-        <PriceAmount currencyID="EUR">101</PriceAmount>
-        <BaseQuantity unitCode="C62">1</BaseQuantity>
-      </ns3:Price>
-    </ns3:InvoiceLine>
-    <ns3:InvoiceLine>
-      <ID>line3</ID>
-      <InvoicedQuantity unitCode="C62">12</InvoicedQuantity>
-      <LineExtensionAmount currencyID="EUR">1224</LineExtensionAmount>
-      <ns3:OrderLineReference>
-        <LineID>orderItem3</LineID>
-      </ns3:OrderLineReference>
-      <ns3:TaxTotal>
-        <TaxAmount currencyID="EUR">122.40</TaxAmount>
-      </ns3:TaxTotal>
-      <ns3:Item>
-        <Description>itemDescription3</Description>
-        <Name>itemDescription3</Name>
-      </ns3:Item>
-      <ns3:Price>
-        <PriceAmount currencyID="EUR">102</PriceAmount>
-        <BaseQuantity unitCode="C62">1</BaseQuantity>
-      </ns3:Price>
-    </ns3:InvoiceLine>
-    <ns3:InvoiceLine>
-      <ID>line4</ID>
-      <InvoicedQuantity unitCode="C62">13</InvoicedQuantity>
-      <LineExtensionAmount currencyID="EUR">1339</LineExtensionAmount>
-      <ns3:OrderLineReference>
-        <LineID>orderItem4</LineID>
-      </ns3:OrderLineReference>
-      <ns3:TaxTotal>
-        <TaxAmount currencyID="EUR">160.68</TaxAmount>
-      </ns3:TaxTotal>
-      <ns3:Item>
-        <Description>itemDescription4</Description>
-        <Name>itemDescription4</Name>
-      </ns3:Item>
-      <ns3:Price>
-        <PriceAmount currencyID="EUR">103</PriceAmount>
-        <BaseQuantity unitCode="C62">1</BaseQuantity>
-      </ns3:Price>
-    </ns3:InvoiceLine>
-  </ns4:Invoice>
+  <Invoice:Invoice xmlns:Invoice="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+  xmlns:ns2="http://www.w3.org/2005/08/addressing" xmlns:ns3="http://www.w3.org/2009/02/ws-tra" xmlns:ns4="http://busdox.org/transport/identifiers/1.0/">
+  <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
+  <cbc:CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0
+  </cbc:CustomizationID>
+  <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
+  <cbc:ID>B-BS-2287</cbc:ID>
+  <cbc:IssueDate>2017-01-01</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:Note>Abrechnung April 2012 - PEPPOL Pilot 42v-FA1/23 P4 Post-Award 2012</cbc:Note>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:AccountingCost>5017</cbc:AccountingCost>
+  <cac:InvoicePeriod>
+    <cbc:StartDate>2017-04-01</cbc:StartDate>
+    <cbc:EndDate>2017-04-30</cbc:EndDate>
+  </cac:InvoicePeriod>
+  <cac:OrderReference>
+    <cbc:ID>1234567890</cbc:ID>
+    <cbc:SalesOrderID>O-BS-525</cbc:SalesOrderID>
+    <cbc:IssueDate>2017-01-01</cbc:IssueDate>
+    <cbc:CustomerReference>BMF-220000/0010-V/5/2012</cbc:CustomerReference>
+  </cac:OrderReference>
+  <cac:AccountingSupplierParty>
+    <cbc:CustomerAssignedAccountID>11011011</cbc:CustomerAssignedAccountID>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeAgencyName="Firmenidentifikationsnummer der Statistik Austria" schemeID="AT:CID">FN 203682h HG Wien
+        </cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>42virtual Business Services GmbH</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Johannesgasse 15</cbc:StreetName>
+        <cbc:CityName>Wien</cbc:CityName>
+        <cbc:PostalZone>1010</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>AT</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>ATU12345678</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:Contact>
+        <cbc:Telephone>47111</cbc:Telephone>
+        <cbc:Telefax>47122</cbc:Telefax>
+        <cbc:ElectronicMail>test@example.org</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cbc:SupplierAssignedAccountID>149</cbc:SupplierAssignedAccountID>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeAgencyName="Österreichische Umsatzsteuer-Identifikationsnummer" schemeID="AT:VAT">ATU 378 664 03
+        </cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Bundesministerium für Finanzen</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Hintere Zollamtsstraße 2b</cbc:StreetName>
+        <cbc:CityName>Wien</cbc:CityName>
+        <cbc:PostalZone>1030</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>AT</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>ATU 378 664 03</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:Contact>
+        <cbc:Name>Abteilung V/1-AP</cbc:Name>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
+    <cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID schemeID="IBAN">AT611904300234573201</cbc:ID>
+      <cac:FinancialInstitutionBranch>
+        <cac:FinancialInstitution>
+          <cbc:ID schemeID="BIC">TUVTAT21</cbc:ID>
+        </cac:FinancialInstitution>
+      </cac:FinancialInstitutionBranch>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PaymentTerms>
+    <cbc:Note>Zahlbar 20 Tage ab Rechnungsdatum netto ohne Abzüge durch Banküberweisung</cbc:Note>
+  </cac:PaymentTerms>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">135.63</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+        <cbc:Percent>20</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">135.63</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">135.63</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">162.76</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="EUR">162.76</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="LH">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">135.63</cbc:LineExtensionAmount>
+    <cac:OrderLineReference>
+      <cbc:LineID>10</cbc:LineID>
+    </cac:OrderLineReference>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">135.63</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+          <cbc:Percent>20</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:Item>
+      <cbc:Description>Abrechnung</cbc:Description>
+      <cbc:Name>Abrechnung</cbc:Name>
+      <cac:SellersItemIdentification>
+        <cbc:ID>Forst-Rakoczy</cbc:ID>
+      </cac:SellersItemIdentification>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">1085.00</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="LH">8</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice:Invoice>
 </StandardBusinessDocument>
