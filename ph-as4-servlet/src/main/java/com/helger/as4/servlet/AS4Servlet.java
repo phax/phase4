@@ -51,9 +51,6 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.error.EEbmsErrorSeverity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
@@ -207,7 +204,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -329,7 +326,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -342,7 +339,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
 
     if (aErrorMessages.isEmpty ())
     {
@@ -723,15 +720,15 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                   @Nonnull final Document aDocToBeSigned,
                                   @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
   {
-    if (ECryptoAlgorithmSign.getFromIDOrNull (aSecurity.getX509SignatureAlgorithmID ()) != null &&
-        ECryptoAlgorithmSignDigest.getFromIDOrNull (aSecurity.getX509SignatureHashFunctionID ()) != null)
+    if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
       final SignedMessageCreator aCreator = new SignedMessageCreator ();
+      final boolean bMustUnderstand = true;
       return aCreator.createSignedMessage (aDocToBeSigned,
                                            eSOAPVersion,
                                            aResponseAttachments,
                                            aResMgr,
-                                           true,
+                                           bMustUnderstand,
                                            aSecurity.getX509SignatureAlgorithm (),
                                            aSecurity.getX509SignatureHashFunction ());
     }
@@ -758,18 +755,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @throws WSSecurityException
    */
   @Nonnull
-  private MimeMessage _generateMimeMessageForResponse (final AS4ResourceManager aResMgr,
-                                                       final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                       final PModeLeg aLeg2,
-                                                       final Document aResponseDoc) throws WSSecurityException,
-                                                                                    TransformerFactoryConfigurationError,
-                                                                                    TransformerException,
-                                                                                    MessagingException
+  private MimeMessage _generateMimeMessageForResponse (@Nonnull final AS4ResourceManager aResMgr,
+                                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                       @Nonnull final PModeLeg aLeg2,
+                                                       @Nonnull final Document aResponseDoc) throws WSSecurityException,
+                                                                                             TransformerFactoryConfigurationError,
+                                                                                             TransformerException,
+                                                                                             MessagingException
   {
     MimeMessage aMimeMsg = null;
     if (aLeg2.getSecurity () != null)
     {
-      if (ECryptoAlgorithmCrypt.getFromIDOrNull (aLeg2.getSecurity ().getX509EncryptionAlgorithmID ()) != null)
+      if (aLeg2.getSecurity ().getX509EncryptionAlgorithm () != null)
       {
         final EncryptionCreator aEncryptCreator = new EncryptionCreator ();
         aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg2.getProtocol ().getSOAPVersion (),
@@ -1033,7 +1030,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
