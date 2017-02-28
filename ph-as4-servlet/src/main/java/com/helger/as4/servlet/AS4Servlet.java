@@ -78,6 +78,7 @@ import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
+import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.IAS4Profile;
@@ -206,7 +207,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -328,7 +329,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -341,7 +342,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
 
     if (aErrorMessages.isEmpty ())
     {
@@ -563,7 +564,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                         .setMustUnderstand (true);
 
           // We've got our response
-          final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+          Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+
+          final PModeLeg aLeg1 = aPModeConfig.getLeg1 ();
+
+          aResponseDoc = _signResponse (aResMgr,
+                                        aResponseAttachments,
+                                        aLeg1.getSecurity (),
+                                        aResponseDoc,
+                                        aLeg1.getProtocol ().getSOAPVersion ());
+
           aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
                       .setMimeType (eSOAPVersion.getMimeType ());
         }
@@ -641,20 +651,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
               if (aLeg2.getSecurity () != null)
               {
-                if (ECryptoAlgorithmSign.getFromIDOrNull (aLeg2.getSecurity ()
-                                                               .getX509SignatureAlgorithmID ()) != null &&
-                    ECryptoAlgorithmSignDigest.getFromIDOrNull (aLeg2.getSecurity ()
-                                                                     .getX509SignatureHashFunctionID ()) != null)
-                {
-                  final SignedMessageCreator aCreator = new SignedMessageCreator ();
-                  aResponseDoc = aCreator.createSignedMessage (aResponseDoc,
-                                                               aLeg2.getProtocol ().getSOAPVersion (),
-                                                               aResponseAttachments,
-                                                               aResMgr,
-                                                               true,
-                                                               aLeg2.getSecurity ().getX509SignatureAlgorithm (),
-                                                               aLeg2.getSecurity ().getX509SignatureHashFunction ());
-                }
+                aResponseDoc = _signResponse (aResMgr,
+                                              aResponseAttachments,
+                                              aLeg2.getSecurity (),
+                                              aResponseDoc,
+                                              aLeg2.getProtocol ().getSOAPVersion ());
               }
 
               if (aResponseAttachments.isNotEmpty ())
@@ -702,6 +703,39 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       else
         s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
     }
+  }
+
+  /**
+   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
+   * will be signed, else the message will be returned as it is.
+   *
+   * @param aResMgr
+   * @param aResponseAttachments
+   * @param aSecurity
+   * @param aDocToBeSigned
+   * @param eSOAPVersion
+   * @return
+   * @throws WSSecurityException
+   */
+  private Document _signResponse (@Nonnull final AS4ResourceManager aResMgr,
+                                  @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                  @Nonnull final PModeLegSecurity aSecurity,
+                                  @Nonnull final Document aDocToBeSigned,
+                                  @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
+  {
+    if (ECryptoAlgorithmSign.getFromIDOrNull (aSecurity.getX509SignatureAlgorithmID ()) != null &&
+        ECryptoAlgorithmSignDigest.getFromIDOrNull (aSecurity.getX509SignatureHashFunctionID ()) != null)
+    {
+      final SignedMessageCreator aCreator = new SignedMessageCreator ();
+      return aCreator.createSignedMessage (aDocToBeSigned,
+                                           eSOAPVersion,
+                                           aResponseAttachments,
+                                           aResMgr,
+                                           true,
+                                           aSecurity.getX509SignatureAlgorithm (),
+                                           aSecurity.getX509SignatureHashFunction ());
+    }
+    return aDocToBeSigned;
   }
 
   /**
@@ -999,7 +1033,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))

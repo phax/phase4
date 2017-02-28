@@ -16,6 +16,8 @@
  */
 package com.helger.as4.server.message;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -33,6 +35,8 @@ import org.w3c.dom.Node;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.client.HttpMimeMessageEntity;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.holodeck.IHolodeckTests;
@@ -67,6 +71,8 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+
+    assertTrue (m_sResponse.contains ("Receipt"));
   }
 
   @Test
@@ -77,6 +83,11 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+
+    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 
   @Test
@@ -89,6 +100,11 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
                                                                                                                               s_aResMgr),
                                                                                           null);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 
   @Test
@@ -104,6 +120,8 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+
+    assertTrue (m_sResponse.contains ("Receipt"));
   }
 
   @Test
@@ -119,5 +137,10 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+
+    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 }

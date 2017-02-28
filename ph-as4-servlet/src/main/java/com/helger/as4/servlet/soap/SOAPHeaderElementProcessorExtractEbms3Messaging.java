@@ -148,6 +148,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       aPModeLeg1 = aPModeConfig.getLeg1 ();
       aPModeLeg2 = aPModeConfig.getLeg2 ();
+
+      // if the two - way is selected, check if it requires two legs and if both
+      // are present
       if (aPModeConfig.getMEPBinding ().getRequiredLegs () == 2)
       {
         if (aPModeLeg1 == null || aPModeLeg2 == null)
