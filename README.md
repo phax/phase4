@@ -11,11 +11,13 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
-  * v0.6.1
+  * v0.7.0 - work in progress
     * Added HTTP retry for client
     * Added server duplicate message detection for incoming messages
     * `MessageInfo/Timestamp` uses UTC - thanks Sander
     * Started two-way handling
+    * Fixed bug that Receipt is not signed (if desired) 
+    * To be on the safe side, delete all previously created `as4-*.xml` files as there were incompatible changes.
   * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects
@@ -71,7 +73,7 @@ server.proxy.port=8080
 Per now the following known limitations exist:
   * Only one-way communication is supported - of course `ErrorMessage`s and `Receipt`s are sent.
   * Multi-hop does not work (and is imho not relevant for a usage in PEPPOL)
-  * Pull requests are currently not supported
+  * Pull requests are currently not supported (not relevant in E-SENS profile)
   
 ## Differences to Holodeck
 
