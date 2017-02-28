@@ -23,7 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import org.apache.http.entity.StringEntity;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -34,7 +34,6 @@ import com.helger.as4.partner.IPartner;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.server.MockPModeGenerator;
-import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.StringMap;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -51,13 +50,13 @@ import com.helger.security.certificate.CertificateHelper;
  */
 public class PartnerTest extends AbstractUserMessageTestSetUpExt
 {
-  private final PartnerManager m_aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
   private static final String PARTNER_ID = "testpartner";
+  private PartnerManager m_aPartnerMgr;
 
-  @BeforeClass
-  public static void startServer () throws Exception
+  @Before
+  public void createPartners () throws Exception
   {
-    AbstractUserMessageTestSetUp.startServer ();
+    m_aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     final StringMap aStringMap = new StringMap ();
     aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, PARTNER_ID);
     final byte [] aCertBytes = StreamHelper.getAllBytes (new ClassPathResource ("partner-cert.txt"));
@@ -105,7 +104,7 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
     final String sPartnerID = "random_party_id121";
 
     final Document aDoc = _modifyUserMessage (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST,
-                                              null,
+                                              PARTNER_ID,
                                               sPartnerID,
                                               _defaultProperties ());
     assertNotNull (aDoc);

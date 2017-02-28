@@ -6,8 +6,7 @@ import static org.junit.Assert.assertTrue;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.StringEntity;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -34,8 +33,8 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
   private static PMode s_aPMode;
 
-  @BeforeClass
-  public static void createTwoWayPMode ()
+  @Before
+  public void createTwoWayPMode ()
   {
     s_aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
                                                                   .getAsString ("server.address",
@@ -57,11 +56,11 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (s_aPMode);
   }
 
-  @AfterClass
-  public static void destroyTwoWayPMode ()
-  {
-    MetaAS4Manager.getPModeMgr ().deletePMode (s_aPMode.getID ());
-  }
+  /*
+   * @AfterClass public static void destroyTwoWayPMode () { // TODO why not
+   * deleted? in as4 file MetaAS4Manager.getPModeMgr ().deletePMode
+   * (s_aPMode.getID ()); }
+   */
 
   @Test
   public void receiveUserMessageAsResponseSuccess () throws Exception
@@ -80,7 +79,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,

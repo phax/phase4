@@ -140,6 +140,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     // TODO check for right leg in two way situation
+    // TODO Check for reftomessageID since we need to decide when leg2 is used
+    // to use the configuration for leg2
     PModeLeg aPModeLeg1 = null;
     PModeLeg aPModeLeg2 = null;
     IMPC aEffectiveMPC = null;
