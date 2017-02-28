@@ -26,17 +26,20 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.mpc.MPCManager;
+import com.helger.as4.model.pmode.DefaultPMode;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
+import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
@@ -149,12 +152,22 @@ public final class MockPModeGenerator
 
   public static void ensureMockPModesArePresent ()
   {
+    // Delete all in the correct order
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    for (final String sID : aPModeMgr.getAllIDs ())
+      aPModeMgr.deletePMode (sID);
+
+    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
+    for (final String sID : aPModeConfigMgr.getAllIDs ())
+      aPModeConfigMgr.deletePModeConfig (sID);
+
+    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
+    for (final String sID : aPartnerMgr.getAllIDs ())
+      aPartnerMgr.deletePartner (sID);
+
+    // Create new one
+    aPModeConfigMgr.createPModeConfig (DefaultPMode.createDefaultPModeConfig ());
     for (final ESOAPVersion e : ESOAPVersion.values ())
-    {
-      final PMode aPMode = MockPModeGenerator.getTestPModeWithSecurity (e);
-      if (!aPModeMgr.containsWithID (aPMode.getID ()))
-        aPModeMgr.createPMode (aPMode);
-    }
+      aPModeMgr.createPMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }
 }

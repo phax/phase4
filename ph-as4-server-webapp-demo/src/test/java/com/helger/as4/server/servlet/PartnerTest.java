@@ -51,7 +51,7 @@ import com.helger.security.certificate.CertificateHelper;
  */
 public class PartnerTest extends AbstractUserMessageTestSetUpExt
 {
-  private final PartnerManager aPM = MetaAS4Manager.getPartnerMgr ();
+  private final PartnerManager m_aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
   private static final String PARTNER_ID = "testpartner";
 
   @BeforeClass
@@ -70,7 +70,7 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testPartnerCertificateSavedSuccess () throws CertificateException
   {
-    final IPartner aPartner = aPM.getPartnerOfID (PARTNER_ID);
+    final IPartner aPartner = m_aPartnerMgr.getPartnerOfID (PARTNER_ID);
     assertNotNull (aPartner);
 
     final String sCertificate = aPartner.getAllAttributes ().get (Partner.ATTR_CERT);
@@ -93,10 +93,10 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
     assertNotNull (aDoc);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
-    final IPartner aPartner = aPM.getPartnerOfID (sPartnerID);
+    final IPartner aPartner = m_aPartnerMgr.getPartnerOfID (sPartnerID);
     assertNotNull (aPartner);
 
-    aPM.deletePartner (aPartner.getID ());
+    m_aPartnerMgr.deletePartner (aPartner.getID ());
   }
 
   @Test
@@ -110,11 +110,15 @@ public class PartnerTest extends AbstractUserMessageTestSetUpExt
                                               _defaultProperties ());
     assertNotNull (aDoc);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
-    final IPartner aPartner = aPM.getPartnerOfID (sPartnerID);
-    assertNotNull (aPartner);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    aPM.deletePartner (aPartner.getID ());
+    // Afterwards something should be present
+    assertTrue (m_aPartnerMgr.getCount () > 0);
+
+    final IPartner aPartner = m_aPartnerMgr.getPartnerOfID (sPartnerID);
+    assertNotNull (sResponse, aPartner);
+
+    m_aPartnerMgr.deletePartner (aPartner.getID ());
   }
 
   // Currently Default PMode is not supported / wanted
