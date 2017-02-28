@@ -29,7 +29,6 @@ import org.junit.Test;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
@@ -73,7 +72,7 @@ public class ESENSCompatibilityValidatorTest
   public void setUp ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPModeConfig = (PModeConfig) MockPModeGenerator.getTestPModeWithSecurity (ESOAPVersion.SOAP_12).getConfig ();
+    m_aPModeConfig = ESENSPMode.createESENSPModeConfig ("http://localhost:8080");
   }
 
   @Test
@@ -271,8 +270,11 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigSecurityPModeAuthorizeMandatory ()
   {
+    m_aPModeConfig.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
+    assertTrue ("Errors: " +
+                m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
   @Test
