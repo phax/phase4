@@ -53,8 +53,6 @@ public abstract class AbstractClientSetUp
 
   protected ISettings m_aSettings;
   protected int m_nStatusCode;
-  // TODO use as return value from sendPlainMessage
-  protected String m_sResponse;
   protected CloseableHttpClient m_aClient;
   protected HttpPost m_aPost;
 

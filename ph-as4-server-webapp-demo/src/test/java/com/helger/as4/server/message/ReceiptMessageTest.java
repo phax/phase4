@@ -62,9 +62,9 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("UserMessage"));
+    assertTrue (sResponse.contains ("UserMessage"));
   }
 
   @Test
@@ -73,9 +73,9 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   @Test
@@ -84,9 +84,9 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
 }

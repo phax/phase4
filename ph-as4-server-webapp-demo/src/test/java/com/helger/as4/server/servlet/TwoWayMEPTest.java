@@ -67,20 +67,20 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties ());
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
-    assertTrue (m_sResponse.contains ("UserMessage"));
-    assertFalse (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains (s_aPMode.getConfig ()
-                                              .getLeg2 ()
-                                              .getSecurity ()
-                                              .getX509SignatureAlgorithm ()
-                                              .getAlgorithmURI ()));
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    assertTrue (sResponse.contains ("UserMessage"));
+    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (s_aPMode.getConfig ()
+                                            .getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
   }
 
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -89,17 +89,17 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
-    assertTrue (m_sResponse.contains ("UserMessage"));
-    assertFalse (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains (s_aPMode.getConfig ()
-                                              .getLeg2 ()
-                                              .getSecurity ()
-                                              .getX509SignatureAlgorithm ()
-                                              .getAlgorithmURI ()));
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    assertTrue (sResponse.contains ("UserMessage"));
+    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (s_aPMode.getConfig ()
+                                            .getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets send to the response
-    assertTrue (m_sResponse.contains ("<dummy>This is a test XML</dummy>"));
+    assertTrue (sResponse.contains ("<dummy>This is a test XML</dummy>"));
 
   }
 }

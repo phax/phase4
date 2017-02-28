@@ -70,9 +70,9 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   @Test
@@ -80,14 +80,14 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 
   @Test
@@ -99,12 +99,12 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
                                                                                                                               null,
                                                                                                                               s_aResMgr),
                                                                                           null);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 
   @Test
@@ -112,16 +112,16 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
                                                             aDoc,
                                                             false,
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   @Test
@@ -129,18 +129,18 @@ public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
                                                             aDoc,
                                                             false,
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains ("NonRepudiationInformation"));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 }

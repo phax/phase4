@@ -67,7 +67,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -80,15 +80,15 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
 
                                                                                           aAttachments);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   @Test
   public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -107,17 +107,17 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
                                                                                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
                                                                                           aAttachments);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 
   @Test
   public void testUserMessageOneAttachmentEncryptedMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -132,16 +132,15 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
                                                                           aAttachments,
                                                                           s_aResMgr,
                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   @Test
   public void testUserMessageMimeSignedEncryptedSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -165,11 +164,10 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
                                                                           aAttachments,
                                                                           s_aResMgr,
                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (m_sResponse.contains ("Receipt"));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-    assertTrue (m_sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
-
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
+    assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
 }

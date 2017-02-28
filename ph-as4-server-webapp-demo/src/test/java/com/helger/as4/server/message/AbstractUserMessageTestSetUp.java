@@ -60,12 +60,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
     MockJettySetup.shutDownServer ();
   }
 
-  protected void sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                                  final boolean bExpectSuccess,
-                                  @Nullable final String sErrorCode) throws IOException, MessagingException
+  @Nonnull
+  protected String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
+                                    final boolean bExpectSuccess,
+                                    @Nullable final String sErrorCode) throws IOException, MessagingException
   {
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), m_aPost);
-    sendPlainMessage (aHttpEntity, bExpectSuccess, sErrorCode);
+    return sendPlainMessage (aHttpEntity, bExpectSuccess, sErrorCode);
   }
 
   /**
@@ -77,11 +78,13 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
    * @param sErrorCode
    *        if you expect a negative response, you must give the expected error
    *        code as it will get searched for in the response.
+   * @return Response as String
    * @throws IOException
    */
-  protected void sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
-                                   final boolean bExpectSuccess,
-                                   @Nullable final String sErrorCode) throws IOException
+  @Nonnull
+  protected String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
+                                     final boolean bExpectSuccess,
+                                     @Nullable final String sErrorCode) throws IOException
   {
     m_aPost.setEntity (aHttpEntity);
 
@@ -91,15 +94,15 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 
       m_nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
       final HttpEntity aEntity = aHttpResponse.getEntity ();
-      m_sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
+      final String sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
 
       if (bExpectSuccess)
       {
-        assertTrue ("Server responded with an error.\nResponse: " + m_sResponse, !m_sResponse.contains ("Error"));
+        assertTrue ("Server responded with an error.\nResponse: " + sResponse, !sResponse.contains ("Error"));
         assertTrue ("Server responded with an error code (" +
                     m_nStatusCode +
                     "). Content:\n" +
-                    m_sResponse,
+                    sResponse,
                     m_nStatusCode == HttpServletResponse.SC_OK || m_nStatusCode == HttpServletResponse.SC_NO_CONTENT);
       }
       else
@@ -116,15 +119,17 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
                       "StatusCode: " +
                       m_nStatusCode +
                       "\nResponse: " +
-                      m_sResponse,
-                      m_sResponse.contains (sErrorCode));
+                      sResponse,
+                      sResponse.contains (sErrorCode));
         }
       }
+      return sResponse;
     }
     catch (final HttpHostConnectException ex)
     {
       // No such server running
       fail ("No target AS4 server reachable: " + ex.getMessage () + " \n Check your properties!");
+      throw new IllegalStateException ("Never reached!");
     }
   }
 }
