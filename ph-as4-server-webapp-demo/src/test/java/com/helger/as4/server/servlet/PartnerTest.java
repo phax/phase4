@@ -30,10 +30,10 @@ import org.w3c.dom.Document;
 
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockPModeGenerator;
 import com.helger.as4.partner.IPartner;
 import com.helger.as4.partner.Partner;
 import com.helger.as4.partner.PartnerManager;
+import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4.util.StringMap;
