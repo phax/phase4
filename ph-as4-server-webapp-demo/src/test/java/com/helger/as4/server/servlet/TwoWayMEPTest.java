@@ -10,13 +10,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.client.HttpMimeMessageEntity;
+import com.helger.as4.error.EEbmsError;
 import com.helger.as4.esens.ESENSPMode;
+import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -24,10 +30,12 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
@@ -94,6 +102,46 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // just adds the xml that gets sent in the original message and adds it to
     // the response
     assertTrue (sResponse.contains ("<dummy>This is a test XML</dummy>"));
+  }
 
+  @Test
+  public void testPModeWrongMPCLeg2 () throws Exception
+  {
+    final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    aEbms3UserMessage.setPayloadInfo (CreateUserMessage.createEbms3PayloadInfo (aPayload, null));
+
+    // Default MessageInfo for testing
+    aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
+
+    // Default CollaborationInfo for testing
+    aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
+                                                                                            null,
+                                                                                            CAS4.DEFAULT_SERVICE_URL,
+                                                                                            "4321",
+                                                                                            null,
+                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT));
+
+    // Default PartyInfo for testing
+    aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                            MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                            CAS4.DEFAULT_RESPONDER_URL,
+                                                                            MockEbmsHelper.DEFAULT_PARTY_ID));
+    // Default MessageProperties for testing
+    aEbms3UserMessage.setMessageProperties (_defaultProperties ());
+
+    s_aPMode.getConfig ().getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
+
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (s_aPMode.getConfigID ()));
+    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
+
+    final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                                  aEbms3UserMessage)
+                                                 .setMustUnderstand (true)
+                                                 .getAsSOAPDocument (aPayload);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 }

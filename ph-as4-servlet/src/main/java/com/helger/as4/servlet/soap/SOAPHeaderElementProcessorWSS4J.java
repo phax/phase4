@@ -45,6 +45,7 @@ import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
+import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsHashSet;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -54,12 +55,14 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.xml.XMLHelper;
 
 /**
  * This class manages the WSS4J SOAP header
  *
  * @author Philip Helger
+ * @author bayerlma
  */
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
@@ -78,8 +81,20 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     if (aPModeConfig == null)
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 
-    // TODO select correct leg
-    final PModeLeg aPModeLeg = aPModeConfig.getLeg1 ();
+    // Default is Leg 1, gets overwritten when a reference to a message id
+    // exists and then uses leg2
+    PModeLeg aPModeLeg = aPModeConfig.getLeg1 ();
+    final Ebms3Messaging aMessage = aState.getMessaging ();
+    if (aMessage != null)
+      if (aMessage.getUserMessageAtIndex (0) != null)
+        if (StringHelper.hasText (aState.getMessaging ()
+                                        .getUserMessageAtIndex (0)
+                                        .getMessageInfo ()
+                                        .getRefToMessageId ()))
+        {
+          aPModeLeg = aPModeConfig.getLeg2 ();
+        }
+
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg.getSecurity () != null)
     {
