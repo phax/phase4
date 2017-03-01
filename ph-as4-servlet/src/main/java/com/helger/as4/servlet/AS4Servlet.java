@@ -169,7 +169,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   }
 
   private static void _decompressAttachments (@Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final AS4MessageState aState,
+                                              @Nonnull final IAS4MessageState aState,
                                               @Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments)
   {
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
@@ -337,11 +337,22 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // Collect all runtime errors
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
-    // This is where all data from the SOAP headers is stored to
-    final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
+    // All further operations should only operate on the interface
+    IAS4MessageState aState;
+    {
+      // This is where all data from the SOAP headers is stored to
+      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, aResMgr);
 
-    // Handle all headers
-    _processSOAPHeaderElements (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aLocale, aState, aErrorMessages);
+      // Handle all headers
+      _processSOAPHeaderElements (aSOAPDocument,
+                                  eSOAPVersion,
+                                  aIncomingAttachments,
+                                  aLocale,
+                                  aStateImpl,
+                                  aErrorMessages);
+
+      aState = aStateImpl;
+    }
 
     Ebms3UserMessage aUserMessage = null;
     Ebms3PullRequest aPullRequest = null;
@@ -503,7 +514,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
     if (aErrorMessages.isEmpty ())
     {
-      // PModeConfig - determined inside SPI providers!
+      // PModeConfig - determined inside header handlers!
       if (aPModeConfig == null)
       {
         throw new BadRequestException ("No AS4 P-Mode configuration found!");
@@ -945,7 +956,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    *        Party information from user message, needed to get full information
    *        of the Initiator and Responder
    */
-  private static void _ensurePModeIsPresent (@Nonnull final AS4MessageState aState,
+  private static void _ensurePModeIsPresent (@Nonnull final IAS4MessageState aState,
                                              @Nonnull final String sConfigID,
                                              @Nonnull final Ebms3PartyInfo aPartyInfo)
   {

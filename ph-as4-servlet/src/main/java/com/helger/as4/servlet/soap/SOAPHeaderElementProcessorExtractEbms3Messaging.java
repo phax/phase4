@@ -19,6 +19,7 @@ package com.helger.as4.servlet.soap;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,8 @@ import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.xml.XMLHelper;
 
+// TODO warning when reftomessageid == messageid
+
 /**
  * This class manages the EBMS Messaging SOAP header element
  *
@@ -63,6 +66,79 @@ import com.helger.xml.XMLHelper;
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
+
+  private static boolean _isUseLeg1 (@Nonnull final Ebms3UserMessage aUserMessage)
+  {
+    final String sThisMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+    final String sRefToMessageID = aUserMessage.getMessageInfo ().getRefToMessageId ();
+
+    // If the message has a non-empty reference to a previous message, and this
+    // reference differs from this message's ID, than leg 2 should be used
+    return StringHelper.hasNoText (sRefToMessageID) || sRefToMessageID.equals (sThisMessageID);
+  }
+
+  @Nullable
+  private static String _getMPC (@Nonnull final Ebms3UserMessage aUserMessage, @Nonnull final PModeLeg aPModeLeg)
+  {
+    String sEffectiveMPCID = aUserMessage.getMpc ();
+    if (sEffectiveMPCID == null)
+    {
+      if (aPModeLeg.getBusinessInfo () != null)
+        sEffectiveMPCID = aPModeLeg.getBusinessInfo ().getMPCID ();
+    }
+    return sEffectiveMPCID;
+  }
+
+  @Nonnull
+  private static ESuccess _checkMPC (@Nonnull final ErrorList aErrorList,
+                                     @Nonnull final Locale aLocale,
+                                     @Nonnull final MPCManager aMPCMgr,
+                                     @Nonnull final PModeLeg aPModeLeg)
+  {
+    // Check if MPC is contained in PMode and if so, if it is valid
+    if (aPModeLeg != null)
+    {
+      if (aPModeLeg.getBusinessInfo () != null)
+      {
+        final String sPModeMPC = aPModeLeg.getBusinessInfo ().getMPCID ();
+        if (sPModeMPC != null)
+          if (!aMPCMgr.containsWithID (sPModeMPC))
+          {
+            s_aLogger.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
+
+            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+      }
+    }
+    else
+    {
+      s_aLogger.warn ("Error processing the usermessage, PMode does not contain a leg!");
+
+      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
+      return ESuccess.FAILURE;
+    }
+
+    return ESuccess.SUCCESS;
+  }
+
+  private static boolean _checkSOAPBodyHasPayload (@Nonnull final ErrorList aErrorList,
+                                                   @Nonnull final PModeLeg aPModeLeg,
+                                                   @Nonnull final Document aSOAPDoc)
+  {
+    if (aPModeLeg != null)
+    {
+      // Check if a SOAPBodyPayload exists
+      final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
+                                                                  aPModeLeg.getProtocol ()
+                                                                           .getSOAPVersion ()
+                                                                           .getBodyElementName ());
+      if (aBody != null && aBody.hasChildNodes ())
+        return true;
+    }
+
+    return false;
+  }
 
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
@@ -153,11 +229,13 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       aPModeLeg1 = aPModeConfig.getLeg1 ();
       aPModeLeg2 = aPModeConfig.getLeg2 ();
 
+      // TODO test if pmode config has only leg2 -> should crash
+
       // if the two - way is selected, check if it requires two legs and if both
       // are present
       if (aPModeConfig.getMEPBinding ().getRequiredLegs () == 2)
       {
-        if (aPModeLeg1 == null || aPModeLeg2 == null)
+        if (aPModeLeg2 == null)
         {
           s_aLogger.warn ("Error processing the usermessage, PMode does not contain a enough legs!");
 
@@ -166,25 +244,14 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         }
       }
 
-      // If the message has a reference to a previous message leg 2 should be
-      // used
-      String sEffectiveMPCID = "";
-      if (StringHelper.hasNoText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
-      {
-        // Use Leg 1
-        if (_checkMPC (aErrorList, aLocale, aMPCMgr, aPModeLeg1).getErrorCount () > 0)
-          return ESuccess.FAILURE;
-        bHasSoapBodyPayload = _checkSOAPBodyPayload (aErrorList, aPModeLeg1, aSOAPDoc);
-        sEffectiveMPCID = _getMPC (aUserMessage, aPModeLeg1);
-      }
-      else
-      {
-        // Use Leg 2
-        if (_checkMPC (aErrorList, aLocale, aMPCMgr, aPModeLeg2).getErrorCount () > 0)
-          return ESuccess.FAILURE;
-        bHasSoapBodyPayload = _checkSOAPBodyPayload (aErrorList, aPModeLeg1, aSOAPDoc);
-        sEffectiveMPCID = _getMPC (aUserMessage, aPModeLeg1);
-      }
+      final boolean bUseLeg1 = _isUseLeg1 (aUserMessage);
+      final PModeLeg aEffectiveLeg = bUseLeg1 ? aPModeLeg1 : aPModeLeg2;
+
+      if (_checkMPC (aErrorList, aLocale, aMPCMgr, aEffectiveLeg).isFailure ())
+        return ESuccess.FAILURE;
+
+      bHasSoapBodyPayload = _checkSOAPBodyHasPayload (aErrorList, aEffectiveLeg, aSOAPDoc);
+      final String sEffectiveMPCID = _getMPC (aUserMessage, aEffectiveLeg);
 
       // PMode is valid
       // Now Check if MPC valid
@@ -312,10 +379,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       }
     }
 
-    // TODO if pullrequest the methode for extracting the pmode needs to be
+    // TODO if pullrequest the method for extracting the pmode needs to be
     // different since the pullrequest itself does not contain the pmode, it
-    // is
-    // just reachable over the mpc where the usermessage is supposed to be
+    // is just reachable over the mpc where the usermessage is supposed to be
     // stored
 
     // Remember in state
@@ -330,66 +396,5 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
 
     return ESuccess.SUCCESS;
-  }
-
-  private String _getMPC (@Nonnull final Ebms3UserMessage aUserMessage, @Nonnull final PModeLeg aPModeLeg)
-  {
-    String sEffectiveMPCID = aUserMessage.getMpc ();
-    if (sEffectiveMPCID == null)
-    {
-      if (aPModeLeg.getBusinessInfo () != null)
-        sEffectiveMPCID = aPModeLeg.getBusinessInfo ().getMPCID ();
-    }
-    return sEffectiveMPCID;
-  }
-
-  private ErrorList _checkMPC (@Nonnull final ErrorList aErrorList,
-                               @Nonnull final Locale aLocale,
-                               @Nonnull final MPCManager aMPCMgr,
-                               @Nonnull final PModeLeg aPModeLeg)
-  {
-    // Check if MPC is contained in PMode and if so, if it is valid
-    if (aPModeLeg != null)
-    {
-      if (aPModeLeg.getBusinessInfo () != null)
-      {
-        final String sPModeMPC = aPModeLeg.getBusinessInfo ().getMPCID ();
-        if (sPModeMPC != null)
-          if (!aMPCMgr.containsWithID (sPModeMPC))
-          {
-            s_aLogger.warn ("Error processing the usermessage, PMode-MPC ID '" + sPModeMPC + "' is invalid!");
-
-            aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-            return aErrorList;
-          }
-      }
-    }
-    else
-    {
-      s_aLogger.warn ("Error processing the usermessage, PMode does not contain a leg!");
-
-      aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
-      return aErrorList;
-    }
-
-    return aErrorList;
-  }
-
-  private boolean _checkSOAPBodyPayload (@Nonnull final ErrorList aErrorList,
-                                         @Nonnull final PModeLeg aPModeLeg,
-                                         @Nonnull final Document aSOAPDoc)
-  {
-    if (aPModeLeg != null)
-    {
-      // Check if a SOAPBodyPayload exists
-      final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
-                                                                  aPModeLeg.getProtocol ()
-                                                                           .getSOAPVersion ()
-                                                                           .getBodyElementName ());
-      if (aBody != null && aBody.hasChildNodes ())
-        return true;
-    }
-
-    return false;
   }
 }

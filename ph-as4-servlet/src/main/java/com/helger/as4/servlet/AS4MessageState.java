@@ -41,12 +41,13 @@ import com.helger.commons.datetime.PDTFactory;
 /**
  * This class keeps track of the status of an incoming message. It is basically
  * a String to any map.<br>
- * Keys starting with <code>as4.</code> are reserved for internal use.
+ * Keys starting with <code>as4.</code> are reserved for internal use.<br>
+ * Instances of this object are only modified in the SOAP header handlers.
  *
  * @author Philip Helger
  */
 @NotThreadSafe
-public class AS4MessageState extends MapBasedAttributeContainerAny <String>
+public class AS4MessageState extends MapBasedAttributeContainerAny <String> implements IAS4MessageState
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE_CONFIG = "as4.pmode.config";
@@ -71,30 +72,18 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
   }
 
-  /**
-   * @return Date and time when the receipt started. This is constantly set in
-   *         the constructor and never <code>null</code>.
-   */
   @Nonnull
   public final LocalDateTime getReceiptDT ()
   {
     return m_aReceiptDT;
   }
 
-  /**
-   * @return The SOAP version of the current request as specified in the
-   *         constructor. Never <code>null</code>.
-   */
   @Nonnull
   public final ESOAPVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
   }
 
-  /**
-   * @return The resource manager as specified in the constructor. Never
-   *         <code>null</code>.
-   */
   @Nonnull
   public final AS4ResourceManager getResourceMgr ()
   {
@@ -112,6 +101,13 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     return getCastedAttribute (KEY_EBMS3_MESSAGING);
   }
 
+  /**
+   * Set the PMode configuration to be used. Called only from Ebms3 header
+   * processor
+   *
+   * @param aPModeConfig
+   *        PMode Config. May be <code>null</code>.
+   */
   public void setPModeConfig (@Nullable final IPModeConfig aPModeConfig)
   {
     setAttribute (KEY_PMODE_CONFIG, aPModeConfig);
@@ -128,12 +124,6 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     setAttribute (KEY_ORIGINAL_ATTACHMENT_LIST, aAttachments);
   }
 
-  public boolean hasOriginalAttachments ()
-  {
-    final ICommonsList <WSS4JAttachment> aAttachments = getOriginalAttachments ();
-    return aAttachments != null && aAttachments.isNotEmpty ();
-  }
-
   @Nullable
   public ICommonsList <WSS4JAttachment> getOriginalAttachments ()
   {
@@ -143,11 +133,6 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
   public void setDecryptedSOAPDocument (@Nullable final Document aDocument)
   {
     setAttribute (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
-  }
-
-  public boolean hasDecryptedSOAPDocument ()
-  {
-    return containsAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 
   @Nullable
@@ -161,12 +146,6 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     setAttribute (KEY_DECRYPTED_ATTACHMENT_LIST, aAttachments);
   }
 
-  public boolean hasDecryptedAttachments ()
-  {
-    final ICommonsList <WSS4JAttachment> aAttachments = getDecryptedAttachments ();
-    return aAttachments != null && aAttachments.isNotEmpty ();
-  }
-
   @Nullable
   public ICommonsList <WSS4JAttachment> getDecryptedAttachments ()
   {
@@ -178,28 +157,10 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String>
     setAttribute (KEY_COMPRESSED_ATTACHMENT_IDS, aIDs);
   }
 
-  public boolean hasCompressedAttachmentIDs ()
-  {
-    return containsAttribute (KEY_COMPRESSED_ATTACHMENT_IDS);
-  }
-
   @Nullable
   public ICommonsMap <String, EAS4CompressionMode> getCompressedAttachmentIDs ()
   {
     return getCastedAttribute (KEY_COMPRESSED_ATTACHMENT_IDS);
-  }
-
-  @Nullable
-  public EAS4CompressionMode getAttachmentCompressionMode (@Nullable final String sID)
-  {
-    final ICommonsMap <String, EAS4CompressionMode> aIDs = getCompressedAttachmentIDs ();
-    return aIDs == null ? null : aIDs.get (sID);
-  }
-
-  public boolean containsCompressedAttachmentID (@Nullable final String sID)
-  {
-    final ICommonsMap <String, EAS4CompressionMode> aIDs = getCompressedAttachmentIDs ();
-    return aIDs != null && aIDs.containsKey (sID);
   }
 
   public void setMPC (@Nullable final IMPC aMPC)

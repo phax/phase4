@@ -50,7 +50,8 @@ public interface ISOAPHeaderElementProcessor
    *        Existing extracted attachments. Never <code>null</code> but maybe
    *        empty.
    * @param aState
-   *        The current processing state. Never <code>null</code>.
+   *        The current processing state (mutable implementation version
+   *        needed). Never <code>null</code>.
    * @param aErrorList
    *        The error list to be filled in case there are processing errors.
    *        Never <code>null</code>. The list is always empty initially.
