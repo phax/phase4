@@ -122,8 +122,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     return ESuccess.SUCCESS;
   }
 
-  private static boolean _checkSOAPBodyHasPayload (@Nonnull final ErrorList aErrorList,
-                                                   @Nonnull final PModeLeg aPModeLeg,
+  private static boolean _checkSOAPBodyHasPayload (@Nonnull final PModeLeg aPModeLeg,
                                                    @Nonnull final Document aSOAPDoc)
   {
     if (aPModeLeg != null)
@@ -250,7 +249,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (_checkMPC (aErrorList, aLocale, aMPCMgr, aEffectiveLeg).isFailure ())
         return ESuccess.FAILURE;
 
-      bHasSoapBodyPayload = _checkSOAPBodyHasPayload (aErrorList, aEffectiveLeg, aSOAPDoc);
+      bHasSoapBodyPayload = _checkSOAPBodyHasPayload (aEffectiveLeg, aSOAPDoc);
       final String sEffectiveMPCID = _getMPC (aUserMessage, aEffectiveLeg);
 
       // PMode is valid

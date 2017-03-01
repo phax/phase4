@@ -39,39 +39,39 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
-  private static PMode s_aPMode;
+  private PMode m_aPMode;
 
   @Before
   public void createTwoWayPMode ()
   {
-    s_aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
+    m_aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
                                                                   .getAsString ("server.address",
                                                                                 "http://localhost:8080/as4"));
     // ESENS PMode is One Way on default settings need to change to two way
     final PModeConfig aPModeConfig = new PModeConfig ("esens-two-way");
     aPModeConfig.setMEP (EMEP.TWO_WAY);
     aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
-    aPModeConfig.setAgreement (s_aPMode.getConfig ().getAgreement ());
-    aPModeConfig.setLeg1 (s_aPMode.getConfig ().getLeg1 ());
+    aPModeConfig.setAgreement (m_aPMode.getConfig ().getAgreement ());
+    aPModeConfig.setLeg1 (m_aPMode.getConfig ().getLeg1 ());
     // Setting second leg to the same as first
-    final PModeLeg aLeg2 = s_aPMode.getConfig ().getLeg1 ();
+    final PModeLeg aLeg2 = m_aPMode.getConfig ().getLeg1 ();
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
     aPModeConfig.setLeg2 (aLeg2);
-    aPModeConfig.setPayloadService (s_aPMode.getConfig ().getPayloadService ());
-    aPModeConfig.setReceptionAwareness (s_aPMode.getConfig ().getReceptionAwareness ());
+    aPModeConfig.setPayloadService (m_aPMode.getConfig ().getPayloadService ());
+    aPModeConfig.setReceptionAwareness (m_aPMode.getConfig ().getReceptionAwareness ());
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
-    s_aPMode = new PMode (s_aPMode.getInitiator (), s_aPMode.getResponder (), aPModeConfig);
-    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (s_aPMode);
+    m_aPMode = new PMode (m_aPMode.getInitiator (), m_aPMode.getResponder (), aPModeConfig);
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
   }
 
   @Test
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getConfigID (), null, null, _defaultProperties ());
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
     assertTrue (sResponse.contains ("UserMessage"));
     assertFalse (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains (s_aPMode.getConfig ()
+    assertTrue (sResponse.contains (m_aPMode.getConfig ()
                                             .getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
@@ -81,19 +81,19 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
 
-    final Document aDoc = _modifyUserMessage (s_aPMode.getConfigID (), null, null, _defaultProperties (), aAttachments);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getConfigID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains ("UserMessage"));
     assertFalse (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains (s_aPMode.getConfig ()
+    assertTrue (sResponse.contains (m_aPMode.getConfig ()
                                             .getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
@@ -130,9 +130,9 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // Default MessageProperties for testing
     aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
-    s_aPMode.getConfig ().getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
+    m_aPMode.getConfig ().getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
 
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (s_aPMode.getConfigID ()));
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getConfigID ()));
     aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
 
     final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
