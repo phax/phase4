@@ -56,12 +56,6 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (s_aPMode);
   }
 
-  /*
-   * @AfterClass public static void destroyTwoWayPMode () { // TODO why not
-   * deleted? in as4 file MetaAS4Manager.getPModeMgr ().deletePMode
-   * (s_aPMode.getID ()); }
-   */
-
   @Test
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
@@ -97,7 +91,8 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                             .getX509SignatureAlgorithm ()
                                             .getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
-    // just adds the xml that gets send to the response
+    // just adds the xml that gets sent in the original message and adds it to
+    // the response
     assertTrue (sResponse.contains ("<dummy>This is a test XML</dummy>"));
 
   }

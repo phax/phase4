@@ -86,9 +86,9 @@ public interface IEbmsError extends Serializable
   }
 
   @Nonnull
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale)
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nonnull final String sRefToMessage)
   {
-    return getAsEbms3Error (aContentLocale, "", "", null);
+    return getAsEbms3Error (aContentLocale, sRefToMessage, "", null);
   }
 
   @Nonnull

@@ -86,7 +86,8 @@ final class MockClientMessages
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
+                                                                                                                               ""));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                                                     aEbms3ErrorList)

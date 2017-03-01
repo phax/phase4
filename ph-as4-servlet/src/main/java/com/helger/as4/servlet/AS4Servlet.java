@@ -204,7 +204,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -270,9 +270,14 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
         for (final IError aError : aErrorList)
         {
+          String sRefToMessageID = "";
+          if (aState.getMessaging () != null)
+            if (aState.getMessaging ().getUserMessageCount () > 0)
+              sRefToMessageID = aState.getMessaging ().getUserMessageAtIndex (0).getMessageInfo ().getMessageId ();
+
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
           if (ePredefinedError != null)
-            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aDisplayLocale));
+            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aDisplayLocale, sRefToMessageID));
           else
           {
             final Ebms3Error aEbms3Error = new Ebms3Error ();
@@ -280,6 +285,10 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             aEbms3Error.setErrorCode (aError.getErrorID ());
             aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
             aEbms3Error.setOrigin (aError.getErrorFieldName ());
+            aEbms3Error.setRefToMessageInError (aState.getMessaging ()
+                                                      .getUserMessageAtIndex (0)
+                                                      .getMessageInfo ()
+                                                      .getMessageId ());
             aErrorMessages.add (aEbms3Error);
           }
         }
@@ -326,7 +335,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // This is where all data from the SOAP headers is stored to
     final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResMgr);
@@ -339,7 +348,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
 
     if (aErrorMessages.isEmpty ())
     {
@@ -441,7 +450,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           final Ebms3Description aDesc = new Ebms3Description ();
           aDesc.setLang (aLocale.getLanguage ());
           aDesc.setValue ("Another message with the same ID was already received!");
-          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aLocale, sMessageID, "", aDesc));
+          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (aLocale, sMessageID, null, aDesc));
         }
         else
         {
@@ -1030,7 +1039,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))
