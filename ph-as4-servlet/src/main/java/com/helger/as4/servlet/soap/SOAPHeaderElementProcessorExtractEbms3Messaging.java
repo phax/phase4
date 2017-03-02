@@ -60,11 +60,19 @@ import com.helger.xml.XMLHelper;
  * This class manages the EBMS Messaging SOAP header element
  *
  * @author Philip Helger
+ * @author bayerlma
  */
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
 
+  /**
+   * Checks if Leg1 should be used or not.
+   *
+   * @param aUserMessage
+   *        needed to get the message ids
+   * @return true if leg1 should be used else false
+   */
   private static boolean _isUseLeg1 (@Nonnull final Ebms3UserMessage aUserMessage)
   {
     final String sThisMessageID = aUserMessage.getMessageInfo ().getMessageId ();
@@ -79,6 +87,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     return StringHelper.hasNoText (sRefToMessageID) || sRefToMessageID.equals (sThisMessageID);
   }
 
+  /**
+   * Determines the effective MPCID.
+   *
+   * @param aUserMessage
+   *        to get the MPC that is used
+   * @param aPModeLeg
+   *        to get the MPC that will be used if the message does not define one
+   * @return the MPCID
+   */
   @Nullable
   private static String _getMPC (@Nonnull final Ebms3UserMessage aUserMessage, @Nonnull final PModeLeg aPModeLeg)
   {
@@ -91,6 +108,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     return sEffectiveMPCID;
   }
 
+  /**
+   * Checks if the MPC that is contained in the PMode is valid.
+   *
+   * @param aErrorList
+   *        to write erros to if they occur
+   * @param aLocale
+   *        Locale to be used for the error messages
+   * @param aMPCMgr
+   *        the MPC-Manager to search for the MPCID in the persisted data
+   * @param aPModeLeg
+   *        the leg to get the MPCID
+   * @return Success if everything is all right, else Failure
+   */
   @Nonnull
   private static ESuccess _checkMPC (@Nonnull final ErrorList aErrorList,
                                      @Nonnull final Locale aLocale,
@@ -120,10 +150,18 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
-
     return ESuccess.SUCCESS;
   }
 
+  /**
+   * Checks if the Document has a SOAPBodyPayload.
+   *
+   * @param aPModeLeg
+   *        to get the SOAPVersion
+   * @param aSOAPDoc
+   *        the document that should be checked if it contains a SOAPBodyPayload
+   * @return true if it contains a SOAPBodyPayload else false
+   */
   private static boolean _checkSOAPBodyHasPayload (@Nonnull final PModeLeg aPModeLeg, @Nonnull final Document aSOAPDoc)
   {
     if (aPModeLeg != null)
@@ -136,7 +174,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (aBody != null && aBody.hasChildNodes ())
         return true;
     }
-
     return false;
   }
 

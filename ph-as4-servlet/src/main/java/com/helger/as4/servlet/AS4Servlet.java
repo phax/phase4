@@ -566,7 +566,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     else
     {
-
       if (aPModeConfig.getMEP ().isOneWay ())
       {
         // If no Error is present check if partners declared if they want a
@@ -729,7 +728,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             }
           }
         }
-
     }
   }
 
