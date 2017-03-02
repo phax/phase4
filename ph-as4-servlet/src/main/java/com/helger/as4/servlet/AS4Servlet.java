@@ -18,7 +18,6 @@ package com.helger.as4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -121,6 +120,7 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
+import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
@@ -314,12 +314,30 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
-  private static void _invokeSPIs (@Nonnull final Ebms3UserMessage aUserMessage,
-                                   @Nullable final Node aPayloadNode,
-                                   @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
-                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                   @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                   @Nonnull final Locale aLocale)
+  /**
+   * Invoke custom SPI message processors
+   *
+   * @param aUserMessage
+   *        Current user message
+   * @param aPayloadNode
+   *        Optional SOAP body payload (only if direct SOAP msg, not for MIME)
+   * @param aDecryptedAttachments
+   *        Original attachments from source message
+   * @param aErrorMessages
+   *        The list of error messages to be filled if something goes wrong.
+   * @param aResponseAttachments
+   *        The list of attachments to be added to the response.
+   * @param aLocale
+   *        Locale to use.
+   * @return {@link ESuccess}
+   */
+  @Nonnull
+  private static ESuccess _invokeSPIs (@Nonnull final Ebms3UserMessage aUserMessage,
+                                       @Nullable final Node aPayloadNode,
+                                       @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
+                                       @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
+                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                       @Nonnull final Locale aLocale)
   {
     // Invoke all SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
@@ -332,7 +350,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                 aPayloadNode,
                                                                                 aDecryptedAttachments);
         if (aResult == null)
-          throw new IllegalStateException ("No result object present!");
+          throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
 
         if (aResult.isSuccess ())
         {
@@ -356,13 +374,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
           aErrorMessages.add (aError);
 
           // Stop processing
-          break;
+          return ESuccess.FAILURE;
         }
       }
       catch (final Throwable t)
       {
-        throw new BadRequestException ("Error processing incoming AS4 message with processor " + aProcessor, t);
+        if (t instanceof RuntimeException)
+          throw (RuntimeException) t;
+        throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
       }
+    return ESuccess.SUCCESS;
   }
 
   private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
@@ -410,6 +431,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     final IPModeConfig aPModeConfig = aState.getPModeConfig ();
+    final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     Ebms3UserMessage aUserMessage = null;
     Ebms3PullRequest aPullRequest = null;
     Node aPayloadNode = null;
@@ -421,6 +443,8 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     {
       if (aPModeConfig == null)
         throw new BadRequestException ("No AS4 P-Mode configuration found!");
+      if (aEffectiveLeg == null)
+        throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
 
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
@@ -547,6 +571,12 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
+          // Invoke SPIs if
+          // * Valid PMode
+          // * Exactly one UserMessage
+          // * No ping/test message
+          // * No Duplicate message ID
+          // * No errors so far (sign, encrypt, ...)
           bCanInvokeSPIs = true;
         }
       }
@@ -557,16 +587,39 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       if (aPModeConfig.getMEPBinding ().isSynchronous ())
       {
         // Call synchronous
+        // Might add to aErrorMessages
+        // Might add to aResponseAttachments
         _invokeSPIs (aUserMessage, aPayloadNode, aDecryptedAttachments, aErrorMessages, aResponseAttachments, aLocale);
       }
       else
       {
         // TODO Call asynchronous
-        final CompletableFuture <BigDecimal> aFuture = AS4WorkerPool.getInstance ().supply ( () -> BigDecimal.ONE);
-        // Block until finished
+        final Ebms3UserMessage aFinalUserMessage = aUserMessage;
+        final Node aFinalPayloadNode = aPayloadNode;
+        final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
+
+        final CompletableFuture <Ebms3UserMessage> aFuture = AS4WorkerPool.getInstance ().supply ( () -> {
+          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList<> ();
+          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList<> ();
+          if (_invokeSPIs (aFinalUserMessage,
+                           aFinalPayloadNode,
+                           aFinalDecryptedAttachments,
+                           aLocalErrorMessages,
+                           aLocalResponseAttachments,
+                           aLocale).isSuccess ())
+          {
+            // TODO SPI processing started
+          }
+          else
+          {
+            // TODO SPI processing started
+          }
+          return null;
+        });
         try
         {
-          final BigDecimal sResult = aFuture.get ();
+          // Block until finished
+          final Ebms3UserMessage aResult = aFuture.get ();
         }
         catch (InterruptedException | ExecutionException ex)
         {
@@ -579,7 +632,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // partners declared in their pmode config they want an error response
     if (aErrorMessages.isNotEmpty ())
     {
-      final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
       if (_isSendErrorAsResponse (aEffectiveLeg))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -595,8 +647,6 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     else
     {
-      final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-
       final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
       if (aPModeConfig.getMEP ().isOneWay ())
