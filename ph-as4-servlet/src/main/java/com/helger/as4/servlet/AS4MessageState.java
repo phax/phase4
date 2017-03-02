@@ -222,10 +222,9 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
     return getCastedAttribute (KEY_USED_CERTIFICATE);
   }
 
-  public void setEffectivePModeLeg (@Nonnegative final int nLegNumber, @Nonnull final PModeLeg aEffectiveLeg)
+  public void setEffectivePModeLeg (@Nonnegative final int nLegNumber, @Nullable final PModeLeg aEffectiveLeg)
   {
     ValueEnforcer.isTrue (nLegNumber == 1 || nLegNumber == 2, "LegNumber must be 1 or 2");
-    ValueEnforcer.notNull (aEffectiveLeg, "EffectiveLeg");
     setAttribute (KEY_EFFECTIVE_PMODE_LEG, aEffectiveLeg);
     setAttribute (KEY_EFFECTIVE_PMODE_LEG_NUMBER, nLegNumber);
   }

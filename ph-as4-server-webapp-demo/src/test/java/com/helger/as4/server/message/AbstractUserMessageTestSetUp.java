@@ -16,7 +16,6 @@
  */
 package com.helger.as4.server.message;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -132,14 +131,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   private String _sendPlainMessage (@Nonnull final HttpPost aPost,
                                     @Nonnull final HttpEntity aHttpEntity,
                                     final boolean bExpectSuccess,
-                                    @Nullable final String sErrorCode) throws IOException
+                                    @Nullable final String sExecptedErrorCode) throws IOException
   {
     aPost.setEntity (aHttpEntity);
 
-    try
+    try (final CloseableHttpResponse aHttpResponse = m_aClient.execute (aPost))
     {
-      final CloseableHttpResponse aHttpResponse = m_aClient.execute (aPost);
-
       final int nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
       final HttpEntity aEntity = aHttpResponse.getEntity ();
       final String sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
@@ -155,21 +152,20 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       }
       else
       {
-        if (sErrorCode.equals ("500"))
-        {
-          // Expecting Internal Servlet error
-          assertEquals ("Server responded with internal servlet error", 500, nStatusCode);
-        }
-        else
-        {
-          // Status code may by 20x but may be an error anyway
-          assertTrue ("Server responded with success or different error message but failure was expected." +
-                      "StatusCode: " +
-                      nStatusCode +
-                      "\nResponse: " +
-                      sResponse,
-                      sResponse.contains (sErrorCode));
-        }
+        // 200, 400 or 500
+        assertTrue ("Server responded with StatusCode=" +
+                    nStatusCode +
+                    ". Response:\n" +
+                    sResponse,
+                    nStatusCode == HttpServletResponse.SC_OK ||
+                               nStatusCode == HttpServletResponse.SC_BAD_REQUEST ||
+                               nStatusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        assertTrue ("Server responded with different error message than expected." +
+                    " StatusCode=" +
+                    nStatusCode +
+                    "\nResponse: " +
+                    sResponse,
+                    sResponse.contains (sExecptedErrorCode));
       }
       return sResponse;
     }
@@ -184,11 +180,11 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   protected String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
                                     final boolean bExpectSuccess,
-                                    @Nullable final String sErrorCode) throws IOException, MessagingException
+                                    @Nullable final String sExpectedErrorCode) throws IOException, MessagingException
   {
     final HttpPost aPost = _createPost ();
     MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), aPost);
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sErrorCode);
+    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
   }
 
   /**
@@ -197,7 +193,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
    * @param bExpectSuccess
    *        specifies if the test case expects a positive or negative response
    *        from the server
-   * @param sErrorCode
+   * @param sExpectedErrorCode
    *        if you expect a negative response, you must give the expected error
    *        code as it will get searched for in the response.
    * @return Response as String
@@ -206,9 +202,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   protected String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
                                      final boolean bExpectSuccess,
-                                     @Nullable final String sErrorCode) throws IOException
+                                     @Nullable final String sExpectedErrorCode) throws IOException
   {
     final HttpPost aPost = _createPost ();
-    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sErrorCode);
+    return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
   }
 }
