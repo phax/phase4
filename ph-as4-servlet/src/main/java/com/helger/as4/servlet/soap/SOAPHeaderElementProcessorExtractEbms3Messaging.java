@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Needed for the compression check: it is not allowed to have a
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -281,6 +281,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
       final boolean bUseLeg1 = _isUseLeg1 (aUserMessage);
       final PModeLeg aEffectiveLeg = bUseLeg1 ? aPModeLeg1 : aPModeLeg2;
+      aState.setEffectivePModeLeg (bUseLeg1 ? 1 : 2, aEffectiveLeg);
 
       if (_checkMPC (aErrorList, aLocale, aMPCMgr, aEffectiveLeg).isFailure ())
         return ESuccess.FAILURE;

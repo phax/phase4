@@ -205,7 +205,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -311,6 +311,57 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
   }
 
+  private static void _invokeSPIs (@Nonnull final Ebms3UserMessage aUserMessage,
+                                   @Nullable final Node aPayloadNode,
+                                   @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
+                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
+                                   @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                   @Nonnull final Locale aLocale)
+  {
+    // Invoke all SPIs
+    for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
+      try
+      {
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
+
+        final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
+                                                                                aPayloadNode,
+                                                                                aDecryptedAttachments);
+        if (aResult == null)
+          throw new IllegalStateException ("No result object present!");
+
+        if (aResult.isSuccess ())
+        {
+          // Add response attachments, payloads
+          aResult.addAllAttachmentsTo (aResponseAttachments);
+          if (s_aLogger.isDebugEnabled ())
+            s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
+        }
+        else
+        {
+          s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
+
+          final Ebms3Error aError = new Ebms3Error ();
+          aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
+          aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
+          aError.setRefToMessageInError (aUserMessage.getMessageInfo ().getMessageId ());
+          final Ebms3Description aDesc = new Ebms3Description ();
+          aDesc.setValue (aResult.getErrorMessage ());
+          aDesc.setLang (aLocale.getLanguage ());
+          aError.setDescription (aDesc);
+          aErrorMessages.add (aError);
+
+          // Stop processing
+          break;
+        }
+      }
+      catch (final Throwable t)
+      {
+        throw new BadRequestException ("Error processing incoming AS4 message with processor " + aProcessor, t);
+      }
+  }
+
   private void _handleSOAPMessage (@Nonnull final AS4ResourceManager aResMgr,
                                    @Nonnull final Document aSOAPDocument,
                                    @Nonnull final ESOAPVersion eSOAPVersion,
@@ -336,7 +387,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // All further operations should only operate on the interface
     IAS4MessageState aState;
@@ -344,7 +395,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // This is where all data from the SOAP headers is stored to
       final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, aResMgr);
 
-      // Handle all headers
+      // Handle all headers - the only place where the AS4MessageState values
       _processSOAPHeaderElements (aSOAPDocument,
                                   eSOAPVersion,
                                   aIncomingAttachments,
@@ -355,15 +406,19 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       aState = aStateImpl;
     }
 
+    final IPModeConfig aPModeConfig = aState.getPModeConfig ();
     Ebms3UserMessage aUserMessage = null;
     Ebms3PullRequest aPullRequest = null;
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
 
     if (aErrorMessages.isEmpty ())
     {
+      if (aPModeConfig == null)
+        throw new BadRequestException ("No AS4 P-Mode configuration found!");
+
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
       aUserMessage = aState.getMessaging ().getUserMessageAtIndex (0);
@@ -375,6 +430,29 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         throw new BadRequestException ("UserMessage or PullRequest must be present!");
       if (aUserMessage != null && aPullRequest != null)
         throw new BadRequestException ("Only UserMessage or PullRequest may be present!");
+
+      // Only do profile checks if a profile is set
+      final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
+      if (StringHelper.hasText (sProfileName))
+      {
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
+        if (aProfile == null)
+        {
+          throw new BadRequestException ("The AS4 profile " + sProfileName + " does not exist.");
+        }
+
+        // Profile Checks gets set when started with Server
+        final ErrorList aErrorList = new ErrorList ();
+        aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+        aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+        if (aErrorList.isNotEmpty ())
+        {
+          throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
+                                         aProfile.getDisplayName () +
+                                         "\n Following errors are present: " +
+                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
+        }
+      }
 
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
@@ -423,7 +501,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
       // P+P da + PConfig da = nix tun
       // P+P da + PConfig id fehlt = default
 
-      final String sConfigID = aState.getPModeConfig ().getID ();
+      final String sConfigID = aPModeConfig.getID ();
 
       final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
       final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
@@ -452,7 +530,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
       }
 
-      if (_isNotPingMessage (aState.getPModeConfig ()))
+      if (_isNotPingMessage (aPModeConfig))
       {
         final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
         final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
@@ -466,83 +544,12 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
-          // Invoke all SPIs
-          for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
-            try
-            {
-              if (s_aLogger.isDebugEnabled ())
-                s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
-
-              final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
-                                                                                      aPayloadNode,
-                                                                                      aDecryptedAttachments);
-              if (aResult == null)
-                throw new IllegalStateException ("No result object present!");
-
-              if (aResult.isSuccess ())
-              {
-                // Add response attachments, payloads
-                aResult.addAllAttachmentsTo (aResponseAttachments);
-                if (s_aLogger.isDebugEnabled ())
-                  s_aLogger.debug ("Successfully invoked AS4 message processor " + aProcessor);
-              }
-              else
-              {
-                s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
-
-                final Ebms3Error aError = new Ebms3Error ();
-                aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
-                aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
-                aError.setRefToMessageInError (sMessageID);
-                final Ebms3Description aDesc = new Ebms3Description ();
-                aDesc.setValue (aResult.getErrorMessage ());
-                aDesc.setLang (aLocale.getLanguage ());
-                aError.setDescription (aDesc);
-                aErrorMessages.add (aError);
-
-                // Stop processing
-                break;
-              }
-            }
-            catch (final Throwable t)
-            {
-              throw new BadRequestException ("Error processing incoming AS4 message with processor " + aProcessor, t);
-            }
-        }
-      }
-    }
-
-    final IPModeConfig aPModeConfig = aState.getPModeConfig ();
-    if (aErrorMessages.isEmpty ())
-    {
-      // PModeConfig - determined inside header handlers!
-      if (aPModeConfig == null)
-      {
-        throw new BadRequestException ("No AS4 P-Mode configuration found!");
-      }
-
-      {
-        // Only do profile checks if a profile is set
-        final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
-        if (StringHelper.hasText (sProfileName))
-        {
-          final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
-          if (aProfile == null)
-          {
-            throw new BadRequestException ("The AS4 profile " + sProfileName + " does not exist.");
-          }
-
-          // Profile Checks gets set when started with Server
-          final ErrorList aErrorList = new ErrorList ();
-          aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
-          aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
-          if (aErrorList.isNotEmpty ())
-          {
-            throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
-                                           aProfile.getDisplayName () +
-                                           "\n Following errors are present: " +
-                                           aErrorList.getAllErrors ().getAllTexts (aLocale));
-          }
+          _invokeSPIs (aUserMessage,
+                       aPayloadNode,
+                       aDecryptedAttachments,
+                       aErrorMessages,
+                       aResponseAttachments,
+                       aLocale);
         }
       }
     }
@@ -550,6 +557,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // Generate ErrorMessage if errors in the process are present and the
     // partners declared in their pmode config they want an error response
     if (aErrorMessages.isNotEmpty ())
+
     {
       if (_isSendErrorAsResponse (aPModeConfig))
       {
@@ -566,12 +574,16 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     else
     {
+      final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
+
+      final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
       if (aPModeConfig.getMEP ().isOneWay ())
       {
         // If no Error is present check if partners declared if they want a
         // response and if this response should contain non-repudiation
         // information if applicable
-        if (_isSendReceiptAsResponse (aPModeConfig))
+        if (bSendReceiptAsResponse)
         {
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
           final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
@@ -885,21 +897,18 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   /**
    * Checks if a ReceiptReplyPattern is set to Response or not.
    *
-   * @param aPModeConfig
-   *        to check the attribute
+   * @param aPLeg
+   *        to PMode leg to use. May not be <code>null</code>.
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private static boolean _isSendReceiptAsResponse (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendReceiptAsResponse (@Nonnull final PModeLeg aLeg)
   {
-    if (aPModeConfig != null)
-      if (aPModeConfig.getLeg1 () != null)
-        if (aPModeConfig.getLeg1 ().getSecurity () != null)
-        {
-          // Note: this is enabled in Default PMode
-          return EPModeSendReceiptReplyPattern.RESPONSE.equals (aPModeConfig.getLeg1 ()
-                                                                            .getSecurity ()
-                                                                            .getSendReceiptReplyPattern ());
-        }
+    if (aLeg != null)
+      if (aLeg.getSecurity () != null)
+      {
+        // Note: this is enabled in Default PMode
+        return EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
+      }
     // Default behaviour if the value is not set or no security is existing
     return true;
   }
@@ -1059,7 +1068,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
       Document aSOAPDocument = null;
       ESOAPVersion eSOAPVersion = null;
-      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+      final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
       final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
       if (aPlainContentType.equals (MT_MULTIPART_RELATED))

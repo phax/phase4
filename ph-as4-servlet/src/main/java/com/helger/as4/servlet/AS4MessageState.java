@@ -19,6 +19,8 @@ package com.helger.as4.servlet;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 
+import javax.annotation.CheckForSigned;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -29,6 +31,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -60,6 +63,8 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   private static final String KEY_INITIATOR_ID = "as4.initiator.id";
   private static final String KEY_RESPONDER_ID = "as4.responder.id";
   private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
+  private static final String KEY_EFFECTIVE_PMODE_LEG = "as4.pmode.effective.leg";
+  private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "as4.pmode.effective.leg.number";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -215,5 +220,25 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   public X509Certificate getUsedCertificate ()
   {
     return getCastedAttribute (KEY_USED_CERTIFICATE);
+  }
+
+  public void setEffectivePModeLeg (@Nonnegative final int nLegNumber, @Nonnull final PModeLeg aEffectiveLeg)
+  {
+    ValueEnforcer.isTrue (nLegNumber == 1 || nLegNumber == 2, "LegNumber must be 1 or 2");
+    ValueEnforcer.notNull (aEffectiveLeg, "EffectiveLeg");
+    setAttribute (KEY_EFFECTIVE_PMODE_LEG, aEffectiveLeg);
+    setAttribute (KEY_EFFECTIVE_PMODE_LEG_NUMBER, nLegNumber);
+  }
+
+  @Nullable
+  public PModeLeg getEffectivePModeLeg ()
+  {
+    return getCastedAttribute (KEY_EFFECTIVE_PMODE_LEG);
+  }
+
+  @CheckForSigned
+  public int getEffectivePModeLegNumber ()
+  {
+    return getAttributeAsInt (KEY_EFFECTIVE_PMODE_LEG_NUMBER, -1);
   }
 }

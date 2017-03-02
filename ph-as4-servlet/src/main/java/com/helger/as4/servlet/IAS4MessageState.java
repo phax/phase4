@@ -3,6 +3,7 @@ package com.helger.as4.servlet;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 
+import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -12,6 +13,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -21,7 +23,7 @@ import com.helger.commons.collection.ext.ICommonsMap;
 
 /**
  * Read-only AS4 message state.
- * 
+ *
  * @author Philip Helger
  */
 public interface IAS4MessageState extends IAttributeContainer <String, Object>
@@ -113,4 +115,14 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   @Nullable
   X509Certificate getUsedCertificate ();
+
+  /**
+   * @return The effective leg to use. May be leg 1 or leg 2 of the PMode.
+   * @see #getPModeConfig()
+   */
+  @Nullable
+  PModeLeg getEffectivePModeLeg ();
+
+  @CheckForSigned
+  int getEffectivePModeLegNumber ();
 }
