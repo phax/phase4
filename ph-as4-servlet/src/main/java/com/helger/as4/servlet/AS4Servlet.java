@@ -18,6 +18,7 @@ package com.helger.as4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -413,7 +416,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
-
+    boolean bCanInvokeSPIs = false;
     if (aErrorMessages.isEmpty ())
     {
       if (aPModeConfig == null)
@@ -544,12 +547,30 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
         }
         else
         {
-          _invokeSPIs (aUserMessage,
-                       aPayloadNode,
-                       aDecryptedAttachments,
-                       aErrorMessages,
-                       aResponseAttachments,
-                       aLocale);
+          bCanInvokeSPIs = true;
+        }
+      }
+    }
+
+    if (bCanInvokeSPIs)
+    {
+      if (aPModeConfig.getMEPBinding ().isSynchronous ())
+      {
+        // Call synchronous
+        _invokeSPIs (aUserMessage, aPayloadNode, aDecryptedAttachments, aErrorMessages, aResponseAttachments, aLocale);
+      }
+      else
+      {
+        // TODO Call asynchronous
+        final CompletableFuture <BigDecimal> aFuture = AS4WorkerPool.getInstance ().supply ( () -> BigDecimal.ONE);
+        // Block until finished
+        try
+        {
+          final BigDecimal sResult = aFuture.get ();
+        }
+        catch (InterruptedException | ExecutionException ex)
+        {
+          s_aLogger.error ("Error", ex);
         }
       }
     }
@@ -557,9 +578,9 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     // Generate ErrorMessage if errors in the process are present and the
     // partners declared in their pmode config they want an error response
     if (aErrorMessages.isNotEmpty ())
-
     {
-      if (_isSendErrorAsResponse (aPModeConfig))
+      final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
+      if (_isSendErrorAsResponse (aEffectiveLeg))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                  MessageHelperMethods.createEbms3MessageInfo (),
@@ -590,19 +611,17 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                                                                                                aEbms3MessageInfo,
                                                                                                aUserMessage,
                                                                                                aSOAPDocument,
-                                                                                               _isSendNonRepudiationInformation (aPModeConfig))
+                                                                                               _isSendNonRepudiationInformation (aEffectiveLeg))
                                                                         .setMustUnderstand (true);
 
           // We've got our response
           Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
 
-          final PModeLeg aLeg1 = aPModeConfig.getLeg1 ();
-
-          aResponseDoc = _signResponse (aResMgr,
-                                        aResponseAttachments,
-                                        aLeg1.getSecurity (),
-                                        aResponseDoc,
-                                        aLeg1.getProtocol ().getSOAPVersion ());
+          aResponseDoc = _signResponseIfNeeded (aResMgr,
+                                                aResponseAttachments,
+                                                aEffectiveLeg.getSecurity (),
+                                                aResponseDoc,
+                                                aEffectiveLeg.getProtocol ().getSOAPVersion ());
 
           aAS4Response.setContentAndCharset (AS4XMLHelper.serializeXML (aResponseDoc), StandardCharsets.UTF_8)
                       .setMimeType (eSOAPVersion.getMimeType ());
@@ -692,11 +711,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
 
               if (aLeg2.getSecurity () != null)
               {
-                aResponseDoc = _signResponse (aResMgr,
-                                              aResponseAttachments,
-                                              aLeg2.getSecurity (),
-                                              aResponseDoc,
-                                              aLeg2.getProtocol ().getSOAPVersion ());
+                aResponseDoc = _signResponseIfNeeded (aResMgr,
+                                                      aResponseAttachments,
+                                                      aLeg2.getSecurity (),
+                                                      aResponseDoc,
+                                                      aLeg2.getProtocol ().getSOAPVersion ());
               }
 
               if (aResponseAttachments.isNotEmpty ())
@@ -755,11 +774,11 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @return
    * @throws WSSecurityException
    */
-  private Document _signResponse (@Nonnull final AS4ResourceManager aResMgr,
-                                  @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                  @Nonnull final PModeLegSecurity aSecurity,
-                                  @Nonnull final Document aDocToBeSigned,
-                                  @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
+  private static Document _signResponseIfNeeded (@Nonnull final AS4ResourceManager aResMgr,
+                                                 @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                 @Nonnull final PModeLegSecurity aSecurity,
+                                                 @Nonnull final Document aDocToBeSigned,
+                                                 @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
   {
     if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
@@ -796,13 +815,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * @throws WSSecurityException
    */
   @Nonnull
-  private MimeMessage _generateMimeMessageForResponse (@Nonnull final AS4ResourceManager aResMgr,
-                                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                       @Nonnull final PModeLeg aLeg2,
-                                                       @Nonnull final Document aResponseDoc) throws WSSecurityException,
-                                                                                             TransformerFactoryConfigurationError,
-                                                                                             TransformerException,
-                                                                                             MessagingException
+  private static MimeMessage _generateMimeMessageForResponse (@Nonnull final AS4ResourceManager aResMgr,
+                                                              @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                              @Nonnull final PModeLeg aLeg2,
+                                                              @Nonnull final Document aResponseDoc) throws WSSecurityException,
+                                                                                                    TransformerFactoryConfigurationError,
+                                                                                                    TransformerException,
+                                                                                                    MessagingException
   {
     MimeMessage aMimeMsg = null;
     if (aLeg2.getSecurity () != null)
@@ -858,17 +877,15 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
    * Checks if in the given PModeConfig the isSendReceiptNonRepudiation is set
    * or not.
    *
-   * @param aPModeConfig
-   *        to check the attribute
+   * @param aLeg
+   *        The PMode leg to check. May not be <code>null</code>.
    * @return Returns the value if set, else DEFAULT <code>false</code>.
    */
-  private static boolean _isSendNonRepudiationInformation (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendNonRepudiationInformation (@Nonnull final PModeLeg aLeg)
   {
-    if (aPModeConfig != null)
-      if (aPModeConfig.getLeg1 () != null)
-        if (aPModeConfig.getLeg1 ().getSecurity () != null)
-          if (aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiationDefined ())
-            return aPModeConfig.getLeg1 ().getSecurity ().isSendReceiptNonRepudiation ();
+    if (aLeg.getSecurity () != null)
+      if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
+        return aLeg.getSecurity ().isSendReceiptNonRepudiation ();
     // Default behavior
     return false;
   }
@@ -876,20 +893,19 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   /**
    * Checks if in the given PModeConfig isReportAsResponse is set.
    *
-   * @param aPModeConfig
-   *        to check the attribute
+   * @param aLeg
+   *        The PMode leg to check. May be <code>null</code>.
    * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
    */
-  private static boolean _isSendErrorAsResponse (@Nullable final IPModeConfig aPModeConfig)
+  private static boolean _isSendErrorAsResponse (@Nullable final PModeLeg aLeg)
   {
-    if (aPModeConfig != null)
-      if (aPModeConfig.getLeg1 () != null)
-        if (aPModeConfig.getLeg1 ().getErrorHandling () != null)
-          if (aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponseDefined ())
-          {
-            // Note: this is enabled in Default PMode
-            return aPModeConfig.getLeg1 ().getErrorHandling ().isReportAsResponse ();
-          }
+    if (aLeg != null)
+      if (aLeg.getErrorHandling () != null)
+        if (aLeg.getErrorHandling ().isReportAsResponseDefined ())
+        {
+          // Note: this is enabled in Default PMode
+          return aLeg.getErrorHandling ().isReportAsResponse ();
+        }
     // Default behavior
     return true;
   }
