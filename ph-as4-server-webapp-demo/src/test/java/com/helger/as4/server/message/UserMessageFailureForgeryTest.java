@@ -129,7 +129,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     final NodeList nList = aDoc.getElementsByTagName (m_eSOAPVersion.getNamespacePrefix () + ":Body");
     for (int i = 0; i < nList.getLength (); i++)
@@ -147,7 +147,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   public void testWrongAttachmentIDShouldFail () throws Exception
   {
 
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                                     CMimeType.APPLICATION_GZIP,
@@ -199,7 +199,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -271,7 +271,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithAttachmentPartInfoOnly () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                                     CMimeType.APPLICATION_GZIP,
@@ -296,7 +296,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithOnlyAttachmentsNoPartInfo () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
 
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4ResourceManager aResMgr = s_aResMgr;
@@ -316,7 +316,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                                     CMimeType.APPLICATION_GZIP,

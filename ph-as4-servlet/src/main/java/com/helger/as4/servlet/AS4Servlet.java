@@ -65,6 +65,7 @@ import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.MEPHelper;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.IPMode;
@@ -565,12 +566,13 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
     }
     else
     {
-      // If no Error is present check if partners declared if they want a
-      // response and if this response should contain non-repudiation
-      // information if applicable
-      if (_isSendReceiptAsResponse (aPModeConfig))
+
+      if (aPModeConfig.getMEP ().isOneWay ())
       {
-        if (aPModeConfig.getMEP ().isOneWay ())
+        // If no Error is present check if partners declared if they want a
+        // response and if this response should contain non-repudiation
+        // information if applicable
+        if (_isSendReceiptAsResponse (aPModeConfig))
         {
           final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
           final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
@@ -595,8 +597,19 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
                       .setMimeType (eSOAPVersion.getMimeType ());
         }
         else
+          s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+      }
+      else
+        if (aPModeConfig.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
         {
           // TODO twowaypushpush
+          // Need to save messageid for reftomessageid
+          // Basically oneway with messageid save
+          aUserMessage.getMessageInfo ().getMessageId ();
+
+        }
+        else
+        {
           // TWO - WAY
           // Except for two way push push, every response as usermessage is
           // always on leg 2
@@ -716,9 +729,7 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
             }
           }
         }
-      }
-      else
-        s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+
     }
   }
 

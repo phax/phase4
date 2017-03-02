@@ -81,7 +81,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -141,6 +141,30 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                  .getAsSOAPDocument (aPayload);
 
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+  }
+
+  @Test
+  public void testPModeConfigWithOnlyLeg2 () throws Exception
+  {
+    PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
+                                                                      .getAsString ("server.address",
+                                                                                    "http://localhost:8080/as4"));
+    // ESENS PMode is One Way on default settings need to change to two way
+    final PModeConfig aPModeConfig = new PModeConfig ("leg2-only");
+    aPModeConfig.setMEP (EMEP.TWO_WAY);
+    aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
+    aPModeConfig.setAgreement (aPMode.getConfig ().getAgreement ());
+    aPModeConfig.setLeg2 (aPMode.getConfig ().getLeg1 ());
+    aPModeConfig.setPayloadService (aPMode.getConfig ().getPayloadService ());
+    aPModeConfig.setReceptionAwareness (aPMode.getConfig ().getReceptionAwareness ());
+    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
+    aPMode = new PMode (aPMode.getInitiator (), aPMode.getResponder (), aPModeConfig);
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+
+    final Document aDoc = _modifyUserMessage (aPMode.getConfigID (), null, null, _defaultProperties ());
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }

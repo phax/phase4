@@ -56,8 +56,6 @@ import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.xml.XMLHelper;
 
-// TODO warning when reftomessageid == messageid
-
 /**
  * This class manages the EBMS Messaging SOAP header element
  *
@@ -71,6 +69,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
   {
     final String sThisMessageID = aUserMessage.getMessageInfo ().getMessageId ();
     final String sRefToMessageID = aUserMessage.getMessageInfo ().getRefToMessageId ();
+
+    if (StringHelper.hasText (sRefToMessageID))
+      if (sThisMessageID.equals (sRefToMessageID))
+        s_aLogger.warn ("MessageID and ReferenceToMessageID are the same!");
 
     // If the message has a non-empty reference to a previous message, and this
     // reference differs from this message's ID, than leg 2 should be used
@@ -122,8 +124,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     return ESuccess.SUCCESS;
   }
 
-  private static boolean _checkSOAPBodyHasPayload (@Nonnull final PModeLeg aPModeLeg,
-                                                   @Nonnull final Document aSOAPDoc)
+  private static boolean _checkSOAPBodyHasPayload (@Nonnull final PModeLeg aPModeLeg, @Nonnull final Document aSOAPDoc)
   {
     if (aPModeLeg != null)
     {
@@ -227,8 +228,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       aPModeLeg1 = aPModeConfig.getLeg1 ();
       aPModeLeg2 = aPModeConfig.getLeg2 ();
-
-      // TODO test if pmode config has only leg2 -> should crash
 
       // if the two - way is selected, check if it requires two legs and if both
       // are present
