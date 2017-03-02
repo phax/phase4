@@ -1,5 +1,7 @@
 # ph-as4
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/89d749bd644a48d38a6c24f44c151979)](https://www.codacy.com/app/philip/ph-as4?utm_source=github.com&utm_medium=referral&utm_content=phax/ph-as4&utm_campaign=badger)
+
 A library to send and receive AS4 messages. 
 Licensed under the Apache 2 License!
 
