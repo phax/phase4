@@ -24,8 +24,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.Test;
@@ -74,10 +72,7 @@ public class UserMessageManyAttachmentTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageManyAttachmentsMimeSuccess () throws IOException,
-                                                           TransformerFactoryConfigurationError,
-                                                           TransformerException,
-                                                           MessagingException
+  public void testUserMessageManyAttachmentsMimeSuccess () throws IOException, MessagingException
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
