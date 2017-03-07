@@ -629,7 +629,7 @@ public final class AS4Handler implements Closeable
         AS4WorkerPool.getInstance ().run ( () -> {
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList<> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList<> ();
-          final Ebms3UserMessage aLeg2UserMsg = null;
+          IAS4Responder aAsyncResponder;
           if (_invokeSPIs (aFinalUserMessage,
                            aFinalPayloadNode,
                            aFinalDecryptedAttachments,
@@ -637,19 +637,22 @@ public final class AS4Handler implements Closeable
                            aLocalResponseAttachments).isSuccess ())
           {
             // TODO SPI processing started
+            final Ebms3UserMessage aLeg2UserMsg = null;
             // Send UserMessage or receipt
+            aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
+                                                          aResponseAttachments,
+                                                          aEffectiveLeg,
+                                                          new AS4UserMessage (eSOAPVersion,
+                                                                              aLeg2UserMsg).getAsSOAPDocument ());
           }
           else
           {
             // TODO SPI processing started
             // Send ErrorMessage
+            // Undefined - see https://github.com/phax/ph-as4/issues/4
+            aAsyncResponder = null;
           }
 
-          final IAS4Responder aDoc = _createResponseUserMessage (eSOAPVersion,
-                                                                 aResponseAttachments,
-                                                                 aEffectiveLeg,
-                                                                 new AS4UserMessage (eSOAPVersion,
-                                                                                     aLeg2UserMsg).getAsSOAPDocument ());
           // TODO invoke client with new doc
         });
       }
@@ -1254,9 +1257,9 @@ public final class AS4Handler implements Closeable
     }
 
     // SOAP document and SOAP version are determined
-    final IAS4Responder aDoc = _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments);
-    if (aDoc != null)
-      aDoc.applyToResponse (eSOAPVersion, aHttpResponse);
+    final IAS4Responder aResponder = _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments);
+    if (aResponder != null)
+      aResponder.applyToResponse (eSOAPVersion, aHttpResponse);
     else
       aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
   }
