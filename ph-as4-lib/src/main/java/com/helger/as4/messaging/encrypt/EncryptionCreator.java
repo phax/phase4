@@ -20,8 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -95,8 +93,6 @@ public class EncryptionCreator
                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                          @Nonnull final AS4ResourceManager aResMgr,
                                          @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException,
-                                                                                          TransformerFactoryConfigurationError,
-                                                                                          TransformerException,
                                                                                           MessagingException
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");

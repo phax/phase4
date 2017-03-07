@@ -24,8 +24,6 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.w3c.dom.Document;
 
@@ -49,9 +47,7 @@ public final class MimeMessageCreator
 
   @Nonnull
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
-                                          @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws TransformerFactoryConfigurationError,
-                                                                                                                TransformerException,
-                                                                                                                MessagingException
+                                          @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;

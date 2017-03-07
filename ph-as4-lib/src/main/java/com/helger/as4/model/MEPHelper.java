@@ -6,10 +6,24 @@ import com.helger.as4.messaging.domain.EAS4MessageType;
 
 public final class MEPHelper
 {
-  public static boolean isValidResponseType (@Nonnull final EMEP eMEP,
-                                             @Nonnull final EMEPBinding eMEPBinding,
-                                             @Nonnull final EAS4MessageType eMsgType,
-                                             final boolean bLeg1)
+  public static boolean isValidResponseTypeLeg1 (@Nonnull final EMEP eMEP,
+                                                 @Nonnull final EMEPBinding eMEPBinding,
+                                                 @Nonnull final EAS4MessageType eMsgType)
+  {
+    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, true);
+  }
+
+  public static boolean isValidResponseTypeLeg2 (@Nonnull final EMEP eMEP,
+                                                 @Nonnull final EMEPBinding eMEPBinding,
+                                                 @Nonnull final EAS4MessageType eMsgType)
+  {
+    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, false);
+  }
+
+  private static boolean _isValidResponseType (@Nonnull final EMEP eMEP,
+                                               @Nonnull final EMEPBinding eMEPBinding,
+                                               @Nonnull final EAS4MessageType eMsgType,
+                                               final boolean bLeg1)
   {
     switch (eMEP)
     {

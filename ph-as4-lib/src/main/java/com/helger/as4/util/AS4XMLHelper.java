@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -60,18 +59,23 @@ public final class AS4XMLHelper
   }
 
   @Nonnull
-  private static String _serializeRT (@Nonnull final Node aNode) throws TransformerFactoryConfigurationError,
-                                                                 TransformerException
+  private static String _serializeRT (@Nonnull final Node aNode)
   {
-    final Transformer transformer = TransformerFactory.newInstance ().newTransformer ();
-    final NonBlockingStringWriter aSW = new NonBlockingStringWriter ();
-    transformer.transform (new DOMSource (aNode), new StreamResult (aSW));
-    return aSW.getAsString ();
+    try
+    {
+      final Transformer aTransformer = TransformerFactory.newInstance ().newTransformer ();
+      final NonBlockingStringWriter aSW = new NonBlockingStringWriter ();
+      aTransformer.transform (new DOMSource (aNode), new StreamResult (aSW));
+      return aSW.getAsString ();
+    }
+    catch (final TransformerException ex)
+    {
+      throw new IllegalStateException ("Failed to serialize XML", ex);
+    }
   }
 
   @Nonnull
-  public static String serializeXML (@Nonnull final Node aNode) throws TransformerFactoryConfigurationError,
-                                                                TransformerException
+  public static String serializeXML (@Nonnull final Node aNode)
   {
     // Use runtime serialization otherwise XMLDsig signature wont work
     return true ? _serializeRT (aNode) : _serializePh (aNode);

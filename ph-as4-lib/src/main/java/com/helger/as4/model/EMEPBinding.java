@@ -53,7 +53,7 @@ public enum EMEPBinding implements IHasID <String>
    * second referring to the User Message unit of the first via
    * eb:RefToMessageId.
    */
-  PUSH_PUSH ("pushpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush", 1),
+  PUSH_PUSH ("pushpush", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pushAndPush", 2),
   /**
    * The Two-Way/Push-and-Pull MEP composes the choreography of a One-Way/Push
    * MEP followed by the choreography of a One-Way/Pull MEP, both initiated from
@@ -111,8 +111,7 @@ public enum EMEPBinding implements IHasID <String>
 
   public boolean isUsableInTwoWay ()
   {
-    // Currently all bindings are suitable for 2-way
-    return true;
+    return this != PUSH;
   }
 
   /**
