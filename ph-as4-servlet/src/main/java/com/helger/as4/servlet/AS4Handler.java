@@ -104,6 +104,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
@@ -203,8 +204,7 @@ public final class AS4Handler implements Closeable
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
-  // TODO make locale dynamic
-  private final Locale m_aLocale = Locale.US;
+  private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
 
   public AS4Handler ()
   {}
@@ -212,6 +212,20 @@ public final class AS4Handler implements Closeable
   public void close ()
   {
     m_aResMgr.close ();
+  }
+
+  @Nonnull
+  public Locale getLocale ()
+  {
+    return m_aLocale;
+  }
+
+  @Nonnull
+  public AS4Handler setLocale (@Nonnull final Locale aLocale)
+  {
+    ValueEnforcer.notNull (aLocale, "Locale");
+    m_aLocale = aLocale;
+    return this;
   }
 
   private static void _decompressAttachments (@Nonnull final Ebms3UserMessage aUserMessage,

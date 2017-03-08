@@ -13,18 +13,24 @@ import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.commons.ValueEnforcer;
 
-public class AS4ReceiptMessageClient extends AS4SignalmessageClient
+public class AS4ReceiptMessageClient extends AbstractAS4SignalMessageClient
 {
-
   private final AS4ResourceManager m_aResMgr;
-  private boolean bNonRepudiation = false;
-  private Node aSOAPDocument;
-  private Ebms3UserMessage aEbms3UserMessage;
-  private final boolean bReceiptShouldBeSigned = false;
+  private boolean m_bNonRepudiation = false;
+  private Node m_aSOAPDocument;
+  private Ebms3UserMessage m_aEbms3UserMessage;
+  private boolean m_bReceiptShouldBeSigned = false;
+
+  public AS4ReceiptMessageClient ()
+  {
+    this (new AS4ResourceManager ());
+  }
 
   public AS4ReceiptMessageClient (@Nonnull final AS4ResourceManager aResMgr)
   {
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
   }
 
@@ -39,13 +45,13 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
     if (getSOAPVersion () == null)
       throw new IllegalStateException ("A SOAPVersion must be set.");
 
-    if (aSOAPDocument == null && aEbms3UserMessage == null)
+    if (m_aSOAPDocument == null && m_aEbms3UserMessage == null)
       throw new IllegalStateException ("A SOAPDocument or a Ebms3UserMessage has to be set.");
 
-    if (bNonRepudiation && aSOAPDocument == null)
+    if (m_bNonRepudiation && m_aSOAPDocument == null)
       throw new IllegalStateException ("Nonrepudiation only works in conjunction with a set SOAPDocument.");
 
-    if (!bNonRepudiation && aEbms3UserMessage == null)
+    if (!m_bNonRepudiation && m_aEbms3UserMessage == null)
       throw new IllegalStateException ("Ebms3UserMessage has to be set, if the SOAPDocument is not signed.");
 
   }
@@ -56,13 +62,13 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
     _checkMandatoryAttributes ();
 
     final AS4ReceiptMessage aReceiptMsg = CreateReceiptMessage.createReceiptMessage (getSOAPVersion (),
-                                                                                     aEbms3UserMessage,
-                                                                                     aSOAPDocument,
-                                                                                     bNonRepudiation);
+                                                                                     m_aEbms3UserMessage,
+                                                                                     m_aSOAPDocument,
+                                                                                     m_bNonRepudiation);
 
     Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 
-    if (bReceiptShouldBeSigned)
+    if (m_bReceiptShouldBeSigned)
     {
       _checkKeystoreAttributes ();
 
@@ -88,17 +94,17 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
    */
   public boolean isNonRepudiation ()
   {
-    return bNonRepudiation;
+    return m_bNonRepudiation;
   }
 
   public void setNonRepudiation (final boolean bNonRepudiation)
   {
-    this.bNonRepudiation = bNonRepudiation;
+    m_bNonRepudiation = bNonRepudiation;
   }
 
   public Node getSOAPDocument ()
   {
-    return aSOAPDocument;
+    return m_aSOAPDocument;
   }
 
   /**
@@ -110,12 +116,12 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
    */
   public void setSOAPDocument (final Node aSOAPDocument)
   {
-    this.aSOAPDocument = aSOAPDocument;
+    m_aSOAPDocument = aSOAPDocument;
   }
 
   public Ebms3UserMessage getEbms3UserMessage ()
   {
-    return aEbms3UserMessage;
+    return m_aEbms3UserMessage;
   }
 
   /**
@@ -127,7 +133,16 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
    */
   public void setEbms3UserMessage (final Ebms3UserMessage aEbms3UserMessage)
   {
-    this.aEbms3UserMessage = aEbms3UserMessage;
+    m_aEbms3UserMessage = aEbms3UserMessage;
   }
 
+  public boolean isReceiptShouldBeSigned ()
+  {
+    return m_bReceiptShouldBeSigned;
+  }
+
+  public void setReceiptShouldBeSigned (final boolean bReceiptShouldBeSigned)
+  {
+    m_bReceiptShouldBeSigned = bReceiptShouldBeSigned;
+  }
 }
