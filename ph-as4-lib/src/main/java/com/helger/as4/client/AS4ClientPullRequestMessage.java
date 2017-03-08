@@ -2,7 +2,7 @@ package com.helger.as4.client;
 
 import org.apache.http.HttpEntity;
 
-public class AS4PullRequestMessageClient extends AbstractAS4SignalMessageClient
+public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 {
 
   @Override

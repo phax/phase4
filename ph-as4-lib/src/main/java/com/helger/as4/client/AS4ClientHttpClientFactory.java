@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import com.helger.as4.http.HttpClientRetryHandler;
 import com.helger.httpclient.HttpClientFactory;
 
 /**
@@ -27,7 +28,7 @@ import com.helger.httpclient.HttpClientFactory;
  * 
  * @author Philip Helger
  */
-public class AS4HttpClientFactory extends HttpClientFactory
+public class AS4ClientHttpClientFactory extends HttpClientFactory
 {
   @Override
   @Nonnull

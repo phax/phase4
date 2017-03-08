@@ -28,9 +28,9 @@ import org.w3c.dom.Document;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.client.HttpMimeMessageEntity;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.esens.ESENSPMode;
+import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;

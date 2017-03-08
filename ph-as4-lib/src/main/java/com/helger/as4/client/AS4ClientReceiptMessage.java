@@ -15,7 +15,7 @@ import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 
-public class AS4ReceiptMessageClient extends AbstractAS4SignalMessageClient
+public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 {
   private final AS4ResourceManager m_aResMgr;
   private boolean m_bNonRepudiation = false;
@@ -23,12 +23,12 @@ public class AS4ReceiptMessageClient extends AbstractAS4SignalMessageClient
   private Ebms3UserMessage m_aEbms3UserMessage;
   private boolean m_bReceiptShouldBeSigned = false;
 
-  public AS4ReceiptMessageClient ()
+  public AS4ClientReceiptMessage ()
   {
     this (new AS4ResourceManager ());
   }
 
-  public AS4ReceiptMessageClient (@Nonnull final AS4ResourceManager aResMgr)
+  public AS4ClientReceiptMessage (@Nonnull final AS4ResourceManager aResMgr)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;

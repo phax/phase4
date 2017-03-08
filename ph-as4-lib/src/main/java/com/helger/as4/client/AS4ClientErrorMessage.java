@@ -21,12 +21,12 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.string.StringHelper;
 
-public class AS4ErrorMessageClient extends AbstractAS4SignalMessageClient
+public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList<> ();
   private String m_sRefToMessageId;
 
-  public AS4ErrorMessageClient ()
+  public AS4ClientErrorMessage ()
   {}
 
   public void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)

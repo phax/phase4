@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
@@ -28,7 +29,7 @@ import com.helger.xml.microdom.IMicroDocument;
 
 public abstract class AbstractAS4Client
 {
-  private IHttpClientProvider m_aHTTPClientProvider = new AS4HttpClientFactory ();
+  private IHttpClientProvider m_aHTTPClientProvider = new AS4ClientHttpClientFactory ();
 
   // Keystore attributes
   private File m_aKeyStoreFile;

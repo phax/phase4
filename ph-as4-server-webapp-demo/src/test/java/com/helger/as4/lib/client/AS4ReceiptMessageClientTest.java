@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
-import com.helger.as4.client.AS4ReceiptMessageClient;
+import com.helger.as4.client.AS4ClientReceiptMessage;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.MockMessages;
@@ -40,7 +40,7 @@ public class AS4ReceiptMessageClientTest
     MockJettySetup.shutDownServer ();
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4ReceiptMessageClient aClient) throws Exception
+  private static void _ensureInvalidState (@Nonnull final AS4ClientReceiptMessage aClient) throws Exception
   {
     try
     {
@@ -53,7 +53,7 @@ public class AS4ReceiptMessageClientTest
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4ReceiptMessageClient aClient) throws Exception
+  private static void _ensureValidState (@Nonnull final AS4ClientReceiptMessage aClient) throws Exception
   {
     try
     {
@@ -68,7 +68,7 @@ public class AS4ReceiptMessageClientTest
   @Test
   public void buildMessageMandatoryCheckFailure () throws Exception
   {
-    final AS4ReceiptMessageClient aClient = new AS4ReceiptMessageClient (s_aResMgr);
+    final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     _ensureInvalidState (aClient);
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);

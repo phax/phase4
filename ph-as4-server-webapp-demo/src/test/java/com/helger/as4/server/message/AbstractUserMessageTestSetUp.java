@@ -44,7 +44,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import com.helger.as4.client.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.server.AbstractClientSetUp;
 import com.helger.as4.server.MockJettySetup;

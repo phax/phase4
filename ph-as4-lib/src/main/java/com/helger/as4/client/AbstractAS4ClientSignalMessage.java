@@ -9,7 +9,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
-public abstract class AbstractAS4SignalMessageClient extends AbstractAS4Client
+public abstract class AbstractAS4ClientSignalMessage extends AbstractAS4Client
 {
   private final ICommonsList <Element> m_aAny = new CommonsArrayList<> ();
 
