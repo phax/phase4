@@ -25,19 +25,17 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.mpc.MPCManager;
-import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
+import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.config.PModeConfig;
-import com.helger.as4.model.pmode.config.PModeReceptionAwareness;
+import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
 
@@ -101,13 +99,13 @@ public final class ESENSPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, null, null, MPCManager.DEFAULT_MPC_ID);
+    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
   private static PModeLegProtocol _generatePModeLegProtocol (@Nonnull final String sAddress)
   {
-    return new PModeLegProtocol (sAddress, ESOAPVersion.SOAP_12);
+    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 
   // TODO not static

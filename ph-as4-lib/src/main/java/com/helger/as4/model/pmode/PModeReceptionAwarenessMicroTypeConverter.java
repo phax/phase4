@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode.config;
+package com.helger.as4.model.pmode;
 
-import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;

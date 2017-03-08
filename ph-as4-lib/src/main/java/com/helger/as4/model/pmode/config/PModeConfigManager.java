@@ -56,7 +56,7 @@ public class PModeConfigManager extends AbstractMapBasedWALDAO <IPModeConfig, PM
   protected EChange onInit ()
   {
     // Ensure default (for testing) is always present
-    createPModeConfig (DefaultPMode.createDefaultPModeConfig ());
+    createPModeConfig (DefaultPMode.createDefaultPModeConfig ("http://localhost"));
     return EChange.CHANGED;
   }
 

@@ -19,6 +19,7 @@ package com.helger.as4.mock;
 import javax.annotation.Nonnull;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
@@ -29,6 +30,7 @@ import com.helger.commons.collection.ext.ICommonsList;
  * Most of the test use the predefined settings here.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 public final class MockEbmsHelper
 {
@@ -37,6 +39,12 @@ public final class MockEbmsHelper
 
   private MockEbmsHelper ()
   {}
+
+  @Nonnull
+  public static PModeLegProtocol createMockProtocol ()
+  {
+    return PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org");
+  }
 
   @Nonnull
   @ReturnsMutableCopy

@@ -17,20 +17,20 @@
 package com.helger.as4.model.pmode;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.state.ETriState;
 
 /**
@@ -51,18 +51,18 @@ public final class DefaultPMode
   {}
 
   @Nonnull
-  public static PModeConfig createDefaultPModeConfig ()
+  public static PModeConfig createDefaultPModeConfig (@Nullable final String sAddress)
   {
     final PModeConfig aDefaultConfig = new PModeConfig (DEFAULT_PMODE_ID);
     aDefaultConfig.setMEP (EMEP.ONE_WAY);
     aDefaultConfig.setMEPBinding (EMEPBinding.PUSH);
-    aDefaultConfig.setLeg1 (_generatePModeLeg ());
+    aDefaultConfig.setLeg1 (_generatePModeLeg (sAddress));
     // Leg 2 stays null, because we only use one-way
     return aDefaultConfig;
   }
 
   @Nonnull
-  private static PModeLeg _generatePModeLeg ()
+  private static PModeLeg _generatePModeLeg (@Nullable final String sAddress)
   {
     final PModeLegReliability aReliability = null;
     final PModeLegSecurity aSecurity = new PModeLegSecurity ();
@@ -76,7 +76,7 @@ public final class DefaultPMode
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    return new PModeLeg (_generatePModeLegProtocol (),
+    return new PModeLeg (_generatePModeLegProtocol (sAddress),
                          _generatePModeLegBusinessInformation (),
                          aErrorHandler,
                          aReliability,
@@ -89,14 +89,12 @@ public final class DefaultPMode
     return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
                                             CAS4.DEFAULT_ACTION_URL,
                                             null,
-                                            null,
-                                            null,
-                                            MPCManager.DEFAULT_MPC_ID);
+                                            CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol ()
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
-    return new PModeLegProtocol ("HTTP 1.1", ESOAPVersion.AS4_DEFAULT);
+    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 }

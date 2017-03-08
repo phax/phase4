@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -229,9 +230,9 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
 
-    aEbms3Properties.add (getRandomProperty ());
+    aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
@@ -252,7 +253,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     assertEquals (1, aEbms3Properties.size ());
 
-    aEbms3Properties.add (getRandomProperty ());
+    aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
@@ -275,7 +276,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     assertEquals (1, aEbms3Properties.size ());
 
-    aEbms3Properties.add (getRandomProperty ());
+    aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
@@ -316,8 +317,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (new PModeLegProtocol ("TestsimulationAddressWrong",
-                                                                                     ESOAPVersion.AS4_DEFAULT),
+    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("TestsimulationAddressWrong"),
                                                                null,
                                                                null,
                                                                null,
@@ -348,12 +348,12 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
   }
 
-  private Ebms3Property getRandomProperty ()
+  @Nonnull
+  private static Ebms3Property _createRandomProperty ()
   {
     final Ebms3Property aRandomProperty = new Ebms3Property ();
     aRandomProperty.setName ("randomname" + UUID.randomUUID ());
     aRandomProperty.setValue ("randomvalue" + UUID.randomUUID ());
-
     return aRandomProperty;
   }
 }

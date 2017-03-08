@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;

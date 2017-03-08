@@ -26,14 +26,13 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.DefaultPMode;
-import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.config.PModeConfigManager;
+import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
@@ -134,7 +133,7 @@ public final class MockPModeGenerator
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, null, null, MPCManager.DEFAULT_MPC_ID);
+    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
@@ -167,7 +166,7 @@ public final class MockPModeGenerator
       aPartnerMgr.deletePartner (sID);
 
     // Create new one
-    aPModeConfigMgr.createPModeConfig (DefaultPMode.createDefaultPModeConfig ());
+    aPModeConfigMgr.createPModeConfig (DefaultPMode.createDefaultPModeConfig ("http://test.mock.org"));
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aPModeMgr.createPMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }

@@ -19,6 +19,7 @@ package com.helger.as4.model.mpc;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4.CAS4;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -31,8 +32,6 @@ import com.helger.photon.security.object.ObjectHelper;
 
 public class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
 {
-  public static final String DEFAULT_MPC_ID = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
-
   public MPCManager (@Nullable final String sFilename) throws DAOException
   {
     super (MPC.class, sFilename);
@@ -43,7 +42,7 @@ public class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
   protected EChange onInit ()
   {
     // Create default MPC
-    createMPC (new MPC (DEFAULT_MPC_ID));
+    createMPC (new MPC (CAS4.DEFAULT_MPC_ID));
     return EChange.CHANGED;
   }
 
@@ -56,7 +55,6 @@ public class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
       internalCreateItem (aMPC);
     });
     AuditHelper.onAuditCreateSuccess (MPC.OT, aMPC.getID ());
-
     return aMPC;
   }
 
@@ -155,6 +153,6 @@ public class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
   @Nullable
   public IMPC getMPCOrDefaultOfID (@Nullable final String sID)
   {
-    return getMPCOfID (StringHelper.hasNoText (sID) ? DEFAULT_MPC_ID : sID);
+    return getMPCOfID (StringHelper.hasNoText (sID) ? CAS4.DEFAULT_MPC_ID : sID);
   }
 }

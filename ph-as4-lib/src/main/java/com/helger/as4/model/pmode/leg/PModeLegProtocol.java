@@ -109,4 +109,10 @@ public class PModeLegProtocol implements Serializable
   {
     return new HashCodeGenerator (this).append (m_sAddress).append (m_eSOAPVersion).getHashCode ();
   }
+
+  @Nonnull
+  public static PModeLegProtocol createForDefaultSOAPVersion (@Nullable final String sAddress)
+  {
+    return new PModeLegProtocol (sAddress, ESOAPVersion.AS4_DEFAULT);
+  }
 }

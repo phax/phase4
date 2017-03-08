@@ -44,20 +44,19 @@ public final class CAS4
 
   public static final String LIB_NAME = "ph-as4";
 
-  // Constants
-  public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
-
   // Constant Names
   public static final String FINAL_RECIPIENT = "finalRecipient";
   public static final String ORIGINAL_SENDER = "originalSender";
 
   // Defaults
+  public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
   public static final String DEFAULT_RESPONDER_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
   public static final String DEFAULT_TO_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultTo";
   public static final String DEFAULT_SENDER_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender";
   public static final String DEFAULT_FROM_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultFrom";
   public static final String DEFAULT_ACTION_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test";
   public static final String DEFAULT_SERVICE_URL = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service";
+  public static final String DEFAULT_MPC_ID = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
 
   private CAS4 ()
   {}
