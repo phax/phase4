@@ -22,8 +22,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4.model.pmode.PModePayloadProfile;
-import com.helger.as4.model.pmode.PModeProperty;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
@@ -55,13 +53,13 @@ public class PModeLegBusinessInformation implements Serializable
   /**
    * The value of this parameter is a list of properties.
    */
-  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap <> ();
+  private final ICommonsOrderedMap <String, PModeProperty> m_aProperties = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying some constraint or profile on the
    * payload. It specifies a list of payload parts.
    */
-  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap <> ();
+  private final ICommonsOrderedMap <String, PModePayloadProfile> m_aPayloadProfiles = new CommonsLinkedHashMap<> ();
 
   /**
    * This parameter allows for specifying a maximum size in kilobytes for the

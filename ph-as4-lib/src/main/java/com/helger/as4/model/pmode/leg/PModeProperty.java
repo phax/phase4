@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode;
+package com.helger.as4.model.pmode.leg;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +45,7 @@ import com.helger.commons.text.IHasDescription;
  *
  * @author Philip Helger
  */
-public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndicator
+public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndicator, Serializable
 {
   public static final String DATA_TYPE_STRING = "string";
 

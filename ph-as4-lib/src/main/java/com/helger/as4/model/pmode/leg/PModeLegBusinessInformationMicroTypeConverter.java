@@ -17,8 +17,6 @@
 package com.helger.as4.model.pmode.leg;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
-import com.helger.as4.model.pmode.PModePayloadProfile;
-import com.helger.as4.model.pmode.PModeProperty;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
 import com.helger.xml.microdom.IMicroElement;

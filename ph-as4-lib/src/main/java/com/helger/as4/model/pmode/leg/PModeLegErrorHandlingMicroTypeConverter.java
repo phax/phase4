@@ -17,7 +17,6 @@
 package com.helger.as4.model.pmode.leg;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
-import com.helger.as4.model.pmode.PModeAddressList;
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;

@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode;
+package com.helger.as4.model.pmode.leg;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,7 +42,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public class PModePayloadProfile implements IHasName, IMandatoryIndicator
+public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Serializable
 {
   private final String m_sName;
   private final IMimeType m_aMimeType;

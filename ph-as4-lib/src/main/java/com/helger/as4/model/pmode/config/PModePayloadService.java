@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode;
+package com.helger.as4.model.pmode.config;
+
+import java.io.Serializable;
 
 import javax.annotation.Nullable;
 
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
-public class PModePayloadService
+public class PModePayloadService implements Serializable
 {
   private EAS4CompressionMode m_eCompressionMode;
 
@@ -42,7 +44,7 @@ public class PModePayloadService
     return m_eCompressionMode == null ? null : m_eCompressionMode.getID ();
   }
 
-  public void setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
+  public final void setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
   {
     m_eCompressionMode = eCompressionMode;
   }

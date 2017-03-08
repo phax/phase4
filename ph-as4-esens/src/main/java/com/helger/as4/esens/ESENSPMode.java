@@ -29,8 +29,8 @@ import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
-import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.config.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
@@ -60,7 +60,8 @@ public final class ESENSPMode
                                    (PModeLegReliability) null,
                                    _generatePModeLegSecurity ()));
     // Leg 2 stays null, because we only use one-way
-    aConfig.setReceptionAwareness (new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE));
+    aConfig.setLeg2 (null);
+    aConfig.setReceptionAwareness (PModeReceptionAwareness.createDefault ());
 
     // Ensure it is stored
     MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aConfig);

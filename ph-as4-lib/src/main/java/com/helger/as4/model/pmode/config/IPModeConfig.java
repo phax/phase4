@@ -21,8 +21,6 @@ import javax.annotation.Nullable;
 
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.PModePayloadService;
-import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.photon.basic.object.IObject;

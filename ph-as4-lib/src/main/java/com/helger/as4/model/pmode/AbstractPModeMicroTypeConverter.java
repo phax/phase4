@@ -30,5 +30,4 @@ public abstract class AbstractPModeMicroTypeConverter implements IMicroTypeConve
   {
     return sAttrValue == null ? ETriState.UNDEFINED : ETriState.valueOf (StringParser.parseBool (sAttrValue, bDefault));
   }
-
 }

@@ -32,12 +32,17 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.config.PModePayloadService;
+import com.helger.as4.model.pmode.config.PModeReceptionAwareness;
+import com.helger.as4.model.pmode.leg.PModeAddressList;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
+import com.helger.as4.model.pmode.leg.PModePayloadProfile;
+import com.helger.as4.model.pmode.leg.PModeProperty;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -106,7 +111,7 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeReceptionAwareness _generatePModeReceptionAwareness ()
   {
-    return new PModeReceptionAwareness (ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
+    return PModeReceptionAwareness.createDefault ();
   }
 
   @Nonnull
@@ -148,7 +153,7 @@ public final class PModeMicroTypeConverterTest
                                                                               "xsdfilename",
                                                                               20001,
                                                                               EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap <> ();
+    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap<> ();
     aPModePayloadProfiles.put (aPModePayloadProfile.getName (), aPModePayloadProfile);
     return aPModePayloadProfiles;
   }
@@ -161,7 +166,7 @@ public final class PModeMicroTypeConverterTest
                                                             "description",
                                                             PModeProperty.DATA_TYPE_STRING,
                                                             EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
+    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap<> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
   }
@@ -192,7 +197,7 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegReliability _generatePModeLegReliability ()
   {
-    final ICommonsList <String> aCorrelation = new CommonsArrayList <> ("correlation", "correlation2");
+    final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation", "correlation2");
     return new PModeLegReliability (ETriState.TRUE,
                                     ETriState.TRUE,
                                     "ack",
@@ -209,9 +214,9 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
-                                                                                  "X509EncryptionEncrypt2");
-    final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",
+                                                                                 "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,
                                  aX509Sign,

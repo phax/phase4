@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode;
+package com.helger.as4.model.pmode.leg;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.EMandatory;
