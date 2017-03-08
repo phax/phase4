@@ -63,7 +63,6 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
 
     final AS4ReceiptMessage aReceiptMsg = CreateReceiptMessage.createReceiptMessage (getSOAPVersion (),
-                                                                                     aEbms3MessageInfo,
                                                                                      aEbms3UserMessage,
                                                                                      aSOAPDocument,
                                                                                      bNonRepudiation);

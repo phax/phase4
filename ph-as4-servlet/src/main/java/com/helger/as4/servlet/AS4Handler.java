@@ -728,7 +728,6 @@ public final class AS4Handler implements Closeable
   {
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                         aEbms3MessageInfo,
                                                                                          aUserMessage,
                                                                                          aSOAPDocument,
                                                                                          _isSendNonRepudiationInformation (aEffectiveLeg))

@@ -112,7 +112,6 @@ final class MockClientMessages
 
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                      null,
                                                                      aUserMessage,
                                                                      true)

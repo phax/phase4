@@ -47,7 +47,7 @@ public final class CreateReceiptMessage
   @ReturnsMutableCopy
   private static ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
-    final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
+    final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
     Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
@@ -67,8 +67,6 @@ public final class CreateReceiptMessage
    *
    * @param eSOAPVersion
    *        SOAP Version which should be used
-   * @param aEbms3MessageInfo
-   *        MessageInfo comes from the received usermessage
    * @param aEbms3UserMessage
    *        The received usermessage which should be responded too
    * @param aSOAPDocument
@@ -80,27 +78,26 @@ public final class CreateReceiptMessage
    */
   @Nonnull
   public static AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                        @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                                         @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                         @Nullable final Node aSOAPDocument,
                                                         @Nonnull final boolean bShouldUseNonRepudiation)
   {
-    if (aEbms3UserMessage != null)
-      aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
-
     // Only for signed messages
     final ICommonsList <Node> aDSRefs = _getAllReferences (aSOAPDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
     // Message Info
-    aSignalMessage.setMessageInfo (aEbms3MessageInfo);
+    {
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+      if (aEbms3UserMessage != null)
+        aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
+      aSignalMessage.setMessageInfo (aEbms3MessageInfo);
+    }
 
     final Ebms3Receipt aEbms3Receipt = new Ebms3Receipt ();
-    // PullRequest
     if (aDSRefs.isNotEmpty () && bShouldUseNonRepudiation)
     {
-
       final NonRepudiationInformation aNonRepudiationInformation = new NonRepudiationInformation ();
       for (final Node aRef : aDSRefs)
       {
