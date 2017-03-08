@@ -162,7 +162,7 @@ public final class AS4Handler implements Closeable
   private static final class AS4ResponderMIME implements IAS4Responder
   {
     private final MimeMessage m_aMimeMsg;
-    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap <> ();
+    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap<> ();
 
     public AS4ResponderMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
@@ -249,7 +249,7 @@ public final class AS4Handler implements Closeable
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -442,7 +442,7 @@ public final class AS4Handler implements Closeable
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // All further operations should only operate on the interface
     IAS4MessageState aState;
@@ -463,7 +463,7 @@ public final class AS4Handler implements Closeable
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
     boolean bCanInvokeSPIs = false;
     if (aErrorMessages.isEmpty ())
     {
@@ -625,8 +625,8 @@ public final class AS4Handler implements Closeable
         final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
 
         AS4WorkerPool.getInstance ().run ( () -> {
-          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
-          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
+          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList<> ();
+          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList<> ();
           IAS4Responder aAsyncResponder;
           if (_invokeSPIs (aFinalUserMessage,
                            aFinalPayloadNode,
@@ -726,7 +726,6 @@ public final class AS4Handler implements Closeable
                                                final Ebms3UserMessage aUserMessage,
                                                final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                          aUserMessage,
                                                                                          aSOAPDocument,
@@ -1162,7 +1161,7 @@ public final class AS4Handler implements Closeable
 
     Document aSOAPDocument = null;
     ESOAPVersion eSOAPVersion = null;
-    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
     if (aPlainContentType.equals (MT_MULTIPART_RELATED))
