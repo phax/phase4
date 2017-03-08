@@ -49,7 +49,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
 
-  private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
+  private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap<> ();
   private final AS4ResourceManager m_aResMgr;
 
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments,
@@ -73,9 +73,9 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sID)
   {
     if (m_aAttachmentMap.containsKey (sID))
-      return new CommonsArrayList <> (m_aAttachmentMap.get (sID));
+      return new CommonsArrayList<> (m_aAttachmentMap.get (sID));
 
-    return new CommonsArrayList <> (m_aAttachmentMap.values ());
+    return new CommonsArrayList<> (m_aAttachmentMap.values ());
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException

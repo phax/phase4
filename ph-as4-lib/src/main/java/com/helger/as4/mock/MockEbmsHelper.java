@@ -42,7 +42,7 @@ public final class MockEbmsHelper
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aOriginalSender = new Ebms3Property ();
     aOriginalSender.setName (CAS4.ORIGINAL_SENDER);
     aOriginalSender.setValue ("C1-test");

@@ -28,7 +28,7 @@ public interface IAS4ProfileRegistrar
 {
   /**
    * Register a new AS4 profile.
-   * 
+   *
    * @param aAS4Profile
    *        The AS4 profile to be registered. May not be <code>null</code>.
    */

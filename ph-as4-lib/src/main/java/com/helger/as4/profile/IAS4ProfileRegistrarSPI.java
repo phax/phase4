@@ -25,7 +25,7 @@ public interface IAS4ProfileRegistrarSPI
 {
   /**
    * Register AS4 profiles at the provided registrar.
-   * 
+   *
    * @param aRegistrar
    *        The registrar to register at. Never <code>null</code>.
    */

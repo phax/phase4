@@ -27,7 +27,7 @@ import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
 /**
  * Micro type converter for class {@link AS4DuplicateItem}.
- * 
+ *
  * @author Philip Helger
  */
 public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConverter

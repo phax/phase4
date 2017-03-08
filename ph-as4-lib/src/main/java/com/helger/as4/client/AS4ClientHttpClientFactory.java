@@ -25,7 +25,7 @@ import com.helger.httpclient.HttpClientFactory;
 
 /**
  * Special {@link HttpClientFactory} using a retry handler by default.
- * 
+ *
  * @author Philip Helger
  */
 public class AS4ClientHttpClientFactory extends HttpClientFactory

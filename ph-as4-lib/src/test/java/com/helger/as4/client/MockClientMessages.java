@@ -86,8 +86,8 @@ final class MockClientMessages
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
-                                                                                                                               ""));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
+                                                                                                                              ""));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                                                     aEbms3ErrorList)
@@ -111,10 +111,7 @@ final class MockClientMessages
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                     null,
-                                                                     aUserMessage,
-                                                                     true)
+    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion, null, aUserMessage, true)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument ();
 
@@ -133,7 +130,7 @@ final class MockClientMessages
                                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -172,7 +169,7 @@ final class MockClientMessages
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3PropertyProcess.setName ("ProcessInst");
     aEbms3PropertyProcess.setValue ("PurchaseOrder:123456");
@@ -213,7 +210,7 @@ final class MockClientMessages
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 

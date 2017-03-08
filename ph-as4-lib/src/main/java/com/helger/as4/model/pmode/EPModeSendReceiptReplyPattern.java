@@ -25,7 +25,7 @@ import com.helger.commons.lang.EnumHelper;
 
 /**
  * Defines the different sendReceipt reply-patterns
- * 
+ *
  * @author bayerlma
  */
 public enum EPModeSendReceiptReplyPattern implements IHasID <String>

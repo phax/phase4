@@ -235,7 +235,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignElement ()
   {
-    return new CommonsArrayList <> (m_aX509SignElement);
+    return new CommonsArrayList<> (m_aX509SignElement);
   }
 
   public final void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
@@ -247,7 +247,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignAttachment ()
   {
-    return new CommonsArrayList <> (m_aX509SignAttachment);
+    return new CommonsArrayList<> (m_aX509SignAttachment);
   }
 
   public final void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
@@ -304,7 +304,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptElement ()
   {
-    return new CommonsArrayList <> (m_aX509EncryptionEncryptElement);
+    return new CommonsArrayList<> (m_aX509EncryptionEncryptElement);
   }
 
   public final void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
@@ -316,7 +316,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptAttachment ()
   {
-    return new CommonsArrayList <> (m_aX509EncryptionEncryptAttachment);
+    return new CommonsArrayList<> (m_aX509EncryptionEncryptAttachment);
   }
 
   public final void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)

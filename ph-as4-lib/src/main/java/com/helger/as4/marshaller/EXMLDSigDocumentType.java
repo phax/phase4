@@ -37,7 +37,7 @@ public enum EXMLDSigDocumentType implements IJAXBDocumentType
   private final JAXBDocumentType m_aDocType;
 
   private EXMLDSigDocumentType (@Nonnull final Class <?> aClass,
-                               @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
+                                @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
   {
     m_aDocType = new JAXBDocumentType (aClass, new CommonsArrayList<> (aXSDPaths, IReadableResource::getPath), null);
   }

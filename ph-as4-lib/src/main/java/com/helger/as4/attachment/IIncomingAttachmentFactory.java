@@ -36,11 +36,11 @@ public interface IIncomingAttachmentFactory extends Serializable
 {
   /**
    * Create an attachment if the source message is a MIME message
+   * 
    * @param aBodyPart
    *        The attachment body part
    * @param aResMgr
    *        The resource manager to use. May not be <code>null</code>.
-   *
    * @return The internal attachment representation. Never <code>null</code>.
    * @throws IOException
    *         In case of IO error
