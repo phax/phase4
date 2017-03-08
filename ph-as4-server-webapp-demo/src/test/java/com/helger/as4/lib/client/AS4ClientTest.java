@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.as4.client.AS4Client;
+import com.helger.as4.client.AS4UserMessageClient;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -45,7 +45,7 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Test class for class {@link AS4Client}
+ * Test class for class {@link AS4UserMessageClient}
  *
  * @author Martin Bayerl
  */
@@ -80,9 +80,9 @@ public final class AS4ClientTest
    * @return the AS4Client with the set attributes to continue
    */
   @Nonnull
-  private static AS4Client _getMandatoryAttributesSuccessMessage ()
+  private static AS4UserMessageClient _getMandatoryAttributesSuccessMessage ()
   {
-    final AS4Client aClient = new AS4Client (s_aResMgr);
+    final AS4UserMessageClient aClient = new AS4UserMessageClient (s_aResMgr);
     aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
 
     // Use a pmode that you know is currently running on the server your trying
@@ -113,7 +113,7 @@ public final class AS4ClientTest
    * @return the client to continue working with it
    */
   @Nonnull
-  private static AS4Client _setKeyStoreTestData (@Nonnull final AS4Client aClient)
+  private static AS4UserMessageClient _setKeyStoreTestData (@Nonnull final AS4UserMessageClient aClient)
   {
     aClient.setKeyStoreAlias ("ph-as4");
     aClient.setKeyStorePassword ("test");
@@ -122,7 +122,7 @@ public final class AS4ClientTest
     return aClient;
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4Client aClient) throws Exception
+  private static void _ensureInvalidState (@Nonnull final AS4UserMessageClient aClient) throws Exception
   {
     try
     {
@@ -135,7 +135,7 @@ public final class AS4ClientTest
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4Client aClient) throws Exception
+  private static void _ensureValidState (@Nonnull final AS4UserMessageClient aClient) throws Exception
   {
     try
     {
@@ -150,7 +150,7 @@ public final class AS4ClientTest
   @Test
   public void buildMessageMandatoryCheckFailure () throws Exception
   {
-    final AS4Client aClient = new AS4Client (s_aResMgr);
+    final AS4UserMessageClient aClient = new AS4UserMessageClient (s_aResMgr);
     _ensureInvalidState (aClient);
     aClient.setAction ("AnAction");
     _ensureInvalidState (aClient);
@@ -179,7 +179,7 @@ public final class AS4ClientTest
   @Test
   public void buildMessageKeystoreCheckFailure () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
 
     // Set sign attributes, to get to the check, the check only gets called if
     // sign or encrypt needs to be done for the usermessage
@@ -202,7 +202,7 @@ public final class AS4ClientTest
   @Test
   public void sendBodyPayloadMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
@@ -211,7 +211,7 @@ public final class AS4ClientTest
   @Test
   public void sendBodyPayloadSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
@@ -228,7 +228,7 @@ public final class AS4ClientTest
   @Test
   public void sendBodyPayloadEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
@@ -244,7 +244,7 @@ public final class AS4ClientTest
   @Test
   public void sendBodyPayloadSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
 
     // Keystore
@@ -264,7 +264,7 @@ public final class AS4ClientTest
   @Test
   public void sendOneAttachmentSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
@@ -281,7 +281,7 @@ public final class AS4ClientTest
   @Test
   public void sendOneAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
@@ -297,7 +297,7 @@ public final class AS4ClientTest
   @Test
   public void sendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
 
     // Keystore
@@ -317,7 +317,7 @@ public final class AS4ClientTest
   @Test
   public void sendManyAttachmentSignedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
@@ -336,7 +336,7 @@ public final class AS4ClientTest
   @Test
   public void sendManyAttachmentEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
@@ -354,7 +354,7 @@ public final class AS4ClientTest
   @Test
   public void sendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
     aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
@@ -376,7 +376,7 @@ public final class AS4ClientTest
   @Test
   public void sendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -404,7 +404,7 @@ public final class AS4ClientTest
   @Test
   public void sendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
@@ -432,7 +432,7 @@ public final class AS4ClientTest
   @Test
   public void buildMessageWithOwnPrefix () throws Exception
   {
-    final AS4Client aClient = _getMandatoryAttributesSuccessMessage ();
+    final AS4UserMessageClient aClient = _getMandatoryAttributesSuccessMessage ();
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose";
     aClient.setMessageIDPrefix (sMessageIDPrefix);
 

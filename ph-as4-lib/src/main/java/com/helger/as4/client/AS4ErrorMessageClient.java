@@ -2,6 +2,8 @@ package com.helger.as4.client;
 
 import java.util.Locale;
 
+import javax.annotation.Nonnull;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Document;
@@ -41,7 +43,7 @@ public class AS4ErrorMessageClient extends AS4SignalmessageClient
     return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
   }
 
-  public void addErrorMessage (final EEbmsError aError)
+  public void addErrorMessage (@Nonnull final EEbmsError aError)
   {
     aErrorMessages.add (aError.getAsEbms3Error (Locale.US, null));
   }

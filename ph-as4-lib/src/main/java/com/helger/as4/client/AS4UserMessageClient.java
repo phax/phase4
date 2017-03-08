@@ -63,7 +63,7 @@ import com.helger.commons.string.StringHelper;
  * @author bayerlma
  */
 @NotThreadSafe
-public class AS4Client extends AbstractAS4Client
+public class AS4UserMessageClient extends AbstractAS4Client
 {
   private final AS4ResourceManager m_aResMgr;
 
@@ -90,12 +90,12 @@ public class AS4Client extends AbstractAS4Client
   private String m_sToRole = CAS4.DEFAULT_ROLE;
   private String m_sToPartyID;
 
-  public AS4Client ()
+  public AS4UserMessageClient ()
   {
     this (new AS4ResourceManager ());
   }
 
-  public AS4Client (@Nonnull final AS4ResourceManager aResMgr)
+  public AS4UserMessageClient (@Nonnull final AS4ResourceManager aResMgr)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
@@ -300,7 +300,7 @@ public class AS4Client extends AbstractAS4Client
    *         if something goes wrong in the adding process
    */
   @Nonnull
-  public AS4Client addAttachment (@Nonnull final File aAttachment,
+  public AS4UserMessageClient addAttachment (@Nonnull final File aAttachment,
                                   @Nonnull final IMimeType aMimeType) throws IOException
   {
     return addAttachment (aAttachment, aMimeType, null);
@@ -321,7 +321,7 @@ public class AS4Client extends AbstractAS4Client
    *         if something goes wrong in the adding process or the compression
    */
   @Nonnull
-  public AS4Client addAttachment (@Nonnull final File aAttachment,
+  public AS4UserMessageClient addAttachment (@Nonnull final File aAttachment,
                                   @Nonnull final IMimeType aMimeType,
                                   @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
@@ -340,7 +340,7 @@ public class AS4Client extends AbstractAS4Client
    * @return this for chaining
    */
   @Nonnull
-  public AS4Client addAttachment (@Nonnull final WSS4JAttachment aAttachment)
+  public AS4UserMessageClient addAttachment (@Nonnull final WSS4JAttachment aAttachment)
   {
     ValueEnforcer.notNull (aAttachment, "Attachment");
     m_aAttachments.add (aAttachment);
