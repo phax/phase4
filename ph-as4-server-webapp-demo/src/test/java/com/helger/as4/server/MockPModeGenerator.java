@@ -23,6 +23,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.mpc.MPCManager;
@@ -146,8 +147,8 @@ public final class MockPModeGenerator
   private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty (null, "APP_1000000101", CAS4.DEFAULT_SENDER_URL, null, null);
-    return new PModeParty (null, "APP_1000000101", CAS4.DEFAULT_RESPONDER_URL, null, null);
+      return PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_SENDER_URL);
+    return PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_RESPONDER_URL);
   }
 
   public static void ensureMockPModesArePresent ()

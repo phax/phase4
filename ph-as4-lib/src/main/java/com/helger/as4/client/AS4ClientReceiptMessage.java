@@ -68,7 +68,9 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 
     Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 
-    if (m_bReceiptShouldBeSigned)
+    final boolean bSign = getCryptoAlgorithmSign () != null && getCryptoAlgorithmSignDigest () != null;
+
+    if (m_bReceiptShouldBeSigned && bSign)
     {
       _checkKeystoreAttributes ();
 

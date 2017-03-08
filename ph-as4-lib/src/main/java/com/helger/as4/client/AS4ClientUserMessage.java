@@ -40,6 +40,8 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
+import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -302,7 +304,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   @Nonnull
   public AS4ClientUserMessage addAttachment (@Nonnull final File aAttachment,
-                                  @Nonnull final IMimeType aMimeType) throws IOException
+                                             @Nonnull final IMimeType aMimeType) throws IOException
   {
     return addAttachment (aAttachment, aMimeType, null);
   }
@@ -323,8 +325,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   @Nonnull
   public AS4ClientUserMessage addAttachment (@Nonnull final File aAttachment,
-                                  @Nonnull final IMimeType aMimeType,
-                                  @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
+                                             @Nonnull final IMimeType aMimeType,
+                                             @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
                                                                         aMimeType,
@@ -462,11 +464,21 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * This is MANDATORY.
    *
    * @param sAgreementRefPMode
-   *        PMode that should be used (id)
+   *        PMode that should be used (id) - PModeConfig ID!
    */
-  public void setAgreementRefPMode (final String sAgreementRefPMode)
+  public void setAgreementRefPMode (@Nullable final String sAgreementRefPMode)
   {
     m_sAgreementRefPMode = sAgreementRefPMode;
+  }
+
+  public void setAgreementRefPMode (@Nullable final IPModeConfig aPModeConfig)
+  {
+    setAgreementRefPMode (aPModeConfig == null ? null : aPModeConfig.getID ());
+  }
+
+  public void setAgreementRefPMode (@Nullable final IPMode aPMode)
+  {
+    setAgreementRefPMode (aPMode == null ? null : aPMode.getConfigID ());
   }
 
   public String getAgreementRefValue ()

@@ -138,10 +138,11 @@ public final class CreateUserMessage
       aEbms3CollaborationInfo.setService (aEbms3Service);
     }
     aEbms3CollaborationInfo.setConversationId (sConversationID);
-    if (StringHelper.hasText (sAgreementRefPMode) || StringHelper.hasText (sAgreementRefValue))
+    if (StringHelper.hasText (sAgreementRefValue))
     {
       final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
-      aEbms3AgreementRef.setPmode (sAgreementRefPMode);
+      if (StringHelper.hasText (sAgreementRefPMode))
+        aEbms3AgreementRef.setPmode (sAgreementRefPMode);
       aEbms3AgreementRef.setValue (sAgreementRefValue);
       aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
     }

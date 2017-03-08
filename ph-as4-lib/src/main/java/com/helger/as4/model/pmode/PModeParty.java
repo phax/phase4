@@ -128,4 +128,11 @@ public class PModeParty implements IHasID <String>
                                        .append (m_sUserName)
                                        .getHashCode ();
   }
+
+  @Nonnull
+  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue,
+                                         @Nonnull @Nonempty final String sRole)
+  {
+    return new PModeParty (null, sIDValue, sRole, null, null);
+  }
 }

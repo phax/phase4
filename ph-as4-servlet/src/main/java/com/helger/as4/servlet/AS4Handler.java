@@ -25,7 +25,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,7 +65,6 @@ import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.MEPHelper;
 import com.helger.as4.model.pmode.EPModeSendReceiptReplyPattern;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
@@ -112,7 +110,6 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsOrderedMap;
-import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.EMimeContentType;
@@ -163,7 +160,7 @@ public final class AS4Handler implements Closeable
   private static final class AS4ResponderMIME implements IAS4Responder
   {
     private final MimeMessage m_aMimeMsg;
-    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap<> ();
+    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap <> ();
 
     public AS4ResponderMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
@@ -263,7 +260,7 @@ public final class AS4Handler implements Closeable
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -456,7 +453,7 @@ public final class AS4Handler implements Closeable
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     // All further operations should only operate on the interface
     IAS4MessageState aState;
@@ -477,7 +474,7 @@ public final class AS4Handler implements Closeable
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
     boolean bCanInvokeSPIs = false;
     if (aErrorMessages.isEmpty ())
     {
@@ -639,8 +636,8 @@ public final class AS4Handler implements Closeable
         final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
 
         AS4WorkerPool.getInstance ().run ( () -> {
-          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList<> ();
-          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList<> ();
+          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
+          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
           IAS4Responder aAsyncResponder;
           if (_invokeSPIs (aFinalUserMessage,
                            aFinalPayloadNode,
@@ -1092,26 +1089,31 @@ public final class AS4Handler implements Closeable
    *
    * @param aState
    *        needed to get Responder and Initiator
-   * @param sConfigID
+   * @param sPModeConfigID
    *        needed to get the PModeConfig for the PMode
    * @param aPartyInfo
    *        Party information from user message, needed to get full information
    *        of the Initiator and Responder
    */
   private static void _ensurePModeIsPresent (@Nonnull final IAS4MessageState aState,
-                                             @Nonnull final String sConfigID,
+                                             @Nonnull final String sPModeConfigID,
                                              @Nonnull final Ebms3PartyInfo aPartyInfo)
   {
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-    if (aPModeMgr.containsNone (_doesPartnerAndPartnerExist (aState.getInitiatorID (),
-                                                             aState.getResponderID (),
-                                                             sConfigID)))
+
+    if (aPModeMgr.containsNone (PModeManager.getPModeFilter (sPModeConfigID,
+                                                             aState.getInitiatorID (),
+                                                             aState.getResponderID ())))
     {
+      final IPModeConfig aPModeConfig = MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sPModeConfigID);
+      if (aPModeConfig == null)
+        throw new IllegalStateException ("Failed to resolve PModeConfig with ID '" + sPModeConfigID + "'");
+
       final Ebms3From aFrom = aPartyInfo.getFrom ();
       final Ebms3PartyId aFromID = aFrom.getPartyIdAtIndex (0);
       final Ebms3To aTo = aPartyInfo.getTo ();
       final Ebms3PartyId aToID = aTo.getPartyIdAtIndex (0);
-      final IPModeConfig aPModeConfig = MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID);
+
       final PMode aPMode = new PMode (new PModeParty (aFromID.getType (),
                                                       aFromID.getValue (),
                                                       aFrom.getRole (),
@@ -1122,28 +1124,6 @@ public final class AS4Handler implements Closeable
       aPModeMgr.createOrUpdatePMode (aPMode);
     }
     // If the PMode already exists we do not need to do anything
-  }
-
-  /**
-   * This Predicate helps to find if a Partner (Initiator), Partner (Responder)
-   * with a specific PModeConfig already exists.
-   *
-   * @param sInitiatorID
-   *        Initiator to check
-   * @param sResponderID
-   *        Responder to check
-   * @param sPModeConfigID
-   *        PModeConfig to check
-   * @return aPMode if it already exists with all 3 components
-   */
-  @Nullable
-  private static Predicate <IPMode> _doesPartnerAndPartnerExist (@Nullable final String sInitiatorID,
-                                                                 @Nullable final String sResponderID,
-                                                                 @Nullable final String sPModeConfigID)
-  {
-    return x -> EqualsHelper.equals (x.getInitiatorID (), sInitiatorID) &&
-                EqualsHelper.equals (x.getResponderID (), sResponderID) &&
-                x.getConfigID ().equals (sPModeConfigID);
   }
 
   @Nonnull
@@ -1175,7 +1155,7 @@ public final class AS4Handler implements Closeable
 
     Document aSOAPDocument = null;
     ESOAPVersion eSOAPVersion = null;
-    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
     if (aPlainContentType.equals (MT_MULTIPART_RELATED))

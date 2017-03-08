@@ -32,8 +32,8 @@ import com.helger.commons.collection.ext.ICommonsList;
  */
 public final class MockEbmsHelper
 {
-  public static final String DEFAULT_PARTY_ID = "APP_1000000101";
-  public static final String DEFAULT_AGREEMENT = "http://agreements.holodeckb2b.org/examples/agreement0";
+  public static final String DEFAULT_PARTY_ID = "APP_0000000000";
+  public static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   private MockEbmsHelper ()
   {}

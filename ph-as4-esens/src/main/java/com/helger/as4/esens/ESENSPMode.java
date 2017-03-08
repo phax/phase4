@@ -109,11 +109,12 @@ public final class ESENSPMode
     return new PModeLegProtocol (sAddress, ESOAPVersion.SOAP_12);
   }
 
+  // TODO not static
   @Nonnull
   private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty (null, "APP_1000000101", CAS4.DEFAULT_SENDER_URL, null, null);
-    return new PModeParty (null, "APP_2000000101", CAS4.DEFAULT_RESPONDER_URL, null, null);
+      return PModeParty.createSimple ("APP_1000000101", CAS4.DEFAULT_SENDER_URL);
+    return PModeParty.createSimple ("APP_2000000101", CAS4.DEFAULT_RESPONDER_URL);
   }
 }

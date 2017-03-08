@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ESuccess;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
@@ -142,11 +143,21 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   }
 
   @Nonnull
+  public static Predicate <IPMode> getPModeFilter (@Nullable final String sPModeConfigID,
+                                                   @Nullable final String sInitiatorID,
+                                                   @Nullable final String sResponderID)
+  {
+    return p -> p.getConfigID ().equals (sPModeConfigID) &&
+                EqualsHelper.equals (p.getInitiatorID (), sInitiatorID) &&
+                EqualsHelper.equals (p.getResponderID (), sResponderID);
+  }
+
+  @Nonnull
   public IPMode createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
-    PMode ret = (PMode) findFirst (_getPModeFilter (aPMode.getConfigID (),
-                                                    aPMode.getInitiator ().getID (),
-                                                    aPMode.getResponder ().getID ()));
+    PMode ret = (PMode) findFirst (getPModeFilter (aPMode.getConfigID (),
+                                                   aPMode.getInitiatorID (),
+                                                   aPMode.getResponderID ()));
 
     if (ret == null)
     {
@@ -158,16 +169,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       updatePMode (aPMode);
     }
     return ret;
-  }
-
-  @Nullable
-  private static Predicate <IPMode> _getPModeFilter (@Nonnull final String sConfigID,
-                                                     @Nonnull final String sIntiatorID,
-                                                     @Nonnull final String sResponderID)
-  {
-    return p -> p.getConfigID ().equals (sConfigID) &&
-                p.getInitiator ().getID ().equals (sIntiatorID) &&
-                p.getResponder ().getID ().equals (sResponderID);
   }
 
   @Nonnull
@@ -186,10 +187,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   @Nonnull
   public ESuccess validatePMode (@Nullable final IPMode aPMode)
   {
-    if (aPMode == null)
-    {
-      throw new IllegalStateException ("PMode is null!");
-    }
+    ValueEnforcer.notNull (aPMode, "PMode");
 
     // Needs ID
     if (aPMode.getID () == null)

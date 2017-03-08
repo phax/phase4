@@ -164,7 +164,7 @@ public final class MockMessages
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
+    final IPMode aPMode = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
@@ -172,7 +172,7 @@ public final class MockMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           aPModeID.getID (),
+                                                                                                           aPMode.getConfigID (),
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    "testt",

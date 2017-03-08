@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
@@ -112,8 +113,8 @@ public final class PModeMicroTypeConverterTest
   private PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty ("initiator-type", "idvalue", "sender", "test", "testpw");
-    return new PModeParty ("responder-type", "idvalue2", "responder", "test2", "test2pw");
+      return new PModeParty ("initiator-type", "idvalue", CAS4.DEFAULT_SENDER_URL, "test", "testpw");
+    return new PModeParty ("responder-type", "idvalue2", CAS4.DEFAULT_RESPONDER_URL, "test2", "test2pw");
   }
 
   @Nonnull
