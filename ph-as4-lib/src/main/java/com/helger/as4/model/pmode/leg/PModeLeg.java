@@ -16,12 +16,14 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import java.io.Serializable;
+
 import javax.annotation.Nullable;
 
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
-public class PModeLeg
+public class PModeLeg implements Serializable
 {
   private final PModeLegProtocol m_aProtocol;
   private final PModeLegBusinessInformation m_aBusinessInfo;

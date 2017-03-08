@@ -16,6 +16,7 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import java.io.Serializable;
 import java.net.URL;
 
 import javax.annotation.Nonnull;
@@ -34,7 +35,7 @@ import com.helger.commons.url.URLHelper;
  * @author Philip Helger
  */
 @NotThreadSafe
-public class PModeLegProtocol
+public class PModeLegProtocol implements Serializable
 {
   /**
    * the value of this parameter represents the address (endpoint URL) of the

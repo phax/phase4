@@ -16,6 +16,8 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -37,7 +39,7 @@ import com.helger.commons.state.ETriState;
  *
  * @author Philip Helger
  */
-public class PModeLegSecurity
+public class PModeLegSecurity implements Serializable
 {
   public static final boolean DEFAULT_USERNAME_TOKEN_DIGEST = false;
   public static final boolean DEFAULT_USERNAME_TOKEN_NONCE = false;

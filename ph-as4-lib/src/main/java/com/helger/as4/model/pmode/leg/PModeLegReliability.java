@@ -16,6 +16,8 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,7 +29,7 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.ETriState;
 
-public class PModeLegReliability
+public class PModeLegReliability implements Serializable
 {
   public static final boolean DEFAULT_TERMINATE_GROUP = false;
   public static final boolean DEFAULT_START_GROUP = false;

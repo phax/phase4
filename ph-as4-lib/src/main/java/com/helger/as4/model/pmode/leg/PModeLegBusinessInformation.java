@@ -16,6 +16,7 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -35,7 +36,7 @@ import com.helger.commons.hashcode.HashCodeGenerator;
  *
  * @author Philip Helger
  */
-public class PModeLegBusinessInformation
+public class PModeLegBusinessInformation implements Serializable
 {
   /**
    * Name of the service to which the User message is intended to be delivered.
