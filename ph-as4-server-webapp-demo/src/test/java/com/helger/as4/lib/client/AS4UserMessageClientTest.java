@@ -49,7 +49,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Martin Bayerl
  */
-public final class AS4ClientTest
+public final class AS4UserMessageClientTest
 {
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";

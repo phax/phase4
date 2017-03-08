@@ -9,13 +9,10 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
-import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.commons.string.StringHelper;
 
 public class AS4ReceiptMessageClient extends AS4SignalmessageClient
 {
@@ -48,19 +45,15 @@ public class AS4ReceiptMessageClient extends AS4SignalmessageClient
     if (bNonRepudiation && aSOAPDocument == null)
       throw new IllegalStateException ("Nonrepudiation only works in conjunction with a set SOAPDocument.");
 
+    if (!bNonRepudiation && aEbms3UserMessage == null)
+      throw new IllegalStateException ("Ebms3UserMessage has to be set, if the SOAPDocument is not signed.");
+
   }
 
   @Override
   public HttpEntity buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
-
-    // Create a new message ID for each build!
-    final String sMessageID = StringHelper.getConcatenatedOnDemand (getMessageIDPrefix (),
-                                                                    '@',
-                                                                    MessageHelperMethods.createRandomMessageID ());
-
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
 
     final AS4ReceiptMessage aReceiptMsg = CreateReceiptMessage.createReceiptMessage (getSOAPVersion (),
                                                                                      aEbms3UserMessage,

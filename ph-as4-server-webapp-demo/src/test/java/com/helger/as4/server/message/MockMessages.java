@@ -110,10 +110,7 @@ public final class MockMessages
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                     null,
-                                                                     aUserMessage,
-                                                                     true)
+    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion, null, aUserMessage, true)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument ();
 

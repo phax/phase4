@@ -23,15 +23,32 @@ public class AS4ErrorMessageClient extends AS4SignalmessageClient
 {
   private final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
+  private String sRefToMessageId;
+
+  private void _checkMandatoryAttributes ()
+  {
+    if (getSOAPVersion () == null)
+      throw new IllegalStateException ("A SOAPVersion must be set.");
+
+    if (aErrorMessages.isEmpty ())
+      throw new IllegalStateException ("No Errors specified!");
+
+    if (StringHelper.hasNoText (sRefToMessageId))
+      throw new IllegalStateException ("No reference to a message set.");
+  }
+
   @Override
   public HttpEntity buildMessage () throws Exception
   {
+    _checkMandatoryAttributes ();
+
     // Create a new message ID for each build!
     final String sMessageID = StringHelper.getConcatenatedOnDemand (getMessageIDPrefix (),
                                                                     '@',
                                                                     MessageHelperMethods.createRandomMessageID ());
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                            sRefToMessageId);
 
     final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (getSOAPVersion (),
                                                                              aEbms3MessageInfo,
@@ -46,5 +63,15 @@ public class AS4ErrorMessageClient extends AS4SignalmessageClient
   public void addErrorMessage (@Nonnull final EEbmsError aError)
   {
     aErrorMessages.add (aError.getAsEbms3Error (Locale.US, null));
+  }
+
+  public String getsRefToMessageId ()
+  {
+    return sRefToMessageId;
+  }
+
+  public void setsRefToMessageId (@Nonnull final String sRefToMessageId)
+  {
+    this.sRefToMessageId = sRefToMessageId;
   }
 }
