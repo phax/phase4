@@ -49,7 +49,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Martin Bayerl
  */
-public final class AS4UserMessageClientTest
+public final class AS4ClientUserMessageTest
 {
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
@@ -94,7 +94,7 @@ public final class AS4UserMessageClientTest
     aClient.setServiceValue ("OrderPaper");
     aClient.setConversationID ("9898");
     aClient.setAgreementRefPMode (sPModeID);
-    aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
+    aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID ("MyPartyIDforSending");
     aClient.setToRole (CAS4.DEFAULT_ROLE);
@@ -162,7 +162,7 @@ public final class AS4UserMessageClientTest
     _ensureInvalidState (aClient);
     aClient.setAgreementRefPMode ("pm-esens-generic-resp");
     _ensureInvalidState (aClient);
-    aClient.setAgreementRefValue ("http://agreements.holodeckb2b.org/examples/agreement0");
+    aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     _ensureInvalidState (aClient);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     _ensureInvalidState (aClient);

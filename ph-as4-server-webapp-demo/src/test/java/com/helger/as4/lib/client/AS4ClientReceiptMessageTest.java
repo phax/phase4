@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 
 import com.helger.as4.client.AS4ClientReceiptMessage;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.MockMessages;
@@ -19,7 +21,7 @@ import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4ReceiptMessageClientTest
+public class AS4ClientReceiptMessageTest
 {
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
@@ -77,6 +79,28 @@ public class AS4ReceiptMessageClientTest
     aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
     _ensureInvalidState (aClient);
     aClient.setNonRepudiation (true);
+    _ensureValidState (aClient);
+  }
+
+  @Test
+  public void buildMessageSignedChecks () throws Exception
+  {
+    final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
+    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    // Parse EBMS3 Messaging object
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
+    aClient.setNonRepudiation (true);
+    aClient.setReceiptShouldBeSigned (true);
+
+    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStorePassword ("test");
+    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
+    aClient.setKeyStoreType ("jks");
+
+    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT);
+    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
     _ensureValidState (aClient);
   }
 }
