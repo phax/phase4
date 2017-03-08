@@ -24,11 +24,13 @@ import com.helger.as4.profile.IAS4ProfileRegistrarSPI;
 import com.helger.commons.annotation.IsSPIImplementation;
 
 @IsSPIImplementation
-public class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
+public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
+  public static final String AS4_PROFILE_ID = "esens";
+
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    aRegistrar.registerProfile (new AS4Profile ("esens",
+    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 "e-SENS",
                                                 () -> new ESENSCompatibilityValidator (),
                                                 () -> ESENSPMode.createESENSPModeConfig ("https://test.example.org")));

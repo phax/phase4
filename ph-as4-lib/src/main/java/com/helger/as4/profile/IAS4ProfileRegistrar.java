@@ -26,5 +26,11 @@ import javax.annotation.Nonnull;
 @FunctionalInterface
 public interface IAS4ProfileRegistrar
 {
+  /**
+   * Register a new AS4 profile.
+   * 
+   * @param aAS4Profile
+   *        The AS4 profile to be registered. May not be <code>null</code>.
+   */
   void registerProfile (@Nonnull IAS4Profile aAS4Profile);
 }
