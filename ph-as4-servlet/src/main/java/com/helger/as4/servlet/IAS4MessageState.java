@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.mpc.IMPC;
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -69,7 +69,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   Ebms3Messaging getMessaging ();
 
   @Nullable
-  IPModeConfig getPModeConfig ();
+  IPMode getPMode ();
 
   @Nullable
   ICommonsList <WSS4JAttachment> getOriginalAttachments ();
@@ -134,7 +134,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   /**
    * @return The effective leg to use. May be leg 1 or leg 2 of the PMode.
-   * @see #getPModeConfig()
+   * @see #getPMode()
    */
   @Nullable
   PModeLeg getEffectivePModeLeg ();

@@ -143,7 +143,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   @Nonnull
   protected static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
   {
-    return p -> p.getConfigID ().equals (sID);
+    return p -> p.getID ().equals (sID);
   }
 
   protected Ebms3MessageProperties _defaultProperties ()

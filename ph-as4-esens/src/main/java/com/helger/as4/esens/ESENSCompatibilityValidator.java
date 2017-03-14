@@ -28,8 +28,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PModePayloadService;
-import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
@@ -66,13 +66,13 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  public void validatePModeConfig (@Nonnull final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrorList)
+  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
-    MetaAS4Manager.getPModeConfigMgr ().validatePModeConfig (aPModeConfig, aErrorList);
+    MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
     assert aErrorList.isEmpty () : "Errors in global PMode config validation: " + aErrorList.toString ();
 
-    final EMEP eMEP = aPModeConfig.getMEP ();
-    final EMEPBinding eMEPBinding = aPModeConfig.getMEPBinding ();
+    final EMEP eMEP = aPMode.getMEP ();
+    final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
     if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
         (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
@@ -89,7 +89,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     }
 
     // Leg1 must be present
-    final PModeLeg aPModeLeg1 = aPModeConfig.getLeg1 ();
+    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1 == null)
     {
       aErrorList.add (_createError ("PMode is missing Leg 1"));
@@ -274,7 +274,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 
       // Compression application/gzip ONLY
       // other possible states are absent or "" (No input)
-      final PModePayloadService aPayloadService = aPModeConfig.getPayloadService ();
+      final PModePayloadService aPayloadService = aPMode.getPayloadService ();
       if (aPayloadService != null)
       {
         final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();

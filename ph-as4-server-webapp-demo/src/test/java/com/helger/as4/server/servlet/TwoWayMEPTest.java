@@ -40,7 +40,7 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
-import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
@@ -60,35 +60,35 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    m_aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
-                                                                  .getAsString ("server.address",
-                                                                                "http://localhost:8080/as4"));
-    // ESENS PMode is One Way on default settings need to change to two way
-    final PModeConfig aPModeConfig = new PModeConfig ("esens-two-way");
-    aPModeConfig.setMEP (EMEP.TWO_WAY);
-    aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
-    aPModeConfig.setAgreement (m_aPMode.getConfig ().getAgreement ());
-    aPModeConfig.setLeg1 (m_aPMode.getConfig ().getLeg1 ());
+    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
+                                                                            .getAsString ("server.address",
+                                                                                          "http://localhost:8080/as4"));
     // Setting second leg to the same as first
-    final PModeLeg aLeg2 = m_aPMode.getConfig ().getLeg1 ();
+    final PModeLeg aLeg2 = aPMode.getLeg1 ();
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
-    aPModeConfig.setLeg2 (aLeg2);
-    aPModeConfig.setPayloadService (m_aPMode.getConfig ().getPayloadService ());
-    aPModeConfig.setReceptionAwareness (m_aPMode.getConfig ().getReceptionAwareness ());
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
-    m_aPMode = new PMode (m_aPMode.getInitiator (), m_aPMode.getResponder (), aPModeConfig);
+    // ESENS PMode is One Way on default settings need to change to two way
+    m_aPMode = new PMode ("esens-two-way",
+                          PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_ROLE),
+                          PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_ROLE),
+                          aPMode.getAgreement (),
+                          EMEP.TWO_WAY,
+                          EMEPBinding.SYNC,
+                          aPMode.getLeg1 (),
+                          aLeg2,
+                          aPMode.getPayloadService (),
+                          aPMode.getReceptionAwareness ());
+
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
   }
 
   @Test
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (m_aPMode.getConfigID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
     assertTrue (sResponse.contains ("UserMessage"));
     assertFalse (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains (m_aPMode.getConfig ()
-                                            .getLeg2 ()
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
                                             .getAlgorithmURI ()));
@@ -104,13 +104,12 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getConfigID (), null, null, _defaultProperties (), aAttachments);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains ("UserMessage"));
     assertFalse (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains (m_aPMode.getConfig ()
-                                            .getLeg2 ()
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
                                             .getAlgorithmURI ()));
@@ -146,10 +145,10 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // Default MessageProperties for testing
     aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
-    m_aPMode.getConfig ().getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
+    m_aPMode.getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
 
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getConfigID ()));
-    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
+    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getID ()));
+    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
     final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                   aEbms3UserMessage)
@@ -164,22 +163,20 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testPModeConfigWithOnlyLeg2 () throws Exception
   {
-    PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
-                                                                      .getAsString ("server.address",
-                                                                                    "http://localhost:8080/as4"));
+    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
+                                                                            .getAsString ("server.address",
+                                                                                          "http://localhost:8080/as4"));
     // ESENS PMode is One Way on default settings need to change to two way
-    final PModeConfig aPModeConfig = new PModeConfig ("leg2-only");
-    aPModeConfig.setMEP (EMEP.TWO_WAY);
-    aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
-    aPModeConfig.setAgreement (aPMode.getConfig ().getAgreement ());
-    aPModeConfig.setLeg2 (aPMode.getConfig ().getLeg1 ());
-    aPModeConfig.setPayloadService (aPMode.getConfig ().getPayloadService ());
-    aPModeConfig.setReceptionAwareness (aPMode.getConfig ().getReceptionAwareness ());
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
-    aPMode = new PMode (aPMode.getInitiator (), aPMode.getResponder (), aPModeConfig);
+
+    aPMode.setMEP (EMEP.TWO_WAY);
+    aPMode.setMEPBinding (EMEPBinding.SYNC);
+    aPMode.setAgreement (aPMode.getAgreement ());
+    aPMode.setLeg2 (aPMode.getLeg1 ());
+    aPMode.setPayloadService (aPMode.getPayloadService ());
+    aPMode.setReceptionAwareness (aPMode.getReceptionAwareness ());
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
 
-    final Document aDoc = _modifyUserMessage (aPMode.getConfigID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (aPMode.getID (), null, null, _defaultProperties ());
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());

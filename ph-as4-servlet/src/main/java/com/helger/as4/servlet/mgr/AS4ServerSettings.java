@@ -23,7 +23,7 @@ import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.model.pmode.config.DefaultPModeConfigResolver;
-import com.helger.as4.model.pmode.config.IPModeConfigResolver;
+import com.helger.as4.model.pmode.config.IPModeResolver;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 
@@ -34,7 +34,7 @@ public final class AS4ServerSettings
 
   private static String m_sResponderID = DEFAULT_RESPONDER_ID;
   private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = WSS4JAttachment::createIncomingFileAttachment;
-  private static IPModeConfigResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver (false);
+  private static IPModeResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver (false);
 
   private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory ();
 
@@ -67,12 +67,12 @@ public final class AS4ServerSettings
   }
 
   @Nonnull
-  public static IPModeConfigResolver getPModeConfigResolver ()
+  public static IPModeResolver getPModeConfigResolver ()
   {
     return s_aPModeConfigResolver;
   }
 
-  public static void setPModeConfigResolver (@Nonnull final IPModeConfigResolver aPModeConfigResolver)
+  public static void setPModeConfigResolver (@Nonnull final IPModeResolver aPModeConfigResolver)
   {
     ValueEnforcer.notNull (aPModeConfigResolver, "PModeConfigResolver");
     s_aPModeConfigResolver = aPModeConfigResolver;

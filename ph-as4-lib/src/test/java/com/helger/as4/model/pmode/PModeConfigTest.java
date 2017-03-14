@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
-import com.helger.as4.model.pmode.config.PModeConfig;
 
 /**
  * Test class for class {@link PModeConfig}.
@@ -40,7 +39,7 @@ public final class PModeConfigTest
   {
     try
     {
-      new PModeConfig ((String) null);
+      new PMode ((String) null, null, null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final NullPointerException ex)
@@ -49,7 +48,7 @@ public final class PModeConfigTest
     }
     try
     {
-      new PModeConfig ("");
+      new PMode ("", null, null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final IllegalArgumentException ex)

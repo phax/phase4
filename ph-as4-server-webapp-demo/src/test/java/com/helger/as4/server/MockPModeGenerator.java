@@ -30,8 +30,6 @@ import com.helger.as4.model.pmode.DefaultPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
-import com.helger.as4.model.pmode.config.PModeConfig;
-import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
@@ -53,47 +51,34 @@ public final class MockPModeGenerator
   {}
 
   @Nonnull
-  public static PModeConfig getTestPModeConfig (@Nonnull final ESOAPVersion eSOAPVersion)
+  public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    return getTestPModeConfigSetID (eSOAPVersion,
-                                    eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_CONFIG_ID_SOAP12_TEST
-                                                                               : PMODE_CONFIG_ID_SOAP11_TEST);
+    return getTestPModeSetID (eSOAPVersion,
+                              eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_CONFIG_ID_SOAP12_TEST
+                                                                         : PMODE_CONFIG_ID_SOAP11_TEST);
   }
 
   @Nonnull
-  public static PModeConfig getTestPModeConfigSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
+  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
   {
-    final PModeConfig aConfig = new PModeConfig (sPModeID);
-    aConfig.setMEP (EMEP.ONE_WAY);
-    aConfig.setMEPBinding (EMEPBinding.PUSH);
-    aConfig.setLeg1 (_generatePModeLeg (eSOAPVersion));
+    final PMode aConfig = new PMode (sPModeID,
+                                     _generateInitiatorOrResponder (true),
+                                     _generateInitiatorOrResponder (false),
+                                     MockEbmsHelper.DEFAULT_AGREEMENT,
+                                     EMEP.ONE_WAY,
+                                     EMEPBinding.PUSH,
+                                     _generatePModeLeg (eSOAPVersion),
+                                     null,
+                                     null,
+                                     null);
     // Leg 2 stays null, because we only use one-way
     return aConfig;
   }
 
   @Nonnull
-  private static PMode _createTestPMode (@Nonnull final PModeConfig aConfig)
-  {
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aConfig);
-    return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
-  }
-
-  @Nonnull
-  public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
-  {
-    return _createTestPMode (getTestPModeConfig (eSOAPVersion));
-  }
-
-  @Nonnull
-  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final String sPModeID)
-  {
-    return _createTestPMode (getTestPModeConfigSetID (eSOAPVersion, sPModeID));
-  }
-
-  @Nonnull
   public static PMode getTestPModeWithSecurity (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PModeConfig aConfig = getTestPModeConfig (eSOAPVersion);
+    final PMode aPMode = getTestPMode (eSOAPVersion);
 
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
@@ -103,14 +88,13 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
 
-    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                                   _generatePModeLegBusinessInformation (),
-                                   _generatePModeLegErrorHandling (),
-                                   null,
-                                   aPModeLegSecurity));
+    aPMode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
+                                  _generatePModeLegBusinessInformation (),
+                                  _generatePModeLegErrorHandling (),
+                                  null,
+                                  aPModeLegSecurity));
     // Leg 2 stays null, because we only use one-way
-    return _createTestPMode (aConfig);
-
+    return aPMode;
   }
 
   @Nonnull
@@ -157,16 +141,12 @@ public final class MockPModeGenerator
     for (final String sID : aPModeMgr.getAllIDs ())
       aPModeMgr.deletePMode (sID);
 
-    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
-    for (final String sID : aPModeConfigMgr.getAllIDs ())
-      aPModeConfigMgr.deletePModeConfig (sID);
-
     final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
     for (final String sID : aPartnerMgr.getAllIDs ())
       aPartnerMgr.deletePartner (sID);
 
     // Create new one
-    aPModeConfigMgr.createPModeConfig (DefaultPMode.createDefaultPModeConfig ("http://test.mock.org"));
+    aPModeMgr.createPMode (DefaultPMode.createDefaultPMode ("http://test.mock.org"));
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aPModeMgr.createPMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }

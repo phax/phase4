@@ -19,8 +19,11 @@ package com.helger.as4.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.EMEP;
+import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
@@ -78,29 +81,75 @@ public class PMode extends AbstractBaseObject implements IPMode
   private PModeParty m_aResponder;
 
   /**
-   * Contains everything a PMOde should contain, outside of Initiator and
-   * Responder, which will be saved separately. This gets done so that a
-   * PModeConfig can be reused, many times when just the partners that
-   * communicate change.
+   * The reference to the agreement governing this message exchange (maps to
+   * <code>eb:AgreementRef</code> in message header).
    */
-  private final IPModeConfig m_aConfig;
+  private String m_sAgreement;
 
-  public PMode (@Nullable final PModeParty aInitiator,
-                @Nullable final PModeParty aResponder,
-                @Nonnull final IPModeConfig aConfig)
+  /** The type of ebMS MEP associated with this P-Mode. */
+  private EMEP m_eMEP = EMEP.DEFAULT_EBMS;
+
+  /**
+   * The transport channel binding assigned to the MEP (push, pull, sync,
+   * push-and-push, push-and-pull, pull-and-push, pull-and-pull, ...).
+   */
+  private EMEPBinding m_eMEPBinding = EMEPBinding.DEFAULT_EBMS;
+
+  private PModeLeg m_aLeg1;
+  private PModeLeg m_aLeg2;
+
+  /**
+   * PayloadService is only used in the AS4 - Profile, to mark the compression
+   * type.
+   */
+  private PModePayloadService m_aPayloadService;
+
+  private PModeReceptionAwareness m_aReceptionAwareness;
+
+  public PMode (@Nonnull @Nonempty final String sID,
+                @Nonnull final PModeParty aInitiator,
+                @Nonnull final PModeParty aResponder,
+                @Nonnull final String sAgreement,
+                @Nonnull final EMEP eMEP,
+                @Nonnull final EMEPBinding eMEPBinding,
+                @Nonnull final PModeLeg aLeg1,
+                @Nullable final PModeLeg aLeg2,
+                @Nullable final PModePayloadService aPayloadService,
+                @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUser (), aInitiator, aResponder, aConfig);
+    this (StubObject.createForCurrentUserAndID (sID),
+          aInitiator,
+          aResponder,
+          sAgreement,
+          eMEP,
+          eMEPBinding,
+          aLeg1,
+          aLeg2,
+          aPayloadService,
+          aReceptionAwareness);
   }
 
-  PMode (@Nonnull final StubObject aStubObject,
-         @Nullable final PModeParty aInitiator,
-         @Nullable final PModeParty aResponder,
-         @Nonnull final IPModeConfig aConfig)
+  PMode (@Nonnull final StubObject aObject,
+         @Nonnull final PModeParty aInitiator,
+         @Nonnull final PModeParty aResponder,
+         @Nonnull final String sAgreement,
+         @Nonnull final EMEP eMEP,
+         @Nonnull final EMEPBinding eMEPBinding,
+         @Nonnull final PModeLeg aLeg1,
+         @Nullable final PModeLeg aLeg2,
+         @Nullable final PModePayloadService aPayloadService,
+         @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    super (aStubObject);
+    super (aObject);
     setInitiator (aInitiator);
     setResponder (aResponder);
-    m_aConfig = ValueEnforcer.notNull (aConfig, "PModeConfig");
+    setAgreement (sAgreement);
+    setMEP (eMEP);
+    setMEPBinding (eMEPBinding);
+    setLeg1 (aLeg1);
+    setLeg2 (aLeg2);
+    setPayloadService (aPayloadService);
+    setReceptionAwareness (aReceptionAwareness);
   }
 
   @Nonnull
@@ -132,9 +181,80 @@ public class PMode extends AbstractBaseObject implements IPMode
   }
 
   @Nullable
-  public IPModeConfig getConfig ()
+  public String getAgreement ()
   {
-    return m_aConfig;
+    return m_sAgreement;
+  }
+
+  public final void setAgreement (final String sAgreement)
+  {
+    m_sAgreement = sAgreement;
+  }
+
+  @Nonnull
+  public EMEP getMEP ()
+  {
+    return m_eMEP;
+  }
+
+  public final void setMEP (@Nonnull final EMEP eMEP)
+  {
+    ValueEnforcer.notNull (eMEP, "MEP");
+    m_eMEP = eMEP;
+  }
+
+  @Nonnull
+  public EMEPBinding getMEPBinding ()
+  {
+    return m_eMEPBinding;
+  }
+
+  public final void setMEPBinding (@Nonnull final EMEPBinding eMEPBinding)
+  {
+    ValueEnforcer.notNull (eMEPBinding, "MEPBinding");
+    m_eMEPBinding = eMEPBinding;
+  }
+
+  @Nullable
+  public PModeLeg getLeg1 ()
+  {
+    return m_aLeg1;
+  }
+
+  public final void setLeg1 (@Nullable final PModeLeg aLeg1)
+  {
+    m_aLeg1 = aLeg1;
+  }
+
+  @Nullable
+  public PModeLeg getLeg2 ()
+  {
+    return m_aLeg2;
+  }
+
+  public final void setLeg2 (@Nullable final PModeLeg aLeg2)
+  {
+    m_aLeg2 = aLeg2;
+  }
+
+  public PModePayloadService getPayloadService ()
+  {
+    return m_aPayloadService;
+  }
+
+  public final void setPayloadService (@Nullable final PModePayloadService aPayloadService)
+  {
+    m_aPayloadService = aPayloadService;
+  }
+
+  public PModeReceptionAwareness getReceptionAwareness ()
+  {
+    return m_aReceptionAwareness;
+  }
+
+  public final void setReceptionAwareness (@Nullable final PModeReceptionAwareness aPModeReceptionAwareness)
+  {
+    m_aReceptionAwareness = aPModeReceptionAwareness;
   }
 
   @Override
@@ -160,7 +280,13 @@ public class PMode extends AbstractBaseObject implements IPMode
     return ToStringGenerator.getDerived (super.toString ())
                             .append ("Initiator", m_aInitiator)
                             .append ("Responder", m_aResponder)
-                            .append ("Config", m_aConfig)
+                            .append ("Agreement", m_sAgreement)
+                            .append ("MEP", m_eMEP)
+                            .append ("MEPBinding", m_eMEPBinding)
+                            .append ("Leg1", m_aLeg1)
+                            .append ("Leg2", m_aLeg2)
+                            .append ("PayloadService", m_aPayloadService)
+                            .append ("ReceptionAwareness", m_aReceptionAwareness)
                             .getToString ();
   }
 }

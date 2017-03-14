@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.error.list.ErrorList;
@@ -35,12 +35,12 @@ public interface IAS4ProfileValidator extends Serializable
   /**
    * Validation method
    *
-   * @param aPModeConfig
-   *        The PMode config to be validated. May not be <code>null</code>.
+   * @param aPMode
+   *        The PMode to be validated. May not be <code>null</code>.
    * @param aErrorList
    *        The error list to be filled. May not be <code>null</code>.
    */
-  default void validatePModeConfig (@Nonnull final IPModeConfig aPModeConfig, @Nonnull final ErrorList aErrorList)
+  default void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {}
 
   /**

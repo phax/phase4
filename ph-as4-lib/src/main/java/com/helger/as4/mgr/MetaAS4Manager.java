@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.PModeManager;
-import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.AS4ProfileManager;
 import com.helger.commons.annotation.UsedViaReflection;
@@ -39,7 +38,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
   private static final String MPC_XML = "as4-mpc.xml";
   private static final String PARTNER_XML = "as4-partner.xml";
-  private static final String PMODE_CONFIG_XML = "as4-pmodeconfig.xml";
   private static final String PMODE_XML = "as4-pmode.xml";
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
@@ -47,7 +45,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
   private MPCManager m_aMPCMgr;
   private PartnerManager m_aPartnerMgr;
-  private PModeConfigManager m_aPModeConfigMgr;
   private PModeManager m_aPModeMgr;
   private AS4ProfileManager m_aProfileMgr;
   private AS4DuplicateManager m_aIncomingDuplicateMgr;
@@ -70,7 +67,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       // MPC manager before PMode manager
       m_aMPCMgr = new MPCManager (MPC_XML);
       m_aPartnerMgr = new PartnerManager (PARTNER_XML);
-      m_aPModeConfigMgr = new PModeConfigManager (PMODE_CONFIG_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
       m_aProfileMgr = new AS4ProfileManager ();
       m_aIncomingDuplicateMgr = new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
@@ -78,7 +74,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       _initCallbacks ();
 
       // Validate content
-      m_aPModeConfigMgr.validateAllPModeConfigs (aLocale);
       m_aPModeMgr.validateAllPModes ();
 
       s_aLogger.info (ClassHelper.getClassLocalName (this) + " was initialized");
@@ -109,12 +104,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static PartnerManager getPartnerMgr ()
   {
     return getInstance ().m_aPartnerMgr;
-  }
-
-  @Nonnull
-  public static PModeConfigManager getPModeConfigMgr ()
-  {
-    return getInstance ().m_aPModeConfigMgr;
   }
 
   @Nonnull

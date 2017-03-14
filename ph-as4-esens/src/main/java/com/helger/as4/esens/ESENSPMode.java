@@ -23,12 +23,12 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
-import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
@@ -47,31 +47,28 @@ public final class ESENSPMode
   {}
 
   @Nonnull
-  public static PModeConfig createESENSPModeConfig (@Nonnull final String sAddress)
-  {
-    final PModeConfig aConfig = new PModeConfig (ESENS_PMODE_CONFIG_ID);
-    aConfig.setMEP (EMEP.ONE_WAY);
-    aConfig.setMEPBinding (EMEPBinding.PUSH);
-    aConfig.setLeg1 (new PModeLeg (_generatePModeLegProtocol (sAddress),
-                                   _generatePModeLegBusinessInformation (),
-                                   _generatePModeLegErrorHandling (),
-                                   (PModeLegReliability) null,
-                                   _generatePModeLegSecurity ()));
-    // Leg 2 stays null, because we only use one-way
-    aConfig.setLeg2 (null);
-    aConfig.setReceptionAwareness (PModeReceptionAwareness.createDefault ());
-
-    // Ensure it is stored
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aConfig);
-    return aConfig;
-  }
-
-  @Nonnull
   public static PMode createESENSPMode (@Nonnull final String sAddress)
   {
-    final PModeConfig aConfig = createESENSPModeConfig (sAddress);
 
-    return new PMode (_generateInitiatorOrResponder (true), _generateInitiatorOrResponder (false), aConfig);
+    final PMode aConfig = new PMode (ESENS_PMODE_CONFIG_ID,
+                                     _generateInitiatorOrResponder (true),
+                                     _generateInitiatorOrResponder (false),
+                                     MockEbmsHelper.DEFAULT_AGREEMENT,
+                                     EMEP.ONE_WAY,
+                                     EMEPBinding.PUSH,
+                                     new PModeLeg (_generatePModeLegProtocol (sAddress),
+                                                   _generatePModeLegBusinessInformation (),
+                                                   _generatePModeLegErrorHandling (),
+                                                   (PModeLegReliability) null,
+                                                   _generatePModeLegSecurity ()),
+                                     null,
+                                     null,
+                                     PModeReceptionAwareness.createDefault ());
+    // Leg 2 stays null, because we only use one-way
+    // Ensure it is stored
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aConfig);
+    return aConfig;
+
   }
 
   @Nonnull

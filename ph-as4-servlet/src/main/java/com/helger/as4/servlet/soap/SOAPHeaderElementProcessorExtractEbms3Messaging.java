@@ -34,7 +34,7 @@ import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.mpc.MPCManager;
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Needed for the compression check: it is not allowed to have a
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -231,7 +231,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       return ESuccess.FAILURE;
     }
 
-    IPModeConfig aPModeConfig = null;
+    IPMode aPMode = null;
     final Ebms3CollaborationInfo aCollaborationInfo = aUserMessage.getCollaborationInfo ();
     if (aCollaborationInfo != null)
     {
@@ -240,11 +240,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (aCollaborationInfo.getAgreementRef () != null)
         sPModeConfigID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
-      aPModeConfig = AS4ServerSettings.getPModeConfigResolver ().getPModeConfigOfID (sPModeConfigID,
+      aPMode = AS4ServerSettings.getPModeConfigResolver ().getPModeOfID (sPModeConfigID,
                                                                                      aCollaborationInfo.getService ()
                                                                                                        .getValue (),
                                                                                      aCollaborationInfo.getAction ());
-      if (aPModeConfig == null)
+      if (aPMode == null)
       {
         s_aLogger.warn ("Failed to resolve PMode '" +
                         sPModeConfigID +
@@ -261,14 +261,14 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     PModeLeg aPModeLeg2 = null;
     IMPC aEffectiveMPC = null;
 
-    if (aPModeConfig != null)
+    if (aPMode != null)
     {
-      aPModeLeg1 = aPModeConfig.getLeg1 ();
-      aPModeLeg2 = aPModeConfig.getLeg2 ();
+      aPModeLeg1 = aPMode.getLeg1 ();
+      aPModeLeg2 = aPMode.getLeg2 ();
 
       // if the two - way is selected, check if it requires two legs and if both
       // are present
-      if (aPModeConfig.getMEPBinding ().getRequiredLegs () == 2)
+      if (aPMode.getMEPBinding ().getRequiredLegs () == 2)
       {
         if (aPModeLeg2 == null)
         {
@@ -422,7 +422,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
     // Remember in state
     aState.setMessaging (aMessaging);
-    aState.setPModeConfig (aPModeConfig);
+    aState.setPMode (aPMode);
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);

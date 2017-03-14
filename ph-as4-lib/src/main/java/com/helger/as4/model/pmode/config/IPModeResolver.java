@@ -19,13 +19,15 @@ package com.helger.as4.model.pmode.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4.model.pmode.IPMode;
+
 /**
  * Resolve PMode from ID
  *
  * @author Philip Helger
  */
 @FunctionalInterface
-public interface IPModeConfigResolver
+public interface IPModeResolver
 {
   /**
    * Get the PMode config of the passed ID.
@@ -41,5 +43,5 @@ public interface IPModeConfigResolver
    * @return <code>null</code> if resolution failed.
    */
   @Nullable
-  IPModeConfig getPModeConfigOfID (@Nullable String sPModeID, @Nonnull String sService, @Nonnull String sAction);
+  IPMode getPModeOfID (@Nullable String sPModeID, @Nonnull String sService, @Nonnull String sAction);
 }

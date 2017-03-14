@@ -19,7 +19,9 @@ package com.helger.as4.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.EMEP;
+import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.photon.basic.object.IObject;
 
@@ -45,13 +47,38 @@ public interface IPMode extends IObject
     return aParty == null ? null : aParty.getID ();
   }
 
+  @Nullable
+  String getAgreement ();
+
   @Nonnull
-  IPModeConfig getConfig ();
+  EMEP getMEP ();
 
   @Nonnull
   @Nonempty
-  default String getConfigID ()
+  default String getMEPID ()
   {
-    return getConfig ().getID ();
+    return getMEP ().getID ();
   }
+
+  @Nonnull
+  EMEPBinding getMEPBinding ();
+
+  @Nonnull
+  @Nonempty
+  default String getMEPBindingID ()
+  {
+    return getMEPBinding ().getID ();
+  }
+
+  @Nullable
+  PModeLeg getLeg1 ();
+
+  @Nullable
+  PModeLeg getLeg2 ();
+
+  @Nullable
+  PModePayloadService getPayloadService ();
+
+  @Nullable
+  PModeReceptionAwareness getReceptionAwareness ();
 }

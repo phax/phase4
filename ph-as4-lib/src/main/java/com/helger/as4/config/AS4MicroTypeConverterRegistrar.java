@@ -31,8 +31,6 @@ import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModePayloadServiceMicroTypeConverter;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.PModeReceptionAwarenessMicroTypeConverter;
-import com.helger.as4.model.pmode.config.PModeConfig;
-import com.helger.as4.model.pmode.config.PModeConfigMicroTypeConverter;
 import com.helger.as4.model.pmode.leg.PModeAddressList;
 import com.helger.as4.model.pmode.leg.PModeAddressListMicroTypeConverter;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -66,7 +64,6 @@ public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverter
     // Register all MicroTypeConverter
     aRegistry.registerMicroElementTypeConverter (PModeParty.class, new PModePartyMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PMode.class, new PModeMicroTypeConverter ());
-    aRegistry.registerMicroElementTypeConverter (PModeConfig.class, new PModeConfigMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeLegBusinessInformation.class,
                                                  new PModeLegBusinessInformationMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeLegErrorHandling.class,

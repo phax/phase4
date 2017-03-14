@@ -47,7 +47,6 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
-import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.server.MockPModeGenerator;
@@ -133,7 +132,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    ((PModeConfig) aPMode.getConfig ()).setLeg1 (null);
+    aPMode.setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     try
@@ -141,7 +140,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       aPModeMgr.createPMode (aPMode);
 
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
-      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
+      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                                                                      m_aEbms3UserMessage)
@@ -162,7 +161,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     {
       // The MockPModeGenerator generates automatically a PModeConfig, we need
       // too delete it after we are done with the test
-      MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
+      MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
   }
@@ -172,7 +171,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    aPMode.getConfig ().getLeg1 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
+    aPMode.getLeg1 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     try
@@ -180,7 +179,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       aPModeMgr.createPMode (aPMode);
 
       final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
-      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getConfigID ());
+      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                     m_aEbms3UserMessage)
@@ -195,7 +194,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     {
       // The MockPModeGenerator generates automatically a PModeConfig, we need
       // too delete it after we are done with the test
-      MetaAS4Manager.getPModeConfigMgr ().deletePModeConfig (aPMode.getConfigID ());
+      MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
   }
@@ -230,7 +229,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
 
     aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
@@ -317,11 +316,11 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
-    ((PModeConfig) aPMode.getConfig ()).setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("TestsimulationAddressWrong"),
-                                                               null,
-                                                               null,
-                                                               null,
-                                                               null));
+    aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("TestsimulationAddressWrong"),
+                                  null,
+                                  null,
+                                  null,
+                                  null));
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {

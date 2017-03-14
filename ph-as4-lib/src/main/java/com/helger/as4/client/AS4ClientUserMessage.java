@@ -71,10 +71,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private final AS4ResourceManager m_aResMgr;
 
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
 
   // CollaborationInfo
   private String m_sAction;
@@ -203,7 +203,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
@@ -478,7 +478,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   public void setAgreementRefPMode (@Nullable final IPMode aPMode)
   {
-    setAgreementRefPMode (aPMode == null ? null : aPMode.getConfigID ());
+    setAgreementRefPMode (aPMode == null ? null : aPMode.getID ());
   }
 
   public String getAgreementRefValue ()

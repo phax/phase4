@@ -41,7 +41,7 @@ import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
@@ -76,14 +76,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final ErrorList aErrorList,
                                         @Nonnull final Locale aLocale)
   {
-    final IPModeConfig aPModeConfig = aState.getPModeConfig ();
+    final IPMode aPMode = aState.getPMode ();
     // Safety Check
-    if (aPModeConfig == null)
+    if (aPMode == null)
       throw new IllegalStateException ("No PMode contained in AS4 state - seems like Ebms3 Messaging header is missing!");
 
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
-    PModeLeg aPModeLeg = aPModeConfig.getLeg1 ();
+    PModeLeg aPModeLeg = aPMode.getLeg1 ();
     final Ebms3Messaging aMessage = aState.getMessaging ();
     if (aMessage != null)
       if (aMessage.getUserMessageAtIndex (0) != null)
@@ -92,7 +92,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         .getMessageInfo ()
                                         .getRefToMessageId ()))
         {
-          aPModeLeg = aPModeConfig.getLeg2 ();
+          aPModeLeg = aPMode.getLeg2 ();
         }
 
     // Does security - legpart checks if not <code>null</code>

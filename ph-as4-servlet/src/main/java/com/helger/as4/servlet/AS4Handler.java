@@ -64,11 +64,8 @@ import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.MEPHelper;
-import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PModeManager;
-import com.helger.as4.model.pmode.PModeParty;
-import com.helger.as4.model.pmode.config.IPModeConfig;
-import com.helger.as4.model.pmode.config.PModeConfigManager;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
@@ -91,16 +88,13 @@ import com.helger.as4.util.StringMap;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
-import com.helger.as4lib.ebms3header.Ebms3From;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
-import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
-import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
@@ -467,7 +461,7 @@ public final class AS4Handler implements Closeable
       aState = aStateImpl;
     }
 
-    final IPModeConfig aPModeConfig = aState.getPModeConfig ();
+    final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     Ebms3UserMessage aUserMessage = null;
     Ebms3PullRequest aPullRequest = null;
@@ -478,7 +472,7 @@ public final class AS4Handler implements Closeable
     boolean bCanInvokeSPIs = false;
     if (aErrorMessages.isEmpty ())
     {
-      if (aPModeConfig == null)
+      if (aPMode == null)
         throw new BadRequestException ("No AS4 P-Mode configuration found!");
       if (aEffectiveLeg == null)
         throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
@@ -507,7 +501,7 @@ public final class AS4Handler implements Closeable
 
         // Profile Checks gets set when started with Server
         final ErrorList aErrorList = new ErrorList ();
-        aProfile.getValidator ().validatePModeConfig (aPModeConfig, aErrorList);
+        aProfile.getValidator ().validatePMode (aPMode, aErrorList);
         aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
         if (aErrorList.isNotEmpty ())
         {
@@ -565,36 +559,26 @@ public final class AS4Handler implements Closeable
       // P+P da + PConfig da = nix tun
       // P+P da + PConfig id fehlt = default
 
-      final String sConfigID = aPModeConfig.getID ();
+      final String sPModeID = aPMode.getID ();
 
-      final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
+      final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
       final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
 
-      if (aPModeConfigMgr.containsWithID (sConfigID))
+      if (aPModeMgr.containsWithID (sPModeID))
       {
-        if (aPartnerMgr.containsWithID (aState.getInitiatorID ()) &&
-            aPartnerMgr.containsWithID (aState.getResponderID ()))
+        if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
         {
-          _ensurePModeIsPresent (aState, sConfigID, aUserMessage.getPartyInfo ());
+          _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
         }
         else
-        {
-          if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
+          if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
           {
-            _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
+            s_aLogger.warn ("Responder is not the default or an already registered one");
+            _createOrUpdatePartner (null, aState.getResponderID ());
           }
-          else
-            if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
-            {
-              s_aLogger.warn ("Responder is not the default or an already registered one");
-              _createOrUpdatePartner (null, aState.getResponderID ());
-            }
-
-          _ensurePModeIsPresent (aState, sConfigID, aUserMessage.getPartyInfo ());
-        }
       }
 
-      if (_isNotPingMessage (aPModeConfig))
+      if (_isNotPingMessage (aPMode))
       {
         final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
         final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
@@ -621,7 +605,7 @@ public final class AS4Handler implements Closeable
 
     if (bCanInvokeSPIs)
     {
-      if (aPModeConfig.getMEPBinding ().isSynchronous ())
+      if (aPMode.getMEPBinding ().isSynchronous ())
       {
         // Call synchronous
         // Might add to aErrorMessages
@@ -684,7 +668,7 @@ public final class AS4Handler implements Closeable
     {
       final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
-      if (aPModeConfig.getMEP ().isOneWay ())
+      if (aPMode.getMEP ().isOneWay ())
       {
         // If no Error is present check if partners declared if they want a
         // response and if this response should contain non-repudiation
@@ -699,13 +683,11 @@ public final class AS4Handler implements Closeable
       else
       {
         // TWO - WAY
-        final PModeLeg aLeg2 = aPModeConfig.getLeg2 ();
+        final PModeLeg aLeg2 = aPMode.getLeg2 ();
         if (aLeg2 == null)
           throw new BadRequestException ("PModeConfig has no leg2!");
 
-        if (MEPHelper.isValidResponseTypeLeg2 (aPModeConfig.getMEP (),
-                                               aPModeConfig.getMEPBinding (),
-                                               EAS4MessageType.USER_MESSAGE))
+        if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
         {
           final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
                                                                               aUserMessage,
@@ -961,13 +943,13 @@ public final class AS4Handler implements Closeable
    * method just checks if the pmode got these exact values set. If true, no SPI
    * processing is done.
    *
-   * @param aPModeConfig
+   * @param aPMode
    *        to check
    * @return true if the default values to ping are not used else false
    */
-  private static boolean _isNotPingMessage (@Nonnull final IPModeConfig aPModeConfig)
+  private static boolean _isNotPingMessage (@Nonnull final IPMode aPMode)
   {
-    final PModeLegBusinessInformation aBInfo = aPModeConfig.getLeg1 ().getBusinessInfo ();
+    final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
 
     if (aBInfo != null &&
         CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
@@ -1082,48 +1064,6 @@ public final class AS4Handler implements Closeable
       throw new BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
     if (StringHelper.hasNoText (sFinalRecipientC4))
       throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
-  }
-
-  /**
-   * Creates a PMode if it does not exist already.
-   *
-   * @param aState
-   *        needed to get Responder and Initiator
-   * @param sPModeConfigID
-   *        needed to get the PModeConfig for the PMode
-   * @param aPartyInfo
-   *        Party information from user message, needed to get full information
-   *        of the Initiator and Responder
-   */
-  private static void _ensurePModeIsPresent (@Nonnull final IAS4MessageState aState,
-                                             @Nonnull final String sPModeConfigID,
-                                             @Nonnull final Ebms3PartyInfo aPartyInfo)
-  {
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-
-    if (aPModeMgr.containsNone (PModeManager.getPModeFilter (sPModeConfigID,
-                                                             aState.getInitiatorID (),
-                                                             aState.getResponderID ())))
-    {
-      final IPModeConfig aPModeConfig = MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sPModeConfigID);
-      if (aPModeConfig == null)
-        throw new IllegalStateException ("Failed to resolve PModeConfig with ID '" + sPModeConfigID + "'");
-
-      final Ebms3From aFrom = aPartyInfo.getFrom ();
-      final Ebms3PartyId aFromID = aFrom.getPartyIdAtIndex (0);
-      final Ebms3To aTo = aPartyInfo.getTo ();
-      final Ebms3PartyId aToID = aTo.getPartyIdAtIndex (0);
-
-      final PMode aPMode = new PMode (new PModeParty (aFromID.getType (),
-                                                      aFromID.getValue (),
-                                                      aFrom.getRole (),
-                                                      null,
-                                                      null),
-                                      new PModeParty (aToID.getType (), aToID.getValue (), aTo.getRole (), null, null),
-                                      aPModeConfig);
-      aPModeMgr.createOrUpdatePMode (aPMode);
-    }
-    // If the PMode already exists we do not need to do anything
   }
 
   @Nonnull

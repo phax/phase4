@@ -21,9 +21,9 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
@@ -51,14 +51,22 @@ public final class DefaultPMode
   {}
 
   @Nonnull
-  public static PModeConfig createDefaultPModeConfig (@Nullable final String sAddress)
+  public static PMode createDefaultPMode (@Nullable final String sAddress)
   {
-    final PModeConfig aDefaultConfig = new PModeConfig (DEFAULT_PMODE_ID);
-    aDefaultConfig.setMEP (EMEP.ONE_WAY);
-    aDefaultConfig.setMEPBinding (EMEPBinding.PUSH);
-    aDefaultConfig.setLeg1 (_generatePModeLeg (sAddress));
+    final PMode aDefaultPMode = new PMode (DEFAULT_PMODE_ID,
+                                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                    CAS4.DEFAULT_SENDER_URL),
+                                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                    CAS4.DEFAULT_SENDER_URL),
+                                           MockEbmsHelper.DEFAULT_AGREEMENT,
+                                           EMEP.ONE_WAY,
+                                           EMEPBinding.PUSH,
+                                           _generatePModeLeg (sAddress),
+                                           null,
+                                           null,
+                                           null);
     // Leg 2 stays null, because we only use one-way
-    return aDefaultConfig;
+    return aDefaultPMode;
   }
 
   @Nonnull

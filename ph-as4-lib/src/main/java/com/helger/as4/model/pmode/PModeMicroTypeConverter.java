@@ -19,8 +19,9 @@ package com.helger.as4.model.pmode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.EMEP;
+import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
@@ -30,7 +31,11 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
 {
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";
-  private static final String ATTR_PMODE_CONFIG_ID = "ConfigID";
+  private static final String ATTR_AGREEMENT = "Agreement";
+  private static final String ATTR_MEP = "MEP";
+  private static final String ATTR_MEP_BINDING = "MEPBinding";
+  private static final String ELEMENT_LEG1 = "Leg1";
+  private static final String ELEMENT_LEG2 = "Leg2";
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -46,23 +51,35 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getResponder (),
                                                                sNamespaceURI,
                                                                ELEMENT_RESPONDER));
-    ret.setAttribute (ATTR_PMODE_CONFIG_ID, aValue.getConfigID ());
+    ret.setAttribute (ATTR_AGREEMENT, aValue.getAgreement ());
+    ret.setAttribute (ATTR_MEP, aValue.getMEPID ());
+    ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
     return ret;
   }
 
   @Nonnull
   public PMode convertToNative (@Nonnull final IMicroElement aElement)
   {
-    final String sConfigID = aElement.getAttributeValue (ATTR_PMODE_CONFIG_ID);
-    final IPModeConfig aConfig = MetaAS4Manager.getPModeConfigMgr ().getPModeConfigOfID (sConfigID);
-    if (aConfig == null)
-      throw new IllegalStateException ("Failed to resolve PModeConfig with ID '" + sConfigID + "'");
-
     final PModeParty aInitiator = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_INITIATOR),
                                                                       PModeParty.class);
     final PModeParty aResponder = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
                                                                       PModeParty.class);
 
-    return new PMode (getStubObject (aElement), aInitiator, aResponder, aConfig);
+    final PMode ret = new PMode (getStubObject (aElement),
+                                 aInitiator,
+                                 aResponder,
+                                 aElement.getAttributeValue (ATTR_AGREEMENT),
+                                 EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)),
+                                 EMEPBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)),
+                                 MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1),
+                                                                     PModeLeg.class),
+                                 MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2),
+                                                                     PModeLeg.class),
+                                 null,
+                                 null);
+
+    return ret;
   }
 }

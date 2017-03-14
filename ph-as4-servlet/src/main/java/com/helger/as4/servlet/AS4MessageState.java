@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.mpc.IMPC;
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -53,7 +53,7 @@ import com.helger.commons.datetime.PDTFactory;
 public class AS4MessageState extends MapBasedAttributeContainerAny <String> implements IAS4MessageState
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
-  private static final String KEY_PMODE_CONFIG = "as4.pmode.config";
+  private static final String KEY_PMODE = "as4.pmode.config";
   private static final String KEY_MPC = "as4.mpc";
   private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "as4.soap.attachmentlist";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
@@ -107,21 +107,20 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   }
 
   /**
-   * Set the PMode configuration to be used. Called only from Ebms3 header
-   * processor
+   * Set the PMode to be used. Called only from Ebms3 header processor
    *
-   * @param aPModeConfig
+   * @param aPMode
    *        PMode Config. May be <code>null</code>.
    */
-  public void setPModeConfig (@Nullable final IPModeConfig aPModeConfig)
+  public void setPMode (@Nullable final IPMode aPMode)
   {
-    setAttribute (KEY_PMODE_CONFIG, aPModeConfig);
+    setAttribute (KEY_PMODE, aPMode);
   }
 
   @Nullable
-  public IPModeConfig getPModeConfig ()
+  public IPMode getPMode ()
   {
-    return getCastedAttribute (KEY_PMODE_CONFIG);
+    return getCastedAttribute (KEY_PMODE);
   }
 
   public void setOriginalAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)

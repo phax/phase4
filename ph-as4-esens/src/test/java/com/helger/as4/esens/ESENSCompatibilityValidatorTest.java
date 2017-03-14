@@ -32,7 +32,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.config.PModeConfig;
+import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
@@ -66,23 +66,23 @@ public class ESENSCompatibilityValidatorTest
   private static final Locale LOCALE = Locale.US;
   private final ESENSCompatibilityValidator aESENSCompatibilityValidator = new ESENSCompatibilityValidator ();
 
-  private PModeConfig m_aPModeConfig;
+  private PMode m_aPMode;
   private ErrorList m_aErrorList;
 
   @Before
   public void setUp ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPModeConfig = ESENSPMode.createESENSPModeConfig ("http://localhost:8080");
+    m_aPMode = ESENSPMode.createESENSPMode ("http://localhost:8080");
   }
 
   @Test
   public void testValidatePModeConfigWrongMEP ()
   {
-    m_aPModeConfig.setMEP (EMEP.TWO_WAY);
+    m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only 2-way push-push allowed
-    m_aPModeConfig.setMEPBinding (EMEPBinding.PULL);
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setMEPBinding (EMEPBinding.PULL);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
@@ -91,8 +91,8 @@ public class ESENSCompatibilityValidatorTest
   public void testValidatePModeConfigWrongMEPBinding ()
   {
     // SYNC not allowed
-    m_aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setMEPBinding (EMEPBinding.SYNC);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
@@ -100,48 +100,48 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigNoLeg ()
   {
-    m_aPModeConfig.setLeg1 (null);
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (null);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
   }
 
   @Test
   public void testValidatePModeConfigNoProtocol ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (null, null, null, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
   }
 
   @Test
   public void testValidatePModeConfigNoProtocolAddress ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
   }
 
   @Test
   public void testValidatePModeConfigProtocolAddressIsNotHttp ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("ftp://test.com"),
-                                          null,
-                                          null,
-                                          null,
-                                          null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("ftp://test.com"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
   }
 
   @Test
   public void testValidatePModeConfigProtocolSOAP11NotAllowed ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
-                                          null,
-                                          null,
-                                          null,
-                                          null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
   }
 
@@ -150,31 +150,31 @@ public class ESENSCompatibilityValidatorTest
   @Ignore ("Certificate check was a TODO")
   public void testValidatePModeConfigSecurityNoX509SignatureCertificate ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityNoX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (null);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityWrongX509SignatureAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
     assertNotSame (aSecurityLeg.getX509SignatureAlgorithm (), ECryptoAlgorithmSign.RSA_SHA_256);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
@@ -182,20 +182,20 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigSecurityNoX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (null);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityWrongX509SignatureHashFunction ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
@@ -203,20 +203,20 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigSecurityNoX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (null);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityWrongX509EncryptionAlgorithm ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_192_CBC);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
@@ -225,18 +225,18 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigSecurityWrongWSSVersion ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setWSSVersion (EWSSVersion.WSS_10);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityPModeAuthorizeMandatory ()
   {
-    m_aPModeConfig.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue ("Errors: " +
                 m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
@@ -245,21 +245,21 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigSecurityPModeAuthorizeTrue ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setPModeAuthorize (true);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
   @Test
   public void testValidatePModeConfigSecurityResponsePatternWrongBoolean ()
   {
-    final PModeLegSecurity aSecurityLeg = m_aPModeConfig.getLeg1 ().getSecurity ();
+    final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setSendReceipt (true);
     aSecurityLeg.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.CALLBACK);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Only response is allowed as pattern")));
   }
@@ -269,9 +269,9 @@ public class ESENSCompatibilityValidatorTest
   @Test
   public void testValidatePModeConfigErrorHandlingMandatory ()
   {
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, null));
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, null));
 
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("No ErrorHandling Parameter present but they are mandatory")));
   }
@@ -285,8 +285,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportAsResponse is a mandatory PMode parameter")));
   }
@@ -301,8 +301,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportAsResponse (false);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportAsResponse has to be True")));
   }
@@ -316,8 +316,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
   }
@@ -332,8 +332,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
   }
@@ -347,8 +347,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
   }
@@ -363,8 +363,8 @@ public class ESENSCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
-    m_aPModeConfig.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
-    aESENSCompatibilityValidator.validatePModeConfig (m_aPModeConfig, m_aErrorList);
+    m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
   }

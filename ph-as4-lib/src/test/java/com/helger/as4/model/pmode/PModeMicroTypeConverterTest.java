@@ -28,10 +28,8 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.config.PModeConfig;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeAddressList;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -66,39 +64,23 @@ public final class PModeMicroTypeConverterTest
   public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
-  public void testAsSimpleAsPossible ()
-  {
-    final PModeConfig aPModeConfig = new PModeConfig ("id");
-    XMLTestHelper.testMicroTypeConversion (aPModeConfig);
-  }
-
-  @Test
   public void testNativToMicroElementConversion ()
   {
-    final PModeConfig aPModeConfig = new PModeConfig ("id");
-    {
-      aPModeConfig.setAgreement ("Agreement");
-      aPModeConfig.setMEP (EMEP.TWO_WAY);
-      aPModeConfig.setMEPBinding (EMEPBinding.SYNC);
-      aPModeConfig.setLeg1 (_generatePModeLeg ());
-      aPModeConfig.setLeg2 (_generatePModeLeg ());
-      aPModeConfig.setPayloadService (_generatePayloadService ());
-      aPModeConfig.setReceptionAwareness (_generatePModeReceptionAwareness ());
-      XMLTestHelper.testMicroTypeConversion (aPModeConfig);
-      XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg1 ());
-      XMLTestHelper.testMicroTypeConversion (aPModeConfig.getLeg2 ());
-    }
-    MetaAS4Manager.getPModeConfigMgr ().createOrUpdatePModeConfig (aPModeConfig);
-
-    {
-      final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
-                                      _generateInitiatorOrResponder (false),
-                                      aPModeConfig);
-      XMLTestHelper.testMicroTypeConversion (aPMode);
-      XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
-      XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
-      XMLTestHelper.testMicroTypeConversion (aPMode.getConfig ());
-    }
+    final PMode aPMode = new PMode ("id",
+                                    null,
+                                    null,
+                                    "Agreement",
+                                    EMEP.TWO_WAY,
+                                    EMEPBinding.SYNC,
+                                    _generatePModeLeg (),
+                                    _generatePModeLeg (),
+                                    _generatePayloadService (),
+                                    _generatePModeReceptionAwareness ());
+    XMLTestHelper.testMicroTypeConversion (aPMode);
+    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg1 ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
+    XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
   }
 
   @Nonnull
@@ -152,7 +134,7 @@ public final class PModeMicroTypeConverterTest
                                                                               "xsdfilename",
                                                                               20001,
                                                                               EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap <> ();
     aPModePayloadProfiles.put (aPModePayloadProfile.getName (), aPModePayloadProfile);
     return aPModePayloadProfiles;
   }
@@ -165,7 +147,7 @@ public final class PModeMicroTypeConverterTest
                                                             "description",
                                                             PModeProperty.DATA_TYPE_STRING,
                                                             EMandatory.MANDATORY);
-    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
   }
@@ -196,7 +178,7 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegReliability _generatePModeLegReliability ()
   {
-    final ICommonsList <String> aCorrelation = new CommonsArrayList<> ("correlation", "correlation2");
+    final ICommonsList <String> aCorrelation = new CommonsArrayList <> ("correlation", "correlation2");
     return new PModeLegReliability (ETriState.TRUE,
                                     ETriState.TRUE,
                                     "ack",
@@ -213,9 +195,9 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList<> ("X509EncryptionEncrypt",
-                                                                                 "X509EncryptionEncrypt2");
-    final ICommonsList <String> aX509Sign = new CommonsArrayList<> ("X509Sign", "X509Sign2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
+                                                                                  "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,
                                  aX509Sign,

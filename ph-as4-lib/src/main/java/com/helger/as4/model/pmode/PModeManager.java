@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -143,26 +145,42 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   }
 
   @Nonnull
-  public static Predicate <IPMode> getPModeFilter (@Nullable final String sPModeConfigID,
+  public static Predicate <IPMode> getPModeFilter (@Nonnull final String sID,
                                                    @Nullable final String sInitiatorID,
                                                    @Nullable final String sResponderID)
   {
-    return p -> p.getConfigID ().equals (sPModeConfigID) &&
+    return p -> p.getID ().equals (sID) &&
                 EqualsHelper.equals (p.getInitiatorID (), sInitiatorID) &&
                 EqualsHelper.equals (p.getResponderID (), sResponderID);
+  }
+
+  @Nullable
+  public IPMode getPModeOfServiceAndAction (@Nullable final String sService, @Nullable final String sAction)
+  {
+    return findFirst (x -> {
+      final PModeLeg aLeg = x.getLeg1 ();
+      if (aLeg != null)
+      {
+        final PModeLegBusinessInformation aBI = aLeg.getBusinessInfo ();
+        if (aBI != null)
+        {
+          return EqualsHelper.equals (aBI.getService (), sService) && EqualsHelper.equals (aBI.getAction (), sAction);
+        }
+      }
+      return false;
+    });
   }
 
   @Nonnull
   public IPMode createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
-    PMode ret = (PMode) findFirst (getPModeFilter (aPMode.getConfigID (),
+    PMode ret = (PMode) findFirst (getPModeFilter (aPMode.getID (),
                                                    aPMode.getInitiatorID (),
                                                    aPMode.getResponderID ()));
 
     if (ret == null)
     {
-      ret = new PMode (aPMode.getInitiator (), aPMode.getResponder (), aPMode.getConfig ());
-      createPMode (ret);
+      ret = (PMode) createPMode (aPMode);
     }
     else
     {
@@ -193,11 +211,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     if (aPMode.getID () == null)
     {
       throw new IllegalStateException ("No PMode ID present");
-    }
-
-    if (aPMode.getConfigID () == null)
-    {
-      throw new IllegalStateException ("No PModeConfig ID present");
     }
 
     final PModeParty aInitiator = aPMode.getInitiator ();

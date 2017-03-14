@@ -19,7 +19,7 @@ package com.helger.as4.profile;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import com.helger.as4.model.pmode.config.IPModeConfig;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.function.ISupplier;
@@ -36,17 +36,17 @@ public class AS4Profile implements IAS4Profile
   private final String m_sID;
   private final String m_sDisplayName;
   private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
-  private final ISupplier <? extends IPModeConfig> m_aDefaultPModeConfigProvider;
+  private final ISupplier <? extends IPMode> m_aDefaultPModeProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final ISupplier <? extends IPModeConfig> aDefaultPModeConfigProvider)
+                     @Nonnull final ISupplier <? extends IPMode> aDefaultPModeConfigProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
     m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
-    m_aDefaultPModeConfigProvider = ValueEnforcer.notNull (aDefaultPModeConfigProvider, "aDefaultPModeConfigProvider");
+    m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeConfigProvider, "aDefaultPModeConfigProvider");
   }
 
   @Nonnull
@@ -70,9 +70,9 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Nonnull
-  public IPModeConfig createDefaultPModeConfig ()
+  public IPMode createDefaultPMode ()
   {
-    return m_aDefaultPModeConfigProvider.get ();
+    return m_aDefaultPModeProvider.get ();
   }
 
   @Override
@@ -81,7 +81,7 @@ public class AS4Profile implements IAS4Profile
     return new ToStringGenerator (this).append ("ID", m_sID)
                                        .append ("DisplayName", m_sDisplayName)
                                        .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
-                                       .append ("DefaultPModeConfigProvider", m_aDefaultPModeConfigProvider)
+                                       .append ("DefaultPModeConfigProvider", m_aDefaultPModeProvider)
                                        .getToString ();
   }
 }

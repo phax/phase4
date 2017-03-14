@@ -21,16 +21,18 @@ import javax.annotation.Nullable;
 
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.DefaultPMode;
+import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.commons.string.StringHelper;
 
 /**
- * Default implementation of {@link IPModeConfigResolver} using the fixed ID
+ * Default implementation of {@link IPModeResolver} using the fixed ID
  * only. If no ID is provided the default pmode is used.
  *
  * @author bayerlma
  */
-public class DefaultPModeConfigResolver implements IPModeConfigResolver
+public class DefaultPModeConfigResolver implements IPModeResolver
 {
   private final boolean m_bUseDefaultAsFallback;
 
@@ -40,25 +42,25 @@ public class DefaultPModeConfigResolver implements IPModeConfigResolver
   }
 
   @Nullable
-  public IPModeConfig getPModeConfigOfID (@Nullable final String sPModeConfigID,
-                                          @Nonnull final String sService,
-                                          @Nonnull final String sAction)
+  public IPMode getPModeOfID (@Nullable final String sPModeID,
+                                    @Nonnull final String sService,
+                                    @Nonnull final String sAction)
   {
-    final PModeConfigManager aPModeConfigMgr = MetaAS4Manager.getPModeConfigMgr ();
-    IPModeConfig ret = null;
-    if (StringHelper.hasText (sPModeConfigID))
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    IPMode ret = null;
+    if (StringHelper.hasText (sPModeID))
     {
       // An ID is present - resolve this ID
       // If provided ID is not present than the incoming message is rejected
       // with an error!
-      ret = aPModeConfigMgr.getPModeConfigOfID (sPModeConfigID);
+      ret = aPModeMgr.getPModeOfID (sPModeID);
     }
 
     if (ret == null)
     {
       // the pmodeconfig id field is empty or null (or invalid)
       // Use combination of service and action
-      ret = aPModeConfigMgr.getPModeConfigOfServiceAndAction (sService, sAction);
+      ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
     }
 
     if (ret != null)
@@ -75,8 +77,8 @@ public class DefaultPModeConfigResolver implements IPModeConfigResolver
     // 2. Default default
     final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
     if (aProfile != null)
-      return aProfile.createDefaultPModeConfig ();
+      return aProfile.createDefaultPMode ();
 
-    return aPModeConfigMgr.getPModeConfigOfID (DefaultPMode.DEFAULT_PMODE_ID);
+    return aPModeMgr.getPModeOfID (DefaultPMode.DEFAULT_PMODE_ID);
   }
 }

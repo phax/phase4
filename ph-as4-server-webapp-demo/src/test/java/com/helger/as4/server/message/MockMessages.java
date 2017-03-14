@@ -85,8 +85,8 @@ public final class MockMessages
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList<> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
-                                                                                                                              ""));
+    final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
+                                                                                                                               ""));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                                                     aEbms3ErrorList)
@@ -139,7 +139,7 @@ public final class MockMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           aPModeID.getConfigID (),
+                                                                                                           aPModeID.getID (),
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    MockEbmsHelper.DEFAULT_PARTY_ID,
@@ -172,7 +172,7 @@ public final class MockMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           aPMode.getConfigID () +
+                                                                                                           aPMode.getID () +
                                                                                                                    "x",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
@@ -198,7 +198,7 @@ public final class MockMessages
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aEbms3PropertyProcess = new Ebms3Property ();
     aEbms3Properties.add (aEbms3PropertyProcess);
 
@@ -228,7 +228,7 @@ public final class MockMessages
   private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
   {
     if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
-    return p -> p.getConfigID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
+      return p -> p.getID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
+    return p -> p.getID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
   }
 }
