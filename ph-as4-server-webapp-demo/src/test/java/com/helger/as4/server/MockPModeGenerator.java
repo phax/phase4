@@ -37,7 +37,6 @@ import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
@@ -140,10 +139,6 @@ public final class MockPModeGenerator
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     for (final String sID : aPModeMgr.getAllIDs ())
       aPModeMgr.deletePMode (sID);
-
-    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
-    for (final String sID : aPartnerMgr.getAllIDs ())
-      aPartnerMgr.deletePartner (sID);
 
     // Create new one
     aPModeMgr.createPMode (DefaultPMode.createDefaultPMode ("http://test.mock.org"));

@@ -24,6 +24,8 @@ import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Test class for class {@link PMode}.
  *
@@ -36,6 +38,7 @@ public final class PModeTest
   public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
+  @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public void testInvalidCtor ()
   {
     try

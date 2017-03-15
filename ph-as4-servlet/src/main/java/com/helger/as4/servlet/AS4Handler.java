@@ -20,7 +20,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -65,13 +64,10 @@ import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.MEPHelper;
 import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.partner.Partner;
-import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
@@ -84,7 +80,6 @@ import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
-import com.helger.as4.util.StringMap;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
@@ -113,7 +108,6 @@ import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.HTTPStringHelper;
-import com.helger.security.certificate.CertificateHelper;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -154,7 +148,7 @@ public final class AS4Handler implements Closeable
   private static final class AS4ResponderMIME implements IAS4Responder
   {
     private final MimeMessage m_aMimeMsg;
-    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap <> ();
+    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap<> ();
 
     public AS4ResponderMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
@@ -254,7 +248,7 @@ public final class AS4Handler implements Closeable
                                            @Nonnull final AS4MessageState aState,
                                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
+    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList<> ();
     {
       // Find SOAP header
       final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
@@ -447,7 +441,7 @@ public final class AS4Handler implements Closeable
     }
 
     // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList<> ();
 
     // All further operations should only operate on the interface
     IAS4MessageState aState;
@@ -468,7 +462,7 @@ public final class AS4Handler implements Closeable
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList<> ();
     boolean bCanInvokeSPIs = false;
     if (aErrorMessages.isEmpty ())
     {
@@ -559,25 +553,6 @@ public final class AS4Handler implements Closeable
       // P+P da + PConfig da = nix tun
       // P+P da + PConfig id fehlt = default
 
-      final String sPModeID = aPMode.getID ();
-
-      final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
-      final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
-
-      if (aPModeMgr.containsWithID (sPModeID))
-      {
-        if (!aPartnerMgr.containsWithID (aState.getInitiatorID ()))
-        {
-          _createOrUpdatePartner (aState.getUsedCertificate (), aState.getInitiatorID ());
-        }
-        else
-          if (!aPartnerMgr.containsWithID (aState.getResponderID ()))
-          {
-            s_aLogger.warn ("Responder is not the default or an already registered one");
-            _createOrUpdatePartner (null, aState.getResponderID ());
-          }
-      }
-
       if (_isNotPingMessage (aPMode))
       {
         final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
@@ -620,8 +595,8 @@ public final class AS4Handler implements Closeable
         final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
 
         AS4WorkerPool.getInstance ().run ( () -> {
-          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
-          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
+          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList<> ();
+          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList<> ();
           IAS4Responder aAsyncResponder;
           if (_invokeSPIs (aFinalUserMessage,
                            aFinalPayloadNode,
@@ -1017,27 +992,6 @@ public final class AS4Handler implements Closeable
   }
 
   /**
-   * Creates or Updates are Partner. Overwrites with the values in the parameter
-   * or creates a new Partner if not present in the PartnerManager already.
-   *
-   * @param aUsedCertificate
-   *        Certificate that should be used
-   * @param sID
-   *        ID of the Partner
-   */
-  private static void _createOrUpdatePartner (@Nullable final X509Certificate aUsedCertificate,
-                                              @Nonnull final String sID)
-  {
-    final StringMap aStringMap = new StringMap ();
-    aStringMap.setAttribute (Partner.ATTR_PARTNER_NAME, sID);
-    if (aUsedCertificate != null)
-      aStringMap.setAttribute (Partner.ATTR_CERT, CertificateHelper.getPEMEncodedCertificate (aUsedCertificate));
-
-    final PartnerManager aPartnerMgr = MetaAS4Manager.getPartnerMgr ();
-    aPartnerMgr.createOrUpdatePartner (sID, aStringMap);
-  }
-
-  /**
    * Checks the mandatory properties OriginalSender and FinalRecipient if those
    * two are set.
    *
@@ -1095,7 +1049,7 @@ public final class AS4Handler implements Closeable
 
     Document aSOAPDocument = null;
     ESOAPVersion eSOAPVersion = null;
-    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList<> ();
 
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
     if (aPlainContentType.equals (MT_MULTIPART_RELATED))

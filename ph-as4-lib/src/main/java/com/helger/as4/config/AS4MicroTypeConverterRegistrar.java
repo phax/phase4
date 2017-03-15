@@ -49,8 +49,6 @@ import com.helger.as4.model.pmode.leg.PModePayloadProfile;
 import com.helger.as4.model.pmode.leg.PModePayloadProfileMicroTypeConverter;
 import com.helger.as4.model.pmode.leg.PModeProperty;
 import com.helger.as4.model.pmode.leg.PModePropertyMicroTypeConverter;
-import com.helger.as4.partner.Partner;
-import com.helger.as4.partner.PartnerMicroTypeConverter;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
@@ -84,7 +82,6 @@ public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverter
 
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
 
-    aRegistry.registerMicroElementTypeConverter (Partner.class, new PartnerMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (AS4DuplicateItem.class, new AS4DuplicateItemMicroTypeConverter ());
   }
 }

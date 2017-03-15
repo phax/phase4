@@ -16,8 +16,6 @@
  */
 package com.helger.as4.mgr;
 
-import java.util.Locale;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -26,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.PModeManager;
-import com.helger.as4.partner.PartnerManager;
 import com.helger.as4.profile.AS4ProfileManager;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
@@ -37,14 +34,12 @@ import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
   private static final String MPC_XML = "as4-mpc.xml";
-  private static final String PARTNER_XML = "as4-partner.xml";
   private static final String PMODE_XML = "as4-pmode.xml";
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private MPCManager m_aMPCMgr;
-  private PartnerManager m_aPartnerMgr;
   private PModeManager m_aPModeMgr;
   private AS4ProfileManager m_aProfileMgr;
   private AS4DuplicateManager m_aIncomingDuplicateMgr;
@@ -60,13 +55,10 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   @Override
   protected void onAfterInstantiation (@Nonnull final IScope aScope)
   {
-    // TODO chose wisely :)
-    final Locale aLocale = Locale.getDefault ();
     try
     {
       // MPC manager before PMode manager
       m_aMPCMgr = new MPCManager (MPC_XML);
-      m_aPartnerMgr = new PartnerManager (PARTNER_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
       m_aProfileMgr = new AS4ProfileManager ();
       m_aIncomingDuplicateMgr = new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
@@ -98,12 +90,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static MPCManager getMPCMgr ()
   {
     return getInstance ().m_aMPCMgr;
-  }
-
-  @Nonnull
-  public static PartnerManager getPartnerMgr ()
-  {
-    return getInstance ().m_aPartnerMgr;
   }
 
   @Nonnull

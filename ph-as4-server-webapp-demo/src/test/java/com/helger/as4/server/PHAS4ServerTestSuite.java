@@ -29,7 +29,6 @@ import com.helger.as4.server.message.UserMessageManyAttachmentTest;
 import com.helger.as4.server.message.UserMessageOneAttachmentTest;
 import com.helger.as4.server.message.UserMessageSoapBodyPayloadTest;
 import com.helger.as4.server.servlet.PModeCheckTest;
-import com.helger.as4.server.servlet.PartnerTest;
 import com.helger.as4.server.supplementary.test.EncryptionTest;
 import com.helger.as4.server.supplementary.test.SignatureTest;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -42,7 +41,6 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
                  UserMessageManyAttachmentTest.class,
                  UserMessageOneAttachmentTest.class,
                  UserMessageSoapBodyPayloadTest.class,
-                 PartnerTest.class,
                  PModeCheckTest.class,
                  EncryptionTest.class,
                  SignatureTest.class,
