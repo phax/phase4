@@ -20,10 +20,16 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 
+/**
+ * Base interface for an AS4 profile - a group of settings that outline what
+ * features of AS4 are used.
+ *
+ * @author Philip Helger
+ */
 public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializable
 {
   /**
@@ -34,8 +40,10 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
   IAS4ProfileValidator getValidator ();
 
   /**
-   * @return A PMode that is NOT yet in the manager!
+   * @return A PMode that is NOT yet in the manager and is not complete! The
+   *         following information is most likely not contained: initiator,
+   *         responder, URLs, certificates.
    */
   @Nonnull
-  IPMode createDefaultPMode ();
+  PMode createPModeTemplate ();
 }

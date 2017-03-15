@@ -19,7 +19,7 @@ package com.helger.as4.profile;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.function.ISupplier;
@@ -36,12 +36,12 @@ public class AS4Profile implements IAS4Profile
   private final String m_sID;
   private final String m_sDisplayName;
   private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
-  private final ISupplier <? extends IPMode> m_aDefaultPModeProvider;
+  private final ISupplier <? extends PMode> m_aDefaultPModeProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final ISupplier <? extends IPMode> aDefaultPModeConfigProvider)
+                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeConfigProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
@@ -70,7 +70,7 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Nonnull
-  public IPMode createDefaultPMode ()
+  public PMode createPModeTemplate ()
   {
     return m_aDefaultPModeProvider.get ();
   }
@@ -81,7 +81,7 @@ public class AS4Profile implements IAS4Profile
     return new ToStringGenerator (this).append ("ID", m_sID)
                                        .append ("DisplayName", m_sDisplayName)
                                        .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
-                                       .append ("DefaultPModeConfigProvider", m_aDefaultPModeProvider)
+                                       .append ("DefaultPModeProvider", m_aDefaultPModeProvider)
                                        .getToString ();
   }
 }

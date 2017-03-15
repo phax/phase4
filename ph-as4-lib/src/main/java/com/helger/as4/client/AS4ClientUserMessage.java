@@ -41,7 +41,6 @@ import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.config.IPModeConfig;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -71,10 +70,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private final AS4ResourceManager m_aResMgr;
 
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
 
   // CollaborationInfo
   private String m_sAction;
@@ -203,7 +202,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
@@ -469,11 +468,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   public void setAgreementRefPMode (@Nullable final String sAgreementRefPMode)
   {
     m_sAgreementRefPMode = sAgreementRefPMode;
-  }
-
-  public void setAgreementRefPMode (@Nullable final IPModeConfig aPModeConfig)
-  {
-    setAgreementRefPMode (aPModeConfig == null ? null : aPModeConfig.getID ());
   }
 
   public void setAgreementRefPMode (@Nullable final IPMode aPMode)

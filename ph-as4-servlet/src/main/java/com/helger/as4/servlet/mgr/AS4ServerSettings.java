@@ -22,7 +22,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.model.pmode.config.DefaultPModeConfigResolver;
+import com.helger.as4.model.pmode.config.DefaultPModeResolver;
 import com.helger.as4.model.pmode.config.IPModeResolver;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -34,7 +34,7 @@ public final class AS4ServerSettings
 
   private static String m_sResponderID = DEFAULT_RESPONDER_ID;
   private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = WSS4JAttachment::createIncomingFileAttachment;
-  private static IPModeResolver s_aPModeConfigResolver = new DefaultPModeConfigResolver (false);
+  private static IPModeResolver s_aPModeConfigResolver = new DefaultPModeResolver (false);
 
   private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory ();
 
