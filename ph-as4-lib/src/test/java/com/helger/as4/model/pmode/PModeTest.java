@@ -24,13 +24,13 @@ import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
 
-// TODO still needed?
 /**
- * Test class for class {@link PModeConfig}.
+ * Test class for class {@link PMode}.
  *
  * @author Philip Helger
+ * @author bayerlma
  */
-public final class PModeConfigTest
+public final class PModeTest
 {
   @Rule
   public final TestRule m_aTestRule = new AS4TestRule ();
