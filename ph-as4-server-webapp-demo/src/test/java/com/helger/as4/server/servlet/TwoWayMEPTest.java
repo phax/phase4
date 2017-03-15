@@ -163,20 +163,11 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testPModeConfigWithOnlyLeg2 () throws Exception
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
-                                                                            .getAsString ("server.address",
-                                                                                          "http://localhost:8080/as4"));
-    // ESENS PMode is One Way on default settings need to change to two way
+    m_aPMode.setLeg1 (null);
 
-    aPMode.setMEP (EMEP.TWO_WAY);
-    aPMode.setMEPBinding (EMEPBinding.SYNC);
-    aPMode.setAgreement (aPMode.getAgreement ());
-    aPMode.setLeg2 (aPMode.getLeg1 ());
-    aPMode.setPayloadService (aPMode.getPayloadService ());
-    aPMode.setReceptionAwareness (aPMode.getReceptionAwareness ());
-    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
-    final Document aDoc = _modifyUserMessage (aPMode.getID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());

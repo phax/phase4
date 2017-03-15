@@ -24,6 +24,7 @@ import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
 
+// TODO still needed?
 /**
  * Test class for class {@link PModeConfig}.
  *
