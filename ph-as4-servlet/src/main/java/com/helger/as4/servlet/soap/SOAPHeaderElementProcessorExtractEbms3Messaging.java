@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Needed for the compression check: it is not allowed to have a
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -236,20 +236,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     if (aCollaborationInfo != null)
     {
       // Find PMode
-      String sPModeConfigID = null;
+      String sPModeID = null;
       if (aCollaborationInfo.getAgreementRef () != null)
-        sPModeConfigID = aCollaborationInfo.getAgreementRef ().getPmode ();
+        sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
-      aPMode = AS4ServerSettings.getPModeConfigResolver ().getPModeOfID (sPModeConfigID,
-                                                                                     aCollaborationInfo.getService ()
-                                                                                                       .getValue (),
-                                                                                     aCollaborationInfo.getAction ());
+      aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
+                                                                   aCollaborationInfo.getService ().getValue (),
+                                                                   aCollaborationInfo.getAction ());
       if (aPMode == null)
       {
         s_aLogger.warn ("Failed to resolve PMode '" +
-                        sPModeConfigID +
+                        sPModeID +
                         "' using resolver " +
-                        AS4ServerSettings.getPModeConfigResolver ());
+                        AS4ServerSettings.getPModeResolver ());
 
         aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
         return ESuccess.FAILURE;

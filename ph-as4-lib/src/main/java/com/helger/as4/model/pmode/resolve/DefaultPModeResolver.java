@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.model.pmode.config;
+package com.helger.as4.model.pmode.resolve;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,7 +58,7 @@ public class DefaultPModeResolver implements IPModeResolver
 
     if (ret == null)
     {
-      // the pmodeconfig id field is empty or null (or invalid)
+      // the PMode id field is empty or null (or invalid)
       // Use combination of service and action
       ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
     }
@@ -72,7 +72,7 @@ public class DefaultPModeResolver implements IPModeResolver
       return null;
     }
 
-    // Use default pmode config
+    // Use default pmode
     // 1. Based on profile
     // 2. Default default
     final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();

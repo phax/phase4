@@ -97,7 +97,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -161,7 +161,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void testPModeConfigWithOnlyLeg2 () throws Exception
+  public void testPModeWithOnlyLeg2 () throws Exception
   {
     m_aPMode.setLeg1 (null);
 

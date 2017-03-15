@@ -48,6 +48,9 @@ public abstract class AbstractAS4Client
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
+  protected AbstractAS4Client ()
+  {}
+
   /**
    * @return The internal http client provider used in
    *         {@link #sendMessage(String, ResponseHandler)}.

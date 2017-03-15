@@ -363,13 +363,14 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * C4.
    *
    * @param aEbms3Properties
-   *        Properties that should be set in the current usermessage
+   *        Properties that should be set in the current user message
    */
   public void setEbms3Properties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
   {
     m_aEbms3Properties.setAll (aEbms3Properties);
   }
 
+  @Nullable
   public String getAction ()
   {
     return m_sAction;
@@ -378,37 +379,39 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * The element is a string identifying an operation or an activity within a
    * Service that may support several of these.<br>
-   * Example of what will be written in the usermessage:
+   * Example of what will be written in the user message:
    * <code>&lt;eb:Action&gt;NewPurchaseOrder&lt;/eb:Action&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAction
    *        the action that should be there.
    */
-  public void setAction (final String sAction)
+  public void setAction (@Nullable final String sAction)
   {
     m_sAction = sAction;
   }
 
+  @Nullable
   public String getServiceType ()
   {
     return m_sServiceType;
   }
 
   /**
-   * It is a string identifying the servicetype of the service specified in
-   * servicevalue.<br>
-   * Example of what will be written in the usermessage:
+   * It is a string identifying the service type of the service specified in
+   * service value.<br>
+   * Example of what will be written in the user message:
    * <code>&lt;eb:Service type= "MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    *
    * @param sServiceType
    *        serviceType that should be set
    */
-  public void setServiceType (final String sServiceType)
+  public void setServiceType (@Nullable final String sServiceType)
   {
     m_sServiceType = sServiceType;
   }
 
+  @Nullable
   public String getServiceValue ()
   {
     return m_sServiceValue;
@@ -417,18 +420,19 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * It is a string identifying the service that acts on the message 1639 and it
    * is specified by the designer of the service.<br>
-   * Example of what will be written in the usermessage: <code>&lt;eb:Service
+   * Example of what will be written in the user message: <code>&lt;eb:Service
    * type="MyServiceTypes"&gt;QuoteToCollect&lt;/eb:Service&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sServiceValue
-   *        the servicevalue that should be set
+   *        the service value that should be set
    */
-  public void setServiceValue (final String sServiceValue)
+  public void setServiceValue (@Nullable final String sServiceValue)
   {
     m_sServiceValue = sServiceValue;
   }
 
+  @Nullable
   public String getConversationID ()
   {
     return m_sConversationID;
@@ -437,18 +441,19 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * The element is a string identifying the set of related messages that make
    * up a conversation between Parties.<br>
-   * Example of what will be written in the usermessage:
+   * Example of what will be written in the user message:
    * <code>&lt;eb:ConversationId&gt;4321&lt;/eb:ConversationId&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sConversationID
    *        the conversationID that should be set
    */
-  public void setConversationID (final String sConversationID)
+  public void setConversationID (@Nullable final String sConversationID)
   {
     m_sConversationID = sConversationID;
   }
 
+  @Nullable
   public String getAgreementRefPMode ()
   {
     return m_sAgreementRefPMode;
@@ -457,13 +462,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * The AgreementRef element requires a PModeID which can be set with this
    * method.<br>
-   * Example of what will be written in the usermessage:
+   * Example of what will be written in the user message:
    * <code>&lt;eb:AgreementRef pmode=
    * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAgreementRefPMode
-   *        PMode that should be used (id) - PModeConfig ID!
+   *        ID of the PMode that should be used
    */
   public void setAgreementRefPMode (@Nullable final String sAgreementRefPMode)
   {
@@ -475,6 +480,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     setAgreementRefPMode (aPMode == null ? null : aPMode.getID ());
   }
 
+  @Nullable
   public String getAgreementRefValue ()
   {
     return m_sAgreementRefValue;
@@ -483,19 +489,20 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * The AgreementRef element is a string that identifies the entity or artifact
    * governing the exchange of messages between the parties.<br>
-   * Example of what will be written in the usermessage:
+   * Example of what will be written in the user message:
    * <code>&lt;eb:AgreementRef pmode=
    * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sAgreementRefValue
-   *        agreementreference that should be set
+   *        agreement reference that should be set
    */
-  public void setAgreementRefValue (final String sAgreementRefValue)
+  public void setAgreementRefValue (@Nullable final String sAgreementRefValue)
   {
     m_sAgreementRefValue = sAgreementRefValue;
   }
 
+  @Nullable
   public String getFromRole ()
   {
     return m_sFromRole;
@@ -510,11 +517,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sFromRole
    *        the role that should be set
    */
-  public void setFromRole (final String sFromRole)
+  public void setFromRole (@Nullable final String sFromRole)
   {
     m_sFromRole = sFromRole;
   }
 
+  @Nullable
   public String getFromPartyID ()
   {
     return m_sFromPartyID;
@@ -523,18 +531,19 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * The PartyID is an ID that identifies the C2 over which the message gets
    * sent.<br>
-   * Example of what will be written in the usermessage:
+   * Example of what will be written in the user message:
    * <code>&lt;eb:PartyId&gt;ImAPartyID&lt;/eb:PartyId&gt;</code><br>
    * This is MANDATORY.
    *
    * @param sFromPartyID
    *        the partyID that should be set
    */
-  public void setFromPartyID (final String sFromPartyID)
+  public void setFromPartyID (@Nullable final String sFromPartyID)
   {
     m_sFromPartyID = sFromPartyID;
   }
 
+  @Nullable
   public String getToRole ()
   {
     return m_sToRole;
@@ -545,11 +554,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sToRole
    *        the role that should be used
    */
-  public void setToRole (final String sToRole)
+  public void setToRole (@Nullable final String sToRole)
   {
     m_sToRole = sToRole;
   }
 
+  @Nullable
   public String getToPartyID ()
   {
     return m_sToPartyID;
@@ -561,7 +571,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sToPartyID
    *        the PartyID that should be set
    */
-  public void setToPartyID (final String sToPartyID)
+  public void setToPartyID (@Nullable final String sToPartyID)
   {
     m_sToPartyID = sToPartyID;
   }

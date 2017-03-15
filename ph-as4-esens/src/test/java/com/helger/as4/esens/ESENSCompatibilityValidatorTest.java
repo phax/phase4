@@ -77,7 +77,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigWrongMEP ()
+  public void testValidatePModeWrongMEP ()
   {
     m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only 2-way push-push allowed
@@ -88,7 +88,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigWrongMEPBinding ()
+  public void testValidatePModeWrongMEPBinding ()
   {
     // SYNC not allowed
     m_aPMode.setMEPBinding (EMEPBinding.SYNC);
@@ -98,7 +98,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigNoLeg ()
+  public void testValidatePModeNoLeg ()
   {
     m_aPMode.setLeg1 (null);
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
@@ -106,7 +106,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigNoProtocol ()
+  public void testValidatePModeNoProtocol ()
   {
     m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
@@ -114,7 +114,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigNoProtocolAddress ()
+  public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
@@ -122,7 +122,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigProtocolAddressIsNotHttp ()
+  public void testValidatePModeProtocolAddressIsNotHttp ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("ftp://test.com"),
                                     null,
@@ -134,7 +134,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigProtocolSOAP11NotAllowed ()
+  public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
     m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
                                     null,
@@ -148,7 +148,7 @@ public class ESENSCompatibilityValidatorTest
   @Test
   // TODO re-enable if we know what we want
   @Ignore ("Certificate check was a TODO")
-  public void testValidatePModeConfigSecurityNoX509SignatureCertificate ()
+  public void testValidatePModeSecurityNoX509SignatureCertificate ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
@@ -158,7 +158,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityNoX509SignatureAlgorithm ()
+  public void testValidatePModeSecurityNoX509SignatureAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (null);
@@ -168,7 +168,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityWrongX509SignatureAlgorithm ()
+  public void testValidatePModeSecurityWrongX509SignatureAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
@@ -180,7 +180,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityNoX509SignatureHashFunction ()
+  public void testValidatePModeSecurityNoX509SignatureHashFunction ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (null);
@@ -190,7 +190,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityWrongX509SignatureHashFunction ()
+  public void testValidatePModeSecurityWrongX509SignatureHashFunction ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
@@ -201,7 +201,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityNoX509EncryptionAlgorithm ()
+  public void testValidatePModeSecurityNoX509EncryptionAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (null);
@@ -211,7 +211,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityWrongX509EncryptionAlgorithm ()
+  public void testValidatePModeSecurityWrongX509EncryptionAlgorithm ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_192_CBC);
@@ -223,7 +223,7 @@ public class ESENSCompatibilityValidatorTest
 
   @SuppressWarnings ("deprecation")
   @Test
-  public void testValidatePModeConfigSecurityWrongWSSVersion ()
+  public void testValidatePModeSecurityWrongWSSVersion ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setWSSVersion (EWSSVersion.WSS_10);
@@ -233,7 +233,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityPModeAuthorizeMandatory ()
+  public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
@@ -243,7 +243,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityPModeAuthorizeTrue ()
+  public void testValidatePModeSecurityPModeAuthorizeTrue ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setPModeAuthorize (true);
@@ -253,7 +253,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigSecurityResponsePatternWrongBoolean ()
+  public void testValidatePModeSecurityResponsePatternWrongBoolean ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setSendReceipt (true);
@@ -267,7 +267,7 @@ public class ESENSCompatibilityValidatorTest
   // Error Handling
 
   @Test
-  public void testValidatePModeConfigErrorHandlingMandatory ()
+  public void testValidatePModeErrorHandlingMandatory ()
   {
     m_aPMode.setLeg1 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, null));
 
@@ -277,7 +277,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportAsResponseMandatory ()
+  public void testValidatePModeErrorHandlingReportAsResponseMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
@@ -292,7 +292,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportAsResponseWrongValue ()
+  public void testValidatePModeErrorHandlingReportAsResponseWrongValue ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
@@ -308,7 +308,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportProcessErrorNotifyConsumerMandatory ()
+  public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
@@ -323,7 +323,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportProcessErrorNotifyConsumerWrongValue ()
+  public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerWrongValue ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
@@ -339,7 +339,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportDeliveryFailuresNotifyProducerMandatory ()
+  public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerMandatory ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
@@ -354,7 +354,7 @@ public class ESENSCompatibilityValidatorTest
   }
 
   @Test
-  public void testValidatePModeConfigErrorHandlingReportDeliveryFailuresNotifyProducerWrongValue ()
+  public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerWrongValue ()
   {
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,

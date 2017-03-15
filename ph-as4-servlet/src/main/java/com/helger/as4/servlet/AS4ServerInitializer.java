@@ -58,7 +58,7 @@ public final class AS4ServerInitializer
                                                           .getCrypto ()
                                                           .getX509Certificates (aCT);
     if (ArrayHelper.isEmpty (aCertList))
-      throw new IllegalStateException ("Failed to find default partner certificate from alias '" +
+      throw new IllegalStateException ("Failed to find my certificate from alias '" +
                                        aCT.getAlias () +
                                        "'");
     final X509Certificate aCert = aCertList[0];

@@ -53,12 +53,11 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessageTestSetUp
 {
-
   /**
    * Modify the standard user message to try special cases or provoke failure
    * messages.
    *
-   * @param sAnotherOrWrongPModeConfigID
+   * @param sAnotherOrWrongPModeID
    * @param sAnotherOrWrongPartyIdInitiator
    * @param sAnotherOrWrongPartyIdResponder
    * @param aEbms3MessageProperties
@@ -68,12 +67,12 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    */
   @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeConfigID,
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
   {
-    return _modifyUserMessage (sAnotherOrWrongPModeConfigID,
+    return _modifyUserMessage (sAnotherOrWrongPModeID,
                                sAnotherOrWrongPartyIdInitiator,
                                sAnotherOrWrongPartyIdResponder,
                                aEbms3MessageProperties,
@@ -84,7 +83,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * Modify the standard user message to try special cases or provoke failure
    * messages.
    *
-   * @param sAnotherOrWrongPModeConfigID
+   * @param sAnotherOrWrongPModeID
    * @param sAnotherOrWrongPartyIdInitiator
    * @param sAnotherOrWrongPartyIdResponder
    * @param aEbms3MessageProperties
@@ -94,7 +93,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    */
   @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeConfigID,
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
@@ -122,7 +121,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           sAnotherOrWrongPModeConfigID,
+                                                                                                           sAnotherOrWrongPModeID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    sSetPartyIDInitiator,

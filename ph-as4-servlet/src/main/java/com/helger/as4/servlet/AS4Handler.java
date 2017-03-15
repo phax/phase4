@@ -544,15 +544,6 @@ public final class AS4Handler implements Closeable
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }
 
-      // Additional Matrix on what should happen in certain scenarios
-      // Check if Partner+Partner combination is already present
-      // P+P neu + PConfig da = anlegen
-      // P+P neu + PConfig neu = Fehler
-      // P+P neu + PConfig Id fehlt = default
-      // P+P da + PConfig neu = fehler
-      // P+P da + PConfig da = nix tun
-      // P+P da + PConfig id fehlt = default
-
       if (_isNotPingMessage (aPMode))
       {
         final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
@@ -627,7 +618,7 @@ public final class AS4Handler implements Closeable
     }
 
     // Generate ErrorMessage if errors in the process are present and the
-    // partners declared in their pmode config they want an error response
+    // pmode wants an error response
     if (aErrorMessages.isNotEmpty ())
     {
       if (_isSendErrorAsResponse (aEffectiveLeg))
@@ -645,7 +636,7 @@ public final class AS4Handler implements Closeable
 
       if (aPMode.getMEP ().isOneWay ())
       {
-        // If no Error is present check if partners declared if they want a
+        // If no Error is present check if pmode declared if they want a
         // response and if this response should contain non-repudiation
         // information if applicable
         if (bSendReceiptAsResponse)
@@ -660,7 +651,7 @@ public final class AS4Handler implements Closeable
         // TWO - WAY
         final PModeLeg aLeg2 = aPMode.getLeg2 ();
         if (aLeg2 == null)
-          throw new BadRequestException ("PModeConfig has no leg2!");
+          throw new BadRequestException ("PMode has no leg2!");
 
         if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
         {
@@ -936,8 +927,7 @@ public final class AS4Handler implements Closeable
   }
 
   /**
-   * Checks if in the given PModeConfig the isSendReceiptNonRepudiation is set
-   * or not.
+   * Checks if in the given PMode the isSendReceiptNonRepudiation is set or not.
    *
    * @param aLeg
    *        The PMode leg to check. May not be <code>null</code>.
@@ -953,7 +943,7 @@ public final class AS4Handler implements Closeable
   }
 
   /**
-   * Checks if in the given PModeConfig isReportAsResponse is set.
+   * Checks if in the given PMode isReportAsResponse is set.
    *
    * @param aLeg
    *        The PMode leg to check. May be <code>null</code>.

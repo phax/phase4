@@ -159,7 +159,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
     finally
     {
-      // The MockPModeGenerator generates automatically a PModeConfig, we need
+      // The MockPModeGenerator generates automatically a PMode, we need
       // too delete it after we are done with the test
       MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
       aPModeMgr.deletePMode (aPMode.getID ());
@@ -192,7 +192,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
     finally
     {
-      // The MockPModeGenerator generates automatically a PModeConfig, we need
+      // The MockPModeGenerator generates automatically a PMode, we need
       // too delete it after we are done with the test
       MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
       aPModeMgr.deletePMode (aPMode.getID ());
@@ -229,7 +229,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
 
     aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);

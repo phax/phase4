@@ -41,12 +41,12 @@ public class AS4Profile implements IAS4Profile
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeConfigProvider)
+                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
     m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
-    m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeConfigProvider, "aDefaultPModeConfigProvider");
+    m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
   }
 
   @Nonnull

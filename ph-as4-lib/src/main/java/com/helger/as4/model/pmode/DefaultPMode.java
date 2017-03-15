@@ -36,8 +36,7 @@ import com.helger.commons.state.ETriState;
 /**
  * Default PMode configuration Specification from
  * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.
- * pdf <br>
- * Automatically generated in PModeConfigManager upon initialization
+ * pdf
  *
  * @author bayerlma
  * @author Philip Helger
@@ -62,9 +61,9 @@ public final class DefaultPMode
                                            EMEP.ONE_WAY,
                                            EMEPBinding.PUSH,
                                            _generatePModeLeg (sAddress),
-                                           null,
-                                           null,
-                                           null);
+                                           (PModeLeg) null,
+                                           (PModePayloadService) null,
+                                           (PModeReceptionAwareness) null);
     // Leg 2 stays null, because we only use one-way
     return aDefaultPMode;
   }
@@ -72,18 +71,18 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLeg _generatePModeLeg (@Nullable final String sAddress)
   {
-    final PModeLegReliability aReliability = null;
-    final PModeLegSecurity aSecurity = new PModeLegSecurity ();
-    {
-      aSecurity.setSendReceipt (true);
-      aSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
-    }
     final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
                                                                            null,
                                                                            ETriState.TRUE,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
+    final PModeLegReliability aReliability = null;
+    final PModeLegSecurity aSecurity = new PModeLegSecurity ();
+    {
+      aSecurity.setSendReceipt (true);
+      aSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+    }
     return new PModeLeg (_generatePModeLegProtocol (sAddress),
                          _generatePModeLegBusinessInformation (),
                          aErrorHandler,
