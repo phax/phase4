@@ -36,6 +36,8 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
   private static final String ATTR_MEP_BINDING = "MEPBinding";
   private static final String ELEMENT_LEG1 = "Leg1";
   private static final String ELEMENT_LEG2 = "Leg2";
+  private static final String ELEMENT_PAYLOADSERVICE = "PayloadServices";
+  private static final String ELEMENT_RECEPETIONAWARENESS = "RecepetionAwareness";
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -56,6 +58,12 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
     ret.setAttribute (ATTR_MEP_BINDING, aValue.getMEPBindingID ());
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg1 (), sNamespaceURI, ELEMENT_LEG1));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getLeg2 (), sNamespaceURI, ELEMENT_LEG2));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getPayloadService (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_PAYLOADSERVICE));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReceptionAwareness (),
+                                                               sNamespaceURI,
+                                                               ELEMENT_RECEPETIONAWARENESS));
     return ret;
   }
 
@@ -67,19 +75,37 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
     final PModeParty aResponder = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RESPONDER),
                                                                       PModeParty.class);
 
+    final String sAgreement = aElement.getAttributeValue (ATTR_AGREEMENT);
+
+    final String sMEP = aElement.getAttributeValue (ATTR_MEP);
+    final EMEP eMEP = EMEP.getFromIDOrNull (sMEP);
+    if (eMEP == null)
+      throw new IllegalStateException ("Failed to resolve MEP '" + sMEP + "'");
+
+    final String sMEPBinding = aElement.getAttributeValue (ATTR_MEP_BINDING);
+    final EMEPBinding eMEPBinding = EMEPBinding.getFromIDOrNull (sMEPBinding);
+    if (eMEPBinding == null)
+      throw new IllegalStateException ("Failed to resolve MEPBinding '" + sMEPBinding + "'");
+
+    final PModeLeg aLeg1 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1),
+                                                               PModeLeg.class);
+    final PModeLeg aLeg2 = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2),
+                                                               PModeLeg.class);
+
+    final PModePayloadService aPayloadService = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_PAYLOADSERVICE),
+                                                                                    PModePayloadService.class);
+    final PModeReceptionAwareness aReceptionAwareness = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RECEPETIONAWARENESS),
+                                                                                            PModeReceptionAwareness.class);
     final PMode ret = new PMode (getStubObject (aElement),
                                  aInitiator,
                                  aResponder,
-                                 aElement.getAttributeValue (ATTR_AGREEMENT),
-                                 EMEP.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP)),
-                                 EMEPBinding.getFromIDOrNull (aElement.getAttributeValue (ATTR_MEP_BINDING)),
-                                 MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG1),
-                                                                     PModeLeg.class),
-                                 MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_LEG2),
-                                                                     PModeLeg.class),
-                                 null,
-                                 null);
-
+                                 sAgreement,
+                                 eMEP,
+                                 eMEPBinding,
+                                 aLeg1,
+                                 aLeg2,
+                                 aPayloadService,
+                                 aReceptionAwareness);
     return ret;
   }
 }

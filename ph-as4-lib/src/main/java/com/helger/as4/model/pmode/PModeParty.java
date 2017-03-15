@@ -113,9 +113,9 @@ public class PModeParty implements IHasID <String>
     final PModeParty rhs = (PModeParty) o;
     return m_sIDType.equals (rhs.m_sIDType) &&
            EqualsHelper.equals (m_sIDValue, rhs.m_sIDValue) &&
-           EqualsHelper.equals (m_sPassword, rhs.m_sPassword) &&
            EqualsHelper.equals (m_sRole, rhs.m_sRole) &&
-           EqualsHelper.equals (m_sUserName, rhs.m_sUserName);
+           EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
+           EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
   }
 
   @Override
@@ -123,9 +123,9 @@ public class PModeParty implements IHasID <String>
   {
     return new HashCodeGenerator (this).append (m_sIDType)
                                        .append (m_sIDValue)
-                                       .append (m_sPassword)
                                        .append (m_sRole)
                                        .append (m_sUserName)
+                                       .append (m_sPassword)
                                        .getHashCode ();
   }
 
