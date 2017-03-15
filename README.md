@@ -16,7 +16,9 @@ It consists of the following sub-projects:
     * Added server duplicate message detection for incoming messages
     * `MessageInfo/Timestamp` uses UTC - thanks Sander
     * Started two-way handling
-    * Fixed bug that Receipt is not signed (if desired) 
+    * Fixed bug that Receipt is not signed (if desired)
+    * Removed `PModeConfig` in favour of redundant `PMode` objects
+    * Removed partner handling - not needed anymore 
     * To be on the safe side, delete all previously created `as4-*.xml` files as there were incompatible changes.
   * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
