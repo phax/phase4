@@ -180,6 +180,9 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 
   // False pmode settings
 
+  // Can not do that anymore since everything gets accepted with default profile
+  // pmode
+  @Ignore
   @Test
   public void testFalsePartyIDToTriggerPModeError () throws Exception
   {

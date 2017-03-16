@@ -106,6 +106,9 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
   }
 
+  // Can not do that anymore since everything gets accepted with default profile
+  // pmode
+  @Ignore
   @Test
   public void testWrongPModeID () throws Exception
   {
