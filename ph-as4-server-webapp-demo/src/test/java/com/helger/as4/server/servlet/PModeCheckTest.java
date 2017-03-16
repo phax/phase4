@@ -128,6 +128,28 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
+  public void testNullPModeID () throws Exception
+  {
+    m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (null);
+    // Needed to set since also Action and Service combination gets checked if
+    // they are already in the pmode pool
+    final Ebms3Service aService = new Ebms3Service ();
+    aService.setValue ("urn:www.cenbii.eu:profile:bii04:ver2.0");
+    aService.setType ("cenbii-procid-ubl");
+    m_aEbms3UserMessage.getCollaborationInfo ().setService (aService);
+    m_aEbms3UserMessage.getCollaborationInfo ()
+                       .setAction ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
+
+    final Document aDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                            m_aEbms3UserMessage)
+                                           .setMustUnderstand (true)
+                                           .getAsSOAPDocument (m_aPayload);
+    assertNotNull (aDoc);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+  }
+
+  @Test
   public void testPModeLegNullReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
@@ -229,7 +251,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
 
     aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);

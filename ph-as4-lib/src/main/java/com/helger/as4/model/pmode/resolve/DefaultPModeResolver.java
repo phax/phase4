@@ -66,18 +66,18 @@ public class DefaultPModeResolver implements IPModeResolver
     if (ret != null)
       return ret;
 
-    if (!m_bUseDefaultAsFallback)
-    {
-      // Not found and no default -> null
-      return null;
-    }
-
     // Use default pmode
     // 1. Based on profile
     // 2. Default default
     final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
     if (aProfile != null)
       return aProfile.createPModeTemplate ();
+
+    if (!m_bUseDefaultAsFallback)
+    {
+      // Not found and no default -> null
+      return null;
+    }
 
     return aPModeMgr.getPModeOfID (DefaultPMode.DEFAULT_PMODE_ID);
   }

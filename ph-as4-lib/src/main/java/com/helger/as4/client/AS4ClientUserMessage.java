@@ -41,6 +41,8 @@ import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -70,10 +72,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private final AS4ResourceManager m_aResMgr;
 
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
 
   // CollaborationInfo
   private String m_sAction;
@@ -91,6 +93,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   private String m_sToRole = CAS4.DEFAULT_ROLE;
   private String m_sToPartyID;
+
+  private boolean bUseLeg1 = true;
+  private PMode m_aPMode;
 
   public AS4ClientUserMessage ()
   {
@@ -145,6 +150,28 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       throw new IllegalStateException ("finalRecipient and originalSender are mandatory properties");
   }
 
+  private void setValuesWithPMode ()
+  {
+    if (m_aPMode != null)
+    {
+      final PModeLeg aEffectiveLeg = m_aPMode.getLeg1 ();
+      if (!bUseLeg1)
+        m_aPMode.getLeg2 ();
+      m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
+      m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
+      m_sAgreementRefPMode = m_aPMode.getID ();
+      m_sAgreementRefValue = m_aPMode.getAgreement ();
+      m_sFromRole = m_aPMode.getInitiator ().getRole ();
+      m_sFromPartyID = m_aPMode.getInitiatorID ();
+      m_sToRole = m_aPMode.getResponder ().getRole ();
+      m_sToPartyID = m_aPMode.getResponderID ();
+
+      setCryptoAlgorithmSign (aEffectiveLeg.getSecurity ().getX509SignatureAlgorithm ());
+      setCryptoAlgorithmSignDigest (aEffectiveLeg.getSecurity ().getX509SignatureHashFunction ());
+      setCryptoAlgorithmCrypt (aEffectiveLeg.getSecurity ().getX509EncryptionAlgorithm ());
+    }
+  }
+
   /**
    * Build the AS4 message to be sent. It uses all the attributes of this class
    * to build the final message. Compression, signing and encryption happens in
@@ -158,6 +185,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   @Nonnull
   public HttpEntity buildMessage () throws Exception
   {
+    // if pmode is set use attribute from pmode
+    setValuesWithPMode ();
+
+    // check mandatory attributes
     _checkMandatoryAttributes ();
 
     final boolean bSign = getCryptoAlgorithmSign () != null && getCryptoAlgorithmSignDigest () != null;
@@ -202,7 +233,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
@@ -575,4 +606,39 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   {
     m_sToPartyID = sToPartyID;
   }
+
+  public boolean isUseLeg1 ()
+  {
+    return bUseLeg1;
+  }
+
+  /**
+   * DEFAULT is set to TRUE, if you want to use leg2 for the message set FALSE
+   *
+   * @param bUseLeg1
+   *        true if leg1 should be used, false if leg2 should be used
+   */
+  public void setUseLeg1 (final boolean bUseLeg1)
+  {
+    this.bUseLeg1 = bUseLeg1;
+  }
+
+  public PMode getPmode ()
+  {
+    return m_aPMode;
+  }
+
+  /**
+   * This method should be used if you do not want to set each parameter and
+   * have a PMOde ready that you wish to use. Some parameters still must be set
+   * with the remaining setters.
+   *
+   * @param aPmode
+   *        that should be used
+   */
+  public void setPmode (final PMode aPmode)
+  {
+    this.m_aPMode = aPmode;
+  }
+
 }
