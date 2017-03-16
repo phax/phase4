@@ -30,7 +30,7 @@ import com.helger.as4.model.pmode.IPMode;
 public interface IPModeResolver
 {
   /**
-   * Get the PMode config of the passed ID.
+   * Get the PMode of the passed ID.
    *
    * @param sPModeID
    *        The direct PMode ID to be resolved. May be <code>null</code>.

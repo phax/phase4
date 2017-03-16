@@ -69,7 +69,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
     MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
-    assert aErrorList.isEmpty () : "Errors in global PMode config validation: " + aErrorList.toString ();
+    assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
 
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
