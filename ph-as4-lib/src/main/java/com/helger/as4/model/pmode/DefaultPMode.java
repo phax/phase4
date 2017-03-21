@@ -44,7 +44,6 @@ import com.helger.commons.state.ETriState;
 @Immutable
 public final class DefaultPMode
 {
-  public static final String DEFAULT_PMODE_ID = "default-pmode";
 
   private DefaultPMode ()
   {}
@@ -52,8 +51,7 @@ public final class DefaultPMode
   @Nonnull
   public static PMode createDefaultPMode (@Nullable final String sAddress)
   {
-    final PMode aDefaultPMode = new PMode (DEFAULT_PMODE_ID,
-                                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
+    final PMode aDefaultPMode = new PMode (PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
                                                                     CAS4.DEFAULT_SENDER_URL),
                                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
                                                                     CAS4.DEFAULT_RESPONDER_URL),

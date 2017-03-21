@@ -43,7 +43,7 @@ public final class PModeTest
   {
     try
     {
-      new PMode ((String) null, null, null, null, null, null, null, null, null, null);
+      new PMode (null, null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final NullPointerException ex)
@@ -52,7 +52,7 @@ public final class PModeTest
     }
     try
     {
-      new PMode ("", null, null, null, null, null, null, null, null, null);
+      new PMode (null, null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final IllegalArgumentException ex)

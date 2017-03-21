@@ -66,8 +66,7 @@ public final class PModeMicroTypeConverterTest
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PMode aPMode = new PMode ("id",
-                                    _generateInitiatorOrResponder (true),
+    final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
                                     _generateInitiatorOrResponder (false),
                                     "Agreement",
                                     EMEP.TWO_WAY,

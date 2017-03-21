@@ -18,6 +18,7 @@ package com.helger.as4.server.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
 
@@ -44,7 +45,6 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -93,7 +93,9 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                               null,
                                                                                               CAS4.DEFAULT_SERVICE_URL,
                                                                                               "4321",
-                                                                                              null,
+                                                                                              MockEbmsHelper.DEFAULT_PARTY_ID +
+                                                                                                      "-" +
+                                                                                                      MockEbmsHelper.DEFAULT_PARTY_ID,
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
@@ -152,20 +154,26 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
+  // TODO does not work anymore since template gets created instead of the pmode
+  // that was given
+  // Because if the pmode has no leg, there is no action/service to find the
+  // pmode
+  // @Ignore
   @Test
   public void testPModeLegNullReject () throws Exception
   {
-    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPMode (ESOAPVersion.AS4_DEFAULT);
     aPMode.setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     try
     {
-      aPModeMgr.createPMode (aPMode);
-
-      final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
-      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
+      for (final String sPModeID : aPModeMgr.getAllIDs ())
+      {
+        aPModeMgr.deletePMode (sPModeID);
+      }
+      assertTrue (aPModeMgr.getAllIDs ().size () == 0);
+      aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                                                                      m_aEbms3UserMessage)
@@ -186,7 +194,6 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     {
       // The MockPModeGenerator generates automatically a PMode, we need
       // too delete it after we are done with the test
-      MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
       aPModeMgr.deletePMode (aPMode.getID ());
     }
   }
@@ -194,17 +201,13 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testPModeWrongMPC () throws Exception
   {
-    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPMode (ESOAPVersion.AS4_DEFAULT);
     aPMode.getLeg1 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
     try
     {
-      aPModeMgr.createPMode (aPMode);
-
-      final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (sPModeID));
-      m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
+      aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                     m_aEbms3UserMessage)
@@ -340,7 +343,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testPModeLegProtocolAddressReject () throws Exception
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = MockPModeGenerator.getTestPModeSetID (ESOAPVersion.AS4_DEFAULT, sPModeID);
+    final PMode aPMode = MockPModeGenerator.getTestPMode (ESOAPVersion.AS4_DEFAULT);
     aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("TestsimulationAddressWrong"),
                                   null,
                                   null,

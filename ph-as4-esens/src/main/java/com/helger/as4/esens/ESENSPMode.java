@@ -41,7 +41,6 @@ import com.helger.commons.state.ETriState;
 
 public final class ESENSPMode
 {
-  public static final String ESENS_PMODE_CONFIG_ID = "pm-esens-default";
 
   private ESENSPMode ()
   {}
@@ -50,8 +49,7 @@ public final class ESENSPMode
   public static PMode createESENSPMode (@Nonnull final String sAddress)
   {
 
-    final PMode aConfig = new PMode (ESENS_PMODE_CONFIG_ID,
-                                     _generateInitiatorOrResponder (true),
+    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true),
                                      _generateInitiatorOrResponder (false),
                                      MockEbmsHelper.DEFAULT_AGREEMENT,
                                      EMEP.ONE_WAY,

@@ -67,8 +67,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
     // ESENS PMode is One Way on default settings need to change to two way
-    m_aPMode = new PMode ("esens-two-way",
-                          PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_ROLE),
+    m_aPMode = new PMode (PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_ROLE),
                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_ROLE),
                           aPMode.getAgreement (),
                           EMEP.TWO_WAY,
@@ -97,7 +96,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,

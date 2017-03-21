@@ -79,6 +79,7 @@ public class DefaultPModeResolver implements IPModeResolver
       return null;
     }
 
-    return aPModeMgr.getPModeOfID (DefaultPMode.DEFAULT_PMODE_ID);
+    // TODO what to do here?
+    return DefaultPMode.createDefaultPMode ("localhost");
   }
 }

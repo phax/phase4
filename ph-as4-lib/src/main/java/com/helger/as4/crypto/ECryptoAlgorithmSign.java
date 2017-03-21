@@ -37,7 +37,7 @@ public enum ECryptoAlgorithmSign implements IHasID <String>
   RSA_SHA_384 ("rsa-sha-384", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384),
   RSA_SHA_512 ("rsa-sha-512", XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512);
 
-  public static final ECryptoAlgorithmSign SIGN_ALGORITHM_DEFAULT = RSA_SHA_512;
+  public static final ECryptoAlgorithmSign SIGN_ALGORITHM_DEFAULT = RSA_SHA_256;
 
   private final String m_sID;
   private final String m_sAlgorithmURI;

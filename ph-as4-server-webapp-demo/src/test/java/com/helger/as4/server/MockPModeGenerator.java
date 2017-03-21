@@ -43,8 +43,9 @@ import com.helger.commons.state.ETriState;
 
 public final class MockPModeGenerator
 {
-  public static String PMODE_CONFIG_ID_SOAP11_TEST = "mock-pmode-soap11";
-  public static String PMODE_CONFIG_ID_SOAP12_TEST = "mock-pmode-soap12";
+  // TODO DELETE
+  // public static String PMODE_CONFIG_ID_SOAP11_TEST = "mock-pmode-soap11";
+  // public static String PMODE_CONFIG_ID_SOAP12_TEST = "mock-pmode-soap12";
 
   private MockPModeGenerator ()
   {}
@@ -52,16 +53,7 @@ public final class MockPModeGenerator
   @Nonnull
   public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    return getTestPModeSetID (eSOAPVersion,
-                              eSOAPVersion.equals (ESOAPVersion.SOAP_12) ? PMODE_CONFIG_ID_SOAP12_TEST
-                                                                         : PMODE_CONFIG_ID_SOAP11_TEST);
-  }
-
-  @Nonnull
-  public static PMode getTestPModeSetID (@Nonnull final ESOAPVersion eSOAPVersion, final String sPModeID)
-  {
-    final PMode aConfig = new PMode (sPModeID,
-                                     _generateInitiatorOrResponder (true),
+    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true),
                                      _generateInitiatorOrResponder (false),
                                      MockEbmsHelper.DEFAULT_AGREEMENT,
                                      EMEP.ONE_WAY,
@@ -143,6 +135,6 @@ public final class MockPModeGenerator
     // Create new one
     aPModeMgr.createPMode (DefaultPMode.createDefaultPMode ("http://test.mock.org"));
     for (final ESOAPVersion e : ESOAPVersion.values ())
-      aPModeMgr.createPMode (MockPModeGenerator.getTestPModeWithSecurity (e));
+      aPModeMgr.createOrUpdatePMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }
 }

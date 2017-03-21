@@ -85,9 +85,12 @@ public final class AS4ClientUserMessageTest
     final AS4ClientUserMessage aClient = new AS4ClientUserMessage (s_aResMgr);
     aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
 
+    final String sSenderID = "MyPartyIDforSending";
+    final String sResponderID = "MyPartyIDforReceving";
+
     // Use a pmode that you know is currently running on the server your trying
     // to send the message too
-    final String sPModeID = MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST;
+    final String sPModeID = sSenderID + "-" + sResponderID;
 
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
@@ -96,9 +99,9 @@ public final class AS4ClientUserMessageTest
     aClient.setAgreementRefPMode (sPModeID);
     aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
-    aClient.setFromPartyID ("MyPartyIDforSending");
+    aClient.setFromPartyID (sSenderID);
     aClient.setToRole (CAS4.DEFAULT_ROLE);
-    aClient.setToPartyID ("MyPartyIDforReceving");
+    aClient.setToPartyID (sResponderID);
     aClient.setEbms3Properties (MockEbmsHelper.getEBMSProperties ());
 
     return aClient;

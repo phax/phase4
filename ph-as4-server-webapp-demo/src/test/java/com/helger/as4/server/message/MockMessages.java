@@ -17,7 +17,6 @@
 package com.helger.as4.server.message;
 
 import java.util.Locale;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,10 +37,7 @@ import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
-import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -131,7 +127,7 @@ public final class MockMessages
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
+    final String sPModeID = CAS4.DEFAULT_SENDER_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
@@ -139,7 +135,7 @@ public final class MockMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           aPModeID.getID (),
+                                                                                                           sPModeID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    MockEbmsHelper.DEFAULT_PARTY_ID,
@@ -164,7 +160,7 @@ public final class MockMessages
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
-    final IPMode aPMode = MetaAS4Manager.getPModeMgr ().findFirst (_getTestPModeFilter (eSOAPVersion));
+    final String sPModeID = CAS4.DEFAULT_SENDER_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
@@ -172,7 +168,7 @@ public final class MockMessages
                                                                                                            "MyServiceTypes",
                                                                                                            "QuoteToCollect",
                                                                                                            "4321",
-                                                                                                           aPMode.getID () +
+                                                                                                           sPModeID +
                                                                                                                    "x",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
@@ -224,11 +220,4 @@ public final class MockMessages
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
-  @Nonnull
-  private static Predicate <IPMode> _getTestPModeFilter (@Nonnull final ESOAPVersion eESOAPVersion)
-  {
-    if (eESOAPVersion.equals (ESOAPVersion.SOAP_12))
-      return p -> p.getID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP12_TEST);
-    return p -> p.getID ().equals (MockPModeGenerator.PMODE_CONFIG_ID_SOAP11_TEST);
-  }
 }

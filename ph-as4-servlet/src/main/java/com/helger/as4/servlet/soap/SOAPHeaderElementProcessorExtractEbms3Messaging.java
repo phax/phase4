@@ -35,7 +35,6 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
@@ -244,9 +243,10 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
                                                                    aCollaborationInfo.getService ().getValue (),
                                                                    aCollaborationInfo.getAction ());
-      if (!sPModeID.equals (aPMode.getInitiatorID () + "-" + aPMode.getResponderID ()))
+
+      if (!(aPMode.getInitiatorID () + "-" + aPMode.getResponderID ()).equals (sPModeID))
       {
-        aPMode = new PMode (sPModeID, null, null, sPModeID, null, null, null, null, null, null);
+        s_aLogger.warn ("Not the recommended way to generate a PMode ID is used");
       }
 
       if (aPMode == null)

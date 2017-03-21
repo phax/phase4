@@ -23,7 +23,6 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
@@ -106,8 +105,7 @@ public class PMode extends AbstractBaseObject implements IPMode
 
   private PModeReceptionAwareness m_aReceptionAwareness;
 
-  public PMode (@Nonnull @Nonempty final String sID,
-                @Nonnull final PModeParty aInitiator,
+  public PMode (@Nonnull final PModeParty aInitiator,
                 @Nonnull final PModeParty aResponder,
                 @Nonnull final String sAgreement,
                 @Nonnull final EMEP eMEP,
@@ -117,7 +115,7 @@ public class PMode extends AbstractBaseObject implements IPMode
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUserAndID (sID),
+    this (StubObject.createForCurrentUserAndID (aInitiator.getID () + "-" + aResponder.getID ()),
           aInitiator,
           aResponder,
           sAgreement,
