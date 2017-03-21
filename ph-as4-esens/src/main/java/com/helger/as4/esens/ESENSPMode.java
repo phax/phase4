@@ -68,7 +68,6 @@ public final class ESENSPMode
     // Ensure it is stored
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aConfig);
     return aConfig;
-
   }
 
   @Nonnull

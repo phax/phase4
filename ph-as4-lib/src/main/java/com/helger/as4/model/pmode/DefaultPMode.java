@@ -56,7 +56,7 @@ public final class DefaultPMode
                                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
                                                                     CAS4.DEFAULT_SENDER_URL),
                                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                    CAS4.DEFAULT_SENDER_URL),
+                                                                    CAS4.DEFAULT_RESPONDER_URL),
                                            MockEbmsHelper.DEFAULT_AGREEMENT,
                                            EMEP.ONE_WAY,
                                            EMEPBinding.PUSH,
