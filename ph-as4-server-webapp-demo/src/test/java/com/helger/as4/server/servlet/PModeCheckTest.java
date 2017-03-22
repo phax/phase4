@@ -94,8 +94,10 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                               CAS4.DEFAULT_SERVICE_URL,
                                                                                               "4321",
                                                                                               MockEbmsHelper.DEFAULT_PARTY_ID +
+                                                                                                      12 +
                                                                                                       "-" +
-                                                                                                      MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                                                      MockEbmsHelper.DEFAULT_PARTY_ID +
+                                                                                                      12,
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
