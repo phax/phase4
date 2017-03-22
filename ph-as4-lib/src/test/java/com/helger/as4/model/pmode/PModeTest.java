@@ -52,10 +52,20 @@ public final class PModeTest
     }
     try
     {
-      new PMode (null, null, null, null, null, null, null, null, null);
+      new PMode (PModeParty.createSimple ("id", "Role"), null, null, null, null, null, null, null, null);
       fail ();
     }
-    catch (final IllegalArgumentException ex)
+    catch (final NullPointerException ex)
+    {
+      // Expected
+    }
+
+    try
+    {
+      new PMode (null, null, null, null, null, null, null, null, null, null);
+      fail ();
+    }
+    catch (final NullPointerException ex)
     {
       // Expected
     }

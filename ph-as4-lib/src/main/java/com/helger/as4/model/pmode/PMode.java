@@ -115,7 +115,9 @@ public class PMode extends AbstractBaseObject implements IPMode
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUserAndID (aInitiator.getID () + "-" + aResponder.getID ()),
+    this (StubObject.createForCurrentUserAndID (ValueEnforcer.notNull (aInitiator, "Initiator").getID () +
+                                                "-" +
+                                                ValueEnforcer.notNull (aResponder, "Responder").getID ()),
           aInitiator,
           aResponder,
           sAgreement,
