@@ -375,14 +375,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           {
             if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
             {
-              if (bHasSoapBodyPayload)
-              {
-                s_aLogger.warn ("Error processing the UserMessage, it contains compressed attachment in consequence you can not have anything in the SOAPBodyPayload.");
-
-                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-                return ESuccess.FAILURE;
-              }
-
               // Only needed check here since AS4 does not support another
               // CompressionType
               // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
