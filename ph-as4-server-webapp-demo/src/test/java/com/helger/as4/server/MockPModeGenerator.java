@@ -46,6 +46,7 @@ public final class MockPModeGenerator
   // TODO DELETE
   // public static String PMODE_CONFIG_ID_SOAP11_TEST = "mock-pmode-soap11";
   // public static String PMODE_CONFIG_ID_SOAP12_TEST = "mock-pmode-soap12";
+  public static String SOAP11_SERVICE = "soap11";
 
   private MockPModeGenerator ()
   {}
@@ -53,8 +54,8 @@ public final class MockPModeGenerator
   @Nonnull
   public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true),
-                                     _generateInitiatorOrResponder (false),
+    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true, eSOAPVersion),
+                                     _generateInitiatorOrResponder (false, eSOAPVersion),
                                      MockEbmsHelper.DEFAULT_AGREEMENT,
                                      EMEP.ONE_WAY,
                                      EMEPBinding.PUSH,
@@ -80,7 +81,7 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
 
     aPMode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                                  _generatePModeLegBusinessInformation (),
+                                  _generatePModeLegBusinessInformation (eSOAPVersion),
                                   _generatePModeLegErrorHandling (),
                                   null,
                                   aPModeLegSecurity));
@@ -94,7 +95,7 @@ public final class MockPModeGenerator
     final PModeLegReliability aPModeLegReliability = null;
     final PModeLegSecurity aPModeLegSecurity = null;
     return new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                         _generatePModeLegBusinessInformation (),
+                         _generatePModeLegBusinessInformation (eSOAPVersion),
                          _generatePModeLegErrorHandling (),
                          aPModeLegReliability,
                          aPModeLegSecurity);
@@ -106,8 +107,10 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation (@Nonnull final ESOAPVersion eSOAPVersion)
   {
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+      return new PModeLegBusinessInformation (SOAP11_SERVICE, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
     return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
@@ -118,11 +121,18 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
+  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator,
+                                                           @Nonnull final ESOAPVersion eSOAPVersion)
   {
+    String sPartyID;
+    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+      sPartyID = MockEbmsHelper.DEFAULT_PARTY_ID + 11;
+    else
+      sPartyID = MockEbmsHelper.DEFAULT_PARTY_ID + 12;
+
     if (bInitiator)
-      return PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_SENDER_URL);
-    return PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID, CAS4.DEFAULT_RESPONDER_URL);
+      return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_SENDER_URL);
+    return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_RESPONDER_URL);
   }
 
   public static void ensureMockPModesArePresent ()

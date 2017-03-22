@@ -48,7 +48,7 @@ public class PModeParty implements IHasID <String>
   // Status vars
 
   /** ID type and value combined */
-  private final String m_sID;
+  private String m_sID;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -61,7 +61,12 @@ public class PModeParty implements IHasID <String>
     m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
     m_sUserName = sUserName;
     m_sPassword = sPassword;
-    m_sID = StringHelper.getNotNull (m_sIDType) + ":" + m_sIDValue;
+    m_sID = m_sIDValue;
+    if (!StringHelper.getNotNull (m_sIDType).equals (""))
+    {
+      m_sID = m_sIDType + ":" + m_sIDValue;
+    }
+
   }
 
   @Nullable

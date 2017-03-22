@@ -172,7 +172,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       {
         aPModeMgr.deletePMode (sPModeID);
       }
-      assertTrue (aPModeMgr.getAllIDs ().size () == 0);
+      assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
       aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
@@ -207,6 +207,13 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     try
     {
+
+      for (final String sPModeID : aPModeMgr.getAllIDs ())
+      {
+        aPModeMgr.deletePMode (sPModeID);
+      }
+      assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
+
       aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
