@@ -56,6 +56,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.function.IFunction;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 
@@ -71,10 +72,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private final AS4ResourceManager m_aResMgr;
 
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
 
   // CollaborationInfo
   private String m_sAction;
@@ -94,6 +95,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   private boolean bUseLeg1 = true;
   private PMode m_aPMode;
+  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getInitiatorPartyID () +
+                                                                            "-" +
+                                                                            x.getResponderPartyID ();
 
   public AS4ClientUserMessage ()
   {
@@ -104,6 +108,17 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
+  }
+
+  public void setPModeID (@Nullable final String sPModeID)
+  {
+    setPModeIDFactory (x -> sPModeID);
+  }
+
+  public void setPModeIDFactory (@Nonnull final IFunction <AS4ClientUserMessage, String> aPModeIDFactory)
+  {
+    ValueEnforcer.notNull (aPModeIDFactory, "PModeIDFactory");
+    m_aPModeIDFactory = aPModeIDFactory;
   }
 
   @Nonnull
@@ -182,7 +197,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     // if pmode is set use attribute from pmode
     setValuesWithPMode ();
 
-    final String sAgreementRefPMode = m_sFromPartyID + "-" + m_sToPartyID;
+    final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
     // check mandatory attributes
     _checkMandatoryAttributes ();
@@ -229,7 +244,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
