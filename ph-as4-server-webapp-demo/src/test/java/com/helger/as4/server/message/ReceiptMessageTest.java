@@ -43,6 +43,8 @@ import com.helger.xml.serialize.read.DOMReader;
 public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
 {
 
+  private static final String SOAP_BODY_PAYLOAD_XML = "SOAPBodyPayload.xml";
+
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
@@ -59,7 +61,7 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Test
   public void testReceiptReceivedFromUserMessageWithoutWSSecurity () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -70,7 +72,7 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Test
   public void testReceiptReceivedFromUserMessageWithWSSecurity () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
@@ -81,12 +83,11 @@ public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Test
   public void testShouldNotGetAResponse () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
-
 }

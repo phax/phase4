@@ -43,7 +43,7 @@ import com.helger.commons.state.ETriState;
 
 public final class MockPModeGenerator
 {
-  public static String SOAP11_SERVICE = "soap11";
+  public static final String SOAP11_SERVICE = "soap11";
 
   private MockPModeGenerator ()
   {}

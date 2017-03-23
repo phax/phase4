@@ -244,5 +244,4 @@ public final class MockMessages
                                                  .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
-
 }
