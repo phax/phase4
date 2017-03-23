@@ -36,6 +36,8 @@ public final class MockEbmsHelper
 {
   public static final String DEFAULT_PARTY_ID = "APP_0000000000";
   public static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+  public static final String SOAP_12_PARTY_ID = MockEbmsHelper.DEFAULT_PARTY_ID + 12;
+  public static final String SOAP_11_PARTY_ID = MockEbmsHelper.DEFAULT_PARTY_ID + 11;
 
   private MockEbmsHelper ()
   {}
@@ -50,7 +52,7 @@ public final class MockEbmsHelper
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     final Ebms3Property aOriginalSender = new Ebms3Property ();
     aOriginalSender.setName (CAS4.ORIGINAL_SENDER);
     aOriginalSender.setValue ("C1-test");

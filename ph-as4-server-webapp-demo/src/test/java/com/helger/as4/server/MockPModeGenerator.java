@@ -43,9 +43,6 @@ import com.helger.commons.state.ETriState;
 
 public final class MockPModeGenerator
 {
-  // TODO DELETE
-  // public static String PMODE_CONFIG_ID_SOAP11_TEST = "mock-pmode-soap11";
-  // public static String PMODE_CONFIG_ID_SOAP12_TEST = "mock-pmode-soap12";
   public static String SOAP11_SERVICE = "soap11";
 
   private MockPModeGenerator ()
@@ -126,9 +123,9 @@ public final class MockPModeGenerator
   {
     String sPartyID;
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      sPartyID = MockEbmsHelper.DEFAULT_PARTY_ID + 11;
+      sPartyID = MockEbmsHelper.SOAP_11_PARTY_ID;
     else
-      sPartyID = MockEbmsHelper.DEFAULT_PARTY_ID + 12;
+      sPartyID = MockEbmsHelper.SOAP_12_PARTY_ID;
 
     if (bInitiator)
       return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_SENDER_URL);

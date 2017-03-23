@@ -137,7 +137,7 @@ public final class MockMessages
     final Ebms3PartyInfo aEbms3PartyInfo;
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
     {
-      sPModeID = MockEbmsHelper.DEFAULT_PARTY_ID + 11 + "-" + MockEbmsHelper.DEFAULT_PARTY_ID + 11;
+      sPModeID = MockEbmsHelper.SOAP_11_PARTY_ID + "-" + MockEbmsHelper.SOAP_11_PARTY_ID;
 
       aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                 "MyServiceTypes",
@@ -146,13 +146,13 @@ public final class MockMessages
                                                                                 sPModeID,
                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
       aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                MockEbmsHelper.DEFAULT_PARTY_ID + 11,
+                                                                MockEbmsHelper.SOAP_11_PARTY_ID,
                                                                 CAS4.DEFAULT_RESPONDER_URL,
-                                                                MockEbmsHelper.DEFAULT_PARTY_ID + 11);
+                                                                MockEbmsHelper.SOAP_11_PARTY_ID);
     }
     else
     {
-      sPModeID = MockEbmsHelper.DEFAULT_PARTY_ID + 12 + "-" + MockEbmsHelper.DEFAULT_PARTY_ID + 12;
+      sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
 
       aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
                                                                                 "MyServiceTypes",
@@ -161,9 +161,9 @@ public final class MockMessages
                                                                                 sPModeID,
                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
       aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                MockEbmsHelper.DEFAULT_PARTY_ID + 12,
+                                                                MockEbmsHelper.SOAP_12_PARTY_ID,
                                                                 CAS4.DEFAULT_RESPONDER_URL,
-                                                                MockEbmsHelper.DEFAULT_PARTY_ID + 12);
+                                                                MockEbmsHelper.SOAP_12_PARTY_ID);
     }
 
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
