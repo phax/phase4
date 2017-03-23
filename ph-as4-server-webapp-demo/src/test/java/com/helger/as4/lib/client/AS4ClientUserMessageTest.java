@@ -96,7 +96,6 @@ public final class AS4ClientUserMessageTest
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");
     aClient.setConversationID ("9898");
-    aClient.setAgreementRefPMode (sPModeID);
     aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID (sSenderID);
@@ -162,8 +161,6 @@ public final class AS4ClientUserMessageTest
     aClient.setServiceValue ("OrderPaper");
     _ensureInvalidState (aClient);
     aClient.setConversationID ("9898");
-    _ensureInvalidState (aClient);
-    aClient.setAgreementRefPMode ("pm-esens-generic-resp");
     _ensureInvalidState (aClient);
     aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     _ensureInvalidState (aClient);

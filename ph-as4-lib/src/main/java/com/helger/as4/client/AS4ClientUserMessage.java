@@ -40,7 +40,6 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.util.AS4ResourceManager;
@@ -85,7 +84,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   private String m_sConversationID;
 
-  private String m_sAgreementRefPMode;
   private String m_sAgreementRefValue;
 
   private String m_sFromRole = CAS4.DEFAULT_ROLE;
@@ -128,9 +126,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (StringHelper.hasNoText (m_sConversationID))
       throw new IllegalStateException ("ConversationID needs to be set");
 
-    if (StringHelper.hasNoText (m_sAgreementRefPMode))
-      throw new IllegalStateException ("AgreementRefPMode needs to be set");
-
     if (StringHelper.hasNoText (m_sAgreementRefValue))
       throw new IllegalStateException ("AgreementRefValue needs to be set");
 
@@ -159,7 +154,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
         m_aPMode.getLeg2 ();
       m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
       m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
-      m_sAgreementRefPMode = m_aPMode.getID ();
       m_sAgreementRefValue = m_aPMode.getAgreement ();
       m_sFromRole = m_aPMode.getInitiator ().getRole ();
       m_sFromPartyID = m_aPMode.getInitiatorID ();
@@ -188,6 +182,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     // if pmode is set use attribute from pmode
     setValuesWithPMode ();
 
+    final String sAgreementRefPMode = m_sFromPartyID + "-" + m_sToPartyID;
+
     // check mandatory attributes
     _checkMandatoryAttributes ();
 
@@ -206,7 +202,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                                                                            m_sServiceType,
                                                                                                            m_sServiceValue,
                                                                                                            m_sConversationID,
-                                                                                                           m_sAgreementRefPMode,
+                                                                                                           sAgreementRefPMode,
                                                                                                            m_sAgreementRefValue);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (m_sFromRole,
                                                                                    m_sFromPartyID,
@@ -482,33 +478,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   public void setConversationID (@Nullable final String sConversationID)
   {
     m_sConversationID = sConversationID;
-  }
-
-  @Nullable
-  public String getAgreementRefPMode ()
-  {
-    return m_sAgreementRefPMode;
-  }
-
-  /**
-   * The AgreementRef element requires a PModeID which can be set with this
-   * method.<br>
-   * Example of what will be written in the user message:
-   * <code>&lt;eb:AgreementRef pmode=
-   * "pm-esens-generic-resp"&gt;http://agreements.holodeckb2b.org/examples/agreement0&lt;/eb:AgreementRef&gt;</code><br>
-   * This is MANDATORY.
-   *
-   * @param sAgreementRefPMode
-   *        ID of the PMode that should be used
-   */
-  public void setAgreementRefPMode (@Nullable final String sAgreementRefPMode)
-  {
-    m_sAgreementRefPMode = sAgreementRefPMode;
-  }
-
-  public void setAgreementRefPMode (@Nullable final IPMode aPMode)
-  {
-    setAgreementRefPMode (aPMode == null ? null : aPMode.getID ());
   }
 
   @Nullable
