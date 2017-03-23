@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import com.helger.as4.AS4TestRule;
+import com.helger.photon.security.object.StubObject;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -62,7 +63,7 @@ public final class PModeTest
 
     try
     {
-      new PMode (null, null, null, null, null, null, null, null, null, null);
+      new PMode ((StubObject) null, null, null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final NullPointerException ex)

@@ -16,6 +16,8 @@
  */
 package com.helger.as4.model.pmode;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -105,6 +107,30 @@ public class PMode extends AbstractBaseObject implements IPMode
 
   private PModeReceptionAwareness m_aReceptionAwareness;
 
+  public PMode (@Nonnull final Supplier <String> aIDFactory,
+                @Nonnull final PModeParty aInitiator,
+                @Nonnull final PModeParty aResponder,
+                @Nonnull final String sAgreement,
+                @Nonnull final EMEP eMEP,
+                @Nonnull final EMEPBinding eMEPBinding,
+                @Nonnull final PModeLeg aLeg1,
+                @Nullable final PModeLeg aLeg2,
+                @Nullable final PModePayloadService aPayloadService,
+                @Nullable final PModeReceptionAwareness aReceptionAwareness)
+  {
+    this (StubObject.createForCurrentUserAndID (aIDFactory.get ()),
+          aInitiator,
+          aResponder,
+          sAgreement,
+          eMEP,
+          eMEPBinding,
+          aLeg1,
+          aLeg2,
+          aPayloadService,
+          aReceptionAwareness);
+  }
+
+  @Deprecated
   public PMode (@Nonnull final PModeParty aInitiator,
                 @Nonnull final PModeParty aResponder,
                 @Nonnull final String sAgreement,
@@ -115,18 +141,16 @@ public class PMode extends AbstractBaseObject implements IPMode
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUserAndID (ValueEnforcer.notNull (aInitiator, "Initiator").getID () +
-                                                "-" +
-                                                ValueEnforcer.notNull (aResponder, "Responder").getID ()),
-          aInitiator,
-          aResponder,
-          sAgreement,
-          eMEP,
-          eMEPBinding,
-          aLeg1,
-          aLeg2,
-          aPayloadService,
-          aReceptionAwareness);
+    this ( () -> aInitiator.getID () + "-" + aResponder.getID (),
+           aInitiator,
+           aResponder,
+           sAgreement,
+           eMEP,
+           eMEPBinding,
+           aLeg1,
+           aLeg2,
+           aPayloadService,
+           aReceptionAwareness);
   }
 
   PMode (@Nonnull final StubObject aObject,
