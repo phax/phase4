@@ -19,6 +19,7 @@ package com.helger.as4.profile;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -35,21 +36,21 @@ public class AS4Profile implements IAS4Profile
 {
   private final String m_sID;
   private final String m_sDisplayName;
-  private boolean m_bDynamicID;
   private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
   private final ISupplier <? extends PMode> m_aDefaultPModeProvider;
+  private final IPModeIDProvider m_aPModeIDProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
-                     final boolean bDynamicID,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeProvider)
+                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeProvider,
+                     @Nonnull final IPModeIDProvider aPModeIDProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
-    m_bDynamicID = bDynamicID;
     m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
     m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
+    m_aPModeIDProvider = ValueEnforcer.notNull (aPModeIDProvider, "PModeIDProvider");
   }
 
   @Nonnull
@@ -66,20 +67,10 @@ public class AS4Profile implements IAS4Profile
     return m_sDisplayName;
   }
 
-  public boolean isDynamicID ()
+  @Nonnull
+  public IPModeIDProvider getPModeIDProvider ()
   {
-    return m_bDynamicID;
-  }
-
-  /**
-   * @param bDynamicID
-   *        True if dynamic ID should be used looks like this:
-   *        InitiatorID-ResponderID <br>
-   *        False if you want to set your own id.
-   */
-  public void setDynamicID (final boolean bDynamicID)
-  {
-    m_bDynamicID = bDynamicID;
+    return m_aPModeIDProvider;
   }
 
   @Nonnull
@@ -99,9 +90,9 @@ public class AS4Profile implements IAS4Profile
   {
     return new ToStringGenerator (this).append ("ID", m_sID)
                                        .append ("DisplayName", m_sDisplayName)
-                                       .append ("DynamicID", m_bDynamicID)
                                        .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
                                        .append ("DefaultPModeProvider", m_aDefaultPModeProvider)
+                                       .append ("PModeIDProvider", m_aPModeIDProvider)
                                        .getToString ();
   }
 }

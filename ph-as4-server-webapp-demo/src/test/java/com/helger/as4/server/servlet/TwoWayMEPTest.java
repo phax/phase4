@@ -49,6 +49,7 @@ import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.xml.serialize.read.DOMReader;
@@ -60,15 +61,17 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ().getAsString (
-                                                                                                         "server.address",
-                                                                                                         "http://localhost:8080/as4"),
-                                                      false);
+    final PMode aPMode = ESENSPMode.createESENSPMode ("TestInitiator",
+                                                      "TestResponder",
+                                                      AS4ServerConfiguration.getSettings ()
+                                                                            .getAsString ("server.address",
+                                                                                          "http://localhost:8080/as4"),
+                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
     // ESENS PMode is One Way on default settings need to change to two way
-    m_aPMode = new PMode ( () -> aPMode.getID (),
+    m_aPMode = new PMode ( (i, r) -> aPMode.getID (),
                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
                            aPMode.getAgreement (),
@@ -100,7 +103,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,

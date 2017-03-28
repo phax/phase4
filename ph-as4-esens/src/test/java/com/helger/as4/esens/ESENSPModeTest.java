@@ -19,6 +19,7 @@ package com.helger.as4.esens;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
 
 public class ESENSPModeTest
@@ -29,6 +30,9 @@ public class ESENSPModeTest
   @Test
   public void testESENSPMode ()
   {
-    ESENSPMode.createESENSPMode ("https://test.example.org", true);
+    ESENSPMode.createESENSPMode ("TestInitiator",
+                                 "TestResponder",
+                                 "https://test.example.org",
+                                 IPModeIDProvider.DEFAULT_DYNAMIC);
   }
 }

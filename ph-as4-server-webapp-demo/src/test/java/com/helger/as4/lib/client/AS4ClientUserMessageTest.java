@@ -90,8 +90,6 @@ public final class AS4ClientUserMessageTest
 
     // Use a pmode that you know is currently running on the server your trying
     // to send the message too
-    final String sPModeID = sSenderID + "-" + sResponderID;
-
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");

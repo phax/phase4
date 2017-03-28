@@ -17,6 +17,7 @@
 package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
@@ -26,6 +27,7 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
@@ -37,7 +39,7 @@ import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.wss.EWSSVersion;
-import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ETriState;
 
 public final class ESENSPMode
@@ -47,32 +49,28 @@ public final class ESENSPMode
   {}
 
   @Nonnull
-  public static PMode createESENSPMode (@Nonnull final String sAddress, final boolean bDynamicID)
+  public static PMode createESENSPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                        @Nonnull @Nonempty final String sResponderID,
+                                        @Nullable final String sAddress,
+                                        @Nonnull final IPModeIDProvider aPModeIDProvider)
   {
-    final PModeParty aInitiator = _generateInitiatorOrResponder (true);
-    final PModeParty aResponder = _generateInitiatorOrResponder (false);
+    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
+    final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
-    final String sID;
-
-    if (bDynamicID)
-      sID = aInitiator.getID () + "-" + aResponder.getID ();
-    else
-      sID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-
-    final PMode aPMode = new PMode ( () -> sID,
-                                      aInitiator,
-                                      aResponder,
-                                      MockEbmsHelper.DEFAULT_AGREEMENT,
-                                      EMEP.ONE_WAY,
-                                      EMEPBinding.PUSH,
-                                      new PModeLeg (_generatePModeLegProtocol (sAddress),
-                                                    _generatePModeLegBusinessInformation (),
-                                                    _generatePModeLegErrorHandling (),
-                                                    (PModeLegReliability) null,
-                                                    _generatePModeLegSecurity ()),
-                                      null,
-                                      null,
-                                      PModeReceptionAwareness.createDefault ());
+    final PMode aPMode = new PMode (aPModeIDProvider,
+                                    aInitiator,
+                                    aResponder,
+                                    MockEbmsHelper.DEFAULT_AGREEMENT,
+                                    EMEP.ONE_WAY,
+                                    EMEPBinding.PUSH,
+                                    new PModeLeg (_generatePModeLegProtocol (sAddress),
+                                                  _generatePModeLegBusinessInformation (),
+                                                  _generatePModeLegErrorHandling (),
+                                                  (PModeLegReliability) null,
+                                                  _generatePModeLegSecurity ()),
+                                    null,
+                                    null,
+                                    PModeReceptionAwareness.createDefault ());
     // Leg 2 stays null, because we only use one-way
     // Ensure it is stored
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
@@ -108,17 +106,8 @@ public final class ESENSPMode
   }
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol (@Nonnull final String sAddress)
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
     return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
-  }
-
-  // TODO not static
-  @Nonnull
-  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
-  {
-    if (bInitiator)
-      return PModeParty.createSimple ("APP_1000000101", CAS4.DEFAULT_SENDER_URL);
-    return PModeParty.createSimple ("APP_2000000101", CAS4.DEFAULT_RESPONDER_URL);
   }
 }

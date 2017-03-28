@@ -16,8 +16,6 @@
  */
 package com.helger.as4.model.pmode;
 
-import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -107,7 +105,7 @@ public class PMode extends AbstractBaseObject implements IPMode
 
   private PModeReceptionAwareness m_aReceptionAwareness;
 
-  public PMode (@Nonnull final Supplier <String> aIDFactory,
+  public PMode (@Nonnull final IPModeIDProvider aIDFactory,
                 @Nonnull final PModeParty aInitiator,
                 @Nonnull final PModeParty aResponder,
                 @Nonnull final String sAgreement,
@@ -118,7 +116,7 @@ public class PMode extends AbstractBaseObject implements IPMode
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUserAndID (aIDFactory.get ()),
+    this (StubObject.createForCurrentUserAndID (aIDFactory.getPModeID (aInitiator.getID (), aResponder.getID ())),
           aInitiator,
           aResponder,
           sAgreement,

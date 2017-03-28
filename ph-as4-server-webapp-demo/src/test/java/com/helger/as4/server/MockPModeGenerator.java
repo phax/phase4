@@ -27,6 +27,7 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.DefaultPMode;
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModeParty;
@@ -55,16 +56,16 @@ public final class MockPModeGenerator
     final PModeParty aInitiator = _generateInitiatorOrResponder (true, eSOAPVersion);
     final PModeParty aResponder = _generateInitiatorOrResponder (false, eSOAPVersion);
 
-    final PMode aConfig = new PMode ( () -> aInitiator.getID () + "-" + aResponder.getID (),
-                                      aInitiator,
-                                      aResponder,
-                                      MockEbmsHelper.DEFAULT_AGREEMENT,
-                                      EMEP.ONE_WAY,
-                                      EMEPBinding.PUSH,
-                                      _generatePModeLeg (eSOAPVersion),
-                                      null,
-                                      null,
-                                      null);
+    final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC,
+                                     aInitiator,
+                                     aResponder,
+                                     MockEbmsHelper.DEFAULT_AGREEMENT,
+                                     EMEP.ONE_WAY,
+                                     EMEPBinding.PUSH,
+                                     _generatePModeLeg (eSOAPVersion),
+                                     null,
+                                     null,
+                                     null);
     // Leg 2 stays null, because we only use one-way
     return aConfig;
   }

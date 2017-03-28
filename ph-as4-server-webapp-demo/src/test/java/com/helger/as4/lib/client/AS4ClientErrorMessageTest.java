@@ -16,25 +16,20 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
 
 public class AS4ClientErrorMessageTest
 {
-  private static AS4ResourceManager s_aResMgr;
-
   @BeforeClass
   public static void startServer () throws Exception
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
-    s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    s_aResMgr = null;
     MockJettySetup.shutDownServer ();
   }
 

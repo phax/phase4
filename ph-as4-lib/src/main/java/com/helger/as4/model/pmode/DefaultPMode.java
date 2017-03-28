@@ -51,7 +51,7 @@ public final class DefaultPMode
   @Nonnull
   public static PMode createDefaultPMode (@Nullable final String sAddress)
   {
-    final PMode aDefaultPMode = new PMode ( () -> "default",
+    final PMode aDefaultPMode = new PMode ( (i, r) -> "default",
                                             PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
                                                                      CAS4.DEFAULT_SENDER_URL),
                                             PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,

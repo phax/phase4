@@ -32,6 +32,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -73,7 +74,10 @@ public class ESENSCompatibilityValidatorTest
   public void setUp ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = ESENSPMode.createESENSPMode ("http://localhost:8080", true);
+    m_aPMode = ESENSPMode.createESENSPMode ("TestInitiator",
+                                            "TestResponder",
+                                            "http://localhost:8080",
+                                            IPModeIDProvider.DEFAULT_DYNAMIC);
   }
 
   @Test

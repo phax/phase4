@@ -18,6 +18,7 @@ package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
 
+import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.profile.AS4Profile;
 import com.helger.as4.profile.IAS4ProfileRegistrar;
 import com.helger.as4.profile.IAS4ProfileRegistrarSPI;
@@ -30,13 +31,14 @@ public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final boolean bDynamicID = true;
-
+    final IPModeIDProvider aPModeIDProvider = IPModeIDProvider.DEFAULT_DYNAMIC;
     aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 "e-SENS",
-                                                bDynamicID,
                                                 () -> new ESENSCompatibilityValidator (),
-                                                () -> ESENSPMode.createESENSPMode ("https://test.example.org",
-                                                                                   bDynamicID)));
+                                                () -> ESENSPMode.createESENSPMode ("TemplateInitiatorID",
+                                                                                   "TemplateResponderID",
+                                                                                   "https://test.example.org",
+                                                                                   aPModeIDProvider),
+                                                aPModeIDProvider));
   }
 }
