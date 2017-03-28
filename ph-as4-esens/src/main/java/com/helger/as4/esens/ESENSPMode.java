@@ -37,6 +37,7 @@ import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.model.pmode.leg.PModeLegReliability;
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.wss.EWSSVersion;
+import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.state.ETriState;
 
 public final class ESENSPMode
@@ -46,26 +47,36 @@ public final class ESENSPMode
   {}
 
   @Nonnull
-  public static PMode createESENSPMode (@Nonnull final String sAddress)
+  public static PMode createESENSPMode (@Nonnull final String sAddress, final boolean bDynamicID)
   {
+    final PModeParty aInitiator = _generateInitiatorOrResponder (true);
+    final PModeParty aResponder = _generateInitiatorOrResponder (false);
 
-    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true),
-                                     _generateInitiatorOrResponder (false),
-                                     MockEbmsHelper.DEFAULT_AGREEMENT,
-                                     EMEP.ONE_WAY,
-                                     EMEPBinding.PUSH,
-                                     new PModeLeg (_generatePModeLegProtocol (sAddress),
-                                                   _generatePModeLegBusinessInformation (),
-                                                   _generatePModeLegErrorHandling (),
-                                                   (PModeLegReliability) null,
-                                                   _generatePModeLegSecurity ()),
-                                     null,
-                                     null,
-                                     PModeReceptionAwareness.createDefault ());
+    final String sID;
+
+    if (bDynamicID)
+      sID = aInitiator.getID () + "-" + aResponder.getID ();
+    else
+      sID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+
+    final PMode aPMode = new PMode ( () -> sID,
+                                      aInitiator,
+                                      aResponder,
+                                      MockEbmsHelper.DEFAULT_AGREEMENT,
+                                      EMEP.ONE_WAY,
+                                      EMEPBinding.PUSH,
+                                      new PModeLeg (_generatePModeLegProtocol (sAddress),
+                                                    _generatePModeLegBusinessInformation (),
+                                                    _generatePModeLegErrorHandling (),
+                                                    (PModeLegReliability) null,
+                                                    _generatePModeLegSecurity ()),
+                                      null,
+                                      null,
+                                      PModeReceptionAwareness.createDefault ());
     // Leg 2 stays null, because we only use one-way
     // Ensure it is stored
-    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aConfig);
-    return aConfig;
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    return aPMode;
   }
 
   @Nonnull

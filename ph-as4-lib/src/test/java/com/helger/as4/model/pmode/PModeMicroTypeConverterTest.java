@@ -66,15 +66,19 @@ public final class PModeMicroTypeConverterTest
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PMode aPMode = new PMode (_generateInitiatorOrResponder (true),
-                                    _generateInitiatorOrResponder (false),
-                                    "Agreement",
-                                    EMEP.TWO_WAY,
-                                    EMEPBinding.SYNC,
-                                    _generatePModeLeg (),
-                                    _generatePModeLeg (),
-                                    _generatePayloadService (),
-                                    _generatePModeReceptionAwareness ());
+    final PModeParty aInitiator = _generateInitiatorOrResponder (true);
+    final PModeParty aResponder = _generateInitiatorOrResponder (false);
+
+    final PMode aPMode = new PMode ( () -> aInitiator.getID () + "-" + aResponder.getID (),
+                                     aInitiator,
+                                     aResponder,
+                                     "Agreement",
+                                     EMEP.TWO_WAY,
+                                     EMEPBinding.SYNC,
+                                     _generatePModeLeg (),
+                                     _generatePModeLeg (),
+                                     _generatePayloadService (),
+                                     _generatePModeReceptionAwareness ());
     XMLTestHelper.testMicroTypeConversion (aPMode);
     XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
     XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());

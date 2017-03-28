@@ -29,6 +29,6 @@ public class ESENSPModeTest
   @Test
   public void testESENSPMode ()
   {
-    ESENSPMode.createESENSPMode ("https://test.example.org");
+    ESENSPMode.createESENSPMode ("https://test.example.org", true);
   }
 }

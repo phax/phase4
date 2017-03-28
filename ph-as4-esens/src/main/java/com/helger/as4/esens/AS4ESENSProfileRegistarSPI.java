@@ -30,9 +30,13 @@ public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
+    final boolean bDynamicID = true;
+
     aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 "e-SENS",
+                                                bDynamicID,
                                                 () -> new ESENSCompatibilityValidator (),
-                                                () -> ESENSPMode.createESENSPMode ("https://test.example.org")));
+                                                () -> ESENSPMode.createESENSPMode ("https://test.example.org",
+                                                                                   bDynamicID)));
   }
 }

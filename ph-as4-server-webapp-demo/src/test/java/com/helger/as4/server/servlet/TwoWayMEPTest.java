@@ -60,23 +60,27 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ()
-                                                                            .getAsString ("server.address",
-                                                                                          "http://localhost:8080/as4"));
+    final PMode aPMode = ESENSPMode.createESENSPMode (AS4ServerConfiguration.getSettings ().getAsString (
+                                                                                                         "server.address",
+                                                                                                         "http://localhost:8080/as4"),
+                                                      false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
     // ESENS PMode is One Way on default settings need to change to two way
-    m_aPMode = new PMode (PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
-                          PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
-                          aPMode.getAgreement (),
-                          EMEP.TWO_WAY,
-                          EMEPBinding.SYNC,
-                          aPMode.getLeg1 (),
-                          aLeg2,
-                          aPMode.getPayloadService (),
-                          aPMode.getReceptionAwareness ());
+    m_aPMode = new PMode ( () -> aPMode.getID (),
+                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
+                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
+                           aPMode.getAgreement (),
+                           EMEP.TWO_WAY,
+                           EMEPBinding.SYNC,
+                           aPMode.getLeg1 (),
+                           aLeg2,
+                           aPMode.getPayloadService (),
+                           aPMode.getReceptionAwareness ());
 
+    // Delete old PMode since it is getting created in the ESENS createPMode
+    MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
   }
 

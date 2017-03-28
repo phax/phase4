@@ -51,15 +51,20 @@ public final class MockPModeGenerator
   @Nonnull
   public static PMode getTestPMode (@Nonnull final ESOAPVersion eSOAPVersion)
   {
-    final PMode aConfig = new PMode (_generateInitiatorOrResponder (true, eSOAPVersion),
-                                     _generateInitiatorOrResponder (false, eSOAPVersion),
-                                     MockEbmsHelper.DEFAULT_AGREEMENT,
-                                     EMEP.ONE_WAY,
-                                     EMEPBinding.PUSH,
-                                     _generatePModeLeg (eSOAPVersion),
-                                     null,
-                                     null,
-                                     null);
+
+    final PModeParty aInitiator = _generateInitiatorOrResponder (true, eSOAPVersion);
+    final PModeParty aResponder = _generateInitiatorOrResponder (false, eSOAPVersion);
+
+    final PMode aConfig = new PMode ( () -> aInitiator.getID () + "-" + aResponder.getID (),
+                                      aInitiator,
+                                      aResponder,
+                                      MockEbmsHelper.DEFAULT_AGREEMENT,
+                                      EMEP.ONE_WAY,
+                                      EMEPBinding.PUSH,
+                                      _generatePModeLeg (eSOAPVersion),
+                                      null,
+                                      null,
+                                      null);
     // Leg 2 stays null, because we only use one-way
     return aConfig;
   }

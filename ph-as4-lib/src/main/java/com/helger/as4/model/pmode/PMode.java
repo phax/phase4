@@ -130,29 +130,6 @@ public class PMode extends AbstractBaseObject implements IPMode
           aReceptionAwareness);
   }
 
-  @Deprecated
-  public PMode (@Nonnull final PModeParty aInitiator,
-                @Nonnull final PModeParty aResponder,
-                @Nonnull final String sAgreement,
-                @Nonnull final EMEP eMEP,
-                @Nonnull final EMEPBinding eMEPBinding,
-                @Nonnull final PModeLeg aLeg1,
-                @Nullable final PModeLeg aLeg2,
-                @Nullable final PModePayloadService aPayloadService,
-                @Nullable final PModeReceptionAwareness aReceptionAwareness)
-  {
-    this ( () -> aInitiator.getID () + "-" + aResponder.getID (),
-           aInitiator,
-           aResponder,
-           sAgreement,
-           eMEP,
-           eMEPBinding,
-           aLeg1,
-           aLeg2,
-           aPayloadService,
-           aReceptionAwareness);
-  }
-
   PMode (@Nonnull final StubObject aObject,
          @Nonnull final PModeParty aInitiator,
          @Nonnull final PModeParty aResponder,

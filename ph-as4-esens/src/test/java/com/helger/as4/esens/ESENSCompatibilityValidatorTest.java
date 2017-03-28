@@ -73,7 +73,7 @@ public class ESENSCompatibilityValidatorTest
   public void setUp ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = ESENSPMode.createESENSPMode ("http://localhost:8080");
+    m_aPMode = ESENSPMode.createESENSPMode ("http://localhost:8080", true);
   }
 
   @Test

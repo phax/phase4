@@ -244,11 +244,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                                                    aCollaborationInfo.getService ().getValue (),
                                                                    aCollaborationInfo.getAction ());
 
-      if (!(aPMode.getInitiatorID () + "-" + aPMode.getResponderID ()).equals (sPModeID))
-      {
-        s_aLogger.warn ("Not the recommended way to generate a PMode ID is used");
-      }
-
       if (aPMode == null)
       {
         s_aLogger.warn ("Failed to resolve PMode '" +

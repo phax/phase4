@@ -51,17 +51,18 @@ public final class DefaultPMode
   @Nonnull
   public static PMode createDefaultPMode (@Nullable final String sAddress)
   {
-    final PMode aDefaultPMode = new PMode (PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                    CAS4.DEFAULT_SENDER_URL),
-                                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
-                                                                    CAS4.DEFAULT_RESPONDER_URL),
-                                           MockEbmsHelper.DEFAULT_AGREEMENT,
-                                           EMEP.ONE_WAY,
-                                           EMEPBinding.PUSH,
-                                           _generatePModeLeg (sAddress),
-                                           (PModeLeg) null,
-                                           (PModePayloadService) null,
-                                           (PModeReceptionAwareness) null);
+    final PMode aDefaultPMode = new PMode ( () -> "default",
+                                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                     CAS4.DEFAULT_SENDER_URL),
+                                            PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                     CAS4.DEFAULT_RESPONDER_URL),
+                                            MockEbmsHelper.DEFAULT_AGREEMENT,
+                                            EMEP.ONE_WAY,
+                                            EMEPBinding.PUSH,
+                                            _generatePModeLeg (sAddress),
+                                            (PModeLeg) null,
+                                            (PModePayloadService) null,
+                                            (PModeReceptionAwareness) null);
     // Leg 2 stays null, because we only use one-way
     return aDefaultPMode;
   }
