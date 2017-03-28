@@ -16,6 +16,7 @@
  */
 package com.helger.as4.servlet;
 
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.concurrent.Immutable;
@@ -40,17 +41,17 @@ public final class AS4ServerInitializer
   private AS4ServerInitializer ()
   {}
 
-  private static void _getMyAPP ()
+  private static String _getMyAPP ()
   {
-    AS4ServerSettings.getDefaultResponderID ();
+    return AS4ServerSettings.getDefaultResponderID ();
   }
 
-  private static void _getMyKeyAlias ()
+  private static String _getMyKeyAlias ()
   {
-    AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ();
+    return AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ();
   }
 
-  private static void _getMyCert () throws WSSecurityException
+  private static Certificate _getMyCert () throws WSSecurityException
   {
     final CryptoType aCT = new CryptoType (TYPE.ALIAS);
     aCT.setAlias (AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ());
@@ -58,10 +59,8 @@ public final class AS4ServerInitializer
                                                           .getCrypto ()
                                                           .getX509Certificates (aCT);
     if (ArrayHelper.isEmpty (aCertList))
-      throw new IllegalStateException ("Failed to find my certificate from alias '" +
-                                       aCT.getAlias () +
-                                       "'");
-    final X509Certificate aCert = aCertList[0];
+      throw new IllegalStateException ("Failed to find my certificate from alias '" + aCT.getAlias () + "'");
+    return aCertList[0];
   }
 
   /**

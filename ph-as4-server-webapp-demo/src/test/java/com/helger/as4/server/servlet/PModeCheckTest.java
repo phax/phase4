@@ -93,18 +93,17 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                               null,
                                                                                               CAS4.DEFAULT_SERVICE_URL,
                                                                                               "4321",
-                                                                                              MockEbmsHelper.DEFAULT_PARTY_ID +
-                                                                                                      12 +
-                                                                                                      "-" +
-                                                                                                      MockEbmsHelper.DEFAULT_PARTY_ID +
-                                                                                                      12,
+                                                                                              DEFAULT_PARTY_ID +
+                                                                                                      "12-" +
+                                                                                                      DEFAULT_PARTY_ID +
+                                                                                                      "12",
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
     m_aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                              MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                              DEFAULT_PARTY_ID,
                                                                               CAS4.DEFAULT_RESPONDER_URL,
-                                                                              MockEbmsHelper.DEFAULT_PARTY_ID));
+                                                                              DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
@@ -266,7 +265,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
 
     aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);

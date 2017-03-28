@@ -149,9 +149,9 @@ final class MockClientMessages
                                                                                                            "pmode-twoway",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                                   MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                                   "1234",
                                                                                    CAS4.DEFAULT_RESPONDER_URL,
-                                                                                   MockEbmsHelper.DEFAULT_PARTY_ID);
+                                                                                   "5678");
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,

@@ -189,7 +189,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Needed for the compression check: it is not allowed to have a
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -222,7 +222,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       return ESuccess.FAILURE;
     }
 
-    // Check if the usermessage has a pmode in the collaboration info
+    // Check if the usermessage has a PMode in the collaboration info
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage == null)
     {
@@ -230,6 +230,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       s_aLogger.warn ("No UserMessage object contained!");
       return ESuccess.FAILURE;
     }
+
+    // Setting Initiator and Responder id, Required values or else xsd will
+    // throw an error
+    final String sInitiatorID = aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ();
+    final String sResponderID = aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
 
     IPMode aPMode = null;
     final Ebms3CollaborationInfo aCollaborationInfo = aUserMessage.getCollaborationInfo ();
@@ -240,9 +245,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (aCollaborationInfo.getAgreementRef () != null)
         sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
+      // TODO get receiver address from properties
+      final String sAddress = "http://localhost-dummy/as4";
+
       aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
                                                                    aCollaborationInfo.getService ().getValue (),
-                                                                   aCollaborationInfo.getAction ());
+                                                                   aCollaborationInfo.getAction (),
+                                                                   sInitiatorID,
+                                                                   sResponderID,
+                                                                   sAddress);
 
       if (aPMode == null)
       {
@@ -418,10 +429,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);
-    // Setting Initiator and Responder id, Required values or else xsd will
-    // throw an error
-    aState.setInitiatorID (aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ());
-    aState.setResponderID (aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ());
+    aState.setInitiatorID (sInitiatorID);
+    aState.setResponderID (sResponderID);
 
     return ESuccess.SUCCESS;
   }

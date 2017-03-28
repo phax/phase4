@@ -19,9 +19,11 @@ package com.helger.as4.profile;
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
 
@@ -49,5 +51,7 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
    *         responder, URLs, certificates.
    */
   @Nonnull
-  PMode createPModeTemplate ();
+  PMode createPModeTemplate (@Nonnull @Nonempty final String sInitiatorID,
+                             @Nonnull @Nonempty final String sResponderID,
+                             @Nullable final String sAddress);
 }

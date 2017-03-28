@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.model.pmode.IPMode;
+import com.helger.commons.annotation.Nonempty;
 
 /**
  * Resolve PMode from ID
@@ -40,8 +41,19 @@ public interface IPModeResolver
    * @param sAction
    *        The action as specified in the EBMS CollaborationInformation. May
    *        not be <code>null</code>.
+   * @param sInitiatorID
+   *        Initiator ID from user message
+   * @param sResponderID
+   *        Responder ID from user message
+   * @param sAddress
+   *        Endpoint address
    * @return <code>null</code> if resolution failed.
    */
   @Nullable
-  IPMode getPModeOfID (@Nullable String sPModeID, @Nonnull String sService, @Nonnull String sAction);
+  IPMode getPModeOfID (@Nullable String sPModeID,
+                       @Nonnull String sService,
+                       @Nonnull String sAction,
+                       @Nonnull @Nonempty String sInitiatorID,
+                       @Nonnull @Nonempty String sResponderID,
+                       @Nullable String sAddress);
 }

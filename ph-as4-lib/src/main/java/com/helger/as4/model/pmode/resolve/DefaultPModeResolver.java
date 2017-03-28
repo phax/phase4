@@ -24,6 +24,7 @@ import com.helger.as4.model.pmode.DefaultPMode;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.profile.IAS4Profile;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -44,7 +45,10 @@ public class DefaultPModeResolver implements IPModeResolver
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sPModeID,
                               @Nonnull final String sService,
-                              @Nonnull final String sAction)
+                              @Nonnull final String sAction,
+                              @Nonnull @Nonempty final String sInitiatorID,
+                              @Nonnull @Nonempty final String sResponderID,
+                              @Nullable final String sAddress)
   {
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     IPMode ret = null;
@@ -71,7 +75,7 @@ public class DefaultPModeResolver implements IPModeResolver
     // 2. Default default
     final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
     if (aProfile != null)
-      return aProfile.createPModeTemplate ();
+      return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
 
     if (!m_bUseDefaultAsFallback)
     {
@@ -80,6 +84,6 @@ public class DefaultPModeResolver implements IPModeResolver
     }
 
     // TODO what to do here?
-    return DefaultPMode.createDefaultPMode ("localhost");
+    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress);
   }
 }

@@ -17,6 +17,7 @@
 package com.helger.as4.profile;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.model.pmode.IPModeIDProvider;
@@ -80,7 +81,9 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Nonnull
-  public PMode createPModeTemplate ()
+  public PMode createPModeTemplate (@Nonnull @Nonempty final String sInitiatorID,
+                                    @Nonnull @Nonempty final String sResponderID,
+                                    @Nullable final String sAddress)
   {
     return m_aDefaultPModeProvider.get ();
   }

@@ -100,9 +100,9 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? MockEbmsHelper.DEFAULT_PARTY_ID
+    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdInitiator;
-    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? MockEbmsHelper.DEFAULT_PARTY_ID
+    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdResponder;
     Ebms3PayloadInfo aEbms3PayloadInfo;
     Node aPayload = null;

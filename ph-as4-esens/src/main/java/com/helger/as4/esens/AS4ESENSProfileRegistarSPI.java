@@ -28,12 +28,13 @@ import com.helger.commons.annotation.IsSPIImplementation;
 public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   public static final String AS4_PROFILE_ID = "esens";
+  public static final String AS4_PROFILE_NAME = "e-SENS";
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
     final IPModeIDProvider aPModeIDProvider = IPModeIDProvider.DEFAULT_DYNAMIC;
     aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
-                                                "e-SENS",
+                                                AS4_PROFILE_NAME,
                                                 () -> new ESENSCompatibilityValidator (),
                                                 () -> ESENSPMode.createESENSPMode ("TemplateInitiatorID",
                                                                                    "TemplateResponderID",

@@ -72,8 +72,8 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
     // ESENS PMode is One Way on default settings need to change to two way
     m_aPMode = new PMode ( (i, r) -> aPMode.getID (),
-                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
-                           PModeParty.createSimple (MockEbmsHelper.DEFAULT_PARTY_ID + 1, CAS4.DEFAULT_ROLE),
+                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
+                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
                            aPMode.getAgreement (),
                            EMEP.TWO_WAY,
                            EMEPBinding.SYNC,
@@ -145,9 +145,9 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     // Default PartyInfo for testing
     aEbms3UserMessage.setPartyInfo (CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                            MockEbmsHelper.DEFAULT_PARTY_ID,
+                                                                            DEFAULT_PARTY_ID,
                                                                             CAS4.DEFAULT_RESPONDER_URL,
-                                                                            MockEbmsHelper.DEFAULT_PARTY_ID));
+                                                                            DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 

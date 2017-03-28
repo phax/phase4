@@ -77,6 +77,16 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     m_aRWLock.writeLock ().lock ();
     try
     {
+      aRealPMode.setInitiator (aPMode.getInitiator ());
+      aRealPMode.setResponder (aPMode.getResponder ());
+      aRealPMode.setAgreement (aPMode.getAgreement ());
+      aRealPMode.setMEP (aPMode.getMEP ());
+      aRealPMode.setMEPBinding (aPMode.getMEPBinding ());
+      aRealPMode.setLeg1 (aPMode.getLeg1 ());
+      aRealPMode.setLeg2 (aPMode.getLeg2 ());
+      aRealPMode.setPayloadService (aPMode.getPayloadService ());
+      aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ());
+
       ObjectHelper.setLastModificationNow (aRealPMode);
       internalUpdateItem (aRealPMode);
     }
@@ -177,7 +187,6 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     PMode ret = (PMode) findFirst (getPModeFilter (aPMode.getID (),
                                                    aPMode.getInitiatorID (),
                                                    aPMode.getResponderID ()));
-
     if (ret == null)
     {
       ret = (PMode) createPMode (aPMode);

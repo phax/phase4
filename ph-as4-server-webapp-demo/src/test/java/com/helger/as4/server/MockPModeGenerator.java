@@ -146,7 +146,12 @@ public final class MockPModeGenerator
       aPModeMgr.deletePMode (sID);
 
     // Create new one
-    aPModeMgr.createPMode (DefaultPMode.createDefaultPMode ("http://test.mock.org"));
+    DefaultPMode.getOrCreateDefaultPMode (MockEbmsHelper.SOAP_11_PARTY_ID,
+                                          MockEbmsHelper.SOAP_11_PARTY_ID,
+                                          "http://test.mock11.org");
+    DefaultPMode.getOrCreateDefaultPMode (MockEbmsHelper.SOAP_12_PARTY_ID,
+                                          MockEbmsHelper.SOAP_12_PARTY_ID,
+                                          "http://test.mock11.org");
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aPModeMgr.createOrUpdatePMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }
