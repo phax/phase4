@@ -51,7 +51,7 @@ public final class ESENSPMode
   @Nonnull
   public static PMode createESENSPMode (@Nonnull @Nonempty final String sInitiatorID,
                                         @Nonnull @Nonempty final String sResponderID,
-                                        @Nullable final String sAddress,
+                                        @Nullable final String sResponderAddress,
                                         @Nonnull final IPModeIDProvider aPModeIDProvider)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
@@ -63,7 +63,7 @@ public final class ESENSPMode
                                     MockEbmsHelper.DEFAULT_AGREEMENT,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
-                                    new PModeLeg (_generatePModeLegProtocol (sAddress),
+                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
                                                   _generatePModeLegBusinessInformation (),
                                                   _generatePModeLegErrorHandling (),
                                                   (PModeLegReliability) null,
@@ -72,6 +72,47 @@ public final class ESENSPMode
                                     null,
                                     PModeReceptionAwareness.createDefault ());
     // Leg 2 stays null, because we only use one-way
+    // Ensure it is stored
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    return aPMode;
+  }
+
+  /**
+   * Two-Way Version of the esens pmode uses two-way push-push
+   * 
+   * @param sInitiatorID
+   * @param sResponderID
+   * @param sResponderAddress
+   * @param aPModeIDProvider
+   * @return
+   */
+  @Nonnull
+  public static PMode createESENSPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
+                                              @Nonnull @Nonempty final String sResponderID,
+                                              @Nullable final String sResponderAddress,
+                                              @Nonnull final IPModeIDProvider aPModeIDProvider)
+  {
+    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
+    final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
+
+    final PMode aPMode = new PMode (aPModeIDProvider,
+                                    aInitiator,
+                                    aResponder,
+                                    MockEbmsHelper.DEFAULT_AGREEMENT,
+                                    EMEP.TWO_WAY,
+                                    EMEPBinding.PUSH_PUSH,
+                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
+                                                  _generatePModeLegBusinessInformation (),
+                                                  _generatePModeLegErrorHandling (),
+                                                  (PModeLegReliability) null,
+                                                  _generatePModeLegSecurity ()),
+                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
+                                                  _generatePModeLegBusinessInformation (),
+                                                  _generatePModeLegErrorHandling (),
+                                                  (PModeLegReliability) null,
+                                                  _generatePModeLegSecurity ()),
+                                    null,
+                                    PModeReceptionAwareness.createDefault ());
     // Ensure it is stored
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     return aPMode;
