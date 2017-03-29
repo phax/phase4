@@ -155,17 +155,22 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
-  // TODO does not work anymore since template gets created instead of the pmode
-  // that was given
-  // Because if the pmode has no leg, there is no action/service to find the
-  // pmode
-  // @Ignore
   @Test
   public void testPModeLegNullReject () throws Exception
   {
     final PMode aPMode = MockPModeGenerator.getTestPMode (ESOAPVersion.AS4_DEFAULT);
     aPMode.setLeg1 (null);
     final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+
+    // Needed since different ids set in message and pmode otherwise
+    m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
+                                                                                              null,
+                                                                                              CAS4.DEFAULT_SERVICE_URL,
+                                                                                              "4321",
+                                                                                              aPMode.getInitiatorID () +
+                                                                                                      "-" +
+                                                                                                      aPMode.getResponderID (),
+                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT));
 
     try
     {
@@ -216,6 +221,15 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
 
       aPModeMgr.createOrUpdatePMode (aPMode);
+      // Needed since different ids set in message and pmode otherwise
+      m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
+                                                                                                null,
+                                                                                                CAS4.DEFAULT_SERVICE_URL,
+                                                                                                "4321",
+                                                                                                aPMode.getInitiatorID () +
+                                                                                                        "-" +
+                                                                                                        aPMode.getResponderID (),
+                                                                                                MockEbmsHelper.DEFAULT_AGREEMENT));
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
                                                                                     m_aEbms3UserMessage)
@@ -265,7 +279,7 @@ public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageDifferentPropertiesValues () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
 
     aEbms3Properties.add (_createRandomProperty ());
     aEbms3MessageProperties.setProperty (aEbms3Properties);
