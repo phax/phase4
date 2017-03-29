@@ -203,7 +203,7 @@ public final class AS4ClientUserMessageTest
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -220,7 +220,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -236,7 +236,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -256,7 +256,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -273,7 +273,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -289,7 +289,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    System.out.println (MicroWriter.getXMLString (aDoc));
+    System.out.println (MicroWriter.getNodeAsString (aDoc));
   }
 
   @Test
@@ -309,7 +309,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -328,7 +328,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -346,7 +346,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -368,7 +368,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -396,7 +396,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
@@ -424,7 +424,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getXMLString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
   }
 
   @Test
