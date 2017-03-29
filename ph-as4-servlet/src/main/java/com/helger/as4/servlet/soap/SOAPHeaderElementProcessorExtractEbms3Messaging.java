@@ -246,15 +246,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (aCollaborationInfo.getAgreementRef () != null)
         sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
-      // Get address from properties file
-      final String sAddress = AS4ServerConfiguration.getAddress ();
+      // Get responder address from properties file
+      final String sResponderAddress = AS4ServerConfiguration.getResponderAddress ();
 
       aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
                                                                    aCollaborationInfo.getService ().getValue (),
                                                                    aCollaborationInfo.getAction (),
                                                                    sInitiatorID,
                                                                    sResponderID,
-                                                                   sAddress);
+                                                                   sResponderAddress);
 
       if (aPMode == null)
       {

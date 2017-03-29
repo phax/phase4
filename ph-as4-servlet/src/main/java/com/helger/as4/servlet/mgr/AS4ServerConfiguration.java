@@ -141,7 +141,7 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsLong (sFieldName, DEFAULT_RESET_MINUTES);
   }
 
-  public static String getAddress ()
+  public static String getResponderAddress ()
   {
     return getSettings ().getAsString ("server.address");
   }
