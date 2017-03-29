@@ -37,6 +37,7 @@ import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
+import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -189,7 +190,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     // Needed for the compression check: it is not allowed to have a
     // compressed attachment and a SOAPBodyPayload
     boolean bHasSoapBodyPayload = false;
-    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap<> ();
+    final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
@@ -245,8 +246,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       if (aCollaborationInfo.getAgreementRef () != null)
         sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
-      // TODO get receiver address from properties
-      final String sAddress = "http://localhost-dummy/as4";
+      // Get address from properties file
+      final String sAddress = AS4ServerConfiguration.getAddress ();
 
       aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
                                                                    aCollaborationInfo.getService ().getValue (),

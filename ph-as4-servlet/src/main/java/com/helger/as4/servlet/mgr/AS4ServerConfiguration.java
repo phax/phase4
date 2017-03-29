@@ -140,4 +140,9 @@ public final class AS4ServerConfiguration
     final String sFieldName = "server.incoming.duplicatedisposal.minutes";
     return getSettings ().getAsLong (sFieldName, DEFAULT_RESET_MINUTES);
   }
+
+  public static String getAddress ()
+  {
+    return getSettings ().getAsString ("server.address");
+  }
 }
