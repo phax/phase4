@@ -83,7 +83,6 @@ public class DefaultPModeResolver implements IPModeResolver
       return null;
     }
 
-    // TODO what to do here?
     return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress);
   }
 }

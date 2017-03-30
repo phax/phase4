@@ -226,8 +226,12 @@ public final class AS4Handler implements Closeable
         aIncomingAttachment.setSourceStreamProvider ( () -> eCompressionMode.getDecompressStream (aOldISP.getInputStream ()));
 
         final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getId (), "attachment=");
+        // x.getHref() != null needed since, if a message contains a payload and
+        // an attachment, it would throw a NullPointerException since a payload
+        // does not have anything written in its partinfo therefor also now href
         final Ebms3PartInfo aPart = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
-                                                                x -> x.getHref ().contains (sAttachmentContentID));
+                                                                x -> x.getHref () != null &&
+                                                                     x.getHref ().contains (sAttachmentContentID));
         if (aPart != null)
         {
           final Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),

@@ -35,4 +35,13 @@ public class ESENSPModeTest
                                  "https://test.example.org",
                                  IPModeIDProvider.DEFAULT_DYNAMIC);
   }
+
+  @Test
+  public void testESENSPModeTwoWay ()
+  {
+    ESENSPMode.createESENSPModeTwoWay ("TestInitiator",
+                                       "TestResponder",
+                                       "https://test.example.org",
+                                       IPModeIDProvider.DEFAULT_DYNAMIC);
+  }
 }
