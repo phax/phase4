@@ -82,20 +82,6 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
-        <artifactId>ph-web-parent-pom</artifactId>
-        <version>8.7.3</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
-        <artifactId>ph-oton-parent-pom</artifactId>
-        <version>7.0.4</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
         <artifactId>ph-xsds-parent-pom</artifactId>
         <version>1.0.1</version>
         <type>pom</type>
@@ -108,7 +94,21 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-          
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-web-parent-pom</artifactId>
+        <version>8.7.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-oton-parent-pom</artifactId>
+        <version>7.0.5</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk15on</artifactId>
@@ -155,9 +155,6 @@
     </dependencies>
   </dependencyManagement>
   
-  <dependencies>
-  </dependencies>
-  
   <modules>
     <module>ph-as4-lib</module>
     <module>ph-as4-esens</module>
@@ -166,7 +163,5 @@
   </modules>
   
   <build>
-    <plugins>
-    </plugins>
   </build>
 </project>
