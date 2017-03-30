@@ -163,7 +163,5 @@
   </modules>
   
   <build>
-    <plugins>
-    </plugins>
   </build>
 </project>
