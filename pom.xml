@@ -155,9 +155,6 @@
     </dependencies>
   </dependencyManagement>
   
-  <dependencies>
-  </dependencies>
-  
   <modules>
     <module>ph-as4-lib</module>
     <module>ph-as4-esens</module>
