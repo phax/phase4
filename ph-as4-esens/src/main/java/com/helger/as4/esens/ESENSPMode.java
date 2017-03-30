@@ -48,6 +48,19 @@ public final class ESENSPMode
   private ESENSPMode ()
   {}
 
+  /**
+   * One-Way Version of the esens pmode uses one-way push
+   *
+   * @param sInitiatorID
+   *        Initiator ID
+   * @param sResponderID
+   *        Responder ID
+   * @param sResponderAddress
+   *        Responder URL
+   * @param aPModeIDProvider
+   *        PMode ID provider
+   * @return New PMode
+   */
   @Nonnull
   public static PMode createESENSPMode (@Nonnull @Nonempty final String sInitiatorID,
                                         @Nonnull @Nonempty final String sResponderID,
@@ -79,12 +92,16 @@ public final class ESENSPMode
 
   /**
    * Two-Way Version of the esens pmode uses two-way push-push
-   * 
+   *
    * @param sInitiatorID
+   *        Initiator ID
    * @param sResponderID
+   *        Responder ID
    * @param sResponderAddress
+   *        Responder URL
    * @param aPModeIDProvider
-   * @return
+   *        PMode ID provider
+   * @return New PMode
    */
   @Nonnull
   public static PMode createESENSPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
