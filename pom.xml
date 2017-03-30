@@ -82,20 +82,6 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
-        <artifactId>ph-web-parent-pom</artifactId>
-        <version>8.7.3</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
-        <artifactId>ph-oton-parent-pom</artifactId>
-        <version>7.0.4</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
         <artifactId>ph-xsds-parent-pom</artifactId>
         <version>1.0.1</version>
         <type>pom</type>
@@ -105,6 +91,20 @@
         <groupId>com.helger</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
         <version>3.6.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-web-parent-pom</artifactId>
+        <version>8.7.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>ph-oton-parent-pom</artifactId>
+        <version>7.0.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
