@@ -1,41 +1,37 @@
-package com.helger.as4.esensCEF;
+package com.helger.as4.CEF;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.http.entity.StringEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import org.w3c.dom.NodeList;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
-import com.helger.as4.model.pmode.IPModeIDProvider;
-import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.server.MockPModeGenerator;
-import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -46,96 +42,9 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
-import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
+public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
 {
-  private static final String INITIATOR_ID = "CEF-Initiator";
-  private static final String RESPONDER_ID = "CEF-Responder";
-  private static final String RESPONDER_ADDRESS = "http://localhost:8080/as4";
-
-  private PMode m_aESENSOneWayPMode;
-  // private PMode m_aESENSTwoWayPMode;
-  private ESOAPVersion m_eSOAPVersion;
-  private Node m_aPayload;
-
-  @Before
-  public void setUpCEF ()
-  {
-
-    m_aESENSOneWayPMode = ESENSPMode.createESENSPMode (INITIATOR_ID,
-                                                       RESPONDER_ID,
-                                                       RESPONDER_ADDRESS,
-                                                       IPModeIDProvider.DEFAULT_DYNAMIC);
-
-    // TODO test if thats possible or not same ID but different MEP should
-    // require another id
-    /*
-     * m_aESENSTwoWayPMode = ESENSPMode.createESENSPModeTwoWay (INITIATOR_ID,
-     * RESPONDER_ID, RESPONDER_ADDRESS, IPModeIDProvider.DEFAULT_DYNAMIC);
-     */
-
-    m_eSOAPVersion = m_aESENSOneWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
-    try
-    {
-      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    }
-    catch (final SAXException e)
-    {
-      e.printStackTrace ();
-    }
-  }
-
-  private Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nullable final Node aPayload,
-                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                          @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
-  {
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
-
-    final Document aSignedDoc = aClient.createSignedMessage (testUserMessageSoapNotSigned (aPayload, aAttachments),
-                                                             eSOAPVersion,
-                                                             aAttachments,
-                                                             aResMgr,
-                                                             false,
-                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-    return aSignedDoc;
-  }
-
-  private Document testUserMessageSoapNotSigned (@Nullable final Node aPayload,
-                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
-  {
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
-
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo;
-    final Ebms3PartyInfo aEbms3PartyInfo;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                              "MyServiceTypes",
-                                                                              MockPModeGenerator.SOAP11_SERVICE,
-                                                                              "4321",
-                                                                              m_aESENSOneWayPMode.getID (),
-                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
-    aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                              INITIATOR_ID,
-                                                              CAS4.DEFAULT_RESPONDER_URL,
-                                                              RESPONDER_ID);
-
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
-
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     m_eSOAPVersion)
-                                                 .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
-  }
 
   /**
    * Prerequisite:<br>
@@ -166,22 +75,6 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
 
     assertTrue (sResponse.contains ("Receipt"));
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
-  }
-
-  /**
-   * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile: Two-Way/Push-and-Push MEP. SMSH sends an AS4 User Message
-   * (M1 with ID MessageId) that requires a consumer response to the RMSH. <br>
-   * <br>
-   * Predicate: <br>
-   * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
-   * MESSAGEID (of M1).
-   */
-  @Test
-  public void eSENS_TA02 ()
-  {
-
   }
 
   /**
@@ -398,9 +291,21 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
    * used is the certificate of the SMSH.
    */
   @Test
-  public void eSENS_TA13 ()
+  public void eSENS_TA13 () throws Exception
   {
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
 
+    NodeList nList = aDoc.getElementsByTagName ("ds:SignatureMethod");
+    String sAlgorithmToCheck = nList.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+
+    // Checking Signature Algorithm
+    assertEquals (sAlgorithmToCheck, ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
+
+    nList = aDoc.getElementsByTagName ("ds:DigestMethod");
+    sAlgorithmToCheck = nList.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+
+    // Checking Digest Algorithm
+    assertEquals (sAlgorithmToCheck, ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
   }
 
   /**
@@ -416,9 +321,24 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
    * the certificate of the RMSH.
    */
   @Test
-  public void eSENS_TA14 ()
+  public void eSENS_TA14 () throws Exception
   {
+    Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
+    aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
+                                                            aDoc,
+                                                            true,
+                                                            ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
+    final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
+    // Needs to be the second item in the message, since first would be
+    // <xenc:EncryptionMethod
+    // Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+    // for the key encryption => real encryption algorithm occurs in the soap
+    // body
+    final String sAlgorithmToCheck = nList.item (1).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+
+    // Checking Signature Algorithm
+    assertEquals (sAlgorithmToCheck, ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
   }
 
   /**
@@ -436,24 +356,15 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
    * provided by the original message submitted by the producer).
    */
   @Test
-  public void eSENS_TA15 ()
+  public void eSENS_TA15 () throws Exception
   {
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
 
-  }
-
-  /**
-   * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (Two-Way/Push-and-Push MEP). SMSH sends an AS4 User Message
-   * to the RMSH.<br>
-   * <br>
-   * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with
-   * status code 2XX.
-   */
-  @Test
-  public void eSENS_TA16 ()
-  {
+    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageProperties");
+    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  "originalSender");
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  "finalRecipient");
 
   }
 
@@ -486,7 +397,7 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
   @Test
   public void eSENS_TA18 ()
   {
-
+    // See com.helger.as4.server.servlet.PModePingTest;
   }
 
   /**
@@ -500,7 +411,7 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
   @Test
   public void eSENS_TA19 ()
   {
-
+    // See com.helger.as4.server.servlet.PModePingTest;
   }
 
   /**
@@ -515,8 +426,58 @@ public class AS4eSENSCEFTest extends AbstractUserMessageTestSetUp
    * TRACKINGIDENTIFIER property.
    */
   @Test
-  public void eSENS_TA20 ()
+  public void eSENS_TA20 () throws Exception
   {
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null);
+
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+    final Ebms3PartyInfo aEbms3PartyInfo;
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                              "MyServiceTypes",
+                                                                              MockPModeGenerator.SOAP11_SERVICE,
+                                                                              "4321",
+                                                                              m_aESENSOneWayPMode.getID (),
+                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
+    aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                              INITIATOR_ID,
+                                                              CAS4.DEFAULT_RESPONDER_URL,
+                                                              RESPONDER_ID);
+
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final String sTrackerIdentifier = "trackingidentifier";
+    final Ebms3Property aProp = new Ebms3Property ();
+    aProp.setName (sTrackerIdentifier);
+    aProp.setValue ("tracker");
+    aEbms3MessageProperties.addProperty (aProp);
+
+    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+                                                                     aEbms3PayloadInfo,
+                                                                     aEbms3CollaborationInfo,
+                                                                     aEbms3PartyInfo,
+                                                                     aEbms3MessageProperties,
+                                                                     m_eSOAPVersion)
+                                                 .setMustUnderstand (true);
+    final SignedMessageCreator aClient = new SignedMessageCreator ();
+
+    final Document aSignedDoc = aClient.createSignedMessage (aDoc.getAsSOAPDocument (m_aPayload),
+                                                             m_eSOAPVersion,
+                                                             null,
+                                                             new AS4ResourceManager (),
+                                                             false,
+                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+    final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  sTrackerIdentifier);
+
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, null);
+
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
+
 }
