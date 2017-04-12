@@ -1,7 +1,19 @@
 package com.helger.as4.CEF;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+
+import javax.mail.internet.MimeMessage;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
@@ -10,14 +22,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.attachment.EAS4CompressionMode;
+import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.encrypt.EncryptionCreator;
+import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
+import com.helger.as4.server.message.MockMessages;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -26,7 +46,13 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
+import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
+import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.mime.CMimeType;
 
 public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 {
@@ -148,9 +174,24 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The SMSH generates an AS4 message with a gzip compressed payload.
    */
   @Test
-  public void AS4_TA06 ()
+  public void AS4_TA06 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                 m_aPayload,
+                                                                                                                 aAttachments,
+                                                                                                                 new AS4ResourceManager ()),
+                                                                                          aAttachments);
+
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   /**
@@ -164,9 +205,20 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * "CompressionType" and value set to "application/gzip" is present.
    */
   @Test
-  public void AS4_TA07 ()
+  public void AS4_TA07 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  "CompressionType");
+    assertEquals (nList.item (0).getLastChild ().getTextContent (), "application/gzip");
   }
 
   /**
@@ -181,9 +233,19 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * set to the value specified by the producer ("application/xml").
    */
   @Test
-  public void AS4_TA08 ()
+  public void AS4_TA08 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
+    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (), "MimeType");
+    assertEquals (nList.item (0).getFirstChild ().getTextContent (), "application/xml");
   }
 
   /**
@@ -196,9 +258,21 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends a synchronous ebMS error response.
    */
   @Test
-  public void AS4_TA09 ()
+  public void AS4_TA09 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
+    nList.item (0).removeChild (nList.item (0).getFirstChild ());
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -213,9 +287,33 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * and set to the value "UTF-16".
    */
   @Test
-  public void AS4_TA10 ()
+  public void AS4_TA10 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                                      CMimeType.APPLICATION_XML,
+                                                                                      EAS4CompressionMode.GZIP,
+                                                                                      s_aResMgr);
+    aAttachment.setCharset (StandardCharsets.UTF_16);
+    aAttachments.add (aAttachment);
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
+    nList = nList.item (0).getChildNodes ();
+
+    boolean bHasCharset = false;
+
+    for (int i = 0; i < nList.getLength (); i++)
+    {
+      if (nList.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
+      {
+        if (nList.item (i).getTextContent ().equals ("UTF-16"))
+          bHasCharset = true;
+      }
+    }
+
+    assertTrue (bHasCharset);
   }
 
   /**
@@ -230,12 +328,39 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * and set to the value "UTF-8".
    */
   @Test
-  public void AS4_TA11 ()
+  public void AS4_TA11 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                                      CMimeType.APPLICATION_XML,
+                                                                                      EAS4CompressionMode.GZIP,
+                                                                                      s_aResMgr);
+    aAttachment.setCharset (StandardCharsets.UTF_8);
+    aAttachments.add (aAttachment);
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
+    nList = nList.item (0).getChildNodes ();
+
+    boolean bHasCharset = false;
+
+    for (int i = 0; i < nList.getLength (); i++)
+    {
+      if (nList.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
+      {
+        if (nList.item (i).getTextContent ().equals ("UTF-8"))
+          bHasCharset = true;
+      }
+    }
+
+    assertTrue (bHasCharset);
   }
 
   /**
+   * Note: Not testable (might become valid after the requirements EBXMLMSG-87
+   * and EBXMLMSG-88 are validated). <= thats what is standing in the
+   * document<br>
    * Prerequisite:<br>
    * SMSH and RMSH are configured to exchange AS4 messages according to the
    * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 message
@@ -265,9 +390,26 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * Category = Communication".
    */
   @Test
-  public void AS4_TA13 ()
+  public void AS4_TA13 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                                      CMimeType.APPLICATION_XML,
+                                                                                      EAS4CompressionMode.GZIP,
+                                                                                      s_aResMgr);
+    aAttachment.setCharset (StandardCharsets.UTF_8);
+    aAttachments.add (aAttachment);
 
+    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
+
+    // TODO discuss with philipp about how to handle the exception that gets
+    // thrown
+    aAttachments.get (0)
+                .setSourceStreamProvider ( () -> ClassPathResource.getInputStream ("attachment/CompressedPayload.txt"));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    // final String s = EntityUtils.toString (new HttpMimeMessageEntity (aMsg));
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -285,7 +427,7 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA14 ()
   {
-
+    // SAME as TA13
   }
 
   /**
@@ -298,9 +440,19 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH delivers the message with decompressed payload to the consumer.
    */
   @Test
-  public void AS4_TA15 ()
+  public void AS4_TA15 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    // How to check message if it is decompressed hmm?
   }
 
   /**
@@ -313,9 +465,26 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH delivers the message with decompressed payloads to the consumer.
    */
   @Test
-  public void AS4_TA16 ()
+  public void AS4_TA16 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
   /**
@@ -328,9 +497,19 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back an AS4 non-repudiation receipt.
    */
   @Test
-  public void AS4_TA17 ()
+  public void AS4_TA17 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   /**
@@ -343,9 +522,27 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The SMSH receives a WS-Security SOAP Fault.
    */
   @Test
-  public void AS4_TA18 ()
+  public void AS4_TA18 () throws Exception
   {
+    // signed then compressed
+    // Should return an error because the uncompressed attachment was signed and
+    // not the compressed one
+    ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    s_aResMgr));
 
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
+
+    aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -358,9 +555,25 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back an AS4 non-repudiation receipt.
    */
   @Test
-  public void AS4_TA19 ()
+  public void AS4_TA19 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    s_aResMgr));
 
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
+                                                                          MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                     null,
+                                                                                                                     aAttachments),
+                                                                          false,
+                                                                          aAttachments,
+                                                                          s_aResMgr,
+                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   /**
@@ -373,9 +586,36 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The SMSH receives a WS-Security SOAP Fault.
    */
   @Test
-  public void AS4_TA20 ()
+  public void AS4_TA20 () throws Exception
   {
+    final Document aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
+                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                      m_aPayload,
+                                                                                                                      null),
+                                                                           true,
+                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
+    final NodeList nList = aDoc.getElementsByTagName ("S12:Body");
+
+    final NonBlockingByteArrayOutputStream outputStream = new NonBlockingByteArrayOutputStream ();
+    final Source xmlSource = new DOMSource (nList.item (0));
+    final Result outputTarget = new StreamResult (outputStream);
+    TransformerFactory.newInstance ().newTransformer ().transform (xmlSource, outputTarget);
+
+    final byte [] aSrc = outputStream.toByteArray ();
+
+    // Compression
+    final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
+    try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
+        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+    {
+      StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
+    }
+    nList.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**
@@ -388,9 +628,35 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back an AS4 non-repudiation receipt.
    */
   @Test
-  public void AS4_TA21 ()
+  public void AS4_TA21 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
 
+    final SignedMessageCreator aSigned = new SignedMessageCreator ();
+    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                  null,
+                                                                                                  aAttachments),
+                                                       m_eSOAPVersion,
+                                                       aAttachments,
+                                                       s_aResMgr,
+                                                       false,
+                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
+    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
+                                                                          aDoc,
+                                                                          false,
+                                                                          aAttachments,
+                                                                          s_aResMgr,
+                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   /**
@@ -415,9 +681,17 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * (producer,consumer).
    */
   @Test
-  public void AS4_TA27 ()
+  public void AS4_TA27 () throws Exception
   {
+    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null);
 
+    NodeList nList = aDoc.getElementsByTagName ("eb:PartyId");
+    final String sPartyID = nList.item (0).getTextContent ();
+
+    nList = aDoc.getElementsByTagName ("eb:Property");
+    final String sOriginalSender = nList.item (0).getTextContent ();
+
+    assertFalse (sPartyID.equals (sOriginalSender));
   }
 
   /**
@@ -433,9 +707,27 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
    * document and the second is the actual payload
    */
   @Test
-  public void AS4_TA28 ()
+  public void AS4_TA28 () throws Exception
   {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final AS4ResourceManager aResMgr = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    aResMgr));
+    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    null,
+                                                                    aResMgr1));
 
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                     null,
+                                                                                                                                     aAttachments),
+                                                                                          aAttachments);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
   }
 
   /**
@@ -453,6 +745,6 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA29 ()
   {
-
+    // Same like AS4_TA03
   }
 }

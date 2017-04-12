@@ -140,7 +140,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     }
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
-                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   @Test

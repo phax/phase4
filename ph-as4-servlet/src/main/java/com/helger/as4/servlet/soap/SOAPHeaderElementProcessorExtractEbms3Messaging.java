@@ -378,8 +378,15 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           // the real amount in the mime message
           nSpecifiedAttachments++;
 
+          boolean bMimeTypePresent = false;
+          boolean bCompressionTypePresent = false;
+
           for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
           {
+            if (aEbms3Property.getName ().equalsIgnoreCase ("mimetype"))
+            {
+              bMimeTypePresent = true;
+            }
             if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
             {
               // Only needed check here since AS4 does not support another
@@ -398,7 +405,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
               final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), CreateUserMessage.PREFIX_CID);
               aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
+              bCompressionTypePresent = true;
             }
+          }
+
+          // if a compressiontype is present there has to be a mimetype present,
+          // to specify what mimetype the attachment was before it got
+          // compressed
+          if (!bMimeTypePresent && bCompressionTypePresent)
+          {
+            s_aLogger.warn ("Error processing the UserMessage, MimeType for a compressed message not present. ");
+
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            return ESuccess.FAILURE;
           }
         }
       }

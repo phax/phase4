@@ -28,12 +28,6 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   public void AS4_TA01 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
-
-    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
-
-    // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
-
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
     assertTrue (sResponse.contains ("ConversationId"));
@@ -58,12 +52,10 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   public void AS4_TA02 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
-
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
 
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
-
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));

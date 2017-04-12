@@ -45,7 +45,6 @@ import com.helger.commons.mime.CMimeType;
 
 public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
 {
-
   /**
    * Prerequisite:<br>
    * SMSH and RMSH are configured to exchange AS4 messages according to the
@@ -64,13 +63,11 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA01 () throws MessagingException, WSSecurityException, IOException
   {
-
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
                                                                                                                  m_aPayload,
                                                                                                                  null,
                                                                                                                  new AS4ResourceManager ()),
                                                                                           null);
-
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
