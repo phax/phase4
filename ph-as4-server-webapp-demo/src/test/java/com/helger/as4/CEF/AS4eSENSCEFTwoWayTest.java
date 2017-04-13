@@ -32,6 +32,9 @@ public class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
    * MESSAGEID (of M1).
+   * 
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void eSENS_TA02 () throws Exception
@@ -58,6 +61,9 @@ public class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH returns a non-repudiation receipt within a HTTP response with
    * status code 2XX.
+   * 
+   * @throws Exception
+   *         In case of error
    */
   // TODO test will only work if async is implemented so both a receipt and a
   // usermessage gets sent

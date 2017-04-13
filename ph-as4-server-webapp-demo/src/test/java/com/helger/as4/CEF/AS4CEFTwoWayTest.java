@@ -23,6 +23,9 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH sends back a User Message (M2) with element CONVERSATIONIDM2 equal
    * to ConversationIdM1 (set by the consumer).
+   * 
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void AS4_TA01 () throws Exception
@@ -47,6 +50,9 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
    * MESSAGEID (of M1) and with element CONVERSATIONIDM2 equal to
    * ConversationIdM1.
+   * 
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void AS4_TA02 () throws Exception
