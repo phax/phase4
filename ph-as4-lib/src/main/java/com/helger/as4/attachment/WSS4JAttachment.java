@@ -293,7 +293,8 @@ public class WSS4JAttachment extends Attachment
 
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
-      try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
+      try (
+          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
         StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
       }

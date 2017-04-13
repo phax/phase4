@@ -116,7 +116,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
-                                                                    EAS4CompressionMode.GZIP,
+                                                                    null,
                                                                     s_aResMgr));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
@@ -148,9 +148,25 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * Compliant AS4 message always have an empty SOAP Body. "
    */
   @Test
-  public void eSENS_TA05 ()
+  public void eSENS_TA05 () throws Exception
   {
     // TODO talk with philip about this
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    s_aResMgr));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                 m_aPayload,
+                                                                                                                 aAttachments,
+                                                                                                                 new AS4ResourceManager ()),
+                                                                                          aAttachments);
+
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   /**
@@ -166,9 +182,37 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * in separate MIME parts and the soap body is empty.
    */
   @Test
-  public void eSENS_TA06 ()
+  public void eSENS_TA06 () throws Exception
   {
     // same stuff as TA05 only one step further
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final AS4ResourceManager aResMgr = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr));
+    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr1));
+    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr2));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                 m_aPayload,
+                                                                                                                 aAttachments,
+                                                                                                                 new AS4ResourceManager ()),
+                                                                                          aAttachments);
+
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+
   }
 
   /**
@@ -183,7 +227,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA07 ()
   {
-    // same stuff as TA05 only one step further
+    // Tests the processing of the payload, which is specified in each SPI
   }
 
   /**
@@ -362,7 +406,6 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                   "originalSender");
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   "finalRecipient");
-
   }
 
   /**

@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.ZipException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -378,7 +379,7 @@ public final class AS4Handler implements Closeable
                                 @Nullable final Node aPayloadNode,
                                 @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                 @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
+                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments) throws ZipException
   {
     // Invoke all SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
@@ -420,6 +421,9 @@ public final class AS4Handler implements Closeable
       }
       catch (final Throwable t)
       {
+        // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
+        if (t.getCause () instanceof ZipException)
+          throw (ZipException) t.getCause ();
         if (t instanceof RuntimeException)
           throw (RuntimeException) t;
         throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
@@ -468,6 +472,8 @@ public final class AS4Handler implements Closeable
     // Storing for two-way response messages
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
     boolean bCanInvokeSPIs = false;
+    String sMessageID = null;
+
     if (aErrorMessages.isEmpty ())
     {
       if (aPMode == null)
@@ -516,6 +522,7 @@ public final class AS4Handler implements Closeable
 
       if (aUserMessage != null)
       {
+        sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
         _decompressAttachments (aUserMessage, aState, aDecryptedAttachments);
@@ -550,7 +557,6 @@ public final class AS4Handler implements Closeable
 
       if (_isNotPingMessage (aPMode))
       {
-        final String sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
         final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
         if (bIsDuplicate)
         {
@@ -580,7 +586,21 @@ public final class AS4Handler implements Closeable
         // Call synchronous
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
-        _invokeSPIs (aUserMessage, aPayloadNode, aDecryptedAttachments, aErrorMessages, aResponseAttachments);
+        try
+        {
+          _invokeSPIs (aUserMessage, aPayloadNode, aDecryptedAttachments, aErrorMessages, aResponseAttachments);
+        }
+        catch (final ZipException ex)
+        {
+          final Ebms3Description aDesc = new Ebms3Description ();
+          aDesc.setLang (m_aLocale.getLanguage ());
+          aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
+
+          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
+                                                                                     sMessageID,
+                                                                                     sMessageID,
+                                                                                     aDesc));
+        }
       }
       else
       {
@@ -593,30 +613,37 @@ public final class AS4Handler implements Closeable
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
           IAS4Responder aAsyncResponder;
-          if (_invokeSPIs (aFinalUserMessage,
-                           aFinalPayloadNode,
-                           aFinalDecryptedAttachments,
-                           aLocalErrorMessages,
-                           aLocalResponseAttachments).isSuccess ())
+          try
           {
-            // TODO SPI processing started
-            final Ebms3UserMessage aLeg2UserMsg = null;
-            // Send UserMessage or receipt
-            aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
-                                                          aResponseAttachments,
-                                                          aEffectiveLeg,
-                                                          new AS4UserMessage (eSOAPVersion,
-                                                                              aLeg2UserMsg).getAsSOAPDocument ());
-          }
-          else
-          {
-            // TODO SPI processing started
-            // Send ErrorMessage
-            // Undefined - see https://github.com/phax/ph-as4/issues/4
-            aAsyncResponder = null;
-          }
+            if (_invokeSPIs (aFinalUserMessage,
+                             aFinalPayloadNode,
+                             aFinalDecryptedAttachments,
+                             aLocalErrorMessages,
+                             aLocalResponseAttachments).isSuccess ())
+            {
+              // TODO SPI processing started
+              final Ebms3UserMessage aLeg2UserMsg = null;
+              // Send UserMessage or receipt
+              aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
+                                                            aResponseAttachments,
+                                                            aEffectiveLeg,
+                                                            new AS4UserMessage (eSOAPVersion,
+                                                                                aLeg2UserMsg).getAsSOAPDocument ());
+            }
+            else
+            {
+              // TODO SPI processing started
+              // Send ErrorMessage
+              // Undefined - see https://github.com/phax/ph-as4/issues/4
+              aAsyncResponder = null;
+            }
 
-          // TODO invoke client with new doc
+            // TODO invoke client with new doc
+          }
+          catch (final ZipException ex)
+          {
+            // TODO add error
+          }
         });
       }
     }

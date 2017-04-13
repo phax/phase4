@@ -409,7 +409,7 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
     // final String s = EntityUtils.toString (new HttpMimeMessageEntity (aMsg));
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
   /**
