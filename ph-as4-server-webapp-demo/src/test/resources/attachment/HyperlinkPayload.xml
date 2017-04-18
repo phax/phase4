@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<S11:Envelope xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/">
+<S11:Header>
+  <eb:Messaging xmlns:S12="http://www.w3.org/2003/05/soap-envelope" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink" S11:mustUnderstand="1">
+    <eb:UserMessage>
+      <eb:MessageInfo>
+        <eb:Timestamp>2017-04-18T10:17:09.982</eb:Timestamp>
+        <eb:MessageId>ph-as4@f1b8614f-18e1-4b3d-8aed-9fcd3fe21513</eb:MessageId>
+      </eb:MessageInfo>
+      <eb:PartyInfo>
+        <eb:From>
+          <eb:PartyId>APP_000000000011</eb:PartyId>
+          <eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/sender</eb:Role>
+        </eb:From>
+        <eb:To>
+          <eb:PartyId>APP_000000000011</eb:PartyId>
+          <eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role>
+        </eb:To>
+      </eb:PartyInfo>
+      <eb:CollaborationInfo>
+        <eb:AgreementRef pmode="APP_000000000011-APP_000000000011">urn:as4:agreements:so-that-we-have-a-non-empty-value</eb:AgreementRef>
+        <eb:Service type="MyServiceTypes">soap11</eb:Service>
+        <eb:Action>NewPurchaseOrder</eb:Action>
+        <eb:ConversationId>4321</eb:ConversationId>
+      </eb:CollaborationInfo>
+      <eb:MessageProperties>
+        <eb:Property name="originalSender">C1-test</eb:Property>
+        <eb:Property name="finalRecipient">C4-test</eb:Property>
+      </eb:MessageProperties>
+      <eb:PayloadInfo>
+        <eb:PartInfo href="testreference"/>
+      </eb:PayloadInfo>
+    </eb:UserMessage>
+  </eb:Messaging>
+</S11:Header>
+<S11:Body></S11:Body>
+</S11:Envelope>

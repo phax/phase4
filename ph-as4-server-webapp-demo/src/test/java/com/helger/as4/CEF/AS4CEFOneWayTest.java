@@ -428,14 +428,10 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     aAttachments.add (aAttachment);
 
     final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
-
-    // TODO discuss with philipp about how to handle the exception that gets
-    // thrown
     aAttachments.get (0)
                 .setSourceStreamProvider ( () -> ClassPathResource.getInputStream ("attachment/CompressedPayload.txt"));
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
-    // final String s = EntityUtils.toString (new HttpMimeMessageEntity (aMsg));
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
@@ -454,7 +450,7 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA14 ()
   {
-    // SAME as TA13
+    // SAME as TA13 and SPI has to send message to the consumer
   }
 
   /**
@@ -652,7 +648,7 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }

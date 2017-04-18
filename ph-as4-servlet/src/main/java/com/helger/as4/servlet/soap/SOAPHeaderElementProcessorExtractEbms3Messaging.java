@@ -16,6 +16,7 @@
  */
 package com.helger.as4.servlet.soap;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,7 @@ import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
+import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
@@ -232,10 +234,27 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       return ESuccess.FAILURE;
     }
 
+    final List <Ebms3PartyId> aFromPartyIdList = aUserMessage.getPartyInfo ().getFrom ().getPartyId ();
+    final List <Ebms3PartyId> aToPartyIdList = aUserMessage.getPartyInfo ().getTo ().getPartyId ();
+
+    if (aFromPartyIdList.isEmpty () || aToPartyIdList.isEmpty ())
+    {
+      s_aLogger.warn ("No Party IDs contained in usermessage, should never occur.");
+      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+      return ESuccess.FAILURE;
+    }
+
+    if (aFromPartyIdList.size () > 1 || aToPartyIdList.size () > 1)
+    {
+      s_aLogger.warn ("More than one partyId is containted in From or To Recipient please check the message.");
+      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+      return ESuccess.FAILURE;
+    }
+
     // Setting Initiator and Responder id, Required values or else xsd will
     // throw an error
-    final String sInitiatorID = aUserMessage.getPartyInfo ().getFrom ().getPartyIdAtIndex (0).getValue ();
-    final String sResponderID = aUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
+    final String sInitiatorID = aFromPartyIdList.get (0).getValue ();
+    final String sResponderID = aToPartyIdList.get (0).getValue ();
 
     IPMode aPMode = null;
     final Ebms3CollaborationInfo aCollaborationInfo = aUserMessage.getCollaborationInfo ();

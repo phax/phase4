@@ -3,7 +3,10 @@ package com.helger.as4.CEF;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
@@ -17,6 +20,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
@@ -26,14 +30,17 @@ import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
+import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -82,10 +89,45 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * not include more than one PartyId element"
    */
   @Test
-  public void eSENS_TA03 ()
+  public void eSENS_TA03 () throws Exception
   {
-    // Code only allows only 1 Party ID, would throw exception if 2 party ids
-    // were present for a single role (Initiator or Responder)
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+    final Ebms3PartyInfo aEbms3PartyInfo;
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                              "MyServiceTypes",
+                                                                              MockPModeGenerator.SOAP11_SERVICE,
+                                                                              "4321",
+                                                                              m_aESENSOneWayPMode.getID (),
+                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
+    aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                              INITIATOR_ID,
+                                                              CAS4.DEFAULT_RESPONDER_URL,
+                                                              RESPONDER_ID);
+    final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
+    aEbms3PartyId.setValue ("Second ID");
+    aEbms3PartyInfo.getTo ().addPartyId (aEbms3PartyId);
+
+    // Check if we added a second party id
+    assertTrue (aEbms3PartyInfo.getTo ().getPartyId ().size () == 2);
+
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+    aUserMessage.setPartyInfo (aEbms3PartyInfo);
+    aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+    aUserMessage.setMessageProperties (aEbms3MessageProperties);
+    aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
+    aUserMessage.setMessageInfo (aEbms3MessageInfo);
+
+    final Document aDoc = new AS4UserMessage (ESOAPVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+
   }
 
   /**
@@ -208,11 +250,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                                                                  new AS4ResourceManager ()),
                                                                                           aAttachments);
 
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
-
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
-
+    final Multipart aMultipart = (Multipart) aMsg.getContent ();
+    // 3 attachments + 1 Main/Bodypart
+    assertTrue (aMultipart.getCount () == 4);
   }
 
   /**
@@ -225,9 +265,36 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * receipt to the SMSH.
    */
   @Test
-  public void eSENS_TA07 ()
+  public void eSENS_TA07 () throws Exception
   {
-    // Tests the processing of the payload, which is specified in each SPI
+    // same stuff as TA05 only one step further
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final AS4ResourceManager aResMgr = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr));
+    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+                                                                    CMimeType.IMAGE_JPG,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr1));
+    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    EAS4CompressionMode.GZIP,
+                                                                    aResMgr2));
+
+    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                 m_aPayload,
+                                                                                                                 aAttachments,
+                                                                                                                 new AS4ResourceManager ()),
+                                                                                          aAttachments);
+
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
 
   /**
@@ -242,6 +309,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back a synchronous error response.
    */
   @Test
+  @Ignore
   public void eSENS_TA08 ()
   {
 
@@ -257,11 +325,19 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back a synchronous ebMS error message.
    */
   @Test
-  public void eSENS_TA09 ()
+  @Ignore
+  // TODO FIX
+  public void eSENS_TA09 () throws Exception
   {
     // Would throw an error in our implementation since the user would have said
     // there is a payload (With the hyperlink reference) but nothing is
     // attached.
+
+    final DocumentBuilderFactory aDbfac = DocumentBuilderFactory.newInstance ();
+    final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
+    final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
+
+    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 
   /**
@@ -330,7 +406,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * Algorithm parameter is set to
    * http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 - Signature Certificate
    * used is the certificate of the SMSH.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -363,7 +439,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * In the AS4 Message generated by the SMSH: - Encryption Algorithm is set to
    * http://www.w3.org/2009/xmlenc11#aes128-gcm - Encryption Certificate used is
    * the certificate of the RMSH.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -401,7 +477,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * "OriginalSender" and value producerID and the other has name =
    * "finalRecipient" and value consumerID (producerID and consumerID are
    * provided by the original message submitted by the producer).
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -473,7 +549,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH returns a non-repudiation receipt within a HTTP response with
    * status code 2XX and the received AS4 message contains the
    * TRACKINGIDENTIFIER property.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
