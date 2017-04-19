@@ -400,31 +400,34 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           boolean bMimeTypePresent = false;
           boolean bCompressionTypePresent = false;
 
-          for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
+          if (aPart.getPartProperties () != null)
           {
-            if (aEbms3Property.getName ().equalsIgnoreCase ("mimetype"))
+            for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
             {
-              bMimeTypePresent = true;
-            }
-            if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
-            {
-              // Only needed check here since AS4 does not support another
-              // CompressionType
-              // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
-              final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
-              if (eCompressionMode == null)
+              if (aEbms3Property.getName ().equalsIgnoreCase ("mimetype"))
               {
-                s_aLogger.warn ("Error processing the UserMessage, CompressionType " +
-                                aEbms3Property.getValue () +
-                                " is not supported. ");
-
-                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-                return ESuccess.FAILURE;
+                bMimeTypePresent = true;
               }
+              if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
+              {
+                // Only needed check here since AS4 does not support another
+                // CompressionType
+                // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
+                final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
+                if (eCompressionMode == null)
+                {
+                  s_aLogger.warn ("Error processing the UserMessage, CompressionType " +
+                                  aEbms3Property.getValue () +
+                                  " is not supported. ");
 
-              final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), CreateUserMessage.PREFIX_CID);
-              aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
-              bCompressionTypePresent = true;
+                  aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+                  return ESuccess.FAILURE;
+                }
+
+                final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), CreateUserMessage.PREFIX_CID);
+                aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
+                bCompressionTypePresent = true;
+              }
             }
           }
 

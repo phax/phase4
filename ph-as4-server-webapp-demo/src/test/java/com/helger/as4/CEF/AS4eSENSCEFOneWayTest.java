@@ -325,19 +325,18 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back a synchronous ebMS error message.
    */
   @Test
-  @Ignore
-  // TODO FIX
   public void eSENS_TA09 () throws Exception
   {
     // Would throw an error in our implementation since the user would have said
     // there is a payload (With the hyperlink reference) but nothing is
     // attached.
-
     final DocumentBuilderFactory aDbfac = DocumentBuilderFactory.newInstance ();
     final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
     final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   /**
