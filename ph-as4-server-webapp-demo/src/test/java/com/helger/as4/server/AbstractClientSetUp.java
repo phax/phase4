@@ -19,7 +19,7 @@ package com.helger.as4.server;
 import org.junit.Before;
 
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.settings.ISettings;
+import com.helger.settings.Settings;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -34,14 +34,14 @@ public abstract class AbstractClientSetUp
   protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractClientSetUp.class);
   protected static final String DEFAULT_PARTY_ID = "APP_MOCK_DUMMY_001";
 
-  protected ISettings m_aSettings;
+  protected Settings m_aSettings;
 
   @Before
   public void setUp ()
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
 
-    m_aSettings = AS4ServerConfiguration.getSettings ();
+    m_aSettings = AS4ServerConfiguration.getMutableSettings ();
 
     // Create the mock PModes
     MockPModeGenerator.ensureMockPModesArePresent ();

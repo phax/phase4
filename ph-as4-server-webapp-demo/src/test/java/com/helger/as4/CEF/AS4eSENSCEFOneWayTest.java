@@ -11,6 +11,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littleshoot.proxy.HttpFilters;
+import org.littleshoot.proxy.HttpFiltersAdapter;
+import org.littleshoot.proxy.HttpFiltersSourceAdapter;
+import org.littleshoot.proxy.HttpProxyServer;
+import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -43,11 +50,19 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+
 public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayTest.class);
+
   /**
    * Prerequisite:<br>
    * SMSH and RMSH are configured to exchange AS4 messages according to the
@@ -87,6 +102,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * <br>
    * Goal: "Both UserMessage/PartyInfo/From and UserMessage/PartyInfo/To must
    * not include more than one PartyId element"
+   *
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void eSENS_TA03 () throws Exception
@@ -263,6 +281,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * Predicate: <br>
    * The RMSH successfully processes the AS4 message and sends a non-repudiation
    * receipt to the SMSH.
+   *
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void eSENS_TA07 () throws Exception
@@ -323,6 +344,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * <br>
    * Predicate: <br>
    * The RMSH sends back a synchronous ebMS error message.
+   *
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void eSENS_TA09 () throws Exception
@@ -348,11 +372,74 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * <br>
    * Predicate: <br>
    * The SMSH retries to send the AS4 User Message (at least once).
+   *
+   * @throws Exception
+   *         In case of error
    */
   @Test
-  public void eSENS_TA10 ()
+  public void eSENS_TA10 () throws Exception
   {
-    // TODO find a way to intercept receipts to trigger resend mechanism
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
+    m_aSettings.setValue ("server.proxy.enabled", true);
+    m_aSettings.setValue ("server.proxy.address", "localhost");
+    m_aSettings.setValue ("server.proxy.port", 8001);
+
+    // Using LittleProxy
+    // https://github.com/adamfisk/LittleProxy
+    final int nResponsesToIntercept = 1;
+    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                               .withPort (8001)
+                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
+                                                               {
+                                                                 private int m_nFilterCount = 0;
+
+                                                                 @Override
+                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                   final ChannelHandlerContext ctx)
+                                                                 {
+                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   {
+                                                                     @Override
+                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     {
+                                                                       return null;
+                                                                     }
+
+                                                                     @Override
+                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                     {
+                                                                       final int nIndex = m_nFilterCount++;
+                                                                       if (nIndex < nResponsesToIntercept)
+                                                                       {
+                                                                         s_aLogger.error ("Intercepted call " + nIndex);
+                                                                         return null;
+                                                                       }
+                                                                       return httpObject;
+                                                                     }
+                                                                   };
+                                                                 }
+                                                               })
+                                                               .start ();
+    try
+    {
+      // send message
+      final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                   m_aPayload,
+                                                                                                                   null,
+                                                                                                                   new AS4ResourceManager ()),
+                                                                                            null);
+      final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+
+      assertTrue (sResponse.contains ("Receipt"));
+      assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    }
+    finally
+    {
+      aProxyServer.stop ();
+      // Restore original properties
+      m_aSettings.clear ();
+      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+    }
   }
 
   /**

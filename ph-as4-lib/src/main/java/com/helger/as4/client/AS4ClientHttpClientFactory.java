@@ -17,6 +17,8 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -30,6 +32,14 @@ import com.helger.httpclient.HttpClientFactory;
  */
 public class AS4ClientHttpClientFactory extends HttpClientFactory
 {
+  public AS4ClientHttpClientFactory ()
+  {}
+
+  public AS4ClientHttpClientFactory (@Nullable final SSLContext aDefaultSSLContext)
+  {
+    super (aDefaultSSLContext);
+  }
+
   @Override
   @Nonnull
   public HttpClientBuilder createHttpClientBuilder ()

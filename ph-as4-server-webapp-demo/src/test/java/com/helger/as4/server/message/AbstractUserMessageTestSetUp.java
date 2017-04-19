@@ -32,18 +32,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.helger.as4.client.AS4ClientHttpClientFactory;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.server.AbstractClientSetUp;
@@ -53,7 +56,6 @@ import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
-import com.helger.httpclient.HttpClientFactory;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
@@ -81,15 +83,29 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
 
-    m_aClient = new HttpClientFactory (aSSLContext)
+    m_aClient = new AS4ClientHttpClientFactory (aSSLContext)
     {
+      @Override
+      @Nonnull
+      public HttpClientBuilder createHttpClientBuilder ()
+      {
+        final HttpClientBuilder ret = super.createHttpClientBuilder ();
+        // Retry always - independent if POST or GET
+        final HttpRequestRetryHandler aRH = (ex, exc, ctx) -> {
+          // retry 2 times (first exc==1!)
+          return exc <= 2;
+        };
+        ret.setRetryHandler (aRH);
+        return ret;
+      }
+
       @Override
       @Nonnull
       public RequestConfig createRequestConfig ()
       {
         return RequestConfig.custom ()
                             .setCookieSpec (CookieSpecs.DEFAULT)
-                            .setSocketTimeout (100_000)
+                            .setSocketTimeout (5_000)
                             .setConnectTimeout (5_000)
                             .setConnectionRequestTimeout (5_000)
                             .setCircularRedirectsAllowed (false)
