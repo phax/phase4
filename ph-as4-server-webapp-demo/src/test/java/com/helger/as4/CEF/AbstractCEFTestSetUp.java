@@ -59,9 +59,9 @@ public class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     {
       m_aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     }
-    catch (final SAXException e)
+    catch (final SAXException ex)
     {
-      e.printStackTrace ();
+      throw new IllegalStateException ("Failed to parse example XML", ex);
     }
   }
 

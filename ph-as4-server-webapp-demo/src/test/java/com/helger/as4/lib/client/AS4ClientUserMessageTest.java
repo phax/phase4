@@ -25,6 +25,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
@@ -51,6 +53,8 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class AS4ClientUserMessageTest
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
+
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
 
@@ -289,7 +293,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    System.out.println (MicroWriter.getNodeAsString (aDoc));
+    s_aLogger.info (MicroWriter.getNodeAsString (aDoc));
   }
 
   @Test
