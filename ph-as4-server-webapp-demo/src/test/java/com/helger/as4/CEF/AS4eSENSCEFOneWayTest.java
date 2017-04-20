@@ -462,7 +462,64 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA11 () throws Exception
   {
-    // Cannot seem to artificial generate a Connection Timeout.
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
+    m_aSettings.setValue ("server.proxy.enabled", true);
+    m_aSettings.setValue ("server.proxy.address", "localhost");
+    m_aSettings.setValue ("server.proxy.port", 8001);
+
+    // Simulating a timeout with Thread.sleep but before it entirely triggers
+    // let the program continue as if the Connection is back up again
+    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                               .withPort (8001)
+                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
+                                                               {
+                                                                 @Override
+                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                   final ChannelHandlerContext ctx)
+                                                                 {
+                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   {
+                                                                     @Override
+                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     {
+                                                                       try
+                                                                       {
+                                                                         Thread.sleep (500);
+                                                                       }
+                                                                       catch (final InterruptedException e)
+                                                                       {
+                                                                         e.printStackTrace ();
+                                                                       }
+                                                                       return null;
+                                                                     }
+
+                                                                     @Override
+                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                     {
+                                                                       s_aLogger.error ("Forcing a timeout from retryhandler ");
+                                                                       return httpObject;
+                                                                     }
+                                                                   };
+                                                                 }
+                                                               })
+                                                               .start ();
+    try
+    {
+      // send message
+      final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                   m_aPayload,
+                                                                                                                   null,
+                                                                                                                   new AS4ResourceManager ()),
+                                                                                            null);
+      sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    }
+    finally
+    {
+      aProxyServer.stop ();
+      // Restore original properties
+      m_aSettings.clear ();
+      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+    }
   }
 
   /**
