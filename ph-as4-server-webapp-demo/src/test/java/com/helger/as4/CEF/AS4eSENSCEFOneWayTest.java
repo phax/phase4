@@ -458,6 +458,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back an AS4 non-repudiation receipt to the SMSH and delivers
    * only one message to the consumer and the SMSH stops resending the original
    * AS4 User Message.
+   * 
+   * @throws Exception
+   *         In case of error
    */
   @Test
   public void eSENS_TA11 () throws Exception
@@ -646,6 +649,9 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * <br>
    * Predicate: <br>
    * The SMSH reports an error to the message producer.
+   * 
+   * @throws Exception
+   *         In case of error
    */
   @Test (expected = NoHttpResponseException.class)
   public void eSENS_TA17 () throws Exception
