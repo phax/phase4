@@ -8,6 +8,7 @@ import javax.mail.internet.MimeMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -363,27 +364,8 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                       EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
-  /**
-   * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Simulate the RMSH to not send receipts
-   * (can be done by intercepting the receipts). SMSH tries to send an AS4 User
-   * Message to the RMSH.<br>
-   * <br>
-   * Predicate: <br>
-   * The SMSH retries to send the AS4 User Message (at least once).
-   *
-   * @throws Exception
-   *         In case of error
-   */
-  @Test
-  public void eSENS_TA10 () throws Exception
+  private HttpProxyServer _startProxyServer ()
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
-    m_aSettings.setValue ("server.proxy.enabled", true);
-    m_aSettings.setValue ("server.proxy.address", "localhost");
-    m_aSettings.setValue ("server.proxy.port", 8001);
-
     // Using LittleProxy
     // https://github.com/adamfisk/LittleProxy
     final int nResponsesToIntercept = 1;
@@ -420,6 +402,31 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                  }
                                                                })
                                                                .start ();
+    return aProxyServer;
+  }
+
+  /**
+   * Prerequisite:<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Simulate the RMSH to not send receipts
+   * (can be done by intercepting the receipts). SMSH tries to send an AS4 User
+   * Message to the RMSH.<br>
+   * <br>
+   * Predicate: <br>
+   * The SMSH retries to send the AS4 User Message (at least once).
+   *
+   * @throws Exception
+   *         In case of error
+   */
+  @Test
+  public void eSENS_TA10 () throws Exception
+  {
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
+    m_aSettings.setValue ("server.proxy.enabled", true);
+    m_aSettings.setValue ("server.proxy.address", "localhost");
+    m_aSettings.setValue ("server.proxy.port", 8001);
+
+    final HttpProxyServer aProxyServer = _startProxyServer ();
     try
     {
       // send message
@@ -428,10 +435,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                                                                    null,
                                                                                                                    new AS4ResourceManager ()),
                                                                                             null);
-      final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
-
-      assertTrue (sResponse.contains ("Receipt"));
-      assertTrue (sResponse.contains ("NonRepudiationInformation"));
+      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
     }
     finally
     {
@@ -456,9 +460,32 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * AS4 User Message.
    */
   @Test
-  public void eSENS_TA11 ()
+  public void eSENS_TA11 () throws Exception
   {
-    // Same as TA10
+    // TODO FIX read desc
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
+    m_aSettings.setValue ("server.proxy.enabled", true);
+    m_aSettings.setValue ("server.proxy.address", "localhost");
+    m_aSettings.setValue ("server.proxy.port", 8001);
+
+    final HttpProxyServer aProxyServer = _startProxyServer ();
+    try
+    {
+      // send message
+      final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                   m_aPayload,
+                                                                                                                   null,
+                                                                                                                   new AS4ResourceManager ()),
+                                                                                            null);
+      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    }
+    finally
+    {
+      aProxyServer.stop ();
+      // Restore original properties
+      m_aSettings.clear ();
+      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+    }
   }
 
   /**
@@ -586,10 +613,58 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * Predicate: <br>
    * The SMSH reports an error to the message producer.
    */
-  @Test
-  public void eSENS_TA17 ()
+  @Test (expected = NoHttpResponseException.class)
+  public void eSENS_TA17 () throws Exception
   {
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
+    m_aSettings.setValue ("server.proxy.enabled", true);
+    m_aSettings.setValue ("server.proxy.address", "localhost");
+    m_aSettings.setValue ("server.proxy.port", 8001);
 
+    // Forcing a Timeout from the retry handler
+    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                               .withPort (8001)
+                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
+                                                               {
+                                                                 @Override
+                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                   final ChannelHandlerContext ctx)
+                                                                 {
+                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   {
+                                                                     @Override
+                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     {
+                                                                       return null;
+                                                                     }
+
+                                                                     @Override
+                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                     {
+                                                                       s_aLogger.error ("Forcing a timeout from retryhandler ");
+                                                                       return null;
+                                                                     }
+                                                                   };
+                                                                 }
+                                                               })
+                                                               .start ();
+    try
+    {
+      // send message
+      final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
+                                                                                                                   m_aPayload,
+                                                                                                                   null,
+                                                                                                                   new AS4ResourceManager ()),
+                                                                                            null);
+      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    }
+    finally
+    {
+      aProxyServer.stop ();
+      // Restore original properties
+      m_aSettings.clear ();
+      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+    }
   }
 
   /**
