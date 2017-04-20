@@ -462,13 +462,41 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA11 () throws Exception
   {
-    // TODO FIX read desc
     final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
     m_aSettings.setValue ("server.proxy.enabled", true);
     m_aSettings.setValue ("server.proxy.address", "localhost");
     m_aSettings.setValue ("server.proxy.port", 8001);
 
-    final HttpProxyServer aProxyServer = _startProxyServer ();
+    // Forcing a Timeout from the retry handler
+    // by adding a "Connection: close" header to the response
+    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                               .withPort (8001)
+                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
+                                                               {
+                                                                 @Override
+                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                   final ChannelHandlerContext ctx)
+                                                                 {
+                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   {
+                                                                     @Override
+                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     {
+                                                                       originalRequest.headers ().add ("Connection",
+                                                                                                       "close");
+                                                                       return null;
+                                                                     }
+
+                                                                     @Override
+                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                     {
+                                                                       s_aLogger.error ("Forcing a timeout from retryhandler ");
+                                                                       return null;
+                                                                     }
+                                                                   };
+                                                                 }
+                                                               })
+                                                               .start ();
     try
     {
       // send message
