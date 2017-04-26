@@ -604,6 +604,17 @@ public final class AS4Handler implements Closeable
       }
       else
       {
+
+        // Send Receipt after starting ASYNCHRONOUS CALL
+        // final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse
+        // (aEffectiveLeg);
+        // if (bSendReceiptAsResponse)
+        // {
+        // return _createReceiptMessage (aSOAPDocument, eSOAPVersion,
+        // aEffectiveLeg, aUserMessage, aResponseAttachments);
+        // }
+        // }
+
         // TODO Call asynchronous
         final Ebms3UserMessage aFinalUserMessage = aUserMessage;
         final Node aFinalPayloadNode = aPayloadNode;
@@ -622,13 +633,15 @@ public final class AS4Handler implements Closeable
                              aLocalResponseAttachments).isSuccess ())
             {
               // TODO SPI processing started
-              final Ebms3UserMessage aLeg2UserMsg = null;
+              final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+                                                                                  aFinalUserMessage,
+                                                                                  aLocalResponseAttachments);
+
               // Send UserMessage or receipt
               aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
                                                             aResponseAttachments,
                                                             aEffectiveLeg,
-                                                            new AS4UserMessage (eSOAPVersion,
-                                                                                aLeg2UserMsg).getAsSOAPDocument ());
+                                                            aResponseUserMsg.getAsSOAPDocument ());
             }
             else
             {
@@ -642,7 +655,17 @@ public final class AS4Handler implements Closeable
           }
           catch (final ZipException ex)
           {
-            // TODO add error
+            // If decompression goes wrong send an error back
+            final Ebms3Description aDesc = new Ebms3Description ();
+            aDesc.setLang (m_aLocale.getLanguage ());
+            aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
+
+            aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
+                                                                                       aFinalUserMessage.getMessageInfo ()
+                                                                                                        .getMessageId (),
+                                                                                       aFinalUserMessage.getMessageInfo ()
+                                                                                                        .getMessageId (),
+                                                                                       aDesc));
           }
         });
       }
@@ -651,6 +674,7 @@ public final class AS4Handler implements Closeable
     // Generate ErrorMessage if errors in the process are present and the
     // pmode wants an error response
     if (aErrorMessages.isNotEmpty ())
+
     {
       if (_isSendErrorAsResponse (aEffectiveLeg))
       {

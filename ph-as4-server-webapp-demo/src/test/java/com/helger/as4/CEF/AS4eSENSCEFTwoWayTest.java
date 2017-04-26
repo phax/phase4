@@ -32,7 +32,7 @@ public class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
    * MESSAGEID (of M1).
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -61,7 +61,7 @@ public class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH returns a non-repudiation receipt within a HTTP response with
    * status code 2XX.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */

@@ -146,7 +146,6 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
-
   }
 
   /**
@@ -208,7 +207,6 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA05 () throws Exception
   {
-    // TODO talk with philip about this
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -458,7 +456,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * The RMSH sends back an AS4 non-repudiation receipt to the SMSH and delivers
    * only one message to the consumer and the SMSH stops resending the original
    * AS4 User Message.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -649,7 +647,7 @@ public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
    * <br>
    * Predicate: <br>
    * The SMSH reports an error to the message producer.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */

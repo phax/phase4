@@ -795,6 +795,6 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA29 ()
   {
-    // Same like AS4_TA03
+    // Same like AS4_TA03 just in Part Properties instead of Message Properties
   }
 }
