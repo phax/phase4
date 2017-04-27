@@ -494,13 +494,13 @@ public final class AS4Handler implements Closeable
         throw new BadRequestException ("Only UserMessage or PullRequest may be present!");
 
       // Only do profile checks if a profile is set
-      final String sProfileName = AS4ServerConfiguration.getAS4ProfileName ();
-      if (StringHelper.hasText (sProfileName))
+      final String sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
+      if (StringHelper.hasText (sProfileID))
       {
-        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileName);
+        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
         if (aProfile == null)
         {
-          throw new BadRequestException ("The AS4 profile " + sProfileName + " does not exist.");
+          throw new BadRequestException ("The AS4 profile " + sProfileID + " does not exist.");
         }
 
         // Profile Checks gets set when started with Server
@@ -605,7 +605,7 @@ public final class AS4Handler implements Closeable
       else
       {
 
-        // Send Receipt after starting ASYNCHRONOUS CALL
+        // Send Receipt after starting ASYNCHRONOUS CALL start
         // final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse
         // (aEffectiveLeg);
         // if (bSendReceiptAsResponse)
@@ -674,7 +674,6 @@ public final class AS4Handler implements Closeable
     // Generate ErrorMessage if errors in the process are present and the
     // pmode wants an error response
     if (aErrorMessages.isNotEmpty ())
-
     {
       if (_isSendErrorAsResponse (aEffectiveLeg))
       {

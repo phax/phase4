@@ -105,7 +105,7 @@ public final class AS4ServerConfiguration
   }
 
   @Nullable
-  public static String getAS4ProfileName ()
+  public static String getAS4ProfileID ()
   {
     return getSettings ().getAsString ("server.profile");
   }

@@ -371,4 +371,15 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
                       false,
                       EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
+
+  @Test
+  public void testForceFailureFromSPI () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_OTHER.getErrorCode ());
+  }
 }

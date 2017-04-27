@@ -57,6 +57,13 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       s_aLogger.info ("  UserMessage: " + aUserMessage);
     if (false)
       s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
+
+    // To test returning with a failure works as intended
+    if (aUserMessage.getCollaborationInfo ().getAction ().equals ("Failure"))
+    {
+      return AS4MessageProcessorResult.createFailure ("Failure");
+    }
+
     if (aIncomingAttachments != null)
     {
       s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());

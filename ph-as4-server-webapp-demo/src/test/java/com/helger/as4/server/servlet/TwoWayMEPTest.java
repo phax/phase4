@@ -69,7 +69,7 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                       (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
-    aLeg2.getSecurity ().setX509EncryptionAlgorithm (null);
+
     // ESENS PMode is One Way on default settings need to change to two way
     m_aPMode = new PMode ( (i, r) -> aPMode.getID (),
                            PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
@@ -101,9 +101,12 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
+  public void receiveUserMessageWithMimeAsResponseSuccessWithoutEncryption () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    m_aPMode.getLeg2 ().getSecurity ().setX509EncryptionAlgorithm (null);
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
+
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -123,6 +126,34 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     // just adds the xml that gets sent in the original message and adds it to
     // the response
     assertTrue (sResponse.contains ("<dummy>This is a test XML</dummy>"));
+  }
+
+  @Test
+  public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
+  {
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    final AS4ResourceManager aResMgr = s_aResMgr;
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    aResMgr));
+
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
+    final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
+    assertTrue (sResponse.contains ("UserMessage"));
+    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
+    // Checking if he adds the attachment to the response message, the mock spi
+    // just adds the xml that gets sent in the original message and adds it to
+    // the response
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509EncryptionAlgorithm ()
+                                            .getAlgorithmURI ()));
   }
 
   @Test
