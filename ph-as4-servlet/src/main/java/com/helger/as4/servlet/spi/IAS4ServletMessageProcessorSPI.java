@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -35,10 +36,10 @@ import com.helger.commons.collection.ext.ICommonsList;
 public interface IAS4ServletMessageProcessorSPI
 {
   /**
-   * Process incoming AS4 message
+   * Process incoming AS4 user message
    *
    * @param aUserMessage
-   *        The received user message. May be <code>null</code>.
+   *        The received user message. May not be <code>null</code>.
    * @param aPayload
    *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
    *        <code>null</code>. May also be <code>null</code> if a MIME message
@@ -50,7 +51,27 @@ public interface IAS4ServletMessageProcessorSPI
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4Message (@Nullable Ebms3UserMessage aUserMessage,
-                                               @Nullable Node aPayload,
-                                               @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
+  AS4MessageProcessorResult processAS4UserMessage (@Nonnull Ebms3UserMessage aUserMessage,
+                                                   @Nullable Node aPayload,
+                                                   @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
+
+  /**
+   * Process incoming AS4 signal message.
+   *
+   * @param aSignalMessage
+   *        The received signal message. May not be <code>null</code>.
+   * @param aPayload
+   *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
+   *        <code>null</code>. May also be <code>null</code> if a MIME message
+   *        comes in - in that case the SOAP body MUST be empty and the main
+   *        payload can be found in aIncomingAttachments[0].
+   * @param aIncomingAttachments
+   *        Extracted, decrypted and verified attachments. May be
+   *        <code>null</code> or empty if no attachments are present.
+   * @return A non-<code>null</code> result object.
+   */
+  @Nonnull
+  AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
+                                                     @Nullable Node aPayload,
+                                                     @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
 }

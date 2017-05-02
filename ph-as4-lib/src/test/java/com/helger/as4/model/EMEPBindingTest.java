@@ -39,7 +39,6 @@ public final class EMEPBindingTest
       assertTrue (StringHelper.hasText (e.getURI ()));
       assertSame (e, EMEPBinding.getFromIDOrNull (e.getID ()));
       assertTrue (e.isSynchronous () || e.isAsynchronous ());
-      assertTrue (e.isUsableInOneWay () || e.isUsableInTwoWay ());
     }
   }
 }

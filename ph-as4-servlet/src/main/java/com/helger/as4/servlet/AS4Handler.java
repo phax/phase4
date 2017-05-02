@@ -91,6 +91,8 @@ import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
+import com.helger.as4lib.ebms3header.Ebms3Receipt;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
@@ -319,10 +321,13 @@ public final class AS4Handler implements Closeable
 
         for (final IError aError : aErrorList)
         {
-          String sRefToMessageID = "";
+          Ebms3MessageInfo aMsgInfo = null;
           if (aState.getMessaging () != null)
-            if (aState.getMessaging ().getUserMessageCount () > 0)
-              sRefToMessageID = aState.getMessaging ().getUserMessageAtIndex (0).getMessageInfo ().getMessageId ();
+            if (aState.getMessaging ().hasUserMessageEntries ())
+              aMsgInfo = aState.getMessaging ().getUserMessageAtIndex (0).getMessageInfo ();
+            else
+              aMsgInfo = aState.getMessaging ().getSignalMessageAtIndex (0).getMessageInfo ();
+          final String sRefToMessageID = aMsgInfo != null ? aMsgInfo.getMessageId () : "";
 
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
           if (ePredefinedError != null)
@@ -334,10 +339,7 @@ public final class AS4Handler implements Closeable
             aEbms3Error.setErrorCode (aError.getErrorID ());
             aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
             aEbms3Error.setOrigin (aError.getErrorFieldName ());
-            aEbms3Error.setRefToMessageInError (aState.getMessaging ()
-                                                      .getUserMessageAtIndex (0)
-                                                      .getMessageInfo ()
-                                                      .getMessageId ());
+            aEbms3Error.setRefToMessageInError (sRefToMessageID);
             aErrorMessages.add (aEbms3Error);
           }
         }
@@ -363,7 +365,11 @@ public final class AS4Handler implements Closeable
    * Invoke custom SPI message processors
    *
    * @param aUserMessage
-   *        Current user message
+   *        Current user message. Either this OR signal message must be
+   *        non-<code>null</code>.
+   * @param aSignalMessage
+   *        The signal message to use. Either this OR user message must be
+   *        non-<code>null</code>.
    * @param aPayloadNode
    *        Optional SOAP body payload (only if direct SOAP msg, not for MIME)
    * @param aDecryptedAttachments
@@ -375,12 +381,16 @@ public final class AS4Handler implements Closeable
    * @return {@link ESuccess}
    */
   @Nonnull
-  private ESuccess _invokeSPIs (@Nonnull final Ebms3UserMessage aUserMessage,
+  private ESuccess _invokeSPIs (@Nullable final Ebms3UserMessage aUserMessage,
+                                @Nullable final Ebms3SignalMessage aSignalMessage,
                                 @Nullable final Node aPayloadNode,
                                 @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                 @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments) throws ZipException
+                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
   {
+    final String sMessageID = aUserMessage != null ? aUserMessage.getMessageInfo ().getMessageId ()
+                                                   : aSignalMessage.getMessageInfo ().getMessageId ();
+
     // Invoke all SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
       try
@@ -388,9 +398,11 @@ public final class AS4Handler implements Closeable
         if (s_aLogger.isDebugEnabled ())
           s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
 
-        final AS4MessageProcessorResult aResult = aProcessor.processAS4Message (aUserMessage,
-                                                                                aPayloadNode,
-                                                                                aDecryptedAttachments);
+        AS4MessageProcessorResult aResult;
+        if (aUserMessage != null)
+          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPayloadNode, aDecryptedAttachments);
+        else
+          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPayloadNode, aDecryptedAttachments);
         if (aResult == null)
           throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
 
@@ -408,7 +420,7 @@ public final class AS4Handler implements Closeable
           final Ebms3Error aError = new Ebms3Error ();
           aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
           aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
-          aError.setRefToMessageInError (aUserMessage.getMessageInfo ().getMessageId ());
+          aError.setRefToMessageInError (sMessageID);
           final Ebms3Description aDesc = new Ebms3Description ();
           aDesc.setValue (aResult.getErrorMessage ());
           aDesc.setLang (m_aLocale.getLanguage ());
@@ -423,7 +435,16 @@ public final class AS4Handler implements Closeable
       {
         // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
         if (t.getCause () instanceof ZipException)
-          throw (ZipException) t.getCause ();
+        {
+          final Ebms3Description aDesc = new Ebms3Description ();
+          aDesc.setLang (m_aLocale.getLanguage ());
+          aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
+          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
+                                                                                     sMessageID,
+                                                                                     sMessageID,
+                                                                                     aDesc));
+          return ESuccess.FAILURE;
+        }
         if (t instanceof RuntimeException)
           throw (RuntimeException) t;
         throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
@@ -465,8 +486,8 @@ public final class AS4Handler implements Closeable
 
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-    Ebms3UserMessage aUserMessage = null;
-    Ebms3PullRequest aPullRequest = null;
+    Ebms3UserMessage aEbmsUserMessage = null;
+    Ebms3SignalMessage aEbmsSignalMessage = null;
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
@@ -483,15 +504,21 @@ public final class AS4Handler implements Closeable
 
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
-      aUserMessage = aState.getMessaging ().getUserMessageAtIndex (0);
-      aPullRequest = aState.getMessaging ().getSignalMessageCount () > 0 ? aState.getMessaging ()
-                                                                                 .getSignalMessageAtIndex (0)
-                                                                                 .getPullRequest ()
-                                                                         : null;
-      if (aUserMessage == null && aPullRequest == null)
-        throw new BadRequestException ("UserMessage or PullRequest must be present!");
-      if (aUserMessage != null && aPullRequest != null)
-        throw new BadRequestException ("Only UserMessage or PullRequest may be present!");
+      aEbmsUserMessage = aState.getMessaging ().getUserMessageAtIndex (0);
+      aEbmsSignalMessage = aState.getMessaging ().hasSignalMessageEntries ()
+                                                                             ? aState.getMessaging ()
+                                                                                     .getSignalMessageAtIndex (0)
+                                                                             : null;
+      final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
+                                                                           : null;
+      final Ebms3Receipt aEbmsReceipt = aEbmsSignalMessage != null ? aEbmsSignalMessage.getReceipt () : null;
+
+      final int nCountData = (aEbmsUserMessage != null ? 1 : 0) +
+                             (aEbmsPullRequest != null ? 1 : 0) +
+                             (aEbmsReceipt != null ? 1 : 0);
+      // Errors do not count
+      if (nCountData != 1)
+        throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt must be present!");
 
       // Only do profile checks if a profile is set
       final String sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
@@ -499,14 +526,12 @@ public final class AS4Handler implements Closeable
       {
         final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
         if (aProfile == null)
-        {
-          throw new BadRequestException ("The AS4 profile " + sProfileID + " does not exist.");
-        }
+          throw new IllegalStateException ("The configured AS4 profile " + sProfileID + " does not exist.");
 
         // Profile Checks gets set when started with Server
         final ErrorList aErrorList = new ErrorList ();
         aProfile.getValidator ().validatePMode (aPMode, aErrorList);
-        aProfile.getValidator ().validateUserMessage (aUserMessage, aErrorList);
+        aProfile.getValidator ().validateUserMessage (aEbmsUserMessage, aErrorList);
         if (aErrorList.isNotEmpty ())
         {
           throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
@@ -520,12 +545,16 @@ public final class AS4Handler implements Closeable
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
 
-      if (aUserMessage != null)
+      if (aEbmsUserMessage != null)
       {
-        sMessageID = aUserMessage.getMessageInfo ().getMessageId ();
+        sMessageID = aEbmsUserMessage.getMessageInfo ().getMessageId ();
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
-        _decompressAttachments (aUserMessage, aState, aDecryptedAttachments);
+        _decompressAttachments (aEbmsUserMessage, aState, aDecryptedAttachments);
+      }
+      else
+      {
+        sMessageID = aEbmsSignalMessage.getMessageInfo ().getMessageId ();
       }
 
       final boolean bUseDecryptedSOAP = aState.hasDecryptedSOAPDocument ();
@@ -541,18 +570,22 @@ public final class AS4Handler implements Closeable
                                        " SOAP document is missing a Body element");
       aPayloadNode = aBodyNode.getFirstChild ();
 
-      if (aUserMessage != null)
+      if (aEbmsUserMessage != null)
       {
         // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory
-        if (aUserMessage.getMessageProperties () == null)
+        if (aEbmsUserMessage.getMessageProperties () == null)
           throw new BadRequestException ("No Message Properties present but OriginalSender and finalRecipient have to be present");
 
-        final List <Ebms3Property> aProps = aUserMessage.getMessageProperties ().getProperty ();
+        final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
         if (aProps.isEmpty ())
           throw new BadRequestException ("Message Property element present but no properties");
 
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
+      }
+      else
+      {
+        // TODO check signal message
       }
 
       if (_isNotPingMessage (aPMode))
@@ -570,7 +603,7 @@ public final class AS4Handler implements Closeable
         {
           // Invoke SPIs if
           // * Valid PMode
-          // * Exactly one UserMessage
+          // * Exactly one UserMessage or SignalMessage
           // * No ping/test message
           // * No Duplicate message ID
           // * No errors so far (sign, encrypt, ...)
@@ -586,38 +619,21 @@ public final class AS4Handler implements Closeable
         // Call synchronous
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
-        try
-        {
-          _invokeSPIs (aUserMessage, aPayloadNode, aDecryptedAttachments, aErrorMessages, aResponseAttachments);
-        }
-        catch (final ZipException ex)
-        {
-          final Ebms3Description aDesc = new Ebms3Description ();
-          aDesc.setLang (m_aLocale.getLanguage ());
-          aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
-
-          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
-                                                                                     sMessageID,
-                                                                                     sMessageID,
-                                                                                     aDesc));
-        }
+        _invokeSPIs (aEbmsUserMessage,
+                     aEbmsSignalMessage,
+                     aPayloadNode,
+                     aDecryptedAttachments,
+                     aErrorMessages,
+                     aResponseAttachments);
       }
       else
       {
-        // Asynchronous
+        // TODO Call asynchronous
 
         // Send Receipt after starting ASYNCHRONOUS CALL start
-        // final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse
-        // (aEffectiveLeg);
-        // if (bSendReceiptAsResponse)
-        // {
-        // return _createReceiptMessage (aSOAPDocument, eSOAPVersion,
-        // aEffectiveLeg, aUserMessage, aResponseAttachments);
-        // }
-        // }
 
-        // TODO Call asynchronous
-        final Ebms3UserMessage aFinalUserMessage = aUserMessage;
+        final Ebms3UserMessage aFinalUserMessage = aEbmsUserMessage;
+        final Ebms3SignalMessage aFinalSignalMessage = aEbmsSignalMessage;
         final Node aFinalPayloadNode = aPayloadNode;
         final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
 
@@ -625,57 +641,41 @@ public final class AS4Handler implements Closeable
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
           IAS4Responder aAsyncResponder;
-          try
+          if (_invokeSPIs (aFinalUserMessage,
+                           aFinalSignalMessage,
+                           aFinalPayloadNode,
+                           aFinalDecryptedAttachments,
+                           aLocalErrorMessages,
+                           aLocalResponseAttachments).isSuccess ())
           {
-            if (_invokeSPIs (aFinalUserMessage,
-                             aFinalPayloadNode,
-                             aFinalDecryptedAttachments,
-                             aLocalErrorMessages,
-                             aLocalResponseAttachments).isSuccess ())
-            {
-              // TODO SPI processing started
-              final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
-                                                                                  aFinalUserMessage,
-                                                                                  aLocalResponseAttachments);
+            // TODO SPI processing started
+            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+                                                                                aFinalUserMessage,
+                                                                                aLocalResponseAttachments);
 
-              // Send UserMessage or receipt
-              aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
-                                                            aResponseAttachments,
-                                                            aEffectiveLeg,
-                                                            aResponseUserMsg.getAsSOAPDocument ());
-            }
-            else
-            {
-              // TODO SPI processing started
-              // Send ErrorMessage
-              // Undefined - see https://github.com/phax/ph-as4/issues/4
-              aAsyncResponder = null;
-            }
-
-            // TODO invoke client with new doc
+            // Send UserMessage or receipt
+            aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
+                                                          aResponseAttachments,
+                                                          aEffectiveLeg,
+                                                          aResponseUserMsg.getAsSOAPDocument ());
           }
-          catch (final ZipException ex)
+          else
           {
-            // If decompression goes wrong send an error back
-            final Ebms3Description aDesc = new Ebms3Description ();
-            aDesc.setLang (m_aLocale.getLanguage ());
-            aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
-
-            aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
-                                                                                       aFinalUserMessage.getMessageInfo ()
-                                                                                                        .getMessageId (),
-                                                                                       aFinalUserMessage.getMessageInfo ()
-                                                                                                        .getMessageId (),
-                                                                                       aDesc));
+            // TODO SPI processing started
+            // Send ErrorMessage
+            // Undefined - see https://github.com/phax/ph-as4/issues/4
+            aAsyncResponder = null;
           }
+
+          // TODO invoke client with new document
         });
       }
     }
 
-    // Generate ErrorMessage if errors in the process are present and the
-    // pmode wants an error response
     if (aErrorMessages.isNotEmpty ())
     {
+      // Generate ErrorMessage if errors in the process are present and the
+      // pmode wants an error response
       if (_isSendErrorAsResponse (aEffectiveLeg))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -687,23 +687,28 @@ public final class AS4Handler implements Closeable
     }
     else
     {
+      // No errors occurred
       final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
-      if (aPMode.getMEP ().isOneWay ())
+      if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
       {
         // If no Error is present check if pmode declared if they want a
         // response and if this response should contain non-repudiation
         // information if applicable
         if (bSendReceiptAsResponse)
         {
-          return _createReceiptMessage (aSOAPDocument, eSOAPVersion, aEffectiveLeg, aUserMessage, aResponseAttachments);
+          return _createReceiptMessage (aSOAPDocument,
+                                        eSOAPVersion,
+                                        aEffectiveLeg,
+                                        aEbmsUserMessage,
+                                        aResponseAttachments);
         }
         // else TODO
         s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
       }
       else
       {
-        // TWO - WAY
+        // synchronous TWO - WAY (= "SYNC")
         final PModeLeg aLeg2 = aPMode.getLeg2 ();
         if (aLeg2 == null)
           throw new BadRequestException ("PMode has no leg2!");
@@ -711,7 +716,7 @@ public final class AS4Handler implements Closeable
         if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
         {
           final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
-                                                                              aUserMessage,
+                                                                              aEbmsUserMessage,
                                                                               aResponseAttachments);
 
           return _createResponseUserMessage (eSOAPVersion,
@@ -970,6 +975,7 @@ public final class AS4Handler implements Closeable
    */
   private static boolean _isNotPingMessage (@Nonnull final IPMode aPMode)
   {
+    // Leg 2 wouldn't make sense... Only leg 1 can be pinged
     final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
 
     if (aBInfo != null &&

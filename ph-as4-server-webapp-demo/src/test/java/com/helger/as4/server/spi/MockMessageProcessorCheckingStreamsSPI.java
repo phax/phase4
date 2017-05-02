@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -48,9 +49,9 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
 
   @Nonnull
   @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
-  public AS4MessageProcessorResult processAS4Message (@Nullable final Ebms3UserMessage aUserMessage,
-                                                      @Nullable final Node aPayload,
-                                                      @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
+                                                          @Nullable final Node aPayload,
+                                                          @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
     s_aLogger.info ("Received AS4 message:");
     if (false)
@@ -79,6 +80,14 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         }
       }
     }
+    return AS4MessageProcessorResult.createSuccess ();
+  }
+
+  @Nonnull
+  public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
+                                                            @Nullable final Node aPayload,
+                                                            @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+  {
     return AS4MessageProcessorResult.createSuccess ();
   }
 }

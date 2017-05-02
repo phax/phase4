@@ -105,19 +105,9 @@ public enum EMEPBinding implements IHasID <String>
     return m_nRequiredLegs;
   }
 
-  public boolean isUsableInOneWay ()
-  {
-    return this == PUSH;
-  }
-
-  public boolean isUsableInTwoWay ()
-  {
-    return this != PUSH;
-  }
-
   /**
-   * @return <code>true</code> if the processing is synchronous,
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if the processing is synchronous (PUSH, PULL or
+   *         SYNC), <code>false</code> otherwise.
    * @see #isAsynchronous()
    */
   public boolean isSynchronous ()
@@ -126,13 +116,18 @@ public enum EMEPBinding implements IHasID <String>
   }
 
   /**
-   * @return <code>true</code> if the processing is asynchronous,
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if the processing is asynchronous (PUSH_PUSH,
+   *         PUSH_PULL or PULL_PUSH), <code>false</code> otherwise.
    * @see #isSynchronous()
    */
   public boolean isAsynchronous ()
   {
     return this == PUSH_PUSH || this == PUSH_PULL || this == PULL_PUSH;
+  }
+
+  public boolean canSendUserMessageBack ()
+  {
+    return this == PULL || this == SYNC || this == PULL_PUSH || this == PUSH_PULL;
   }
 
   @Nullable
