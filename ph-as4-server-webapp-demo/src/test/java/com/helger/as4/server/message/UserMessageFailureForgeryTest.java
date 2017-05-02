@@ -178,24 +178,7 @@ public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
-  // False pmode settings
-
-  // Can not do that anymore since everything gets accepted with default profile
-  // pmode
-  @Ignore
-  @Test
-  public void testFalsePartyIDToTriggerPModeError () throws Exception
-  {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
-
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
-  }
-
   // Encryption
-
   // Cannot be tested easily, since the error gets only thrown if the SPI tries
   // to read the stream of the attachment
   @Ignore

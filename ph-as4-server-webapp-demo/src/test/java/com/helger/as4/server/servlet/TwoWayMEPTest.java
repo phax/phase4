@@ -209,4 +209,16 @@ public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
+
+  @Test
+  public void testPModeWithTwoWayButNoLeg2 () throws Exception
+  {
+    m_aPMode.setLeg2 (null);
+    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
+
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+  }
 }

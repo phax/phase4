@@ -275,6 +275,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                                                                    sResponderID,
                                                                    sResponderAddress);
 
+      // Should be screened by the xsd conversion already
       if (aPMode == null)
       {
         s_aLogger.warn ("Failed to resolve PMode '" +

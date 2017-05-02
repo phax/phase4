@@ -604,6 +604,7 @@ public final class AS4Handler implements Closeable
       }
       else
       {
+        // Asynchronous
 
         // Send Receipt after starting ASYNCHRONOUS CALL start
         // final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse

@@ -87,10 +87,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     final Ebms3Messaging aMessage = aState.getMessaging ();
     if (aMessage != null)
       if (aMessage.getUserMessageAtIndex (0) != null)
-        if (StringHelper.hasText (aState.getMessaging ()
-                                        .getUserMessageAtIndex (0)
-                                        .getMessageInfo ()
-                                        .getRefToMessageId ()))
+        if (StringHelper.hasText (aMessage.getUserMessageAtIndex (0).getMessageInfo ().getRefToMessageId ()))
         {
           aPModeLeg = aPMode.getLeg2 ();
         }
