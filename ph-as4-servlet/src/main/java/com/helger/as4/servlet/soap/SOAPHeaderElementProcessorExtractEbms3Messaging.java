@@ -46,6 +46,9 @@ import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3PullRequest;
+import com.helger.as4lib.ebms3header.Ebms3Receipt;
+import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsHashMap;
@@ -487,6 +490,46 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       // stored
 
       // all vars stay null
+
+      final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);
+
+      // Message Info Check
+      if (aSignalMessage.getMessageInfo () == null)
+      {
+        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+        return ESuccess.FAILURE;
+      }
+
+      final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();
+      final Ebms3Receipt aEbms3Receipt = aSignalMessage.getReceipt ();
+      if (aEbms3PullRequest != null)
+      {
+        final IMPC aMPC = aMPCMgr.getMPCOfID (aEbms3PullRequest.getMpc ());
+        if (aMPC == null)
+        {
+          // Return value not recognized when MPC is not currently saved
+          aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
+          return ESuccess.FAILURE;
+        }
+      }
+      else
+        if (aEbms3Receipt != null)
+        {
+          if (StringHelper.hasNoText (aSignalMessage.getMessageInfo ().getRefToMessageId ()))
+          {
+            aErrorList.add (EEbmsError.EBMS_INVALID_RECEIPT.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+        }
+        else
+        {
+          // Error Message
+          if (StringHelper.hasNoText (aSignalMessage.getMessageInfo ().getRefToMessageId ()))
+          {
+            // TODO Check if it really has to be present in message info or just
+            // in the error itself
+          }
+        }
     }
 
     // Remember in state

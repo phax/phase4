@@ -497,14 +497,11 @@ public final class AS4Handler implements Closeable
 
     if (aErrorMessages.isEmpty ())
     {
-      if (aPMode == null)
-        throw new BadRequestException ("No AS4 P-Mode configuration found!");
-      if (aEffectiveLeg == null)
-        throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
-
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
-      aEbmsUserMessage = aState.getMessaging ().getUserMessageAtIndex (0);
+      aEbmsUserMessage = aState.getMessaging ().hasUserMessageEntries () ? aState.getMessaging ()
+                                                                                 .getUserMessageAtIndex (0)
+                                                                         : null;
       aEbmsSignalMessage = aState.getMessaging ().hasSignalMessageEntries ()
                                                                              ? aState.getMessaging ()
                                                                                      .getSignalMessageAtIndex (0)
@@ -520,33 +517,37 @@ public final class AS4Handler implements Closeable
       if (nCountData != 1)
         throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt must be present!");
 
-      // Only do profile checks if a profile is set
-      final String sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
-      if (StringHelper.hasText (sProfileID))
-      {
-        final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
-        if (aProfile == null)
-          throw new IllegalStateException ("The configured AS4 profile " + sProfileID + " does not exist.");
-
-        // Profile Checks gets set when started with Server
-        final ErrorList aErrorList = new ErrorList ();
-        aProfile.getValidator ().validatePMode (aPMode, aErrorList);
-        aProfile.getValidator ().validateUserMessage (aEbmsUserMessage, aErrorList);
-        if (aErrorList.isNotEmpty ())
-        {
-          throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
-                                         aProfile.getDisplayName () +
-                                         "\n Following errors are present: " +
-                                         aErrorList.getAllErrors ().getAllTexts (m_aLocale));
-        }
-      }
-
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
-
       if (aEbmsUserMessage != null)
       {
+        // Only check PMode and leg if the message is a usermessage
+        if (aPMode == null)
+          throw new BadRequestException ("No AS4 P-Mode configuration found!");
+        if (aEffectiveLeg == null)
+          throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
+
+        // Only do profile checks if a profile is set
+        final String sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
+        if (StringHelper.hasText (sProfileID))
+        {
+          final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
+          if (aProfile == null)
+            throw new IllegalStateException ("The configured AS4 profile " + sProfileID + " does not exist.");
+
+          // Profile Checks gets set when started with Server
+          final ErrorList aErrorList = new ErrorList ();
+          aProfile.getValidator ().validatePMode (aPMode, aErrorList);
+          aProfile.getValidator ().validateUserMessage (aEbmsUserMessage, aErrorList);
+          if (aErrorList.isNotEmpty ())
+          {
+            throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
+                                           aProfile.getDisplayName () +
+                                           "\n Following errors are present: " +
+                                           aErrorList.getAllErrors ().getAllTexts (m_aLocale));
+          }
+        }
         sMessageID = aEbmsUserMessage.getMessageInfo ().getMessageId ();
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
@@ -585,21 +586,21 @@ public final class AS4Handler implements Closeable
       }
       else
       {
-        // TODO check signal message
+        // TODO check signal message what should we check?
       }
 
-      if (_isNotPingMessage (aPMode))
+      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
+      if (bIsDuplicate)
       {
-        final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
-        if (bIsDuplicate)
-        {
-          s_aLogger.info ("Not invoking SPIs, because message was already handled!");
-          final Ebms3Description aDesc = new Ebms3Description ();
-          aDesc.setLang (m_aLocale.getLanguage ());
-          aDesc.setValue ("Another message with the same ID was already received!");
-          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, null, aDesc));
-        }
-        else
+        s_aLogger.info ("Not invoking SPIs, because message was already handled!");
+        final Ebms3Description aDesc = new Ebms3Description ();
+        aDesc.setLang (m_aLocale.getLanguage ());
+        aDesc.setValue ("Another message with the same ID was already received!");
+        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, null, aDesc));
+      }
+      else
+      {
+        if (_isNotPingMessage (aPMode))
         {
           // Invoke SPIs if
           // * Valid PMode
@@ -629,9 +630,6 @@ public final class AS4Handler implements Closeable
       else
       {
         // TODO Call asynchronous
-
-        // Send Receipt after starting ASYNCHRONOUS CALL start
-
         final Ebms3UserMessage aFinalUserMessage = aEbmsUserMessage;
         final Ebms3SignalMessage aFinalSignalMessage = aEbmsSignalMessage;
         final Node aFinalPayloadNode = aPayloadNode;
@@ -676,6 +674,7 @@ public final class AS4Handler implements Closeable
     {
       // Generate ErrorMessage if errors in the process are present and the
       // pmode wants an error response
+      // When aLeg == null, the response is true
       if (_isSendErrorAsResponse (aEffectiveLeg))
       {
         final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -687,24 +686,37 @@ public final class AS4Handler implements Closeable
     }
     else
     {
-      // No errors occurred
-      final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
       if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
       {
         // If no Error is present check if pmode declared if they want a
         // response and if this response should contain non-repudiation
         // information if applicable
-        if (bSendReceiptAsResponse)
+
+        if (aEbmsUserMessage != null)
         {
-          return _createReceiptMessage (aSOAPDocument,
-                                        eSOAPVersion,
-                                        aEffectiveLeg,
-                                        aEbmsUserMessage,
-                                        aResponseAttachments);
+
+          // No errors occurred
+          final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
+          if (bSendReceiptAsResponse)
+          {
+            return _createReceiptMessage (aSOAPDocument,
+                                          eSOAPVersion,
+                                          aEffectiveLeg,
+                                          aEbmsUserMessage,
+                                          aResponseAttachments);
+          }
+          // else TODO
+          s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
         }
-        // else TODO
-        s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+        else
+        {
+          // Pullrequest do nothing since async part above already sends
+          // usermessage back
+          // Look up what to do for pull-push, push-pull
+          // Signalmessage Pull Request
+          // else TODO (e.g. "pull" of "push-pull")
+        }
       }
       else
       {
@@ -724,7 +736,6 @@ public final class AS4Handler implements Closeable
                                              aLeg2,
                                              aResponseUserMsg.getAsSOAPDocument ());
         }
-        // else TODO (e.g. "pull" of "push-pull")
       }
     }
 
@@ -975,14 +986,17 @@ public final class AS4Handler implements Closeable
    */
   private static boolean _isNotPingMessage (@Nonnull final IPMode aPMode)
   {
-    // Leg 2 wouldn't make sense... Only leg 1 can be pinged
-    final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
-
-    if (aBInfo != null &&
-        CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
-        CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
+    if (aPMode != null)
     {
-      return false;
+      // Leg 2 wouldn't make sense... Only leg 1 can be pinged
+      final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
+
+      if (aBInfo != null &&
+          CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
+          CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
+      {
+        return false;
+      }
     }
     return true;
   }
