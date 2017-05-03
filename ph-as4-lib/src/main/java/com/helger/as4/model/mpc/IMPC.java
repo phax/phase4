@@ -20,5 +20,5 @@ import com.helger.photon.basic.object.IObject;
 
 public interface IMPC extends IObject
 {
-
+  /* empty */
 }

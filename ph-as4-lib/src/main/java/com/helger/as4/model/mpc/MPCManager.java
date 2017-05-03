@@ -30,7 +30,7 @@ import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.ObjectHelper;
 
-public class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
+public final class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
 {
   public MPCManager (@Nullable final String sFilename) throws DAOException
   {

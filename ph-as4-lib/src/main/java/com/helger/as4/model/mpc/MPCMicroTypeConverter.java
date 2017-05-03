@@ -23,7 +23,7 @@ import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter
 {
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -39,7 +39,6 @@ public class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter
   @Nonnull
   public MPC convertToNative (@Nonnull final IMicroElement aElement)
   {
-    final MPC ret = new MPC (getStubObject (aElement));
-    return ret;
+    return new MPC (getStubObject (aElement));
   }
 }
