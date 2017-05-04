@@ -520,11 +520,12 @@ public final class AS4Handler implements Closeable
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
+      if (aPMode == null)
+        throw new BadRequestException ("No AS4 P-Mode configuration found!");
+
       if (aEbmsUserMessage != null)
       {
-        // Only check PMode and leg if the message is a usermessage
-        if (aPMode == null)
-          throw new BadRequestException ("No AS4 P-Mode configuration found!");
+        // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
           throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
 
@@ -694,7 +695,6 @@ public final class AS4Handler implements Closeable
 
         if (aEbmsUserMessage != null)
         {
-
           // No errors occurred
           final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
@@ -716,6 +716,11 @@ public final class AS4Handler implements Closeable
           // Look up what to do for pull-push, push-pull
           // Signalmessage Pull Request
           // else TODO (e.g. "pull" of "push-pull")
+
+          // pull message from MPC
+          // how to pull from the mpcs? TODO
+          // Use SPI signal message to get new message
+
         }
       }
       else

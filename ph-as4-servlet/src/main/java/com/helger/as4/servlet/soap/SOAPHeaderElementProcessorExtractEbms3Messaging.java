@@ -40,6 +40,8 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
+import com.helger.as4.servlet.mgr.AS4ServletPullRequestProcessorManager;
+import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
@@ -510,6 +512,19 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
           // Return value not recognized when MPC is not currently saved
           aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
           return ESuccess.FAILURE;
+        }
+
+        // Create SPI which returns a PMode
+        for (final IAS4ServletPullRequestProcessorSPI aProcessor : AS4ServletPullRequestProcessorManager.getAllProcessors ())
+        {
+          aPMode = aProcessor.processAS4UserMessage (aSignalMessage);
+          if (aPMode == null)
+          {
+            aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+          // needed in manager? TODO
+          // MetaAS4Manager.getPModeMgr ().createOrUpdatePMode ((PMode) aPMode);
         }
       }
       else

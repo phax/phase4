@@ -16,6 +16,8 @@
  */
 package com.helger.as4.server.servlet;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
@@ -37,6 +39,8 @@ public class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC")
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
-    sendPlainMessage (aEntity, true, null);
+    final String sResponse = sendPlainMessage (aEntity, true, null);
+
+    assertTrue (sResponse.contains ("UserMessage"));
   }
 }
