@@ -89,6 +89,13 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
+        <artifactId>ph-masterdata-parent-pom</artifactId>
+        <version>5.0.4</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
         <version>3.6.1</version>
         <type>pom</type>
