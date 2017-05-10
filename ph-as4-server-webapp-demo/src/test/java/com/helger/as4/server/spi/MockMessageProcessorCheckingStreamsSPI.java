@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
@@ -85,8 +86,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
 
   @Nonnull
   public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                            @Nullable final Node aPayload,
-                                                            @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+                                                            @Nonnull final IPMode aPmode)
   {
     return AS4MessageProcessorResult.createSuccess ();
   }

@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
@@ -72,6 +73,5 @@ public interface IAS4ServletMessageProcessorSPI
    */
   @Nonnull
   AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
-                                                     @Nullable Node aPayload,
-                                                     @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
+                                                     @Nullable final IPMode aPMode);
 }

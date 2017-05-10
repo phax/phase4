@@ -9,7 +9,6 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.id.factory.GlobalIDFactory;
 
 @IsSPIImplementation
 public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProcessorSPI
@@ -21,7 +20,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",
                                                                                           "http://localhost:8080/as4"),
-                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
+                                                      (i, r) -> "PullPMode");
     aPMode.setMEPBinding (EMEPBinding.PULL);
     return aPMode;
   }

@@ -24,15 +24,30 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.mock.MockEbmsHelper;
+import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -77,9 +92,56 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
   @Nonnull
   public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                            @Nullable final Node aPayload,
-                                                            @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+                                                            @Nullable final IPMode aPMode)
   {
-    return AS4MessageProcessorResult.createSuccess ();
+    final Node aPayload;
+
+    if (!aSignalMessage.getPullRequest ()
+                       .getMpc ()
+                       .equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC"))
+    {
+      return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
+    }
+
+    try
+    {
+      aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+
+      // Add properties
+      final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+      final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+
+      final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+      final Ebms3PartyInfo aEbms3PartyInfo;
+      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                                "MyServiceTypes",
+                                                                                MockPModeGenerator.SOAP11_SERVICE,
+                                                                                "4321",
+                                                                                "PullPMode",
+                                                                                MockEbmsHelper.DEFAULT_AGREEMENT);
+      aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                "pullinitiator",
+                                                                CAS4.DEFAULT_RESPONDER_URL,
+                                                                "pullresponder");
+
+      final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+      final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+      aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+      aUserMessage.setMessageInfo (aEbms3MessageInfo);
+      aUserMessage.setMessageProperties (aEbms3MessageProperties);
+      aUserMessage.setPartyInfo (aEbms3PartyInfo);
+      aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
+      aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
+
+      return AS4MessageProcessorResult.createSuccess (aUserMessage);
+    }
+    catch (final SAXException e)
+    {
+      e.printStackTrace ();
+    }
+    return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
   }
 }

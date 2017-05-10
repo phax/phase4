@@ -23,8 +23,11 @@ import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.as4.error.EEbmsError;
 import com.helger.as4.messaging.domain.CreatePullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 
@@ -42,5 +45,21 @@ public class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
+  }
+
+  @Test
+  public void sendPullRequestFailure () throws Exception
+  {
+    final String sFailure = "failure";
+    final MPC aMPC = new MPC (sFailure);
+    if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
+      MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
+
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             sFailure)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }
 }

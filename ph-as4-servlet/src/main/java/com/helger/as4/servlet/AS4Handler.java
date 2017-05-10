@@ -63,6 +63,7 @@ import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.MEPHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
@@ -193,6 +194,7 @@ public final class AS4Handler implements Closeable
 
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
+  private Ebms3UserMessage m_aPullRequestReturn = null;
 
   public AS4Handler ()
   {}
@@ -386,7 +388,8 @@ public final class AS4Handler implements Closeable
                                 @Nullable final Node aPayloadNode,
                                 @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                 @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
+                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                @Nonnull final IPMode aPMode)
   {
     final String sMessageID = aUserMessage != null ? aUserMessage.getMessageInfo ().getMessageId ()
                                                    : aSignalMessage.getMessageInfo ().getMessageId ();
@@ -402,7 +405,33 @@ public final class AS4Handler implements Closeable
         if (aUserMessage != null)
           aResult = aProcessor.processAS4UserMessage (aUserMessage, aPayloadNode, aDecryptedAttachments);
         else
-          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPayloadNode, aDecryptedAttachments);
+        {
+          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode);
+          if (m_aPullRequestReturn == null)
+          {
+            m_aPullRequestReturn = aResult.getReturnUserMessage ();
+            // No message contained in the MPC
+            if (m_aPullRequestReturn == null)
+            {
+              s_aLogger.warn ("Invoked AS4 message processor SPI " +
+                              aProcessor +
+                              " returned a failure, no UserMessage contained in the MPC");
+
+              final Ebms3Error aError = new Ebms3Error ();
+              aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
+              aError.setErrorCode (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
+              aError.setRefToMessageInError (sMessageID);
+              final Ebms3Description aDesc = new Ebms3Description ();
+              aDesc.setValue (aResult.getErrorMessage ());
+              aDesc.setLang (m_aLocale.getLanguage ());
+              aError.setDescription (aDesc);
+              aErrorMessages.add (aError);
+
+              // Stop processing
+              return ESuccess.FAILURE;
+            }
+          }
+        }
         if (aResult == null)
           throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
 
@@ -587,7 +616,8 @@ public final class AS4Handler implements Closeable
       }
       else
       {
-        // TODO check signal message what should we check?
+        // TODO check signal message what should we check? or is something even
+        // needed
       }
 
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
@@ -621,12 +651,14 @@ public final class AS4Handler implements Closeable
         // Call synchronous
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
+        // Might add to m_aPullRequestReturn
         _invokeSPIs (aEbmsUserMessage,
                      aEbmsSignalMessage,
                      aPayloadNode,
                      aDecryptedAttachments,
                      aErrorMessages,
-                     aResponseAttachments);
+                     aResponseAttachments,
+                     aPMode);
       }
       else
       {
@@ -645,7 +677,8 @@ public final class AS4Handler implements Closeable
                            aFinalPayloadNode,
                            aFinalDecryptedAttachments,
                            aLocalErrorMessages,
-                           aLocalResponseAttachments).isSuccess ())
+                           aLocalResponseAttachments,
+                           aPMode).isSuccess ())
           {
             // TODO SPI processing started
             final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
@@ -693,35 +726,33 @@ public final class AS4Handler implements Closeable
         // response and if this response should contain non-repudiation
         // information if applicable
 
-        if (aEbmsUserMessage != null)
+        if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL))
         {
-          // No errors occurred
-          final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
-          if (bSendReceiptAsResponse)
-          {
-            return _createReceiptMessage (aSOAPDocument,
-                                          eSOAPVersion,
-                                          aEffectiveLeg,
-                                          aEbmsUserMessage,
-                                          aResponseAttachments);
-          }
-          // else TODO
-          s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+          return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
         }
         else
-        {
-          // Pullrequest do nothing since async part above already sends
-          // usermessage back
-          // Look up what to do for pull-push, push-pull
-          // Signalmessage Pull Request
-          // else TODO (e.g. "pull" of "push-pull")
+          if (aEbmsUserMessage != null)
+          {
+            // No errors occurred
+            final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
-          // pull message from MPC
-          // how to pull from the mpcs? TODO
-          // Use SPI signal message to get new message
-
-        }
+            if (bSendReceiptAsResponse)
+            {
+              return _createReceiptMessage (aSOAPDocument,
+                                            eSOAPVersion,
+                                            aEffectiveLeg,
+                                            aEbmsUserMessage,
+                                            aResponseAttachments);
+            }
+            // else TODO
+            s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+          }
+          else
+          {
+            // Look up what to do for pull-push, push-pull
+            // Signalmessage Pull Request
+            // else TODO (e.g. "pull" of "push-pull")
+          }
       }
       else
       {
