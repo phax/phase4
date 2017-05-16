@@ -60,7 +60,7 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 
-public class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
+public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayTest.class);
 

@@ -50,7 +50,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
-public class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
+public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()

@@ -54,7 +54,7 @@ import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
 
-public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
+public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 {
 
   /**
@@ -648,7 +648,7 @@ public class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }

@@ -62,7 +62,7 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class PModeCheckTest extends AbstractUserMessageTestSetUpExt
+public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (PModeCheckTest.class);
 

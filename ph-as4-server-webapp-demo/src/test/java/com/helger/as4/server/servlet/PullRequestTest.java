@@ -31,9 +31,8 @@ import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 
-public class PullRequestTest extends AbstractUserMessageTestSetUpExt
+public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 {
-
   @Test
   public void sendPullRequestSuccess () throws Exception
   {

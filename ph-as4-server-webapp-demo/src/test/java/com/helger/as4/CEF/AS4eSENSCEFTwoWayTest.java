@@ -21,7 +21,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-public class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
+public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
   /**
    * Prerequisite:<br>

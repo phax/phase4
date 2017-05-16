@@ -25,5 +25,5 @@ package com.helger.as4.server.holodeck;
  */
 public interface IHolodeckTests
 {
-
+  /* empty */
 }

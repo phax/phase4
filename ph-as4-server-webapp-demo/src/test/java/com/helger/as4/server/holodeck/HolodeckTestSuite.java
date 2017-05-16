@@ -37,11 +37,9 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
  */
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)
-@SuiteClasses ({ UserMessageSoapBodyPayloadTest.class,
-                 UserMessageOneAttachmentTest.class,
-                 ReceiptMessageTest.class })
+@SuiteClasses ({ UserMessageSoapBodyPayloadTest.class, UserMessageOneAttachmentTest.class, ReceiptMessageTest.class })
 @Ignore
-public class HolodeckTestSuite
+public final class HolodeckTestSuite
 {
   /** The default URL where Holodeck is supposed to run */
   public static final String DEFAULT_HOLODECK_URI = "http://localhost:8080/msh";

@@ -54,7 +54,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
+public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
   private PMode m_aPMode;
 

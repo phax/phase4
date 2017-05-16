@@ -22,7 +22,7 @@ import org.junit.Test;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
 
-public class ESENSPModeTest
+public final class ESENSPModeTest
 {
   @ClassRule
   public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();

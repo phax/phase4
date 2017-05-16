@@ -35,7 +35,7 @@ import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 
-public class EAS4CompressionModeFuncTest
+public final class EAS4CompressionModeFuncTest
 {
   private static void _compressPayload (@Nonnull @WillClose final InputStream aUncompressed,
                                         @Nonnull @WillClose final OutputStream aOut) throws IOException
@@ -85,7 +85,7 @@ public class EAS4CompressionModeFuncTest
       // Compression
       final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
       try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-          final OutputStream aOS = eMode.getCompressStream (aCompressedOS))
+           final OutputStream aOS = eMode.getCompressStream (aCompressedOS))
       {
         StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
       }
@@ -94,7 +94,7 @@ public class EAS4CompressionModeFuncTest
       // DECOMPRESSION
       final NonBlockingByteArrayOutputStream aDecompressedOS = new NonBlockingByteArrayOutputStream ();
       try (final InputStream aIS = eMode.getDecompressStream (new NonBlockingByteArrayInputStream (aCompressed));
-          final OutputStream aOS = aDecompressedOS)
+           final OutputStream aOS = aDecompressedOS)
       {
         StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
       }

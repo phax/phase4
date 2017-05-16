@@ -30,13 +30,12 @@ import com.helger.commons.annotation.Nonempty;
 @NotThreadSafe
 public final class AS4ServerSettings
 {
-  private final static String DEFAULT_RESPONDER_ID = "default";
+  private static final String DEFAULT_RESPONDER_ID = "default";
 
-  private static String m_sResponderID = DEFAULT_RESPONDER_ID;
+  private static String s_sResponderID = DEFAULT_RESPONDER_ID;
   private static IIncomingAttachmentFactory s_aIncomingAttachmentFactory = WSS4JAttachment::createIncomingFileAttachment;
   private static IPModeResolver s_aPModeResolver = new DefaultPModeResolver (false);
-
-  private static AS4CryptoFactory m_aAS4CryptoFactory = new AS4CryptoFactory ();
+  private static AS4CryptoFactory s_aAS4CryptoFactory = new AS4CryptoFactory ();
 
   private AS4ServerSettings ()
   {}
@@ -45,13 +44,13 @@ public final class AS4ServerSettings
   @Nonempty
   public static String getDefaultResponderID ()
   {
-    return m_sResponderID;
+    return s_sResponderID;
   }
 
   public static void setDefaultResponderID (@Nonnull @Nonempty final String sResponderID)
   {
     ValueEnforcer.notEmpty (sResponderID, "ResponderID");
-    m_sResponderID = sResponderID;
+    s_sResponderID = sResponderID;
   }
 
   @Nonnull
@@ -80,11 +79,11 @@ public final class AS4ServerSettings
 
   public static AS4CryptoFactory getAS4CryptoFactory ()
   {
-    return m_aAS4CryptoFactory;
+    return s_aAS4CryptoFactory;
   }
 
   public static void setAS4CryptoFactory (@Nonnull final AS4CryptoFactory aAS4CryptoFactory)
   {
-    m_aAS4CryptoFactory = aAS4CryptoFactory;
+    s_aAS4CryptoFactory = aAS4CryptoFactory;
   }
 }

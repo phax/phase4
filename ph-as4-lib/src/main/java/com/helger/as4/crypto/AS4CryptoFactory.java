@@ -83,7 +83,7 @@ public final class AS4CryptoFactory implements Serializable
   {
     m_aCryptoProps = _createPropsFromFile (sCryptoPropertiesPath);
     if (!m_aCryptoProps.isRead ())
-      throw new InitializationException ("Failed to locate crypto properties");
+      throw new InitializationException ("Failed to locate crypto properties in '" + sCryptoPropertiesPath + "'");
   }
 
   public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
@@ -105,7 +105,7 @@ public final class AS4CryptoFactory implements Serializable
     {
       try
       {
-        ret = CryptoFactory.getInstance (m_aCryptoProps.getProperties ());
+        ret = CryptoFactory.getInstance (m_aCryptoProps.getAsProperties ());
       }
       catch (final Throwable t)
       {

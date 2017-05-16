@@ -93,7 +93,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private String m_sToRole = CAS4.DEFAULT_ROLE;
   private String m_sToPartyID;
 
-  private boolean bUseLeg1 = true;
+  private boolean m_bUseLeg1 = true;
   private PMode m_aPMode;
   private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getInitiatorPartyID () +
                                                                             "-" +
@@ -160,12 +160,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       throw new IllegalStateException ("finalRecipient and originalSender are mandatory properties");
   }
 
-  private void setValuesWithPMode ()
+  private void _setValuesWithPMode ()
   {
     if (m_aPMode != null)
     {
       final PModeLeg aEffectiveLeg = m_aPMode.getLeg1 ();
-      if (!bUseLeg1)
+      if (!m_bUseLeg1)
         m_aPMode.getLeg2 ();
       m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
       m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
@@ -195,7 +195,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   public HttpEntity buildMessage () throws Exception
   {
     // if pmode is set use attribute from pmode
-    setValuesWithPMode ();
+    _setValuesWithPMode ();
 
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
@@ -624,7 +624,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   public boolean isUseLeg1 ()
   {
-    return bUseLeg1;
+    return m_bUseLeg1;
   }
 
   /**
@@ -635,7 +635,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   public void setUseLeg1 (final boolean bUseLeg1)
   {
-    this.bUseLeg1 = bUseLeg1;
+    this.m_bUseLeg1 = bUseLeg1;
   }
 
   public PMode getPmode ()

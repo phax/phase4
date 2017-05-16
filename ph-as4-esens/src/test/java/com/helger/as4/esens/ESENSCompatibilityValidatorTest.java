@@ -59,7 +59,7 @@ import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
  *
  * @author bayerlma
  */
-public class ESENSCompatibilityValidatorTest
+public final class ESENSCompatibilityValidatorTest
 {
   @ClassRule
   public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();

@@ -10,7 +10,7 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 
-public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
+public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
   /**
    * Prerequisite:<br>
@@ -23,7 +23,7 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * Predicate: <br>
    * The RMSH sends back a User Message (M2) with element CONVERSATIONIDM2 equal
    * to ConversationIdM1 (set by the consumer).
-   * 
+   *
    * @throws Exception
    *         In case of error
    */
@@ -50,7 +50,7 @@ public class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * The RMSH sends back a User Message (M2) with element REFTOMESSAGEID set to
    * MESSAGEID (of M1) and with element CONVERSATIONIDM2 equal to
    * ConversationIdM1.
-   * 
+   *
    * @throws Exception
    *         In case of error
    */

@@ -69,7 +69,7 @@ import com.helger.xml.serialize.read.DOMReader;
  * @author bayerlma
  */
 @RunWith (Parameterized.class)
-public class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
+public final class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
