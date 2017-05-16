@@ -62,4 +62,20 @@ public class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }
+
+  @Test
+  public void sendPullRequestTwoSPIsFailure () throws Exception
+  {
+    final String sMPC = "TWO-SPI";
+    final MPC aMPC = new MPC (sMPC);
+    if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sMPC) == null)
+      MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
+
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             sMPC)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
 }

@@ -96,9 +96,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   {
     final Node aPayload;
 
-    if (!aSignalMessage.getPullRequest ()
-                       .getMpc ()
-                       .equals ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC"))
+    if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
     {
       return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
     }

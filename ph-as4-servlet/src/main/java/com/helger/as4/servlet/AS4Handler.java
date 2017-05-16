@@ -431,6 +431,31 @@ public final class AS4Handler implements Closeable
               return ESuccess.FAILURE;
             }
           }
+          else
+          {
+            // A second processor has commited a response to the pullrequest
+            // Which is not allowed since only one response can be sent back to
+            // the pullrequest initiator
+            if (aResult.getReturnUserMessage () != null)
+            {
+              s_aLogger.warn ("Invoked AS4 message processor SPI " +
+                              aProcessor +
+                              " the previous processor already returned a usermessage, it is not possible to return two usermessage." +
+                              "Please look at your SPI Implementation.");
+
+              final Ebms3Error aError = new Ebms3Error ();
+              aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
+              aError.setErrorCode (EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+              aError.setRefToMessageInError (sMessageID);
+
+              aError.setShortDescription (EEbmsError.EBMS_VALUE_INCONSISTENT.getShortDescription ());
+              aError.setOrigin (aSignalMessage.getMessageInfo ().getMessageId ());
+              aErrorMessages.add (aError);
+
+              // Stop processing
+              return ESuccess.FAILURE;
+            }
+          }
         }
         if (aResult == null)
           throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
