@@ -639,11 +639,6 @@ public final class AS4Handler implements Closeable
 
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }
-      else
-      {
-        // TODO check signal message what should we check? or is something even
-        // needed
-      }
 
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
       if (bIsDuplicate)
