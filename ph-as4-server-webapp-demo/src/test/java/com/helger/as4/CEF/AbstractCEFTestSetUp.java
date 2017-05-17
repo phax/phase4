@@ -35,7 +35,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
+public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
 {
   protected static final String INITIATOR_ID = "CEF-Initiator";
   protected static final String RESPONDER_ID = "CEF-Responder";

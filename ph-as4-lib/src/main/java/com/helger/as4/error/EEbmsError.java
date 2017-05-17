@@ -43,7 +43,7 @@ public enum EEbmsError implements IEbmsError
                            EEbmsErrorText.VALUE_INCONSISTENT,
                            EEbmsErrorCategory.CONTENT),
   EBMS_OTHER ("EBMS:0004", EEbmsErrorSeverity.FAILURE, "Other", EEbmsErrorText.OTHER, EEbmsErrorCategory.CONTENT),
-  EBMS_CONNECTION_FAIlURE ("EBMS:0005",
+  EBMS_CONNECTION_FAILURE ("EBMS:0005",
                            EEbmsErrorSeverity.WARNING,
                            "ConnectionFailure",
                            EEbmsErrorText.CONNECTION_FAILURE,

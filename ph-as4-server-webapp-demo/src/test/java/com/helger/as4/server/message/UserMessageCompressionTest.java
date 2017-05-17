@@ -48,7 +48,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
 @RunWith (Parameterized.class)
-public class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
+public final class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()

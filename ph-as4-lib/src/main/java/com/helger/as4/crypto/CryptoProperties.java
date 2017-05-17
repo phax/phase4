@@ -28,6 +28,7 @@ import javax.annotation.concurrent.Immutable;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.lang.NonBlockingProperties;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -38,11 +39,11 @@ import com.helger.commons.string.ToStringGenerator;
 @Immutable
 public class CryptoProperties implements Serializable
 {
-  private Properties m_aProps;
+  private NonBlockingProperties m_aProps;
 
   public CryptoProperties (@Nullable final Map <String, String> aProps)
   {
-    m_aProps = new Properties ();
+    m_aProps = new NonBlockingProperties ();
     if (aProps != null)
       m_aProps.putAll (aProps);
   }
@@ -53,7 +54,7 @@ public class CryptoProperties implements Serializable
     if (aRes.exists ())
       try
       {
-        m_aProps = new Properties ();
+        m_aProps = new NonBlockingProperties ();
         try (final InputStream aIS = aRes.getInputStream ())
         {
           m_aProps.load (aIS);
@@ -71,9 +72,14 @@ public class CryptoProperties implements Serializable
   }
 
   @Nullable
-  public Properties getProperties ()
+  public Properties getAsProperties ()
   {
-    return m_aProps;
+    if (m_aProps == null)
+      return null;
+
+    final Properties ret = new Properties ();
+    ret.putAll (m_aProps);
+    return ret;
   }
 
   @Nullable

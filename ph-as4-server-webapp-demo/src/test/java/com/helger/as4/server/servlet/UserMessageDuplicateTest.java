@@ -31,9 +31,8 @@ import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
+public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
-
   @Test
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {

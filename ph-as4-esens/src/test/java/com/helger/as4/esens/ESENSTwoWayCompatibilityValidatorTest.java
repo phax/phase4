@@ -36,7 +36,7 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
 import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
 
-public class ESENSTwoWayCompatibilityValidatorTest
+public final class ESENSTwoWayCompatibilityValidatorTest
 {
   @ClassRule
   public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();

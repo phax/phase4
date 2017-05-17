@@ -40,9 +40,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
-public class ReceiptMessageTest extends AbstractUserMessageTestSetUp
+public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
 {
-
   private static final String SOAP_BODY_PAYLOAD_XML = "SOAPBodyPayload.xml";
 
   @Parameters (name = "{index}: {0}")

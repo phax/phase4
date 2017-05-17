@@ -33,7 +33,7 @@ import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 
-public class AS4ClientErrorMessageTest
+public final class AS4ClientErrorMessageTest
 {
   @BeforeClass
   public static void startServer () throws Exception

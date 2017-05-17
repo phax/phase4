@@ -49,7 +49,7 @@ import com.helger.commons.mime.CMimeType;
 
 @RunWith (Parameterized.class)
 @Category (IHolodeckTests.class)
-public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
+public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
 {
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -67,7 +67,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -88,7 +88,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentSignedMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -117,7 +117,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageOneAttachmentEncryptedMimeSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,
@@ -140,7 +140,7 @@ public class UserMessageOneAttachmentTest extends AbstractUserMessageTestSetUp
   @Test
   public void testUserMessageMimeSignedEncryptedSuccess () throws Exception
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
                                                                     CMimeType.APPLICATION_XML,

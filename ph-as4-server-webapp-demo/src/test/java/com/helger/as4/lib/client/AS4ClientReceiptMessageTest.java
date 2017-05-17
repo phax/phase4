@@ -37,7 +37,7 @@ import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class AS4ClientReceiptMessageTest
+public final class AS4ClientReceiptMessageTest
 {
   private static AS4ResourceManager s_aResMgr;
 

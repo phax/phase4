@@ -46,7 +46,7 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
                  SignatureTest.class,
                  ReceiptMessageTest.class })
 @Ignore
-public class PHAS4ServerTestSuite
+public final class PHAS4ServerTestSuite
 {
   @BeforeClass
   public static void init ()

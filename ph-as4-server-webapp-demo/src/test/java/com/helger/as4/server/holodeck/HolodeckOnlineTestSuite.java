@@ -30,11 +30,9 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)
-@SuiteClasses ({ UserMessageSoapBodyPayloadTest.class,
-                 UserMessageOneAttachmentTest.class,
-                 ReceiptMessageTest.class })
+@SuiteClasses ({ UserMessageSoapBodyPayloadTest.class, UserMessageOneAttachmentTest.class, ReceiptMessageTest.class })
 @Ignore
-public class HolodeckOnlineTestSuite
+public final class HolodeckOnlineTestSuite
 {
   /** The default URL where Holodeck is supposed to run */
   // TODO will be changed soon
