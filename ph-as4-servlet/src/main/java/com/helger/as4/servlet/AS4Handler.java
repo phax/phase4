@@ -666,7 +666,7 @@ public final class AS4Handler implements Closeable
 
     if (bCanInvokeSPIs)
     {
-      if (aPMode.getMEPBinding ().isSynchronous ())
+      if (aPMode.getMEPBinding ().isSynchronous () || aPMode.getMEPBinding ().isAsynchronousInitiator ())
       {
         // Call synchronous
         // Might add to aErrorMessages
@@ -745,8 +745,12 @@ public final class AS4Handler implements Closeable
         // If no Error is present check if pmode declared if they want a
         // response and if this response should contain non-repudiation
         // information if applicable
-
-        if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL))
+        // Only get in here if pull is part of the EMEPBinding, if it is two
+        // way, we need to check if the current application is currently in the
+        // pull phase
+        if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
+            aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
+            aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
         {
           return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
         }
@@ -766,12 +770,6 @@ public final class AS4Handler implements Closeable
             }
             // else TODO
             s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
-          }
-          else
-          {
-            // Look up what to do for pull-push, push-pull
-            // Signalmessage Pull Request
-            // else TODO (e.g. "pull" of "push-pull")
           }
       }
       else

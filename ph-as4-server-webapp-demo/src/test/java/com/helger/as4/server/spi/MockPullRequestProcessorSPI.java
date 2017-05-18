@@ -2,6 +2,8 @@ package com.helger.as4.server.spi;
 
 import javax.annotation.Nonnull;
 
+import org.w3c.dom.Element;
+
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
@@ -21,7 +23,26 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
                                                                             .getAsString ("server.address",
                                                                                           "http://localhost:8080/as4"),
                                                       (i, r) -> "PullPMode");
-    aPMode.setMEPBinding (EMEPBinding.PULL);
+    if (aSignalMessage.getPullRequest () != null)
+    {
+      if (!aSignalMessage.getAny ().isEmpty ())
+      {
+        final Element aElement = (Element) aSignalMessage.getAnyAtIndex (0);
+        if (aElement.getTextContent ().contains ("pushPull"))
+        {
+          aPMode.setMEPBinding (EMEPBinding.PUSH_PULL);
+        }
+        else
+          if (aElement.getTextContent ().contains ("pullPush"))
+          {
+            aPMode.setMEPBinding (EMEPBinding.PULL_PUSH);
+          }
+      }
+      else
+      {
+        aPMode.setMEPBinding (EMEPBinding.PULL);
+      }
+    }
     return aPMode;
   }
 }

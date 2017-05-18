@@ -125,6 +125,14 @@ public enum EMEPBinding implements IHasID <String>
     return this == PUSH_PUSH || this == PUSH_PULL || this == PULL_PUSH;
   }
 
+  /**
+   * Initiator side has the asynchronous part of the transfer
+   */
+  public boolean isAsynchronousInitiator ()
+  {
+    return this == PUSH_PULL || this == PULL_PUSH;
+  }
+
   public boolean canSendUserMessageBack ()
   {
     return this == PULL || this == SYNC || this == PULL_PUSH || this == PUSH_PULL;

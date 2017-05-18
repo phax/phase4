@@ -486,11 +486,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
     else
     {
-      // TODO if pullrequest the method for extracting the pmode needs to be
-      // different since the pullrequest itself does not contain the pmode, it
-      // is just reachable over the mpc where the usermessage is supposed to be
-      // stored
-
       // all vars stay null
 
       final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);

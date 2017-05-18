@@ -16,7 +16,10 @@
  */
 package com.helger.as4.messaging.domain;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -31,9 +34,12 @@ public final class CreatePullRequestMessage
   @Nonnull
   public static AS4PullRequestMessage createPullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                                 @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                                @Nonnull final String aMPC)
+                                                                @Nonnull final String aMPC,
+                                                                @Nullable final List <Object> aAny)
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
+
+    aSignalMessage.setAny (aAny);
 
     // Message Info
     aSignalMessage.setMessageInfo (aEbms3MessageInfo);

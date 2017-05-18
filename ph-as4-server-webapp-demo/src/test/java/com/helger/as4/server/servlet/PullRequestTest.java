@@ -30,6 +30,10 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 {
@@ -38,7 +42,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC")
+                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             null)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
     final String sResponse = sendPlainMessage (aEntity, true, null);
@@ -56,7 +61,8 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             sFailure)
+                                                                             sFailure,
+                                                                             null)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
@@ -72,9 +78,52 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             sMPC)
+                                                                             sMPC,
+                                                                             null)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void sendPullRequestSuccessTwoWayPushPull () throws Exception
+  {
+    // Depending on the payload a different EMEPBinding get chosen by
+    // @MockPullRequestProcessorSPI
+    // To Test the pull request part of the EMEPBinding
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PushPull.xml"));
+    final ICommonsList <Object> aAny = new CommonsArrayList <> ();
+    aAny.add (aPayload.getDocumentElement ());
+
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             aAny)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final String sResponse = sendPlainMessage (aEntity, true, null);
+
+    assertTrue (sResponse.contains ("UserMessage"));
+  }
+
+  @Test
+  public void sendPullRequestSuccessTwoWayPullPush () throws Exception
+  {
+    // Depending on the payload a different EMEPBinding get chosen by
+    // @MockPullRequestProcessorSPI
+    // To Test the pull request part of the EMEPBinding
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PullPush.xml"));
+    final ICommonsList <Object> aAny = new CommonsArrayList <> ();
+    aAny.add (aPayload.getDocumentElement ());
+
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             aAny)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final String sResponse = sendPlainMessage (aEntity, true, null);
+
+    assertTrue (sResponse.contains ("UserMessage"));
   }
 }
