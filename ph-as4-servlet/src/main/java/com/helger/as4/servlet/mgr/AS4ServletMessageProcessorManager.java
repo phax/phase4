@@ -43,7 +43,7 @@ public final class AS4ServletMessageProcessorManager
 
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
-  private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList<> ();
+  private static final ICommonsList <IAS4ServletMessageProcessorSPI> s_aProcessors = new CommonsArrayList <> ();
 
   private AS4ServletMessageProcessorManager ()
   {}

@@ -67,7 +67,7 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
   {
     if (nDisposalMinutes > 0)
     {
-      final ICommonsMap <String, Object> aJobDataMap = new CommonsHashMap<> ();
+      final ICommonsMap <String, Object> aJobDataMap = new CommonsHashMap <> ();
       aJobDataMap.put (KEY_MINUTES, Long.valueOf (nDisposalMinutes));
       GlobalQuartzScheduler.getInstance ().scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class),
                                                         JDK8TriggerBuilder.newTrigger ()

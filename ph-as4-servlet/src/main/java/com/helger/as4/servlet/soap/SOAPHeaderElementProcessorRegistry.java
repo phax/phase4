@@ -44,7 +44,7 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
   @GuardedBy ("m_aRWLock")
-  private final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap<> ();
+  private final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
 
   @Deprecated
   @UsedViaReflection

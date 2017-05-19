@@ -69,9 +69,11 @@ public interface IAS4ServletMessageProcessorSPI
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
+   * @param aPMode
+   *        PMode
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
   AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
-                                                     @Nullable final IPMode aPMode);
+                                                     @Nullable IPMode aPMode);
 }
