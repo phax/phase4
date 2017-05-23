@@ -246,6 +246,7 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     {
       // No Message was found
       s_aLogger.warn ("Neither UserMessage nor SignalMessage object contained!");
+      aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
 
