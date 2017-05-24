@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -15,6 +16,8 @@ import com.helger.as4.marshaller.Ebms3WriterBuilder;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
+import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
@@ -149,6 +152,66 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (_getMessagingAsDocument (aEbms3Messaging)));
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  // TODO discuss with philipp what handler has to do with receipts
+  @Ignore
+  @Test
+  public void sendReceiptTest () throws Exception
+  {
+    final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final String sPModeID;
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+    sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
+                                                                              "MyServiceTypes",
+                                                                              "QuoteToCollect",
+                                                                              "4321",
+                                                                              sPModeID,
+                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
+
+    final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
+    // From => Sender
+    final Ebms3From aEbms3From = new Ebms3From ();
+    aEbms3From.setRole (CAS4.DEFAULT_SENDER_URL);
+    {
+      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
+      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
+      aEbms3From.addPartyId (aEbms3PartyId);
+    }
+    aEbms3PartyInfo.setFrom (aEbms3From);
+
+    // To => Receiver
+    final Ebms3To aEbms3To = new Ebms3To ();
+    aEbms3To.setRole (CAS4.DEFAULT_RESPONDER_URL);
+    {
+      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
+      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
+      aEbms3To.addPartyId (aEbms3PartyId);
+    }
+    aEbms3PartyInfo.setTo (aEbms3To);
+
+    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+
+    aEbms3UserMessage.setPartyInfo (aEbms3PartyInfo);
+    aEbms3UserMessage.setPayloadInfo (aEbms3PayloadInfo);
+    aEbms3UserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+    aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
+    aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
+
+    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT,
+                                                           aPayload,
+                                                           null,
+                                                           new AS4ResourceManager (),
+                                                           aEbms3UserMessage,
+                                                           null);
+
+    // We've got our response
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }

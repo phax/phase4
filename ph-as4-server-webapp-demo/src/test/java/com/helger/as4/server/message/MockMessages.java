@@ -48,6 +48,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 
@@ -101,24 +102,17 @@ public final class MockMessages
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                              @Nullable final Node aPayload,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException,
-                                                                                        DOMException
+                                             @Nonnull final AS4ResourceManager aResMgr,
+                                             @Nullable final Ebms3UserMessage aEbms3UserMessage,
+                                             @Nullable final Document aUserMessage) throws DOMException
   {
-    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
-
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
-    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion, null, aUserMessage, true)
+    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                     aEbms3UserMessage,
+                                                                     aUserMessage,
+                                                                     true)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument ();
-
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc,
-                                                             eSOAPVersion,
-                                                             aAttachments,
-                                                             aResMgr,
-                                                             false,
-                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-    return aSignedDoc;
+    return aDoc;
   }
 
   public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,

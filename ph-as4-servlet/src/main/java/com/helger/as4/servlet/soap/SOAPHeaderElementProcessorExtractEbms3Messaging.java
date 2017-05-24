@@ -43,6 +43,7 @@ import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.mgr.AS4ServletPullRequestProcessorManager;
 import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
@@ -535,10 +536,16 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         else
         {
           // Error Message
-          if (StringHelper.hasNoText (aSignalMessage.getMessageInfo ().getRefToMessageId ()))
+          if (!aSignalMessage.getError ().isEmpty ())
           {
-            // TODO Check if it really has to be present in message info or just
-            // in the error itself
+            for (final Ebms3Error aError : aSignalMessage.getError ())
+            {
+              if (StringHelper.hasNoText (aError.getRefToMessageInError ()))
+              {
+                aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+                return ESuccess.FAILURE;
+              }
+            }
           }
         }
     }
