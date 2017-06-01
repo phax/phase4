@@ -19,8 +19,10 @@ package com.helger.as4.messaging.domain;
 import javax.annotation.Nonnull;
 
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.string.StringHelper;
 
 /**
  * AS4 error message
@@ -34,5 +36,9 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
     super (eSOAPVersion, EAS4MessageType.ERROR_MESSAGE);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
+
+    for (final Ebms3Error aError : aSignalMessage.getError ())
+      if (aError.getDescription () != null && StringHelper.hasNoText (aError.getDescription ().getValue ()))
+        throw new IllegalArgumentException ("Error description may not be empty - will lead to invalid XML!");
   }
 }

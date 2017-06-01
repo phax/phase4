@@ -57,7 +57,10 @@ public interface IAS4ServletMessageProcessorSPI
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
 
   /**
-   * Process incoming AS4 signal message.
+   * Process incoming AS4 signal message - pull-request and receipt.<br>
+   * Attachment and Payload are not needed since they are allowed, but should
+   * not be added to a SignalMessage Because the will be ignored in the MSH -
+   * Processing.
    *
    * @param aSignalMessage
    *        The received signal message. May not be <code>null</code>.
@@ -70,13 +73,9 @@ public interface IAS4ServletMessageProcessorSPI
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
    * @param aPMode
-   *        PMode
+   *        PMode - only needed for pull-request.
    * @return A non-<code>null</code> result object.
    */
-
-  // Attachment and Payload are not needed since they are allowed, but should
-  // not be added to a SignalMessage
-  // Because the will be ignored in the MSH - Processing
   @Nonnull
   AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
                                                      @Nullable IPMode aPMode);

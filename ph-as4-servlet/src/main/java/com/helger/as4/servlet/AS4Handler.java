@@ -380,6 +380,8 @@ public final class AS4Handler implements Closeable
    *        The list of error messages to be filled if something goes wrong.
    * @param aResponseAttachments
    *        The list of attachments to be added to the response.
+   * @param aPMode
+   *        PMode to be used - may be <code>null</code> for Receipt messages.
    * @return {@link ESuccess}
    */
   @Nonnull
@@ -389,7 +391,7 @@ public final class AS4Handler implements Closeable
                                 @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                 @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
                                 @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                @Nonnull final IPMode aPMode)
+                                @Nullable final IPMode aPMode)
   {
     final String sMessageID = aUserMessage != null ? aUserMessage.getMessageInfo ().getMessageId ()
                                                    : aSignalMessage.getMessageInfo ().getMessageId ();
@@ -574,11 +576,13 @@ public final class AS4Handler implements Closeable
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
-      if (aPMode == null)
-        throw new BadRequestException ("No AS4 P-Mode configuration found!");
 
       if (aEbmsUserMessage != null)
       {
+        // User message requires PMode
+        if (aPMode == null)
+          throw new BadRequestException ("No AS4 P-Mode configuration found for user-message!");
+
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
           throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
@@ -610,6 +614,12 @@ public final class AS4Handler implements Closeable
       }
       else
       {
+        // Signal message
+
+        // Pull-request also requires PMode
+        if (aEbmsPullRequest != null && aPMode == null)
+          throw new BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
+
         sMessageID = aEbmsSignalMessage.getMessageInfo ().getMessageId ();
       }
 
@@ -666,7 +676,10 @@ public final class AS4Handler implements Closeable
 
     if (bCanInvokeSPIs)
     {
-      if (aPMode.getMEPBinding ().isSynchronous () || aPMode.getMEPBinding ().isAsynchronousInitiator ())
+      // PMode may be null for receipts
+      if (aPMode == null ||
+          aPMode.getMEPBinding ().isSynchronous () ||
+          aPMode.getMEPBinding ().isAsynchronousInitiator ())
       {
         // Call synchronous
         // Might add to aErrorMessages

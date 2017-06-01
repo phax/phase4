@@ -94,8 +94,13 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
                                                             @Nullable final IPMode aPMode)
   {
-    final Node aPayload;
+    if (aSignalMessage.getReceipt () != null)
+    {
+      // Receipt - just acknowledge
+      return AS4MessageProcessorResult.createSuccess ();
+    }
 
+    // Must be a pull-request
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
     {
       return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
@@ -103,7 +108,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
     try
     {
-      aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // Add properties
       final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
@@ -138,8 +143,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     }
     catch (final SAXException e)
     {
-      e.printStackTrace ();
+      return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage. Technical details: " +
+                                                      e.getMessage ());
     }
-    return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
   }
 }

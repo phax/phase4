@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -154,8 +153,8 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
-  // TODO discuss with philipp what handler has to do with receipts
-  @Ignore
+  // TODO discuss with philip what handler has to do with receipts
+  // @Ignore
   @Test
   public void sendReceiptTest () throws Exception
   {
