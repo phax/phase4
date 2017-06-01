@@ -102,6 +102,12 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
                                                             @Nonnull final IPMode aPmode)
   {
+    if (aSignalMessage.getReceipt () != null)
+    {
+      // Receipt - just acknowledge
+      return AS4MessageProcessorResult.createSuccess ();
+    }
+
     final Node aPayload;
 
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("TWO-SPI"))

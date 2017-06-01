@@ -153,7 +153,6 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
-  // TODO discuss with philip what handler has to do with receipts
   // @Ignore
   @Test
   public void sendReceiptTest () throws Exception
@@ -207,6 +206,6 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
 
     // We've got our response
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (aEntity, true, null);
   }
 }

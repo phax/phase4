@@ -409,7 +409,7 @@ public final class AS4Handler implements Closeable
         else
         {
           aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode);
-          if (m_aPullRequestReturn == null)
+          if (m_aPullRequestReturn == null && aSignalMessage.getReceipt () == null)
           {
             m_aPullRequestReturn = aResult.getReturnUserMessage ();
             // No message contained in the MPC
@@ -753,55 +753,61 @@ public final class AS4Handler implements Closeable
     }
     else
     {
-      if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
+      if (aEbmsSignalMessage.getReceipt () == null)
       {
-        // If no Error is present check if pmode declared if they want a
-        // response and if this response should contain non-repudiation
-        // information if applicable
-        // Only get in here if pull is part of the EMEPBinding, if it is two
-        // way, we need to check if the current application is currently in the
-        // pull phase
-        if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-            aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
-            aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
+        if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
         {
-          return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
+          // If no Error is present check if pmode declared if they want a
+          // response and if this response should contain non-repudiation
+          // information if applicable
+          // Only get in here if pull is part of the EMEPBinding, if it is two
+          // way, we need to check if the current application is currently in
+          // the
+          // pull phase
+          if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
+              aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
+              aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
+          {
+            return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
+          }
+          else
+            if (aEbmsUserMessage != null)
+            {
+              // No errors occurred
+              final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
+              if (bSendReceiptAsResponse)
+              {
+                return _createReceiptMessage (aSOAPDocument,
+                                              eSOAPVersion,
+                                              aEffectiveLeg,
+                                              aEbmsUserMessage,
+                                              aResponseAttachments);
+              }
+              // else TODO
+              s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+            }
         }
         else
-          if (aEbmsUserMessage != null)
-          {
-            // No errors occurred
-            final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
-            if (bSendReceiptAsResponse)
-            {
-              return _createReceiptMessage (aSOAPDocument,
-                                            eSOAPVersion,
-                                            aEffectiveLeg,
-                                            aEbmsUserMessage,
-                                            aResponseAttachments);
-            }
-            // else TODO
-            s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
-          }
-      }
-      else
-      {
-        // synchronous TWO - WAY (= "SYNC")
-        final PModeLeg aLeg2 = aPMode.getLeg2 ();
-        if (aLeg2 == null)
-          throw new BadRequestException ("PMode has no leg2!");
-
-        if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
         {
-          final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
-                                                                              aEbmsUserMessage,
-                                                                              aResponseAttachments);
+          // synchronous TWO - WAY (= "SYNC")
+          final PModeLeg aLeg2 = aPMode.getLeg2 ();
+          if (aLeg2 == null)
+            throw new BadRequestException ("PMode has no leg2!");
 
-          return _createResponseUserMessage (eSOAPVersion,
-                                             aResponseAttachments,
-                                             aLeg2,
-                                             aResponseUserMsg.getAsSOAPDocument ());
+          if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
+                                                 aPMode.getMEPBinding (),
+                                                 EAS4MessageType.USER_MESSAGE))
+          {
+            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+                                                                                aEbmsUserMessage,
+                                                                                aResponseAttachments);
+
+            return _createResponseUserMessage (eSOAPVersion,
+                                               aResponseAttachments,
+                                               aLeg2,
+                                               aResponseUserMsg.getAsSOAPDocument ());
+          }
         }
       }
     }
