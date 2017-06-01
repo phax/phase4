@@ -17,7 +17,6 @@ import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
@@ -160,6 +159,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
   @Test
   public void sendReceiptTest () throws Exception
   {
+    // Fake an incoming message
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     final String sPModeID;
@@ -203,12 +203,8 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
-    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT,
-                                                           aPayload,
-                                                           null,
-                                                           new AS4ResourceManager (),
-                                                           aEbms3UserMessage,
-                                                           null);
+    // Now send receipt
+    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null);
 
     // We've got our response
     final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));

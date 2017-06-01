@@ -100,9 +100,6 @@ public final class MockMessages
   }
 
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                             @Nullable final Node aPayload,
-                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull final AS4ResourceManager aResMgr,
                                              @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                              @Nullable final Document aUserMessage) throws DOMException
   {
