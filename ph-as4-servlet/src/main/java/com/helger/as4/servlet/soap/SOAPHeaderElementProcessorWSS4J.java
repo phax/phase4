@@ -143,15 +143,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           s_aLogger.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
 
-      // Encrypted header
-      final Element aEncryptedNode = XMLHelper.getFirstChildElementOfName (aSecurityNode, CAS4.XENC_NS, "EncryptedKey");
-      if (aEncryptedNode != null)
-      {
-        // TODO Encrypted checks if needed beyond pmode checks, currently
-        // nothing of that sort in sight
-
-      }
-
       final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);
       final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
 

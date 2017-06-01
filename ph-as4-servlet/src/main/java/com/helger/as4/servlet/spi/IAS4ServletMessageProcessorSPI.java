@@ -73,6 +73,10 @@ public interface IAS4ServletMessageProcessorSPI
    *        PMode
    * @return A non-<code>null</code> result object.
    */
+
+  // Attachment and Payload are not needed since they are allowed, but should
+  // not be added to a SignalMessage
+  // Because the will be ignored in the MSH - Processing
   @Nonnull
   AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
                                                      @Nullable IPMode aPMode);
