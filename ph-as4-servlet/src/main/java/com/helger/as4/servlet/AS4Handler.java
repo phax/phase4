@@ -753,7 +753,7 @@ public final class AS4Handler implements Closeable
     }
     else
     {
-      if (aEbmsSignalMessage.getReceipt () == null)
+      if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
       {
         if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
         {
