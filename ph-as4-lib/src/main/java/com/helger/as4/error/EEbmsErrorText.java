@@ -26,7 +26,7 @@ import com.helger.commons.text.display.IHasDisplayText;
 
 public enum EEbmsErrorText implements IHasDisplayText
 {
-  VALUE_NOT_RECOGNIZED ("Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by th MSH."),
+  VALUE_NOT_RECOGNIZED ("Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by the MSH."),
   FEATURE_NOT_SUPPORTED ("Although the message document is well formed and schema valid, some element/attribute value cannot be processed as expected because the related feature is not supported by the MSH."),
   VALUE_INCONSISTENT ("Although the message document is well formed and schema valid, some element/attribute value is inconsistent either with the content of other element/attribute, or with the processing mode of the MSH, or with the normative requirements of the ebMS specification."),
   OTHER ("An undefined error occurred."),
