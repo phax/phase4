@@ -328,7 +328,8 @@ public final class AS4Handler implements Closeable
             if (aState.getMessaging ().hasUserMessageEntries ())
               aMsgInfo = aState.getMessaging ().getUserMessageAtIndex (0).getMessageInfo ();
             else
-              aMsgInfo = aState.getMessaging ().getSignalMessageAtIndex (0).getMessageInfo ();
+              if (aState.getMessaging ().hasSignalMessageEntries ())
+                aMsgInfo = aState.getMessaging ().getSignalMessageAtIndex (0).getMessageInfo ();
           final String sRefToMessageID = aMsgInfo != null ? aMsgInfo.getMessageId () : "";
 
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
@@ -544,6 +545,7 @@ public final class AS4Handler implements Closeable
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     Ebms3UserMessage aEbmsUserMessage = null;
     Ebms3SignalMessage aEbmsSignalMessage = null;
+    Ebms3Error aEbmsError = null;
     Node aPayloadNode = null;
     ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
     // Storing for two-way response messages
@@ -562,16 +564,21 @@ public final class AS4Handler implements Closeable
                                                                              ? aState.getMessaging ()
                                                                                      .getSignalMessageAtIndex (0)
                                                                              : null;
+      aEbmsError = aEbmsSignalMessage != null && !aEbmsSignalMessage.getError ().isEmpty ()
+                                                                                            ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                                            : null;
+
       final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
                                                                            : null;
       final Ebms3Receipt aEbmsReceipt = aEbmsSignalMessage != null ? aEbmsSignalMessage.getReceipt () : null;
 
       final int nCountData = (aEbmsUserMessage != null ? 1 : 0) +
                              (aEbmsPullRequest != null ? 1 : 0) +
-                             (aEbmsReceipt != null ? 1 : 0);
+                             (aEbmsReceipt != null ? 1 : 0) +
+                             (aEbmsError != null ? 1 : 0);
       // Errors do not count
       if (nCountData != 1)
-        throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt must be present!");
+        throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
 
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
@@ -737,76 +744,79 @@ public final class AS4Handler implements Closeable
       }
     }
 
-    if (aErrorMessages.isNotEmpty ())
+    if (aEbmsError == null)
     {
-      // Generate ErrorMessage if errors in the process are present and the
-      // pmode wants an error response
-      // When aLeg == null, the response is true
-      if (_isSendErrorAsResponse (aEffectiveLeg))
+      if (aErrorMessages.isNotEmpty ())
       {
-        final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                 MessageHelperMethods.createEbms3MessageInfo (),
-                                                                                 aErrorMessages);
-        return new AS4ResponderXML (aErrorMsg.getAsSOAPDocument ());
-      }
-      s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
-    }
-    else
-    {
-      if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
-      {
-        if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
+        // Generate ErrorMessage if errors in the process are present and the
+        // pmode wants an error response
+        // When aLeg == null, the response is true
+        if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          // If no Error is present check if pmode declared if they want a
-          // response and if this response should contain non-repudiation
-          // information if applicable
-          // Only get in here if pull is part of the EMEPBinding, if it is two
-          // way, we need to check if the current application is currently in
-          // the
-          // pull phase
-          if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-              aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
-              aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
+          final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                   MessageHelperMethods.createEbms3MessageInfo (),
+                                                                                   aErrorMessages);
+          return new AS4ResponderXML (aErrorMsg.getAsSOAPDocument ());
+        }
+        s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
+      }
+      else
+      {
+        if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
+        {
+          if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
           {
-            return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
+            // If no Error is present check if pmode declared if they want a
+            // response and if this response should contain non-repudiation
+            // information if applicable
+            // Only get in here if pull is part of the EMEPBinding, if it is two
+            // way, we need to check if the current application is currently in
+            // the
+            // pull phase
+            if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
+                aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
+                aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
+            {
+              return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
+            }
+            else
+              if (aEbmsUserMessage != null)
+              {
+                // No errors occurred
+                final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
+                if (bSendReceiptAsResponse)
+                {
+                  return _createReceiptMessage (aSOAPDocument,
+                                                eSOAPVersion,
+                                                aEffectiveLeg,
+                                                aEbmsUserMessage,
+                                                aResponseAttachments);
+                }
+                // else TODO
+                s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+              }
           }
           else
-            if (aEbmsUserMessage != null)
-            {
-              // No errors occurred
-              final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
-              if (bSendReceiptAsResponse)
-              {
-                return _createReceiptMessage (aSOAPDocument,
-                                              eSOAPVersion,
-                                              aEffectiveLeg,
-                                              aEbmsUserMessage,
-                                              aResponseAttachments);
-              }
-              // else TODO
-              s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
-            }
-        }
-        else
-        {
-          // synchronous TWO - WAY (= "SYNC")
-          final PModeLeg aLeg2 = aPMode.getLeg2 ();
-          if (aLeg2 == null)
-            throw new BadRequestException ("PMode has no leg2!");
-
-          if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
-                                                 aPMode.getMEPBinding (),
-                                                 EAS4MessageType.USER_MESSAGE))
           {
-            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
-                                                                                aEbmsUserMessage,
-                                                                                aResponseAttachments);
+            // synchronous TWO - WAY (= "SYNC")
+            final PModeLeg aLeg2 = aPMode.getLeg2 ();
+            if (aLeg2 == null)
+              throw new BadRequestException ("PMode has no leg2!");
 
-            return _createResponseUserMessage (eSOAPVersion,
-                                               aResponseAttachments,
-                                               aLeg2,
-                                               aResponseUserMsg.getAsSOAPDocument ());
+            if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
+                                                   aPMode.getMEPBinding (),
+                                                   EAS4MessageType.USER_MESSAGE))
+            {
+              final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+                                                                                  aEbmsUserMessage,
+                                                                                  aResponseAttachments);
+
+              return _createResponseUserMessage (eSOAPVersion,
+                                                 aResponseAttachments,
+                                                 aLeg2,
+                                                 aResponseUserMsg.getAsSOAPDocument ());
+            }
           }
         }
       }

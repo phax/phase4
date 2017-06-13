@@ -21,8 +21,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -88,5 +91,17 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
+  }
+
+  @Ignore
+  @Test
+  public void sendReceipt () throws Exception
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TestReceipt.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
   }
 }

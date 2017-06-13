@@ -126,4 +126,16 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     assertTrue (sResponse.contains ("UserMessage"));
   }
+
+  @Test
+  public void sendPullRequestWithNoMPC () throws Exception
+  {
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             null,
+                                                                             null)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getErrorCode ());
+  }
 }

@@ -223,6 +223,9 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       return ESuccess.FAILURE;
     }
 
+    // Remember in state
+    aState.setMessaging (aMessaging);
+
     // 0 or 1 are allowed
     final int nUserMessages = aMessaging.getUserMessageCount ();
     if (nUserMessages > 1)
@@ -535,7 +538,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
     }
 
     // Remember in state
-    aState.setMessaging (aMessaging);
     aState.setPMode (aPMode);
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);

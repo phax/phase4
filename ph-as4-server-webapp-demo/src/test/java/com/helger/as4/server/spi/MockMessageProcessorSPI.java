@@ -100,6 +100,12 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       return AS4MessageProcessorResult.createSuccess ();
     }
 
+    if (!aSignalMessage.getError ().isEmpty ())
+    {
+      // Error - just acknowledge
+      return AS4MessageProcessorResult.createSuccess ();
+    }
+
     // Must be a pull-request
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
     {
