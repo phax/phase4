@@ -485,13 +485,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
 
       final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);
 
-      // Message Info Check
-      if (aSignalMessage.getMessageInfo () == null)
-      {
-        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-
       final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();
       final Ebms3Receipt aEbms3Receipt = aSignalMessage.getReceipt ();
       if (aEbms3PullRequest != null)
