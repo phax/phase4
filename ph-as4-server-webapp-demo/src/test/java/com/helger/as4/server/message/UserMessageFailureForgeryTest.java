@@ -102,9 +102,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   }
 
   @Test
-  public void testTwoUserMessageShouldFail () throws Exception
+  public void testTwoUserMessagesShouldFail () throws Exception
   {
-
     final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
     domFactory.setNamespaceAware (true); // never forget this!
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
@@ -113,6 +112,19 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
+  @Test
+  public void testUserMessageWithNoPartyIDShouldFail () throws Exception
+  {
+    final DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance ();
+    domFactory.setNamespaceAware (true); // never forget this!
+    final DocumentBuilder builder = domFactory.newDocumentBuilder ();
+    final Document aDoc = builder.parse (new ClassPathResource ("testfiles/UserMessageNoPartyID.xml").getInputStream ());
+
+    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+                      false,
+                      EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
   // Tinkering with the signature

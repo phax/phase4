@@ -258,13 +258,6 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
       final List <Ebms3PartyId> aFromPartyIdList = aUserMessage.getPartyInfo ().getFrom ().getPartyId ();
       final List <Ebms3PartyId> aToPartyIdList = aUserMessage.getPartyInfo ().getTo ().getPartyId ();
 
-      if (aFromPartyIdList.isEmpty () || aToPartyIdList.isEmpty ())
-      {
-        s_aLogger.warn ("No Party IDs contained in usermessage, should never occur.");
-        aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-        return ESuccess.FAILURE;
-      }
-
       if (aFromPartyIdList.size () > 1 || aToPartyIdList.size () > 1)
       {
         s_aLogger.warn ("More than one partyId is containted in From or To Recipient please check the message.");
