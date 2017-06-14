@@ -16,7 +16,6 @@
  */
 package com.helger.as4.duplicate;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
@@ -27,7 +26,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
-import com.helger.commons.id.IHasID;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -36,14 +34,13 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Martin Bayerl, Philip Helger
  */
-public class AS4DuplicateItem implements IHasID <String>, Serializable
+public class AS4DuplicateItem implements IAS4DuplicateItem
 {
   private final LocalDateTime m_aDT;
   private final String m_sMessageID;
   private final String m_sProfileID;
   private final String m_sPModeID;
 
-  // TODO what if no profile is active
   public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
                            @Nullable final String sProfileID,
                            @Nullable final String sPModeID)
@@ -53,8 +50,8 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
 
   AS4DuplicateItem (@Nonnull final LocalDateTime aDT,
                     @Nonnull @Nonempty final String sMessageID,
-                    @Nonnull @Nonempty final String sProfileID,
-                    @Nonnull @Nonempty final String sPModeID)
+                    @Nullable final String sProfileID,
+                    @Nullable final String sPModeID)
   {
     m_aDT = ValueEnforcer.notNull (aDT, "DT");
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
@@ -62,9 +59,6 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     m_sPModeID = sPModeID;
   }
 
-  /**
-   * @return The date time when the entry was created. Never <code>null</code>.
-   */
   @Nonnull
   public LocalDateTime getDateTime ()
   {
@@ -82,9 +76,6 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     return getMessageID ();
   }
 
-  /**
-   * @return The message ID. Neither <code>null</code> nor empty.
-   */
   @Nonnull
   @Nonempty
   public String getMessageID ()
@@ -92,21 +83,13 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     return m_sMessageID;
   }
 
-  /**
-   * @return The message ID. Neither <code>null</code> nor empty.
-   */
-  @Nonnull
-  @Nonempty
+  @Nullable
   public String getProfileID ()
   {
     return m_sProfileID;
   }
 
-  /**
-   * @return The message ID. Neither <code>null</code> nor empty.
-   */
-  @Nonnull
-  @Nonempty
+  @Nullable
   public String getPModeID ()
   {
     return m_sPModeID;
@@ -120,7 +103,7 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final AS4DuplicateItem rhs = (AS4DuplicateItem) o;
-    return EqualsHelper.equals (m_sMessageID, rhs.m_sMessageID) &&
+    return m_sMessageID.equals (rhs.m_sMessageID) &&
            EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
            EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
   }
@@ -136,8 +119,8 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
   {
     return new ToStringGenerator (null).append ("DT", m_aDT)
                                        .append ("MessageID", m_sMessageID)
-                                       .append ("ProfileID", m_sProfileID)
-                                       .append ("PModeID", m_sPModeID)
+                                       .appendIfNotNull ("ProfileID", m_sProfileID)
+                                       .appendIfNotNull ("PModeID", m_sPModeID)
                                        .getToString ();
   }
 }

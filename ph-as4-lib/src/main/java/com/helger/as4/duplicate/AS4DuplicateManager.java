@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.EContinue;
 import com.helger.commons.string.StringHelper;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
@@ -33,7 +34,7 @@ import com.helger.photon.basic.app.dao.impl.DAOException;
  *
  * @author Philip Helger
  */
-public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <AS4DuplicateItem, AS4DuplicateItem>
+public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem>
 {
   public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
   {
@@ -45,6 +46,11 @@ public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <AS4Duplic
    *
    * @param sMessageID
    *        Message ID to check. May be <code>null</code>.
+   * @param sProfileID
+   *        Active AS4 profile ID. May be used to define the PMode further. May
+   *        be <code>null</code>.
+   * @param sPModeID
+   *        Active AS4 PMode ID. May be <code>null</code>.
    * @return {@link EContinue#CONTINUE} to continue
    */
   @Nonnull
@@ -75,22 +81,33 @@ public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <AS4Duplic
 
   /**
    * Remove all entries in the cache.
+   *
+   * @return {@link EChange}
    */
-  public void clearCache ()
+  @Nonnull
+  public EChange clearCache ()
   {
-    m_aRWLock.writeLocked ( () -> internalRemoveAllItemsNoCallback ());
+    return m_aRWLock.writeLocked ( () -> internalRemoveAllItemsNoCallback ());
   }
 
+  /**
+   * Delete all duplicate items that were created before the provided time.
+   *
+   * @param aRefDT
+   *        The reference date time to compare to. May not be <code>null</code>.
+   * @return A non-<code>null</code> list of all evicted message IDs.
+   */
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> evictAllItemsBefore (@Nonnull final LocalDateTime aRefDT)
   {
     final ICommonsList <String> aEvictItems = getAllMapped (x -> x.getDateTime ().isBefore (aRefDT),
-                                                            AS4DuplicateItem::getMessageID);
-    m_aRWLock.writeLocked ( () -> {
-      for (final String sItemID : aEvictItems)
-        internalDeleteItem (sItemID);
-    });
+                                                            IAS4DuplicateItem::getMessageID);
+    if (aEvictItems.isNotEmpty ())
+      m_aRWLock.writeLocked ( () -> {
+        for (final String sItemID : aEvictItems)
+          internalDeleteItem (sItemID);
+      });
     return aEvictItems;
   }
 }
