@@ -65,6 +65,8 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "as4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "as4.pmode.effective.leg.number";
+  // TODO new state for message id for fast checks on receipt which pmode should
+  // be chosen
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;

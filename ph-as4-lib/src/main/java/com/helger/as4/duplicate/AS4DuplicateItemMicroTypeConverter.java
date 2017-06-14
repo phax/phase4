@@ -34,6 +34,8 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
 {
   private static final String ATTR_DT = "dt";
   private static final String ATTR_MESSAGE_ID = "msgid";
+  private static final String ATTR_PROFILE_ID = "profileid";
+  private static final String ATTR_PMODE_ID = "pmodeid";
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
@@ -44,6 +46,8 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttributeWithConversion (ATTR_DT, aValue.getDateTime ());
     ret.setAttribute (ATTR_MESSAGE_ID, aValue.getMessageID ());
+    ret.setAttribute (ATTR_PROFILE_ID, aValue.getProfileID ());
+    ret.setAttribute (ATTR_PMODE_ID, aValue.getPModeID ());
     return ret;
   }
 
@@ -52,6 +56,8 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
   {
     final LocalDateTime aLDT = aElement.getAttributeValueWithConversion (ATTR_DT, LocalDateTime.class);
     final String sMsgID = aElement.getAttributeValue (ATTR_MESSAGE_ID);
-    return new AS4DuplicateItem (aLDT, sMsgID);
+    final String sProfileID = aElement.getAttributeValue (ATTR_PROFILE_ID);
+    final String sPModeID = aElement.getAttributeValue (ATTR_PMODE_ID);
+    return new AS4DuplicateItem (aLDT, sMsgID, sProfileID, sPModeID);
   }
 }

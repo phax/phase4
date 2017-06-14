@@ -20,10 +20,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.datetime.PDTFactory;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.string.ToStringGenerator;
@@ -32,22 +34,32 @@ import com.helger.commons.string.ToStringGenerator;
  * This class represents a single "duplication check" item. It works for
  * incoming and outgoing duplication checks
  *
- * @author Philip Helger
+ * @author Martin Bayerl, Philip Helger
  */
 public class AS4DuplicateItem implements IHasID <String>, Serializable
 {
   private final LocalDateTime m_aDT;
   private final String m_sMessageID;
+  private final String m_sProfileID;
+  private final String m_sPModeID;
 
-  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID)
+  // TODO what if no profile is active
+  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
+                           @Nullable final String sProfileID,
+                           @Nullable final String sPModeID)
   {
-    this (PDTFactory.getCurrentLocalDateTime (), sMessageID);
+    this (PDTFactory.getCurrentLocalDateTime (), sMessageID, sProfileID, sPModeID);
   }
 
-  AS4DuplicateItem (@Nonnull final LocalDateTime aDT, @Nonnull @Nonempty final String sMessageID)
+  AS4DuplicateItem (@Nonnull final LocalDateTime aDT,
+                    @Nonnull @Nonempty final String sMessageID,
+                    @Nonnull @Nonempty final String sProfileID,
+                    @Nonnull @Nonempty final String sPModeID)
   {
     m_aDT = ValueEnforcer.notNull (aDT, "DT");
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
+    m_sProfileID = sProfileID;
+    m_sPModeID = sPModeID;
   }
 
   /**
@@ -80,6 +92,26 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     return m_sMessageID;
   }
 
+  /**
+   * @return The message ID. Neither <code>null</code> nor empty.
+   */
+  @Nonnull
+  @Nonempty
+  public String getProfileID ()
+  {
+    return m_sProfileID;
+  }
+
+  /**
+   * @return The message ID. Neither <code>null</code> nor empty.
+   */
+  @Nonnull
+  @Nonempty
+  public String getPModeID ()
+  {
+    return m_sPModeID;
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -88,18 +120,24 @@ public class AS4DuplicateItem implements IHasID <String>, Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final AS4DuplicateItem rhs = (AS4DuplicateItem) o;
-    return m_sMessageID.equals (rhs.m_sMessageID);
+    return EqualsHelper.equals (m_sMessageID, rhs.m_sMessageID) &&
+           EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
+           EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sMessageID).getHashCode ();
+    return new HashCodeGenerator (this).append (m_sMessageID).append (m_sProfileID).append (m_sPModeID).getHashCode ();
   }
 
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("DT", m_aDT).append ("MessageID", m_sMessageID).getToString ();
+    return new ToStringGenerator (null).append ("DT", m_aDT)
+                                       .append ("MessageID", m_sMessageID)
+                                       .append ("ProfileID", m_sProfileID)
+                                       .append ("PModeID", m_sPModeID)
+                                       .getToString ();
   }
 }

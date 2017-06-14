@@ -48,7 +48,9 @@ public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <AS4Duplic
    * @return {@link EContinue#CONTINUE} to continue
    */
   @Nonnull
-  public EContinue registerAndCheck (@Nullable final String sMessageID)
+  public EContinue registerAndCheck (@Nullable final String sMessageID,
+                                     @Nullable final String sProfileID,
+                                     @Nullable final String sPModeID)
   {
     if (StringHelper.hasNoText (sMessageID))
     {
@@ -56,7 +58,7 @@ public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <AS4Duplic
       return EContinue.CONTINUE;
     }
 
-    final AS4DuplicateItem aItem = new AS4DuplicateItem (sMessageID);
+    final AS4DuplicateItem aItem = new AS4DuplicateItem (sMessageID, sProfileID, sPModeID);
     try
     {
       m_aRWLock.writeLocked ( () -> {

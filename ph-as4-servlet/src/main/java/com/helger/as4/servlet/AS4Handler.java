@@ -552,6 +552,7 @@ public final class AS4Handler implements Closeable
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
     boolean bCanInvokeSPIs = false;
     String sMessageID = null;
+    String sProfileID = null;
 
     if (aErrorMessages.isEmpty ())
     {
@@ -595,7 +596,7 @@ public final class AS4Handler implements Closeable
           throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
 
         // Only do profile checks if a profile is set
-        final String sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
+        sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
         if (StringHelper.hasText (sProfileID))
         {
           final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
@@ -657,7 +658,11 @@ public final class AS4Handler implements Closeable
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }
 
-      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ().registerAndCheck (sMessageID).isBreak ();
+      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
+                                                 .registerAndCheck (sMessageID,
+                                                                    sProfileID,
+                                                                    aPMode == null ? null : aPMode.getID ())
+                                                 .isBreak ();
       if (bIsDuplicate)
       {
         s_aLogger.info ("Not invoking SPIs, because message was already handled!");

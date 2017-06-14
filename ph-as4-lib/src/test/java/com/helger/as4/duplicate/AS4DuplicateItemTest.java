@@ -32,9 +32,11 @@ public final class AS4DuplicateItemTest
   @Test
   public void testBasic ()
   {
-    final AS4DuplicateItem x = new AS4DuplicateItem ("x");
+    final AS4DuplicateItem x = new AS4DuplicateItem ("x", "profile", "pmode");
     assertEquals ("x", x.getID ());
     assertEquals ("x", x.getMessageID ());
+    assertEquals ("profile", x.getProfileID ());
+    assertEquals ("pmode", x.getPModeID ());
     XMLTestHelper.testMicroTypeConversion (x);
   }
 }
