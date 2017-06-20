@@ -28,6 +28,7 @@ import com.helger.as4.messaging.domain.CreatePullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.MPC;
+import com.helger.as4.server.spi.MockMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -54,7 +55,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   public void sendPullRequestEmpty () throws Exception
   {
     // Special MPC name handled in MockMessageProcessorSPI
-    final String sFailure = "empty";
+    final String sFailure = MockMessageProcessorSPI.MPC_EMPTY;
     final MPC aMPC = new MPC (sFailure);
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
@@ -72,7 +73,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   public void sendPullRequestFailure () throws Exception
   {
     // Special MPC name handled in MockMessageProcessorSPI
-    final String sFailure = "failure";
+    final String sFailure = MockMessageProcessorSPI.MPC_FAILURE;
     final MPC aMPC = new MPC (sFailure);
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);

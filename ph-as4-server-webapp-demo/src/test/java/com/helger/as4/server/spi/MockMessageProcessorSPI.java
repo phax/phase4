@@ -61,6 +61,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @IsSPIImplementation
 public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 {
+  public static final String MPC_FAILURE = "failure";
+  public static final String MPC_EMPTY = "empty";
+
   private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorSPI.class);
 
   @Nonnull
@@ -108,13 +111,13 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     }
 
     // Must be a pull-request
-    if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
+    if (aSignalMessage.getPullRequest ().getMpc ().equals (MPC_FAILURE))
     {
       return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
     }
 
     // Empty MPC
-    if (aSignalMessage.getPullRequest ().getMpc ().equals ("empty"))
+    if (aSignalMessage.getPullRequest ().getMpc ().equals (MPC_EMPTY))
     {
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
