@@ -34,7 +34,7 @@ public final class CreatePullRequestMessage
   @Nonnull
   public static AS4PullRequestMessage createPullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                                 @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
-                                                                @Nonnull final String aMPC,
+                                                                @Nullable final String aMPC,
                                                                 @Nullable final List <Object> aAny)
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();

@@ -45,7 +45,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -64,7 +64,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              sFailure,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }
 
@@ -81,7 +81,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              sMPC,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -100,7 +100,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              aAny)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -121,7 +121,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              aAny)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -135,7 +135,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              null,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getErrorCode ());
   }
 }
