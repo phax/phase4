@@ -88,7 +88,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
         }
       }
     }
-    return AS4MessageProcessorResult.createSuccess (aIncomingAttachments);
+    return AS4MessageProcessorResult.createSuccess (aIncomingAttachments, null);
   }
 
   @Nonnull
@@ -146,7 +146,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
       aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
 
-      return AS4SignalMessageProcessorResult.createSuccess (null, aUserMessage);
+      return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
     }
     catch (final SAXException e)
     {

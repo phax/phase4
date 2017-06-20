@@ -152,7 +152,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
         aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
 
-        return AS4SignalMessageProcessorResult.createSuccess (null, aUserMessage);
+        return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
       }
       catch (final SAXException e)
       {

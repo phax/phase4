@@ -84,7 +84,7 @@ public final class MockMessages
   {
     final SignedMessageCreator aClient = new SignedMessageCreator ();
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
-                                                                                                                               ""));
+                                                                                                                               null));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                                     MessageHelperMethods.createEbms3MessageInfo (),
                                                                                                     aEbms3ErrorList)

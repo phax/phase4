@@ -39,7 +39,7 @@ import com.helger.commons.string.StringHelper;
 
 public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 {
-  private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
   private String m_sRefToMessageId;
 
   public AS4ClientErrorMessage ()
@@ -50,7 +50,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     ValueEnforcer.notNull (aError, "Error");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    addErrorMessage (aError.getAsEbms3Error (aLocale, null));
+    addErrorMessage (aError.getAsEbms3Error (aLocale, getRefToMessageId ()));
   }
 
   public void addErrorMessage (@Nonnull final Ebms3Error aError)

@@ -17,6 +17,7 @@
 package com.helger.as4.messaging.domain;
 
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -29,9 +30,11 @@ import javax.mail.internet.MimeMessage;
 import org.apache.http.HttpMessage;
 
 import com.helger.as4.CAS4;
+import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
 import com.helger.http.HTTPStringHelper;
@@ -92,6 +95,19 @@ public final class MessageHelperMethods
     // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNowUTC ());
     return aMessageInfo;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public static Ebms3Description createEbms3Description (@Nonnull final Locale aLocale, @Nonnull final String sText)
+  {
+    ValueEnforcer.notNull (aLocale, "Locale");
+    ValueEnforcer.notNull (sText, "Text");
+
+    final Ebms3Description aDesc = new Ebms3Description ();
+    aDesc.setLang (aLocale.getLanguage ());
+    aDesc.setValue (sText);
+    return aDesc;
   }
 
   public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,

@@ -29,6 +29,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ISuccessIndicator;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -43,14 +44,17 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
+  private final String m_sAsyncResponseURL;
 
   protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                        @Nullable final String sErrorMsg,
-                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                       @Nullable final String sAsyncResponseURL)
   {
     m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
     m_sErrorMsg = sErrorMsg;
     m_aAttachments = aAttachments;
+    m_sAsyncResponseURL = sAsyncResponseURL;
   }
 
   public boolean isSuccess ()
@@ -82,31 +86,44 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return new CommonsArrayList <> (m_aAttachments);
   }
 
+  @Nullable
+  public String getAsyncResponseURL ()
+  {
+    return m_sAsyncResponseURL;
+  }
+
+  public boolean hasAsyncResponseURL ()
+  {
+    return StringHelper.hasText (m_sAsyncResponseURL);
+  }
+
   @Override
   public String toString ()
   {
     return new ToStringGenerator (this).append ("Success", m_eSuccess)
                                        .appendIf ("ErrorMsg", m_sErrorMsg, x -> m_eSuccess.isFailure ())
                                        .appendIf ("Attachments", m_aAttachments, x -> m_eSuccess.isSuccess ())
+                                       .appendIfNotNull ("AsyncResponseURL", m_sAsyncResponseURL)
                                        .getToString ();
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
   {
-    return createSuccess (null);
+    return createSuccess (null, null);
   }
 
   @Nonnull
-  public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                         @Nullable final String sAsyncResponseURL)
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, sAsyncResponseURL);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
   }
 }

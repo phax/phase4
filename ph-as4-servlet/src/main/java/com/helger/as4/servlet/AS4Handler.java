@@ -50,7 +50,6 @@ import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.error.EEbmsErrorSeverity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -84,7 +83,6 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
-import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -110,7 +108,7 @@ import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
-import com.helger.commons.state.ESuccess;
+import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.HTTPStringHelper;
 import com.helger.web.multipart.MultipartProgressNotifier;
@@ -196,7 +194,6 @@ public final class AS4Handler implements Closeable
 
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
-  private Ebms3UserMessage m_aPullRequestReturn;
 
   public AS4Handler ()
   {}
@@ -366,6 +363,55 @@ public final class AS4Handler implements Closeable
     }
   }
 
+  private static final class SPIInvocationResult implements ISuccessIndicator
+  {
+    private boolean m_bSuccess = false;
+    private Ebms3UserMessage m_aPullRequestReturn;
+    private String m_sAsyncResponseURL;
+
+    public boolean isSuccess ()
+    {
+      return m_bSuccess;
+    }
+
+    void setSuccess (final boolean bSuccess)
+    {
+      m_bSuccess = bSuccess;
+    }
+
+    public boolean hasNoPullRequestReturn ()
+    {
+      return m_aPullRequestReturn == null;
+    }
+
+    public boolean hasPullRequestReturn ()
+    {
+      return m_aPullRequestReturn != null;
+    }
+
+    void setPullRequestReturn (@Nonnull final Ebms3UserMessage aPullReturnUserMsg)
+    {
+      m_aPullRequestReturn = aPullReturnUserMsg;
+    }
+
+    @Nullable
+    public Ebms3UserMessage getPullRequestReturn ()
+    {
+      return m_aPullRequestReturn;
+    }
+
+    void setAsyncResponseURL (@Nonnull final String sAsyncResponseURL)
+    {
+      m_sAsyncResponseURL = sAsyncResponseURL;
+    }
+
+    @Nullable
+    public String getAsyncResponseURL ()
+    {
+      return m_sAsyncResponseURL;
+    }
+  }
+
   /**
    * Invoke custom SPI message processors
    *
@@ -388,16 +434,17 @@ public final class AS4Handler implements Closeable
    *        <code>null</code>.
    * @param aPMode
    *        PMode to be used - may be <code>null</code> for Receipt messages.
-   * @return {@link ESuccess}
+   * @param aSPIResult
+   *        The result object to be filled. May not be <code>null</code>.
    */
-  @Nonnull
-  private ESuccess _invokeSPIs (@Nullable final Ebms3UserMessage aUserMessage,
-                                @Nullable final Ebms3SignalMessage aSignalMessage,
-                                @Nullable final Node aPayloadNode,
-                                @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
-                                @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                @Nullable final IPMode aPMode)
+  private void _invokeSPIs (@Nullable final Ebms3UserMessage aUserMessage,
+                            @Nullable final Ebms3SignalMessage aSignalMessage,
+                            @Nullable final Node aPayloadNode,
+                            @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
+                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
+                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                            @Nullable final IPMode aPMode,
+                            @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
     ValueEnforcer.isFalse (aUserMessage != null &&
@@ -428,57 +475,57 @@ public final class AS4Handler implements Closeable
         if (bIsUserMessage)
         {
           // User message specific processing result handling
+
+          // empty
         }
         else
         {
           // Signal message specific processing result handling
-          if (m_aPullRequestReturn == null && aSignalMessage.getReceipt () == null)
+          if (aSignalMessage.getReceipt () == null)
           {
-            m_aPullRequestReturn = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
-            // No message contained in the MPC
-            if (m_aPullRequestReturn == null)
+            final Ebms3UserMessage aPullReturnUserMsg = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
+            if (aSPIResult.hasNoPullRequestReturn ())
             {
-              s_aLogger.warn ("Invoked AS4 message processor SPI " +
-                              aProcessor +
-                              " returned a failure, no UserMessage contained in the MPC");
+              if (aPullReturnUserMsg == null)
+              {
+                // No message contained in the MPC
+                s_aLogger.warn ("Invoked AS4 message processor SPI " +
+                                aProcessor +
+                                " returned a failure: no UserMessage contained in the MPC");
 
-              final Ebms3Error aError = new Ebms3Error ();
-              aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
-              aError.setErrorCode (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
-              aError.setRefToMessageInError (sMessageID);
-              final Ebms3Description aDesc = new Ebms3Description ();
-              aDesc.setValue (aResult.getErrorMessage ());
-              aDesc.setLang (m_aLocale.getLanguage ());
-              aError.setDescription (aDesc);
-              aErrorMessages.add (aError);
+                aErrorMessages.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
+                                                                                                     sMessageID,
+                                                                                                     aSignalMessage.getMessageInfo ()
+                                                                                                                   .getMessageId (),
+                                                                                                     aResult.getErrorMessage ()));
+                // Stop processing
+                return;
+              }
 
-              // Stop processing
-              return ESuccess.FAILURE;
+              // We have something :)
+              aSPIResult.setPullRequestReturn (aPullReturnUserMsg);
             }
-          }
-          else
-          {
-            // A second processor has commited a response to the pullrequest
-            // Which is not allowed since only one response can be sent back to
-            // the pullrequest initiator
-            if (((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage () != null)
+            else
             {
-              s_aLogger.warn ("Invoked AS4 message processor SPI " +
-                              aProcessor +
-                              " the previous processor already returned a usermessage, it is not possible to return two usermessage." +
-                              "Please look at your SPI Implementation.");
+              // A second processor has commited a response to the pullrequest
+              // Which is not allowed since only one response can be sent back
+              // to the pullrequest initiator
+              if (aPullReturnUserMsg != null)
+              {
+                s_aLogger.warn ("Invoked AS4 message processor SPI " +
+                                aProcessor +
+                                " the previous processor already returned a usermessage, it is not possible to return two usermessage." +
+                                "Please check your SPI implementations.");
 
-              final Ebms3Error aError = new Ebms3Error ();
-              aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
-              aError.setErrorCode (EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
-              aError.setRefToMessageInError (sMessageID);
+                aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                        sMessageID,
+                                                                                        aSignalMessage.getMessageInfo ()
+                                                                                                      .getMessageId (),
+                                                                                        (String) null));
 
-              aError.setShortDescription (EEbmsError.EBMS_VALUE_INCONSISTENT.getShortDescription ());
-              aError.setOrigin (aSignalMessage.getMessageInfo ().getMessageId ());
-              aErrorMessages.add (aError);
-
-              // Stop processing
-              return ESuccess.FAILURE;
+                // Stop processing
+                return;
+              }
             }
           }
         }
@@ -494,18 +541,12 @@ public final class AS4Handler implements Closeable
         {
           s_aLogger.warn ("Invoked AS4 message processor SPI " + aProcessor + " returned a failure");
 
-          final Ebms3Error aError = new Ebms3Error ();
-          aError.setSeverity (EEbmsErrorSeverity.FAILURE.getSeverity ());
-          aError.setErrorCode (EEbmsError.EBMS_OTHER.getErrorCode ());
-          aError.setRefToMessageInError (sMessageID);
-          final Ebms3Description aDesc = new Ebms3Description ();
-          aDesc.setValue (aResult.getErrorMessage ());
-          aDesc.setLang (m_aLocale.getLanguage ());
-          aError.setDescription (aDesc);
-          aErrorMessages.add (aError);
+          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                     sMessageID,
+                                                                     aResult.getErrorMessage ()));
 
           // Stop processing
-          return ESuccess.FAILURE;
+          return;
         }
       }
       catch (final Throwable t)
@@ -513,20 +554,16 @@ public final class AS4Handler implements Closeable
         // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
         if (t.getCause () instanceof ZipException)
         {
-          final Ebms3Description aDesc = new Ebms3Description ();
-          aDesc.setLang (m_aLocale.getLanguage ());
-          aDesc.setValue (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getShortDescription ());
-          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale,
-                                                                                     sMessageID,
-                                                                                     sMessageID,
-                                                                                     aDesc));
-          return ESuccess.FAILURE;
+          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
+          return;
         }
         if (t instanceof RuntimeException)
           throw (RuntimeException) t;
         throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
       }
-    return ESuccess.SUCCESS;
+
+    // Remember success
+    aSPIResult.setSuccess (true);
   }
 
   @Nullable
@@ -687,10 +724,9 @@ public final class AS4Handler implements Closeable
       if (bIsDuplicate)
       {
         s_aLogger.info ("Not invoking SPIs, because message was already handled!");
-        final Ebms3Description aDesc = new Ebms3Description ();
-        aDesc.setLang (m_aLocale.getLanguage ());
-        aDesc.setValue ("Another message with the same ID was already received!");
-        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, null, aDesc));
+        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                   sMessageID,
+                                                                   "Another message with the same ID was already received!"));
       }
       else
       {
@@ -707,6 +743,7 @@ public final class AS4Handler implements Closeable
       }
     }
 
+    final SPIInvocationResult aSPIResult = new SPIInvocationResult ();
     if (bCanInvokeSPIs)
     {
       // PMode may be null for receipts
@@ -718,14 +755,15 @@ public final class AS4Handler implements Closeable
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
         // Might add to m_aPullRequestReturn
-        final ESuccess eSuccess = _invokeSPIs (aEbmsUserMessage,
-                                               aEbmsSignalMessage,
-                                               aPayloadNode,
-                                               aDecryptedAttachments,
-                                               aErrorMessages,
-                                               aResponseAttachments,
-                                               aPMode);
-        if (eSuccess.isFailure ())
+        _invokeSPIs (aEbmsUserMessage,
+                     aEbmsSignalMessage,
+                     aPayloadNode,
+                     aDecryptedAttachments,
+                     aErrorMessages,
+                     aResponseAttachments,
+                     aPMode,
+                     aSPIResult);
+        if (aSPIResult.isFailure ())
           s_aLogger.warn ("Error invoking synchronous SPIs");
         else
           if (s_aLogger.isDebugEnabled ())
@@ -743,13 +781,16 @@ public final class AS4Handler implements Closeable
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
           IAS4ResponseFactory aAsyncResponseFactory;
-          if (_invokeSPIs (aFinalUserMessage,
-                           aFinalSignalMessage,
-                           aFinalPayloadNode,
-                           aFinalDecryptedAttachments,
-                           aLocalErrorMessages,
-                           aLocalResponseAttachments,
-                           aPMode).isSuccess ())
+          final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
+          _invokeSPIs (aFinalUserMessage,
+                       aFinalSignalMessage,
+                       aFinalPayloadNode,
+                       aFinalDecryptedAttachments,
+                       aLocalErrorMessages,
+                       aLocalResponseAttachments,
+                       aPMode,
+                       aAsyncSPIResult);
+          if (aAsyncSPIResult.isSuccess ())
           {
             // SPI processing succeeded
             assert aLocalErrorMessages.isEmpty ();
@@ -775,6 +816,11 @@ public final class AS4Handler implements Closeable
                                                                                              aLocalErrorMessages);
             aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
           }
+
+          // where to send it back (must be determined by SPI!)
+          final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
+          if (StringHelper.hasNoText (sAsyncResponseURL))
+            throw new IllegalStateException ("No asynchronous response URL present!");
 
           // TODO invoke client with new document
         });
@@ -814,11 +860,11 @@ public final class AS4Handler implements Closeable
             // way, we need to check if the current application is currently in
             // the pull phase
             if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-                aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
-                aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
+                aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullRequestReturn () ||
+                aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullRequestReturn ())
             {
               return new AS4ResponseFactoryXML (new AS4UserMessage (eSOAPVersion,
-                                                                    m_aPullRequestReturn).getAsSOAPDocument ());
+                                                                    aSPIResult.getPullRequestReturn ()).getAsSOAPDocument ());
             }
 
             if (aEbmsUserMessage != null)

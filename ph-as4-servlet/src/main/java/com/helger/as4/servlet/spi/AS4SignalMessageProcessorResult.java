@@ -40,9 +40,10 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   protected AS4SignalMessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                              @Nullable final String sErrorMsg,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                             @Nullable final String sAsyncResponseURL,
                                              @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    super (eSuccess, sErrorMsg, aAttachments);
+    super (eSuccess, sErrorMsg, aAttachments, sAsyncResponseURL);
     m_aPullReturnUserMessage = aPullReturnUserMessage;
   }
 
@@ -67,20 +68,25 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   @Nonnull
   public static AS4SignalMessageProcessorResult createSuccess ()
   {
-    return createSuccess (null, null);
+    return createSuccess (null, null, null);
   }
 
   @Nonnull
   public static AS4SignalMessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                               @Nullable final String sAsyncResponseURL,
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, aPullReturnUserMessage);
+    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS,
+                                                null,
+                                                aAttachments,
+                                                sAsyncResponseURL,
+                                                aPullReturnUserMessage);
   }
 
   @Nonnull
   public static AS4SignalMessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
+    return new AS4SignalMessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null, null);
   }
 }

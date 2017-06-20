@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.commons.error.IError;
@@ -86,9 +87,30 @@ public interface IEbmsError extends Serializable
   }
 
   @Nonnull
-  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nullable final String sRefToMessage)
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale, @Nullable final String sRefToMessageInError)
   {
-    return getAsEbms3Error (aContentLocale, sRefToMessage, (String) null, (Ebms3Description) null);
+    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null);
+  }
+
+  @Nonnull
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
+                                      @Nullable final String sRefToMessageInError,
+                                      @Nullable final String sErrorText)
+  {
+    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null, sErrorText);
+  }
+
+  @Nonnull
+  default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
+                                      @Nullable final String sRefToMessageInError,
+                                      @Nullable final String sOrigin,
+                                      @Nullable final String sErrorText)
+  {
+    return getAsEbms3Error (aContentLocale,
+                            sRefToMessageInError,
+                            sOrigin,
+                            sErrorText == null ? null : MessageHelperMethods.createEbms3Description (aContentLocale,
+                                                                                                     sErrorText));
   }
 
   @Nonnull
@@ -98,11 +120,15 @@ public interface IEbmsError extends Serializable
                                       @Nullable final Ebms3Description aEbmsDescription)
   {
     final Ebms3Error aEbms3Error = new Ebms3Error ();
-    aEbms3Error.setDescription (aEbmsDescription);
+    // Default to shortDescription if none provided
+    aEbms3Error.setDescription (aEbmsDescription != null ? aEbmsDescription
+                                                         : MessageHelperMethods.createEbms3Description (aContentLocale,
+                                                                                                        getShortDescription ()));
     aEbms3Error.setErrorDetail (getErrorDetail ().getDisplayText (aContentLocale));
     aEbms3Error.setErrorCode (getErrorCode ());
     aEbms3Error.setSeverity (getSeverity ().getSeverity ());
-    aEbms3Error.setShortDescription (getShortDescription ());
+    if (aEbmsDescription != null)
+      aEbms3Error.setShortDescription (getShortDescription ());
     aEbms3Error.setCategory (getCategory ().getDisplayName ());
     aEbms3Error.setRefToMessageInError (sRefToMessageInError);
     aEbms3Error.setOrigin (sOrigin);
