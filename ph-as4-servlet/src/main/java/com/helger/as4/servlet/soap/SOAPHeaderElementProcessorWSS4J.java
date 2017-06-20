@@ -41,7 +41,6 @@ import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
@@ -78,9 +77,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final Locale aLocale)
   {
     final IPMode aPMode = aState.getPMode ();
-
-    MetaAS4Manager.getIncomingDuplicateMgr ()
-                  .findFirst (x -> x.getMessageID ().equals (aState.getMessaging ().getId ()));
 
     // Safety Check
     if (aPMode == null)
