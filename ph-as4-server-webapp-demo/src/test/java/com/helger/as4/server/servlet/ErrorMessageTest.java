@@ -1,11 +1,10 @@
 package com.helger.as4.server.servlet;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.util.AS4XMLHelper;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -16,9 +15,7 @@ public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ()),
-                      true,
-                      null);
+    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
   }
 
   @Test
@@ -26,8 +23,6 @@ public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ()),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }

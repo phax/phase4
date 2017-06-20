@@ -23,7 +23,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -37,11 +36,11 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.holodeck.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -70,7 +69,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
   }
@@ -82,7 +81,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
@@ -119,7 +118,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                             false,
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
   }
@@ -136,7 +135,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                             false,
                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
     assertTrue (sResponse.contains ("NonRepudiationInformation"));

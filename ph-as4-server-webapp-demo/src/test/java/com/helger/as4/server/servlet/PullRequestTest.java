@@ -19,17 +19,16 @@ package com.helger.as4.server.servlet;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreatePullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -45,7 +44,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -64,7 +63,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              sFailure,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }
 
@@ -81,7 +80,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              sMPC,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -100,7 +99,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              aAny)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -121,7 +120,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
                                                                              aAny)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
@@ -135,7 +134,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              null,
                                                                              null)
                                                   .getAsSOAPDocument ();
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc), AS4XMLHelper.XWS.getCharsetObj ());
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getErrorCode ());
   }
 }

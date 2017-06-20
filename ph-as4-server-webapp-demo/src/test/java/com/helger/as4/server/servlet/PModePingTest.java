@@ -16,11 +16,10 @@
  */
 package com.helger.as4.server.servlet;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.as4.util.AS4XMLHelper;
+import com.helger.as4.http.HttpXMLEntity;
 
 public final class PModePingTest extends AbstractUserMessageTestSetUpExt
 {
@@ -30,6 +29,6 @@ public final class PModePingTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = _modifyUserMessage (null, null, null, _defaultProperties ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
   }
 }

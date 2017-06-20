@@ -25,7 +25,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -34,6 +33,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -43,7 +43,6 @@ import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -72,10 +71,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private final AS4ResourceManager m_aResMgr;
 
   private Node m_aPayload;
-  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList<> ();
+  private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
   // Document related attributes
-  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList<> ();
+  private final ICommonsList <Ebms3Property> m_aEbms3Properties = new CommonsArrayList <> ();
 
   // CollaborationInfo
   private String m_sAction;
@@ -244,7 +243,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       _checkKeystoreAttributes ();
 
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap<> ();
+      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
       aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
       aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
@@ -305,7 +304,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     }
 
     // Wrap SOAP XML
-    return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    return new HttpXMLEntity (aDoc);
   }
 
   public Node getPayload ()

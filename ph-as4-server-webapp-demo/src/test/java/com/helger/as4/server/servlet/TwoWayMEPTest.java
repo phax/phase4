@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -31,6 +30,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -45,7 +45,6 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -91,7 +90,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
     assertTrue (sResponse.contains ("UserMessage"));
     assertFalse (sResponse.contains ("Receipt"));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -192,9 +191,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                  .setMustUnderstand (true)
                                                  .getAsSOAPDocument (aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aSignedDoc), false, EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -205,9 +202,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -217,8 +212,6 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 }

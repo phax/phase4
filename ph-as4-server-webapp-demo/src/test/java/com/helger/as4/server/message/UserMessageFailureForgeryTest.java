@@ -45,6 +45,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -52,7 +53,6 @@ import com.helger.as4.messaging.mime.SoapMimeMultipart;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -109,9 +109,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TwoUserMessages.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -122,9 +120,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/UserMessageNoPartyID.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
   // Tinkering with the signature
@@ -133,7 +129,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, null, null, s_aResMgr);
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
   }
 
   @Test
@@ -150,9 +146,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       final Element eElement = (Element) nNode;
       eElement.setAttribute ("INVALID", "INVALID");
     }
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   @Test
@@ -240,9 +234,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       XMLHelper.removeAllChildElements (aElement);
     }
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -261,9 +253,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     aNext.getParentNode ().removeChild (aNext);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -349,9 +339,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningAlgorithm.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
 
   @Test
@@ -362,9 +350,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningDigestAlgorithm.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
 
   @Test
@@ -373,8 +359,6 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
     final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 }

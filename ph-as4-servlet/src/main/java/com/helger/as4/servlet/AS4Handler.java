@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
+import org.apache.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
+import com.helger.as4.client.AbstractAS4Client;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
@@ -127,7 +129,6 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class AS4Handler implements Closeable
 {
-  @FunctionalInterface
   private static interface IAS4ResponseFactory
   {
     void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4Response aHttpResponse);
@@ -145,7 +146,8 @@ public final class AS4Handler implements Closeable
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
-      aHttpResponse.setContentAndCharset (sXML, StandardCharsets.UTF_8).setMimeType (eSOAPVersion.getMimeType ());
+      aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharsetObj ())
+                   .setMimeType (eSOAPVersion.getMimeType ());
     }
   }
 
@@ -180,7 +182,7 @@ public final class AS4Handler implements Closeable
         {
           return m_aMimeMsg.getInputStream ();
         }
-        catch (IOException | MessagingException ex)
+        catch (final IOException | MessagingException ex)
         {
           throw new IllegalStateException ("Failed to get MIME input stream", ex);
         }
@@ -810,6 +812,7 @@ public final class AS4Handler implements Closeable
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
           IAS4ResponseFactory aAsyncResponseFactory;
+
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
           _invokeSPIs (aFinalUserMessage,
                        aFinalSignalMessage,
@@ -834,6 +837,7 @@ public final class AS4Handler implements Closeable
             aAsyncResponseFactory = _createResponseUserMessage (aResponseAttachments,
                                                                 aEffectiveLeg,
                                                                 aResponseUserMsg.getAsSOAPDocument ());
+
           }
           else
           {
@@ -852,6 +856,14 @@ public final class AS4Handler implements Closeable
             throw new IllegalStateException ("No asynchronous response URL present!");
 
           // TODO invoke client with new document
+          final AbstractAS4Client aClient = new AbstractAS4Client ()
+          {
+            @Override
+            public HttpEntity buildMessage () throws Exception
+            {
+              return null;
+            }
+          };
         });
       }
     }
@@ -1114,7 +1126,7 @@ public final class AS4Handler implements Closeable
    *
    * @param aResponseAttachments
    *        The Attachments that should be encrypted
-   * @param aLeg2
+   * @param aLeg
    *        Leg2 to get necessary information, EncryptionAlgorithm, SOAPVersion
    * @param aResponseDoc
    *        the document that contains the user message
@@ -1124,33 +1136,30 @@ public final class AS4Handler implements Closeable
    */
   @Nonnull
   private MimeMessage _generateMimeMessageForResponse (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                       @Nonnull final PModeLeg aLeg2,
+                                                       @Nonnull final PModeLeg aLeg,
                                                        @Nonnull final Document aResponseDoc) throws WSSecurityException,
                                                                                              MessagingException
   {
     MimeMessage aMimeMsg = null;
-    if (aLeg2.getSecurity () != null)
+    if (aLeg.getSecurity () != null && aLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
     {
-      if (aLeg2.getSecurity ().getX509EncryptionAlgorithm () != null)
-      {
-        final EncryptionCreator aEncryptCreator = new EncryptionCreator ();
-        aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg2.getProtocol ().getSOAPVersion (),
-                                                       aResponseDoc,
-                                                       true,
-                                                       aResponseAttachments,
-                                                       m_aResMgr,
-                                                       aLeg2.getSecurity ().getX509EncryptionAlgorithm ());
+      final EncryptionCreator aEncryptCreator = new EncryptionCreator ();
+      aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg.getProtocol ().getSOAPVersion (),
+                                                     aResponseDoc,
+                                                     true,
+                                                     aResponseAttachments,
+                                                     m_aResMgr,
+                                                     aLeg.getSecurity ().getX509EncryptionAlgorithm ());
 
-      }
-      else
-      {
-        aMimeMsg = new MimeMessageCreator (aLeg2.getProtocol ()
-                                                .getSOAPVersion ()).generateMimeMessage (aResponseDoc,
-                                                                                         aResponseAttachments);
-      }
+    }
+    else
+    {
+      aMimeMsg = new MimeMessageCreator (aLeg.getProtocol ()
+                                             .getSOAPVersion ()).generateMimeMessage (aResponseDoc,
+                                                                                      aResponseAttachments);
     }
     if (aMimeMsg == null)
-      throw new IllegalStateException ("Unexpected");
+      throw new IllegalStateException ("No MimeMessage created!");
     return aMimeMsg;
   }
 

@@ -30,7 +30,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -44,13 +43,13 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -112,7 +111,7 @@ public final class MainAS4Client
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
         aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
 
-      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList<> ();
+      final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
@@ -124,7 +123,7 @@ public final class MainAS4Client
         final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                                aPayload,
                                                                                aAttachments);
-        aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+        aPost.setEntity (new HttpXMLEntity (aDoc));
       }
       else
         // BodyPayload SIGNED
@@ -134,7 +133,7 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-          aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+          aPost.setEntity (new HttpXMLEntity (aDoc));
         }
         // BodyPayload ENCRYPTED
         else
@@ -148,7 +147,7 @@ public final class MainAS4Client
                                                                     false,
                                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-            aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+            aPost.setEntity (new HttpXMLEntity (aDoc));
           }
           else
             if (true)
@@ -185,7 +184,7 @@ public final class MainAS4Client
                                                                         aDoc,
                                                                         false,
                                                                         ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-                aPost.setEntity (new StringEntity (AS4XMLHelper.serializeXML (aDoc)));
+                aPost.setEntity (new HttpXMLEntity (aDoc));
               }
               else
                 throw new IllegalStateException ("Some test message should be selected :)");

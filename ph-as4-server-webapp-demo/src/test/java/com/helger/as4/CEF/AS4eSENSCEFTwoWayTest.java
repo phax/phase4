@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -13,9 +12,9 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -46,7 +45,7 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));

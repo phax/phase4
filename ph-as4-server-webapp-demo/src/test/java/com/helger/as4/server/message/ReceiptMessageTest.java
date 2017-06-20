@@ -22,7 +22,6 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -31,9 +30,9 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.holodeck.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
@@ -63,7 +62,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("UserMessage"));
   }
@@ -74,7 +73,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
@@ -85,7 +84,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }

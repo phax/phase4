@@ -2,14 +2,13 @@ package com.helger.as4.CEF;
 
 import static org.junit.Assert.assertTrue;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
@@ -34,7 +33,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   public void AS4_TA01 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("ConversationId"));
     assertTrue (sResponse.contains (CONVERSATION_ID));
@@ -67,7 +66,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));

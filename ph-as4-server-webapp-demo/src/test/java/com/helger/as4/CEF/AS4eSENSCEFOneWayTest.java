@@ -9,7 +9,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.NoHttpResponseException;
-import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.littleshoot.proxy.HttpFilters;
@@ -30,6 +29,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -40,7 +40,6 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -143,9 +142,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESOAPVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -357,9 +354,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
     final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   private HttpProxyServer _startProxyServer ()
@@ -802,7 +797,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }

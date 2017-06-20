@@ -15,7 +15,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -29,6 +28,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -127,7 +127,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc), true, null);
 
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
   }
@@ -149,7 +149,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
 
-    final String sResponse = sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     assertTrue (sResponse.contains ("Receipt"));
     assertTrue (sResponse.contains ("NonRepudiationInformation"));
@@ -654,9 +654,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     }
     nList.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**

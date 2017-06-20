@@ -120,9 +120,9 @@ public abstract class AbstractAS4Client
   {}
 
   @Nullable
-  protected <T> T internalSendMessage (@Nonnull final String sURL,
-                                       @Nonnull final HttpEntity aHttpEntity,
-                                       @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+  public <T> T sendGenericMessage (@Nonnull final String sURL,
+                                   @Nonnull final HttpEntity aHttpEntity,
+                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -149,7 +149,7 @@ public abstract class AbstractAS4Client
                             @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
     final HttpEntity aRequestEntity = buildMessage ();
-    return internalSendMessage (sURL, aRequestEntity, aResponseHandler);
+    return sendGenericMessage (sURL, aRequestEntity, aResponseHandler);
   }
 
   @Nullable

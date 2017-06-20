@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,6 +39,7 @@ import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -51,7 +51,6 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3Service;
@@ -128,9 +127,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .getAsSOAPDocument (m_aPayload);
     assertNotNull (aDoc);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -152,7 +149,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .getAsSOAPDocument (m_aPayload);
     assertNotNull (aDoc);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
   }
 
   @Test
@@ -192,7 +189,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+      sendPlainMessage (new HttpXMLEntity (aSignedDoc),
                         false,
                         EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
@@ -236,7 +233,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                    .setMustUnderstand (true)
                                                    .getAsSOAPDocument (m_aPayload);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+      sendPlainMessage (new HttpXMLEntity (aSignedDoc),
                         false,
                         EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
@@ -258,9 +255,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .setMustUnderstand (true)
                                            .getAsSOAPDocument (m_aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -272,7 +267,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .setMustUnderstand (true)
                                            .getAsSOAPDocument (m_aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, "");
   }
 
   @Test
@@ -290,7 +285,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .setMustUnderstand (true)
                                            .getAsSOAPDocument (m_aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)), false, "");
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, "");
   }
 
   @Test
@@ -311,7 +306,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .setMustUnderstand (true)
                                            .getAsSOAPDocument (m_aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+    sendPlainMessage (new HttpXMLEntity (aDoc),
                       false,
                       "originalSender property is empty or not existant but mandatory");
   }
@@ -334,7 +329,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                            .setMustUnderstand (true)
                                            .getAsSOAPDocument (m_aPayload);
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
+    sendPlainMessage (new HttpXMLEntity (aDoc),
                       false,
                       "finalRecipient property is empty or not existant but mandatory");
   }
@@ -347,9 +342,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/NoResponder.xml").getInputStream ());
 
-    sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aDoc)),
-                      false,
-                      EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
   /**
@@ -387,7 +380,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-      sendPlainMessage (new StringEntity (AS4XMLHelper.serializeXML (aSignedDoc)),
+      sendPlainMessage (new HttpXMLEntity (aSignedDoc),
                         false,
                         EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }

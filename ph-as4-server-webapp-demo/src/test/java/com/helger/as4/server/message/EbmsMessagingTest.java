@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.marshaller.Ebms3WriterBuilder;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -76,7 +75,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     aSignalMsgList.add (aSignalMessage);
     aSignalMsgList.add (aSignalMessage);
 
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (_getMessagingAsDocument (aEbms3Messaging)));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -85,7 +84,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
 
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (_getMessagingAsDocument (aEbms3Messaging)));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -149,7 +148,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (_getMessagingAsDocument (aEbms3Messaging)));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -205,7 +204,6 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null);
 
     // We've got our response
-    final HttpEntity aEntity = new StringEntity (AS4XMLHelper.serializeXML (aDoc));
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
   }
 }

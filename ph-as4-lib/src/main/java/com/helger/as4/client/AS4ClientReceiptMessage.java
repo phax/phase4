@@ -18,16 +18,14 @@ package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 
@@ -73,7 +71,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public HttpEntity buildMessage () throws Exception
+  public HttpXMLEntity buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -102,7 +100,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    return new HttpXMLEntity (aDoc);
   }
 
   /**

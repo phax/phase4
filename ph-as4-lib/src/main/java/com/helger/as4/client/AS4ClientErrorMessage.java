@@ -21,15 +21,13 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Document;
 
 import com.helger.as4.error.IEbmsError;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.CreateErrorMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
@@ -84,7 +82,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public HttpEntity buildMessage () throws Exception
+  public HttpXMLEntity buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -103,6 +101,6 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     final Document aDoc = aErrorMsg.getAsSOAPDocument ();
 
     // Wrap SOAP XML
-    return new StringEntity (AS4XMLHelper.serializeXML (aDoc));
+    return new HttpXMLEntity (aDoc);
   }
 }
