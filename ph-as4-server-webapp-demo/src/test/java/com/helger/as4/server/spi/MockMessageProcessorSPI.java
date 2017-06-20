@@ -34,6 +34,7 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
+import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -91,25 +92,25 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   }
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                            @Nullable final IPMode aPMode)
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
+                                                                  @Nullable final IPMode aPMode)
   {
     if (aSignalMessage.getReceipt () != null)
     {
       // Receipt - just acknowledge
-      return AS4MessageProcessorResult.createSuccess ();
+      return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     if (!aSignalMessage.getError ().isEmpty ())
     {
       // Error - just acknowledge
-      return AS4MessageProcessorResult.createSuccess ();
+      return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     // Must be a pull-request
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
     {
-      return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage");
+      return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage");
     }
 
     try
@@ -145,12 +146,12 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
       aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
 
-      return AS4MessageProcessorResult.createSuccess (aUserMessage);
+      return AS4SignalMessageProcessorResult.createSuccess (null, aUserMessage);
     }
     catch (final SAXException e)
     {
-      return AS4MessageProcessorResult.createFailure ("Error in creating the usermessage. Technical details: " +
-                                                      e.getMessage ());
+      return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage. Technical details: " +
+                                                            e.getMessage ());
     }
   }
 }

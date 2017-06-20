@@ -77,6 +77,6 @@ public interface IAS4ServletMessageProcessorSPI
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
-                                                     @Nullable IPMode aPMode);
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
+                                                         @Nullable IPMode aPMode);
 }

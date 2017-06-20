@@ -16,11 +16,12 @@
  */
 package com.helger.as4.servlet.spi;
 
+import java.util.Collection;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.CollectionHelper;
@@ -42,17 +43,14 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
-  private final Ebms3UserMessage m_aReturnUserMessage;
 
   protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                        @Nullable final String sErrorMsg,
-                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                       @Nullable final Ebms3UserMessage aReturnUserMessage)
+                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     m_eSuccess = ValueEnforcer.notNull (eSuccess, "Success");
     m_sErrorMsg = sErrorMsg;
     m_aAttachments = aAttachments;
-    m_aReturnUserMessage = aReturnUserMessage;
   }
 
   public boolean isSuccess ()
@@ -71,15 +69,10 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return CollectionHelper.isNotEmpty (m_aAttachments);
   }
 
-  public void addAllAttachmentsTo (@Nonnull final ICommonsList <WSS4JAttachment> aTarget)
+  public void addAllAttachmentsTo (@Nonnull final Collection <WSS4JAttachment> aTarget)
   {
     if (m_aAttachments != null)
       aTarget.addAll (m_aAttachments);
-  }
-
-  public Ebms3UserMessage getReturnUserMessage ()
-  {
-    return m_aReturnUserMessage;
   }
 
   @Nonnull
@@ -101,25 +94,19 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, null);
+    return createSuccess (null);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, null);
-  }
-
-  @Nonnull
-  public static AS4MessageProcessorResult createSuccess (@Nullable final Ebms3UserMessage aReturnUserMessage)
-  {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, null, aReturnUserMessage);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null);
   }
 }

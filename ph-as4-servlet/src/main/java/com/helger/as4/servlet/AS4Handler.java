@@ -78,6 +78,7 @@ import com.helger.as4.servlet.soap.AS4SingleSOAPHeader;
 import com.helger.as4.servlet.soap.ISOAPHeaderElementProcessor;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
+import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -375,13 +376,16 @@ public final class AS4Handler implements Closeable
    *        The signal message to use. Either this OR user message must be
    *        non-<code>null</code>.
    * @param aPayloadNode
-   *        Optional SOAP body payload (only if direct SOAP msg, not for MIME)
+   *        Optional SOAP body payload (only if direct SOAP msg, not for MIME).
+   *        May be <code>null</code>.
    * @param aDecryptedAttachments
-   *        Original attachments from source message
+   *        Original attachments from source message. May be <code>null</code>.
    * @param aErrorMessages
    *        The list of error messages to be filled if something goes wrong.
+   *        Never <code>null</code>.
    * @param aResponseAttachments
-   *        The list of attachments to be added to the response.
+   *        The list of attachments to be added to the response. Never
+   *        <code>null</code>.
    * @param aPMode
    *        PMode to be used - may be <code>null</code> for Receipt messages.
    * @return {@link ESuccess}
@@ -395,8 +399,15 @@ public final class AS4Handler implements Closeable
                                 @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                 @Nullable final IPMode aPMode)
   {
-    final String sMessageID = aUserMessage != null ? aUserMessage.getMessageInfo ().getMessageId ()
-                                                   : aSignalMessage.getMessageInfo ().getMessageId ();
+    ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
+    ValueEnforcer.isFalse (aUserMessage != null &&
+                           aSignalMessage != null,
+                           "Only one of User OR Signal Message may be present");
+
+    final boolean bIsUserMessage = aUserMessage != null;
+
+    final String sMessageID = bIsUserMessage ? aUserMessage.getMessageInfo ().getMessageId ()
+                                             : aSignalMessage.getMessageInfo ().getMessageId ();
 
     // Invoke all SPIs
     for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
@@ -405,15 +416,25 @@ public final class AS4Handler implements Closeable
         if (s_aLogger.isDebugEnabled ())
           s_aLogger.debug ("Invoking AS4 message processor " + aProcessor);
 
+        // Main processing
         AS4MessageProcessorResult aResult;
-        if (aUserMessage != null)
+        if (bIsUserMessage)
           aResult = aProcessor.processAS4UserMessage (aUserMessage, aPayloadNode, aDecryptedAttachments);
         else
-        {
           aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode);
+        if (aResult == null)
+          throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
+
+        if (bIsUserMessage)
+        {
+          // User message specific processing result handling
+        }
+        else
+        {
+          // Signal message specific processing result handling
           if (m_aPullRequestReturn == null && aSignalMessage.getReceipt () == null)
           {
-            m_aPullRequestReturn = aResult.getReturnUserMessage ();
+            m_aPullRequestReturn = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
             // No message contained in the MPC
             if (m_aPullRequestReturn == null)
             {
@@ -440,7 +461,7 @@ public final class AS4Handler implements Closeable
             // A second processor has commited a response to the pullrequest
             // Which is not allowed since only one response can be sent back to
             // the pullrequest initiator
-            if (aResult.getReturnUserMessage () != null)
+            if (((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage () != null)
             {
               s_aLogger.warn ("Invoked AS4 message processor SPI " +
                               aProcessor +
@@ -461,8 +482,6 @@ public final class AS4Handler implements Closeable
             }
           }
         }
-        if (aResult == null)
-          throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
 
         if (aResult.isSuccess ())
         {
@@ -732,9 +751,11 @@ public final class AS4Handler implements Closeable
                            aLocalResponseAttachments,
                            aPMode).isSuccess ())
           {
+            // SPI processing succeeded
             assert aLocalErrorMessages.isEmpty ();
 
-            // SPI processing succeeded
+            // The response user message has no explicit payload.
+            // All data of the response user message is in the local attachments
             final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
                                                                                 aFinalUserMessage,
                                                                                 aLocalResponseAttachments);

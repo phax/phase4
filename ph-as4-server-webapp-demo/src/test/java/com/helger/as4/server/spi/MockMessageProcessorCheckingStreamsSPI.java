@@ -34,6 +34,7 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
+import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -99,19 +100,19 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   }
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                            @Nonnull final IPMode aPmode)
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
+                                                                  @Nonnull final IPMode aPmode)
   {
     if (aSignalMessage.getReceipt () != null)
     {
       // Receipt - just acknowledge
-      return AS4MessageProcessorResult.createSuccess ();
+      return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     if (!aSignalMessage.getError ().isEmpty ())
     {
       // Error - just acknowledge
-      return AS4MessageProcessorResult.createSuccess ();
+      return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     final Node aPayload;
@@ -151,13 +152,13 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
         aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
 
-        return AS4MessageProcessorResult.createSuccess (aUserMessage);
+        return AS4SignalMessageProcessorResult.createSuccess (null, aUserMessage);
       }
       catch (final SAXException e)
       {
         e.printStackTrace ();
       }
     }
-    return AS4MessageProcessorResult.createSuccess ();
+    return AS4SignalMessageProcessorResult.createSuccess ();
   }
 }
