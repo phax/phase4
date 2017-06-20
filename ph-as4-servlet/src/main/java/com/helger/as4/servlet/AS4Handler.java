@@ -128,16 +128,17 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class AS4Handler implements Closeable
 {
-  private static interface IAS4Responder
+  @FunctionalInterface
+  private static interface IAS4ResponseFactory
   {
     void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4Response aHttpResponse);
   }
 
-  private static final class AS4ResponderXML implements IAS4Responder
+  private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
   {
     private final Document m_aDoc;
 
-    public AS4ResponderXML (@Nonnull final Document aDoc)
+    public AS4ResponseFactoryXML (@Nonnull final Document aDoc)
     {
       m_aDoc = aDoc;
     }
@@ -149,12 +150,12 @@ public final class AS4Handler implements Closeable
     }
   }
 
-  private static final class AS4ResponderMIME implements IAS4Responder
+  private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
     private final MimeMessage m_aMimeMsg;
     private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap <> ();
 
-    public AS4ResponderMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
+    public AS4ResponseFactoryMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
       m_aMimeMsg = aMimeMsg;
       // Move all mime headers to the HTTP request
@@ -194,7 +195,7 @@ public final class AS4Handler implements Closeable
 
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
-  private Ebms3UserMessage m_aPullRequestReturn = null;
+  private Ebms3UserMessage m_aPullRequestReturn;
 
   public AS4Handler ()
   {}
@@ -509,10 +510,11 @@ public final class AS4Handler implements Closeable
     return ESuccess.SUCCESS;
   }
 
-  private IAS4Responder _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
-                                            @Nonnull final ESOAPVersion eSOAPVersion,
-                                            @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                                                                MessagingException
+  @Nullable
+  private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
+                                                  @Nonnull final ESOAPVersion eSOAPVersion,
+                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
+                                                                                                                      MessagingException
   {
     ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
@@ -697,17 +699,22 @@ public final class AS4Handler implements Closeable
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
         // Might add to m_aPullRequestReturn
-        _invokeSPIs (aEbmsUserMessage,
-                     aEbmsSignalMessage,
-                     aPayloadNode,
-                     aDecryptedAttachments,
-                     aErrorMessages,
-                     aResponseAttachments,
-                     aPMode);
+        final ESuccess eSuccess = _invokeSPIs (aEbmsUserMessage,
+                                               aEbmsSignalMessage,
+                                               aPayloadNode,
+                                               aDecryptedAttachments,
+                                               aErrorMessages,
+                                               aResponseAttachments,
+                                               aPMode);
+        if (eSuccess.isFailure ())
+          s_aLogger.warn ("Error invoking synchronous SPIs");
+        else
+          if (s_aLogger.isDebugEnabled ())
+            s_aLogger.debug ("Successfully invoked synchronous SPIs");
       }
       else
       {
-        // TODO Call asynchronous
+        // Call asynchronous
         final Ebms3UserMessage aFinalUserMessage = aEbmsUserMessage;
         final Ebms3SignalMessage aFinalSignalMessage = aEbmsSignalMessage;
         final Node aFinalPayloadNode = aPayloadNode;
@@ -716,7 +723,7 @@ public final class AS4Handler implements Closeable
         AS4WorkerPool.getInstance ().run ( () -> {
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
-          IAS4Responder aAsyncResponder;
+          IAS4ResponseFactory aAsyncResponseFactory;
           if (_invokeSPIs (aFinalUserMessage,
                            aFinalSignalMessage,
                            aFinalPayloadNode,
@@ -725,23 +732,27 @@ public final class AS4Handler implements Closeable
                            aLocalResponseAttachments,
                            aPMode).isSuccess ())
           {
-            // TODO SPI processing started
+            assert aLocalErrorMessages.isEmpty ();
+
+            // SPI processing succeeded
             final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
                                                                                 aFinalUserMessage,
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage or receipt
-            aAsyncResponder = _createResponseUserMessage (eSOAPVersion,
-                                                          aResponseAttachments,
-                                                          aEffectiveLeg,
-                                                          aResponseUserMsg.getAsSOAPDocument ());
+            aAsyncResponseFactory = _createResponseUserMessage (aResponseAttachments,
+                                                                aEffectiveLeg,
+                                                                aResponseUserMsg.getAsSOAPDocument ());
           }
           else
           {
-            // TODO SPI processing started
+            // SPI processing failed
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
-            aAsyncResponder = null;
+            final AS4ErrorMessage aResponseErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
+                                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                                             aLocalErrorMessages);
+            aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
           }
 
           // TODO invoke client with new document
@@ -749,8 +760,10 @@ public final class AS4Handler implements Closeable
       }
     }
 
+    // Try building error message
     if (aEbmsError == null)
     {
+      // Not an incoming Ebms Error Message
       if (aErrorMessages.isNotEmpty ())
       {
         // Generate ErrorMessage if errors in the process are present and the
@@ -761,14 +774,16 @@ public final class AS4Handler implements Closeable
           final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
                                                                                    MessageHelperMethods.createEbms3MessageInfo (),
                                                                                    aErrorMessages);
-          return new AS4ResponderXML (aErrorMsg.getAsSOAPDocument ());
+          return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
         }
         s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
       }
       else
       {
+        // Do not respond to receipt (except with error message - see above)
         if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
         {
+          // So now the incoming message is a user message or a pull request
           if (aPMode.getMEP ().isOneWay () || aPMode.getMEPBinding ().isAsynchronous ())
           {
             // If no Error is present check if pmode declared if they want a
@@ -776,31 +791,31 @@ public final class AS4Handler implements Closeable
             // information if applicable
             // Only get in here if pull is part of the EMEPBinding, if it is two
             // way, we need to check if the current application is currently in
-            // the
-            // pull phase
+            // the pull phase
             if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
                 aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && m_aPullRequestReturn != null ||
                 aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && m_aPullRequestReturn != null)
             {
-              return new AS4ResponderXML (new AS4UserMessage (eSOAPVersion, m_aPullRequestReturn).getAsSOAPDocument ());
+              return new AS4ResponseFactoryXML (new AS4UserMessage (eSOAPVersion,
+                                                                    m_aPullRequestReturn).getAsSOAPDocument ());
             }
-            else
-              if (aEbmsUserMessage != null)
-              {
-                // No errors occurred
-                final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
 
-                if (bSendReceiptAsResponse)
-                {
-                  return _createReceiptMessage (aSOAPDocument,
-                                                eSOAPVersion,
-                                                aEffectiveLeg,
-                                                aEbmsUserMessage,
-                                                aResponseAttachments);
-                }
-                // else TODO
-                s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+            if (aEbmsUserMessage != null)
+            {
+              // No errors occurred
+              final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
+              if (bSendReceiptAsResponse)
+              {
+                return _createReceiptMessage (aSOAPDocument,
+                                              eSOAPVersion,
+                                              aEffectiveLeg,
+                                              aEbmsUserMessage,
+                                              aResponseAttachments);
               }
+              // else TODO
+              s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+            }
           }
           else
           {
@@ -817,10 +832,7 @@ public final class AS4Handler implements Closeable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
-              return _createResponseUserMessage (eSOAPVersion,
-                                                 aResponseAttachments,
-                                                 aLeg2,
-                                                 aResponseUserMsg.getAsSOAPDocument ());
+              return _createResponseUserMessage (aResponseAttachments, aLeg2, aResponseUserMsg.getAsSOAPDocument ());
             }
           }
         }
@@ -838,11 +850,11 @@ public final class AS4Handler implements Closeable
    * @param aResponseAttachments
    * @throws WSSecurityException
    */
-  private IAS4Responder _createReceiptMessage (final Document aSOAPDocument,
-                                               final ESOAPVersion eSOAPVersion,
-                                               final PModeLeg aEffectiveLeg,
-                                               final Ebms3UserMessage aUserMessage,
-                                               final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
+  private IAS4ResponseFactory _createReceiptMessage (final Document aSOAPDocument,
+                                                     final ESOAPVersion eSOAPVersion,
+                                                     final PModeLeg aEffectiveLeg,
+                                                     final Ebms3UserMessage aUserMessage,
+                                                     final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
     final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                          aUserMessage,
@@ -856,7 +868,7 @@ public final class AS4Handler implements Closeable
                                           aEffectiveLeg.getSecurity (),
                                           aResponseDoc,
                                           aEffectiveLeg.getProtocol ().getSOAPVersion ());
-    return new AS4ResponderXML (aResponseDoc);
+    return new AS4ResponseFactoryXML (aResponseDoc);
   }
 
   /**
@@ -872,6 +884,7 @@ public final class AS4Handler implements Closeable
    *        attachment that should be added
    * @return the reversed usermessage in document form
    */
+  @Nonnull
   private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                             @Nonnull final Ebms3UserMessage aUserMessage,
                                                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
@@ -882,20 +895,7 @@ public final class AS4Handler implements Closeable
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, aResponseAttachments);
 
     // Invert from and to role from original user message
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (aUserMessage.getPartyInfo ()
-                                                                                               .getTo ()
-                                                                                               .getRole (),
-                                                                                   aUserMessage.getPartyInfo ()
-                                                                                               .getTo ()
-                                                                                               .getPartyIdAtIndex (0)
-                                                                                               .getValue (),
-                                                                                   aUserMessage.getPartyInfo ()
-                                                                                               .getFrom ()
-                                                                                               .getRole (),
-                                                                                   aUserMessage.getPartyInfo ()
-                                                                                               .getFrom ()
-                                                                                               .getPartyIdAtIndex (0)
-                                                                                               .getValue ());
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
 
     // Should be exactly the same as incoming message
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
@@ -943,10 +943,6 @@ public final class AS4Handler implements Closeable
    * With this method it is possible to send a usermessage back, the method will
    * check if signing is needed and if the message needs to be a mime message.
    *
-   * @param m_aResMgr
-   *        resource manager needed for signing and creating the mime message
-   * @param eSOAPVersion
-   *        to decide which soapversion should be used
    * @param aResponseAttachments
    *        attachments if any that should be added
    * @param aLeg
@@ -957,10 +953,11 @@ public final class AS4Handler implements Closeable
    * @throws WSSecurityException
    * @throws MessagingException
    */
-  private IAS4Responder _createResponseUserMessage (final ESOAPVersion eSOAPVersion,
-                                                    final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                    final PModeLeg aLeg,
-                                                    final Document aDoc) throws WSSecurityException, MessagingException
+  @Nonnull
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                          @Nonnull final PModeLeg aLeg,
+                                                          @Nonnull final Document aDoc) throws WSSecurityException,
+                                                                                        MessagingException
   {
     Document aResponseDoc;
     if (aLeg.getSecurity () != null)
@@ -977,10 +974,10 @@ public final class AS4Handler implements Closeable
     }
 
     if (aResponseAttachments.isEmpty ())
-      return new AS4ResponderXML (aResponseDoc);
+      return new AS4ResponseFactoryXML (aResponseDoc);
 
     final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResponseAttachments, aLeg, aResponseDoc);
-    return new AS4ResponderMIME (aMimeMsg);
+    return new AS4ResponseFactoryMIME (aMimeMsg);
   }
 
   /**
@@ -1292,10 +1289,16 @@ public final class AS4Handler implements Closeable
     }
 
     // SOAP document and SOAP version are determined
-    final IAS4Responder aResponder = _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments);
+    final IAS4ResponseFactory aResponder = _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments);
     if (aResponder != null)
+    {
+      // Response present -> send back
       aResponder.applyToResponse (eSOAPVersion, aHttpResponse);
+    }
     else
+    {
+      // Success, HTTP No Content
       aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
+    }
   }
 }

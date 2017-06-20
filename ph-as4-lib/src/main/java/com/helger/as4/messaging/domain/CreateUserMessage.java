@@ -92,6 +92,16 @@ public final class CreateUserMessage
     return ret;
   }
 
+  @Nonnull
+  public static Ebms3PartyInfo createEbms3ReversePartyInfo (@Nonnull final Ebms3PartyInfo aOrigPartyInfo)
+  {
+    return createEbms3PartyInfo (aOrigPartyInfo.getTo ().getRole (),
+                                 aOrigPartyInfo.getTo ().getPartyIdAtIndex (0).getValue (),
+                                 aOrigPartyInfo.getFrom ().getRole (),
+                                 aOrigPartyInfo.getFrom ().getPartyIdAtIndex (0).getValue ());
+  }
+
+  @Nonnull
   public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull final String sFromRole,
                                                      @Nonnull final String sFromPartyID,
                                                      @Nonnull final String sToRole,
