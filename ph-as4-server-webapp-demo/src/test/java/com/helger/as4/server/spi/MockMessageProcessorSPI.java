@@ -110,7 +110,13 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     // Must be a pull-request
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("failure"))
     {
-      return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage");
+      return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
+    }
+
+    // Empty MPC
+    if (aSignalMessage.getPullRequest ().getMpc ().equals ("empty"))
+    {
+      return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     try
@@ -148,10 +154,10 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
       return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
     }
-    catch (final SAXException e)
+    catch (final SAXException ex)
     {
       return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage. Technical details: " +
-                                                            e.getMessage ());
+                                                            ex.getMessage ());
     }
   }
 }

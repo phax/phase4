@@ -51,9 +51,10 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestFailure () throws Exception
+  public void sendPullRequestEmpty () throws Exception
   {
-    final String sFailure = "failure";
+    // Special MPC name handled in MockMessageProcessorSPI
+    final String sFailure = "empty";
     final MPC aMPC = new MPC (sFailure);
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
@@ -65,6 +66,24 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
+  }
+
+  @Test
+  public void sendPullRequestFailure () throws Exception
+  {
+    // Special MPC name handled in MockMessageProcessorSPI
+    final String sFailure = "failure";
+    final MPC aMPC = new MPC (sFailure);
+    if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
+      MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
+
+    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                             MessageHelperMethods.createEbms3MessageInfo (),
+                                                                             sFailure,
+                                                                             null)
+                                                  .getAsSOAPDocument ();
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
   @Test
