@@ -53,7 +53,9 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 public final class AS4Servlet extends AbstractUnifiedResponseServlet
 {
   public AS4Servlet ()
-  {}
+  {
+    LoggedInUserManager.getInstance ().setLogoutAlreadyLoggedInUser (true);
+  }
 
   @Override
   protected Set <EHTTPMethod> getAllowedHTTPMethods ()

@@ -651,6 +651,7 @@ public final class AS4Handler implements Closeable
 
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
+    final boolean bIsEffectiveLeg1 = aState.getEffectivePModeLegNumber () == 1;
     Ebms3UserMessage aEbmsUserMessage = null;
     Ebms3SignalMessage aEbmsSignalMessage = null;
     Ebms3Error aEbmsError = null;
@@ -688,6 +689,12 @@ public final class AS4Handler implements Closeable
       // Errors do not count
       if (nCountData != 1)
         throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
+
+      // XXX debugging
+      if (aEbmsReceipt != null)
+      {
+        s_aLogger.info ("RECEIPT INCOMING");
+      }
 
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
@@ -799,9 +806,11 @@ public final class AS4Handler implements Closeable
       // PMode may be null for receipts
       if (aPMode == null ||
           aPMode.getMEPBinding ().isSynchronous () ||
-          aPMode.getMEPBinding ().isAsynchronousInitiator ())
+          aPMode.getMEPBinding ().isAsynchronousInitiator () ||
+          !bIsEffectiveLeg1)
       {
         // Call synchronous
+
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
         // Might add to m_aPullReturnUserMsg
@@ -822,6 +831,8 @@ public final class AS4Handler implements Closeable
       else
       {
         // Call asynchronous
+        // Only leg1 can be async!
+
         final Ebms3UserMessage aFinalUserMessage = aEbmsUserMessage;
         final Ebms3SignalMessage aFinalSignalMessage = aEbmsSignalMessage;
         final Node aFinalPayloadNode = aPayloadNode;
@@ -873,6 +884,9 @@ public final class AS4Handler implements Closeable
           final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
           if (StringHelper.hasNoText (sAsyncResponseURL))
             throw new IllegalStateException ("No asynchronous response URL present!");
+
+          if (s_aLogger.isDebugEnabled ())
+            s_aLogger.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
           // invoke client with new document
           final BasicAS4Sender aSender = new BasicAS4Sender ();

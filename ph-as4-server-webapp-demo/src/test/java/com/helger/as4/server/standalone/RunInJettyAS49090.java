@@ -18,13 +18,16 @@ package com.helger.as4.server.standalone;
 
 import com.helger.photon.jetty.JettyRunner;
 
-public class RunInJettyAS49090
+/**
+ * Run this AS4 server locally using Jetty on port 9090 in / context.
+ *
+ * @author Philip Helger
+ */
+public final class RunInJettyAS49090
 {
-
   public static void main (final String [] args) throws Exception
   {
     final int nPort = 9090;
-    final JettyRunner s_aJetty = new JettyRunner (nPort, nPort + 1000);
-    s_aJetty.startServer ();
+    new JettyRunner (nPort, nPort + 1000).startServer ();
   }
 }

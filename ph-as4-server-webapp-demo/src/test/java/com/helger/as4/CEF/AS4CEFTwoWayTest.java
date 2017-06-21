@@ -43,8 +43,10 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // Avoid stopping server to receive async response
     ThreadHelper.sleepSeconds (2);
 
-    // assertTrue (sResponse.contains ("ConversationId"));
-    assertTrue (sResponse.contains (CONVERSATION_ID));
+    // Step one assertion for the sync part
+    assertTrue (sResponse.contains ("Receipt"));
+
+    // TODO needs step 2 assertion aka the usermessage that should come back
   }
 
   /**

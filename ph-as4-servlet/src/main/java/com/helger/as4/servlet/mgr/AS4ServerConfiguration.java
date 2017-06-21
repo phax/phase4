@@ -141,8 +141,15 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsLong (sFieldName, DEFAULT_RESET_MINUTES);
   }
 
+  @Nullable
   public static String getResponderAddress ()
   {
-    return getSettings ().getAsString ("server.address");
+    return getResponderAddress (null);
+  }
+
+  @Nullable
+  public static String getResponderAddress (@Nullable final String sDefault)
+  {
+    return getSettings ().getAsString ("server.address", sDefault);
   }
 }
