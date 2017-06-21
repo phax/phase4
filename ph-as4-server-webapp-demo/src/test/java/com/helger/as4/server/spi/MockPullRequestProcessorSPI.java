@@ -19,7 +19,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   {
     final PMode aPMode = ESENSPMode.createESENSPMode ("pullinitiator",
                                                       "pullresponder",
-                                                      AS4ServerConfiguration.getResponderAddress ("http://localhost:8080/as4"),
+                                                      AS4ServerConfiguration.getServerAddress (),
                                                       (i, r) -> "PullPMode");
     if (aSignalMessage.getPullRequest () != null)
     {

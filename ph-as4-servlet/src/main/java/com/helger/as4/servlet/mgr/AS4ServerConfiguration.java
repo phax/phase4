@@ -142,14 +142,8 @@ public final class AS4ServerConfiguration
   }
 
   @Nullable
-  public static String getResponderAddress ()
+  public static String getServerAddress ()
   {
-    return getResponderAddress (null);
-  }
-
-  @Nullable
-  public static String getResponderAddress (@Nullable final String sDefault)
-  {
-    return getSettings ().getAsString ("server.address", sDefault);
+    return getSettings ().getAsString ("server.address");
   }
 }

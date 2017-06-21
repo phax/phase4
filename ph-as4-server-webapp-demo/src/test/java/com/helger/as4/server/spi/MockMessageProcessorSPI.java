@@ -98,7 +98,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
     {
       return AS4MessageProcessorResult.createSuccess (aIncomingAttachments,
-                                                      AS4ServerConfiguration.getResponderAddress ());
+                                                      true ? "http://localhost:9090/as4"
+                                                           : AS4ServerConfiguration.getServerAddress ());
     }
 
     return AS4MessageProcessorResult.createSuccess (aIncomingAttachments, null);

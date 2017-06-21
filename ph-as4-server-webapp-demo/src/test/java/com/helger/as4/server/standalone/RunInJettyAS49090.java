@@ -16,6 +16,8 @@
  */
 package com.helger.as4.server.standalone;
 
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.system.SystemProperties;
 import com.helger.photon.jetty.JettyRunner;
 
 /**
@@ -27,6 +29,9 @@ public final class RunInJettyAS49090
 {
   public static void main (final String [] args) throws Exception
   {
+    SystemProperties.setPropertyValue ("as4.server.configfile",
+                                       new ClassPathResource ("test-as4-9090.properties").getAsFile ()
+                                                                                         .getAbsolutePath ());
     final int nPort = 9090;
     new JettyRunner (nPort, nPort + 1000).startServer ();
   }
