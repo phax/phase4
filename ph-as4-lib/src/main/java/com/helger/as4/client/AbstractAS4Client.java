@@ -23,18 +23,18 @@ import javax.annotation.Nullable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
-import org.w3c.dom.Document;
 
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
-import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.xml.microdom.IMicroDocument;
+import com.helger.xml.microdom.serialize.MicroWriter;
 
 public abstract class AbstractAS4Client extends BasicAS4Sender
 {
@@ -75,23 +75,19 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
   public abstract HttpEntity buildMessage () throws Exception;
 
   @Nullable
-  public <T> T sendMessage (@Nonnull final String sURL,
-                            @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+  <T> T sendMessage (@Nonnull final String sURL,
+                     @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
     final HttpEntity aRequestEntity = buildMessage ();
     return sendGenericMessage (sURL, aRequestEntity, aResponseHandler);
   }
 
   @Nullable
-  public Document sendMessageAndGetDOMDocument (@Nonnull final String sURL) throws Exception
-  {
-    return sendMessage (sURL, new ResponseHandlerXml ());
-  }
-
-  @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    return sendMessage (sURL, new ResponseHandlerMicroDom ());
+    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ());
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret));
+    return ret;
   }
 
   public File getKeyStoreFile ()

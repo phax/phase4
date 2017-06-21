@@ -53,8 +53,6 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Test implementation of {@link IAS4ServletMessageProcessorSPI}
  *
@@ -69,33 +67,34 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorSPI.class);
 
   @Nonnull
-  @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
-    s_aLogger.info ("Received AS4 message:");
     if (false)
-      s_aLogger.info ("  UserMessage: " + aUserMessage);
-    if (false)
-      s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
-    if (aIncomingAttachments != null)
     {
-      s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
-      for (final WSS4JAttachment x : aIncomingAttachments)
+      s_aLogger.info ("Received AS4 message:");
+      s_aLogger.info ("  UserMessage: " + aUserMessage);
+      s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
+      if (aIncomingAttachments != null)
       {
-        s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
-        if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
+        s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
+        for (final WSS4JAttachment x : aIncomingAttachments)
         {
-          final InputStream aIS = x.getSourceStream ();
-          s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
-          s_aLogger.info ("    Attachment Content: " + StreamHelper.getAllBytesAsString (aIS, x.getCharset ()));
+          s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
+          if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
+          {
+            final InputStream aIS = x.getSourceStream ();
+            s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
+            s_aLogger.info ("    Attachment Content: " + StreamHelper.getAllBytesAsString (aIS, x.getCharset ()));
+          }
         }
       }
     }
 
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
+
     {
       return AS4MessageProcessorResult.createSuccess (aIncomingAttachments,
                                                       true ? "http://localhost:9090/as4"

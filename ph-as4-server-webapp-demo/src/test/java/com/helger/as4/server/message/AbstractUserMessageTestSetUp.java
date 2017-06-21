@@ -46,8 +46,11 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4.client.AS4ClientHttpClientFactory;
+import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.server.AbstractClientSetUp;
@@ -61,6 +64,8 @@ import com.helger.commons.ws.TrustManagerTrustAll;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
+
   protected static AS4ResourceManager s_aResMgr;
   private CloseableHttpClient m_aClient;
   private final int m_nRetries;
@@ -165,6 +170,17 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
                                     final boolean bExpectSuccess,
                                     @Nullable final String sExecptedErrorCode) throws IOException
   {
+    AS4HttpDebug.debug ( () -> {
+      String ret = "TEST-SEND-START to " + aPost.getURI ();
+      try
+      {
+        ret += " - " + EntityUtils.toString (aHttpEntity);
+      }
+      catch (@SuppressWarnings ("unused") final IOException ex)
+      { /* ignore */ }
+      return ret;
+    });
+
     aPost.setEntity (aHttpEntity);
 
     try (final CloseableHttpResponse aHttpResponse = m_aClient.execute (aPost))
@@ -172,6 +188,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       final int nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
       final HttpEntity aEntity = aHttpResponse.getEntity ();
       final String sResponse = aEntity == null ? "" : EntityUtils.toString (aEntity);
+
+      AS4HttpDebug.debug ( () -> "TEST-SEND-RESPONSE received: " + sResponse);
 
       if (bExpectSuccess)
       {

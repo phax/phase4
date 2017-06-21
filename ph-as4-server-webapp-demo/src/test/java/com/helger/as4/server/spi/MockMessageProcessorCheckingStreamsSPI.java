@@ -51,8 +51,6 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-
 /**
  * Test implementation of {@link IAS4ServletMessageProcessorSPI}
  *
@@ -61,41 +59,43 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @IsSPIImplementation
 public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessageProcessorSPI
 {
+  public static final String ACTION_FAILURE = "Failure";
+
   private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
   @Nonnull
-  @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
-    s_aLogger.info ("Received AS4 message:");
     if (false)
+    {
+      s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
-    if (false)
       s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
 
-    // To test returning with a failure works as intended
-    if (aUserMessage.getCollaborationInfo ().getAction ().equals ("Failure"))
-    {
-      return AS4MessageProcessorResult.createFailure ("Failure");
-    }
-
-    if (aIncomingAttachments != null)
-    {
-      s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
-      for (final WSS4JAttachment x : aIncomingAttachments)
+      if (aIncomingAttachments != null)
       {
-        s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
-        if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
+        s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
+        for (final WSS4JAttachment x : aIncomingAttachments)
         {
-          final InputStream aIS = x.getSourceStream ();
-          s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
-          s_aLogger.info ("    Attachment Content: " +
-                          StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ()));
+          s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
+          if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
+          {
+            final InputStream aIS = x.getSourceStream ();
+            s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
+            s_aLogger.info ("    Attachment Content: " +
+                            StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ()));
+          }
         }
       }
+    }
+
+    // To test returning with a failure works as intended
+    if (aUserMessage.getCollaborationInfo ().getAction ().equals (ACTION_FAILURE))
+    {
+      return AS4MessageProcessorResult.createFailure (ACTION_FAILURE);
     }
     return AS4MessageProcessorResult.createSuccess ();
   }

@@ -52,6 +52,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.client.BasicAS4Sender;
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
@@ -123,7 +124,9 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
+import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
  * Process incoming AS4 transmissions.
@@ -893,8 +896,9 @@ public final class AS4Handler implements Closeable
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
                                                                       aAsyncResponseFactory.getHttpEntity (),
                                                                       new ResponseHandlerXml ());
-          // XXX
-          s_aLogger.info ("Received async: " + XMLWriter.getNodeAsString (aAsyncResponse));
+          AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
+                                     XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                new XMLWriterSettings ().setIndent (EXMLSerializeIndent.NONE)));
         });
       }
     }
@@ -1320,6 +1324,8 @@ public final class AS4Handler implements Closeable
                                                                        SAXException,
                                                                        WSSecurityException
   {
+    AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
+
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
 
     // Determine content type
@@ -1436,5 +1442,6 @@ public final class AS4Handler implements Closeable
       // Success, HTTP No Content
       aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
     }
+    AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
   }
 }

@@ -16,13 +16,17 @@
  */
 package com.helger.as4.client;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.util.EntityUtils;
 
+import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
@@ -40,7 +44,7 @@ public class BasicAS4Sender
 
   /**
    * @return The internal http client provider used in
-   *         {@link #sendMessage(String, ResponseHandler)}.
+   *         {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
    */
   @Nonnull
   protected IHttpClientProvider getHttpClientProvider ()
@@ -94,6 +98,17 @@ public class BasicAS4Sender
 
       // Overridable method
       customizeHttpPost (aPost);
+
+      AS4HttpDebug.debug ( () -> {
+        String ret = "SEND-START to " + sURL;
+        try
+        {
+          ret += " - " + EntityUtils.toString (aHttpEntity);
+        }
+        catch (final IOException ex)
+        { /* ignore */ }
+        return ret;
+      });
 
       return aClient.execute (aPost, aResponseHandler);
     }
