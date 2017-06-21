@@ -57,7 +57,8 @@ public final class AS4ServletMessageProcessorManager
     if (aProcessorSPIs.isEmpty ())
       s_aLogger.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
     else
-      s_aLogger.info ("Found " + aProcessorSPIs.size () + " AS4 message processors");
+      if (s_aLogger.isDebugEnabled ())
+        s_aLogger.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
 
     s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }
