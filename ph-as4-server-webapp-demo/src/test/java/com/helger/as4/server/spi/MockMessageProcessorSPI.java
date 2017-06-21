@@ -31,8 +31,10 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
+import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
+import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -69,6 +71,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   @Nonnull
   @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
+                                                          @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
@@ -91,6 +94,13 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
         }
       }
     }
+
+    if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
+    {
+      return AS4MessageProcessorResult.createSuccess (aIncomingAttachments,
+                                                      AS4ServerConfiguration.getResponderAddress ());
+    }
+
     return AS4MessageProcessorResult.createSuccess (aIncomingAttachments, null);
   }
 

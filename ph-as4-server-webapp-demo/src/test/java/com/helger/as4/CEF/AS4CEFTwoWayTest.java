@@ -8,10 +8,16 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.commons.thread.ThreadHelper;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
+  public AS4CEFTwoWayTest ()
+  {
+    // No retries
+    super (0);
+  }
+
   /**
    * Prerequisite:<br>
    * SMSH and RMSH are configured to exchange AS4 messages according to the
@@ -28,14 +34,16 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  @Ignore
   // TODO async has to work
   public void AS4_TA01 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("ConversationId"));
+    // Avoid stopping server to receive async response
+    ThreadHelper.sleepSeconds (2);
+
+    // assertTrue (sResponse.contains ("ConversationId"));
     assertTrue (sResponse.contains (CONVERSATION_ID));
   }
 
@@ -61,7 +69,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   // TODO async has to work
   public void AS4_TA02 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
 
     // Should only be called once

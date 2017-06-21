@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
@@ -53,6 +54,7 @@ import com.helger.as4.server.AbstractClientSetUp;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
@@ -61,6 +63,17 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
   protected static AS4ResourceManager s_aResMgr;
   private CloseableHttpClient m_aClient;
+  private final int m_nRetries;
+
+  protected AbstractUserMessageTestSetUp ()
+  {
+    this (2);
+  }
+
+  protected AbstractUserMessageTestSetUp (@Nonnegative final int nRetries)
+  {
+    m_nRetries = ValueEnforcer.isGE0 (nRetries, "Retries");
+  }
 
   @BeforeClass
   public static void startServer () throws Exception
@@ -90,12 +103,15 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       public HttpClientBuilder createHttpClientBuilder ()
       {
         final HttpClientBuilder ret = super.createHttpClientBuilder ();
-        // Retry always - independent if POST or GET
-        final HttpRequestRetryHandler aRH = (ex, exc, ctx) -> {
-          // retry 2 times (first exc==1!)
-          return exc <= 2;
-        };
-        ret.setRetryHandler (aRH);
+        if (m_nRetries > 0)
+        {
+          // Retry always - independent if POST or GET
+          final HttpRequestRetryHandler aRH = (ex, exc, ctx) -> {
+            // retry 2 times (first exc==1!)
+            return exc <= m_nRetries;
+          };
+          ret.setRetryHandler (aRH);
+        }
         return ret;
       }
 
@@ -105,7 +121,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       {
         return RequestConfig.custom ()
                             .setCookieSpec (CookieSpecs.DEFAULT)
-                            .setSocketTimeout (5_000)
+                            .setSocketTimeout (500_000)
                             .setConnectTimeout (5_000)
                             .setConnectionRequestTimeout (5_000)
                             .setCircularRedirectsAllowed (false)

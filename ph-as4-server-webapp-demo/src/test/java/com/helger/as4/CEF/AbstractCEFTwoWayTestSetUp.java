@@ -1,5 +1,6 @@
 package com.helger.as4.CEF;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -46,10 +47,19 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected ESOAPVersion m_eSOAPVersion;
   protected Node m_aPayload;
 
+  protected AbstractCEFTwoWayTestSetUp ()
+  {
+    super ();
+  }
+
+  protected AbstractCEFTwoWayTestSetUp (@Nonnegative final int nRetries)
+  {
+    super (nRetries);
+  }
+
   @Before
   public void setUpCEF ()
   {
-
     m_aESENSTwoWayPMode = ESENSPMode.createESENSPModeTwoWay (INITIATOR_ID,
                                                              RESPONDER_ID,
                                                              RESPONDER_ADDRESS,

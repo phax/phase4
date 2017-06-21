@@ -50,8 +50,10 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
-import com.helger.as4.client.AbstractAS4Client;
+import com.helger.as4.client.BasicAS4Sender;
 import com.helger.as4.error.EEbmsError;
+import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -113,6 +115,7 @@ import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.HTTPStringHelper;
+import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -120,6 +123,7 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.XMLWriter;
 
 /**
  * Process incoming AS4 transmissions.
@@ -132,6 +136,9 @@ public final class AS4Handler implements Closeable
   private static interface IAS4ResponseFactory
   {
     void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4Response aHttpResponse);
+
+    @Nonnull
+    HttpEntity getHttpEntity ();
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
@@ -148,6 +155,12 @@ public final class AS4Handler implements Closeable
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharsetObj ())
                    .setMimeType (eSOAPVersion.getMimeType ());
+    }
+
+    @Nonnull
+    public HttpEntity getHttpEntity ()
+    {
+      return new HttpXMLEntity (m_aDoc);
     }
   }
 
@@ -188,6 +201,12 @@ public final class AS4Handler implements Closeable
         }
       });
       aHttpResponse.setMimeType (MT_MULTIPART_RELATED);
+    }
+
+    @Nonnull
+    public HttpMimeMessageEntity getHttpEntity ()
+    {
+      return new HttpMimeMessageEntity (m_aMimeMsg);
     }
   }
 
@@ -468,7 +487,7 @@ public final class AS4Handler implements Closeable
         // Main processing
         AS4MessageProcessorResult aResult;
         if (bIsUserMessage)
-          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPayloadNode, aDecryptedAttachments);
+          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPMode, aPayloadNode, aDecryptedAttachments);
         else
           aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode);
 
@@ -855,15 +874,13 @@ public final class AS4Handler implements Closeable
           if (StringHelper.hasNoText (sAsyncResponseURL))
             throw new IllegalStateException ("No asynchronous response URL present!");
 
-          // TODO invoke client with new document
-          final AbstractAS4Client aClient = new AbstractAS4Client ()
-          {
-            @Override
-            public HttpEntity buildMessage () throws Exception
-            {
-              return null;
-            }
-          };
+          // invoke client with new document
+          final BasicAS4Sender aSender = new BasicAS4Sender ();
+          final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
+                                                                      aAsyncResponseFactory.getHttpEntity (),
+                                                                      new ResponseHandlerXml ());
+          // XXX
+          s_aLogger.info ("Received async: " + XMLWriter.getNodeAsString (aAsyncResponse));
         });
       }
     }

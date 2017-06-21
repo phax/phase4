@@ -41,6 +41,8 @@ public interface IAS4ServletMessageProcessorSPI
    *
    * @param aUserMessage
    *        The received user message. May not be <code>null</code>.
+   * @param aPMode
+   *        The source PMode used to parse the message.
    * @param aPayload
    *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
    *        <code>null</code>. May also be <code>null</code> if a MIME message
@@ -53,6 +55,7 @@ public interface IAS4ServletMessageProcessorSPI
    */
   @Nonnull
   AS4MessageProcessorResult processAS4UserMessage (@Nonnull Ebms3UserMessage aUserMessage,
+                                                   @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
 
@@ -73,10 +76,10 @@ public interface IAS4ServletMessageProcessorSPI
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
    * @param aPMode
-   *        PMode - only needed for pull-request.
+   *        PMode - only needed for pull-request. May be <code>null</code>.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
   AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
-                                                         @Nullable IPMode aPMode);
+                                                           @Nullable IPMode aPMode);
 }

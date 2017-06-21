@@ -23,30 +23,21 @@ import javax.annotation.Nullable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
 import org.w3c.dom.Document;
 
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.string.StringHelper;
-import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.HttpClientManager;
-import com.helger.httpclient.IHttpClientProvider;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.xml.microdom.IMicroDocument;
 
-public abstract class AbstractAS4Client
+public abstract class AbstractAS4Client extends BasicAS4Sender
 {
-  private IHttpClientProvider m_aHTTPClientProvider = new AS4ClientHttpClientFactory ();
-
   // Keystore attributes
   private File m_aKeyStoreFile;
   private String m_sKeyStoreType = "jks";
@@ -67,34 +58,6 @@ public abstract class AbstractAS4Client
   protected AbstractAS4Client ()
   {}
 
-  /**
-   * @return The internal http client provider used in
-   *         {@link #sendMessage(String, ResponseHandler)}.
-   */
-  @Nonnull
-  protected IHttpClientProvider getHttpClientProvider ()
-  {
-    return m_aHTTPClientProvider;
-  }
-
-  /**
-   * Set the HTTP client provider to be used. This is e.g. necessary when a
-   * custom SSL context is to be used. See {@link HttpClientFactory} as the
-   * default implementation of {@link IHttpClientProvider}. This provider is
-   * used in {@link #sendMessage(String, ResponseHandler)}.
-   *
-   * @param aHttpClientProvider
-   *        The HTTP client provider to be used. May not be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public AbstractAS4Client setHttpClientProvider (@Nonnull final IHttpClientProvider aHttpClientProvider)
-  {
-    ValueEnforcer.notNull (aHttpClientProvider, "HttpClientProvider");
-    m_aHTTPClientProvider = aHttpClientProvider;
-    return this;
-  }
-
   protected void _checkKeystoreAttributes ()
   {
     if (m_aKeyStoreFile == null)
@@ -107,39 +70,6 @@ public abstract class AbstractAS4Client
       throw new IllegalStateException ("Key store alias is configured.");
     if (StringHelper.hasNoText (m_sKeyStorePassword))
       throw new IllegalStateException ("Key store password is configured.");
-  }
-
-  /**
-   * Customize the HTTP Post before it is to be sent.
-   *
-   * @param aPost
-   *        The post to be modified. Never <code>null</code>.
-   */
-  @OverrideOnDemand
-  protected void customizeHttpPost (@Nonnull final HttpPost aPost)
-  {}
-
-  @Nullable
-  public <T> T sendGenericMessage (@Nonnull final String sURL,
-                                   @Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
-  {
-    ValueEnforcer.notEmpty (sURL, "URL");
-    ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-
-    try (final HttpClientManager aClient = new HttpClientManager (m_aHTTPClientProvider))
-    {
-      final HttpPost aPost = new HttpPost (sURL);
-      if (aHttpEntity instanceof HttpMimeMessageEntity)
-        MessageHelperMethods.moveMIMEHeadersToHTTPHeader (((HttpMimeMessageEntity) aHttpEntity).getMimeMessage (),
-                                                          aPost);
-      aPost.setEntity (aHttpEntity);
-
-      // Overridable method
-      customizeHttpPost (aPost);
-
-      return aClient.execute (aPost, aResponseHandler);
-    }
   }
 
   public abstract HttpEntity buildMessage () throws Exception;

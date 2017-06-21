@@ -66,6 +66,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   @Nonnull
   @SuppressFBWarnings ("DMI_INVOKING_TOSTRING_ON_ARRAY")
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
+                                                          @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
