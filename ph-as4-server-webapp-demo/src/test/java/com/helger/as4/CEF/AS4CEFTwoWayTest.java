@@ -9,6 +9,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.server.standalone.RunInJettyAS49090;
 import com.helger.commons.thread.ThreadHelper;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -52,7 +53,6 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  // TODO async has to work
   public void AS4_TA01 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
@@ -64,7 +64,16 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // Step one assertion for the sync part
     assertTrue (sResponse.contains ("Receipt"));
 
-    // TODO needs step 2 assertion aka the usermessage that should come back
+    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Should only be called once
+    final String aID = nList.item (0).getTextContent ();
+
+    // <item dt="2017-06-22T14:53:40.091"
+    // msgid="ph-as4@005ed363-bc75-4dab-a58e-d7bdc12b5699"
+    // pmodeid="APP_000000000011-APP_000000000011" />
+
+    assertTrue (MetaAS4Manager.getIncomingDuplicateMgr ().findFirst (x -> x.getMessageID ().equals (aID)) != null);
+    assertTrue (MetaAS4Manager.getIncomingDuplicateMgr ().getAll ().size () > 1);
   }
 
   /**
