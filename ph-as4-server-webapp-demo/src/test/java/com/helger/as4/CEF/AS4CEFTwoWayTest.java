@@ -2,12 +2,14 @@ package com.helger.as4.CEF;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.server.standalone.RunInJettyAS49090;
 import com.helger.commons.thread.ThreadHelper;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
@@ -17,6 +19,16 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // No retries
     super (0);
   }
+
+  @BeforeClass
+  public static void startServerNinety () throws Exception
+  {
+    RunInJettyAS49090.startNinetyServer ();
+  }
+
+  @AfterClass
+  public static void shutDownServerNinety () throws Exception
+  {}
 
   /**
    * Prerequisite:<br>
@@ -67,7 +79,6 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  @Ignore
   // TODO async has to work
   public void AS4_TA02 () throws Exception
   {
@@ -80,7 +91,5 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
-    assertTrue (sResponse.contains ("ConversationId"));
-    assertTrue (sResponse.contains (CONVERSATION_ID));
   }
 }

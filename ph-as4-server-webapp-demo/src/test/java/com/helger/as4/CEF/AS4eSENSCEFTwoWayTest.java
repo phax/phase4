@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.mail.internet.MimeMessage;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -66,7 +65,6 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    */
   // TODO test will only work if async is implemented so both a receipt and a
   // usermessage gets sent
-  @Ignore
   @Test
   public void eSENS_TA16 () throws Exception
   {

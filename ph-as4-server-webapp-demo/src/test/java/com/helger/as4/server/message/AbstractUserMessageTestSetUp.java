@@ -46,8 +46,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.as4.client.AS4ClientHttpClientFactory;
 import com.helger.as4.http.AS4HttpDebug;
@@ -64,8 +62,6 @@ import com.helger.commons.ws.TrustManagerTrustAll;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
-
   protected static AS4ResourceManager s_aResMgr;
   private CloseableHttpClient m_aClient;
   private final int m_nRetries;
