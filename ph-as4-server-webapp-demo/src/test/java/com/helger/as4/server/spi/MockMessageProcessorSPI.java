@@ -72,7 +72,9 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
   {
-    if (false)
+    // Needed for AS4_TA13 because we want to force a decompression failure and
+    // for that to happen the stream has to be read
+    if (true)
     {
       s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
