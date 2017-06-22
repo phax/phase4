@@ -11,6 +11,7 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.standalone.RunInJettyAS49090;
 import com.helger.commons.thread.ThreadHelper;
+import com.helger.photon.core.servlet.WebAppListener;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
@@ -23,12 +24,17 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   @BeforeClass
   public static void startServerNinety () throws Exception
   {
+    WebAppListener.setOnlyOneInstanceAllowed (false);
     RunInJettyAS49090.startNinetyServer ();
   }
 
   @AfterClass
   public static void shutDownServerNinety () throws Exception
-  {}
+  {
+    // reset
+    RunInJettyAS49090.stopNinetyServer ();
+    WebAppListener.setOnlyOneInstanceAllowed (true);
+  }
 
   /**
    * Prerequisite:<br>

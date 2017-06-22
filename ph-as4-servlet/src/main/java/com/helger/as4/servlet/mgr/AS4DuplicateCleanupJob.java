@@ -17,6 +17,7 @@
 package com.helger.as4.servlet.mgr;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 
@@ -63,21 +64,27 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
       s_aLogger.info ("Evicted " + aEvicted.size () + " incoming duplicate message IDs");
   }
 
+  private static final AtomicBoolean s_aScheduled = new AtomicBoolean (false);
+
   public static void scheduleMe (final long nDisposalMinutes)
   {
     if (nDisposalMinutes > 0)
     {
-      final ICommonsMap <String, Object> aJobDataMap = new CommonsHashMap <> ();
-      aJobDataMap.put (KEY_MINUTES, Long.valueOf (nDisposalMinutes));
-      GlobalQuartzScheduler.getInstance ()
-                           .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
-                                         "-" +
-                                         nDisposalMinutes,
-                                         JDK8TriggerBuilder.newTrigger ()
-                                                           .startNow ()
-                                                           .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever (5)),
-                                         AS4DuplicateCleanupJob.class,
-                                         aJobDataMap);
+      if (!s_aScheduled.getAndSet (true))
+      {
+        final ICommonsMap <String, Object> aJobDataMap = new CommonsHashMap <> ();
+        aJobDataMap.put (KEY_MINUTES, Long.valueOf (nDisposalMinutes));
+        GlobalQuartzScheduler.getInstance ()
+                             .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
+                                           "-" +
+                                           nDisposalMinutes,
+                                           JDK8TriggerBuilder.newTrigger ()
+                                                             .startNow ()
+                                                             .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever (5)),
+                                           AS4DuplicateCleanupJob.class,
+                                           aJobDataMap);
+      }
+      // else already scheduled
     }
     else
     {

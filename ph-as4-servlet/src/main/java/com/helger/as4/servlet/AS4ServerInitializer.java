@@ -16,52 +16,26 @@
  */
 package com.helger.as4.servlet;
 
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-
 import javax.annotation.concurrent.Immutable;
 import javax.xml.namespace.QName;
-
-import org.apache.wss4j.common.crypto.CryptoType;
-import org.apache.wss4j.common.crypto.CryptoType.TYPE;
-import org.apache.wss4j.common.ext.WSSecurityException;
 
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
-import com.helger.commons.collection.ArrayHelper;
 
 @Immutable
 public final class AS4ServerInitializer
 {
+  private static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+                                                          "Messaging");
+  private static final QName QNAME_SECURITY = new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+                                                         "Security");
+
   private AS4ServerInitializer ()
   {}
-
-  private static String _getMyAPP ()
-  {
-    return AS4ServerSettings.getDefaultResponderID ();
-  }
-
-  private static String _getMyKeyAlias ()
-  {
-    return AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ();
-  }
-
-  private static Certificate _getMyCert () throws WSSecurityException
-  {
-    final CryptoType aCT = new CryptoType (TYPE.ALIAS);
-    aCT.setAlias (AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ().getKeyAlias ());
-    final X509Certificate [] aCertList = AS4ServerSettings.getAS4CryptoFactory ()
-                                                          .getCrypto ()
-                                                          .getX509Certificates (aCT);
-    if (ArrayHelper.isEmpty (aCertList))
-      throw new IllegalStateException ("Failed to find my certificate from alias '" + aCT.getAlias () + "'");
-    return aCertList[0];
-  }
 
   /**
    * Call this method in your AS4 server to initialize everything that is
@@ -72,13 +46,11 @@ public final class AS4ServerInitializer
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
-    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
-                                                    "Messaging"),
-                                         new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+    if (!aReg.containsHeaderElementProcessor (QNAME_MESSAGING))
+      aReg.registerHeaderElementProcessor (QNAME_MESSAGING, new SOAPHeaderElementProcessorExtractEbms3Messaging ());
     // WSS4J must be after Ebms3Messaging handler!
-    aReg.registerHeaderElementProcessor (new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-                                                    "Security"),
-                                         new SOAPHeaderElementProcessorWSS4J ());
+    if (!aReg.containsHeaderElementProcessor (QNAME_SECURITY))
+      aReg.registerHeaderElementProcessor (QNAME_SECURITY, new SOAPHeaderElementProcessorWSS4J ());
 
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();

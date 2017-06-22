@@ -79,6 +79,11 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
     return m_aRWLock.readLocked ( () -> m_aMap.get (aQName));
   }
 
+  public boolean containsHeaderElementProcessor (@Nullable final QName aQName)
+  {
+    return aQName != null && m_aRWLock.readLocked ( () -> m_aMap.containsKey (aQName));
+  }
+
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()

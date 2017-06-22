@@ -16,9 +16,12 @@
  */
 package com.helger.as4.server.standalone;
 
+import java.io.IOException;
+
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.system.SystemProperties;
 import com.helger.photon.jetty.JettyRunner;
+import com.helger.photon.jetty.JettyStopper;
 
 /**
  * Run this AS4 server locally using Jetty on port 9090 in / context.
@@ -27,14 +30,20 @@ import com.helger.photon.jetty.JettyRunner;
  */
 public final class RunInJettyAS49090
 {
+  private static final int PORT = 9090;
+  private static final int STOP_PORT = PORT + 1000;
 
   public static void startNinetyServer () throws Exception
   {
     SystemProperties.setPropertyValue ("as4.server.configfile",
                                        new ClassPathResource ("test-as4-9090.properties").getAsFile ()
                                                                                          .getAbsolutePath ());
-    final int nPort = 9090;
-    new JettyRunner (nPort, nPort + 1000).startServer ();
+    new JettyRunner (PORT, STOP_PORT).startServer ();
+  }
+
+  public static void stopNinetyServer () throws IOException
+  {
+    new JettyStopper ().setStopPort (STOP_PORT).run ();
   }
 
   public static void main (final String [] args) throws Exception
