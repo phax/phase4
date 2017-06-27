@@ -31,6 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
@@ -67,24 +68,24 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   @Test
   public void testSendUnsignedMessageSuccess () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void testUserMessageSOAPBodyPayloadSignedSuccess () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
     assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
@@ -92,7 +93,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   @Test
   public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testSignedUserMessage (m_eSOAPVersion,
                                                                                                                               aPayload,
                                                                                                                               null,
@@ -100,8 +101,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                                                           null);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
     assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }
@@ -109,7 +110,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   @Test
   public void testUserMessageSOAPBodyPayloadEncryptSuccess () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
@@ -120,13 +121,13 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void testUserMessageSOAPBodyPayloadSignedEncryptedSuccess () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
@@ -137,8 +138,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
     assertTrue (sResponse.contains (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT.getAlgorithmURI ()));
     assertTrue (sResponse.contains (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT.getAlgorithmURI ()));
   }

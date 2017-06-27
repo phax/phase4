@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -76,7 +77,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     // Default Payload for testing
     try
     {
-      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
       m_aEbms3UserMessage.setPayloadInfo (CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null));
     }
     catch (final SAXException ex)
@@ -91,11 +92,11 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
                                                                                               null,
                                                                                               CAS4.DEFAULT_SERVICE_URL,
-                                                                                              "4321",
+                                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                               DEFAULT_PARTY_ID +
-                                                                                                      "12-" +
-                                                                                                      DEFAULT_PARTY_ID +
-                                                                                                      "12",
+                                                                                                                                "12-" +
+                                                                                                                                DEFAULT_PARTY_ID +
+                                                                                                                                "12",
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
@@ -163,10 +164,10 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
                                                                                               null,
                                                                                               CAS4.DEFAULT_SERVICE_URL,
-                                                                                              "4321",
+                                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                               aPMode.getInitiatorID () +
-                                                                                                      "-" +
-                                                                                                      aPMode.getResponderID (),
+                                                                                                                                "-" +
+                                                                                                                                aPMode.getResponderID (),
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     try
@@ -222,10 +223,10 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       m_aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
                                                                                                 null,
                                                                                                 CAS4.DEFAULT_SERVICE_URL,
-                                                                                                "4321",
+                                                                                                AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                                 aPMode.getInitiatorID () +
-                                                                                                        "-" +
-                                                                                                        aPMode.getResponderID (),
+                                                                                                                                  "-" +
+                                                                                                                                  aPMode.getResponderID (),
                                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT));
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,

@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.client.AS4ClientUserMessage;
@@ -57,8 +58,6 @@ public final class AS4ClientUserMessageTest
 
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
-
-  private static final String RECEIPT_CHECK = "Receipt";
 
   @BeforeClass
   public static void startServer () throws Exception
@@ -205,16 +204,16 @@ public final class AS4ClientUserMessageTest
   public void sendBodyPayloadMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendBodyPayloadSignedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -224,14 +223,14 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendBodyPayloadEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -240,14 +239,14 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendBodyPayloadSignedEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource ("PayloadXML.xml")));
+    aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -260,14 +259,15 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendOneAttachmentSignedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -277,14 +277,15 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendOneAttachmentEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -300,7 +301,8 @@ public final class AS4ClientUserMessageTest
   public void sendOneAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -313,16 +315,19 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendManyAttachmentSignedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+                           CMimeType.IMAGE_JPG);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -332,16 +337,19 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendManyAttachmentEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+                           CMimeType.IMAGE_JPG);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -350,16 +358,19 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendManyAttachmentSignedEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (), CMimeType.APPLICATION_XML);
-    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (), CMimeType.IMAGE_JPG);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
+                           CMimeType.APPLICATION_XML);
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
+                           CMimeType.IMAGE_JPG);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -372,20 +383,20 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendOneAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
                            CMimeType.IMAGE_JPG,
                            EAS4CompressionMode.GZIP);
 
@@ -400,20 +411,20 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test
   public void sendManyAttachmentCompressedSignedEncryptedMessageSuccessful () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml.xml").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource ("attachment/shortxml2.xml").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
                            CMimeType.APPLICATION_XML,
                            EAS4CompressionMode.GZIP);
-    aClient.addAttachment (new ClassPathResource ("attachment/test-img.jpg").getAsFile (),
+    aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
                            CMimeType.IMAGE_JPG,
                            EAS4CompressionMode.GZIP);
 
@@ -428,7 +439,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (RECEIPT_CHECK));
+    assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   @Test

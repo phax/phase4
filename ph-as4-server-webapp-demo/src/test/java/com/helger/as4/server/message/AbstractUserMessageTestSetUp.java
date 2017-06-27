@@ -47,6 +47,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.client.AS4ClientHttpClientFactory;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -145,7 +146,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   private HttpPost _createPost ()
   {
-    final String sURL = m_aSettings.getAsString ("server.address", "http://localhost:8080/as4");
+    final String sURL = m_aSettings.getAsString ("server.address", AS4TestConstants.DEFAULT_SERVER_ADDRESS);
 
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);

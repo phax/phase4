@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
@@ -67,7 +68,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
 
     // PullRequest
     final Ebms3PullRequest aEbms3PullRequest = new Ebms3PullRequest ();
-    aEbms3PullRequest.setMpc ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC");
+    aEbms3PullRequest.setMpc (AS4TestConstants.DEFAULT_MPC);
     aSignalMessage.setPullRequest (aEbms3PullRequest);
 
     aEbms3Messaging.setSignalMessage (aSignalMsgList);
@@ -98,17 +99,17 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     final String sPModeID;
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
 
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                              "MyServiceTypes",
-                                                                              "QuoteToCollect",
-                                                                              "4321",
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                              AS4TestConstants.TEST_SERVICE,
+                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                               sPModeID,
                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
 
@@ -160,14 +161,14 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     final String sPModeID;
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                              "MyServiceTypes",
-                                                                              "QuoteToCollect",
-                                                                              "4321",
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                              AS4TestConstants.TEST_SERVICE,
+                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                               sPModeID,
                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
 

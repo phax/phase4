@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.CreateUserMessage;
@@ -122,7 +123,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     {
       try
       {
-        aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+        aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
         // Add properties
         final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
@@ -132,10 +133,10 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
 
         final Ebms3CollaborationInfo aEbms3CollaborationInfo;
         final Ebms3PartyInfo aEbms3PartyInfo;
-        aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                  "MyServiceTypes",
+        aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                   MockPModeGenerator.SOAP11_SERVICE,
-                                                                                  "4321",
+                                                                                  AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                   "PullPMode",
                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT);
         aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,

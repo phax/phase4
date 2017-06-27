@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.error.EEbmsError;
@@ -60,11 +61,11 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode ("TestInitiator",
-                                                      "TestResponder",
+    final PMode aPMode = ESENSPMode.createESENSPMode (AS4TestConstants.TEST_INITIATOR,
+                                                      AS4TestConstants.TEST_RESPONDER,
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",
-                                                                                          "http://localhost:8080/as4"),
+                                                                                          AS4TestConstants.DEFAULT_SERVER_ADDRESS),
                                                       (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
@@ -91,8 +92,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
-    assertTrue (sResponse.contains ("UserMessage"));
-    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
+    assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
@@ -107,7 +108,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
@@ -115,8 +116,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
-    assertTrue (sResponse.contains ("UserMessage"));
-    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
+    assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
@@ -132,7 +133,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
@@ -140,8 +141,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
-    assertTrue (sResponse.contains ("UserMessage"));
-    assertFalse (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
+    assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
                                             .getSecurity ()
                                             .getX509SignatureAlgorithm ()
@@ -159,7 +160,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void testPModeWrongMPCLeg2 () throws Exception
   {
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
-    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     aEbms3UserMessage.setPayloadInfo (CreateUserMessage.createEbms3PayloadInfo (aPayload, null));
 
     // Default MessageInfo for testing
@@ -169,7 +170,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aEbms3UserMessage.setCollaborationInfo (CreateUserMessage.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
                                                                                             null,
                                                                                             CAS4.DEFAULT_SERVICE_URL,
-                                                                                            "4321",
+                                                                                            AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                             null,
                                                                                             MockEbmsHelper.DEFAULT_AGREEMENT));
 

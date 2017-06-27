@@ -38,6 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
@@ -71,6 +72,7 @@ import com.helger.xml.serialize.read.DOMReader;
 @RunWith (Parameterized.class)
 public final class UserMessageFailureForgeryTest extends AbstractUserMessageTestSetUp
 {
+
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
@@ -135,7 +137,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testPayloadChangedAfterSigningShouldFail () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
@@ -155,7 +157,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
                                                                     aResMgr));
@@ -193,7 +195,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
@@ -221,7 +223,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWithPayloadInfoOnly () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
@@ -240,7 +242,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testUserMessageWithBodyPayloadOnlyNoInfo () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
@@ -248,7 +250,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     Node aNext = XMLHelper.getFirstChildElementOfName (aDoc, "Envelope");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "Messaging");
-    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "UserMessage");
+    aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, AS4TestConstants.USERMESSAGE_ASSERTCHECK);
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.EBMS_NS, "PayloadInfo");
 
     aNext.getParentNode ().removeChild (aNext);
@@ -261,7 +263,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
                                                                     aResMgr));
@@ -289,7 +291,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4ResourceManager aResMgr = s_aResMgr;
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
                                                                     aResMgr));
@@ -306,7 +308,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
                                                                     aResMgr));
@@ -314,12 +316,12 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4ResourceManager aResMgr1 = s_aResMgr;
 
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
     final AS4ResourceManager aResMgr2 = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img2.jpg"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG2_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr2));
@@ -356,7 +358,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Test
   public void testForceFailureFromSPI () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
     sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_OTHER.getErrorCode ());

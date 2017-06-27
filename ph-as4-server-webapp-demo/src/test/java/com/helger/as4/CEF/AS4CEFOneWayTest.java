@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
@@ -83,16 +84,16 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                              "MyServiceTypes",
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
                                                                               MockPModeGenerator.SOAP11_SERVICE,
-                                                                              "4321",
+                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                               m_aESENSOneWayPMode.getID (),
                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
     aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                              INITIATOR_ID,
+                                                              AS4TestConstants.CEF_INITIATOR_ID,
                                                               CAS4.DEFAULT_RESPONDER_URL,
-                                                              RESPONDER_ID);
+                                                              AS4TestConstants.CEF_RESPONDER_ID);
 
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
     final String sTrackerIdentifier = "trackingidentifier";
@@ -129,7 +130,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc), true, null);
 
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   /**
@@ -151,8 +152,8 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   /**
@@ -186,7 +187,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA06 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -199,8 +200,8 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   /**
@@ -220,7 +221,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA07 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -251,7 +252,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA08 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -279,7 +280,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA09 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -311,7 +312,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA10 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                                       CMimeType.APPLICATION_XML,
                                                                                       EAS4CompressionMode.GZIP,
                                                                                       s_aResMgr);
@@ -355,7 +356,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA11 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                                       CMimeType.APPLICATION_XML,
                                                                                       EAS4CompressionMode.GZIP,
                                                                                       s_aResMgr);
@@ -420,7 +421,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA13 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                                       CMimeType.APPLICATION_XML,
                                                                                       EAS4CompressionMode.GZIP,
                                                                                       s_aResMgr);
@@ -469,7 +470,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA15 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -497,15 +498,15 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA16 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml2.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -532,7 +533,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA17 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -541,7 +542,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   /**
@@ -563,7 +564,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // Should return an error because the uncompressed attachment was signed and
     // not the compressed one
     ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     s_aResMgr));
@@ -571,7 +572,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
 
     aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -596,7 +597,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA19 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     s_aResMgr));
@@ -611,7 +612,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   /**
@@ -648,7 +649,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
@@ -673,7 +674,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   public void AS4_TA21 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -697,8 +698,8 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   /**
@@ -759,12 +760,12 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
     final AS4ResourceManager aResMgr1 = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test-img.jpg"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
@@ -775,7 +776,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                                           aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
 
   /**

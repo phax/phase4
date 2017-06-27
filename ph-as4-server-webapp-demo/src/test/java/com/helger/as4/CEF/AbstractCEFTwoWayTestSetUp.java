@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
@@ -38,11 +39,6 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTestSetUp
 {
-  protected static final String INITIATOR_ID = "CEF-Initiator";
-  protected static final String RESPONDER_ID = "CEF-Responder";
-  protected static final String RESPONDER_ADDRESS = "http://localhost:8080/as4";
-  protected static final String CONVERSATION_ID = "ConversationID";
-
   protected PMode m_aESENSTwoWayPMode;
   protected ESOAPVersion m_eSOAPVersion;
   protected Node m_aPayload;
@@ -60,15 +56,15 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   @Before
   public void setUpCEF ()
   {
-    m_aESENSTwoWayPMode = ESENSPMode.createESENSPModeTwoWay (INITIATOR_ID,
-                                                             RESPONDER_ID,
-                                                             RESPONDER_ADDRESS,
+    m_aESENSTwoWayPMode = ESENSPMode.createESENSPModeTwoWay (AS4TestConstants.CEF_INITIATOR_ID,
+                                                             AS4TestConstants.CEF_RESPONDER_ID,
+                                                             AS4TestConstants.DEFAULT_SERVER_ADDRESS,
                                                              IPModeIDProvider.DEFAULT_DYNAMIC);
 
     m_eSOAPVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
     try
     {
-      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     }
     catch (final SAXException ex)
     {
@@ -104,16 +100,16 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                              "MyServiceTypes",
+    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
                                                                               MockPModeGenerator.SOAP11_SERVICE,
-                                                                              CONVERSATION_ID,
+                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
                                                                               m_aESENSTwoWayPMode.getID (),
                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
     aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                              INITIATOR_ID,
+                                                              AS4TestConstants.CEF_INITIATOR_ID,
                                                               CAS4.DEFAULT_RESPONDER_URL,
-                                                              RESPONDER_ID);
+                                                              AS4TestConstants.CEF_RESPONDER_ID);
 
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 

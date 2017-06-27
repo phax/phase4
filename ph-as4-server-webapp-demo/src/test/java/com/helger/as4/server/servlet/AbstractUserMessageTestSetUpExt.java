@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -108,7 +109,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     Node aPayload = null;
     if (aAttachments == null)
     {
-      aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
       aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
     }
     else
@@ -117,10 +118,10 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     }
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                                           "MyServiceTypes",
-                                                                                                           "QuoteToCollect",
-                                                                                                           "4321",
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                                           AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                                           AS4TestConstants.TEST_SERVICE,
+                                                                                                           AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                                            sAnotherOrWrongPModeID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,

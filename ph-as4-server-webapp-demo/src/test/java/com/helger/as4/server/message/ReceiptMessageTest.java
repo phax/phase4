@@ -30,6 +30,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.holodeck.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
@@ -41,7 +42,6 @@ import com.helger.xml.serialize.read.DOMReader;
 @Category (IHolodeckTests.class)
 public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
 {
-  private static final String SOAP_BODY_PAYLOAD_XML = "SOAPBodyPayload.xml";
 
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
@@ -59,33 +59,33 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Test
   public void testReceiptReceivedFromUserMessageWithoutWSSecurity () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("UserMessage"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
   }
 
   @Test
   public void testReceiptReceivedFromUserMessageWithWSSecurity () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
   @Test
   public void testShouldNotGetAResponse () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (SOAP_BODY_PAYLOAD_XML));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 }

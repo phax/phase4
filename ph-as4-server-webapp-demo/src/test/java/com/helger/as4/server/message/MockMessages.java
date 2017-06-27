@@ -26,6 +26,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
@@ -131,10 +132,10 @@ public final class MockMessages
     {
       sPModeID = MockEbmsHelper.SOAP_11_PARTY_ID + "-" + MockEbmsHelper.SOAP_11_PARTY_ID;
 
-      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                "MyServiceTypes",
+      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                 MockPModeGenerator.SOAP11_SERVICE,
-                                                                                "4321",
+                                                                                AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                 sPModeID,
                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
       aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
@@ -146,10 +147,10 @@ public final class MockMessages
     {
       sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
 
-      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo ("NewPurchaseOrder",
-                                                                                "MyServiceTypes",
-                                                                                "QuoteToCollect",
-                                                                                "4321",
+      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                AS4TestConstants.TEST_SERVICE,
+                                                                                AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                 sPModeID,
                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
       aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
@@ -182,11 +183,11 @@ public final class MockMessages
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
-                                                                                                           "MyServiceTypes",
-                                                                                                           "QuoteToCollect",
-                                                                                                           "4321",
+                                                                                                           AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                                           AS4TestConstants.TEST_SERVICE,
+                                                                                                           AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                                            sPModeID +
-                                                                                                                   "x",
+                                                                                                                                                  "x",
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
     final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    "testt",

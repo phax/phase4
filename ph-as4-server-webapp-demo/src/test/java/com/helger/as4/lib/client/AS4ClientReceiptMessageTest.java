@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.client.AS4ClientReceiptMessage;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -90,7 +91,7 @@ public final class AS4ClientReceiptMessageTest
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     // Parse EBMS3 Messaging object
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
     _ensureInvalidState (aClient);
     aClient.setNonRepudiation (true);
@@ -103,7 +104,7 @@ public final class AS4ClientReceiptMessageTest
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
     // Parse EBMS3 Messaging object
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);

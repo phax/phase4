@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.message.MockMessages;
@@ -35,7 +36,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   @Test
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (ESOAPVersion.AS4_DEFAULT, aPayload, null);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
@@ -50,7 +51,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   @Test
   public void sendDuplicateMessageTestDisposalFeature () throws Exception
   {
-    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (ESOAPVersion.AS4_DEFAULT, aPayload, null);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);

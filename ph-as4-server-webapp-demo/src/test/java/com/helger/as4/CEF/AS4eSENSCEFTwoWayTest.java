@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -63,13 +64,11 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    * @throws Exception
    *         In case of error
    */
-  // TODO test will only work if async is implemented so both a receipt and a
-  // usermessage gets sent
   @Test
   public void eSENS_TA16 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/shortxml.xml"),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -82,8 +81,8 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
-    assertTrue (sResponse.contains ("Receipt"));
-    assertTrue (sResponse.contains ("NonRepudiationInformation"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
 
 }

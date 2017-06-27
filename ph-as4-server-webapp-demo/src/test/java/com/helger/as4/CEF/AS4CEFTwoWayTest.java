@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.as4.AS4TestConstants;
+import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.server.standalone.RunInJettyAS49090;
@@ -55,6 +57,12 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   @Test
   public void AS4_TA01 () throws Exception
   {
+    // Needs to be cleared so we can exactly see if two messages are contained
+    // in the duplicate manager
+    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    aIncomingDuplicateMgr.clearCache ();
+    assertTrue (aIncomingDuplicateMgr.containsNone ());
+
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
@@ -62,18 +70,14 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     ThreadHelper.sleepSeconds (2);
 
     // Step one assertion for the sync part
-    assertTrue (sResponse.contains ("Receipt"));
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
 
-    // <item dt="2017-06-22T14:53:40.091"
-    // msgid="ph-as4@005ed363-bc75-4dab-a58e-d7bdc12b5699"
-    // pmodeid="APP_000000000011-APP_000000000011" />
-
-    assertTrue (MetaAS4Manager.getIncomingDuplicateMgr ().findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (MetaAS4Manager.getIncomingDuplicateMgr ().getAll ().size () > 1);
+    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
+    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
   }
 
   /**
@@ -94,17 +98,26 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  // TODO async has to work
   public void AS4_TA02 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
-    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Needs to be cleared so we can exactly see if two messages are contained
+    // in the duplicate manager
+    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    aIncomingDuplicateMgr.clearCache ();
+    assertTrue (aIncomingDuplicateMgr.containsNone ());
 
-    // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
+    // Avoid stopping server to receive async response
+    ThreadHelper.sleepSeconds (2);
+
+    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Should only be called once
+    final String aID = nList.item (0).getTextContent ();
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
+    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
+    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
   }
 }

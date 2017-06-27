@@ -22,6 +22,7 @@ import org.apache.http.HttpEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.as4.AS4TestConstants;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreatePullRequestMessage;
@@ -42,13 +43,13 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             AS4TestConstants.DEFAULT_MPC,
                                                                              null)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
-    assertTrue (sResponse.contains ("UserMessage"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
   }
 
   @Test
@@ -116,13 +117,13 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             AS4TestConstants.DEFAULT_MPC,
                                                                              aAny)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
-    assertTrue (sResponse.contains ("UserMessage"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
   }
 
   @Test
@@ -137,13 +138,13 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
                                                                              MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC",
+                                                                             AS4TestConstants.DEFAULT_MPC,
                                                                              aAny)
                                                   .getAsSOAPDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
-    assertTrue (sResponse.contains ("UserMessage"));
+    assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
   }
 
   @Test
