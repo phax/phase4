@@ -70,6 +70,18 @@ public final class MessageHelperMethods
   }
 
   /**
+   * Create a new message info with a UUID as message ID and a reference to the
+   * previous message.
+   *
+   * @return Never <code>null</code>.
+   */
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nullable final String sRefToMessageID)
+  {
+    return createEbms3MessageInfo (createRandomMessageID (), sRefToMessageID);
+  }
+
+  /**
    * Create a new message info.
    *
    * @param sMessageID

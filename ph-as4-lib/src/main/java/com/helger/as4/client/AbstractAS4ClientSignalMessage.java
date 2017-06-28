@@ -16,28 +16,21 @@
  */
 package com.helger.as4.client;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.w3c.dom.Element;
-
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractAS4ClientSignalMessage extends AbstractAS4Client
 {
-  private final ICommonsList <Element> m_aAny = new CommonsArrayList<> ();
+  private List <Object> m_aAny = new ArrayList <> ();
 
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <Element> getAny ()
+  public List <Object> getAny ()
   {
-    return m_aAny.getClone ();
+    return m_aAny;
   }
 
-  public void setAny (@Nullable final Iterable <? extends Element> aAny)
+  public void setAny (final List <Object> aAny)
   {
-    m_aAny.setAll (aAny);
+    m_aAny = aAny;
   }
+
 }

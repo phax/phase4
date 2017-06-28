@@ -1,22 +1,57 @@
 package com.helger.as4.server.servlet;
 
+import static org.junit.Assert.assertTrue;
+
+import org.apache.http.HttpEntity;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
+import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.esens.ESENSPMode;
+import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.CreatePullRequestMessage;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.server.standalone.RunInJettyAS49090;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.soap.ESOAPVersion;
+import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.thread.ThreadHelper;
+import com.helger.photon.core.servlet.WebAppListener;
+import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
 {
   private PMode m_aPMode;
+
+  @BeforeClass
+  public static void startServerNinety () throws Exception
+  {
+    WebAppListener.setOnlyOneInstanceAllowed (false);
+    RunInJettyAS49090.startNinetyServer ();
+  }
+
+  @AfterClass
+  public static void shutDownServerNinety () throws Exception
+  {
+    // reset
+    RunInJettyAS49090.stopNinetyServer ();
+    WebAppListener.setOnlyOneInstanceAllowed (true);
+  }
 
   @Before
   public void createTwoWayPMode ()
@@ -45,6 +80,51 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
     // Delete old PMode since it is getting created in the ESENS createPMode
     MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
+
+  }
+
+  @Test
+  public void pullPushSuccess () throws Exception
+  {
+    // Needs to be cleared so we can exactly see if two messages are contained
+    // in the duplicate manager
+    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    aIncomingDuplicateMgr.clearCache ();
+    assertTrue (aIncomingDuplicateMgr.containsNone ());
+
+    // Depending on the payload a different EMEPBinding get chosen by
+    // @MockPullRequestProcessorSPI
+    // To Test the pull request part of the EMEPBinding
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PushPull.xml"));
+    final ICommonsList <Object> aAny = new CommonsArrayList <> ();
+    aAny.add (aPayload.getDocumentElement ());
+
+    // add the ID from the usermessage since its still one async message
+    // transfer
+    Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                       MessageHelperMethods.createEbms3MessageInfo (),
+                                                                       AS4TestConstants.DEFAULT_MPC,
+                                                                       aAny)
+                                            .getAsSOAPDocument ();
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    String sResponse = sendPlainMessage (aEntity, true, null);
+
+    // Avoid stopping server to receive async response
+    ThreadHelper.sleepSeconds (2);
+
+    aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null);
+    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+
+    // Step one assertion for final the sync part
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+
+    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Should only be called once
+    final String aID = nList.item (0).getTextContent ();
+
+    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
+    // Pull => First UserMsg, Push part second UserMsg
+    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
 
   }
 }

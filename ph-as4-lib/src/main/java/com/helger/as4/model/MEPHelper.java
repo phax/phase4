@@ -65,7 +65,6 @@ public final class MEPHelper
       {
         switch (eMEPBinding)
         {
-          // TODO subject to change if we implement pull
           case PUSH:
             return eMsgType.isReceiptOrError ();
           case PULL:

@@ -45,12 +45,14 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -124,13 +126,14 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     }
 
     // Must be a pull-request
-    if (aSignalMessage.getPullRequest ().getMpc ().equals (MPC_FAILURE))
+    final Ebms3PullRequest aPullRequest = aSignalMessage.getPullRequest ();
+    if (aPullRequest.getMpc ().equals (MPC_FAILURE))
     {
       return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
     }
 
     // Empty MPC
-    if (aSignalMessage.getPullRequest ().getMpc ().equals (MPC_EMPTY))
+    if (aPullRequest.getMpc ().equals (MPC_EMPTY))
     {
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
@@ -142,7 +145,12 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       // Add properties
       final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
-      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+      final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
+      // Can be RefToMsgId when MEP equals PUSH_PULL
+      final String sID = StringHelper.hasText (aMessageInfo.getRefToMessageId ()) ? aMessageInfo.getRefToMessageId ()
+                                                                                  : null;
+
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sID);
       final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
 
       final Ebms3CollaborationInfo aEbms3CollaborationInfo;
@@ -166,7 +174,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       aUserMessage.setMessageProperties (aEbms3MessageProperties);
       aUserMessage.setPartyInfo (aEbms3PartyInfo);
       aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
-      aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
+      aUserMessage.setMpc (aPullRequest.getMpc ());
 
       return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
     }
