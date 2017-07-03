@@ -173,7 +173,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       {
         ret += " - " + EntityUtils.toString (aHttpEntity);
       }
-      catch (@SuppressWarnings ("unused") final IOException ex)
+      catch (final IOException ex)
       { /* ignore */ }
       return ret;
     });
@@ -191,10 +191,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       if (bExpectSuccess)
       {
         assertTrue ("Server responded with an error.\nResponse: " + sResponse, !sResponse.contains ("Error"));
-        assertTrue ("Server responded with an error code (" +
-                    nStatusCode +
-                    "). Content:\n" +
-                    sResponse,
+        assertTrue ("Server responded with an error code (" + nStatusCode + "). Content:\n" + sResponse,
                     nStatusCode == HttpServletResponse.SC_OK || nStatusCode == HttpServletResponse.SC_NO_CONTENT);
       }
       else
