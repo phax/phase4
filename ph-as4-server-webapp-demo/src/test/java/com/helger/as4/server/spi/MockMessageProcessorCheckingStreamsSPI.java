@@ -17,7 +17,6 @@
 package com.helger.as4.server.spi;
 
 import java.io.InputStream;
-import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +34,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
+import com.helger.as4.servlet.IAS4MessageState;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -70,9 +70,11 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nullable final X509Certificate aCert)
+                                                          @Nonnull final IAS4MessageState aState)
   {
-    if (false)
+    // Needed for AS4_TA13 because we want to force a decompression failure and
+    // for that to happen the stream has to be read
+    if (true)
     {
       s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
@@ -106,7 +108,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   @Nonnull
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nonnull final IPMode aPmode,
-                                                                  @Nullable final X509Certificate aCert)
+                                                                  @Nonnull final IAS4MessageState aState)
   {
     if (aSignalMessage.getReceipt () != null)
     {
@@ -120,13 +122,11 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
-    final Node aPayload;
-
     if (aSignalMessage.getPullRequest ().getMpc ().equals ("TWO-SPI"))
     {
       try
       {
-        aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+        final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
         // Add properties
         final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
@@ -161,9 +161,9 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
 
         return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
       }
-      catch (final SAXException e)
+      catch (final SAXException ex)
       {
-        e.printStackTrace ();
+        s_aLogger.error ("Internal error", ex);
       }
     }
     return AS4SignalMessageProcessorResult.createSuccess ();

@@ -16,14 +16,9 @@
  */
 package com.helger.as4.server.spi;
 
-import java.io.InputStream;
-import java.security.cert.X509Certificate;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -36,6 +31,7 @@ import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
+import com.helger.as4.servlet.IAS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
@@ -52,9 +48,7 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.stream.StreamHelper;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xml.serialize.write.XMLWriter;
 
 /**
  * Test implementation of {@link IAS4ServletMessageProcessorSPI}
@@ -67,40 +61,14 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   public static final String MPC_FAILURE = "failure";
   public static final String MPC_EMPTY = "empty";
 
-  private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorSPI.class);
-
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nullable final X509Certificate aCert)
+                                                          @Nonnull final IAS4MessageState aState)
   {
-    // Needed for AS4_TA13 because we want to force a decompression failure and
-    // for that to happen the stream has to be read
-    if (true)
-    {
-      s_aLogger.info ("Received AS4 message:");
-      s_aLogger.info ("  UserMessage: " + aUserMessage);
-      s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
-      if (aIncomingAttachments != null)
-      {
-        s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
-        for (final WSS4JAttachment x : aIncomingAttachments)
-        {
-          s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
-          if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
-          {
-            final InputStream aIS = x.getSourceStream ();
-            s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
-            s_aLogger.info ("    Attachment Content: " + StreamHelper.getAllBytesAsString (aIS, x.getCharset ()));
-          }
-        }
-      }
-    }
-
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
-
     {
       return AS4MessageProcessorResult.createSuccess (aIncomingAttachments,
                                                       true ? "http://localhost:9090/as4"
@@ -113,7 +81,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   @Nonnull
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nullable final X509Certificate aCert)
+                                                                  @Nonnull final IAS4MessageState aState)
   {
     if (aSignalMessage.getReceipt () != null)
     {

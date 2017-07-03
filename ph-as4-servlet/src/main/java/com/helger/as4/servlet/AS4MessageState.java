@@ -65,6 +65,8 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "as4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "as4.pmode.effective.leg.number";
+  private static final String KEY_SOAP_CHECKED_SIGNATURE = "as4.soap.signature.checked";
+  private static final String KEY_SOAP_DECRYPTED = "as4.soap.decrypted";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -238,6 +240,34 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   public int getEffectivePModeLegNumber ()
   {
     return getAttributeAsInt (KEY_EFFECTIVE_PMODE_LEG_NUMBER, -1);
+  }
+
+  public void setSoapSignatureChecked (final boolean bSignatureChecked)
+  {
+    setAttribute (KEY_SOAP_CHECKED_SIGNATURE, bSignatureChecked);
+  }
+
+  /**
+   * @return <code>true</code> if the incoming message was signed and the
+   *         signature was verified, <code>false</code> otherwise.
+   */
+  public boolean isSoapSignatureChecked ()
+  {
+    return getAttributeAsBoolean (KEY_SOAP_CHECKED_SIGNATURE, false);
+  }
+
+  public void setSoapDecrypted (final boolean bDecrypted)
+  {
+    setAttribute (KEY_SOAP_DECRYPTED, bDecrypted);
+  }
+
+  /**
+   * @return <code>true</code> if the incoming message was decrypted,
+   *         <code>false</code> otherwise.
+   */
+  public boolean isSoapDecrypted ()
+  {
+    return getAttributeAsBoolean (KEY_SOAP_DECRYPTED, false);
   }
 
 }

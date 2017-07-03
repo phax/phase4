@@ -20,7 +20,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -459,6 +458,8 @@ public final class AS4Handler implements Closeable
    *        <code>null</code>.
    * @param aPMode
    *        PMode to be used - may be <code>null</code> for Receipt messages.
+   * @param aState
+   *        The current state. Never <code>null</<code></code>.
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
@@ -469,8 +470,8 @@ public final class AS4Handler implements Closeable
                             @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                             @Nullable final IPMode aPMode,
-                            @Nonnull final SPIInvocationResult aSPIResult,
-                            @Nullable final X509Certificate aCert)
+                            @Nonnull final IAS4MessageState aState,
+                            @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
     ValueEnforcer.isFalse (aUserMessage != null &&
@@ -492,9 +493,13 @@ public final class AS4Handler implements Closeable
         // Main processing
         AS4MessageProcessorResult aResult;
         if (bIsUserMessage)
-          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPMode, aPayloadNode, aDecryptedAttachments, aCert);
+          aResult = aProcessor.processAS4UserMessage (aUserMessage,
+                                                      aPMode,
+                                                      aPayloadNode,
+                                                      aDecryptedAttachments,
+                                                      aState);
         else
-          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode, aCert);
+          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode, aState);
 
         // Result returned?
         if (aResult == null)
@@ -826,8 +831,8 @@ public final class AS4Handler implements Closeable
                      aErrorMessages,
                      aResponseAttachments,
                      aPMode,
-                     aSPIResult,
-                     aState.getUsedCertificate ());
+                     aState,
+                     aSPIResult);
         if (aSPIResult.isFailure ())
           s_aLogger.warn ("Error invoking synchronous SPIs");
         else
@@ -857,8 +862,8 @@ public final class AS4Handler implements Closeable
                        aLocalErrorMessages,
                        aLocalResponseAttachments,
                        aPMode,
-                       aAsyncSPIResult,
-                       aState.getUsedCertificate ());
+                       aState,
+                       aAsyncSPIResult);
           if (aAsyncSPIResult.isSuccess ())
           {
             // SPI processing succeeded

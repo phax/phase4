@@ -65,6 +65,10 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nonnull
   AS4ResourceManager getResourceMgr ();
 
+  /**
+   * @return The parent of the usermessage/signal message for further
+   *         evaluation.
+   */
   @Nullable
   Ebms3Messaging getMessaging ();
 
@@ -129,6 +133,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   String getResponderID ();
 
+  /**
+   * @return The first provided certificate in the incoming message. May be
+   *         <code>null</code>. Usually the certificate that was used for
+   *         signing.
+   */
   @Nullable
   X509Certificate getUsedCertificate ();
 
@@ -139,6 +148,21 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   PModeLeg getEffectivePModeLeg ();
 
+  /**
+   * @return 1 or 2, depending on the used leg.
+   */
   @CheckForSigned
   int getEffectivePModeLegNumber ();
+
+  /**
+   * @return <code>true</code> if the incoming message was signed and the
+   *         signature was verified, <code>false</code> otherwise.
+   */
+  boolean isSoapSignatureChecked ();
+
+  /**
+   * @return <code>true</code> if the incoming message was decrypted,
+   *         <code>false</code> otherwise.
+   */
+  boolean isSoapDecrypted ();
 }

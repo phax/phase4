@@ -16,8 +16,6 @@
  */
 package com.helger.as4.servlet.spi;
 
-import java.security.cert.X509Certificate;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -25,6 +23,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.servlet.IAS4MessageState;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
@@ -53,6 +52,10 @@ public interface IAS4ServletMessageProcessorSPI
    * @param aIncomingAttachments
    *        Extracted, decrypted and verified attachments. May be
    *        <code>null</code> or empty if no attachments are present.
+   * @param aState
+   *        The current message state. Can be used to determine all other things
+   *        potentially necessary for processing the incoming message. Never
+   *        <code>null</code>.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
@@ -60,7 +63,7 @@ public interface IAS4ServletMessageProcessorSPI
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                   @Nullable final X509Certificate aCert);
+                                                   @Nonnull IAS4MessageState aState);
 
   /**
    * Process incoming AS4 signal message - pull-request and receipt.<br>
@@ -70,20 +73,16 @@ public interface IAS4ServletMessageProcessorSPI
    *
    * @param aSignalMessage
    *        The received signal message. May not be <code>null</code>.
-   * @param aPayload
-   *        Extracted, decrypted and verified payload node (e.g. SBDH). May be
-   *        <code>null</code>. May also be <code>null</code> if a MIME message
-   *        comes in - in that case the SOAP body MUST be empty and the main
-   *        payload can be found in aIncomingAttachments[0].
-   * @param aIncomingAttachments
-   *        Extracted, decrypted and verified attachments. May be
-   *        <code>null</code> or empty if no attachments are present.
    * @param aPMode
    *        PMode - only needed for pull-request. May be <code>null</code>.
+   * @param aState
+   *        The current message state. Can be used to determine all other things
+   *        potentially necessary for processing the incoming message. Never
+   *        <code>null</code>.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
   AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
-                                                           @Nullable final X509Certificate aCert);
+                                                           @Nonnull IAS4MessageState aState);
 }

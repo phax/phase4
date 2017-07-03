@@ -26,6 +26,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import org.apache.wss4j.common.util.AttachmentUtils;
+import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
@@ -195,23 +196,37 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // afterwards!
         aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
 
-        // Collect all used certificates
-        final ICommonsSet <X509Certificate> aCerts = new CommonsHashSet <> ();
-        aResults.forEach (x -> {
-          final X509Certificate aCert = (X509Certificate) x.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        // Collect all unique used certificates
+        final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
+        for (final WSSecurityEngineResult aResult : aResults)
+        {
+          final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
           if (aCert != null)
-            aCerts.add (aCert);
-        });
-        if (aCerts.size () > 1)
+            aCertSet.add (aCert);
+
+          final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
+          if (aAction != null)
+            switch (aAction.intValue ())
+            {
+              case WSConstants.SIGN:
+                aState.setSoapSignatureChecked (true);
+                break;
+              case WSConstants.ENCR:
+                aState.setSoapDecrypted (true);
+                break;
+            }
+
+        }
+        if (aCertSet.size () > 1)
         {
           if (GlobalDebug.isDebugMode ())
-            s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message: " + aCerts);
+            s_aLogger.warn ("Found " + aCertSet.size () + " different certificates in message: " + aCertSet);
           else
-            s_aLogger.warn ("Found " + aCerts.size () + " different certificates in message!");
+            s_aLogger.warn ("Found " + aCertSet.size () + " different certificates in message!");
         }
 
         // Remember in State
-        aState.setUsedCertificate (aCerts.getAtIndex (0));
+        aState.setUsedCertificate (aCertSet.getAtIndex (0));
         aState.setDecryptedSOAPDocument (aSOAPDoc);
 
         // Decrypting the Attachments
