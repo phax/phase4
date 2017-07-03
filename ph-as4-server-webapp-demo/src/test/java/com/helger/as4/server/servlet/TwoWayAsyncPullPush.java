@@ -95,7 +95,7 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI
     // To Test the pull request part of the EMEPBinding
-    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PushPull.xml"));
+    final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/PullPush.xml"));
     final ICommonsList <Object> aAny = new CommonsArrayList <> ();
     aAny.add (aPayload.getDocumentElement ());
 
@@ -112,15 +112,20 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
     // Avoid stopping server to receive async response
     ThreadHelper.sleepSeconds (2);
 
-    aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null);
-    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final NodeList nPullList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Should only be called once
+    final String aPullID = nPullList.item (0).getTextContent ();
 
-    // Step one assertion for final the sync part
-    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, aPullID);
+    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
+
+    // Step one assertion for final the sync part
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
 
     assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
     // Pull => First UserMsg, Push part second UserMsg

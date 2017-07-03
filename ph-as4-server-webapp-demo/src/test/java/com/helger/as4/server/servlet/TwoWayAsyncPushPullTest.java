@@ -106,6 +106,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
 
     assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
     assertTrue (aIncomingDuplicateMgr.getAll ().size () == 1);
+    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
 
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI
@@ -124,6 +125,10 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sResponse = sendPlainMessage (aEntity, true, null);
 
-    assertTrue (sResponse.contains (aID));
+    final NodeList nUserList = aDoc.getElementsByTagName ("eb:MessageId");
+    // Should only be called once
+    final String aUserMsgID = nUserList.item (0).getTextContent ();
+
+    assertTrue (sResponse.contains (aUserMsgID));
   }
 }

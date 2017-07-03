@@ -100,6 +100,35 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments) throws Exception
   {
+    return _modifyUserMessage (sAnotherOrWrongPModeID,
+                               sAnotherOrWrongPartyIdInitiator,
+                               sAnotherOrWrongPartyIdResponder,
+                               aEbms3MessageProperties,
+                               aAttachments,
+                               null);
+  }
+
+  /**
+   * Modify the standard user message to try special cases or provoke failure
+   * messages.
+   *
+   * @param sAnotherOrWrongPModeID
+   * @param sAnotherOrWrongPartyIdInitiator
+   * @param sAnotherOrWrongPartyIdResponder
+   * @param aEbms3MessageProperties
+   *        Default should be with _defaultProperties(), only if you do not want
+   *        them change this
+   * @return
+   * @throws Exception
+   */
+  @Nonnull
+  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
+                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                         @Nullable final String sReferenceToMessageID) throws Exception
+  {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID
                                                                                 : sAnotherOrWrongPartyIdInitiator;
@@ -117,7 +146,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
       aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, aAttachments);
     }
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sReferenceToMessageID);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
                                                                                                            AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                            AS4TestConstants.TEST_SERVICE,

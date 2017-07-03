@@ -49,7 +49,6 @@ import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.string.StringHelper;
 import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -130,11 +129,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
         final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
-        // Can be RefToMsgId when MEP equals PUSH_PULL
-        final String sID = StringHelper.hasText (aMessageInfo.getRefToMessageId ()) ? aMessageInfo.getRefToMessageId ()
-                                                                                    : null;
 
-        final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sID);
+        final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (aMessageInfo.getMessageId ());
         final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
 
         final Ebms3CollaborationInfo aEbms3CollaborationInfo;
