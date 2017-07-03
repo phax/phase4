@@ -16,6 +16,8 @@
  */
 package com.helger.as4.servlet.spi;
 
+import java.security.cert.X509Certificate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -57,7 +59,8 @@ public interface IAS4ServletMessageProcessorSPI
   AS4MessageProcessorResult processAS4UserMessage (@Nonnull Ebms3UserMessage aUserMessage,
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
-                                                   @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments);
+                                                   @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                   @Nullable final X509Certificate aCert);
 
   /**
    * Process incoming AS4 signal message - pull-request and receipt.<br>
@@ -81,5 +84,6 @@ public interface IAS4ServletMessageProcessorSPI
    */
   @Nonnull
   AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
-                                                           @Nullable IPMode aPMode);
+                                                           @Nullable IPMode aPMode,
+                                                           @Nullable final X509Certificate aCert);
 }

@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -468,7 +469,8 @@ public final class AS4Handler implements Closeable
                             @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                             @Nullable final IPMode aPMode,
-                            @Nonnull final SPIInvocationResult aSPIResult)
+                            @Nonnull final SPIInvocationResult aSPIResult,
+                            @Nullable final X509Certificate aCert)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
     ValueEnforcer.isFalse (aUserMessage != null &&
@@ -490,9 +492,9 @@ public final class AS4Handler implements Closeable
         // Main processing
         AS4MessageProcessorResult aResult;
         if (bIsUserMessage)
-          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPMode, aPayloadNode, aDecryptedAttachments);
+          aResult = aProcessor.processAS4UserMessage (aUserMessage, aPMode, aPayloadNode, aDecryptedAttachments, aCert);
         else
-          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode);
+          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode, aCert);
 
         // Result returned?
         if (aResult == null)
@@ -824,7 +826,8 @@ public final class AS4Handler implements Closeable
                      aErrorMessages,
                      aResponseAttachments,
                      aPMode,
-                     aSPIResult);
+                     aSPIResult,
+                     aState.getUsedCertificate ());
         if (aSPIResult.isFailure ())
           s_aLogger.warn ("Error invoking synchronous SPIs");
         else
@@ -854,7 +857,8 @@ public final class AS4Handler implements Closeable
                        aLocalErrorMessages,
                        aLocalResponseAttachments,
                        aPMode,
-                       aAsyncSPIResult);
+                       aAsyncSPIResult,
+                       aState.getUsedCertificate ());
           if (aAsyncSPIResult.isSuccess ())
           {
             // SPI processing succeeded

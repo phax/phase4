@@ -17,6 +17,7 @@
 package com.helger.as4.server.spi;
 
 import java.io.InputStream;
+import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -72,7 +73,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
-                                                          @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+                                                          @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                          @Nullable final X509Certificate aCert)
   {
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
@@ -110,7 +112,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
   @Nonnull
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                                  @Nullable final IPMode aPMode)
+                                                                  @Nullable final IPMode aPMode,
+                                                                  @Nullable final X509Certificate aCert)
   {
     if (aSignalMessage.getReceipt () != null)
     {

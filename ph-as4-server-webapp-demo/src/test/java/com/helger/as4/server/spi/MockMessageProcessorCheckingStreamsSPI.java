@@ -17,6 +17,7 @@
 package com.helger.as4.server.spi;
 
 import java.io.InputStream;
+import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,7 +69,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
-                                                          @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments)
+                                                          @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                          @Nullable final X509Certificate aCert)
   {
     if (false)
     {
@@ -103,7 +105,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
 
   @Nonnull
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final Ebms3SignalMessage aSignalMessage,
-                                                                  @Nonnull final IPMode aPmode)
+                                                                  @Nonnull final IPMode aPmode,
+                                                                  @Nullable final X509Certificate aCert)
   {
     if (aSignalMessage.getReceipt () != null)
     {
