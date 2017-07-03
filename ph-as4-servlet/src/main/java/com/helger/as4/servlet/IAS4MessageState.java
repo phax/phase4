@@ -72,6 +72,8 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   Ebms3Messaging getMessaging ();
 
+  // TODO document all public methods!
+
   @Nullable
   IPMode getPMode ();
 
@@ -149,7 +151,8 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   PModeLeg getEffectivePModeLeg ();
 
   /**
-   * @return 1 or 2, depending on the used leg.
+   * @return 1 or 2, depending on the used leg. Any other value indicates
+   *         "undefined".
    */
   @CheckForSigned
   int getEffectivePModeLegNumber ();
