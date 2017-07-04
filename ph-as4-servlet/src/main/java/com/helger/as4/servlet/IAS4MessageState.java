@@ -128,7 +128,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   }
 
   /**
-   * @param sID,
+   * @param sID
    *        id to look up
    * @return Looks up if a compression mode with the id sID exists and returns
    *         the mode else null
@@ -141,7 +141,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   }
 
   /**
-   * @param sID,
+   * @param sID
    *        the id to look up
    * @return looks up if the compressed attachment contain the given ID
    */

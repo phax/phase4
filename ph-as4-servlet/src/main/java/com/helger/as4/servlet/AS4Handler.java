@@ -474,8 +474,7 @@ public final class AS4Handler implements Closeable
                             @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aUserMessage != null &&
-                           aSignalMessage != null,
+    ValueEnforcer.isFalse (aUserMessage != null && aSignalMessage != null,
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aUserMessage != null;
@@ -684,9 +683,8 @@ public final class AS4Handler implements Closeable
                                                                              ? aState.getMessaging ()
                                                                                      .getSignalMessageAtIndex (0)
                                                                              : null;
-      aEbmsError = aEbmsSignalMessage != null && !aEbmsSignalMessage.getError ().isEmpty ()
-                                                                                            ? aEbmsSignalMessage.getErrorAtIndex (0)
-                                                                                            : null;
+      aEbmsError = aEbmsSignalMessage != null &&
+                   !aEbmsSignalMessage.getError ().isEmpty () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
 
       final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
                                                                            : null;
@@ -995,7 +993,7 @@ public final class AS4Handler implements Closeable
   }
 
   /**
-   * @param aSOAPDocument,
+   * @param aSOAPDocument
    *        document which should be used as source for the receipt to convert
    *        it to non-repudiation information. Can be <code>null</code>.
    * @param eSOAPVersion
@@ -1157,7 +1155,7 @@ public final class AS4Handler implements Closeable
    * @throws WSSecurityException
    *         if something in the signing process goes wrong from WSS4j
    */
-  private Document _signResponseIfNeeded (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+  private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                           @Nonnull final PModeLegSecurity aSecurity,
                                           @Nonnull final Document aDocToBeSigned,
                                           @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
