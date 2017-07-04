@@ -44,7 +44,7 @@ Das ist die zweite Zeile des Kommentars. Auch Zeilenumbrüche in einer Note werd
     <cac:OrderReference>
       <!--  Die Auftragsreferenz:  -->
       <!--  Order reference:  -->
-      <cbc:ID>1234567890</cbc:ID>
+      <cbc:ID>Z01</cbc:ID>
     </cac:OrderReference>
     <cac:AccountingSupplierParty>
       <!--  Die Lieferantennummer/Kreditorennummer:  -->
@@ -79,7 +79,7 @@ Das ist die zweite Zeile des Kommentars. Auch Zeilenumbrüche in einer Note werd
           <!--
  The following email address(es) is/are used to send automated emails to: 
 -->
-          <cbc:ElectronicMail>test@example.org</cbc:ElectronicMail>
+          <cbc:ElectronicMail>martin.bayerl@brz.gv.at</cbc:ElectronicMail>
         </cac:Contact>
         <cac:Person>
           <cbc:FirstName>Max</cbc:FirstName>

@@ -995,18 +995,25 @@ public final class AS4Handler implements Closeable
   }
 
   /**
-   * @param aSOAPDocument
+   * @param aSOAPDocument,
+   *        document which should be used as source for the receipt to convert
+   *        it to non-repudiation information. Can be <code>null</code>.
    * @param eSOAPVersion
+   *        SOAPVersion which should be used
    * @param aEffectiveLeg
+   *        the leg that is used to determined, how the receipt should be build
    * @param aUserMessage
+   *        used if no non-repudiation information is needed, prints the
+   *        usermessage in receipt. Can be <code>null</code>.
    * @param aResponseAttachments
+   *        that should be sent back if needed. Can be <code>null</code>.
    * @throws WSSecurityException
    */
-  private IAS4ResponseFactory _createReceiptMessage (final Document aSOAPDocument,
-                                                     final ESOAPVersion eSOAPVersion,
-                                                     final PModeLeg aEffectiveLeg,
-                                                     final Ebms3UserMessage aUserMessage,
-                                                     final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
+  private IAS4ResponseFactory _createReceiptMessage (@Nullable final Document aSOAPDocument,
+                                                     @Nonnull final ESOAPVersion eSOAPVersion,
+                                                     @Nonnull final PModeLeg aEffectiveLeg,
+                                                     @Nullable final Ebms3UserMessage aUserMessage,
+                                                     @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
     final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
                                                                                          aUserMessage,
@@ -1136,13 +1143,19 @@ public final class AS4Handler implements Closeable
    * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
    * will be signed, else the message will be returned as it is.
    *
-   * @param m_aResMgr
    * @param aResponseAttachments
+   *        attachment that are added
    * @param aSecurity
+   *        the Security part of the PMode, needed to determine if and how the
+   *        message should be signed
    * @param aDocToBeSigned
+   *        the message that should be signed
    * @param eSOAPVersion
-   * @return
+   *        SOAPVersion that is used
+   * @return returns the signed response or just the input document if no
+   *         X509SignatureAlgorithm and no X509SignatureHashFunction was set.
    * @throws WSSecurityException
+   *         if something in the signing process goes wrong from WSS4j
    */
   private Document _signResponseIfNeeded (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                           @Nonnull final PModeLegSecurity aSecurity,
@@ -1319,6 +1332,12 @@ public final class AS4Handler implements Closeable
       throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
+  /**
+   * @param aHttpServletRequest
+   *        the current request
+   * @return the InputStream of the HttpServletRequest
+   * @throws IOException
+   */
   @Nonnull
   private static InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
   {

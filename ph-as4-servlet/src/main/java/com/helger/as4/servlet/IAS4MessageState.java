@@ -72,11 +72,16 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   Ebms3Messaging getMessaging ();
 
-  // TODO document all public methods!
-
+  /**
+   * @return the PMode that is used with the current message
+   */
   @Nullable
   IPMode getPMode ();
 
+  /**
+   * @return has saved the original attachment, can be encrypted or not depends
+   *         if encryption is used or not
+   */
   @Nullable
   ICommonsList <WSS4JAttachment> getOriginalAttachments ();
 
@@ -86,6 +91,10 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
     return aAttachments != null && aAttachments.isNotEmpty ();
   }
 
+  /**
+   * @return get the decrypted SOAP document, only the entire document no
+   *         attachment
+   */
   @Nullable
   Document getDecryptedSOAPDocument ();
 
@@ -94,6 +103,10 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
     return getDecryptedSOAPDocument () != null;
   }
 
+  /**
+   * @return getting decrypted attachment, if there were encrypted attachments
+   *         to begin with
+   */
   @Nullable
   ICommonsList <WSS4JAttachment> getDecryptedAttachments ();
 
@@ -103,6 +116,9 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
     return aAttachments != null && aAttachments.isNotEmpty ();
   }
 
+  /**
+   * @return IDs from all compressed attachments and/or payload
+   */
   @Nullable
   ICommonsMap <String, EAS4CompressionMode> getCompressedAttachmentIDs ();
 
@@ -111,6 +127,12 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
     return getCompressedAttachmentIDs () != null;
   }
 
+  /**
+   * @param sID,
+   *        id to look up
+   * @return Looks up if a compression mode with the id sID exists and returns
+   *         the mode else null
+   */
   @Nullable
   default EAS4CompressionMode getAttachmentCompressionMode (@Nullable final String sID)
   {
@@ -118,20 +140,39 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
     return aIDs == null ? null : aIDs.get (sID);
   }
 
+  /**
+   * @param sID,
+   *        the id to look up
+   * @return looks up if the compressed attachment contain the given ID
+   */
   default boolean containsCompressedAttachmentID (@Nullable final String sID)
   {
     final ICommonsMap <String, EAS4CompressionMode> aIDs = getCompressedAttachmentIDs ();
     return aIDs != null && aIDs.containsKey (sID);
   }
 
+  /**
+   * @return the MPC that is used in the current message exchange
+   */
   @Nullable
   IMPC getMPC ();
 
+  /**
+   * @return true if a payload in the soap body is present, else false
+   */
   boolean isSoapBodyPayloadPresent ();
 
+  /**
+   * @return initiator set in the usermessage if the incoming message is a
+   *         usermessage
+   */
   @Nullable
   String getInitiatorID ();
 
+  /**
+   * @return responder set in the usermessage if the incoming message is a
+   *         usermessage
+   */
   @Nullable
   String getResponderID ();
 

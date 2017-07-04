@@ -133,7 +133,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceManager aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));

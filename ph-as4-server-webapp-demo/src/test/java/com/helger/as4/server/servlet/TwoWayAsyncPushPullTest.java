@@ -105,7 +105,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     final String aID = nList.item (0).getTextContent ();
 
     assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 1);
+    assertTrue (aIncomingDuplicateMgr.getCountOfMessages () == 1);
     assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
 
     // Depending on the payload a different EMEPBinding get chosen by

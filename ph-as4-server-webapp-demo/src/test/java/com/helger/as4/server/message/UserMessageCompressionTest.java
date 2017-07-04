@@ -69,7 +69,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageWithCompressedAttachmentSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -87,7 +87,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageWithCompressedSignedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -111,7 +111,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageCompressedEncrpytedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
@@ -131,7 +131,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   public void testUserMessageCompressedSignedEncrpytedSuccessful () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));

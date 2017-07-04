@@ -23,14 +23,18 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
+import com.helger.as4.crypto.ECryptoAlgorithmSign;
+import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.CreatePullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.server.spi.MockMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -41,11 +45,22 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void sendPullRequestSuccess () throws Exception
   {
-    final Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
-                                                                             MessageHelperMethods.createEbms3MessageInfo (),
-                                                                             AS4TestConstants.DEFAULT_MPC,
-                                                                             null)
-                                                  .getAsSOAPDocument ();
+    Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                       MessageHelperMethods.createEbms3MessageInfo (),
+                                                                       AS4TestConstants.DEFAULT_MPC,
+                                                                       null)
+                                            .getAsSOAPDocument ();
+
+    final SignedMessageCreator aCreator = new SignedMessageCreator ();
+    final boolean bMustUnderstand = true;
+    aDoc = aCreator.createSignedMessage (aDoc,
+                                         ESOAPVersion.AS4_DEFAULT,
+                                         null,
+                                         new AS4ResourceManager (),
+                                         bMustUnderstand,
+                                         ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                         ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
@@ -66,6 +81,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                                              sFailure,
                                                                              null)
                                                   .getAsSOAPDocument ();
+
     final HttpEntity aEntity = new HttpXMLEntity (aDoc);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }

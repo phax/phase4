@@ -26,6 +26,16 @@ import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messagi
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
 
+/**
+ * This class contains the init method for the AS4Server. Registering alle
+ * Processors that are currently used
+ * {@link SOAPHeaderElementProcessorExtractEbms3Messaging} and
+ * {@link SOAPHeaderElementProcessorWSS4J}. Also a {@link MetaAS4Manager}
+ * instance gets provided for the server to use. The duplicate cleanup job will
+ * also be started.
+ *
+ * @author bayerlma
+ */
 @Immutable
 public final class AS4ServerInitializer
 {
