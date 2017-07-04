@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
@@ -55,7 +56,12 @@ public class AS4Response extends UnifiedResponse
                                 @Nullable final Throwable t)
   {
     s_aLogger.error ("HTTP " + nStatusCode + ": " + sMsg, t);
-    setContentAndCharset (sMsg, StandardCharsets.UTF_8);
+
+    String sBody = sMsg;
+    if (t != null)
+      sBody += "\nTechnical details:\n" + StackTraceHelper.getStackAsString (t);
+
+    setContentAndCharset (sBody, StandardCharsets.UTF_8);
     setMimeType (CMimeType.TEXT_PLAIN);
     setStatus (nStatusCode);
   }
