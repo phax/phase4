@@ -87,12 +87,15 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     // exists and then uses leg2
     PModeLeg aPModeLeg = aPMode.getLeg1 ();
     final Ebms3Messaging aMessage = aState.getMessaging ();
-    if (aMessage != null)
-      if (aMessage.getUserMessageAtIndex (0) != null)
-        if (StringHelper.hasText (aMessage.getUserMessageAtIndex (0).getMessageInfo ().getRefToMessageId ()))
-        {
-          aPModeLeg = aPMode.getLeg2 ();
-        }
+    Ebms3UserMessage aUserMessage = null;
+    if (aMessage != null && aMessage.hasUserMessageEntries ())
+    {
+      aUserMessage = aMessage.getUserMessageAtIndex (0);
+      if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
+      {
+        aPModeLeg = aPMode.getLeg2 ();
+      }
+    }
 
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg.getSecurity () != null)
@@ -145,30 +148,33 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           s_aLogger.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
 
-      final Ebms3UserMessage aUserMessage = aState.getMessaging ().getUserMessage ().get (0);
-      final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
-
-      // Check if Attachment IDs are the same
-      for (int i = 0; i < aAttachments.size (); i++)
+      // Check attachment validity only if a PartInfo element is available
+      if (aUserMessage != null)
       {
-        String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
-        sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
+        final boolean bBodyPayloadPresent = aState.isSoapBodyPayloadPresent ();
 
-        // Add +1 because the payload has index 0
-        final String sHref = aUserMessage.getPayloadInfo ()
-                                         .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
-                                         .getHref ();
-        if (!sHref.contains (sAttachmentId))
+        // Check if Attachment IDs are the same
+        for (int i = 0; i < aAttachments.size (); i++)
         {
-          s_aLogger.info ("Error processing the Attachments, the attachment '" +
-                          sHref +
-                          "' is not valid with what is specified in the usermessage ('" +
-                          sAttachmentId +
-                          "')");
+          String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
+          sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
 
-          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+          // Add +1 because the payload has index 0
+          final String sHref = aUserMessage.getPayloadInfo ()
+                                           .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
+                                           .getHref ();
+          if (!sHref.contains (sAttachmentId))
+          {
+            s_aLogger.info ("Error processing the Attachments, the attachment '" +
+                            sHref +
+                            "' is not valid with what is specified in the usermessage ('" +
+                            sAttachmentId +
+                            "')");
 
-          return ESuccess.FAILURE;
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+
+            return ESuccess.FAILURE;
+          }
         }
       }
 
