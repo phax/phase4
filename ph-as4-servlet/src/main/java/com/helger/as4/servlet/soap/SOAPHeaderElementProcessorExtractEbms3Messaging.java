@@ -491,11 +491,17 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         for (final IAS4ServletPullRequestProcessorSPI aProcessor : AS4ServletPullRequestProcessorManager.getAllProcessors ())
         {
           aPMode = aProcessor.processAS4UserMessage (aSignalMessage);
-          if (aPMode == null)
+          if (aPMode != null)
           {
-            aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
-            return ESuccess.FAILURE;
+            s_aLogger.info ("Found P-Mode " + aPMode.getID () + " for signal message " + aSignalMessage);
+            break;
           }
+        }
+
+        if (aPMode == null)
+        {
+          aErrorList.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsError (aLocale));
+          return ESuccess.FAILURE;
         }
       }
       else
