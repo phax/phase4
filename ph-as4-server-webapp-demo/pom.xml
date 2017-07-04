@@ -26,7 +26,7 @@
   </parent>
   <artifactId>ph-as4-server-webapp-demo</artifactId>
   <packaging>war</packaging>
-  <name>ph-as4-serve-webapp-demo</name>
+  <name>ph-as4-server-webapp-demo</name>
   <description>AS4 server - Demo web application</description>
   <url>https://github.com/phax/ph-as4/ph-as4-server-webapp-demo</url>
   <inceptionYear>2015</inceptionYear>
