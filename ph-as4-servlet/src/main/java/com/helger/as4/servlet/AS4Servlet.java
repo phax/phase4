@@ -25,8 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.helger.http.EHTTPMethod;
 import com.helger.http.EHTTPVersion;
 import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
-import com.helger.photon.security.CSecurity;
-import com.helger.photon.security.login.ELoginResult;
 import com.helger.photon.security.login.LoggedInUserManager;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -78,28 +76,23 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   {
     final AS4Response aHttpResponse = (AS4Response) aUnifiedResponse;
 
-    // XXX By default login in admin user; why do we need a logged-in user?
-    final ELoginResult e = LoggedInUserManager.getInstance ().loginUser (CSecurity.USER_ADMINISTRATOR_LOGIN,
-                                                                         CSecurity.USER_ADMINISTRATOR_PASSWORD);
-    assert e.isSuccess () : "Login failed: " + e.toString ();
-
     try (final AS4Handler aHandler = new AS4Handler ())
     {
       aHandler.handleRequest (aRequestScope, aHttpResponse);
     }
     catch (final BadRequestException ex)
     {
-      aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST, ex.getMessage (), ex.getCause ());
+      // Logged inside
+      aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST,
+                                      "Bad Request: " + ex.getMessage (),
+                                      ex.getCause ());
     }
     catch (final Throwable t)
     {
+      // Logged inside
       aHttpResponse.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                                       "Internal error processing AS4 request",
                                       t);
-    }
-    finally
-    {
-      LoggedInUserManager.getInstance ().logoutCurrentUser ();
     }
   }
 }
