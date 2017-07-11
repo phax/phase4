@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<StandardBusinessDocument xmlns="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <StandardBusinessDocumentHeader>
+    <HeaderVersion>1.0</HeaderVersion>
+    <Sender>
+      <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
+    </Sender>
+    <Receiver>
+      <Identifier Authority="iso6523-actorid-upis">9915:test</Identifier>
+    </Receiver>
+    <DocumentIdentification>
+      <Standard>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2</Standard>
+      <TypeVersion>2.1</TypeVersion>
+      <InstanceIdentifier>123123</InstanceIdentifier>
+      <Type>Invoice</Type>
+      <CreationDateAndTime>2013-02-19T05:10:10Z</CreationDateAndTime>
+    </DocumentIdentification>
+    <BusinessScope>
+      <Scope>
+        <Type>DOCUMENTID</Type>
+        <InstanceIdentifier>urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1</InstanceIdentifier>
+      </Scope>
+      <Scope>
+        <Type>PROCESSID</Type>
+        <InstanceIdentifier>urn:www.cenbii.eu:profile:bii04:ver2.0</InstanceIdentifier>
+      </Scope>
+    </BusinessScope>
+  </StandardBusinessDocumentHeader>
+  <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver2.0</cbc:ProfileID>
+    <cbc:ID>AS4-EXAMPLE-SERVER-INVOICE</cbc:ID>
+    <cbc:IssueDate>2017-01-01</cbc:IssueDate>
+    <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+    <cbc:Note>Das ist ein globaler Kommentar zur Rechnung.</cbc:Note>
+    <cbc:Note>
+Das ist die zweite Zeile des Kommentars. Auch Zeilenumbrüche in einer Note werden berücksichtigt.
+</cbc:Note>
+    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+    <cac:OrderReference>
+      <cbc:ID>Z01</cbc:ID>
+    </cac:OrderReference>
+    <cac:AccountingSupplierParty>
+      <cbc:CustomerAssignedAccountID>11011011</cbc:CustomerAssignedAccountID>
+      <cac:Party>
+        <cac:PartyName>
+          <cbc:Name>Mustermann GmbH</cbc:Name>
+        </cac:PartyName>
+        <cac:PostalAddress>
+          <cbc:StreetName>Hauptstraße</cbc:StreetName>
+          <cbc:BuildingNumber>10</cbc:BuildingNumber>
+          <cbc:CityName>Graz</cbc:CityName>
+          <cbc:PostalZone>8010</cbc:PostalZone>
+          <cac:Country>
+            <cbc:IdentificationCode>AT</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:PostalAddress>
+        <cac:PartyTaxScheme>
+          <cbc:CompanyID>ATU13585627</cbc:CompanyID>
+          <cac:TaxScheme>
+            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:PartyTaxScheme>
+        <cac:Contact>
+          <cbc:Telephone>1234 567890</cbc:Telephone>
+          <cbc:ElectronicMail>test@example.org</cbc:ElectronicMail>
+        </cac:Contact>
+        <cac:Person>
+          <cbc:FirstName>Max</cbc:FirstName>
+          <cbc:FamilyName>Mustermann</cbc:FamilyName>
+        </cac:Person>
+      </cac:Party>
+    </cac:AccountingSupplierParty>
+    <cac:AccountingCustomerParty>
+      <cbc:SupplierAssignedAccountID>149</cbc:SupplierAssignedAccountID>
+      <cac:Party>
+        <cac:PartyName>
+          <cbc:Name>BRZ GmbH</cbc:Name>
+        </cac:PartyName>
+        <cac:PostalAddress>
+          <cbc:StreetName>Hintere Zollamtsstraße</cbc:StreetName>
+          <cbc:BuildingNumber>4</cbc:BuildingNumber>
+          <cbc:CityName>Wien</cbc:CityName>
+          <cbc:PostalZone>1030</cbc:PostalZone>
+          <cac:Country>
+            <cbc:IdentificationCode>AT</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:PostalAddress>
+        <cac:PartyTaxScheme>
+          <cbc:CompanyID>ATU 378 664 03</cbc:CompanyID>
+          <cac:TaxScheme>
+            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:PartyTaxScheme>
+        <cac:Contact>
+          <cbc:Telephone>+43 / 1 / 78 56 789</cbc:Telephone>
+          <cbc:ElectronicMail>support-erb@brz.gv.at; info@brz.gv.at</cbc:ElectronicMail>
+        </cac:Contact>
+        <cac:Person>
+          <cbc:FirstName>Maxime</cbc:FirstName>
+          <cbc:FamilyName>Musterfrau</cbc:FamilyName>
+        </cac:Person>
+      </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:Delivery>
+      <cbc:ActualDeliveryDate>2012-11-18</cbc:ActualDeliveryDate>
+      <cac:DeliveryLocation>
+        <cac:Address>
+          <cbc:StreetName>Hintere Zollamtsstraße</cbc:StreetName>
+          <cbc:BuildingNumber>4</cbc:BuildingNumber>
+          <cbc:CityName>Wien</cbc:CityName>
+          <cbc:PostalZone>1030</cbc:PostalZone>
+          <cac:Country>
+            <cbc:IdentificationCode>AT</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:Address>
+      </cac:DeliveryLocation>
+    </cac:Delivery>
+    <cac:PaymentMeans>
+      <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
+      <cbc:PaymentDueDate>2017-12-31</cbc:PaymentDueDate>
+      <cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
+      <cbc:InstructionNote>Sofort fällig</cbc:InstructionNote>
+      <cac:PayeeFinancialAccount>
+        <cbc:ID schemeID="IBAN">AT611904300234573201</cbc:ID>
+        <cac:FinancialInstitutionBranch>
+          <cac:FinancialInstitution>
+            <cbc:ID schemeID="BIC">TUVTAT21</cbc:ID>
+          </cac:FinancialInstitution>
+        </cac:FinancialInstitutionBranch>
+      </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    <cac:PaymentTerms>
+      <cbc:ID>1</cbc:ID>
+      <cbc:Note>
+3% Skonto bei Zahlung in 5 Tagen/3% discount when paid in 5 days
+</cbc:Note>
+      <cbc:SettlementDiscountPercent>3.00</cbc:SettlementDiscountPercent>
+      <cac:SettlementPeriod>
+        <cbc:StartDate>2017-01-01</cbc:StartDate>
+        <cbc:EndDate>2017-12-30</cbc:EndDate>
+      </cac:SettlementPeriod>
+    </cac:PaymentTerms>
+    <cac:AllowanceCharge>
+      <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+      <cbc:Amount currencyID="EUR">14.50</cbc:Amount>
+      <cac:TaxCategory>
+        <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">AA</cbc:ID>
+        <cbc:Percent>20</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:AllowanceCharge>
+    <cac:AllowanceCharge>
+      <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+      <cbc:Amount currencyID="EUR">0.13</cbc:Amount>
+      <cac:TaxCategory>
+        <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">AA</cbc:ID>
+        <cbc:Percent>20</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:AllowanceCharge>
+    <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">30</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="EUR">150</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">30</cbc:TaxAmount>
+        <cac:TaxCategory>
+          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+          <cbc:Percent>20</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+      <cbc:LineExtensionAmount currencyID="EUR">135.63</cbc:LineExtensionAmount>
+      <cbc:TaxExclusiveAmount currencyID="EUR">135.63</cbc:TaxExclusiveAmount>
+      <cbc:TaxInclusiveAmount currencyID="EUR">162.76</cbc:TaxInclusiveAmount>
+      <cbc:PayableAmount currencyID="EUR">180</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    <cac:InvoiceLine>
+      <cbc:ID>1</cbc:ID>
+      <cbc:InvoicedQuantity unitCode="LH">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR">135.63</cbc:LineExtensionAmount>
+      <cac:OrderLineReference>
+        <cbc:LineID>10</cbc:LineID>
+      </cac:OrderLineReference>
+      <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+          <cbc:TaxableAmount currencyID="EUR">135.63</cbc:TaxableAmount>
+          <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
+          <cac:TaxCategory>
+            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
+            <cbc:Percent>20</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:TaxCategory>
+        </cac:TaxSubtotal>
+      </cac:TaxTotal>
+      <cac:Item>
+        <cbc:Description>Abrechnung</cbc:Description>
+        <cbc:Name>Abrechnung</cbc:Name>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">1085.00</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="LH">8</cbc:BaseQuantity>
+      </cac:Price>
+    </cac:InvoiceLine>
+  </Invoice>
+</StandardBusinessDocument>
