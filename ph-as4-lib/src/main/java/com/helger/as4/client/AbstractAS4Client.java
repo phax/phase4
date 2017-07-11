@@ -37,6 +37,7 @@ import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.function.ISupplier;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
@@ -65,6 +66,14 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     public HttpEntity getHttpEntity ()
     {
       return m_aHttpEntity;
+    }
+
+    @Override
+    public String toString ()
+    {
+      return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
+                                         .append ("HttpEntity", m_aHttpEntity)
+                                         .getToString ();
     }
   }
 
@@ -95,6 +104,14 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     public boolean hasResponse ()
     {
       return m_aResponse != null;
+    }
+
+    @Override
+    public String toString ()
+    {
+      return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
+                                         .append ("Response", m_aResponse)
+                                         .getToString ();
     }
   }
 

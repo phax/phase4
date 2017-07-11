@@ -57,16 +57,16 @@ import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.keystore.KeyStoreHelper;
 
-public final class WatchDirSBDH
+public final class DropFolderUserMessage
 {
   private static final IIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   private static final IPeppolURLProvider UP = PeppolURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
-  private static final Logger s_aLogger = LoggerFactory.getLogger (WatchDirSBDH.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (DropFolderUserMessage.class);
   private static WatchDir s_aWatch;
 
-  private WatchDirSBDH ()
+  private DropFolderUserMessage ()
   {}
 
   @Nonnull
@@ -166,7 +166,9 @@ public final class WatchDirSBDH
 
             final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                new ResponseHandlerByteArray ());
-            s_aLogger.info ("Successfully transmitted document for '" +
+            s_aLogger.info ("Successfully transmitted document with message ID '" +
+                            aResponseEntity.getMessageID () +
+                            "' for '" +
                             aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                             "' to '" +
                             W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()) +

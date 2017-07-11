@@ -100,7 +100,7 @@ public final class AS4WebAppListener extends WebAppListener
                                      false);
 
     HttpDebugger.setEnabled (false);
-    WatchDirSBDH.init ();
+    DropFolderUserMessage.init ();
 
     s_aLogger.info ("AS4 server started");
   }
@@ -108,7 +108,7 @@ public final class AS4WebAppListener extends WebAppListener
   @Override
   protected void afterContextDestroyed (@Nonnull final ServletContext aSC)
   {
-    WatchDirSBDH.destroy ();
+    DropFolderUserMessage.destroy ();
 
     s_aLogger.info ("AS4 server destroyed");
   }
