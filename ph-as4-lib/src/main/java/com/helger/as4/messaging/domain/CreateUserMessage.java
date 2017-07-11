@@ -190,24 +190,20 @@ public final class CreateUserMessage
       {
         final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
         {
-          final Ebms3Property aMimeType = new Ebms3Property ();
-          aMimeType.setName (PART_PROPERTY_MIME_TYPE);
-          aMimeType.setValue (aAttachment.getUncompressedMimeType ());
-          aEbms3PartProperties.addProperty (aMimeType);
+          aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                                                      aAttachment.getUncompressedMimeType ()));
         }
         if (aAttachment.hasCharset ())
         {
-          final Ebms3Property aCharacterSet = new Ebms3Property ();
-          aCharacterSet.setName (PART_PROPERTY_CHARACTER_SET);
-          aCharacterSet.setValue (aAttachment.getCharset ().name ());
-          aEbms3PartProperties.addProperty (aCharacterSet);
+          aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                                                      aAttachment.getCharset ()
+                                                                                                 .name ()));
         }
         if (aAttachment.hasCompressionMode ())
         {
-          final Ebms3Property aCompressionType = new Ebms3Property ();
-          aCompressionType.setName (PART_PROPERTY_COMPRESSION_TYPE);
-          aCompressionType.setValue (aAttachment.getCompressionMode ().getMimeTypeAsString ());
-          aEbms3PartProperties.addProperty (aCompressionType);
+          aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_COMPRESSION_TYPE,
+                                                                                      aAttachment.getCompressionMode ()
+                                                                                                 .getMimeTypeAsString ()));
         }
 
         final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();

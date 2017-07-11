@@ -24,13 +24,19 @@ import com.helger.as4.client.AS4ClientUserMessage;
 import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.server.watchdir.WatchDir;
 import com.helger.as4.server.watchdir.WatchDir.EWatchDirAction;
 import com.helger.as4.server.watchdir.WatchDir.IWatchDirCallback;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.io.resource.FileSystemResource;
+import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.peppol.identifier.factory.IIdentifierFactory;
@@ -122,7 +128,7 @@ public final class WatchDirSBDH
 
             final AS4ClientUserMessage aClient = new AS4ClientUserMessage ();
             aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
-
+            // XXX
             // to send the message too
             aClient.setAction ("xxx");
             aClient.setServiceType ("xxx");
@@ -134,13 +140,19 @@ public final class WatchDirSBDH
                                                                                           .getName ()));
             aClient.setToRole (CAS4.DEFAULT_ROLE);
             aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
-            // XXX
-            aClient.setEbms3Properties (new CommonsArrayList <> ());
+
+            final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
+            aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"));
+            aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
+
+            aClient.setEbms3Properties (aEbms3Properties);
             aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
             // Keystore data
-            aClient.setKeyStoreResource (KeyStoreHelper.getResourceProvider ()
-                                                       .getReadableResource (aCP.getKeyStorePath ()));
+            IReadableResource aRes = new ClassPathResource (aCP.getKeyStorePath ());
+            if (!aRes.exists ())
+              aRes = new FileSystemResource (aCP.getKeyStorePath ());
+            aClient.setKeyStoreResource (aRes);
             aClient.setKeyStorePassword (aCP.getKeyStorePassword ());
             aClient.setKeyStoreType (aCP.getKeyStoreType ());
             aClient.setKeyStoreAlias (aCP.getKeyAlias ());

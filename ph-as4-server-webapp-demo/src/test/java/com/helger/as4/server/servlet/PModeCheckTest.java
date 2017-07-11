@@ -395,9 +395,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   @Nonnull
   private static Ebms3Property _createRandomProperty ()
   {
-    final Ebms3Property aRandomProperty = new Ebms3Property ();
-    aRandomProperty.setName ("randomname" + UUID.randomUUID ());
-    aRandomProperty.setValue ("randomvalue" + UUID.randomUUID ());
-    return aRandomProperty;
+    return MessageHelperMethods.createEbms3Property ("randomname" +
+                                                     UUID.randomUUID (),
+                                                     "randomvalue" + UUID.randomUUID ());
   }
 }

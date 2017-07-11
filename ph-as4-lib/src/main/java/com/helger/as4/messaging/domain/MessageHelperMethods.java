@@ -32,6 +32,7 @@ import org.apache.http.HttpMessage;
 import com.helger.as4.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -120,6 +121,14 @@ public final class MessageHelperMethods
     aDesc.setLang (aLocale.getLanguage ());
     aDesc.setValue (sText);
     return aDesc;
+  }
+
+  public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName, @Nonnull final String sValue)
+  {
+    final Ebms3Property aProp = new Ebms3Property ();
+    aProp.setName (sName);
+    aProp.setValue (sValue);
+    return aProp;
   }
 
   public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,

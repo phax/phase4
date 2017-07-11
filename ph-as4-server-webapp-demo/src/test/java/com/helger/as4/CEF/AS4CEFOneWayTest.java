@@ -114,10 +114,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
     final String sTrackerIdentifier = "trackingidentifier";
-    final Ebms3Property aProp = new Ebms3Property ();
-    aProp.setName (sTrackerIdentifier);
-    aProp.setValue ("tracker");
-    aEbms3MessageProperties.addProperty (aProp);
+    aEbms3MessageProperties.addProperty (MessageHelperMethods.createEbms3Property (sTrackerIdentifier, "tracker"));
 
     // Can not do a Property without Value (type) since type does not exist
     // final Ebms3Property aPropOnlyName = new Ebms3Property ();

@@ -154,7 +154,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       throw new IllegalStateException ("ToPartyID needs to be set");
 
     if (m_aEbms3Properties.isEmpty ())
-      throw new IllegalStateException ("finalRecipient and originalSender are mandatory properties");
+      throw new IllegalStateException ("Mandatory properties finalRecipient and originalSender are missing");
   }
 
   private void _setValuesWithPMode ()
