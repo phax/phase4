@@ -77,6 +77,7 @@ public final class AS4ServerSettings
     s_aPModeResolver = aPModeResolver;
   }
 
+  @Nonnull
   public static AS4CryptoFactory getAS4CryptoFactory ()
   {
     return s_aAS4CryptoFactory;
@@ -84,6 +85,7 @@ public final class AS4ServerSettings
 
   public static void setAS4CryptoFactory (@Nonnull final AS4CryptoFactory aAS4CryptoFactory)
   {
+    ValueEnforcer.notNull (aAS4CryptoFactory, "AS4CryptoFactory");
     s_aAS4CryptoFactory = aAS4CryptoFactory;
   }
 }
