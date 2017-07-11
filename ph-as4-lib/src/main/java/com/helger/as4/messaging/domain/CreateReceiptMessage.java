@@ -31,6 +31,7 @@ import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.ebms3header.MessagePartNRInformation;
 import com.helger.as4lib.ebms3header.NonRepudiationInformation;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
@@ -47,7 +48,7 @@ public final class CreateReceiptMessage
   @ReturnsMutableCopy
   private static ICommonsList <Node> _getAllReferences (@Nullable final Node aUserMessage)
   {
-    final ICommonsList <Node> aDSRefs = new CommonsArrayList<> ();
+    final ICommonsList <Node> aDSRefs = new CommonsArrayList <> ();
     Node aNext = XMLHelper.getFirstChildElementOfName (aUserMessage, "Envelope");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, "Header");
     aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.WSSE_NS, "Security");
@@ -67,6 +68,8 @@ public final class CreateReceiptMessage
    *
    * @param eSOAPVersion
    *        SOAP Version which should be used
+   * @param sMessageID
+   *        Message ID to use. May neither be <code>null</code> nor empty.
    * @param aEbms3UserMessage
    *        The received usermessage which should be responded too
    * @param aSOAPDocument
@@ -78,6 +81,7 @@ public final class CreateReceiptMessage
    */
   @Nonnull
   public static AS4ReceiptMessage createReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                        @Nonnull @Nonempty final String sMessageID,
                                                         @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                         @Nullable final Node aSOAPDocument,
                                                         @Nonnull final boolean bShouldUseNonRepudiation)
@@ -89,7 +93,7 @@ public final class CreateReceiptMessage
 
     // Message Info
     {
-      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
       if (aEbms3UserMessage != null)
         aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
       aSignalMessage.setMessageInfo (aEbms3MessageInfo);

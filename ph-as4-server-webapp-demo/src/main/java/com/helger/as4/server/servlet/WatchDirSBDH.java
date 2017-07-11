@@ -1,5 +1,6 @@
 package com.helger.as4.server.servlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.DirectoryStream;
@@ -17,10 +18,10 @@ import javax.naming.ldap.Rdn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
-import org.w3c.dom.Document;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.client.AS4ClientUserMessage;
+import com.helger.as4.client.AbstractAS4Client.SentMessage;
 import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -31,14 +32,15 @@ import com.helger.as4.server.watchdir.WatchDir.IWatchDirCallback;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.stream.StreamHelper;
-import com.helger.httpclient.response.ResponseHandlerXml;
+import com.helger.commons.timing.StopWatch;
+import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.identifier.factory.IIdentifierFactory;
 import com.helger.peppol.identifier.factory.PeppolIdentifierFactory;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
@@ -54,7 +56,6 @@ import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.keystore.KeyStoreHelper;
-import com.helger.xml.serialize.write.XMLWriter;
 
 public final class WatchDirSBDH
 {
@@ -77,17 +78,19 @@ public final class WatchDirSBDH
     throw new IllegalStateException ("Failed to get CN from '" + sPrincipal + "'");
   }
 
-  private static void _send (final Path aPath)
+  private static void _send (final Path aSendFile, final Path aIncomingDir)
   {
+    final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
-    s_aLogger.info ("Trying to send " + aPath.toString ());
+    s_aLogger.info ("Trying to send " + aSendFile.toString ());
     try
     {
       // Read generic SBD
-      final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ().read (Files.newInputStream (aPath));
+      final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ()
+                                                      .read (Files.newInputStream (aSendFile));
       if (aSBD == null)
       {
-        s_aLogger.error ("Failed to read " + aPath.toString () + " as SBDH document!");
+        s_aLogger.error ("Failed to read " + aSendFile.toString () + " as SBDH document!");
       }
       else
       {
@@ -95,7 +98,7 @@ public final class WatchDirSBDH
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
         if (aSBDH == null)
         {
-          s_aLogger.error ("Failed to read " + aPath.toString () + " as PEPPOL SBDH document!");
+          s_aLogger.error ("Failed to read " + aSendFile.toString () + " as PEPPOL SBDH document!");
         }
         else
         {
@@ -128,25 +131,6 @@ public final class WatchDirSBDH
 
             final AS4ClientUserMessage aClient = new AS4ClientUserMessage ();
             aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
-            // XXX
-            // to send the message too
-            aClient.setAction ("xxx");
-            aClient.setServiceType ("xxx");
-            aClient.setServiceValue ("xxx");
-            aClient.setConversationID ("xxx");
-            aClient.setAgreementRefValue ("xxx");
-            aClient.setFromRole (CAS4.DEFAULT_ROLE);
-            aClient.setFromPartyID (_getCN (((X509Certificate) aOurCert.getCertificate ()).getSubjectX500Principal ()
-                                                                                          .getName ()));
-            aClient.setToRole (CAS4.DEFAULT_ROLE);
-            aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
-
-            final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
-            aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"));
-            aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
-
-            aClient.setEbms3Properties (aEbms3Properties);
-            aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
             // Keystore data
             IReadableResource aRes = new ClassPathResource (aCP.getKeyStorePath ());
@@ -161,14 +145,46 @@ public final class WatchDirSBDH
             aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
             aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
 
-            final Document aResponseDoc = aClient.sendGenericMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                      aClient.buildMessage (),
-                                                                      new ResponseHandlerXml ());
-            s_aLogger.info ("Successfully transmitted document for " +
+            // XXX
+            // to send the message too
+            aClient.setAction ("xxx");
+            aClient.setServiceType ("xxx");
+            aClient.setServiceValue ("xxx");
+            aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
+            aClient.setAgreementRefValue ("xxx");
+
+            aClient.setFromRole (CAS4.DEFAULT_ROLE);
+            aClient.setFromPartyID (_getCN (((X509Certificate) aOurCert.getCertificate ()).getSubjectX500Principal ()
+                                                                                          .getName ()));
+            aClient.setToRole (CAS4.DEFAULT_ROLE);
+            aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
+            aClient.setEbms3Properties (new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+                                                                                                           aSBDH.getSenderValue ()),
+                                                                 MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                                                                           aSBDH.getReceiverValue ())));
+            aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
+
+            final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
+                                                                               new ResponseHandlerByteArray ());
+            s_aLogger.info ("Successfully transmitted document for '" +
                             aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
-                            " to " +
-                            W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()));
-            s_aLogger.info ("Response received:\n" + XMLWriter.getNodeAsString (aResponseDoc));
+                            "' to '" +
+                            W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()) +
+                            "' in " +
+                            aSW.stopAndGetMillis () +
+                            " ms");
+
+            if (aResponseEntity.hasResponse ())
+            {
+              final String sMessageID = aResponseEntity.getMessageID ();
+              final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
+              final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
+              if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
+                s_aLogger.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
+              else
+                s_aLogger.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
+            }
+
             bSuccess = true;
           }
         }
@@ -176,20 +192,21 @@ public final class WatchDirSBDH
     }
     catch (final Throwable t)
     {
-      s_aLogger.error ("Error sending " + aPath.toString (), t);
+      s_aLogger.error ("Error sending " + aSendFile.toString (), t);
     }
 
+    // After the exception handler!
     {
-      // Move to error directory
-      final Path aDest = aPath.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR).resolve (aPath.getFileName ());
+      // Move to done or error directory?
+      final Path aDest = aSendFile.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR)
+                                  .resolve (aSendFile.getFileName ());
       try
       {
-        Files.move (aPath, aDest);
+        Files.move (aSendFile, aDest);
       }
-      catch (final IOException e)
+      catch (final IOException ex)
       {
-        // TODO Auto-generated catch block
-        s_aLogger.error ("Error moving from '" + aPath.toString () + "' to '" + aDest + "'");
+        s_aLogger.error ("Error moving from '" + aSendFile.toString () + "' to '" + aDest + "'", ex);
       }
     }
   }
@@ -199,37 +216,45 @@ public final class WatchDirSBDH
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");
 
-    // Starting WatchDir
-    final IWatchDirCallback aCB = (eAction, aPath) -> {
-      s_aLogger.info ("WatchEvent " + eAction + " - " + aPath);
-      if (!eAction.equals (EWatchDirAction.DELETE) &&
-          aPath.toFile ().exists () &&
-          aPath.getFileName ().toString ().endsWith (".xml"))
-      {
-        _send (aPath);
-      }
-    };
+    final Path aOutgoingDir = Paths.get (AS4ServerConfiguration.getSettings ().getAsString ("server.directory.outgoing",
+                                                                                            "out"));
+    final Path aIncomingDir = Paths.get (AS4ServerConfiguration.getSettings ().getAsString ("server.directory.incoming",
+                                                                                            "in"));
 
-    final Path aDataDir = Paths.get (AS4ServerConfiguration.getSettings ().getAsString ("server.directory.outgoing",
-                                                                                        "out"));
     try
     {
-      Files.createDirectories (aDataDir.resolve (PATH_DONE));
-      Files.createDirectories (aDataDir.resolve (PATH_ERROR));
-      s_aWatch = WatchDir.createAsyncRunningWatchDir (aDataDir, false, aCB);
+      // Ensure directories are present
+      Files.createDirectories (aOutgoingDir.resolve (PATH_DONE));
+      Files.createDirectories (aOutgoingDir.resolve (PATH_ERROR));
+      Files.createDirectories (aIncomingDir);
 
-      // Do initially for all existing files
-      try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aDataDir,
-                                                                            x -> x.getFileName ()
+      // Start watching directory for changes
+      final IWatchDirCallback aCB = (eAction, aCurFile) -> {
+        if (s_aLogger.isDebugEnabled ())
+          s_aLogger.debug ("WatchEvent " + eAction + " - " + aCurFile);
+        if (!eAction.equals (EWatchDirAction.DELETE) &&
+            aCurFile.toFile ().isFile () &&
+            aCurFile.getFileName ().toString ().endsWith (".xml"))
+        {
+          _send (aCurFile, aIncomingDir);
+        }
+      };
+      s_aWatch = WatchDir.createAsyncRunningWatchDir (aOutgoingDir, false, aCB);
+
+      // Send initially for all existing files
+      try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
+                                                                            x -> x.toFile ().isFile () &&
+                                                                                 x.getFileName ()
                                                                                   .toString ()
                                                                                   .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
-          _send (aCur);
+          _send (aCur, aIncomingDir);
       }
     }
     catch (final IOException ex)
     {
+      // Checked to unchecked conversion
       throw new UncheckedIOException (ex);
     }
   }

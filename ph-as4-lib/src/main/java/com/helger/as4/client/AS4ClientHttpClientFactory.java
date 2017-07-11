@@ -16,6 +16,7 @@
  */
 package com.helger.as4.client;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
@@ -23,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.helger.as4.http.HttpClientRetryHandler;
+import com.helger.commons.ValueEnforcer;
 import com.helger.httpclient.HttpClientFactory;
 
 /**
@@ -32,12 +34,26 @@ import com.helger.httpclient.HttpClientFactory;
  */
 public class AS4ClientHttpClientFactory extends HttpClientFactory
 {
-  public AS4ClientHttpClientFactory ()
-  {}
+  public static final int DEFAULT_RETRIES = 3;
+  private int m_nRetries = DEFAULT_RETRIES;
 
   public AS4ClientHttpClientFactory (@Nullable final SSLContext aDefaultSSLContext)
   {
     super (aDefaultSSLContext);
+  }
+
+  @Nonnegative
+  public int getRetries ()
+  {
+    return m_nRetries;
+  }
+
+  @Nonnull
+  public AS4ClientHttpClientFactory setRetries (@Nonnegative final int nRetries)
+  {
+    ValueEnforcer.isGE0 (nRetries, "Retries");
+    m_nRetries = nRetries;
+    return this;
   }
 
   @Override
@@ -45,7 +61,7 @@ public class AS4ClientHttpClientFactory extends HttpClientFactory
   public HttpClientBuilder createHttpClientBuilder ()
   {
     final HttpClientBuilder ret = super.createHttpClientBuilder ();
-    ret.setRetryHandler (new HttpClientRetryHandler (3));
+    ret.setRetryHandler (new HttpClientRetryHandler (m_nRetries));
     return ret;
   }
 }

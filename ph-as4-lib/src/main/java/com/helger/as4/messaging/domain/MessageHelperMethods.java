@@ -36,6 +36,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.random.RandomHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
 import com.helger.http.HTTPStringHelper;
@@ -51,6 +52,13 @@ public final class MessageHelperMethods
 {
   private MessageHelperMethods ()
   {}
+
+  @Nonnull
+  @Nonempty
+  public static String createRandomConversationID ()
+  {
+    return CAS4.LIB_NAME + "@Conv" + RandomHelper.getRandom ().nextLong ();
+  }
 
   @Nonnull
   @Nonempty

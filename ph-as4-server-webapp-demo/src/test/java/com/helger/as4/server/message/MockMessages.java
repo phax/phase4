@@ -107,6 +107,7 @@ public final class MockMessages
                                              @Nullable final Document aUserMessage) throws DOMException
   {
     final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                     MessageHelperMethods.createRandomMessageID (),
                                                                      aEbms3UserMessage,
                                                                      aUserMessage,
                                                                      true)

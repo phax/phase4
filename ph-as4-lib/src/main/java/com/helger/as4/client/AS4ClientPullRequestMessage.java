@@ -18,7 +18,6 @@ package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
 
-import org.apache.http.HttpEntity;
 import org.w3c.dom.Document;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
@@ -63,16 +62,17 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public HttpEntity buildMessage () throws Exception
+  public BuiltMessage buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
+    final String sMessageID = createMessageID ();
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
 
     final AS4PullRequestMessage aPullRequest = CreatePullRequestMessage.createPullRequestMessage (getSOAPVersion (),
                                                                                                   aEbms3MessageInfo,
                                                                                                   m_sMPC,
-                                                                                                  getAny ());
+                                                                                                  getAllAny ());
 
     Document aDoc = aPullRequest.getAsSOAPDocument ();
 
@@ -94,7 +94,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new HttpXMLEntity (aDoc);
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
   }
 
   public String getMPC ()

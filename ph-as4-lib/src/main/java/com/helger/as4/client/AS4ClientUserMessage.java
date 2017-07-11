@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.HttpEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -189,7 +188,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   @Override
   @Nonnull
-  public HttpEntity buildMessage () throws Exception
+  public BuiltMessage buildMessage () throws Exception
   {
     // if pmode is set use attribute from pmode
     _setValuesWithPMode ();
@@ -204,9 +203,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
     // Create a new message ID for each build!
-    final String sMessageID = StringHelper.getConcatenatedOnDemand (getMessageIDPrefix (),
-                                                                    '@',
-                                                                    MessageHelperMethods.createRandomMessageID ());
+    final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
@@ -289,11 +286,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
     if (aMimeMsg != null)
     {
-      return new HttpMimeMessageEntity (aMimeMsg);
+      return new BuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
     }
 
     // Wrap SOAP XML
-    return new HttpXMLEntity (aDoc);
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
   }
 
   public Node getPayload ()
@@ -623,7 +620,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   public void setUseLeg1 (final boolean bUseLeg1)
   {
-    this.m_bUseLeg1 = bUseLeg1;
+    m_bUseLeg1 = bUseLeg1;
   }
 
   public PMode getPmode ()
@@ -641,7 +638,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   public void setPmode (final PMode aPmode)
   {
-    this.m_aPMode = aPmode;
+    m_aPMode = aPmode;
   }
-
 }

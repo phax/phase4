@@ -72,11 +72,13 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public HttpXMLEntity buildMessage () throws Exception
+  public BuiltMessage buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
+    final String sMessageID = createMessageID ();
     final AS4ReceiptMessage aReceiptMsg = CreateReceiptMessage.createReceiptMessage (getSOAPVersion (),
+                                                                                     sMessageID,
                                                                                      m_aEbms3UserMessage,
                                                                                      m_aSOAPDocument,
                                                                                      m_bNonRepudiation);
@@ -101,7 +103,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new HttpXMLEntity (aDoc);
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
   }
 
   /**

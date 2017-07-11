@@ -35,6 +35,7 @@ import com.helger.as4.client.AS4ClientUserMessage;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
@@ -96,7 +97,7 @@ public final class AS4ClientUserMessageTest
     aClient.setAction ("AnAction");
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");
-    aClient.setConversationID ("9898");
+    aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
     aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID (sSenderID);
@@ -162,7 +163,7 @@ public final class AS4ClientUserMessageTest
     _ensureInvalidState (aClient);
     aClient.setServiceValue ("OrderPaper");
     _ensureInvalidState (aClient);
-    aClient.setConversationID ("9898");
+    aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
     _ensureInvalidState (aClient);
     aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
     _ensureInvalidState (aClient);
@@ -449,9 +450,9 @@ public final class AS4ClientUserMessageTest
   public void buildMessageWithOwnPrefix () throws Exception
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
-    final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose";
-    aClient.setMessageIDPrefix (sMessageIDPrefix);
+    final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
+    aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
 
-    assertTrue (EntityUtils.toString (aClient.buildMessage ()).contains (sMessageIDPrefix));
+    assertTrue (EntityUtils.toString (aClient.buildMessage ().getHttpEntity ()).contains (sMessageIDPrefix));
   }
 }

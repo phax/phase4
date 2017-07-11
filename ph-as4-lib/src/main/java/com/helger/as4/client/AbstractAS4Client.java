@@ -27,11 +27,14 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.function.ISupplier;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
@@ -40,6 +43,61 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 
 public abstract class AbstractAS4Client extends BasicAS4Sender
 {
+  public static final class BuiltMessage
+  {
+    private final String m_sMessageID;
+    private final HttpEntity m_aHttpEntity;
+
+    public BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpEntity aHttpEntity)
+    {
+      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
+      m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
+    }
+
+    @Nonnull
+    @Nonempty
+    public String getMessageID ()
+    {
+      return m_sMessageID;
+    }
+
+    @Nonnull
+    public HttpEntity getHttpEntity ()
+    {
+      return m_aHttpEntity;
+    }
+  }
+
+  public static final class SentMessage <T>
+  {
+    private final String m_sMessageID;
+    private final T m_aResponse;
+
+    public SentMessage (@Nonnull @Nonempty final String sMessageID, @Nullable final T aResponse)
+    {
+      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
+      m_aResponse = aResponse;
+    }
+
+    @Nonnull
+    @Nonempty
+    public String getMessageID ()
+    {
+      return m_sMessageID;
+    }
+
+    @Nullable
+    public T getResponse ()
+    {
+      return m_aResponse;
+    }
+
+    public boolean hasResponse ()
+    {
+      return m_aResponse != null;
+    }
+  }
+
   public static final String DEFAULT_KEYSTORE_TYPE = "jks";
 
   // KeyStore attributes
@@ -56,7 +114,7 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
   private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
   // For Message Info
-  private String m_sMessageIDPrefix;
+  private ISupplier <String> m_aMessageIDFactory = () -> MessageHelperMethods.createRandomMessageID ();
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
@@ -94,20 +152,22 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     return new AS4CryptoFactory (aCryptoProps);
   }
 
-  public abstract HttpEntity buildMessage () throws Exception;
+  @OverrideOnDemand
+  public abstract BuiltMessage buildMessage () throws Exception;
 
-  @Nullable
-  <T> T sendMessage (@Nonnull final String sURL,
-                     @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+  @Nonnull
+  public <T> SentMessage <T> sendMessage (@Nonnull final String sURL,
+                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
-    final HttpEntity aRequestEntity = buildMessage ();
-    return sendGenericMessage (sURL, aRequestEntity, aResponseHandler);
+    final BuiltMessage aBuiltMsg = buildMessage ();
+    final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+    return new SentMessage <> (aBuiltMsg.getMessageID (), aResponse);
   }
 
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ());
+    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ()).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret));
     return ret;
   }
@@ -261,23 +321,32 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     m_eCryptoAlgorithmCrypt = eCryptoAlgorithmCrypt;
   }
 
-  @Nullable
-  public String getMessageIDPrefix ()
+  @Nonnull
+  public ISupplier <String> getMessageIDFactory ()
   {
-    return m_sMessageIDPrefix;
+    return m_aMessageIDFactory;
   }
 
   /**
-   * If it is desired to set a MessagePrefix for the MessageID it can be done
-   * here.
+   * Set the factory that creates message IDs. By default a random UUID is used.
    *
-   * @param sMessageIDPrefix
-   *        Prefix that will be at the start of the MessageID. May be
-   *        <code>null</code>.
+   * @param aMessageIDFactory
+   *        Factory to be used. May not be <code>null</code>.
    */
-  public void setMessageIDPrefix (@Nullable final String sMessageIDPrefix)
+  public void setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
   {
-    m_sMessageIDPrefix = sMessageIDPrefix;
+    ValueEnforcer.notNull (aMessageIDFactory, "MessageIDFactory");
+    m_aMessageIDFactory = aMessageIDFactory;
+  }
+
+  @Nonnull
+  @Nonempty
+  protected final String createMessageID ()
+  {
+    final String ret = m_aMessageIDFactory.get ();
+    if (StringHelper.hasNoText (ret))
+      throw new IllegalStateException ("An empty MessageID was generate!");
+    return ret;
   }
 
   @Nonnull

@@ -82,14 +82,12 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public HttpXMLEntity buildMessage () throws Exception
+  public BuiltMessage buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
     // Create a new message ID for each build!
-    final String sMessageID = StringHelper.getConcatenatedOnDemand (getMessageIDPrefix (),
-                                                                    '@',
-                                                                    MessageHelperMethods.createRandomMessageID ());
+    final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             m_sRefToMessageId);
@@ -101,6 +99,6 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     final Document aDoc = aErrorMsg.getAsSOAPDocument ();
 
     // Wrap SOAP XML
-    return new HttpXMLEntity (aDoc);
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
   }
 }

@@ -37,7 +37,8 @@ import com.helger.httpclient.IHttpClientProvider;
 
 public class BasicAS4Sender
 {
-  private IHttpClientProvider m_aHTTPClientProvider = new AS4ClientHttpClientFactory ();
+  // By default no special SSL context present
+  private IHttpClientProvider m_aHTTPClientProvider = new AS4ClientHttpClientFactory (null);
 
   public BasicAS4Sender ()
   {}

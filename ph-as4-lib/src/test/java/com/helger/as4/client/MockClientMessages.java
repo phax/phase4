@@ -112,7 +112,11 @@ final class MockClientMessages
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
     final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
-    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion, null, aUserMessage, true)
+    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                     MessageHelperMethods.createRandomMessageID (),
+                                                                     null,
+                                                                     aUserMessage,
+                                                                     true)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument ();
 

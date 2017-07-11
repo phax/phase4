@@ -29,6 +29,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.debug.GlobalDebug;
+import com.helger.httpclient.HttpDebugger;
 import com.helger.photon.core.requesttrack.RequestTracker;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -98,6 +99,7 @@ public final class AS4WebAppListener extends WebAppListener
                                      null,
                                      false);
 
+    HttpDebugger.setEnabled (false);
     WatchDirSBDH.init ();
 
     s_aLogger.info ("AS4 server started");

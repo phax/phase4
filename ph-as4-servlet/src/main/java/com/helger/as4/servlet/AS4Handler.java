@@ -1018,6 +1018,7 @@ public final class AS4Handler implements Closeable
                                                      @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
     final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
+                                                                                         MessageHelperMethods.createRandomMessageID (),
                                                                                          aUserMessage,
                                                                                          aSOAPDocument,
                                                                                          _isSendNonRepudiationInformation (aEffectiveLeg))
