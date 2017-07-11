@@ -7,7 +7,8 @@ It consists of the following sub-projects:
   * **ph-as4-lib** - basic data structures for AS4 handling
   * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
   * **ph-as4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
-  * **ph-as4-server-webapp-demo** - AS4 servlet based server component to be integrated into an existing server
+  * **ph-as4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
+  * **ph-as4-server-webapp-test** - Standalone AS4 server for **testing** purposes only (since 0.7.0)
 
 ## News and noteworthy
 
@@ -20,6 +21,7 @@ It consists of the following sub-projects:
     * Removed `PModeConfig` in favour of redundant `PMode` objects
     * Removed partner handling - not needed anymore 
     * To be on the safe side, delete all previously created `as4-*.xml` files as there were incompatible changes.
+    * Added a second webapp - one for demo, one for testing
   * v0.6.0 - 2017-01-26
     * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
     * Unified the namespaces across the subprojects
