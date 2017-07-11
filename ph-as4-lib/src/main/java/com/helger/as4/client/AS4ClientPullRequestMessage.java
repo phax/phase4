@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.apache.http.HttpEntity;
 import org.w3c.dom.Document;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
 import com.helger.as4.messaging.domain.CreatePullRequestMessage;
@@ -79,9 +80,9 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 
     if (bSign)
     {
-      _checkKeystoreAttributes ();
+      final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
-      final SignedMessageCreator aCreator = new SignedMessageCreator ();
+      final SignedMessageCreator aCreator = new SignedMessageCreator (aCryptoFactory);
       final boolean bMustUnderstand = true;
       aDoc = aCreator.createSignedMessage (aDoc,
                                            getSOAPVersion (),

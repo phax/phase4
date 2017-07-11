@@ -92,8 +92,10 @@ public class BasicAS4Sender
     {
       final HttpPost aPost = new HttpPost (sURL);
       if (aHttpEntity instanceof HttpMimeMessageEntity)
+      {
         MessageHelperMethods.moveMIMEHeadersToHTTPHeader (((HttpMimeMessageEntity) aHttpEntity).getMimeMessage (),
                                                           aPost);
+      }
       aPost.setEntity (aHttpEntity);
 
       // Overridable method

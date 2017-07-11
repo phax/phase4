@@ -41,6 +41,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -607,10 +608,10 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   public void eSENS_TA14 () throws Exception
   {
     Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
-    aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
-                                                            aDoc,
-                                                            true,
-                                                            ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
+                                                                                             aDoc,
+                                                                                             true,
+                                                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be
@@ -800,7 +801,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                      aEbms3MessageProperties,
                                                                      m_eSOAPVersion)
                                                  .setMustUnderstand (true);
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc.getAsSOAPDocument (m_aPayload),
                                                              m_eSOAPVersion,

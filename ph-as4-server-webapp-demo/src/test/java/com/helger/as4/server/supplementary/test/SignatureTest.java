@@ -58,7 +58,7 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final AS4CryptoFactory aAS4CryptoFactory = new AS4CryptoFactory ();
+    final AS4CryptoFactory aAS4CryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
     final Crypto aCrypto = aAS4CryptoFactory.getCrypto ();
     final CryptoProperties aCryptoProperties = aAS4CryptoFactory.getCryptoProperties ();
 
@@ -82,8 +82,8 @@ public final class SignatureTest
     }
 
     final WSSecurityEngineResult actionResult = aResults.getActionResults ()
-                                                       .get (Integer.valueOf (WSConstants.SIGN))
-                                                       .get (0);
+                                                        .get (Integer.valueOf (WSConstants.SIGN))
+                                                        .get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);

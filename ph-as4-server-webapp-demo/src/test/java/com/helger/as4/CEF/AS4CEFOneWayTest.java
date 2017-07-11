@@ -40,6 +40,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -130,7 +131,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                      aEbms3MessageProperties,
                                                                      m_eSOAPVersion)
                                                  .setMustUnderstand (true);
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
 
     final Document aSignedDoc = aClient.createSignedMessage (aDoc.getAsSOAPDocument (m_aPayload),
                                                              m_eSOAPVersion,
@@ -618,14 +619,14 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
-                                                                          MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                     null,
-                                                                                                                     aAttachments),
-                                                                          false,
-                                                                          aAttachments,
-                                                                          s_aResMgr,
-                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                                      null,
+                                                                                                                                                      aAttachments),
+                                                                                                           false,
+                                                                                                           aAttachments,
+                                                                                                           s_aResMgr,
+                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -646,12 +647,12 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA20 () throws Exception
   {
-    final Document aDoc = new EncryptionCreator ().encryptSoapBodyPayload (m_eSOAPVersion,
-                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                      m_aPayload,
-                                                                                                                      null),
-                                                                           true,
-                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final Document aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
+                                                                                                            MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                                       m_aPayload,
+                                                                                                                                                       null),
+                                                                                                            true,
+                                                                                                            ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final NodeList nList = aDoc.getElementsByTagName ("S12:Body");
 
@@ -695,7 +696,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final SignedMessageCreator aSigned = new SignedMessageCreator ();
+    final SignedMessageCreator aSigned = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
     final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                   null,
                                                                                                   aAttachments),
@@ -706,12 +707,12 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                        ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                        ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMsg = new EncryptionCreator ().encryptMimeMessage (m_eSOAPVersion,
-                                                                          aDoc,
-                                                                          false,
-                                                                          aAttachments,
-                                                                          s_aResMgr,
-                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                           aDoc,
+                                                                                                           false,
+                                                                                                           aAttachments,
+                                                                                                           s_aResMgr,
+                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

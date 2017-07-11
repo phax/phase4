@@ -44,11 +44,6 @@ public class SignedMessageCreator
 {
   private final AS4CryptoFactory m_aCryptoFactory;
 
-  public SignedMessageCreator ()
-  {
-    this (new AS4CryptoFactory ());
-  }
-
   public SignedMessageCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");

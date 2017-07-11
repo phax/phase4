@@ -25,6 +25,7 @@ import com.helger.photon.jetty.JettyStarter;
  */
 public final class RunInJettyAS4
 {
+
   public static void main (final String... args) throws Exception
   {
     new JettyStarter (RunInJettyAS4.class).run ();

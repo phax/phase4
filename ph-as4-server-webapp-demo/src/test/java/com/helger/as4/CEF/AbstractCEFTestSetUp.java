@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.esens.ESENSPMode;
@@ -83,7 +84,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                             @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
 
     final Document aSignedDoc = aClient.createSignedMessage (testUserMessageSoapNotSigned (aPayload, aAttachments),
                                                              eSOAPVersion,

@@ -48,7 +48,7 @@ public final class EncryptionTest
 
   public EncryptionTest () throws Exception
   {
-    m_aAS4CryptoFactory = new AS4CryptoFactory ();
+    m_aAS4CryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
     m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
     m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }

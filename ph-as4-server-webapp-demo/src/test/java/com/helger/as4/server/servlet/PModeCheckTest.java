@@ -37,6 +37,7 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
@@ -94,9 +95,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                               CAS4.DEFAULT_SERVICE_URL,
                                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                               DEFAULT_PARTY_ID +
-                                                                                                                                "12-" +
-                                                                                                                                DEFAULT_PARTY_ID +
-                                                                                                                                "12",
+                                                                                                                                     "12-" +
+                                                                                                                                     DEFAULT_PARTY_ID +
+                                                                                                                                     "12",
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     // Default PartyInfo for testing
@@ -166,8 +167,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                               CAS4.DEFAULT_SERVICE_URL,
                                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                               aPMode.getInitiatorID () +
-                                                                                                                                "-" +
-                                                                                                                                aPMode.getResponderID (),
+                                                                                                                                     "-" +
+                                                                                                                                     aPMode.getResponderID (),
                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT));
 
     try
@@ -179,16 +180,16 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
       aPModeMgr.createOrUpdatePMode (aPMode);
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
-                                                                                                                                     m_aEbms3UserMessage)
-                                                                                                    .setMustUnderstand (true)
-                                                                                                    .getAsSOAPDocument (m_aPayload),
-                                                                                   ESOAPVersion.AS4_DEFAULT,
-                                                                                   null,
-                                                                                   s_aResMgr,
-                                                                                   false,
-                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+      final Document aSignedDoc = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE).createSignedMessage (CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
+                                                                                                                                                                      m_aEbms3UserMessage)
+                                                                                                                                     .setMustUnderstand (true)
+                                                                                                                                     .getAsSOAPDocument (m_aPayload),
+                                                                                                                    ESOAPVersion.AS4_DEFAULT,
+                                                                                                                    null,
+                                                                                                                    s_aResMgr,
+                                                                                                                    false,
+                                                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc),
                         false,
@@ -225,8 +226,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                                 CAS4.DEFAULT_SERVICE_URL,
                                                                                                 AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                                 aPMode.getInitiatorID () +
-                                                                                                                                  "-" +
-                                                                                                                                  aPMode.getResponderID (),
+                                                                                                                                       "-" +
+                                                                                                                                       aPMode.getResponderID (),
                                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT));
 
       final Document aSignedDoc = CreateUserMessage.getUserMessageAsAS4UserMessage (ESOAPVersion.AS4_DEFAULT,
@@ -370,16 +371,16 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     {
       aPModeMgr.createPMode (aPMode);
 
-      final Document aSignedDoc = new SignedMessageCreator ().createSignedMessage (_modifyUserMessage (sPModeID,
-                                                                                                       null,
-                                                                                                       null,
-                                                                                                       _defaultProperties ()),
-                                                                                   ESOAPVersion.AS4_DEFAULT,
-                                                                                   null,
-                                                                                   s_aResMgr,
-                                                                                   false,
-                                                                                   ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                   ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+      final Document aSignedDoc = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE).createSignedMessage (_modifyUserMessage (sPModeID,
+                                                                                                                                        null,
+                                                                                                                                        null,
+                                                                                                                                        _defaultProperties ()),
+                                                                                                                    ESOAPVersion.AS4_DEFAULT,
+                                                                                                                    null,
+                                                                                                                    s_aResMgr,
+                                                                                                                    false,
+                                                                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc),
                         false,

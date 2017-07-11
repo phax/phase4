@@ -16,14 +16,13 @@
  */
 package com.helger.as4.client;
 
-import java.io.File;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -31,6 +30,9 @@ import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.ext.CommonsLinkedHashMap;
+import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.xml.microdom.IMicroDocument;
@@ -38,11 +40,14 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 
 public abstract class AbstractAS4Client extends BasicAS4Sender
 {
-  // Keystore attributes
-  private File m_aKeyStoreFile;
-  private String m_sKeyStoreType = "jks";
-  private String m_sKeyStoreAlias;
+  public static final String DEFAULT_KEYSTORE_TYPE = "jks";
+
+  // KeyStore attributes
+  private IReadableResource m_aKeyStoreRes;
   private String m_sKeyStorePassword;
+  private String m_sKeyStoreType = DEFAULT_KEYSTORE_TYPE;
+  private String m_sKeyStoreAlias;
+  private String m_sKeyStoreKeyPassword;
 
   // Signing additional attributes
   private ECryptoAlgorithmSign m_eCryptoAlgorithmSign;
@@ -58,18 +63,35 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
   protected AbstractAS4Client ()
   {}
 
-  protected void _checkKeystoreAttributes ()
+  private void _checkKeyStoreAttributes ()
   {
-    if (m_aKeyStoreFile == null)
-      throw new IllegalStateException ("Key store file is not configured.");
-    if (!m_aKeyStoreFile.exists ())
-      throw new IllegalStateException ("Key store file does not exist: " + m_aKeyStoreFile.getAbsolutePath ());
+    if (m_aKeyStoreRes == null)
+      throw new IllegalStateException ("KeyStore resources is not configured.");
+    if (!m_aKeyStoreRes.exists ())
+      throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
     if (StringHelper.hasNoText (m_sKeyStoreType))
-      throw new IllegalStateException ("Key store type is configured.");
+      throw new IllegalStateException ("KeyStore type is not configured.");
+    if (m_sKeyStorePassword == null)
+      throw new IllegalStateException ("KeyStore password is not configured.");
     if (StringHelper.hasNoText (m_sKeyStoreAlias))
-      throw new IllegalStateException ("Key store alias is configured.");
-    if (StringHelper.hasNoText (m_sKeyStorePassword))
-      throw new IllegalStateException ("Key store password is configured.");
+      throw new IllegalStateException ("KeyStore alias is not configured.");
+    if (m_sKeyStoreKeyPassword == null)
+      throw new IllegalStateException ("Key password is not configured.");
+  }
+
+  @Nonnull
+  protected AS4CryptoFactory internalCreateCryptoFactory ()
+  {
+    _checkKeyStoreAttributes ();
+
+    final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+    aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreResource ().getPath ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", getKeyStorePassword ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", getKeyStoreAlias ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.private.password", getKeyStoreKeyPassword ());
+    return new AS4CryptoFactory (aCryptoProps);
   }
 
   public abstract HttpEntity buildMessage () throws Exception;
@@ -90,21 +112,40 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     return ret;
   }
 
-  public File getKeyStoreFile ()
+  @Nullable
+  public IReadableResource getKeyStoreResource ()
   {
-    return m_aKeyStoreFile;
+    return m_aKeyStoreRes;
   }
 
   /**
    * The keystore that should be used can be set here.<br>
    * MANDATORY if you want to use sign or encryption of an usermessage.
    *
-   * @param aKeyStoreFile
+   * @param aKeyStoreRes
    *        the keystore file that should be used
    */
-  public void setKeyStoreFile (final File aKeyStoreFile)
+  public void setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
   {
-    m_aKeyStoreFile = aKeyStoreFile;
+    m_aKeyStoreRes = aKeyStoreRes;
+  }
+
+  @Nullable
+  public String getKeyStorePassword ()
+  {
+    return m_sKeyStorePassword;
+  }
+
+  /**
+   * KeyStore password needs to be set if a keystore is used<br>
+   * MANDATORY if you want to use sign or encryption of an usermessage.
+   *
+   * @param sKeyStorePassword
+   *        password that should be set
+   */
+  public void setKeyStorePassword (@Nullable final String sKeyStorePassword)
+  {
+    m_sKeyStorePassword = sKeyStorePassword;
   }
 
   @Nonnull
@@ -128,38 +169,40 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     m_sKeyStoreType = sKeyStoreType;
   }
 
+  @Nullable
   public String getKeyStoreAlias ()
   {
     return m_sKeyStoreAlias;
   }
 
   /**
-   * Keystorealias needs to be set if a keystore is used<br>
+   * KeyStorealias needs to be set if a keystore is used<br>
    * MANDATORY if you want to use sign or encryption of an usermessage.
    *
    * @param sKeyStoreAlias
    *        alias that should be set
    */
-  public void setKeyStoreAlias (final String sKeyStoreAlias)
+  public void setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
   {
     m_sKeyStoreAlias = sKeyStoreAlias;
   }
 
-  public String getKeyStorePassword ()
+  @Nullable
+  public String getKeyStoreKeyPassword ()
   {
-    return m_sKeyStorePassword;
+    return m_sKeyStoreKeyPassword;
   }
 
   /**
-   * Keystore password needs to be set if a keystore is used<br>
+   * Key password needs to be set if a keystore is used<br>
    * MANDATORY if you want to use sign or encryption of an usermessage.
    *
-   * @param sKeyStorePassword
+   * @param sKeyStoreKeyPassword
    *        password that should be set
    */
-  public void setKeyStorePassword (final String sKeyStorePassword)
+  public void setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
   {
-    m_sKeyStorePassword = sKeyStorePassword;
+    m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
   }
 
   @Nullable

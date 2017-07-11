@@ -91,6 +91,24 @@ public class CryptoProperties implements Serializable
   }
 
   @Nullable
+  public String getKeyStorePath ()
+  {
+    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.file");
+  }
+
+  @Nullable
+  public String getKeyStorePassword ()
+  {
+    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.password");
+  }
+
+  @Nullable
+  public String getKeyStoreType ()
+  {
+    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.type");
+  }
+
+  @Nullable
   public String getKeyAlias ()
   {
     return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.alias");
@@ -99,7 +117,7 @@ public class CryptoProperties implements Serializable
   @Nullable
   public String getKeyPassword ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.password");
+    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.private.password");
   }
 
   @Override

@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
@@ -67,7 +68,7 @@ final class MockClientMessages
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
 
     final Document aSignedDoc = aClient.createSignedMessage (testUserMessageSoapNotSigned (eSOAPVersion,
                                                                                            aPayload,
@@ -85,7 +86,7 @@ final class MockClientMessages
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
     final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
@@ -110,7 +111,7 @@ final class MockClientMessages
   {
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
-    final SignedMessageCreator aClient = new SignedMessageCreator ();
+    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
     final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion, null, aUserMessage, true)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument ();

@@ -98,12 +98,16 @@ public final class AS4WebAppListener extends WebAppListener
                                      null,
                                      false);
 
+    WatchDirSBDH.init ();
+
     s_aLogger.info ("AS4 server started");
   }
 
   @Override
   protected void afterContextDestroyed (@Nonnull final ServletContext aSC)
   {
+    WatchDirSBDH.destroy ();
+
     s_aLogger.info ("AS4 server destroyed");
   }
 }

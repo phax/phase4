@@ -51,6 +51,7 @@ import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.client.BasicAS4Sender;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -218,6 +219,7 @@ public final class AS4Handler implements Closeable
 
   private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
+  private final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
   public AS4Handler ()
   {}
@@ -474,7 +476,8 @@ public final class AS4Handler implements Closeable
                             @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aUserMessage != null && aSignalMessage != null,
+    ValueEnforcer.isFalse (aUserMessage != null &&
+                           aSignalMessage != null,
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aUserMessage != null;
@@ -683,8 +686,9 @@ public final class AS4Handler implements Closeable
                                                                              ? aState.getMessaging ()
                                                                                      .getSignalMessageAtIndex (0)
                                                                              : null;
-      aEbmsError = aEbmsSignalMessage != null &&
-                   !aEbmsSignalMessage.getError ().isEmpty () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+      aEbmsError = aEbmsSignalMessage != null && !aEbmsSignalMessage.getError ().isEmpty ()
+                                                                                            ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                                            : null;
 
       final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
                                                                            : null;
@@ -1162,7 +1166,7 @@ public final class AS4Handler implements Closeable
   {
     if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
-      final SignedMessageCreator aCreator = new SignedMessageCreator ();
+      final SignedMessageCreator aCreator = new SignedMessageCreator (m_aCryptoFactory);
       final boolean bMustUnderstand = true;
       return aCreator.createSignedMessage (aDocToBeSigned,
                                            eSOAPVersion,
@@ -1198,7 +1202,7 @@ public final class AS4Handler implements Closeable
     MimeMessage aMimeMsg = null;
     if (aLeg.getSecurity () != null && aLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
     {
-      final EncryptionCreator aEncryptCreator = new EncryptionCreator ();
+      final EncryptionCreator aEncryptCreator = new EncryptionCreator (m_aCryptoFactory);
       aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg.getProtocol ().getSOAPVersion (),
                                                      aResponseDoc,
                                                      true,

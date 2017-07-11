@@ -40,17 +40,14 @@ public final class AS4CryptoFactory implements Serializable
     WSSConfig.init ();
   }
 
+  /**
+   * Default {@link AS4CryptoFactory} using file 'private-crypto.properties' or
+   * 'crypto.properties'
+   */
+  public static final AS4CryptoFactory DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
+
   private final CryptoProperties m_aCryptoProps;
   private transient Crypto m_aCrypto;
-
-  /**
-   * If this constructor is used the default properties get used.
-   */
-  public AS4CryptoFactory ()
-  {
-    // Read the default file
-    this ((String) null);
-  }
 
   @Nonnull
   private static CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)

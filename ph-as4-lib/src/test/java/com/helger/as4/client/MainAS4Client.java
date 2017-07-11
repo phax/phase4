@@ -39,6 +39,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -142,10 +143,10 @@ public final class MainAS4Client
             Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                              aPayload,
                                                                              aAttachments);
-            aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
-                                                                    aDoc,
-                                                                    false,
-                                                                    ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+            aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+                                                                                                     aDoc,
+                                                                                                     false,
+                                                                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
             aPost.setEntity (new HttpXMLEntity (aDoc));
           }
@@ -157,7 +158,7 @@ public final class MainAS4Client
                                                                               null,
                                                                               aResMgr));
 
-              final SignedMessageCreator aSigned = new SignedMessageCreator ();
+              final SignedMessageCreator aSigned = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
               final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
                                                                                                                                                                                         null,
                                                                                                                                                                                         aAttachments),
@@ -180,10 +181,10 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-                aDoc = new EncryptionCreator ().encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
-                                                                        aDoc,
-                                                                        false,
-                                                                        ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+                                                                                                         aDoc,
+                                                                                                         false,
+                                                                                                         ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
                 aPost.setEntity (new HttpXMLEntity (aDoc));
               }
               else

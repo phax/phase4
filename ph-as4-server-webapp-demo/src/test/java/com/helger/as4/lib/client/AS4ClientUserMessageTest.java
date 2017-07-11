@@ -116,12 +116,13 @@ public final class AS4ClientUserMessageTest
    * @return the client to continue working with it
    */
   @Nonnull
-  private static AS4ClientUserMessage _setKeyStoreTestData (@Nonnull final AS4ClientUserMessage aClient)
+  private static AS4ClientUserMessage _setKeystoreTestData (@Nonnull final AS4ClientUserMessage aClient)
   {
-    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
     aClient.setKeyStorePassword ("test");
-    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
     aClient.setKeyStoreType ("jks");
+    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStoreKeyPassword ("test");
     return aClient;
   }
 
@@ -189,13 +190,15 @@ public final class AS4ClientUserMessageTest
 
     // No Keystore attributes set
     _ensureInvalidState (aClient);
-    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
+    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
+    _ensureInvalidState (aClient);
+    aClient.setKeyStorePassword ("test");
     _ensureInvalidState (aClient);
     aClient.setKeyStoreType ("jks");
     _ensureInvalidState (aClient);
     aClient.setKeyStoreAlias ("ph-as4");
     _ensureInvalidState (aClient);
-    aClient.setKeyStorePassword ("test");
+    aClient.setKeyStoreKeyPassword ("test");
     _ensureValidState (aClient);
 
   }
@@ -216,7 +219,7 @@ public final class AS4ClientUserMessageTest
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -233,7 +236,7 @@ public final class AS4ClientUserMessageTest
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -249,7 +252,7 @@ public final class AS4ClientUserMessageTest
     aClient.setPayload (DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_PAYLOAD_XML)));
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -270,7 +273,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.APPLICATION_XML);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -288,7 +291,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.APPLICATION_XML);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -305,7 +308,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.APPLICATION_XML);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -330,7 +333,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.IMAGE_JPG);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -352,7 +355,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.IMAGE_JPG);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -373,7 +376,7 @@ public final class AS4ClientUserMessageTest
                            CMimeType.IMAGE_JPG);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -401,7 +404,7 @@ public final class AS4ClientUserMessageTest
                            EAS4CompressionMode.GZIP);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
@@ -429,7 +432,7 @@ public final class AS4ClientUserMessageTest
                            EAS4CompressionMode.GZIP);
 
     // Keystore
-    _setKeyStoreTestData (aClient);
+    _setKeystoreTestData (aClient);
 
     // Sign specific
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);

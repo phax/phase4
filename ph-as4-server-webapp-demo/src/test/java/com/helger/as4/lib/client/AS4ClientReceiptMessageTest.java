@@ -109,10 +109,11 @@ public final class AS4ClientReceiptMessageTest
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 
-    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
     aClient.setKeyStorePassword ("test");
-    aClient.setKeyStoreFile (new ClassPathResource ("keys/dummy-pw-test.jks").getAsFile ());
     aClient.setKeyStoreType ("jks");
+    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.setKeyStoreKeyPassword ("test");
 
     aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT);
     aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);

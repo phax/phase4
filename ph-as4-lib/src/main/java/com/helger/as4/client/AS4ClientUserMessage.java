@@ -52,9 +52,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
 import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.function.IFunction;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
@@ -241,15 +239,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
     {
-      _checkKeystoreAttributes ();
-
-      final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
-      aCryptoProps.put ("org.apache.wss4j.crypto.provider", "org.apache.wss4j.common.crypto.Merlin");
-      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreFile ().getPath ());
-      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
-      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", getKeyStorePassword ());
-      aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", getKeyStoreAlias ());
-      final AS4CryptoFactory aCryptoFactory = new AS4CryptoFactory (aCryptoProps);
+      final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       // 2a. sign
       if (bSign)
@@ -268,7 +258,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       // 2b. encrypt
       if (bEncrypt)
       {
-        _checkKeystoreAttributes ();
         final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
         // MustUnderstand always set to true
         final boolean bMustUnderstand = true;

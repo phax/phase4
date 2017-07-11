@@ -48,11 +48,6 @@ public class EncryptionCreator
 {
   private final AS4CryptoFactory m_aCryptoFactory;
 
-  public EncryptionCreator ()
-  {
-    this (new AS4CryptoFactory ());
-  }
-
   public EncryptionCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");

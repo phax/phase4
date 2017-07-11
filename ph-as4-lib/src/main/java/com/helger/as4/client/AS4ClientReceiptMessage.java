@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.CreateReceiptMessage;
@@ -86,9 +87,9 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 
     if (m_bReceiptShouldBeSigned && bSign)
     {
-      _checkKeystoreAttributes ();
+      final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
-      final SignedMessageCreator aCreator = new SignedMessageCreator ();
+      final SignedMessageCreator aCreator = new SignedMessageCreator (aCryptoFactory);
       final boolean bMustUnderstand = true;
       aDoc = aCreator.createSignedMessage (aDoc,
                                            getSOAPVersion (),
