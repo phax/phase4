@@ -18,9 +18,6 @@ package com.helger.as4.server.standalone;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.system.SystemProperties;
 import com.helger.photon.jetty.JettyRunner;
@@ -33,7 +30,6 @@ import com.helger.photon.jetty.JettyStopper;
  */
 public final class RunInJettyAS4TEST9090
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (RunInJettyAS4TEST9090.class);
   private static final int PORT = 9090;
   private static final int STOP_PORT = PORT + 1000;
 
@@ -47,7 +43,6 @@ public final class RunInJettyAS4TEST9090
 
   public static void stopNinetyServer () throws IOException
   {
-    s_aLogger.info ("Stopping Jetty:9090");
     new JettyStopper ().setStopPort (STOP_PORT).run ();
   }
 
