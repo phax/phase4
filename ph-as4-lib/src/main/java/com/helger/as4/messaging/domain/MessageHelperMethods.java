@@ -112,8 +112,6 @@ public final class MessageHelperMethods
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
 
-    // TODO Change Timestamp or do we only want the present date when the
-    // message gets sent/replied
     aMessageInfo.setTimestamp (PDTXMLConverter.getXMLCalendarNowUTC ());
     return aMessageInfo;
   }
