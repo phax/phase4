@@ -51,6 +51,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.xml.serialize.read.DOMReader;
+import com.helger.xml.serialize.write.XMLWriter;
 
 /**
  * Test implementation of {@link IAS4ServletMessageProcessorSPI}
@@ -76,6 +77,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     {
       s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
+      s_aLogger.info ("  Payload: " +
+                      (aPayload == null ? "null" : true ? "present" : XMLWriter.getNodeAsString (aPayload)));
 
       if (aIncomingAttachments != null)
       {
