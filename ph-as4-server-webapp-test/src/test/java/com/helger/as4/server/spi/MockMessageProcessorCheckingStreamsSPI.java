@@ -77,7 +77,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     {
       s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
-      s_aLogger.info ("  Payload: " + (aPayload == null ? "null" : XMLWriter.getNodeAsString (aPayload)));
+      s_aLogger.info ("  Payload: " +
+                      (aPayload == null ? "null" : true ? "present" : XMLWriter.getNodeAsString (aPayload)));
 
       if (aIncomingAttachments != null)
       {
