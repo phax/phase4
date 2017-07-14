@@ -18,6 +18,9 @@ package com.helger.as4.server.standalone;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.photon.jetty.JettyStopper;
 
 /**
@@ -25,8 +28,11 @@ import com.helger.photon.jetty.JettyStopper;
  */
 public final class JettyStopAS4TEST
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (JettyStopAS4TEST.class);
+
   public static void main (final String [] args) throws IOException
   {
+    s_aLogger.info ("Stopping Jetty:8080");
     new JettyStopper ().run ();
   }
 }

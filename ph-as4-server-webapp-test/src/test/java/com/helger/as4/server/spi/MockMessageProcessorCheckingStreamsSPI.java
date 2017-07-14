@@ -74,7 +74,6 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   {
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
-    if (true)
     {
       s_aLogger.info ("Received AS4 message:");
       s_aLogger.info ("  UserMessage: " + aUserMessage);
@@ -90,8 +89,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
           {
             final InputStream aIS = x.getSourceStream ();
             s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
-            s_aLogger.info ("    Attachment Content: " +
-                            StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ()));
+            final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
+            s_aLogger.info ("    Attachment Content: " + sContent.length () + " chars");
           }
         }
       }

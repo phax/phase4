@@ -22,6 +22,8 @@ import javax.annotation.Nonnull;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
@@ -36,6 +38,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 
 public final class MockJettySetup extends AbstractClientSetUp
 {
+  private static final Logger s_aLogger = LoggerFactory.getLogger (MockJettySetup.class);
   private static JettyRunner s_aJetty;
   private static AS4ResourceManager s_aResMgr;
 
@@ -80,7 +83,10 @@ public final class MockJettySetup extends AbstractClientSetUp
     if (_isRunJetty ())
     {
       if (s_aJetty != null)
+      {
+        s_aLogger.info ("Stopping MockJetty:" + _getJettyPort ());
         s_aJetty.shutDownServer ();
+      }
       s_aJetty = null;
     }
     else
