@@ -21,7 +21,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -42,6 +44,7 @@ import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
+import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -52,6 +55,7 @@ import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
 public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTestSetUp
@@ -68,6 +72,21 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected AbstractCEFTwoWayTestSetUp (@Nonnegative final int nRetries)
   {
     super (nRetries);
+  }
+
+  @BeforeClass
+  public static void startServerNinety () throws Exception
+  {
+    WebAppListener.setOnlyOneInstanceAllowed (false);
+    RunInJettyAS4TEST9090.startNinetyServer ();
+  }
+
+  @AfterClass
+  public static void shutDownServerNinety () throws Exception
+  {
+    // reset
+    RunInJettyAS4TEST9090.stopNinetyServer ();
+    WebAppListener.setOnlyOneInstanceAllowed (true);
   }
 
   @Before

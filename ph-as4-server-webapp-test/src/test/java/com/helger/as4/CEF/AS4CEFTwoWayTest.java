@@ -18,8 +18,6 @@ package com.helger.as4.CEF;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -28,9 +26,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.commons.thread.ThreadHelper;
-import com.helger.photon.core.servlet.WebAppListener;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
@@ -38,21 +34,6 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
   {
     // No retries
     super (0);
-  }
-
-  @BeforeClass
-  public static void startServerNinety () throws Exception
-  {
-    WebAppListener.setOnlyOneInstanceAllowed (false);
-    RunInJettyAS4TEST9090.startNinetyServer ();
-  }
-
-  @AfterClass
-  public static void shutDownServerNinety () throws Exception
-  {
-    // reset
-    RunInJettyAS4TEST9090.stopNinetyServer ();
-    WebAppListener.setOnlyOneInstanceAllowed (true);
   }
 
   /**

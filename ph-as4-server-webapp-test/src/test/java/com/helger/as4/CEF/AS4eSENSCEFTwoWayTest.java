@@ -35,6 +35,7 @@ import com.helger.commons.collection.ext.CommonsArrayList;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.commons.thread.ThreadHelper;
 
 public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {
@@ -52,7 +53,7 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA02 () throws Exception
+  public void eSENS_TA02_PushPush () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
 
@@ -65,6 +66,10 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
+
+    // Wait for async response to come in
+    // Otherwise indeterministic errors
+    ThreadHelper.sleepSeconds (2);
   }
 
   /**
@@ -81,7 +86,7 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA16 () throws Exception
+  public void eSENS_TA16_PushPush () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -99,6 +104,9 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
-  }
 
+    // Wait for async response to come in
+    // Otherwise indeterministic errors
+    ThreadHelper.sleepSeconds (2);
+  }
 }

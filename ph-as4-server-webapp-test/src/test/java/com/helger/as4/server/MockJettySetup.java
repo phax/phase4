@@ -69,7 +69,9 @@ public final class MockJettySetup extends AbstractClientSetUp
       s_aJetty = null;
       WebScopeManager.onGlobalBegin (MockServletContext.create ());
       final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
-      WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (), aSCPath, false);
+      WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (),
+                           aSCPath.getAbsolutePath (),
+                           false);
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
     }
     RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
