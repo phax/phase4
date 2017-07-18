@@ -16,6 +16,8 @@
  */
 package com.helger.as4.messaging.mime;
 
+import java.nio.charset.Charset;
+
 import javax.annotation.Nonnull;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMultipart;
@@ -31,12 +33,13 @@ import com.helger.as4.soap.ESOAPVersion;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESOAPVersion eSOAPVersion) throws ParseException
+  public SoapMimeMultipart (@Nonnull final ESOAPVersion eSOAPVersion,
+                            @Nonnull final Charset aCharset) throws ParseException
   {
     super ("related");
     // type parameter is essential for Axis to work!
     final ContentType cType = new ContentType (contentType);
-    cType.setParameter ("type", eSOAPVersion.getMimeType ().getAsString ());
+    cType.setParameter ("type", eSOAPVersion.getMimeType (aCharset).getAsString ());
     contentType = cType.toString ();
   }
 }

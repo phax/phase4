@@ -16,6 +16,8 @@
  */
 package com.helger.as4.messaging.mime;
 
+import java.nio.charset.Charset;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
@@ -47,14 +49,15 @@ public final class MimeMessageCreator
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
                                           @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion);
+    final Charset aCharset = AS4XMLHelper.XWS.getCharsetObj ();
+    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
 
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final String aDoc = AS4XMLHelper.serializeXML (aSOAPEnvelope);
-      aMessagePart.setContent (aDoc, m_eSOAPVersion.getMimeType (AS4XMLHelper.XWS.getCharsetObj ()).getAsString ());
+      final String sDoc = AS4XMLHelper.serializeXML (aSOAPEnvelope);
+      aMessagePart.setContent (sDoc.getBytes (aCharset), m_eSOAPVersion.getMimeType (aCharset).getAsString ());
       aMessagePart.setHeader (CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
