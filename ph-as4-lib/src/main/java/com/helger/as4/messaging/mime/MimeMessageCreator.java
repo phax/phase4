@@ -18,12 +18,16 @@ package com.helger.as4.messaging.mime;
 
 import java.nio.charset.Charset;
 
+import javax.activation.CommandInfo;
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
 
@@ -32,11 +36,52 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 public final class MimeMessageCreator
 {
   private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
+
+  static
+  {
+    /**
+     * Java 1.8.0_77 on Win7 64 Bit JDK contains as default:
+     *
+     * <pre>
+    text/html; content-handler; com.sun.mail.handlers.text_html
+    text/html; view; com.sun.activation.viewers.TextViewer
+    text/html; edit; com.sun.activation.viewers.TextEditor
+    message/rfc822; content-handler; com.sun.mail.handlers.message_rfc822
+    multipart/*; content-handler; com.sun.mail.handlers.multipart_mixed
+    text/xml; content-handler; com.sun.mail.handlers.text_xml
+    text/xml; view; com.sun.activation.viewers.TextViewer
+    text/xml; edit; com.sun.activation.viewers.TextEditor
+    text/plain; content-handler; com.sun.mail.handlers.text_plain
+    text/plain; view; com.sun.activation.viewers.TextViewer
+    text/plain; edit; com.sun.activation.viewers.TextEditor
+    text/*; view; com.sun.activation.viewers.TextViewer
+    text/*; edit; com.sun.activation.viewers.TextEditor
+    image/jpeg; view; com.sun.activation.viewers.ImageViewer
+    image/gif; view; com.sun.activation.viewers.ImageViewer
+     * </pre>
+     */
+    if (false)
+    {
+      final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
+      for (final String m : aCommandMap.getMimeTypes ())
+        for (final CommandInfo i : aCommandMap.getAllCommands (m))
+          System.out.println (m + "; " + i.getCommandName () + "; " + i.getCommandClass ());
+    }
+
+    {
+      final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
+      aCommandMap.addMailcap (CMimeType.APPLICATION_SOAP_XML.getAsStringWithoutParameters () +
+                              ";; x-java-content-handler=" +
+                              DataContentHandlerSoap12.class.getName ());
+      CommandMap.setDefaultCommandMap (aCommandMap);
+    }
+  }
 
   private final ESOAPVersion m_eSOAPVersion;
 
@@ -52,12 +97,12 @@ public final class MimeMessageCreator
     final Charset aCharset = AS4XMLHelper.XWS.getCharsetObj ();
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
+    final String sContentType = m_eSOAPVersion.getMimeType (aCharset).getAsString ();
 
     {
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      final String sDoc = AS4XMLHelper.serializeXML (aSOAPEnvelope);
-      aMessagePart.setContent (sDoc.getBytes (aCharset), m_eSOAPVersion.getMimeType (aCharset).getAsString ());
+      aMessagePart.setContent (new DOMSource (aSOAPEnvelope), sContentType);
       aMessagePart.setHeader (CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
