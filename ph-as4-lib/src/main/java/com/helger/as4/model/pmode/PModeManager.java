@@ -32,6 +32,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
@@ -189,7 +190,8 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
                                                    aPMode.getResponderID ()));
     if (ret == null)
     {
-      ret = (PMode) createPMode (aPMode);
+      createPMode (aPMode);
+      ret = aPMode;
     }
     else
     {
@@ -205,6 +207,13 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     return getAll ();
   }
 
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <IPMode> getAllPModes (@Nonnull final Predicate <? super IPMode> aFilter)
+  {
+    return getAll (aFilter);
+  }
+
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sID)
   {
@@ -212,15 +221,13 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
   }
 
   @Nonnull
-  public ESuccess validatePMode (@Nullable final IPMode aPMode)
+  public ESuccess validatePMode (@Nullable final IPMode aPMode) throws IllegalStateException
   {
     ValueEnforcer.notNull (aPMode, "PMode");
 
     // Needs ID
-    if (aPMode.getID () == null)
-    {
+    if (StringHelper.hasNoText (aPMode.getID ()))
       throw new IllegalStateException ("No PMode ID present");
-    }
 
     final PModeParty aInitiator = aPMode.getInitiator ();
     if (aInitiator != null)
@@ -262,7 +269,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     return ESuccess.SUCCESS;
   }
 
-  public void validateAllPModes ()
+  public void validateAllPModes () throws IllegalStateException
   {
     for (final IPMode aPMode : getAll ())
       validatePMode (aPMode);
