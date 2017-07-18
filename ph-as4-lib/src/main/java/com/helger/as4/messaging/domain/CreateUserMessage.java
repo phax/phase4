@@ -39,6 +39,7 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.as4lib.ebms3header.Ebms3Service;
 import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.string.StringHelper;
 
@@ -107,6 +108,11 @@ public final class CreateUserMessage
                                                      @Nonnull final String sToRole,
                                                      @Nonnull final String sToPartyID)
   {
+    ValueEnforcer.notNull (sFromRole, "FromRole");
+    ValueEnforcer.notNull (sFromPartyID, "FromPartyID");
+    ValueEnforcer.notNull (sToRole, "ToRole");
+    ValueEnforcer.notNull (sToPartyID, "ToPartyID");
+
     final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
 
     // From => Sender

@@ -227,7 +227,7 @@ public final class MockMessages
                                                                                                            null,
                                                                                                            null,
                                                                                                            null);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (null, null, null, null);
+    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo ("", "", "", "");
     final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
