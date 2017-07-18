@@ -140,7 +140,7 @@ public final class AS4XMLHelper
     ValueEnforcer.notNull (sNodeKeyName, "NodeKeyName");
     ValueEnforcer.notNull (sNodeValueName, "NodeValueName");
 
-    final ICommonsOrderedMap <String, String> ret = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, String> ret = new CommonsLinkedHashMap <> ();
     int nIndex = 0;
     for (final IMicroElement eChild : aNode.getAllChildElements (sNodeName))
     {
