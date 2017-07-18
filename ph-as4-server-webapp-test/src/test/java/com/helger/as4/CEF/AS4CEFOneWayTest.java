@@ -74,7 +74,6 @@ import com.helger.commons.mime.CMimeType;
 
 public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 {
-
   /**
    * Prerequisite:<br>
    * SMSH and RMSH are configured to exchange AS4 messages according to the
@@ -205,17 +204,15 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
-
     final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
                                                                                                                  m_aPayload,
                                                                                                                  aAttachments,
                                                                                                                  new AS4ResourceManager ()),
                                                                                           aAttachments);
-
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
-
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
+
   }
 
   /**
