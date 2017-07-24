@@ -51,9 +51,6 @@ public class PModeLegProtocol implements Serializable
    * this parameter indicates the SOAP version to be used (<code>1.1</code> or
    * <code>1.2</code>). In some implementations, this parameter may be
    * constrained by the implementation, and not set by users.
-   *
-   * @see #PROTOCOL_SOAP_VERSION_11
-   * @see #PROTOCOL_SOAP_VERSION_12
    */
   private ESOAPVersion m_eSOAPVersion;
 

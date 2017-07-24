@@ -82,6 +82,8 @@ public final class MessageHelperMethods
    * Create a new message info with a UUID as message ID and a reference to the
    * previous message.
    *
+   * @param sRefToMessageID
+   *        The message ID of the referenced message. May be <code>null</code>.
    * @return Never <code>null</code>.
    */
   @Nonnull

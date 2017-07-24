@@ -91,9 +91,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   private boolean m_bUseLeg1 = true;
   private PMode m_aPMode;
-  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getInitiatorPartyID () +
+  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
                                                                             "-" +
-                                                                            x.getResponderPartyID ();
+                                                                            x.getToPartyID ();
 
   public AS4ClientUserMessage ()
   {
@@ -543,20 +543,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     m_sFromPartyID = sFromPartyID;
   }
 
-  /**
-   * See above setFromPartyID.
-   */
-  public void setInitiatorPartyID (@Nullable final String sFromPartyID)
-  {
-    m_sFromPartyID = sFromPartyID;
-  }
-
-  @Nullable
-  public String getInitiatorPartyID ()
-  {
-    return m_sFromPartyID;
-  }
-
   @Nullable
   public String getToRole ()
   {
@@ -586,23 +572,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    *        the PartyID that should be set
    */
   public void setToPartyID (@Nullable final String sToPartyID)
-  {
-    m_sToPartyID = sToPartyID;
-  }
-
-  @Nullable
-  public String getResponderPartyID ()
-  {
-    return m_sToPartyID;
-  }
-
-  /**
-   * * @see #setFromPartyID(String)
-   *
-   * @param sToPartyID
-   *        the PartyID that should be set
-   */
-  public void setResponderPartyID (@Nullable final String sToPartyID)
   {
     m_sToPartyID = sToPartyID;
   }

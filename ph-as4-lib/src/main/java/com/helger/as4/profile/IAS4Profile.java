@@ -46,12 +46,18 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
   IPModeIDProvider getPModeIDProvider ();
 
   /**
+   * @param sInitiatorID
+   *        Initiator ID
+   * @param sResponderID
+   *        Responder ID
+   * @param sAddress
+   *        Address string
    * @return A PMode that is NOT yet in the manager and is not complete! The
    *         following information is most likely not contained: initiator,
    *         responder, URLs, certificates.
    */
   @Nonnull
-  PMode createPModeTemplate (@Nonnull @Nonempty final String sInitiatorID,
-                             @Nonnull @Nonempty final String sResponderID,
-                             @Nullable final String sAddress);
+  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
+                             @Nonnull @Nonempty String sResponderID,
+                             @Nullable String sAddress);
 }

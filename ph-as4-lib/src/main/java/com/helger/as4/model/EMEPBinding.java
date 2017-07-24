@@ -126,8 +126,8 @@ public enum EMEPBinding implements IHasID <String>
   }
 
   /**
-   * Initiator side has the asynchronous part of the transfer <br>
-   * this == PUSH_PULL || this == PULL_PUSH;
+   * @return <code>true</code> if initiator side has the asynchronous part of
+   *         the transfer (this == PUSH_PULL || this == PULL_PUSH)
    */
   public boolean isAsynchronousInitiator ()
   {
