@@ -71,6 +71,7 @@ import com.helger.commons.collection.ext.ICommonsList;
 import com.helger.commons.collection.ext.ICommonsMap;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.commons.thread.ThreadHelper;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -496,14 +497,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                      @Override
                                                                      public HttpResponse clientToProxyRequest (final HttpObject httpObject)
                                                                      {
-                                                                       try
-                                                                       {
-                                                                         Thread.sleep (500);
-                                                                       }
-                                                                       catch (final InterruptedException e)
-                                                                       {
-                                                                         e.printStackTrace ();
-                                                                       }
+                                                                       ThreadHelper.sleep (500);
                                                                        return null;
                                                                      }
 

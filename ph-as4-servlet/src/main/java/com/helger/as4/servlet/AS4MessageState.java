@@ -269,5 +269,4 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
   {
     return getAttributeAsBoolean (KEY_SOAP_DECRYPTED, false);
   }
-
 }

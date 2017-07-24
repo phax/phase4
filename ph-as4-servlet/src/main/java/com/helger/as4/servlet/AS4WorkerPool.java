@@ -33,6 +33,11 @@ import com.helger.commons.concurrent.ManagedExecutorService;
 import com.helger.commons.scope.IScope;
 import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
 
+/**
+ * Asynchronous worker pool that handles stuff that runs in the background.
+ * 
+ * @author Philip Helger
+ */
 public final class AS4WorkerPool extends AbstractGlobalSingleton
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WorkerPool.class);
@@ -43,8 +48,7 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
   @UsedViaReflection
   public AS4WorkerPool ()
   {
-    m_aES = Executors.newFixedThreadPool (Runtime.getRuntime ().availableProcessors () *
-                                          2,
+    m_aES = Executors.newFixedThreadPool (Runtime.getRuntime ().availableProcessors () * 2,
                                           new BasicThreadFactory.Builder ().setDaemon (true)
                                                                            .setNamingPattern ("as4-worker-%d")
                                                                            .build ());

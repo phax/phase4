@@ -229,11 +229,21 @@ public final class AS4Handler implements Closeable
   public AS4Handler ()
   {}
 
+  /**
+   * @return <code>true</code> if internal debugging is enabled,
+   *         <code>false</code> otherwise.
+   */
   public static boolean isDebug ()
   {
     return s_aDebug.get ();
   }
 
+  /**
+   * Enable or disable debug mode. By default it is disabled.
+   *
+   * @param bDebug
+   *        <code>true</code> to enable it, <code>false</code> to disable it.
+   */
   public static void setDebug (final boolean bDebug)
   {
     s_aDebug.set (bDebug);
@@ -491,8 +501,7 @@ public final class AS4Handler implements Closeable
                             @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aUserMessage != null &&
-                           aSignalMessage != null,
+    ValueEnforcer.isFalse (aUserMessage != null && aSignalMessage != null,
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aUserMessage != null;
@@ -701,9 +710,8 @@ public final class AS4Handler implements Closeable
                                                                              ? aState.getMessaging ()
                                                                                      .getSignalMessageAtIndex (0)
                                                                              : null;
-      aEbmsError = aEbmsSignalMessage != null && !aEbmsSignalMessage.getError ().isEmpty ()
-                                                                                            ? aEbmsSignalMessage.getErrorAtIndex (0)
-                                                                                            : null;
+      aEbmsError = aEbmsSignalMessage != null &&
+                   !aEbmsSignalMessage.getError ().isEmpty () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
 
       final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
                                                                            : null;
@@ -1369,7 +1377,10 @@ public final class AS4Handler implements Closeable
     if (isDebug ())
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
-      s_aLogger.info ("GOT[" + Charset.defaultCharset ().name () + "]:\n" + new String (aBytes));
+      s_aLogger.info ("GOT[" +
+                      Charset.defaultCharset ().name () +
+                      "]:\n" +
+                      new String (aBytes, Charset.defaultCharset ()));
       return DOMReader.readXMLDOM (aBytes);
     }
     return DOMReader.readXMLDOM (aRequestIS);
