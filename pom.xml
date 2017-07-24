@@ -25,7 +25,7 @@
     <version>1.9.3</version>
   </parent>
   <artifactId>ph-as4-parent-pom</artifactId>
-  <version>0.7.0</version>
+  <version>0.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>ph-as4-parent-pom</name>
   <description>Base POM to build the ph-as4 projects</description>
@@ -44,7 +44,7 @@
     <connection>scm:git:git@github.com:phax/ph-as4.git</connection>
     <developerConnection>scm:git:git@github.com:phax/ph-as4.git</developerConnection>
     <url>http://github.com/phax/ph-as4</url>
-    <tag>ph-as4-parent-pom-0.7.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <organization>
