@@ -8,15 +8,15 @@ It consists of the following sub-projects:
   * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
   * **ph-as4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
   * **ph-as4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
-  * **ph-as4-server-webapp-test** - Standalone AS4 server for **testing** purposes only (since 0.7.0)
+  * **ph-as4-server-webapp-test** - Standalone AS4 server for internal **testing** purposes only (since 0.7.0)
 
 ## News and noteworthy
 
-  * v0.7.0 - work in progress
+  * v0.7.0 - 2017-07-24
     * Added HTTP retry for client
     * Added server duplicate message detection for incoming messages
     * `MessageInfo/Timestamp` uses UTC - thanks Sander
-    * Started two-way handling
+    * Added two-way handling
     * Fixed bug that Receipt is not signed (if desired)
     * Removed `PModeConfig` in favour of redundant `PMode` objects
     * Removed partner handling - not needed anymore 
@@ -75,10 +75,8 @@ server.proxy.port=8080
 ## Known limitations
 
 Per now the following known limitations exist:
-  * Only one-way communication is supported - of course `ErrorMessage`s and `Receipt`s are sent.
   * Multi-hop does not work (and is imho not relevant for a usage in PEPPOL)
-  * Pull requests are currently not supported (not relevant in E-SENS profile)
-  
+
 ## Differences to Holodeck
 
   * This is a library and not a product
