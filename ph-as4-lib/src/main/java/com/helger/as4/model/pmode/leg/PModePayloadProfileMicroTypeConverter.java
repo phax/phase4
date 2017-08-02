@@ -26,7 +26,7 @@ import com.helger.commons.string.StringParser;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModePayloadProfile>
 {
   private static final String ATTR_NAME = "Name";
   private static final String ATTR_MIME_TYPE = "MimeType";
@@ -35,9 +35,10 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
   private static final String ATTR_MANDATORY = "Mandatory";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModePayloadProfile aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModePayloadProfile aValue = (PModePayloadProfile) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
     ret.setAttribute (ATTR_NAME, aValue.getName ());
@@ -50,7 +51,7 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
   }
 
   @Nonnull
-  public Object convertToNative (final IMicroElement aElement)
+  public PModePayloadProfile convertToNative (final IMicroElement aElement)
   {
     final String sName = aElement.getAttributeValue (ATTR_NAME);
     final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAttributeValue (ATTR_MIME_TYPE));
@@ -61,5 +62,4 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
 
     return new PModePayloadProfile (sName, aMimeType, sXSDFilename, aMaxSizeKB, eMandatory);
   }
-
 }

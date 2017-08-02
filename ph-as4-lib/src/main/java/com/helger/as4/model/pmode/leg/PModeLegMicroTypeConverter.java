@@ -21,7 +21,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLeg>
 {
   private static final String ELEMENT_PROTOCOL = "Protocol";
   private static final String ELEMENT_BUSINESS_INFORMATION = "BusinessInfo";
@@ -29,9 +29,8 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter
   private static final String ELEMENT_RELIABILITY = "Reliability";
   private static final String ELEMENT_SECURITY = "Security";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLeg aValue, final String sNamespaceURI, final String sTagName)
   {
-    final PModeLeg aValue = (PModeLeg) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getProtocol (), sNamespaceURI, ELEMENT_PROTOCOL));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getBusinessInfo (),
@@ -61,5 +60,4 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter
                                                                            PModeLegSecurity.class);
     return new PModeLeg (aProtocol, aBusinessInformation, aErrorHandling, aReliability, aSecurity);
   }
-
 }

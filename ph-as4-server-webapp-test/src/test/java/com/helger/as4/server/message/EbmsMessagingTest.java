@@ -48,7 +48,7 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.as4lib.soap12.Soap12Body;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.as4lib.soap12.Soap12Header;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 

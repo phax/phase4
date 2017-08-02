@@ -21,15 +21,15 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.as4.wss.EWSSVersion;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.util.MicroHelper;
 
-public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegSecurity>
 {
   private static final String ATTR_WSS_VERSION = "WSSVersion";
   private static final String ELEMENT_X509_SIGN_ELEMENT = "X509SignElement";
@@ -52,9 +52,10 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final String ATTR_SEND_RECEIPT_REPLY_PATTERN = "SendReceiptReplyPattern";
   private static final String ATTR_SEND_RECEIPT_NON_REPUDIATION = "SendReceiptNonRepudiation";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegSecurity aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeLegSecurity aValue = (PModeLegSecurity) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
     ret.setAttribute (ATTR_WSS_VERSION, aValue.getWSSVersionAsString ());
@@ -103,7 +104,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  public Object convertToNative (final IMicroElement aElement)
+  public PModeLegSecurity convertToNative (final IMicroElement aElement)
   {
     final String sWSSVersion = aElement.getAttributeValue (ATTR_WSS_VERSION);
     final EWSSVersion eWSSVersion = EWSSVersion.getFromVersionOrNull (sWSSVersion);
@@ -112,12 +113,12 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       throw new IllegalStateException ("Invalid WSS version '" + sWSSVersion + "'");
     }
 
-    final ICommonsList <String> aX509SignElement = new CommonsArrayList<> ();
+    final ICommonsList <String> aX509SignElement = new CommonsArrayList <> ();
     for (final IMicroElement aSignElement : aElement.getAllChildElements (ELEMENT_X509_SIGN_ELEMENT))
     {
       aX509SignElement.add (aSignElement.getTextContentTrimmed ());
     }
-    final ICommonsList <String> aX509SignAttachment = new CommonsArrayList<> ();
+    final ICommonsList <String> aX509SignAttachment = new CommonsArrayList <> ();
     for (final IMicroElement aSignElement : aElement.getAllChildElements (ELEMENT_X509_SIGN_ATTACHMENT))
     {
       aX509SignAttachment.add (aSignElement.getTextContentTrimmed ());
@@ -138,12 +139,12 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       throw new IllegalStateException ("Invalid signature algorithm '" + sX509SignatureAlgorithm + "'");
     }
 
-    final ICommonsList <String> aX509EncryptionEncryptElement = new CommonsArrayList<> ();
+    final ICommonsList <String> aX509EncryptionEncryptElement = new CommonsArrayList <> ();
     for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT))
     {
       aX509EncryptionEncryptElement.add (aEncryptElement.getTextContentTrimmed ());
     }
-    final ICommonsList <String> aX509EncryptionEncryptAttachment = new CommonsArrayList<> ();
+    final ICommonsList <String> aX509EncryptionEncryptAttachment = new CommonsArrayList <> ();
     for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT))
     {
       aX509EncryptionEncryptAttachment.add (aEncryptElement.getTextContentTrimmed ());

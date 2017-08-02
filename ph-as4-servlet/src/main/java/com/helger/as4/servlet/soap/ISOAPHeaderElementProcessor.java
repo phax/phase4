@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.servlet.AS4MessageState;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
 

@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.ToStringGenerator;
 

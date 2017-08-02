@@ -27,6 +27,6 @@ public class HttpXMLEntity extends StringEntity
 {
   public HttpXMLEntity (@Nonnull final Node Node)
   {
-    super (AS4XMLHelper.serializeXML (Node), AS4XMLHelper.XWS.getCharsetObj ());
+    super (AS4XMLHelper.serializeXML (Node), AS4XMLHelper.XWS.getCharset ());
   }
 }

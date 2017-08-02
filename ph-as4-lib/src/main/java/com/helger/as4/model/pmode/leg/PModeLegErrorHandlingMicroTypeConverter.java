@@ -22,7 +22,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegErrorHandling>
 {
   private static final String ELEMENT_REPORT_RECEIVER_ERRORS_TO = "ReportReceiverErrorsTo";
   private static final String ELEMENT_REPORT_SENDER_ERRORS_TO = "ReportSenderErrorsTo";
@@ -31,9 +31,10 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
   private static final String ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = "ReportProcessErrorNotifyProducer";
   private static final String ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = "ReportDeliveryFailuresNotifyProducer";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegErrorHandling aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeLegErrorHandling aValue = (PModeLegErrorHandling) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReportReceiverErrorsTo (),
                                                                sNamespaceURI,
@@ -52,9 +53,8 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
     return ret;
   }
 
-  public Object convertToNative (final IMicroElement aElement)
+  public PModeLegErrorHandling convertToNative (final IMicroElement aElement)
   {
-
     final PModeAddressList aReceiverAddresses = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_REPORT_RECEIVER_ERRORS_TO),
                                                                                     PModeAddressList.class);
     final PModeAddressList aSenderAddresses = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_REPORT_SENDER_ERRORS_TO),
@@ -76,5 +76,4 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
                                       eReportProcessErrorNotifyProducer,
                                       eReportDeliveryFailuresNotifyProducer);
   }
-
 }

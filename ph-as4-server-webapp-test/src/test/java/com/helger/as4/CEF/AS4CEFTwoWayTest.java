@@ -26,7 +26,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.commons.thread.ThreadHelper;
+import com.helger.commons.concurrent.ThreadHelper;
 
 public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {

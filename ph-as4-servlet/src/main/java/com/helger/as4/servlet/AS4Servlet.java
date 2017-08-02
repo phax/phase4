@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.helger.http.EHTTPMethod;
-import com.helger.http.EHTTPVersion;
+import com.helger.http.EHttpMethod;
+import com.helger.http.EHttpVersion;
 import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
 import com.helger.photon.security.login.LoggedInUserManager;
 import com.helger.servlet.response.UnifiedResponse;
@@ -56,15 +56,15 @@ public final class AS4Servlet extends AbstractUnifiedResponseServlet
   }
 
   @Override
-  protected Set <EHTTPMethod> getAllowedHTTPMethods ()
+  protected Set <EHttpMethod> getAllowedHTTPMethods ()
   {
     return ALLOWED_METHDOS_POST;
   }
 
   @Override
   @Nonnull
-  protected AS4Response createUnifiedResponse (@Nonnull final EHTTPVersion eHTTPVersion,
-                                               @Nonnull final EHTTPMethod eHTTPMethod,
+  protected AS4Response createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
+                                               @Nonnull final EHttpMethod eHTTPMethod,
                                                @Nonnull final HttpServletRequest aHttpRequest)
   {
     return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);

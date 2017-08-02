@@ -17,13 +17,13 @@
 package com.helger.as4.model.pmode.leg;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegReliability>
 {
   private static final String ATTR_AT_LEAST_ONCE_CONTRACT = "AtLeastOnceContract";
   private static final String ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY = "AtLeastOnceAckOnDelivery";
@@ -36,9 +36,10 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
   private static final String ELEMENT_CORRELATION = "Correlation";
   private static final String ATTR_TERMINATE_GROUP = "TerminateGroup";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegReliability aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeLegReliability aValue = (PModeLegReliability) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
     if (aValue.isAtLeastOnceContractDefined ())
@@ -64,9 +65,8 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
     return ret;
   }
 
-  public Object convertToNative (final IMicroElement aElement)
+  public PModeLegReliability convertToNative (final IMicroElement aElement)
   {
-
     final ETriState eAtLeastOnceContract = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_CONTRACT),
                                                         PModeLegReliability.DEFAULT_AT_LEAST_ONCE_CONTRACT);
     final ETriState eAtLeastOnceAckOnDelivery = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY),
@@ -82,7 +82,7 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
                                                     PModeLegReliability.DEFAULT_IN_ORDER_CONTACT);
     final ETriState eStartGroup = getTriState (aElement.getAttributeValue (ATTR_START_GROUP),
                                                PModeLegReliability.DEFAULT_START_GROUP);
-    final ICommonsList <String> aCorrelationStrings = new CommonsArrayList<> ();
+    final ICommonsList <String> aCorrelationStrings = new CommonsArrayList <> ();
     for (final IMicroElement aCorrelationElement : aElement.getAllChildElements (ELEMENT_CORRELATION))
     {
       aCorrelationStrings.add (aCorrelationElement.getTextContentTrimmed ());
@@ -101,5 +101,4 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
                                     aCorrelationStrings,
                                     eTerminateGroup);
   }
-
 }

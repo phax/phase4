@@ -22,8 +22,8 @@ import com.helger.as4.CAS4;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 
 /**
  * This class helps to keep the test clean from strings that can be changed.

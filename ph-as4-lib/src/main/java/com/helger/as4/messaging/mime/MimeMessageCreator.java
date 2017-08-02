@@ -35,7 +35,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
@@ -94,7 +94,7 @@ public final class MimeMessageCreator
   public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
                                           @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
-    final Charset aCharset = AS4XMLHelper.XWS.getCharsetObj ();
+    final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
     final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
     final String sContentType = m_eSOAPVersion.getMimeType (aCharset).getAsString ();

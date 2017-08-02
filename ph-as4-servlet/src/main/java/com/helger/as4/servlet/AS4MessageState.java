@@ -36,9 +36,9 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.attr.MapBasedAttributeContainerAny;
-import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.collection.attr.AttributeContainerAny;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 
 /**
@@ -50,7 +50,7 @@ import com.helger.commons.datetime.PDTFactory;
  * @author Philip Helger
  */
 @NotThreadSafe
-public class AS4MessageState extends MapBasedAttributeContainerAny <String> implements IAS4MessageState
+public class AS4MessageState extends AttributeContainerAny <String> implements IAS4MessageState
 {
   private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
   private static final String KEY_PMODE = "as4.pmode.config";
@@ -99,13 +99,13 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
 
   public void setMessaging (@Nullable final Ebms3Messaging aMessaging)
   {
-    setAttribute (KEY_EBMS3_MESSAGING, aMessaging);
+    putIn (KEY_EBMS3_MESSAGING, aMessaging);
   }
 
   @Nullable
   public Ebms3Messaging getMessaging ()
   {
-    return getCastedAttribute (KEY_EBMS3_MESSAGING);
+    return getCastedValue (KEY_EBMS3_MESSAGING);
   }
 
   /**
@@ -116,135 +116,135 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
    */
   public void setPMode (@Nullable final IPMode aPMode)
   {
-    setAttribute (KEY_PMODE, aPMode);
+    putIn (KEY_PMODE, aPMode);
   }
 
   @Nullable
   public IPMode getPMode ()
   {
-    return getCastedAttribute (KEY_PMODE);
+    return getCastedValue (KEY_PMODE);
   }
 
   public void setOriginalAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    setAttribute (KEY_ORIGINAL_ATTACHMENT_LIST, aAttachments);
+    putIn (KEY_ORIGINAL_ATTACHMENT_LIST, aAttachments);
   }
 
   @Nullable
   public ICommonsList <WSS4JAttachment> getOriginalAttachments ()
   {
-    return getCastedAttribute (KEY_ORIGINAL_ATTACHMENT_LIST);
+    return getCastedValue (KEY_ORIGINAL_ATTACHMENT_LIST);
   }
 
   public void setDecryptedSOAPDocument (@Nullable final Document aDocument)
   {
-    setAttribute (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
+    putIn (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
   }
 
   @Nullable
   public Document getDecryptedSOAPDocument ()
   {
-    return getCastedAttribute (KEY_DECRYPTED_SOAP_DOCUMENT);
+    return getCastedValue (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 
   public void setDecryptedAttachments (@Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
-    setAttribute (KEY_DECRYPTED_ATTACHMENT_LIST, aAttachments);
+    putIn (KEY_DECRYPTED_ATTACHMENT_LIST, aAttachments);
   }
 
   @Nullable
   public ICommonsList <WSS4JAttachment> getDecryptedAttachments ()
   {
-    return getCastedAttribute (KEY_DECRYPTED_ATTACHMENT_LIST);
+    return getCastedValue (KEY_DECRYPTED_ATTACHMENT_LIST);
   }
 
   public void setCompressedAttachmentIDs (@Nullable final ICommonsMap <String, EAS4CompressionMode> aIDs)
   {
-    setAttribute (KEY_COMPRESSED_ATTACHMENT_IDS, aIDs);
+    putIn (KEY_COMPRESSED_ATTACHMENT_IDS, aIDs);
   }
 
   @Nullable
   public ICommonsMap <String, EAS4CompressionMode> getCompressedAttachmentIDs ()
   {
-    return getCastedAttribute (KEY_COMPRESSED_ATTACHMENT_IDS);
+    return getCastedValue (KEY_COMPRESSED_ATTACHMENT_IDS);
   }
 
   public void setMPC (@Nullable final IMPC aMPC)
   {
-    setAttribute (KEY_MPC, aMPC);
+    putIn (KEY_MPC, aMPC);
   }
 
   @Nullable
   public IMPC getMPC ()
   {
-    return getCastedAttribute (KEY_MPC);
+    return getCastedValue (KEY_MPC);
   }
 
   public void setSoapBodyPayloadPresent (final boolean bHasSoapBodyPayload)
   {
-    setAttribute (KEY_SOAP_BODY_PAYLOAD_PRESENT, bHasSoapBodyPayload);
+    putIn (KEY_SOAP_BODY_PAYLOAD_PRESENT, bHasSoapBodyPayload);
   }
 
   public boolean isSoapBodyPayloadPresent ()
   {
-    return getAttributeAsBoolean (KEY_SOAP_BODY_PAYLOAD_PRESENT, false);
+    return getAsBoolean (KEY_SOAP_BODY_PAYLOAD_PRESENT, false);
   }
 
   public void setInitiatorID (@Nullable final String sInitiatorID)
   {
-    setAttribute (KEY_INITIATOR_ID, sInitiatorID);
+    putIn (KEY_INITIATOR_ID, sInitiatorID);
   }
 
   @Nullable
   public String getInitiatorID ()
   {
-    return getAttributeAsString (KEY_INITIATOR_ID);
+    return getAsString (KEY_INITIATOR_ID);
   }
 
   public void setResponderID (@Nullable final String sResponderID)
   {
-    setAttribute (KEY_RESPONDER_ID, sResponderID);
+    putIn (KEY_RESPONDER_ID, sResponderID);
   }
 
   @Nullable
   public String getResponderID ()
   {
-    return getAttributeAsString (KEY_RESPONDER_ID);
+    return getAsString (KEY_RESPONDER_ID);
   }
 
   public void setUsedCertificate (@Nullable final X509Certificate aCert)
   {
-    setAttribute (KEY_USED_CERTIFICATE, aCert);
+    putIn (KEY_USED_CERTIFICATE, aCert);
   }
 
   @Nullable
   public X509Certificate getUsedCertificate ()
   {
-    return getCastedAttribute (KEY_USED_CERTIFICATE);
+    return getCastedValue (KEY_USED_CERTIFICATE);
   }
 
   public void setEffectivePModeLeg (@Nonnegative final int nLegNumber, @Nullable final PModeLeg aEffectiveLeg)
   {
     ValueEnforcer.isTrue (nLegNumber == 1 || nLegNumber == 2, "LegNumber must be 1 or 2");
-    setAttribute (KEY_EFFECTIVE_PMODE_LEG, aEffectiveLeg);
-    setAttribute (KEY_EFFECTIVE_PMODE_LEG_NUMBER, nLegNumber);
+    putIn (KEY_EFFECTIVE_PMODE_LEG, aEffectiveLeg);
+    putIn (KEY_EFFECTIVE_PMODE_LEG_NUMBER, nLegNumber);
   }
 
   @Nullable
   public PModeLeg getEffectivePModeLeg ()
   {
-    return getCastedAttribute (KEY_EFFECTIVE_PMODE_LEG);
+    return getCastedValue (KEY_EFFECTIVE_PMODE_LEG);
   }
 
   @CheckForSigned
   public int getEffectivePModeLegNumber ()
   {
-    return getAttributeAsInt (KEY_EFFECTIVE_PMODE_LEG_NUMBER, -1);
+    return getAsInt (KEY_EFFECTIVE_PMODE_LEG_NUMBER, -1);
   }
 
   public void setSoapSignatureChecked (final boolean bSignatureChecked)
   {
-    setAttribute (KEY_SOAP_CHECKED_SIGNATURE, bSignatureChecked);
+    putIn (KEY_SOAP_CHECKED_SIGNATURE, bSignatureChecked);
   }
 
   /**
@@ -253,12 +253,12 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
    */
   public boolean isSoapSignatureChecked ()
   {
-    return getAttributeAsBoolean (KEY_SOAP_CHECKED_SIGNATURE, false);
+    return getAsBoolean (KEY_SOAP_CHECKED_SIGNATURE, false);
   }
 
   public void setSoapDecrypted (final boolean bDecrypted)
   {
-    setAttribute (KEY_SOAP_DECRYPTED, bDecrypted);
+    putIn (KEY_SOAP_DECRYPTED, bDecrypted);
   }
 
   /**
@@ -267,6 +267,6 @@ public class AS4MessageState extends MapBasedAttributeContainerAny <String> impl
    */
   public boolean isSoapDecrypted ()
   {
-    return getAttributeAsBoolean (KEY_SOAP_DECRYPTED, false);
+    return getAsBoolean (KEY_SOAP_DECRYPTED, false);
   }
 }

@@ -25,12 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.commons.collection.ext.CommonsHashMap;
-import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsMap;
+import com.helger.commons.collection.impl.CommonsHashMap;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.lang.ClassHelper;
-import com.helger.photon.core.app.CApplication;
+import com.helger.photon.basic.app.CApplicationID;
 import com.helger.photon.core.job.AbstractPhotonJob;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
@@ -49,7 +49,7 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
   public AS4DuplicateCleanupJob ()
   {
     // Fixed ID
-    super (CApplication.APP_ID_SECURE);
+    super (CApplicationID.APP_ID_SECURE);
   }
 
   @Override

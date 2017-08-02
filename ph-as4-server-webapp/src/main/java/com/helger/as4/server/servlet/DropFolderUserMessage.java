@@ -45,7 +45,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.commons.collection.ext.CommonsArrayList;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.resource.ClassPathResource;

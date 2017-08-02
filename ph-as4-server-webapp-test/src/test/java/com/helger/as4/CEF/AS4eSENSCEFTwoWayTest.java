@@ -31,11 +31,11 @@ import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
-import com.helger.commons.thread.ThreadHelper;
 
 public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
 {

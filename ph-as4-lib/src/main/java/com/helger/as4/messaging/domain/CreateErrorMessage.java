@@ -22,7 +22,7 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 
 public final class CreateErrorMessage
 {

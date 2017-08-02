@@ -12,6 +12,8 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
+  * v0.8.0 - work in progress
+    * Updated to ph-commons 9.0.0
   * v0.7.0 - 2017-07-24
     * Added HTTP retry for client
     * Added server duplicate message detection for incoming messages

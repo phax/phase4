@@ -17,13 +17,14 @@
 package com.helger.as4.model.pmode.leg;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
-import com.helger.commons.collection.ext.ICommonsOrderedMap;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegBusinessInformationMicroTypeConverter extends
+                                                           AbstractPModeMicroTypeConverter <PModeLegBusinessInformation>
 {
   private static final String ATTR_SERVICE = "Service";
   private static final String ATTR_ACTION = "Action";
@@ -32,9 +33,10 @@ public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPMode
   private static final String ATTR_PAYLOAD_PROFILE_MAX_KB = "PayloadProfileMaxKB";
   private static final String ATTR_MPCID = "MPCID";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegBusinessInformation aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeLegBusinessInformation aValue = (PModeLegBusinessInformation) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_SERVICE, aValue.getService ());
     ret.setAttribute (ATTR_ACTION, aValue.getAction ());
@@ -55,14 +57,14 @@ public class PModeLegBusinessInformationMicroTypeConverter extends AbstractPMode
     final String sService = aElement.getAttributeValue (ATTR_SERVICE);
     final String sAction = aElement.getAttributeValue (ATTR_ACTION);
 
-    final ICommonsOrderedMap <String, PModeProperty> aProperties = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModeProperty> aProperties = new CommonsLinkedHashMap <> ();
     for (final IMicroElement aPropertyElement : aElement.getAllChildElements (ELEMENT_PROPERTIES))
     {
       final PModeProperty aProperty = MicroTypeConverter.convertToNative (aPropertyElement, PModeProperty.class);
       aProperties.put (aProperty.getName (), aProperty);
     }
 
-    final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles = new CommonsLinkedHashMap<> ();
+    final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles = new CommonsLinkedHashMap <> ();
     for (final IMicroElement aPayloadElement : aElement.getAllChildElements (ELEMENT_PAYLOAD_PROFILE))
     {
       final PModePayloadProfile aPayloadProfile = MicroTypeConverter.convertToNative (aPayloadElement,

@@ -23,7 +23,7 @@ import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringParser;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
-public abstract class AbstractPModeMicroTypeConverter implements IMicroTypeConverter
+public abstract class AbstractPModeMicroTypeConverter <T> implements IMicroTypeConverter <T>
 {
   @Nonnull
   protected static ETriState getTriState (@Nullable final String sAttrValue, final boolean bDefault)

@@ -36,10 +36,10 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
-import com.helger.http.HTTPStringHelper;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -151,7 +151,7 @@ public final class MessageHelperMethods
     {
       final Header h = (Header) aEnum.nextElement ();
       // Make a single-line HTTP header value!
-      aHttpMsg.addHeader (h.getName (), HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
+      aHttpMsg.addHeader (h.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (h.getValue ()));
 
       // Remove from MIME message!
       aMimeMsg.removeHeader (h.getName ());

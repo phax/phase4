@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.concurrent.BasicThreadFactory;
-import com.helger.commons.concurrent.ManagedExecutorService;
-import com.helger.commons.scope.IScope;
-import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
+import com.helger.commons.concurrent.ExecutorServiceHelper;
+import com.helger.scope.IScope;
+import com.helger.scope.singleton.AbstractGlobalSingleton;
 
 /**
  * Asynchronous worker pool that handles stuff that runs in the background.
- * 
+ *
  * @author Philip Helger
  */
 public final class AS4WorkerPool extends AbstractGlobalSingleton
@@ -64,7 +64,7 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
   protected void onDestroy (@Nonnull final IScope aScopeInDestruction) throws Exception
   {
     s_aLogger.info ("Global AS4 worker queue about to be closed");
-    ManagedExecutorService.shutdownAndWaitUntilAllTasksAreFinished (m_aES);
+    ExecutorServiceHelper.shutdownAndWaitUntilAllTasksAreFinished (m_aES);
     s_aLogger.info ("Global AS4 worker queue closed!");
   }
 

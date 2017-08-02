@@ -23,7 +23,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
-public final class PModePartyMicroTypeConverter implements IMicroTypeConverter
+public final class PModePartyMicroTypeConverter implements IMicroTypeConverter <PModeParty>
 {
   private static final String ATTR_ID_TYPE = "IDType";
   private static final String ATTR_ID_VALUE = "IDValue";
@@ -32,11 +32,10 @@ public final class PModePartyMicroTypeConverter implements IMicroTypeConverter
   private static final String ATTR_PASSWORD = "Password";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final PModeParty aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final PModeParty aValue = (PModeParty) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ID_TYPE, aValue.getIDType ());
     ret.setAttribute (ATTR_ID_VALUE, aValue.getIDValue ());

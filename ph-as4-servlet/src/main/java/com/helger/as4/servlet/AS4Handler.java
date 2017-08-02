@@ -106,12 +106,13 @@ import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
-import com.helger.commons.collection.ext.ICommonsList;
-import com.helger.commons.collection.ext.ICommonsOrderedMap;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
@@ -119,7 +120,6 @@ import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
-import com.helger.http.HTTPStringHelper;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
@@ -160,7 +160,7 @@ public final class AS4Handler implements Closeable
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
-      aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharsetObj ())
+      aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharset ())
                    .setMimeType (eSOAPVersion.getMimeType ());
     }
 
@@ -185,7 +185,7 @@ public final class AS4Handler implements Closeable
       {
         final Header h = (Header) aEnum.nextElement ();
         // Make a single-line HTTP header value!
-        m_aHeaders.put (h.getName (), HTTPStringHelper.getUnifiedHTTPHeaderValue (h.getValue ()));
+        m_aHeaders.put (h.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (h.getValue ()));
 
         // Remove from MIME message!
         m_aMimeMsg.removeHeader (h.getName ());

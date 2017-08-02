@@ -30,7 +30,7 @@ import com.helger.xml.microdom.convert.IMicroTypeConverter;
  *
  * @author Philip Helger
  */
-public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConverter
+public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConverter <AS4DuplicateItem>
 {
   private static final String ATTR_DT = "dt";
   private static final String ATTR_MESSAGE_ID = "msgid";
@@ -38,11 +38,10 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
   private static final String ATTR_PMODE_ID = "pmodeid";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final AS4DuplicateItem aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final AS4DuplicateItem aValue = (AS4DuplicateItem) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttributeWithConversion (ATTR_DT, aValue.getDateTime ());
     ret.setAttribute (ATTR_MESSAGE_ID, aValue.getMessageID ());

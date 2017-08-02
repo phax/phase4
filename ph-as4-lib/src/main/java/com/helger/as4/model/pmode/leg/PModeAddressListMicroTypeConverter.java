@@ -17,18 +17,19 @@
 package com.helger.as4.model.pmode.leg;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
-import com.helger.commons.collection.ext.CommonsArrayList;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeAddressList>
 {
   private static final String ELEMENT_ADDRESSES = "Addresses";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeAddressList aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeAddressList aValue = (PModeAddressList) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     for (final String sEncrypt : aValue.getAllAddresses ())
     {
@@ -37,9 +38,9 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  public Object convertToNative (final IMicroElement aElement)
+  public PModeAddressList convertToNative (final IMicroElement aElement)
   {
-    final ICommonsList <String> aAddresses = new CommonsArrayList<> ();
+    final ICommonsList <String> aAddresses = new CommonsArrayList <> ();
     for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_ADDRESSES))
     {
       aAddresses.add (aEncryptElement.getTextContentTrimmed ());
@@ -47,5 +48,4 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
 
     return new PModeAddressList (aAddresses);
   }
-
 }

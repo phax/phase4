@@ -20,30 +20,28 @@ import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeReceptionAwareness>
 {
   private static final String ATTR_RECEPTION_AWARENESS = "WSSVersion";
   private static final String ATTR_RETRY = "X509Sign";
   private static final String ATTR_DOUBLE_DETECTION = "X509SignatureCertificate";
 
-  public IMicroElement convertToMicroElement (final Object aObject, final String sNamespaceURI, final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeReceptionAwareness aValue,
+                                              final String sNamespaceURI,
+                                              final String sTagName)
   {
-    final PModeReceptionAwareness aValue = (PModeReceptionAwareness) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
-
     if (aValue.isReceptionAwarenessDefined ())
       ret.setAttribute (ATTR_RECEPTION_AWARENESS, aValue.isReceptionAwareness ());
     if (aValue.isRetryDefined ())
       ret.setAttribute (ATTR_RETRY, aValue.isRetry ());
     if (aValue.isDuplicateDetectionDefined ())
       ret.setAttribute (ATTR_DOUBLE_DETECTION, aValue.isDuplicateDetection ());
-
     return ret;
   }
 
-  public Object convertToNative (final IMicroElement aElement)
+  public PModeReceptionAwareness convertToNative (final IMicroElement aElement)
   {
-
     final ETriState eReceptionAwareness = getTriState (aElement.getAttributeValue (ATTR_RECEPTION_AWARENESS),
                                                        PModeReceptionAwareness.DEFAULT_RECEPTION_AWARENESS);
     final ETriState eRetry = getTriState (aElement.getAttributeValue (ATTR_RETRY),

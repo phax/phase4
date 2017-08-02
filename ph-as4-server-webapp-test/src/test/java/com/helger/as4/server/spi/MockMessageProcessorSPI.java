@@ -46,7 +46,7 @@ import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 

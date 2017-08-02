@@ -30,11 +30,11 @@ import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
-import com.helger.photon.core.requesttrack.RequestTracker;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
+import com.helger.photon.xservlet.requesttrack.RequestTracker;
 
 public final class AS4WebAppListener extends WebAppListener
 {

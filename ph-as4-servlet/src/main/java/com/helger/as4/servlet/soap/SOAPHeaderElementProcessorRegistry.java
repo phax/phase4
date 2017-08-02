@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.UsedViaReflection;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
-import com.helger.commons.collection.ext.ICommonsOrderedMap;
-import com.helger.commons.scope.singleton.AbstractGlobalSingleton;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
+import com.helger.scope.singleton.AbstractGlobalSingleton;
 
 /**
  * This class manages the SOAP header element processors. This is used to

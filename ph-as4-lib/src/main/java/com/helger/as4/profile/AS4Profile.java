@@ -24,7 +24,7 @@ import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.function.ISupplier;
+import com.helger.commons.functional.ISupplier;
 import com.helger.commons.string.ToStringGenerator;
 
 /**

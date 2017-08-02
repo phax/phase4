@@ -31,8 +31,8 @@ import org.w3c.dom.Node;
 import com.helger.as4.marshaller.Ebms3NamespaceHandler;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.ext.CommonsLinkedHashMap;
-import com.helger.commons.collection.ext.ICommonsOrderedMap;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.NonBlockingStringWriter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
@@ -97,7 +97,7 @@ public final class AS4XMLHelper
     ValueEnforcer.notNull (aElement, "Element");
 
     final StringMap ret = new StringMap ();
-    aElement.forAllAttributes ( (ns, name, value) -> ret.setAttribute (name.toLowerCase (Locale.US), value));
+    aElement.forAllAttributes ( (ns, name, value) -> ret.putIn (name.toLowerCase (Locale.US), value));
     return ret;
   }
 
@@ -108,7 +108,7 @@ public final class AS4XMLHelper
   {
     final StringMap aAttributes = getAllAttrsWithLowercaseName (aElement);
     for (final String sRequiredAttribute : aRequiredAttributes)
-      if (!aAttributes.containsAttribute (sRequiredAttribute))
+      if (!aAttributes.containsKey (sRequiredAttribute))
         throw new IllegalStateException (aElement.getTagName () +
                                          " is missing required attribute '" +
                                          sRequiredAttribute +

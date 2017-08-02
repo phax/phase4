@@ -24,16 +24,15 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
-public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeConverter
+public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeConverter <PModePayloadService>
 {
   private static final String ATTR_COMPRESSION_MODE = "CompressionMode";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final PModePayloadService aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final PModePayloadService aValue = (PModePayloadService) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_COMPRESSION_MODE, aValue.getCompressionModeID ());
     return ret;
@@ -48,6 +47,5 @@ public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeCo
       throw new IllegalStateException ("Invalid compression mode ID '" + sCompressionModeID + "' provided!");
 
     return new PModePayloadService (eCompressionMode);
-
   }
 }

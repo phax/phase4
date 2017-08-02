@@ -27,7 +27,7 @@ import com.helger.as4.servlet.IAS4MessageState;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
-import com.helger.commons.collection.ext.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsList;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate

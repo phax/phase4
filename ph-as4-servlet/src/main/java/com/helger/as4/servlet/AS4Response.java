@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mime.CMimeType;
-import com.helger.http.EHTTPMethod;
-import com.helger.http.EHTTPVersion;
+import com.helger.http.EHttpMethod;
+import com.helger.http.EHttpVersion;
 import com.helger.servlet.response.UnifiedResponse;
 
 /**
@@ -41,8 +41,8 @@ public class AS4Response extends UnifiedResponse
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Response.class);
 
-  public AS4Response (@Nonnull final EHTTPVersion eHTTPVersion,
-                      @Nonnull final EHTTPMethod eHTTPMethod,
+  public AS4Response (@Nonnull final EHttpVersion eHTTPVersion,
+                      @Nonnull final EHttpMethod eHTTPMethod,
                       @Nonnull final HttpServletRequest aHttpRequest)
   {
     super (eHTTPVersion, eHTTPMethod, aHttpRequest);

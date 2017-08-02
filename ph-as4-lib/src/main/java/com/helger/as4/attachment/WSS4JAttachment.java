@@ -40,13 +40,13 @@ import com.helger.as4.CAS4;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.http.CHTTPHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamDataSource;
 
@@ -231,7 +231,7 @@ public class WSS4JAttachment extends Attachment
 
     // After DataHandler!!
     aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ());
-    aMimeBodyPart.setHeader (CHTTPHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
+    aMimeBodyPart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
 
     aMimeMultipart.addBodyPart (aMimeBodyPart);
   }
@@ -293,8 +293,7 @@ public class WSS4JAttachment extends Attachment
 
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
-      try (
-          final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
+      try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
         StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
       }

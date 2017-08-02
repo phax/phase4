@@ -27,7 +27,7 @@ import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter <PMode>
 {
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";
@@ -40,11 +40,10 @@ public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConver
   private static final String ELEMENT_RECEPETIONAWARENESS = "RecepetionAwareness";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final PMode aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final IPMode aValue = (IPMode) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getInitiator (),

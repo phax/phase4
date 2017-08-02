@@ -24,17 +24,16 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeConverter
+public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegProtocol>
 {
   private static final String ATTR_ADDRESS = "Address";
   private static final String ATTR_SOAP_VERSION = "SOAPVersion";
 
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final PModeLegProtocol aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final PModeLegProtocol aValue = (PModeLegProtocol) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ADDRESS, aValue.getAddress ());
     ret.setAttribute (ATTR_SOAP_VERSION, aValue.getSOAPVersion ().getVersion ());

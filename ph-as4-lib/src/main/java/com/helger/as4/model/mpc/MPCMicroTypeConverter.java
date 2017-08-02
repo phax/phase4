@@ -23,14 +23,13 @@ import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public final class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter
+public final class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter <MPC>
 {
   @Nonnull
-  public IMicroElement convertToMicroElement (@Nonnull final Object aObject,
+  public IMicroElement convertToMicroElement (@Nonnull final MPC aValue,
                                               @Nullable final String sNamespaceURI,
                                               @Nonnull final String sTagName)
   {
-    final IMPC aValue = (IMPC) aObject;
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     setObjectFields (aValue, ret);
     return ret;
