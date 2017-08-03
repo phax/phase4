@@ -36,13 +36,12 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 public final class MimeMessageCreator
 {
-  private static final String CONTENT_TRANSFER_ENCODING = "Content-Transfer-Encoding";
-
   static
   {
     /**
@@ -103,7 +102,7 @@ public final class MimeMessageCreator
       // Message Itself
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       aMessagePart.setContent (new DOMSource (aSOAPEnvelope), sContentType);
-      aMessagePart.setHeader (CONTENT_TRANSFER_ENCODING, eCTE.getID ());
+      aMessagePart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
 

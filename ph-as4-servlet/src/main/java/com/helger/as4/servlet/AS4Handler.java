@@ -16,7 +16,6 @@
  */
 package com.helger.as4.servlet;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -107,9 +106,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -138,7 +135,7 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4Handler implements Closeable
+public final class AS4Handler implements AutoCloseable
 {
   private static interface IAS4ResponseFactory
   {
@@ -174,29 +171,29 @@ public final class AS4Handler implements Closeable
   private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
     private final MimeMessage m_aMimeMsg;
-    private final ICommonsOrderedMap <String, String> m_aHeaders = new CommonsLinkedHashMap <> ();
+    private final HttpHeaderMap m_aHeaders = new HttpHeaderMap ();
 
     public AS4ResponseFactoryMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
       m_aMimeMsg = aMimeMsg;
       // Move all mime headers to the HTTP request
-      final Enumeration <?> aEnum = m_aMimeMsg.getAllHeaders ();
+      final Enumeration <Header> aEnum = m_aMimeMsg.getAllHeaders ();
       while (aEnum.hasMoreElements ())
       {
-        final Header h = (Header) aEnum.nextElement ();
+        final Header aHeader = aEnum.nextElement ();
         // Make a single-line HTTP header value!
-        m_aHeaders.put (h.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (h.getValue ()));
-
-        // Remove from MIME message!
-        m_aMimeMsg.removeHeader (h.getName ());
+        m_aHeaders.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (aHeader.getValue ()));
       }
+
+      // Remove all headers from MIME message
+      // Do it after the copy loop, in case a header has more than one value!
+      for (final Header aHeader : CollectionHelper.newList (m_aMimeMsg.getAllHeaders ()))
+        m_aMimeMsg.removeHeader (aHeader.getName ());
     }
 
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
     {
-      for (final Map.Entry <String, String> aEntry : m_aHeaders.entrySet ())
-        aHttpResponse.addCustomResponseHeader (aEntry.getKey (), aEntry.getValue ());
-
+      aHttpResponse.addCustomResponseHeaders (m_aHeaders);
       aHttpResponse.setContent ( () -> {
         try
         {

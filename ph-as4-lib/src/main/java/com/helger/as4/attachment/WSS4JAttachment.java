@@ -221,7 +221,7 @@ public class WSS4JAttachment extends Attachment
 
     final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
 
-    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, getId ());
+    aMimeBodyPart.setHeader (CHttpHeader.CONTENT_ID, getId ());
     // !IMPORTANT! DO NOT CHANGE the order of the adding a DH and then the last
     // headers
     // On some tests the datahandler did reset content-type and transfer
@@ -230,7 +230,7 @@ public class WSS4JAttachment extends Attachment
                                                                               getId ()).getEncodingAware (getContentTransferEncoding ())));
 
     // After DataHandler!!
-    aMimeBodyPart.setHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, getMimeType ());
+    aMimeBodyPart.setHeader (CHttpHeader.CONTENT_TYPE, getMimeType ());
     aMimeBodyPart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
 
     aMimeMultipart.addBodyPart (aMimeBodyPart);
