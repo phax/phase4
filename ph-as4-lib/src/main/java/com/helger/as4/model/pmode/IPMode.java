@@ -23,9 +23,9 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.photon.basic.object.IObject;
+import com.helger.photon.basic.object.IBusinessObject;
 
-public interface IPMode extends IObject
+public interface IPMode extends IBusinessObject
 {
   @Nullable
   PModeParty getInitiator ();

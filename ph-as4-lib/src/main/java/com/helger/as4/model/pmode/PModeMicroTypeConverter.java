@@ -22,12 +22,12 @@ import javax.annotation.Nullable;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
-import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
+import com.helger.photon.security.object.AbstractBusinessObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
-public final class PModeMicroTypeConverter extends AbstractObjectMicroTypeConverter <PMode>
+public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTypeConverter <PMode>
 {
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";

@@ -36,7 +36,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
-import com.helger.photon.security.object.ObjectHelper;
+import com.helger.photon.security.object.BusinessObjectHelper;
 
 public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
 {
@@ -88,7 +88,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
       aRealPMode.setPayloadService (aPMode.getPayloadService ());
       aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ());
 
-      ObjectHelper.setLastModificationNow (aRealPMode);
+      BusinessObjectHelper.setLastModificationNow (aRealPMode);
       internalUpdateItem (aRealPMode);
     }
     finally
@@ -114,7 +114,7 @@ public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
     m_aRWLock.writeLock ().lock ();
     try
     {
-      if (ObjectHelper.setDeletionNow (aDeletedPMode).isUnchanged ())
+      if (BusinessObjectHelper.setDeletionNow (aDeletedPMode).isUnchanged ())
       {
         AuditHelper.onAuditDeleteFailure (PMode.OT, "already-deleted", sPModeID);
         return EChange.UNCHANGED;

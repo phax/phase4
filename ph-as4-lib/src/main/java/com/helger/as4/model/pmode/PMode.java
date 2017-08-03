@@ -26,10 +26,10 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
-import com.helger.photon.basic.object.AbstractBaseObject;
+import com.helger.photon.basic.object.AbstractBusinessObject;
 import com.helger.photon.security.object.StubObject;
 
-public class PMode extends AbstractBaseObject implements IPMode
+public class PMode extends AbstractBusinessObject implements IPMode
 {
   public static final ObjectType OT = new ObjectType ("as4.pmode");
 

@@ -19,11 +19,11 @@ package com.helger.as4.model.mpc;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.photon.security.object.AbstractObjectMicroTypeConverter;
+import com.helger.photon.security.object.AbstractBusinessObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
-public final class MPCMicroTypeConverter extends AbstractObjectMicroTypeConverter <MPC>
+public final class MPCMicroTypeConverter extends AbstractBusinessObjectMicroTypeConverter <MPC>
 {
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final MPC aValue,

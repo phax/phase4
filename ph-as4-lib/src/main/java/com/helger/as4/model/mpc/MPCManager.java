@@ -28,7 +28,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
 import com.helger.photon.basic.app.dao.impl.DAOException;
 import com.helger.photon.basic.audit.AuditHelper;
-import com.helger.photon.security.object.ObjectHelper;
+import com.helger.photon.security.object.BusinessObjectHelper;
 
 public final class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
 {
@@ -72,7 +72,7 @@ public final class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
     m_aRWLock.writeLock ().lock ();
     try
     {
-      ObjectHelper.setLastModificationNow (aRealMPC);
+      BusinessObjectHelper.setLastModificationNow (aRealMPC);
       internalUpdateItem (aRealMPC);
     }
     finally
@@ -97,7 +97,7 @@ public final class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
     m_aRWLock.writeLock ().lock ();
     try
     {
-      if (ObjectHelper.setDeletionNow (aDeletedMPC).isUnchanged ())
+      if (BusinessObjectHelper.setDeletionNow (aDeletedMPC).isUnchanged ())
       {
         AuditHelper.onAuditDeleteFailure (MPC.OT, "already-deleted", sMPCID);
         return EChange.UNCHANGED;
