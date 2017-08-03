@@ -69,8 +69,7 @@ public final class AS4ServerConfiguration
     if (!aCF.isRead ())
       throw new InitializationException ("Failed to read AS4 server configuration file!");
     s_aLogger.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
-    SETTINGS.clear ();
-    SETTINGS.setValues (aCF.getSettings ());
+    SETTINGS.setAll (aCF.getSettings ());
   }
 
   @VisibleForTesting

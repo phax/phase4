@@ -433,10 +433,10 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA10 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
-    m_aSettings.setValue ("server.proxy.enabled", true);
-    m_aSettings.setValue ("server.proxy.address", "localhost");
-    m_aSettings.setValue ("server.proxy.port", 8001);
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
+    m_aSettings.putIn ("server.proxy.enabled", true);
+    m_aSettings.putIn ("server.proxy.address", "localhost");
+    m_aSettings.putIn ("server.proxy.port", 8001);
 
     final HttpProxyServer aProxyServer = _startProxyServer ();
     try
@@ -453,8 +453,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     {
       aProxyServer.stop ();
       // Restore original properties
-      m_aSettings.clear ();
-      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+      m_aSettings.setAll (aOldSettings);
     }
   }
 
@@ -477,10 +476,10 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA11 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
-    m_aSettings.setValue ("server.proxy.enabled", true);
-    m_aSettings.setValue ("server.proxy.address", "localhost");
-    m_aSettings.setValue ("server.proxy.port", 8001);
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
+    m_aSettings.putIn ("server.proxy.enabled", true);
+    m_aSettings.putIn ("server.proxy.address", "localhost");
+    m_aSettings.putIn ("server.proxy.port", 8001);
 
     // Simulating a timeout with Thread.sleep but before it entirely triggers
     // let the program continue as if the Connection is back up again
@@ -525,8 +524,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     {
       aProxyServer.stop ();
       // Restore original properties
-      m_aSettings.clear ();
-      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+      m_aSettings.setAll (aOldSettings);
     }
   }
 
@@ -661,10 +659,10 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   @Test (expected = NoHttpResponseException.class)
   public void eSENS_TA17 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getAllEntries ();
-    m_aSettings.setValue ("server.proxy.enabled", true);
-    m_aSettings.setValue ("server.proxy.address", "localhost");
-    m_aSettings.setValue ("server.proxy.port", 8001);
+    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
+    m_aSettings.putIn ("server.proxy.enabled", true);
+    m_aSettings.putIn ("server.proxy.address", "localhost");
+    m_aSettings.putIn ("server.proxy.port", 8001);
 
     // Forcing a Timeout from the retry handler
     final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
@@ -707,8 +705,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     {
       aProxyServer.stop ();
       // Restore original properties
-      m_aSettings.clear ();
-      aOldSettings.forEach ( (k, v) -> m_aSettings.setValue (k, v));
+      m_aSettings.setAll (aOldSettings);
     }
   }
 

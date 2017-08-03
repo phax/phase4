@@ -48,7 +48,7 @@ public final class HolodeckTestSuite
   public static void init ()
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
-    AS4ServerConfiguration.getMutableSettings ().setValue ("server.jetty.enabled", false);
-    AS4ServerConfiguration.getMutableSettings ().setValue ("server.address", DEFAULT_HOLODECK_URI);
+    AS4ServerConfiguration.getMutableSettings ().putIn ("server.jetty.enabled", false);
+    AS4ServerConfiguration.getMutableSettings ().putIn ("server.address", DEFAULT_HOLODECK_URI);
   }
 }
