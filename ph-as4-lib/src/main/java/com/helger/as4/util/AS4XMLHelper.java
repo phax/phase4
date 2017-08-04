@@ -31,6 +31,7 @@ import org.w3c.dom.Node;
 import com.helger.as4.marshaller.Ebms3NamespaceHandler;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.attr.StringMap;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.NonBlockingStringWriter;
