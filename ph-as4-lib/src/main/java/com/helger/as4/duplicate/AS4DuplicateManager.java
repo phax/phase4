@@ -26,15 +26,15 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.EContinue;
 import com.helger.commons.string.StringHelper;
-import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
-import com.helger.photon.basic.app.dao.impl.DAOException;
+import com.helger.dao.DAOException;
+import com.helger.photon.basic.app.dao.AbstractPhotonMapBasedWALDAO;
 
 /**
  * This is the duplicate checker for avoiding duplicate messages.
  *
  * @author Philip Helger
  */
-public final class AS4DuplicateManager extends AbstractMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem>
+public final class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem>
 {
   public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
   {

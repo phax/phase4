@@ -25,12 +25,12 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
-import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
-import com.helger.photon.basic.app.dao.impl.DAOException;
+import com.helger.dao.DAOException;
+import com.helger.photon.basic.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
-public final class MPCManager extends AbstractMapBasedWALDAO <IMPC, MPC>
+public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
 {
   public MPCManager (@Nullable final String sFilename) throws DAOException
   {

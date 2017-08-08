@@ -34,7 +34,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
-import com.helger.photon.xservlet.requesttrack.RequestTracker;
+import com.helger.xservlet.requesttrack.RequestTracker;
 
 public final class AS4WebAppListener extends WebAppListener
 {

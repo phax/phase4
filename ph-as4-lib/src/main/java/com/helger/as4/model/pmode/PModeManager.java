@@ -33,12 +33,12 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
-import com.helger.photon.basic.app.dao.impl.AbstractMapBasedWALDAO;
-import com.helger.photon.basic.app.dao.impl.DAOException;
+import com.helger.dao.DAOException;
+import com.helger.photon.basic.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
-public class PModeManager extends AbstractMapBasedWALDAO <IPMode, PMode>
+public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (PModeManager.class);
 
