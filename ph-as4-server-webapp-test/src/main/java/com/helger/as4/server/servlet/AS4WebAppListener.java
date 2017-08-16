@@ -105,7 +105,7 @@ public final class AS4WebAppListener extends WebAppListener
   }
 
   @Override
-  protected void afterContextDestroyed (@Nonnull final ServletContext aSC)
+  protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
   {
     s_aLogger.info ("AS4 server destroyed");
   }
