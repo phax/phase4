@@ -182,7 +182,7 @@ public final class AS4Handler implements AutoCloseable
       {
         final Header aHeader = aEnum.nextElement ();
         // Make a single-line HTTP header value!
-        m_aHeaders.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (aHeader.getValue ()));
+        m_aHeaders.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
       }
 
       // Remove all headers from MIME message

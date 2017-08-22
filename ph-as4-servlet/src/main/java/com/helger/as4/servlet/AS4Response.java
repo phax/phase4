@@ -26,9 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.mime.CMimeType;
-import com.helger.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
 import com.helger.servlet.response.UnifiedResponse;
 

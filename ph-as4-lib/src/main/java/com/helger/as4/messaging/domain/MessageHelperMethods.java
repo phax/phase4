@@ -151,7 +151,7 @@ public final class MessageHelperMethods
     {
       final Header h = (Header) aEnum.nextElement ();
       // Make a single-line HTTP header value!
-      aHttpMsg.addHeader (h.getName (), HttpHeaderMap.getUnifiedHTTPHeaderValue (h.getValue ()));
+      aHttpMsg.addHeader (h.getName (), HttpHeaderMap.getUnifiedValue (h.getValue ()));
 
       // Remove from MIME message!
       aMimeMsg.removeHeader (h.getName ());
