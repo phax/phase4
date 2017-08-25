@@ -68,7 +68,7 @@
 
   <properties>
     <wss4j.version>2.1.10</wss4j.version>
-    <bc.version>1.57</bc.version>
+    <bc.version>1.58</bc.version>
   </properties>
   
   <dependencyManagement>
