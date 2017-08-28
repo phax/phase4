@@ -16,18 +16,8 @@
  */
 package com.helger.as4.servlet;
 
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.helger.commons.http.EHttpMethod;
-import com.helger.http.EHttpVersion;
-import com.helger.photon.core.servlet.AbstractUnifiedResponseServlet;
-import com.helger.photon.security.login.LoggedInUserManager;
-import com.helger.servlet.response.UnifiedResponse;
-import com.helger.web.scope.IRequestWebScopeWithoutResponse;
+import com.helger.xservlet.AbstractXServlet;
 
 /**
  * AS4 receiving servlet.<br>
@@ -48,51 +38,10 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4Servlet extends AbstractUnifiedResponseServlet
+public final class AS4Servlet extends AbstractXServlet
 {
   public AS4Servlet ()
   {
-    LoggedInUserManager.getInstance ().setLogoutAlreadyLoggedInUser (true);
-  }
-
-  @Override
-  protected Set <EHttpMethod> getAllowedHTTPMethods ()
-  {
-    return ALLOWED_METHDOS_POST;
-  }
-
-  @Override
-  @Nonnull
-  protected AS4Response createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
-                                               @Nonnull final EHttpMethod eHTTPMethod,
-                                               @Nonnull final HttpServletRequest aHttpRequest)
-  {
-    return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);
-  }
-
-  @Override
-  protected void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                                @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
-  {
-    final AS4Response aHttpResponse = (AS4Response) aUnifiedResponse;
-
-    try (final AS4Handler aHandler = new AS4Handler ())
-    {
-      aHandler.handleRequest (aRequestScope, aHttpResponse);
-    }
-    catch (final BadRequestException ex)
-    {
-      // Logged inside
-      aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST,
-                                      "Bad Request: " + ex.getMessage (),
-                                      ex.getCause ());
-    }
-    catch (final Throwable t)
-    {
-      // Logged inside
-      aHttpResponse.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                                      "Internal error processing AS4 request",
-                                      t);
-    }
+    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler ());
   }
 }

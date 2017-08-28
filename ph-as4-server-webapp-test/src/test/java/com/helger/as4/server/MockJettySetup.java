@@ -78,7 +78,8 @@ public final class MockJettySetup extends AbstractClientSetUp
   @AfterClass
   public static void shutDownServer () throws Exception
   {
-    s_aResMgr.close ();
+    if (s_aResMgr != null)
+      s_aResMgr.close ();
     if (_isRunJetty ())
     {
       if (s_aJetty != null)
