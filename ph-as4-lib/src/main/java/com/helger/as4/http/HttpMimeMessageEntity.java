@@ -27,6 +27,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.http.entity.AbstractHttpEntity;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * Special HTTP entity that reads and writes to a {@link MimeMessage}.
@@ -92,5 +93,11 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     {
       throw new IOException ("Error writing MIME message", ex);
     }
+  }
+
+  @Override
+  public String toString ()
+  {
+    return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMsg).getToString ();
   }
 }

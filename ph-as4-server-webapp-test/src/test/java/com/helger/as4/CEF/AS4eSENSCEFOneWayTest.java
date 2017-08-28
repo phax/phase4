@@ -19,6 +19,7 @@ package com.helger.as4.CEF;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import javax.annotation.Nonnull;
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import javax.xml.parsers.DocumentBuilder;
@@ -81,6 +82,9 @@ import io.netty.handler.codec.http.HttpResponse;
 public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayTest.class);
+
+  public AS4eSENSCEFOneWayTest ()
+  {}
 
   /**
    * Prerequisite:<br>
@@ -376,13 +380,14 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
-  private HttpProxyServer _startProxyServer ()
+  @Nonnull
+  private static HttpProxyServer _startProxyServer (final int nProxyPort)
   {
     // Using LittleProxy
     // https://github.com/adamfisk/LittleProxy
     final int nResponsesToIntercept = 1;
     final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
-                                                               .withPort (8001)
+                                                               .withPort (nProxyPort)
                                                                .withFiltersSource (new HttpFiltersSourceAdapter ()
                                                                {
                                                                  private int m_nFilterCount = 0;
@@ -405,9 +410,13 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
                                                                        final int nIndex = m_nFilterCount++;
                                                                        if (nIndex < nResponsesToIntercept)
                                                                        {
-                                                                         s_aLogger.error ("Intercepted call " + nIndex);
+                                                                         s_aLogger.error ("Proxy purposely intercepted call " +
+                                                                                          nIndex);
                                                                          return null;
                                                                        }
+
+                                                                       s_aLogger.info ("Proxy purposely passes on call " +
+                                                                                       nIndex);
                                                                        return httpObject;
                                                                      }
                                                                    };
@@ -434,11 +443,12 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   public void eSENS_TA10 () throws Exception
   {
     final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
+    final int nProxyPort = 8001;
     m_aSettings.putIn ("server.proxy.enabled", true);
     m_aSettings.putIn ("server.proxy.address", "localhost");
-    m_aSettings.putIn ("server.proxy.port", 8001);
+    m_aSettings.putIn ("server.proxy.port", nProxyPort);
 
-    final HttpProxyServer aProxyServer = _startProxyServer ();
+    final HttpProxyServer aProxyServer = _startProxyServer (nProxyPort);
     try
     {
       // send message

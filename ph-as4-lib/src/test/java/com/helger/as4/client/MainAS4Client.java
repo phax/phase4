@@ -104,7 +104,7 @@ public final class MainAS4Client
                           RandomHelper.getSecureRandom ());
       }
 
-      final CloseableHttpClient aClient = new HttpClientFactory (aSSLContext).createHttpClient ();
+      final CloseableHttpClient aClient = new HttpClientFactory ().setSSLContext (aSSLContext).createHttpClient ();
 
       s_aLogger.info ("Sending to " + sURL);
       final HttpPost aPost = new HttpPost (sURL);

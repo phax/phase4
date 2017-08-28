@@ -20,8 +20,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -33,14 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -48,7 +44,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.client.AS4ClientHttpClientFactory;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -60,6 +55,8 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
+import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
@@ -93,44 +90,20 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   }
 
   @Before
-  public void setUpHttpClient () throws KeyManagementException, NoSuchAlgorithmException
+  public void setUpHttpClient () throws GeneralSecurityException
   {
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
 
-    m_aClient = new AS4ClientHttpClientFactory (aSSLContext)
+    m_aClient = new HttpClientFactory ()
     {
       @Override
       @Nonnull
-      public HttpClientBuilder createHttpClientBuilder ()
+      public RequestConfig.Builder createRequestConfigBuilder ()
       {
-        final HttpClientBuilder ret = super.createHttpClientBuilder ();
-        if (m_nRetries > 0)
-        {
-          // Retry always - independent if POST or GET
-          final HttpRequestRetryHandler aRH = (ex, exc, ctx) -> {
-            // retry 2 times (first exc==1!)
-            return exc <= m_nRetries;
-          };
-          ret.setRetryHandler (aRH);
-        }
-        return ret;
+        return super.createRequestConfigBuilder ().setSocketTimeout (500_000);
       }
-
-      @Override
-      @Nonnull
-      public RequestConfig createRequestConfig ()
-      {
-        return RequestConfig.custom ()
-                            .setCookieSpec (CookieSpecs.DEFAULT)
-                            .setSocketTimeout (500_000)
-                            .setConnectTimeout (5_000)
-                            .setConnectionRequestTimeout (5_000)
-                            .setCircularRedirectsAllowed (false)
-                            .setRedirectsEnabled (true)
-                            .build ();
-      }
-    }.createHttpClient ();
+    }.setSSLContext (aSSLContext).setRetries (m_nRetries).setRetryMode (ERetryMode.RETRY_ALWAYS).createHttpClient ();
   }
 
   @After
