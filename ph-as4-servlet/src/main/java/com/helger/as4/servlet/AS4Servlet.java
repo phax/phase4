@@ -42,6 +42,8 @@ public final class AS4Servlet extends AbstractXServlet
 {
   public AS4Servlet ()
   {
+    // Multipart is handled specifically inside
+    settings ().setMultipartEnabled (false);
     handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler ());
   }
 }
