@@ -1,5 +1,9 @@
 language: java
 
+# Required to avoid timeout!
+# This is still needed when "travis_wait" is used!
+sudo: true
+
 env:
   global:
     - SONATYPE_USERNAME=ph@phloc.com
