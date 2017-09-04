@@ -38,7 +38,9 @@ public final class RunInJettyAS4TEST9090
     SystemProperties.setPropertyValue ("as4.server.configfile",
                                        new ClassPathResource ("test-as4-9090.properties").getAsFile ()
                                                                                          .getAbsolutePath ());
-    new JettyRunner (PORT, STOP_PORT).startServer ();
+    final JettyRunner aJetty = new JettyRunner ();
+    aJetty.setPort (PORT).setStopPort (STOP_PORT).setAllowAnnotationBasedConfig (false);
+    aJetty.startServer ();
   }
 
   public static void stopNinetyServer () throws IOException

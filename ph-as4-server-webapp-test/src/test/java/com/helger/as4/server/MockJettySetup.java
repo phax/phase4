@@ -58,7 +58,8 @@ public final class MockJettySetup extends AbstractClientSetUp
     if (_isRunJetty ())
     {
       final int nPort = _getJettyPort ();
-      s_aJetty = new JettyRunner (nPort, nPort + 1000);
+      s_aJetty = new JettyRunner ("AS4 Mock Jetty");
+      s_aJetty.setPort (nPort).setStopPort (nPort + 1000).setAllowAnnotationBasedConfig (false);
       s_aJetty.startServer ();
     }
     else
