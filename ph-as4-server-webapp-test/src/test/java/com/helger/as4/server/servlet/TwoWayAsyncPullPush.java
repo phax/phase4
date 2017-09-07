@@ -106,7 +106,7 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
     // in the duplicate manager
     final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
-    assertTrue (aIncomingDuplicateMgr.containsNone ());
+    assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI

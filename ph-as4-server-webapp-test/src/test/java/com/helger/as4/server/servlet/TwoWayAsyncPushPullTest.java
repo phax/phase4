@@ -106,7 +106,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     // in the duplicate manager
     final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
-    assertTrue (aIncomingDuplicateMgr.containsNone ());
+    assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null);
     String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
 
@@ -121,7 +121,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     final String aID = nList.item (0).getTextContent ();
 
     assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (aIncomingDuplicateMgr.getCountOfMessages () == 1);
+    assertTrue (aIncomingDuplicateMgr.size () == 1);
     assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
 
     // Depending on the payload a different EMEPBinding get chosen by

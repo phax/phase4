@@ -58,7 +58,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // in the duplicate manager
     final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
-    assertTrue (aIncomingDuplicateMgr.containsNone ());
+    assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
@@ -101,7 +101,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // in the duplicate manager
     final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
-    assertTrue (aIncomingDuplicateMgr.containsNone ());
+    assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);

@@ -110,12 +110,4 @@ public final class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS
       });
     return aEvictItems;
   }
-
-  /**
-   * @return Get the amount of messages that already are safed in the file.
-   */
-  public int getCountOfMessages ()
-  {
-    return this.getCount ();
-  }
 }
