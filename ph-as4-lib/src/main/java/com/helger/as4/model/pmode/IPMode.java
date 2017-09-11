@@ -23,7 +23,7 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.photon.basic.object.IBusinessObject;
+import com.helger.tenancy.IBusinessObject;
 
 public interface IPMode extends IBusinessObject
 {
