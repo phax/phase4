@@ -16,7 +16,7 @@
  */
 package com.helger.as4.model.mpc;
 
-import com.helger.photon.basic.object.IBusinessObject;
+import com.helger.tenancy.IBusinessObject;
 
 public interface IMPC extends IBusinessObject
 {

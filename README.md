@@ -15,6 +15,7 @@ It consists of the following sub-projects:
   * v0.8.0 - work in progress
     * Updated to ph-commons 9.0.0
     * Updated to BouncyCastle 1.58
+    * Updated to WSS4J 2.2
   * v0.7.0 - 2017-07-24
     * Added HTTP retry for client
     * Added server duplicate message detection for incoming messages

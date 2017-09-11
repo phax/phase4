@@ -69,25 +69,24 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final WSSecEncrypt aBuilder = new WSSecEncrypt ();
+    final Document doc = _getSoapEnvelope11 ();
+    final WSSecHeader secHeader = new WSSecHeader (doc);
+    secHeader.insertSecurityHeader ();
+
+    final WSSecEncrypt aBuilder = new WSSecEncrypt (secHeader);
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
-
-    final Document doc = _getSoapEnvelope11 ();
-    WSSecHeader secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
 
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
     // "Element");
     final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESOAPVersion.SOAP_11.getNamespaceURI (), "Element");
     aBuilder.getParts ().add (encP);
-    secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
+
     LOG.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = aBuilder.build (doc, m_aCrypto, secHeader);
+    final Document encryptedDoc = aBuilder.build (m_aCrypto);
     LOG.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
@@ -97,15 +96,16 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final WSSecEncrypt builder = new WSSecEncrypt ();
+    final Document doc = _getSoapEnvelope11 ();
+    final WSSecHeader secHeader = new WSSecHeader (doc);
+    secHeader.insertSecurityHeader ();
+
+    final WSSecEncrypt builder = new WSSecEncrypt (secHeader);
     // builder.setUserInfo ("wss40");
     builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
-    final Document doc = _getSoapEnvelope11 ();
-    final WSSecHeader secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
-    final Document encryptedDoc = builder.build (doc, m_aCrypto, secHeader);
+    final Document encryptedDoc = builder.build (m_aCrypto);
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     // System.out.println (outputString);

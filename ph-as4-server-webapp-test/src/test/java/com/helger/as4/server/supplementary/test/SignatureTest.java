@@ -62,16 +62,17 @@ public final class SignatureTest
     final Crypto aCrypto = aAS4CryptoFactory.getCrypto ();
     final CryptoProperties aCryptoProperties = aAS4CryptoFactory.getCryptoProperties ();
 
-    final WSSecSignature aBuilder = new WSSecSignature ();
+    final Document doc = _getSoapEnvelope11 ();
+    final WSSecHeader secHeader = new WSSecHeader (doc);
+    secHeader.insertSecurityHeader ();
+
+    final WSSecSignature aBuilder = new WSSecSignature (secHeader);
     aBuilder.setUserInfo (aCryptoProperties.getKeyAlias (), aCryptoProperties.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
     aBuilder.setDigestAlgo (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
-    final Document doc = _getSoapEnvelope11 ();
-    final WSSecHeader secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
-    final Document signedDoc = aBuilder.build (doc, aCrypto, secHeader);
+    final Document signedDoc = aBuilder.build (aCrypto);
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 

@@ -66,19 +66,19 @@ public class EncryptionCreator
 
     final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
 
-    final WSSecEncrypt aBuilder = new WSSecEncrypt ();
+    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
+    aSecHeader.insertSecurityHeader ();
+
+    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
-
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
-    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
-    aSecHeader.insertSecurityHeader ();
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
+                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
-    return aBuilder.build (aDoc, m_aCryptoFactory.getCrypto (), aSecHeader);
+    return aBuilder.build (m_aCryptoFactory.getCrypto ());
   }
 
   @Nonnull
@@ -95,12 +95,14 @@ public class EncryptionCreator
 
     final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
 
-    final WSSecEncrypt aBuilder = new WSSecEncrypt ();
+    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
+    aSecHeader.insertSecurityHeader ();
+
+    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
-
     aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
@@ -110,15 +112,13 @@ public class EncryptionCreator
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
-    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
-    aSecHeader.insertSecurityHeader ();
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
+                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (aDoc, m_aCryptoFactory.getCrypto (), aSecHeader);
+    final Document aEncryptedDoc = aBuilder.build (m_aCryptoFactory.getCrypto ());
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!

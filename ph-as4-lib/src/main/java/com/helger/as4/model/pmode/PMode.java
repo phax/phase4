@@ -26,8 +26,8 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
-import com.helger.photon.basic.object.AbstractBusinessObject;
 import com.helger.photon.security.object.StubObject;
+import com.helger.tenancy.AbstractBusinessObject;
 
 public class PMode extends AbstractBusinessObject implements IPMode
 {

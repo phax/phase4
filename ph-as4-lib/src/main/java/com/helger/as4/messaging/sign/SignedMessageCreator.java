@@ -50,21 +50,6 @@ public class SignedMessageCreator
     m_aCryptoFactory = aCryptoFactory;
   }
 
-  @Nonnull
-  private WSSecSignature _getBasicBuilder (@Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
-                                           @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest)
-  {
-    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
-
-    final WSSecSignature aBuilder = new WSSecSignature ();
-    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm (eCryptoAlgorithmSign.getAlgorithmURI ());
-    // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
-    return aBuilder;
-  }
-
   /**
    * This method must be used if the message does not contain attachments, that
    * should be in a additional mime message part.
@@ -96,7 +81,18 @@ public class SignedMessageCreator
                                        @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
                                        @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
   {
-    final WSSecSignature aBuilder = _getBasicBuilder (eCryptoAlgorithmSign, eCryptoAlgorithmSignDigest);
+    // Start signing the document
+    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
+    aSecHeader.insertSecurityHeader ();
+
+    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
+
+    final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
+    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setSignatureAlgorithm (eCryptoAlgorithmSign.getAlgorithmURI ());
+    // PMode indicates the DigestAlgorithm as Hash Function
+    aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
 
     if (CollectionHelper.isNotEmpty (aAttachments))
     {
@@ -110,15 +106,12 @@ public class SignedMessageCreator
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
-    // Start signing the document
-    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
-    aSecHeader.insertSecurityHeader ();
     // Set the mustUnderstand header of the wsse:Security element as well
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeader ().getAttributeNodeNS (eSOAPVersion.getNamespaceURI (),
-                                                                                     "mustUnderstand");
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
+                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
-    return aBuilder.build (aPreSigningMessage, m_aCryptoFactory.getCrypto (), aSecHeader);
+    return aBuilder.build (m_aCryptoFactory.getCrypto ());
   }
 }

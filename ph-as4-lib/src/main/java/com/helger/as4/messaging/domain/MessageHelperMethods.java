@@ -146,10 +146,10 @@ public final class MessageHelperMethods
     ValueEnforcer.notNull (aHttpMsg, "HttpMsg");
 
     // Move all mime headers to the HTTP request
-    final Enumeration <?> aEnum = aMimeMsg.getAllHeaders ();
+    final Enumeration <Header> aEnum = aMimeMsg.getAllHeaders ();
     while (aEnum.hasMoreElements ())
     {
-      final Header h = (Header) aEnum.nextElement ();
+      final Header h = aEnum.nextElement ();
       // Make a single-line HTTP header value!
       aHttpMsg.addHeader (h.getName (), HttpHeaderMap.getUnifiedValue (h.getValue ()));
 

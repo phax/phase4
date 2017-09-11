@@ -1371,7 +1371,7 @@ public final class AS4Handler implements AutoCloseable
   @Nonnull
   private static Document _readXML (@Nonnull final InputStream aRequestIS) throws SAXException
   {
-    if (isDebug ())
+    if (true || isDebug ())
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
       s_aLogger.info ("GOT[" +
