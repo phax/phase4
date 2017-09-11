@@ -76,6 +76,10 @@
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
+      <artifactId>ph-tenancy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
       <artifactId>ph-oton-basic</artifactId>
     </dependency>
     <dependency>
