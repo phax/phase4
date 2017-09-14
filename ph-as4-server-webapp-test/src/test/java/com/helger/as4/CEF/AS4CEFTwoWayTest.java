@@ -61,7 +61,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     // Avoid stopping server to receive async response
     ThreadHelper.sleepSeconds (2);
@@ -104,7 +104,7 @@ public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     // Avoid stopping server to receive async response
     ThreadHelper.sleepSeconds (2);

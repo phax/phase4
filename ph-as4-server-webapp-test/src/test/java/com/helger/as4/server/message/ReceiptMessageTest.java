@@ -62,7 +62,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
   }
@@ -73,7 +73,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -84,7 +84,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, null, s_aResMgr);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }

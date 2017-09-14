@@ -40,12 +40,10 @@ public final class ERBTest extends AbstractUserMessageTestSetUp
   public void duplicateSignedMessage () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testSignedUserMessage (ESOAPVersion.AS4_DEFAULT,
-                                                              aPayload,
-                                                              null,
-                                                              new AS4ResourceManager ());
+    final ESOAPVersion eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+    final Document aDoc = MockMessages.testSignedUserMessage (eSOAPVersion, aPayload, null, new AS4ResourceManager ());
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion);
 
     final String sResponse = sendPlainMessage (aEntity, true, null);
 

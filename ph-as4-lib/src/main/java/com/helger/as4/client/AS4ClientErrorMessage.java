@@ -99,6 +99,6 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     final Document aDoc = aErrorMsg.getAsSOAPDocument ();
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 }

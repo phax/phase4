@@ -94,7 +94,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   public String getMPC ()

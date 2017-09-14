@@ -62,7 +62,6 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   @Before
   public void setUpCEF ()
   {
-
     m_aESENSOneWayPMode = ESENSPMode.createESENSPMode (AS4TestConstants.CEF_INITIATOR_ID,
                                                        AS4TestConstants.CEF_RESPONDER_ID,
                                                        AS4TestConstants.DEFAULT_SERVER_ADDRESS,

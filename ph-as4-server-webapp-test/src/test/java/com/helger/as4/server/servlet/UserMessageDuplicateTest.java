@@ -33,13 +33,15 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
+  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+
   @Test
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (ESOAPVersion.AS4_DEFAULT, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
 
     sendPlainMessage (aEntity, true, null);
 
@@ -52,9 +54,9 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void sendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (ESOAPVersion.AS4_DEFAULT, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
 
     sendPlainMessage (aEntity, true, null);
 

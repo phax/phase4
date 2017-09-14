@@ -54,6 +54,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
 {
+  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.SOAP_12;
 
   private Document _getMessagingAsDocument (final Ebms3Messaging aEbms3Messaging)
   {
@@ -92,7 +93,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     aSignalMsgList.add (aSignalMessage);
     aSignalMsgList.add (aSignalMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -101,7 +102,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -165,7 +166,7 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging));
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -221,6 +222,6 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null);
 
     // We've got our response
-    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
   }
 }

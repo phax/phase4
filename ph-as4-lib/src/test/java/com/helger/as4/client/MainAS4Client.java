@@ -114,6 +114,7 @@ public final class MainAS4Client
 
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
+      final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body
@@ -121,34 +122,30 @@ public final class MainAS4Client
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                               aPayload,
-                                                                               aAttachments);
-        aPost.setEntity (new HttpXMLEntity (aDoc));
+        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
+        aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
       }
       else
         // BodyPayload SIGNED
         if (false)
         {
-          final Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+          final Document aDoc = MockClientMessages.testSignedUserMessage (eSOAPVersion,
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-          aPost.setEntity (new HttpXMLEntity (aDoc));
+          aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
         }
         // BodyPayload ENCRYPTED
         else
           if (false)
           {
-            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                             aPayload,
-                                                                             aAttachments);
-            aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
+            aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (eSOAPVersion,
                                                                                                      aDoc,
                                                                                                      false,
                                                                                                      ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-            aPost.setEntity (new HttpXMLEntity (aDoc));
+            aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
           }
           else
             if (true)
@@ -159,16 +156,16 @@ public final class MainAS4Client
                                                                               aResMgr));
 
               final SignedMessageCreator aSigned = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
-              final MimeMessage aMsg = new MimeMessageCreator (ESOAPVersion.SOAP_12).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (ESOAPVersion.SOAP_12,
-                                                                                                                                                                                        null,
-                                                                                                                                                                                        aAttachments),
-                                                                                                                                       ESOAPVersion.SOAP_12,
-                                                                                                                                       aAttachments,
-                                                                                                                                       aResMgr,
-                                                                                                                                       false,
-                                                                                                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
-                                                                                                          aAttachments);
+              final MimeMessage aMsg = new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                                                                                                                null,
+                                                                                                                                                                                aAttachments),
+                                                                                                                               eSOAPVersion,
+                                                                                                                               aAttachments,
+                                                                                                                               aResMgr,
+                                                                                                                               false,
+                                                                                                                               ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                               ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
+                                                                                                  aAttachments);
 
               // Move all global mime headers to the POST request
               MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
@@ -177,15 +174,15 @@ public final class MainAS4Client
             else
               if (false)
               {
-                Document aDoc = MockClientMessages.testSignedUserMessage (ESOAPVersion.SOAP_12,
+                Document aDoc = MockClientMessages.testSignedUserMessage (eSOAPVersion,
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-                aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (ESOAPVersion.SOAP_12,
+                aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (eSOAPVersion,
                                                                                                          aDoc,
                                                                                                          false,
                                                                                                          ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-                aPost.setEntity (new HttpXMLEntity (aDoc));
+                aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
               }
               else
                 throw new IllegalStateException ("Some test message should be selected :)");

@@ -165,7 +165,9 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESOAPVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -377,7 +379,9 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
     final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Nonnull
@@ -813,7 +817,7 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }

@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.soap.ESOAPVersion;
 
 public final class PModePingTest extends AbstractUserMessageTestSetUpExt
 {
@@ -29,6 +30,6 @@ public final class PModePingTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = _modifyUserMessage (null, null, null, _defaultProperties ());
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.AS4_DEFAULT), true, null);
   }
 }

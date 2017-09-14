@@ -62,7 +62,7 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));

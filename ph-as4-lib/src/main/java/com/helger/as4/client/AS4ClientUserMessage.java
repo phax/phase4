@@ -290,7 +290,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     }
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   public Node getPayload ()

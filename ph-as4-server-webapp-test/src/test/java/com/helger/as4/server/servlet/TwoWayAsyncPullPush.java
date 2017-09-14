@@ -52,6 +52,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
 {
+  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
   @BeforeClass
@@ -117,12 +118,12 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
 
     // add the ID from the usermessage since its still one async message
     // transfer
-    Document aDoc = CreatePullRequestMessage.createPullRequestMessage (ESOAPVersion.AS4_DEFAULT,
+    Document aDoc = CreatePullRequestMessage.createPullRequestMessage (m_eSOAPVersion,
                                                                        MessageHelperMethods.createEbms3MessageInfo (),
                                                                        AS4TestConstants.DEFAULT_MPC,
                                                                        aAny)
                                             .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
     String sResponse = sendPlainMessage (aEntity, true, null);
 
     // Avoid stopping server to receive async response
@@ -133,7 +134,7 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
     final String aPullID = nPullList.item (0).getTextContent ();
 
     aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, aPullID);
-    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once

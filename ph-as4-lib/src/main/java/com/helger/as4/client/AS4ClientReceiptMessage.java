@@ -103,7 +103,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc));
+    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   /**

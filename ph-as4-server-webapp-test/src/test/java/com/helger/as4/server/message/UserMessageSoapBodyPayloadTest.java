@@ -71,7 +71,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -83,7 +83,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -120,7 +120,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                                                              false,
                                                                                              ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -137,7 +137,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
                                                                                              false,
                                                                                              ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));

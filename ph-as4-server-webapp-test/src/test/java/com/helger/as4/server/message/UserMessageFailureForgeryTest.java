@@ -112,7 +112,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/TwoUserMessages.xml").getInputStream ());
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -123,7 +125,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/UserMessageNoPartyID.xml").getInputStream ());
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), false, EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
   // Tinkering with the signature
@@ -132,7 +134,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageNoSOAPBodyPayloadNoAttachmentSignedSuccess () throws Exception
   {
     final Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, null, null, s_aResMgr);
-    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
   }
 
   @Test
@@ -149,7 +151,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       final Element eElement = (Element) nNode;
       eElement.setAttribute ("INVALID", "INVALID");
     }
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   @Test
@@ -237,7 +241,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       XMLHelper.removeAllChildElements (aElement);
     }
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -256,7 +262,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     aNext.getParentNode ().removeChild (aNext);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
@@ -342,7 +350,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningAlgorithm.xml").getInputStream ());
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
 
   @Test
@@ -353,7 +363,9 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/WrongSigningDigestAlgorithm.xml").getInputStream ());
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_FAILED_AUTHENTICATION.getErrorCode ());
   }
 
   @Test
@@ -362,6 +374,6 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSignedNotPModeConform (m_eSOAPVersion, aPayload, null);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 }

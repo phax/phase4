@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -31,7 +32,7 @@ public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12), true, null);
   }
 
   @Test
@@ -39,6 +40,8 @@ public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }

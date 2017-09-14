@@ -141,7 +141,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -163,7 +163,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -660,13 +660,15 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
     nList.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+                      false,
+                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**
