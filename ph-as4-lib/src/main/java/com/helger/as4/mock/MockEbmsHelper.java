@@ -19,6 +19,7 @@ package com.helger.as4.mock;
 import javax.annotation.Nonnull;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.leg.PModeLegProtocol;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -51,17 +52,7 @@ public final class MockEbmsHelper
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList<> ();
-    final Ebms3Property aOriginalSender = new Ebms3Property ();
-    aOriginalSender.setName (CAS4.ORIGINAL_SENDER);
-    aOriginalSender.setValue ("C1-test");
-    aEbms3Properties.add (aOriginalSender);
-
-    final Ebms3Property aFinalRecipient = new Ebms3Property ();
-    aFinalRecipient.setName (CAS4.FINAL_RECIPIENT);
-    aFinalRecipient.setValue ("C4-test");
-    aEbms3Properties.add (aFinalRecipient);
-
-    return aEbms3Properties;
+    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"),
+                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
   }
 }

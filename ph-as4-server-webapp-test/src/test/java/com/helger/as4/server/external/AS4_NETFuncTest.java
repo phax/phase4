@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.server.holodeck;
+package com.helger.as4.server.external;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -45,6 +47,7 @@ import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.impl.ICommonsList;
 
+@Ignore ("Currently returns a PMODE MisMatch")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 {
   /** TThe test URL for AS4.NET */
@@ -52,16 +55,21 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   private static final String COLLABORATION_INFO_SERVICE = "SRV_SIMPLE_ONEWAY_DYN";
   private static final String COLLABORATION_INFO_ACTION = "ACT_SIMPLE_ONEWAY_DYN";
 
-  @Test
-  public void sendToAS4_NET () throws Exception
+  @BeforeClass
+  public static void noJetty ()
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
     AS4ServerConfiguration.getMutableSettings ().putIn ("server.jetty.enabled", false);
     AS4ServerConfiguration.getMutableSettings ().putIn ("server.address", DEFAULT_AS4_NET_URI);
+  }
 
+  @Test
+  public void sendToAS4_NET () throws Exception
+  {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
+    // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null);
 

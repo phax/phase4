@@ -131,6 +131,7 @@ public final class MessageHelperMethods
     return aDesc;
   }
 
+  @Nonnull
   public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName, @Nonnull final String sValue)
   {
     final Ebms3Property aProp = new Ebms3Property ();

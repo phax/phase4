@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.server.holodeck;
+package com.helger.as4.server.external;
 
 /**
  * An interface is needed to use JUnits Category feature. Every test that is

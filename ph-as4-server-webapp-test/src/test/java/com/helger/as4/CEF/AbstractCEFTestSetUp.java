@@ -78,6 +78,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     }
   }
 
+  @Nonnull
   protected Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
