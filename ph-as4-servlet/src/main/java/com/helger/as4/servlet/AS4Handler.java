@@ -142,7 +142,7 @@ public final class AS4Handler implements AutoCloseable
     void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4Response aHttpResponse);
 
     @Nonnull
-    HttpEntity getHttpEntity ();
+    HttpEntity getHttpEntity (@Nonnull ESOAPVersion eSOAPVersion);
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
@@ -162,9 +162,9 @@ public final class AS4Handler implements AutoCloseable
     }
 
     @Nonnull
-    public HttpEntity getHttpEntity ()
+    public HttpEntity getHttpEntity (@Nonnull final ESOAPVersion eSOAPVersion)
     {
-      return new HttpXMLEntity (m_aDoc);
+      return new HttpXMLEntity (m_aDoc, eSOAPVersion);
     }
   }
 
@@ -208,7 +208,7 @@ public final class AS4Handler implements AutoCloseable
     }
 
     @Nonnull
-    public HttpMimeMessageEntity getHttpEntity ()
+    public HttpMimeMessageEntity getHttpEntity (@Nonnull final ESOAPVersion eSOAPVersion)
     {
       return new HttpMimeMessageEntity (m_aMimeMsg);
     }
@@ -925,7 +925,7 @@ public final class AS4Handler implements AutoCloseable
           // invoke client with new document
           final BasicAS4Sender aSender = new BasicAS4Sender ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                                      aAsyncResponseFactory.getHttpEntity (),
+                                                                      aAsyncResponseFactory.getHttpEntity (eSOAPVersion),
                                                                       new ResponseHandlerXml ());
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse,
