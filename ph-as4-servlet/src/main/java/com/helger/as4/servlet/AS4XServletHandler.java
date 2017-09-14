@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.http.EHttpVersion;
 import com.helger.servlet.response.UnifiedResponse;
+import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
@@ -51,9 +52,11 @@ public final class AS4XServletHandler implements IXServletSimpleHandler
   {}
 
   @Nonnull
+  @Override
   public AS4Response createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
                                             @Nonnull final EHttpMethod eHTTPMethod,
-                                            @Nonnull final HttpServletRequest aHttpRequest)
+                                            @Nonnull final HttpServletRequest aHttpRequest,
+                                            @Nonnull final IRequestWebScope aRequestScope)
   {
     return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);
   }
