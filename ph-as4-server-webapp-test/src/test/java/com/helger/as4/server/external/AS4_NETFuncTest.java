@@ -82,9 +82,15 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
+    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
+                                                                    CMimeType.APPLICATION_XML,
+                                                                    null,
+                                                                    s_aResMgr));
+
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (COLLABORATION_INFO_ACTION,
                                                                                                             COLLABORATION_INFO_SERVICE_TYPE,
                                                                                                             COLLABORATION_INFO_SERVICE,
@@ -116,12 +122,6 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-
-    final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
-                                                                    CMimeType.APPLICATION_XML,
-                                                                    null,
-                                                                    s_aResMgr));
 
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSignedDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
