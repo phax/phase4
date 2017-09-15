@@ -117,7 +117,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aUserMsg.getAsSOAPDocument (),
                                                                           m_eSOAPVersion,
-                                                                          null,
+                                                                          aAttachments,
                                                                           new AS4ResourceManager (),
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
