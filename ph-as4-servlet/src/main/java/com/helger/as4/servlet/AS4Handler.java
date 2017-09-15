@@ -60,11 +60,11 @@ import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.CreateErrorMessage;
-import com.helger.as4.messaging.domain.CreateReceiptMessage;
-import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.EAS4MessageType;
+import com.helger.as4.messaging.domain.ErrorMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.ReceiptMessageCreator;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -288,7 +288,7 @@ public final class AS4Handler implements AutoCloseable
         {
           final Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
                                                                       x -> x.getName ()
-                                                                            .equals (CreateUserMessage.PART_PROPERTY_MIME_TYPE));
+                                                                            .equals (UserMessageCreator.PART_PROPERTY_MIME_TYPE));
           if (aProperty != null)
           {
             aIncomingAttachment.overwriteMimeType (aProperty.getValue ());
@@ -908,9 +908,9 @@ public final class AS4Handler implements AutoCloseable
             // SPI processing failed
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
-            final AS4ErrorMessage aResponseErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                             MessageHelperMethods.createEbms3MessageInfo (),
-                                                                                             aLocalErrorMessages);
+            final AS4ErrorMessage aResponseErrorMsg = ErrorMessageCreator.createErrorMessage (eSOAPVersion,
+                                                                                              MessageHelperMethods.createEbms3MessageInfo (),
+                                                                                              aLocalErrorMessages);
             aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
           }
 
@@ -945,9 +945,9 @@ public final class AS4Handler implements AutoCloseable
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                   MessageHelperMethods.createEbms3MessageInfo (),
-                                                                                   aErrorMessages);
+          final AS4ErrorMessage aErrorMsg = ErrorMessageCreator.createErrorMessage (eSOAPVersion,
+                                                                                    MessageHelperMethods.createEbms3MessageInfo (),
+                                                                                    aErrorMessages);
           return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
         }
         s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
@@ -1037,12 +1037,12 @@ public final class AS4Handler implements AutoCloseable
                                                      @Nullable final Ebms3UserMessage aUserMessage,
                                                      @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
-    final AS4ReceiptMessage aReceiptMessage = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                                         MessageHelperMethods.createRandomMessageID (),
-                                                                                         aUserMessage,
-                                                                                         aSOAPDocument,
-                                                                                         _isSendNonRepudiationInformation (aEffectiveLeg))
-                                                                  .setMustUnderstand (true);
+    final AS4ReceiptMessage aReceiptMessage = ReceiptMessageCreator.createReceiptMessage (eSOAPVersion,
+                                                                                          MessageHelperMethods.createRandomMessageID (),
+                                                                                          aUserMessage,
+                                                                                          aSOAPDocument,
+                                                                                          _isSendNonRepudiationInformation (aEffectiveLeg))
+                                                                   .setMustUnderstand (true);
 
     // We've got our response
     Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
@@ -1074,10 +1074,10 @@ public final class AS4Handler implements AutoCloseable
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                             aUserMessage.getMessageInfo ()
                                                                                                         .getMessageId ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, aResponseAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (null, aResponseAttachments);
 
     // Invert from and to role from original user message
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
+    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
 
     // Should be exactly the same as incoming message
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
@@ -1112,12 +1112,12 @@ public final class AS4Handler implements AutoCloseable
       aEbms3MessageProperties.addProperty (aOriginalSender);
     }
 
-    final AS4UserMessage aResponseUserMessage = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                                     aEbms3PayloadInfo,
-                                                                                     aEbms3CollaborationInfo,
-                                                                                     aEbms3PartyInfo,
-                                                                                     aEbms3MessageProperties,
-                                                                                     eSOAPVersion);
+    final AS4UserMessage aResponseUserMessage = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                                      aEbms3PayloadInfo,
+                                                                                      aEbms3CollaborationInfo,
+                                                                                      aEbms3PartyInfo,
+                                                                                      aEbms3MessageProperties,
+                                                                                      eSOAPVersion);
     return aResponseUserMessage;
   }
 
@@ -1187,15 +1187,15 @@ public final class AS4Handler implements AutoCloseable
   {
     if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
-      final SignedMessageCreator aCreator = new SignedMessageCreator (m_aCryptoFactory);
       final boolean bMustUnderstand = true;
-      return aCreator.createSignedMessage (aDocToBeSigned,
-                                           eSOAPVersion,
-                                           aResponseAttachments,
-                                           m_aResMgr,
-                                           bMustUnderstand,
-                                           aSecurity.getX509SignatureAlgorithm (),
-                                           aSecurity.getX509SignatureHashFunction ());
+      return SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+                                                       aDocToBeSigned,
+                                                       eSOAPVersion,
+                                                       aResponseAttachments,
+                                                       m_aResMgr,
+                                                       bMustUnderstand,
+                                                       aSecurity.getX509SignatureAlgorithm (),
+                                                       aSecurity.getX509SignatureHashFunction ());
     }
     return aDocToBeSigned;
   }
@@ -1234,9 +1234,9 @@ public final class AS4Handler implements AutoCloseable
     }
     else
     {
-      aMimeMsg = new MimeMessageCreator (aLeg.getProtocol ()
-                                             .getSOAPVersion ()).generateMimeMessage (aResponseDoc,
-                                                                                      aResponseAttachments);
+      aMimeMsg = MimeMessageCreator.generateMimeMessage (aLeg.getProtocol ().getSOAPVersion (),
+                                                         aResponseDoc,
+                                                         aResponseAttachments);
     }
     if (aMimeMsg == null)
       throw new IllegalStateException ("No MimeMessage created!");

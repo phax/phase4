@@ -24,9 +24,9 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.collection.impl.ICommonsList;
 
-public final class CreateErrorMessage
+public final class ErrorMessageCreator
 {
-  private CreateErrorMessage ()
+  private ErrorMessageCreator ()
   {}
 
   @Nonnull

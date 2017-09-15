@@ -29,6 +29,7 @@ public class HttpXMLEntity extends StringEntity
   public HttpXMLEntity (@Nonnull final Node Node, @Nonnull final ESOAPVersion eSoapVersion)
   {
     super (AS4XMLHelper.serializeXML (Node), AS4XMLHelper.XWS.getCharset ());
+    // Required for AS4.NET
     setContentType (eSoapVersion.getMimeType ().getAsString ());
   }
 }

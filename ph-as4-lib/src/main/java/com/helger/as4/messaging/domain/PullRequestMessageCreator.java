@@ -26,9 +26,9 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 
-public final class CreatePullRequestMessage
+public final class PullRequestMessageCreator
 {
-  private CreatePullRequestMessage ()
+  private PullRequestMessageCreator ()
   {}
 
   @Nonnull

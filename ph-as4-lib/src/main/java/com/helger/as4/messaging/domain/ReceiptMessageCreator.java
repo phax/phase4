@@ -39,9 +39,9 @@ import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
 
-public final class CreateReceiptMessage
+public final class ReceiptMessageCreator
 {
-  private CreateReceiptMessage ()
+  private ReceiptMessageCreator ()
   {}
 
   @Nonnull
@@ -121,7 +121,7 @@ public final class CreateReceiptMessage
     {
       // If the original usermessage is not signed, the receipt will contain the
       // original message part with out wss4j security
-      aEbms3Receipt.addAny (CreateUserMessage.getUserMessageAsAS4UserMessage (eSOAPVersion, aEbms3UserMessage)
+      aEbms3Receipt.addAny (UserMessageCreator.getUserMessageAsAS4UserMessage (eSOAPVersion, aEbms3UserMessage)
                                              .getAsSOAPDocument ()
                                              .getDocumentElement ());
     }

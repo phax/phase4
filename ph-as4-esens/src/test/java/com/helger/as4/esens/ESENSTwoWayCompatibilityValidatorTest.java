@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
@@ -141,7 +142,8 @@ public final class ESENSTwoWayCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg2 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESOAPVersion.SOAP_11),
+    m_aPMode.setLeg2 (new PModeLeg (new PModeLegProtocol ("https://test.com",
+                                                          ESOAPVersion.SOAP_11),
                                     null,
                                     null,
                                     null,
@@ -242,8 +244,7 @@ public final class ESENSTwoWayCompatibilityValidatorTest
   {
     m_aPMode.getLeg2 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue ("Errors: " +
-                m_aErrorList.toString (),
+    assertTrue ("Errors: " + m_aErrorList.toString (),
                 m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
@@ -386,12 +387,8 @@ public final class ESENSTwoWayCompatibilityValidatorTest
   @Test
   public void testValidateUserMessageMoreThanOnePartyID ()
   {
-    final Ebms3PartyId aFirstId = new Ebms3PartyId ();
-    aFirstId.setType ("type");
-    aFirstId.setValue ("value");
-    final Ebms3PartyId aSecondId = new Ebms3PartyId ();
-    aSecondId.setType ("type2");
-    aSecondId.setValue ("value2");
+    final Ebms3PartyId aFirstId = MessageHelperMethods.createEbms3PartyId ("type", "value");
+    final Ebms3PartyId aSecondId = MessageHelperMethods.createEbms3PartyId ("type2", "value2");
 
     final Ebms3From aFromPart = new Ebms3From ();
     aFromPart.addPartyId (aFirstId);

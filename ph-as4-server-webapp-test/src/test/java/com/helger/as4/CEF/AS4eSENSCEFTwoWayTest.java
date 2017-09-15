@@ -94,11 +94,12 @@ public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
-                                                                                                                 m_aPayload,
-                                                                                                                 aAttachments,
-                                                                                                                 new AS4ResourceManager ()),
-                                                                                          aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                     testSignedUserMessage (m_eSOAPVersion,
+                                                                                            m_aPayload,
+                                                                                            aAttachments,
+                                                                                            new AS4ResourceManager ()),
+                                                                     aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 

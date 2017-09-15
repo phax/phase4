@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
@@ -134,22 +134,22 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
 
         final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (aMessageInfo.getMessageId ());
-        final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+        final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, null);
 
         final Ebms3CollaborationInfo aEbms3CollaborationInfo;
         final Ebms3PartyInfo aEbms3PartyInfo;
-        aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+        aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
                                                                                   AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                   MockPModeGenerator.SOAP11_SERVICE,
                                                                                   AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                   "PullPMode",
                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT);
-        aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+        aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                   "pullinitiator",
                                                                   CAS4.DEFAULT_RESPONDER_URL,
                                                                   "pullresponder");
 
-        final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+        final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
         final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
         aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);

@@ -28,7 +28,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
@@ -139,26 +139,26 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     if (aAttachments == null)
     {
       aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-      aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+      aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, null);
     }
     else
     {
-      aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (null, aAttachments);
+      aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (null, aAttachments);
     }
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sReferenceToMessageID);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
                                                                                                            AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                            AS4TestConstants.TEST_SERVICE,
                                                                                                            AS4TestConstants.TEST_CONVERSATION_ID,
                                                                                                            sAnotherOrWrongPModeID,
                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
                                                                                    sSetPartyIDInitiator,
                                                                                    CAS4.DEFAULT_RESPONDER_URL,
                                                                                    sSetPartyIDResponder);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
+    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
                                                                      aEbms3PayloadInfo,
                                                                      aEbms3CollaborationInfo,
                                                                      aEbms3PartyInfo,

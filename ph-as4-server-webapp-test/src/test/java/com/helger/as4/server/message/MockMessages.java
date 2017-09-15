@@ -34,10 +34,10 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.CreateErrorMessage;
-import com.helger.as4.messaging.domain.CreateReceiptMessage;
-import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.ErrorMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.ReceiptMessageCreator;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
@@ -67,17 +67,17 @@ public final class MockMessages
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
 
-    final Document aSignedDoc = aClient.createSignedMessage (testUserMessageSoapNotSigned (eSOAPVersion,
-                                                                                           aPayload,
-                                                                                           aAttachments),
-                                                             eSOAPVersion,
-                                                             aAttachments,
-                                                             aResMgr,
-                                                             false,
-                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                          testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                                        aPayload,
+                                                                                                        aAttachments),
+                                                                          eSOAPVersion,
+                                                                          aAttachments,
+                                                                          aResMgr,
+                                                                          false,
+                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     return aSignedDoc;
   }
 
@@ -85,20 +85,20 @@ public final class MockMessages
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
-    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
-    final Document aSignedDoc = aClient.createSignedMessage (CreateErrorMessage.createErrorMessage (eSOAPVersion,
-                                                                                                    MessageHelperMethods.createEbms3MessageInfo (),
-                                                                                                    aEbms3ErrorList)
-                                                                               .setMustUnderstand (true)
-                                                                               .getAsSOAPDocument (),
-                                                             eSOAPVersion,
-                                                             aAttachments,
-                                                             aResMgr,
-                                                             false,
-                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                          ErrorMessageCreator.createErrorMessage (eSOAPVersion,
+                                                                                                                  MessageHelperMethods.createEbms3MessageInfo (),
+                                                                                                                  aEbms3ErrorList)
+                                                                                             .setMustUnderstand (true)
+                                                                                             .getAsSOAPDocument (),
+                                                                          eSOAPVersion,
+                                                                          aAttachments,
+                                                                          aResMgr,
+                                                                          false,
+                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
     return aSignedDoc;
   }
 
@@ -106,13 +106,13 @@ public final class MockMessages
                                              @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                              @Nullable final Document aUserMessage) throws DOMException
   {
-    final Document aDoc = CreateReceiptMessage.createReceiptMessage (eSOAPVersion,
-                                                                     MessageHelperMethods.createRandomMessageID (),
-                                                                     aEbms3UserMessage,
-                                                                     aUserMessage,
-                                                                     true)
-                                              .setMustUnderstand (true)
-                                              .getAsSOAPDocument ();
+    final Document aDoc = ReceiptMessageCreator.createReceiptMessage (eSOAPVersion,
+                                                                      MessageHelperMethods.createRandomMessageID (),
+                                                                      aEbms3UserMessage,
+                                                                      aUserMessage,
+                                                                      true)
+                                               .setMustUnderstand (true)
+                                               .getAsSOAPDocument ();
     return aDoc;
   }
 
@@ -126,7 +126,7 @@ public final class MockMessages
     final String sPModeID;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
@@ -134,42 +134,42 @@ public final class MockMessages
     {
       sPModeID = MockEbmsHelper.SOAP_11_PARTY_ID + "-" + MockEbmsHelper.SOAP_11_PARTY_ID;
 
-      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                                AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                                MockPModeGenerator.SOAP11_SERVICE,
-                                                                                AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                sPModeID,
-                                                                                MockEbmsHelper.DEFAULT_AGREEMENT);
-      aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                MockEbmsHelper.SOAP_11_PARTY_ID,
-                                                                CAS4.DEFAULT_RESPONDER_URL,
-                                                                MockEbmsHelper.SOAP_11_PARTY_ID);
+      aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                 AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                 MockPModeGenerator.SOAP11_SERVICE,
+                                                                                 AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                                 sPModeID,
+                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
+      aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                 MockEbmsHelper.SOAP_11_PARTY_ID,
+                                                                 CAS4.DEFAULT_RESPONDER_URL,
+                                                                 MockEbmsHelper.SOAP_11_PARTY_ID);
     }
     else
     {
       sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
 
-      aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                                AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                                AS4TestConstants.TEST_SERVICE,
-                                                                                AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                sPModeID,
-                                                                                MockEbmsHelper.DEFAULT_AGREEMENT);
-      aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                MockEbmsHelper.SOAP_12_PARTY_ID,
-                                                                CAS4.DEFAULT_RESPONDER_URL,
-                                                                MockEbmsHelper.SOAP_12_PARTY_ID);
+      aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                                 AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                 AS4TestConstants.TEST_SERVICE,
+                                                                                 AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                                 sPModeID,
+                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT);
+      aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                 MockEbmsHelper.SOAP_12_PARTY_ID,
+                                                                 CAS4.DEFAULT_RESPONDER_URL,
+                                                                 MockEbmsHelper.SOAP_12_PARTY_ID);
     }
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     eSOAPVersion)
-                                                 .setMustUnderstand (true);
+    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                      aEbms3PayloadInfo,
+                                                                      aEbms3CollaborationInfo,
+                                                                      aEbms3PartyInfo,
+                                                                      aEbms3MessageProperties,
+                                                                      eSOAPVersion)
+                                                  .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -183,27 +183,27 @@ public final class MockMessages
     final String sPModeID = CAS4.DEFAULT_SENDER_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
-                                                                                                           AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                                                           AS4TestConstants.TEST_SERVICE,
-                                                                                                           AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                                           sPModeID +
-                                                                                                                                                  "x",
-                                                                                                           MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                                   "testt",
-                                                                                   CAS4.DEFAULT_RESPONDER_URL,
-                                                                                   "testt");
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
+                                                                                                            AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                                            AS4TestConstants.TEST_SERVICE,
+                                                                                                            AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                                                            sPModeID +
+                                                                                                                                                   "x",
+                                                                                                            MockEbmsHelper.DEFAULT_AGREEMENT);
+    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                                    "testt",
+                                                                                    CAS4.DEFAULT_RESPONDER_URL,
+                                                                                    "testt");
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     eSOAPVersion)
-                                                 .setMustUnderstand (true);
+    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                      aEbms3PayloadInfo,
+                                                                      aEbms3CollaborationInfo,
+                                                                      aEbms3PartyInfo,
+                                                                      aEbms3MessageProperties,
+                                                                      eSOAPVersion)
+                                                  .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -220,23 +220,23 @@ public final class MockMessages
 
     // Use an empty message info by purpose
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (null,
-                                                                                                           null,
-                                                                                                           null,
-                                                                                                           null,
-                                                                                                           null,
-                                                                                                           null);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo ("", "", "", "");
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (null,
+                                                                                                            null,
+                                                                                                            null,
+                                                                                                            null,
+                                                                                                            null,
+                                                                                                            null);
+    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo ("", "", "", "");
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     eSOAPVersion)
-                                                 .setMustUnderstand (true);
+    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                      aEbms3PayloadInfo,
+                                                                      aEbms3CollaborationInfo,
+                                                                      aEbms3PartyInfo,
+                                                                      aEbms3MessageProperties,
+                                                                      eSOAPVersion)
+                                                  .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 }

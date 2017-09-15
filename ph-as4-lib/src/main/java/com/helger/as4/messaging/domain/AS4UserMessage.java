@@ -29,10 +29,20 @@ import com.helger.commons.ValueEnforcer;
  */
 public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
 {
+  private final Ebms3UserMessage m_aUserMessage;
+
   public AS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3UserMessage aUserMessage)
   {
     super (eSOAPVersion, EAS4MessageType.USER_MESSAGE);
     ValueEnforcer.notNull (aUserMessage, "UserMessage");
     m_aMessaging.addUserMessage (aUserMessage);
+
+    m_aUserMessage = aUserMessage;
+  }
+
+  @Nonnull
+  public Ebms3UserMessage getEbms3UserMessage ()
+  {
+    return m_aUserMessage;
   }
 }

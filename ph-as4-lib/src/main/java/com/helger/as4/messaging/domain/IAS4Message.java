@@ -66,6 +66,15 @@ public interface IAS4Message extends Serializable
     return getAsSOAPDocument ((Node) null);
   }
 
+  /**
+   * Create a SOAP document from this message with the specified optional
+   * payload.
+   *
+   * @param aPayload
+   *        The payload to be added into the SOAP body. May be
+   *        <code>null</code>.
+   * @return The created DOM document
+   */
   @Nonnull
   Document getAsSOAPDocument (@Nullable Node aPayload);
 }

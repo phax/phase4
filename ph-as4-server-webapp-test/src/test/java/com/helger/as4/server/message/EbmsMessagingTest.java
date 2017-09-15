@@ -29,15 +29,14 @@ import com.helger.as4.CAS4;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.marshaller.Ebms3WriterBuilder;
-import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3From;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
-import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
@@ -118,45 +117,34 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     final String sPModeID;
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, null);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
 
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                              AS4TestConstants.TEST_SERVICE,
-                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                              sPModeID,
-                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
+    aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                               AS4TestConstants.TEST_SERVICE,
+                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                               sPModeID,
+                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
 
     final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
 
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
     aEbms3From.setRole (CAS4.DEFAULT_SENDER_URL);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
-      aEbms3From.addPartyId (aEbms3PartyId);
-
-      final Ebms3PartyId aEbms3PartyId2 = new Ebms3PartyId ();
-      aEbms3PartyId2.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
-      aEbms3From.addPartyId (aEbms3PartyId2);
-    }
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (MockEbmsHelper.SOAP_12_PARTY_ID));
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (MockEbmsHelper.SOAP_12_PARTY_ID));
     aEbms3PartyInfo.setFrom (aEbms3From);
 
     // To => Receiver
     final Ebms3To aEbms3To = new Ebms3To ();
     aEbms3To.setRole (CAS4.DEFAULT_RESPONDER_URL);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
-      aEbms3To.addPartyId (aEbms3PartyId);
-    }
+    aEbms3To.addPartyId (MessageHelperMethods.createEbms3PartyId (MockEbmsHelper.SOAP_12_PARTY_ID));
     aEbms3PartyInfo.setTo (aEbms3To);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
     aEbms3UserMessage.setPartyInfo (aEbms3PartyInfo);
     aEbms3UserMessage.setPayloadInfo (aEbms3PayloadInfo);
@@ -179,38 +167,30 @@ public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
     final String sPModeID;
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                              AS4TestConstants.TEST_SERVICE,
-                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                              sPModeID,
-                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
+    aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                               AS4TestConstants.TEST_SERVICE,
+                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                               sPModeID,
+                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
 
     final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
     aEbms3From.setRole (CAS4.DEFAULT_SENDER_URL);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
-      aEbms3From.addPartyId (aEbms3PartyId);
-    }
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (MockEbmsHelper.SOAP_12_PARTY_ID));
     aEbms3PartyInfo.setFrom (aEbms3From);
 
     // To => Receiver
     final Ebms3To aEbms3To = new Ebms3To ();
     aEbms3To.setRole (CAS4.DEFAULT_RESPONDER_URL);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (MockEbmsHelper.SOAP_12_PARTY_ID);
-      aEbms3To.addPartyId (aEbms3PartyId);
-    }
+    aEbms3To.addPartyId (MessageHelperMethods.createEbms3PartyId (MockEbmsHelper.SOAP_12_PARTY_ID));
     aEbms3PartyInfo.setTo (aEbms3To);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 
     aEbms3UserMessage.setPartyInfo (aEbms3PartyInfo);
     aEbms3UserMessage.setPayloadInfo (aEbms3PayloadInfo);

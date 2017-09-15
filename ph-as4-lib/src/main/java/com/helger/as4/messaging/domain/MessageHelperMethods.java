@@ -32,6 +32,7 @@ import org.apache.http.HttpMessage;
 import com.helger.as4.CAS4;
 import com.helger.as4lib.ebms3header.Ebms3Description;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -46,6 +47,7 @@ import com.helger.datetime.util.PDTXMLConverter;
  * than one message creating classes in this package.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 @Immutable
 public final class MessageHelperMethods
@@ -138,6 +140,21 @@ public final class MessageHelperMethods
     aProp.setName (sName);
     aProp.setValue (sValue);
     return aProp;
+  }
+
+  @Nonnull
+  public static Ebms3PartyId createEbms3PartyId (@Nonnull final String sValue)
+  {
+    return createEbms3PartyId (null, sValue);
+  }
+
+  @Nonnull
+  public static Ebms3PartyId createEbms3PartyId (@Nullable final String sType, @Nonnull final String sValue)
+  {
+    final Ebms3PartyId ret = new Ebms3PartyId ();
+    ret.setType (sType);
+    ret.setValue (sValue);
+    return ret;
   }
 
   public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,

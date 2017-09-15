@@ -155,17 +155,18 @@ public final class MainAS4Client
                                                                               null,
                                                                               aResMgr));
 
-              final SignedMessageCreator aSigned = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
-              final MimeMessage aMsg = new MimeMessageCreator (eSOAPVersion).generateMimeMessage (aSigned.createSignedMessage (MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
-                                                                                                                                                                                null,
-                                                                                                                                                                                aAttachments),
-                                                                                                                               eSOAPVersion,
-                                                                                                                               aAttachments,
-                                                                                                                               aResMgr,
-                                                                                                                               false,
-                                                                                                                               ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                                                               ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
-                                                                                                  aAttachments);
+              final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
+                                                                               SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                                                                         MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                                                                                                          null,
+                                                                                                                                                                          aAttachments),
+                                                                                                                         eSOAPVersion,
+                                                                                                                         aAttachments,
+                                                                                                                         aResMgr,
+                                                                                                                         false,
+                                                                                                                         ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                         ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
+                                                                               aAttachments);
 
               // Move all global mime headers to the POST request
               MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);

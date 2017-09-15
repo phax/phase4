@@ -32,7 +32,6 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartInfo;
 import com.helger.as4lib.ebms3header.Ebms3PartProperties;
-import com.helger.as4lib.ebms3header.Ebms3PartyId;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
@@ -47,15 +46,16 @@ import com.helger.commons.string.StringHelper;
  * With the help of this class an usermessage or parts of it can be created.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
-public final class CreateUserMessage
+public final class UserMessageCreator
 {
   public static final String PART_PROPERTY_MIME_TYPE = "MimeType";
   public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = "cid:";
 
-  private CreateUserMessage ()
+  private UserMessageCreator ()
   {}
 
   public static AS4UserMessage getUserMessageAsAS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
@@ -118,22 +118,15 @@ public final class CreateUserMessage
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
     aEbms3From.setRole (sFromRole);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (sFromPartyID);
-      aEbms3From.addPartyId (aEbms3PartyId);
-    }
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (sFromPartyID));
     aEbms3PartyInfo.setFrom (aEbms3From);
 
     // To => Receiver
     final Ebms3To aEbms3To = new Ebms3To ();
     aEbms3To.setRole (sToRole);
-    {
-      final Ebms3PartyId aEbms3PartyId = new Ebms3PartyId ();
-      aEbms3PartyId.setValue (sToPartyID);
-      aEbms3To.addPartyId (aEbms3PartyId);
-    }
+    aEbms3To.addPartyId (MessageHelperMethods.createEbms3PartyId (sToPartyID));
     aEbms3PartyInfo.setTo (aEbms3To);
+
     return aEbms3PartyInfo;
   }
 
@@ -195,10 +188,8 @@ public final class CreateUserMessage
       for (final WSS4JAttachment aAttachment : aAttachments)
       {
         final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-        {
-          aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_MIME_TYPE,
-                                                                                      aAttachment.getUncompressedMimeType ()));
-        }
+        aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                                                    aAttachment.getUncompressedMimeType ()));
         if (aAttachment.hasCharset ())
         {
           aEbms3PartProperties.addProperty (MessageHelperMethods.createEbms3Property (PART_PROPERTY_CHARACTER_SET,

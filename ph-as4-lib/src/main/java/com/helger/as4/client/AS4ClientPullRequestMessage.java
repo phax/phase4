@@ -23,8 +23,8 @@ import org.w3c.dom.Document;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
-import com.helger.as4.messaging.domain.CreatePullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.PullRequestMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -69,10 +69,10 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     final String sMessageID = createMessageID ();
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
 
-    final AS4PullRequestMessage aPullRequest = CreatePullRequestMessage.createPullRequestMessage (getSOAPVersion (),
-                                                                                                  aEbms3MessageInfo,
-                                                                                                  m_sMPC,
-                                                                                                  getAllAny ());
+    final AS4PullRequestMessage aPullRequest = PullRequestMessageCreator.createPullRequestMessage (getSOAPVersion (),
+                                                                                                   aEbms3MessageInfo,
+                                                                                                   m_sMPC,
+                                                                                                   getAllAny ());
 
     Document aDoc = aPullRequest.getAsSOAPDocument ();
 
@@ -82,15 +82,15 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     {
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
-      final SignedMessageCreator aCreator = new SignedMessageCreator (aCryptoFactory);
       final boolean bMustUnderstand = true;
-      aDoc = aCreator.createSignedMessage (aDoc,
-                                           getSOAPVersion (),
-                                           null,
-                                           m_aResMgr,
-                                           bMustUnderstand,
-                                           getCryptoAlgorithmSign (),
-                                           getCryptoAlgorithmSignDigest ());
+      aDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
+                                                       aDoc,
+                                                       getSOAPVersion (),
+                                                       null,
+                                                       m_aResMgr,
+                                                       bMustUnderstand,
+                                                       getCryptoAlgorithmSign (),
+                                                       getCryptoAlgorithmSignDigest ());
     }
 
     // Wrap SOAP XML

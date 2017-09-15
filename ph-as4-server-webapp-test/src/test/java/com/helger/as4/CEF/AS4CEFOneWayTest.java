@@ -48,8 +48,8 @@ import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -96,22 +96,22 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, null);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
-    aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                              AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                              MockPModeGenerator.SOAP11_SERVICE,
-                                                                              AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                              m_aESENSOneWayPMode.getID (),
-                                                                              MockEbmsHelper.DEFAULT_AGREEMENT);
-    aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                              AS4TestConstants.CEF_INITIATOR_ID,
-                                                              CAS4.DEFAULT_RESPONDER_URL,
-                                                              AS4TestConstants.CEF_RESPONDER_ID);
+    aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
+                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                               MockPModeGenerator.SOAP11_SERVICE,
+                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                               m_aESENSOneWayPMode.getID (),
+                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
+    aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                               AS4TestConstants.CEF_INITIATOR_ID,
+                                                               CAS4.DEFAULT_RESPONDER_URL,
+                                                               AS4TestConstants.CEF_RESPONDER_ID);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
     final String sTrackerIdentifier = "trackingidentifier";
     aEbms3MessageProperties.addProperty (MessageHelperMethods.createEbms3Property (sTrackerIdentifier, "tracker"));
 
@@ -120,22 +120,22 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     // aPropOnlyName.setName ("OnlyName");
     // aEbms3MessageProperties.addProperty (aPropOnlyName);
 
-    final AS4UserMessage aDoc = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                     aEbms3PayloadInfo,
-                                                                     aEbms3CollaborationInfo,
-                                                                     aEbms3PartyInfo,
-                                                                     aEbms3MessageProperties,
-                                                                     m_eSOAPVersion)
-                                                 .setMustUnderstand (true);
-    final SignedMessageCreator aClient = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
+    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                      aEbms3PayloadInfo,
+                                                                      aEbms3CollaborationInfo,
+                                                                      aEbms3PartyInfo,
+                                                                      aEbms3MessageProperties,
+                                                                      m_eSOAPVersion)
+                                                  .setMustUnderstand (true);
 
-    final Document aSignedDoc = aClient.createSignedMessage (aDoc.getAsSOAPDocument (m_aPayload),
-                                                             m_eSOAPVersion,
-                                                             null,
-                                                             new AS4ResourceManager (),
-                                                             false,
-                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                          aDoc.getAsSOAPDocument (m_aPayload),
+                                                                          m_eSOAPVersion,
+                                                                          null,
+                                                                          new AS4ResourceManager (),
+                                                                          false,
+                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
@@ -204,11 +204,12 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     CMimeType.APPLICATION_XML,
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (testSignedUserMessage (m_eSOAPVersion,
-                                                                                                                 m_aPayload,
-                                                                                                                 aAttachments,
-                                                                                                                 new AS4ResourceManager ()),
-                                                                                          aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                     testSignedUserMessage (m_eSOAPVersion,
+                                                                                            m_aPayload,
+                                                                                            aAttachments,
+                                                                                            new AS4ResourceManager ()),
+                                                                     aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -301,7 +302,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
     nList.item (0).removeChild (nList.item (0).getFirstChild ());
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -443,7 +444,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     aAttachments.get (0)
                 .setSourceStreamProvider ( () -> ClassPathResource.getInputStream ("attachment/CompressedPayload.txt"));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
@@ -488,7 +489,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
     // How to check message if it is decompressed hmm?
   }
@@ -524,7 +525,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -551,7 +552,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, aAttachments, new AS4ResourceManager ());
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -588,7 +589,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (aDoc, aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -692,16 +693,16 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final SignedMessageCreator aSigned = new SignedMessageCreator (AS4CryptoFactory.DEFAULT_INSTANCE);
-    final Document aDoc = aSigned.createSignedMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                  null,
-                                                                                                  aAttachments),
-                                                       m_eSOAPVersion,
-                                                       aAttachments,
-                                                       s_aResMgr,
-                                                       false,
-                                                       ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                       ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                    MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                               null,
+                                                                                                               aAttachments),
+                                                                    m_eSOAPVersion,
+                                                                    aAttachments,
+                                                                    s_aResMgr,
+                                                                    false,
+                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
     final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
                                                                                                            aDoc,
@@ -783,10 +784,11 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     aResMgr1));
 
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                     null,
-                                                                                                                                     aAttachments),
-                                                                                          aAttachments);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                     MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                null,
+                                                                                                                aAttachments),
+                                                                     aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

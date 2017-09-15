@@ -84,21 +84,21 @@ public final class MimeMessageCreator
     }
   }
 
-  private final ESOAPVersion m_eSOAPVersion;
-
-  public MimeMessageCreator (@Nonnull final ESOAPVersion eSOAPVersion)
-  {
-    m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-  }
+  private MimeMessageCreator ()
+  {}
 
   @Nonnull
-  public MimeMessage generateMimeMessage (@Nonnull final Document aSOAPEnvelope,
-                                          @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
+  public static MimeMessage generateMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                 @Nonnull final Document aSOAPEnvelope,
+                                                 @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
+    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (aSOAPEnvelope, "SOAPEnvelope");
+
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (m_eSOAPVersion, aCharset);
+    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
-    final String sContentType = m_eSOAPVersion.getMimeType (aCharset).getAsString ();
+    final String sContentType = eSOAPVersion.getMimeType (aCharset).getAsString ();
 
     {
       // Message Itself

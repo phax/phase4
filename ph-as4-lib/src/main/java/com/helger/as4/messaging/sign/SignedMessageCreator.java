@@ -33,7 +33,7 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.messaging.domain.CreateUserMessage;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
@@ -42,13 +42,8 @@ import com.helger.commons.collection.impl.ICommonsList;
 
 public class SignedMessageCreator
 {
-  private final AS4CryptoFactory m_aCryptoFactory;
-
-  public SignedMessageCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
-  {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    m_aCryptoFactory = aCryptoFactory;
-  }
+  private SignedMessageCreator ()
+  {}
 
   /**
    * This method must be used if the message does not contain attachments, that
@@ -73,19 +68,27 @@ public class SignedMessageCreator
    *         If an error occurs during signing
    */
   @Nonnull
-  public Document createSignedMessage (@Nonnull final Document aPreSigningMessage,
-                                       @Nonnull final ESOAPVersion eSOAPVersion,
-                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                       @Nonnull final AS4ResourceManager aResMgr,
-                                       final boolean bMustUnderstand,
-                                       @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
-                                       @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
+  public static Document createSignedMessage (@Nonnull final AS4CryptoFactory aCryptoFactory,
+                                              @Nonnull final Document aPreSigningMessage,
+                                              @Nonnull final ESOAPVersion eSOAPVersion,
+                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                              @Nonnull final AS4ResourceManager aResMgr,
+                                              final boolean bMustUnderstand,
+                                              @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
+                                              @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
   {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
+    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    ValueEnforcer.notNull (eCryptoAlgorithmSign, "CryptoAlgorithmSign");
+    ValueEnforcer.notNull (eCryptoAlgorithmSignDigest, "CryptoAlgorithmSignDigest");
+
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
 
-    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
+    final CryptoProperties aCryptoProps = aCryptoFactory.getCryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
@@ -99,7 +102,7 @@ public class SignedMessageCreator
       // Modify builder for attachments
       aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
       // XXX where is this ID used????
-      aBuilder.getParts ().add (new WSEncryptionPart (CreateUserMessage.PREFIX_CID + "Attachments", "Content"));
+      aBuilder.getParts ().add (new WSEncryptionPart (UserMessageCreator.PREFIX_CID + "Attachments", "Content"));
 
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                             aResMgr);
@@ -112,6 +115,6 @@ public class SignedMessageCreator
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
-    return aBuilder.build (m_aCryptoFactory.getCrypto ());
+    return aBuilder.build (aCryptoFactory.getCrypto ());
   }
 }

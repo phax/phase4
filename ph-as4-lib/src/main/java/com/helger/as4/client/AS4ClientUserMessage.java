@@ -34,8 +34,8 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.CreateUserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -206,27 +206,27 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = CreateUserMessage.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = CreateUserMessage.createEbms3CollaborationInfo (m_sAction,
-                                                                                                           m_sServiceType,
-                                                                                                           m_sServiceValue,
-                                                                                                           m_sConversationID,
-                                                                                                           sAgreementRefPMode,
-                                                                                                           m_sAgreementRefValue);
-    final Ebms3PartyInfo aEbms3PartyInfo = CreateUserMessage.createEbms3PartyInfo (m_sFromRole,
-                                                                                   m_sFromPartyID,
-                                                                                   m_sToRole,
-                                                                                   m_sToPartyID);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (m_sAction,
+                                                                                                            m_sServiceType,
+                                                                                                            m_sServiceValue,
+                                                                                                            m_sConversationID,
+                                                                                                            sAgreementRefPMode,
+                                                                                                            m_sAgreementRefValue);
+    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (m_sFromRole,
+                                                                                    m_sFromPartyID,
+                                                                                    m_sToRole,
+                                                                                    m_sToPartyID);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = CreateUserMessage.createEbms3MessageProperties (m_aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (m_aEbms3Properties);
 
-    final AS4UserMessage aUserMsg = CreateUserMessage.createUserMessage (aEbms3MessageInfo,
-                                                                         aEbms3PayloadInfo,
-                                                                         aEbms3CollaborationInfo,
-                                                                         aEbms3PartyInfo,
-                                                                         aEbms3MessageProperties,
-                                                                         getSOAPVersion ())
-                                                     .setMustUnderstand (true);
+    final AS4UserMessage aUserMsg = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+                                                                          aEbms3PayloadInfo,
+                                                                          aEbms3CollaborationInfo,
+                                                                          aEbms3PartyInfo,
+                                                                          aEbms3MessageProperties,
+                                                                          getSOAPVersion ())
+                                                      .setMustUnderstand (true);
     Document aDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
 
     // 1. compress
@@ -242,13 +242,14 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       if (bSign)
       {
         final boolean bMustUnderstand = true;
-        final Document aSignedDoc = new SignedMessageCreator (aCryptoFactory).createSignedMessage (aDoc,
-                                                                                                   getSOAPVersion (),
-                                                                                                   m_aAttachments,
-                                                                                                   m_aResMgr,
-                                                                                                   bMustUnderstand,
-                                                                                                   getCryptoAlgorithmSign (),
-                                                                                                   getCryptoAlgorithmSignDigest ());
+        final Document aSignedDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
+                                                                              aDoc,
+                                                                              getSOAPVersion (),
+                                                                              m_aAttachments,
+                                                                              m_aResMgr,
+                                                                              bMustUnderstand,
+                                                                              getCryptoAlgorithmSign (),
+                                                                              getCryptoAlgorithmSignDigest ());
         aDoc = aSignedDoc;
       }
 
@@ -281,7 +282,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       // * not encrypted, not signed
       // * not encrypted, signed
-      aMimeMsg = new MimeMessageCreator (getSOAPVersion ()).generateMimeMessage (aDoc, m_aAttachments);
+      aMimeMsg = MimeMessageCreator.generateMimeMessage (getSOAPVersion (), aDoc, m_aAttachments);
     }
 
     if (aMimeMsg != null)

@@ -26,6 +26,7 @@ import java.util.Enumeration;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.Header;
@@ -48,6 +49,8 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
+import com.helger.mail.cte.IContentTransferEncoding;
+import com.helger.mail.datasource.IEncodingAwareDataSource;
 import com.helger.mail.datasource.InputStreamDataSource;
 
 /**
@@ -215,6 +218,45 @@ public class WSS4JAttachment extends Attachment
     return this;
   }
 
+  private DataSource _getAsDataSource ()
+  {
+    final InputStreamDataSource aDS = new InputStreamDataSource (getSourceStream (), getId ());
+    final EContentTransferEncoding eCTE = getContentTransferEncoding ();
+    return new IEncodingAwareDataSource ()
+    {
+      public String getContentType ()
+      {
+        return aDS.getContentType ();
+      }
+
+      public InputStream getInputStream () throws IOException
+      {
+        // XXX Avoid double read check
+        // This is a temporary hack until we know, which IS can be repeated and
+        // which can't!
+        if (true)
+          return getSourceStream ();
+        return aDS.getInputStream ();
+      }
+
+      public String getName ()
+      {
+        return aDS.getName ();
+      }
+
+      public OutputStream getOutputStream () throws IOException
+      {
+        return aDS.getOutputStream ();
+      }
+
+      @Nullable
+      public IContentTransferEncoding getContentTransferEncoding ()
+      {
+        return eCTE;
+      }
+    };
+  }
+
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws MessagingException
   {
     ValueEnforcer.notNull (aMimeMultipart, "MimeMultipart");
@@ -226,8 +268,7 @@ public class WSS4JAttachment extends Attachment
     // headers
     // On some tests the datahandler did reset content-type and transfer
     // encoding, so this is now the correct order
-    aMimeBodyPart.setDataHandler (new DataHandler (new InputStreamDataSource (getSourceStream (),
-                                                                              getId ()).getEncodingAware (getContentTransferEncoding ())));
+    aMimeBodyPart.setDataHandler (new DataHandler (_getAsDataSource ()));
 
     // After DataHandler!!
     aMimeBodyPart.setHeader (CHttpHeader.CONTENT_TYPE, getMimeType ());
@@ -253,7 +294,7 @@ public class WSS4JAttachment extends Attachment
   /**
    * Constructor. Performs compression internally.
    *
-   * @param aFile
+   * @param aSrcFile
    *        Source, uncompressed, unencrypted file.
    * @param aMimeType
    *        Original mime type of the file.
@@ -266,12 +307,12 @@ public class WSS4JAttachment extends Attachment
    *         In case something goes wrong during compression
    */
   @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aFile,
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceManager aResMgr) throws IOException
   {
-    ValueEnforcer.notNull (aFile, "File");
+    ValueEnforcer.notNull (aSrcFile, "File");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
@@ -280,7 +321,7 @@ public class WSS4JAttachment extends Attachment
     // Set after ID and MimeType!
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
-                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (aFile) + "\"");
+                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (aSrcFile) + "\"");
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + ">");
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
 
@@ -295,13 +336,14 @@ public class WSS4JAttachment extends Attachment
       aRealFile = aResMgr.createTempFile ();
       try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
       {
-        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aFile)), aOS);
+        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aSrcFile)),
+                                                    aOS);
       }
     }
     else
     {
       // No compression - use file as-is
-      aRealFile = aFile;
+      aRealFile = aSrcFile;
     }
     ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aRealFile)));
     return ret;

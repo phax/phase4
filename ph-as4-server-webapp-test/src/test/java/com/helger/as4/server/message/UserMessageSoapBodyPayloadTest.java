@@ -95,11 +95,12 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final MimeMessage aMsg = new MimeMessageCreator (m_eSOAPVersion).generateMimeMessage (MockMessages.testSignedUserMessage (m_eSOAPVersion,
-                                                                                                                              aPayload,
-                                                                                                                              null,
-                                                                                                                              s_aResMgr),
-                                                                                          null);
+    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                     MockMessages.testSignedUserMessage (m_eSOAPVersion,
+                                                                                                         aPayload,
+                                                                                                         null,
+                                                                                                         s_aResMgr),
+                                                                     null);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

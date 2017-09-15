@@ -26,7 +26,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.error.IEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
-import com.helger.as4.messaging.domain.CreateErrorMessage;
+import com.helger.as4.messaging.domain.ErrorMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -92,7 +92,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             m_sRefToMessageId);
 
-    final AS4ErrorMessage aErrorMsg = CreateErrorMessage.createErrorMessage (getSOAPVersion (),
+    final AS4ErrorMessage aErrorMsg = ErrorMessageCreator.createErrorMessage (getSOAPVersion (),
                                                                              aEbms3MessageInfo,
                                                                              m_aErrorMessages);
 

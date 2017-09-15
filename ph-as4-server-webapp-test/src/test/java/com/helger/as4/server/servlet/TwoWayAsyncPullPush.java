@@ -31,7 +31,7 @@ import com.helger.as4.CAS4;
 import com.helger.as4.duplicate.AS4DuplicateManager;
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.domain.CreatePullRequestMessage;
+import com.helger.as4.messaging.domain.PullRequestMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEP;
@@ -118,7 +118,7 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
 
     // add the ID from the usermessage since its still one async message
     // transfer
-    Document aDoc = CreatePullRequestMessage.createPullRequestMessage (m_eSOAPVersion,
+    Document aDoc = PullRequestMessageCreator.createPullRequestMessage (m_eSOAPVersion,
                                                                        MessageHelperMethods.createEbms3MessageInfo (),
                                                                        AS4TestConstants.DEFAULT_MPC,
                                                                        aAny)

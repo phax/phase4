@@ -50,9 +50,17 @@ public final class MockEbmsHelper
 
   @Nonnull
   @ReturnsMutableCopy
+  public static ICommonsList <Ebms3Property> getEBMSProperties (@Nonnull final String sOriginalSender,
+                                                                @Nonnull final String sFinalRecipient)
+  {
+    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, sOriginalSender),
+                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, sFinalRecipient));
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"),
-                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
+    return getEBMSProperties ("C1-test", "C4-test");
   }
 }
