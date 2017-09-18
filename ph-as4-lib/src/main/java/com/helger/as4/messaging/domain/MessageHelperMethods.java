@@ -37,6 +37,8 @@ import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.string.StringHelper;
@@ -140,6 +142,15 @@ public final class MessageHelperMethods
     aProp.setName (sName);
     aProp.setValue (sValue);
     return aProp;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <Ebms3Property> createEmbs3PropertiesSpecial (@Nonnull final String sOriginalSender,
+                                                                           @Nonnull final String sFinalRecipient)
+  {
+    return new CommonsArrayList <> (createEbms3Property (CAS4.ORIGINAL_SENDER, sOriginalSender),
+                                    createEbms3Property (CAS4.FINAL_RECIPIENT, sFinalRecipient));
   }
 
   @Nonnull

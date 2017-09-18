@@ -79,9 +79,6 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   @Test
   public void sendToAS4_NET () throws Exception
   {
-    // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
-
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
@@ -102,8 +99,11 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                                                     CAS4.DEFAULT_RESPONDER_URL,
                                                                                     TO_PARTY_ID);
 
+    // Add properties
+    final ICommonsList <Ebms3Property> aEbms3Properties = MessageHelperMethods.createEmbs3PropertiesSpecial ("C1",
+                                                                                                             "C4");
+    aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("trackingidentifier", "tracker"));
     final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
-    aEbms3MessageProperties.addProperty (MessageHelperMethods.createEbms3Property ("trackingidentifier", "tracker"));
 
     final AS4UserMessage aUserMsg = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
                                                                           aEbms3PayloadInfo,
