@@ -170,7 +170,8 @@ public final class UserMessageCreator
    * Add payload info if attachments are present.
    *
    * @param aPayload
-   *        Optional SOAP body payload
+   *        Optional SOAP body payload. This must be <code>null</code> when
+   *        using MIME message layout!
    * @param aAttachments
    *        Used attachments
    * @return <code>null</code> if no attachments are present.

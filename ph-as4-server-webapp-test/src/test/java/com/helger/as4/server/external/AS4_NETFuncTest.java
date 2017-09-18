@@ -53,7 +53,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-@Ignore ("Currently returns a PMODE MisMatch")
+@Ignore ("Working! Requires external proxy and PEPPOL pilot certificate!")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 {
   /** TThe test URL for AS4.NET */
@@ -69,7 +69,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
     AS4ServerConfiguration.internalReinitForTestOnly ();
     AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
     AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
-    AS4HttpDebug.setEnabled (true);
+    AS4HttpDebug.setEnabled (false);
   }
 
   @AfterClass
@@ -89,7 +89,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (null, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (COLLABORATION_INFO_ACTION,
                                                                                                             COLLABORATION_INFO_SERVICE_TYPE,
                                                                                                             COLLABORATION_INFO_SERVICE,
