@@ -124,7 +124,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);
 
-    if (m_aSettings.getAsBoolean ("server.proxy.enabled", false))
+    if (m_aSettings.getAsBoolean ("server.proxy.enabled", false) && !"localhost".equals (aPost.getURI ().getHost ()))
     {
       aPost.setConfig (RequestConfig.custom ()
                                     .setProxy (new HttpHost (m_aSettings.getAsString ("server.proxy.address"),

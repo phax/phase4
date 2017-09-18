@@ -1374,10 +1374,8 @@ public final class AS4Handler implements AutoCloseable
     if (true || isDebug ())
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
-      s_aLogger.info ("GOT[" +
-                      Charset.defaultCharset ().name () +
-                      "]:\n" +
-                      new String (aBytes, Charset.defaultCharset ()));
+      final Charset aCharset = Charset.defaultCharset ();
+      s_aLogger.info ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
       return DOMReader.readXMLDOM (aBytes);
     }
     return DOMReader.readXMLDOM (aRequestIS);

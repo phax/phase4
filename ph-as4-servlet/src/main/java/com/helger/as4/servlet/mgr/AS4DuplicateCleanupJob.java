@@ -30,7 +30,6 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.lang.ClassHelper;
-import com.helger.photon.basic.app.CApplicationID;
 import com.helger.photon.core.job.AbstractPhotonJob;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
@@ -47,10 +46,7 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
   private static final String KEY_MINUTES = "mins";
 
   public AS4DuplicateCleanupJob ()
-  {
-    // Fixed ID
-    super (CApplicationID.APP_ID_SECURE);
-  }
+  {}
 
   @Override
   protected void onExecute (@Nonnull final JobDataMap aJobDataMap,

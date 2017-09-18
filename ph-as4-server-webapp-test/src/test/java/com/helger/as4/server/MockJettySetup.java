@@ -36,6 +36,9 @@ import com.helger.xservlet.requesttrack.RequestTracker;
 
 public final class MockJettySetup extends AbstractClientSetUp
 {
+  public static final String SETTINGS_SERVER_JETTY_ENABLED = "server.jetty.enabled";
+  public static final String SETTINGS_SERVER_ADDRESS = "server.address";
+
   private static JettyRunner s_aJetty;
   private static AS4ResourceManager s_aResMgr;
 
@@ -44,12 +47,12 @@ public final class MockJettySetup extends AbstractClientSetUp
 
   private static boolean _isRunJetty ()
   {
-    return AS4ServerConfiguration.getSettings ().getAsBoolean ("server.jetty.enabled", false);
+    return AS4ServerConfiguration.getSettings ().getAsBoolean (SETTINGS_SERVER_JETTY_ENABLED, false);
   }
 
   private static int _getJettyPort ()
   {
-    return URLHelper.getAsURL (AS4ServerConfiguration.getSettings ().getAsString ("server.address")).getPort ();
+    return URLHelper.getAsURL (AS4ServerConfiguration.getSettings ().getAsString (SETTINGS_SERVER_ADDRESS)).getPort ();
   }
 
   @BeforeClass
