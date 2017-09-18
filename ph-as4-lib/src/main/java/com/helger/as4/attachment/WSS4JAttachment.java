@@ -49,8 +49,6 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
-import com.helger.mail.cte.IContentTransferEncoding;
-import com.helger.mail.datasource.IEncodingAwareDataSource;
 import com.helger.mail.datasource.InputStreamDataSource;
 
 /**
@@ -221,40 +219,10 @@ public class WSS4JAttachment extends Attachment
   private DataSource _getAsDataSource ()
   {
     final InputStreamDataSource aDS = new InputStreamDataSource (getSourceStream (), getId ());
-    final EContentTransferEncoding eCTE = getContentTransferEncoding ();
-    return new IEncodingAwareDataSource ()
-    {
-      public String getContentType ()
-      {
-        return aDS.getContentType ();
-      }
+    // XXX Avoid double read check
+    aDS.setRepeatable (true);
 
-      public InputStream getInputStream () throws IOException
-      {
-        // XXX Avoid double read check
-        // This is a temporary hack until we know, which IS can be repeated and
-        // which can't!
-        if (true)
-          return getSourceStream ();
-        return aDS.getInputStream ();
-      }
-
-      public String getName ()
-      {
-        return aDS.getName ();
-      }
-
-      public OutputStream getOutputStream () throws IOException
-      {
-        return aDS.getOutputStream ();
-      }
-
-      @Nullable
-      public IContentTransferEncoding getContentTransferEncoding ()
-      {
-        return eCTE;
-      }
-    };
+    return aDS.getEncodingAware (getContentTransferEncoding ());
   }
 
   public void addToMimeMultipart (@Nonnull final MimeMultipart aMimeMultipart) throws MessagingException

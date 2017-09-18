@@ -108,11 +108,10 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
-                                                                    aResMgr));
+                                                                    s_aResMgr));
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
     final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);

@@ -1371,7 +1371,7 @@ public final class AS4Handler implements AutoCloseable
   @Nonnull
   private static Document _readXML (@Nonnull final InputStream aRequestIS) throws SAXException
   {
-    if (true || isDebug ())
+    if (isDebug ())
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
       final Charset aCharset = Charset.defaultCharset ();
@@ -1471,8 +1471,17 @@ public final class AS4Handler implements AutoCloseable
       // Note: this may require a huge amount of memory for large requests
       aSOAPDocument = _readXML (_getRequestIS (aHttpServletRequest));
 
-      // Determine SOAP version from content type
-      eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainContentType.equals (x.getMimeType ()));
+      if (aSOAPDocument != null)
+      {
+        // Determine SOAP version from the read document
+        eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSOAPDocument.getDocumentElement ().getNamespaceURI ());
+      }
+
+      if (eSOAPVersion == null)
+      {
+        // Determine SOAP version from content type
+        eSOAPVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainContentType);
+      }
     }
 
     if (aSOAPDocument == null)

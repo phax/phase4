@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -169,6 +169,22 @@ public enum ESOAPVersion
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;
-    return EnumHelper.findFirst (ESOAPVersion.class, x -> x.getVersion ().equals (sVersion), eDefault);
+    return ArrayHelper.findFirst (values (), x -> x.getVersion ().equals (sVersion), eDefault);
+  }
+
+  @Nullable
+  public static ESOAPVersion getFromNamespaceURIOrNull (@Nullable final String sNamespaceURI)
+  {
+    if (StringHelper.hasNoText (sNamespaceURI))
+      return null;
+    return ArrayHelper.findFirst (values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
+  }
+
+  @Nullable
+  public static ESOAPVersion getFromMimeTypeOrNull (@Nullable final IMimeType aMimeType)
+  {
+    if (aMimeType == null)
+      return null;
+    return ArrayHelper.findFirst (values (), x -> x.getMimeType ().equals (aMimeType));
   }
 }

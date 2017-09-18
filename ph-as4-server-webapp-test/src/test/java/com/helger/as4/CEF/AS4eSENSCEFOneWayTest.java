@@ -450,9 +450,9 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   {
     final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
     final int nProxyPort = 8001;
-    m_aSettings.putIn ("server.proxy.enabled", true);
-    m_aSettings.putIn ("server.proxy.address", "localhost");
-    m_aSettings.putIn ("server.proxy.port", nProxyPort);
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
     final HttpProxyServer aProxyServer = _startProxyServer (nProxyPort);
     try
@@ -494,14 +494,15 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   public void eSENS_TA11 () throws Exception
   {
     final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
-    m_aSettings.putIn ("server.proxy.enabled", true);
-    m_aSettings.putIn ("server.proxy.address", "localhost");
-    m_aSettings.putIn ("server.proxy.port", 8001);
+    final int nProxyPort = 8001;
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
     // Simulating a timeout with Thread.sleep but before it entirely triggers
     // let the program continue as if the Connection is back up again
     final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
-                                                               .withPort (8001)
+                                                               .withPort (nProxyPort)
                                                                .withFiltersSource (new HttpFiltersSourceAdapter ()
                                                                {
                                                                  @Override
@@ -678,13 +679,14 @@ public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
   public void eSENS_TA17 () throws Exception
   {
     final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
-    m_aSettings.putIn ("server.proxy.enabled", true);
-    m_aSettings.putIn ("server.proxy.address", "localhost");
-    m_aSettings.putIn ("server.proxy.port", 8001);
+    final int nProxyPort = 8001;
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
     // Forcing a Timeout from the retry handler
     final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
-                                                               .withPort (8001)
+                                                               .withPort (nProxyPort)
                                                                .withFiltersSource (new HttpFiltersSourceAdapter ()
                                                                {
                                                                  @Override

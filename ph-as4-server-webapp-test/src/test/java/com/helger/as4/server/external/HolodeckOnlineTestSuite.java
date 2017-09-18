@@ -23,6 +23,7 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.message.ReceiptMessageTest;
 import com.helger.as4.server.message.UserMessageOneAttachmentTest;
 import com.helger.as4.server.message.UserMessageSoapBodyPayloadTest;
@@ -42,7 +43,7 @@ public final class HolodeckOnlineTestSuite
   public static void init ()
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
-    AS4ServerConfiguration.getMutableSettings ().putIn ("server.jetty.enabled", false);
-    AS4ServerConfiguration.getMutableSettings ().putIn ("server.address", DEFAULT_HOLODECK_URI);
+    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
+    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_HOLODECK_URI);
   }
 }

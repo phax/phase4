@@ -60,6 +60,10 @@ import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
 
 public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 {
+  public static final String SETTINGS_SERVER_PROXY_ENABLED = "server.proxy.enabled";
+  public static final String SETTINGS_SERVER_PROXY_ADDRESS = "server.proxy.address";
+  public static final String SETTINGS_SERVER_PROXY_PORT = "server.proxy.port";
+
   protected static AS4ResourceManager s_aResMgr;
   private CloseableHttpClient m_aClient;
   private final int m_nRetries;
@@ -119,16 +123,18 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   private HttpPost _createPost ()
   {
-    final String sURL = m_aSettings.getAsString ("server.address", AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    final String sURL = m_aSettings.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
+                                                 AS4TestConstants.DEFAULT_SERVER_ADDRESS);
 
     LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);
 
-    if (m_aSettings.getAsBoolean ("server.proxy.enabled", false) && !"localhost".equals (aPost.getURI ().getHost ()))
+    if (m_aSettings.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
     {
+      // E.g. using little proxy for faking "no response"
       aPost.setConfig (RequestConfig.custom ()
-                                    .setProxy (new HttpHost (m_aSettings.getAsString ("server.proxy.address"),
-                                                             m_aSettings.getAsInt ("server.proxy.port")))
+                                    .setProxy (new HttpHost (m_aSettings.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
+                                                             m_aSettings.getAsInt (SETTINGS_SERVER_PROXY_PORT)))
                                     .build ());
     }
     return aPost;
@@ -177,7 +183,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
                     nStatusCode == HttpServletResponse.SC_OK ||
                                nStatusCode == HttpServletResponse.SC_BAD_REQUEST ||
                                nStatusCode == HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        assertTrue ("Server responded with different error message than expected." +
+        assertTrue ("Server responded with different error message than expected (" +
+                    sExecptedErrorCode +
+                    ")." +
                     " StatusCode=" +
                     nStatusCode +
                     "\nResponse: " +

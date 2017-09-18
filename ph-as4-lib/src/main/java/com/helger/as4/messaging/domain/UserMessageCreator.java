@@ -181,7 +181,7 @@ public final class UserMessageCreator
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
-    // No empty payload info for AS4.NET
+    // Empty PayloadInfo only if sending as the body of the SOAP message
     if (aPayload != null)
       aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
 

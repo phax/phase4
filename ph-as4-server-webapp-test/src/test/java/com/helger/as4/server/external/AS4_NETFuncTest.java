@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -38,6 +39,7 @@ import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
+import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -51,7 +53,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-//@Ignore ("Currently returns a PMODE MisMatch")
+@Ignore ("Currently returns a PMODE MisMatch")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 {
   /** TThe test URL for AS4.NET */
@@ -65,8 +67,8 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   public static void noJetty ()
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
-    AS4ServerConfiguration.getMutableSettings ().putIn ("server.jetty.enabled", false);
-    AS4ServerConfiguration.getMutableSettings ().putIn ("server.address", DEFAULT_AS4_NET_URI);
+    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
+    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
     AS4HttpDebug.setEnabled (true);
   }
 
