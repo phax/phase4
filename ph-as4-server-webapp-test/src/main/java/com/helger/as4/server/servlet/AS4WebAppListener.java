@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4.servlet.AS4ServerInitializer;
@@ -38,8 +36,6 @@ import com.helger.xservlet.requesttrack.RequestTracker;
 
 public final class AS4WebAppListener extends WebAppListener
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WebAppListener.class);
-
   @Override
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
@@ -74,17 +70,21 @@ public final class AS4WebAppListener extends WebAppListener
   }
 
   @Override
-  protected void afterContextInitialized (@Nonnull final ServletContext aSC)
+  protected void initGlobalSettings ()
   {
     // Logging: JUL to SLF4J
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
 
-    AS4ServerInitializer.initAS4Server ();
-
     if (GlobalDebug.isDebugMode ())
       RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
+    HttpDebugger.setEnabled (false);
+  }
+
+  @Override
+  protected void initSecurity ()
+  {
     // Ensure user exists
     final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
     if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
@@ -98,15 +98,11 @@ public final class AS4WebAppListener extends WebAppListener
                                      Locale.US,
                                      null,
                                      false);
-
-    HttpDebugger.setEnabled (false);
-
-    s_aLogger.info ("AS4 server started");
   }
 
   @Override
-  protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
+  protected void initManagers ()
   {
-    s_aLogger.info ("AS4 server destroyed");
+    AS4ServerInitializer.initAS4Server ();
   }
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -42,14 +43,17 @@ import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.CHttpHeader;
+import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.io.stream.HasInputStreamOnce;
+import com.helger.commons.io.stream.HasInputStreamMultiple;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
-import com.helger.mail.datasource.InputStreamDataSource;
+import com.helger.mail.datasource.InputStreamProviderDataSource;
 
 /**
  * Special WSS4J attachment with an InputStream provider instead of a fixed
@@ -62,14 +66,8 @@ import com.helger.mail.datasource.InputStreamDataSource;
  */
 public class WSS4JAttachment extends Attachment
 {
-  @FunctionalInterface
-  public interface IHasAttachmentSourceStream
-  {
-    InputStream getInputStream () throws Exception;
-  }
-
   private final AS4ResourceManager m_aResMgr;
-  private IHasAttachmentSourceStream m_aISP;
+  private IHasInputStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private EAS4CompressionMode m_eCM;
   private Charset m_aCharset;
@@ -141,12 +139,12 @@ public class WSS4JAttachment extends Attachment
   }
 
   @Nullable
-  public IHasAttachmentSourceStream getInputStreamProvider ()
+  public IHasInputStream getInputStreamProvider ()
   {
     return m_aISP;
   }
 
-  public void setSourceStreamProvider (@Nonnull final IHasAttachmentSourceStream aISP)
+  public void setSourceStreamProvider (@Nonnull final IHasInputStream aISP)
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
@@ -218,10 +216,7 @@ public class WSS4JAttachment extends Attachment
 
   private DataSource _getAsDataSource ()
   {
-    final InputStreamDataSource aDS = new InputStreamDataSource (getSourceStream (), getId (), getMimeType ());
-    // XXX Avoid double read check
-    aDS.setRepeatable (true);
-
+    final InputStreamProviderDataSource aDS = new InputStreamProviderDataSource (m_aISP, getId (), getMimeType ());
     return aDS.getEncodingAware (getContentTransferEncoding ());
   }
 
@@ -313,8 +308,13 @@ public class WSS4JAttachment extends Attachment
       // No compression - use file as-is
       aRealFile = aSrcFile;
     }
-    ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aRealFile)));
+    ret.setSourceStreamProvider (new HasInputStreamMultiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     return ret;
+  }
+
+  public static boolean canBeKeptInMemory (final long nBytes)
+  {
+    return nBytes <= 64 * CGlobal.BYTES_PER_KILOBYTE;
   }
 
   @Nonnull
@@ -336,10 +336,20 @@ public class WSS4JAttachment extends Attachment
       ret.setId (sRealContentID);
     }
 
-    // keep some small parts in memory
-    if (aBodyPart.getSize () < 64 * CGlobal.BYTES_PER_KILOBYTE)
+    if (canBeKeptInMemory (aBodyPart.getSize ()))
     {
-      ret.setSourceStreamProvider ( () -> aBodyPart.getDataHandler ().getInputStream ());
+      // keep some small parts in memory
+      final DataHandler aDH = aBodyPart.getDataHandler ();
+      ret.setSourceStreamProvider (new HasInputStreamOnce ( () -> {
+        try
+        {
+          return aDH.getInputStream ();
+        }
+        catch (final IOException ex)
+        {
+          throw new UncheckedIOException (ex);
+        }
+      }));
     }
     else
     {
@@ -349,7 +359,7 @@ public class WSS4JAttachment extends Attachment
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      ret.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aTempFile)));
+      ret.setSourceStreamProvider (new HasInputStreamMultiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
     }
 
     // Convert all headers to attributes

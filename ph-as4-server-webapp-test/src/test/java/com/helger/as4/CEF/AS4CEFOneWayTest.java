@@ -441,8 +441,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     aAttachments.add (aAttachment);
 
     final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
-    aAttachments.get (0)
-                .setSourceStreamProvider ( () -> ClassPathResource.getInputStream ("attachment/CompressedPayload.txt"));
+    aAttachments.get (0).setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
 
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());

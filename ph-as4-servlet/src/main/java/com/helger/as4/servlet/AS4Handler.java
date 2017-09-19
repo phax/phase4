@@ -18,6 +18,7 @@ package com.helger.as4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -50,7 +51,6 @@ import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.attachment.WSS4JAttachment.IHasAttachmentSourceStream;
 import com.helger.as4.client.BasicAS4Sender;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.error.EEbmsError;
@@ -110,6 +110,9 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.IHasInputStream;
+import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.io.stream.HasInputStreamMultiple;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
@@ -194,7 +197,7 @@ public final class AS4Handler implements AutoCloseable
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
     {
       aHttpResponse.addCustomResponseHeaders (m_aHeaders);
-      aHttpResponse.setContent ( () -> {
+      aHttpResponse.setContent (new HasInputStreamMultiple ( () -> {
         try
         {
           return m_aMimeMsg.getInputStream ();
@@ -203,7 +206,7 @@ public final class AS4Handler implements AutoCloseable
         {
           throw new IllegalStateException ("Failed to get MIME input stream", ex);
         }
-      });
+      }));
       aHttpResponse.setMimeType (MT_MULTIPART_RELATED);
     }
 
@@ -274,13 +277,23 @@ public final class AS4Handler implements AutoCloseable
       final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
       if (eCompressionMode != null)
       {
-        final IHasAttachmentSourceStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
-        aIncomingAttachment.setSourceStreamProvider ( () -> eCompressionMode.getDecompressStream (aOldISP.getInputStream ()));
+        final IHasInputStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
+        aIncomingAttachment.setSourceStreamProvider (new HasInputStream ( () -> {
+          try
+          {
+            return eCompressionMode.getDecompressStream (aOldISP.getInputStream ());
+          }
+          catch (final IOException ex)
+          {
+            throw new UncheckedIOException (ex);
+          }
+        }, aOldISP.isReadMultiple ()));
 
         final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getId (), "attachment=");
         // x.getHref() != null needed since, if a message contains a payload and
         // an attachment, it would throw a NullPointerException since a payload
-        // does not have anything written in its partinfo therefor also now href
+        // does not have anything written in its partinfo therefore also now
+        // href
         final Ebms3PartInfo aPart = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
                                                                 x -> x.getHref () != null &&
                                                                      x.getHref ().contains (sAttachmentContentID));
