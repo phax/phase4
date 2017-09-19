@@ -25,12 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.lang.ClassHelper;
-import com.helger.photon.core.job.AbstractPhotonJob;
 import com.helger.quartz.DisallowConcurrentExecution;
 import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
@@ -38,9 +35,10 @@ import com.helger.quartz.JobExecutionException;
 import com.helger.quartz.SimpleScheduleBuilder;
 import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
+import com.helger.web.scope.util.AbstractScopeAwareJob;
 
 @DisallowConcurrentExecution
-public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
+public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
   private static final String KEY_MINUTES = "mins";
@@ -52,7 +50,7 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
   protected void onExecute (@Nonnull final JobDataMap aJobDataMap,
                             @Nonnull final IJobExecutionContext aContext) throws JobExecutionException
   {
-    final long nMins = aJobDataMap.getLong (KEY_MINUTES);
+    final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);
     final LocalDateTime aOldDT = PDTFactory.getCurrentLocalDateTime ().minusMinutes (nMins);
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
@@ -68,8 +66,8 @@ public final class AS4DuplicateCleanupJob extends AbstractPhotonJob
     {
       if (!s_aScheduled.getAndSet (true))
       {
-        final ICommonsMap <String, Object> aJobDataMap = new CommonsHashMap <> ();
-        aJobDataMap.put (KEY_MINUTES, Long.valueOf (nDisposalMinutes));
+        final JobDataMap aJobDataMap = new JobDataMap ();
+        aJobDataMap.putIn (KEY_MINUTES, nDisposalMinutes);
         GlobalQuartzScheduler.getInstance ()
                              .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
                                            "-" +
