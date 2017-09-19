@@ -218,7 +218,7 @@ public class WSS4JAttachment extends Attachment
 
   private DataSource _getAsDataSource ()
   {
-    final InputStreamDataSource aDS = new InputStreamDataSource (getSourceStream (), getId ());
+    final InputStreamDataSource aDS = new InputStreamDataSource (getSourceStream (), getId (), getMimeType ());
     // XXX Avoid double read check
     aDS.setRepeatable (true);
 

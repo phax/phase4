@@ -30,6 +30,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -52,7 +53,9 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
@@ -147,14 +150,24 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
                                     @Nullable final String sExecptedErrorCode) throws IOException
   {
     AS4HttpDebug.debug ( () -> {
-      String ret = "TEST-SEND-START to " + aPost.getURI ();
+      final StringBuilder aSB = new StringBuilder ();
+      aSB.append ("TEST-SEND-START to ").append (aPost.getURI ()).append ("\n");
       try
       {
-        ret += " - " + EntityUtils.toString (aHttpEntity);
+        final Header [] aHeaders = aPost.getAllHeaders ();
+        if (ArrayHelper.isNotEmpty (aHeaders))
+        {
+          for (final Header aHeader : aHeaders)
+            aSB.append (aHeader.getName ()).append ('=').append (aHeader.getValue ()).append ("\n");
+          aSB.append ("\n");
+        }
+        aSB.append (EntityUtils.toString (aHttpEntity));
       }
       catch (final IOException ex)
-      { /* ignore */ }
-      return ret;
+      {
+        aSB.append (StackTraceHelper.getStackAsString (ex));
+      }
+      return aSB.toString ();
     });
 
     aPost.setEntity (aHttpEntity);
