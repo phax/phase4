@@ -54,6 +54,7 @@ import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.stream.HasInputStreamMultiple;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -245,9 +246,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           // read more than once.
           // Not nice, but working :)
           final File aTempFile = aState.getResourceMgr ().createTempFile ();
-          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS,
-                                                                StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)));
-          aResponseAttachment.setSourceStreamProvider ( () -> StreamHelper.getBuffered (FileHelper.getInputStream (aTempFile)));
+          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getBufferedOutputStream (aTempFile));
+          aResponseAttachment.setSourceStreamProvider (new HasInputStreamMultiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
         }
 
         // Remember in State
