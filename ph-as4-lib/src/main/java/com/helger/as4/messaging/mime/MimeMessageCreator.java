@@ -96,7 +96,7 @@ public final class MimeMessageCreator
     ValueEnforcer.notNull (aSOAPEnvelope, "SOAPEnvelope");
 
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion);
+    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
     final String sContentType = eSOAPVersion.getMimeType (aCharset).getAsString ();
 
