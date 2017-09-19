@@ -112,7 +112,6 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.HasInputStreamMultiple;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
@@ -197,7 +196,7 @@ public final class AS4Handler implements AutoCloseable
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
     {
       aHttpResponse.addCustomResponseHeaders (m_aHeaders);
-      aHttpResponse.setContent (new HasInputStreamMultiple ( () -> {
+      aHttpResponse.setContent (HasInputStream.multiple ( () -> {
         try
         {
           return m_aMimeMsg.getInputStream ();

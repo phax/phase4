@@ -37,7 +37,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
-import com.helger.commons.io.stream.HasInputStreamOnce;
+import com.helger.commons.io.stream.HasInputStream;
 
 /**
  * A Callback Handler implementation for the case of signing/encrypting
@@ -105,14 +105,14 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 
           final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
           if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug (" Resulting attachment ID '" + sAttachmentID + "'");
+            s_aLogger.debug ("Resulting attachment ID '" + sAttachmentID + "'");
 
           // Convert
           final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResMgr, aResponseAttachment.getMimeType ());
           aRealAttachment.setId (sAttachmentID);
           aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
           // Use supplier to ensure stream is opened only when needed
-          aRealAttachment.setSourceStreamProvider (new HasInputStreamOnce ( () -> aResponseAttachment.getSourceStream ()));
+          aRealAttachment.setSourceStreamProvider (HasInputStream.once ( () -> aResponseAttachment.getSourceStream ()));
 
           m_aAttachmentMap.put (sAttachmentID, aRealAttachment);
         }

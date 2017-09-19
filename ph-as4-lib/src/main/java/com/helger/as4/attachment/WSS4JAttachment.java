@@ -46,8 +46,7 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.io.stream.HasInputStreamOnce;
-import com.helger.commons.io.stream.HasInputStreamMultiple;
+import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
@@ -308,7 +307,7 @@ public class WSS4JAttachment extends Attachment
       // No compression - use file as-is
       aRealFile = aSrcFile;
     }
-    ret.setSourceStreamProvider (new HasInputStreamMultiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
+    ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     return ret;
   }
 
@@ -340,7 +339,7 @@ public class WSS4JAttachment extends Attachment
     {
       // keep some small parts in memory
       final DataHandler aDH = aBodyPart.getDataHandler ();
-      ret.setSourceStreamProvider (new HasInputStreamOnce ( () -> {
+      ret.setSourceStreamProvider (HasInputStream.once ( () -> {
         try
         {
           return aDH.getInputStream ();
@@ -359,7 +358,7 @@ public class WSS4JAttachment extends Attachment
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
-      ret.setSourceStreamProvider (new HasInputStreamMultiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
+      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
     }
 
     // Convert all headers to attributes
