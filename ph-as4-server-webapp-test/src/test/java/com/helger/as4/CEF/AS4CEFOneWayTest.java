@@ -441,6 +441,7 @@ public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
     aAttachments.add (aAttachment);
 
     final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
+    // Damaged payload: txt file
     aAttachments.get (0).setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
 
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);

@@ -29,8 +29,8 @@ import org.xml.sax.SAXException;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
@@ -88,10 +88,17 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
           s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
           if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
           {
-            final InputStream aIS = x.getSourceStream ();
-            s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
-            final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
-            s_aLogger.info ("    Attachment Content: " + sContent.length () + " chars");
+            try
+            {
+              final InputStream aIS = x.getSourceStream ();
+              s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
+              final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
+              s_aLogger.info ("    Attachment Content: " + sContent.length () + " chars");
+            }
+            catch (final IllegalStateException ex)
+            {
+              s_aLogger.warn ("    Attachment Content: CANNOT BE READ", ex);
+            }
           }
         }
       }
@@ -139,15 +146,15 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         final Ebms3CollaborationInfo aEbms3CollaborationInfo;
         final Ebms3PartyInfo aEbms3PartyInfo;
         aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                                  MockPModeGenerator.SOAP11_SERVICE,
-                                                                                  AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                  "PullPMode",
-                                                                                  MockEbmsHelper.DEFAULT_AGREEMENT);
+                                                                                   AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                   MockPModeGenerator.SOAP11_SERVICE,
+                                                                                   AS4TestConstants.TEST_CONVERSATION_ID,
+                                                                                   "PullPMode",
+                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT);
         aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                  "pullinitiator",
-                                                                  CAS4.DEFAULT_RESPONDER_URL,
-                                                                  "pullresponder");
+                                                                   "pullinitiator",
+                                                                   CAS4.DEFAULT_RESPONDER_URL,
+                                                                   "pullresponder");
 
         final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
 

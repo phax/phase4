@@ -115,15 +115,9 @@ public class WSS4JAttachment extends Attachment
   @Override
   public InputStream getSourceStream ()
   {
-    InputStream ret;
-    try
-    {
-      ret = m_aISP.getInputStream ();
-    }
-    catch (final Exception ex)
-    {
-      throw new IllegalStateException ("Failed to get InputStream from " + m_aISP, ex);
-    }
+    // This will e.g. throw an UncheckedIOException if compression is enabled,
+    // but the transmitted document is not compressed
+    final InputStream ret = m_aISP.getInputStream ();
     if (ret == null)
       throw new IllegalStateException ("Got no InputStream from " + m_aISP);
     m_aResMgr.addCloseable (ret);
