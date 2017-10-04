@@ -48,10 +48,9 @@
 					<eb:Property name="ProcessInst">PurchaseOrder:123456</eb:Property>
 					<eb:Property name="ContextID"> 987654321</eb:Property>
 				</eb:MessageProperties>
-    		<eb:PayloadInfo><eb:PartInfo/></eb:PayloadInfo>
+    		<eb:PayloadInfo>
 					<eb:PartInfo href="cid:part@example.com">
-						<eb:Schema location="http://registry.example.org/po.xsd"
-							version="2.0" />
+						<eb:Schema location="http://registry.example.org/po.xsd" version="2.0" />
 						<eb:PartProperties>
 							<eb:Property name="Description">Purchase Order for 11 Widgets</eb:Property>
 							<eb:Property name="MimeType">application/xml</eb:Property>
