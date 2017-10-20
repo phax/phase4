@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
@@ -31,6 +32,7 @@ import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
+import com.helger.commons.http.CHttp;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
@@ -103,14 +105,18 @@ public class BasicAS4Sender
       customizeHttpPost (aPost);
 
       AS4HttpDebug.debug ( () -> {
-        String ret = "SEND-START to " + sURL;
+        final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL);
         try
         {
-          ret += " - " + EntityUtils.toString (aHttpEntity);
+          ret.append ("\n");
+          for (final Header h : aPost.getAllHeaders ())
+            ret.append (h.getName ()).append ('=').append (h.getValue ()).append (CHttp.EOL);
+          ret.append (CHttp.EOL);
+          ret.append (EntityUtils.toString (aHttpEntity));
         }
         catch (final IOException ex)
         { /* ignore */ }
-        return ret;
+        return ret.toString ();
       });
 
       return aClient.execute (aPost, aResponseHandler);

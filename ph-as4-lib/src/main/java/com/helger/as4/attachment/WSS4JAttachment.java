@@ -42,11 +42,13 @@ import com.helger.as4.CAS4;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
@@ -247,6 +249,18 @@ public class WSS4JAttachment extends Attachment
                                        .getToString ();
   }
 
+  private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nonnull final String sFilename)
+  {
+    aAttachment.setUniqueID ();
+
+    // Set after ID and MimeType!
+    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
+    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
+                           "attachment; filename=\"" + sFilename + "\"");
+    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + ">");
+    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, aAttachment.getMimeType ());
+  }
+
   /**
    * Constructor. Performs compression internally.
    *
@@ -272,14 +286,7 @@ public class WSS4JAttachment extends Attachment
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
-    ret.setUniqueID ();
-
-    // Set after ID and MimeType!
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
-                   "attachment; filename=\"" + FilenameHelper.getWithoutPath (aSrcFile) + "\"");
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + ">");
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
+    _addOutgoingHeaders (ret, FilenameHelper.getWithoutPath (aSrcFile));
 
     // If the attachment has an compressionMode do it directly, so that
     // encryption later on works on the compressed content
@@ -290,10 +297,9 @@ public class WSS4JAttachment extends Attachment
 
       // Create temporary file with compressed content
       aRealFile = aResMgr.createTempFile ();
-      try (final OutputStream aOS = eCompressionMode.getCompressStream (StreamHelper.getBuffered (FileHelper.getOutputStream (aRealFile))))
+      try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
       {
-        StreamHelper.copyInputStreamToOutputStream (StreamHelper.getBuffered (FileHelper.getInputStream (aSrcFile)),
-                                                    aOS);
+        StreamHelper.copyInputStreamToOutputStream (FileHelper.getBufferedInputStream (aSrcFile), aOS);
       }
     }
     else
@@ -302,6 +308,59 @@ public class WSS4JAttachment extends Attachment
       aRealFile = aSrcFile;
     }
     ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
+    return ret;
+  }
+
+  /**
+   * Constructor. Performs compression internally.
+   *
+   * @param aSrcData
+   *        Source in-memory data, uncompressed, unencrypted file.
+   * @param sFilename
+   *        Filename of the attachment
+   * @param aMimeType
+   *        Original mime type of the file.
+   * @param eCompressionMode
+   *        Optional compression mode to use. May be <code>null</code>.
+   * @param aResMgr
+   *        The resource manager to use. May not be <code>null</code>.
+   * @return The newly created attachment instance. Never <code>null</code>.
+   * @throws IOException
+   *         In case something goes wrong during compression
+   */
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final byte [] aSrcData,
+                                                              @Nonnull @Nonempty final String sFilename,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
+  {
+    ValueEnforcer.notNull (aSrcData, "Data");
+    ValueEnforcer.notNull (sFilename, "Filename");
+    ValueEnforcer.notNull (aMimeType, "MimeType");
+
+    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
+    _addOutgoingHeaders (ret, sFilename);
+
+    // If the attachment has an compressionMode do it directly, so that
+    // encryption later on works on the compressed content
+    if (eCompressionMode != null)
+    {
+      ret.setCompressionMode (eCompressionMode);
+
+      // Create temporary file with compressed content
+      final File aRealFile = aResMgr.createTempFile ();
+      try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
+      {
+        aOS.write (aSrcData);
+      }
+      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
+    }
+    else
+    {
+      // No compression - use data as-is
+      ret.setSourceStreamProvider (HasInputStream.multiple ( () -> new NonBlockingByteArrayInputStream (aSrcData)));
+    }
     return ret;
   }
 
@@ -348,7 +407,7 @@ public class WSS4JAttachment extends Attachment
     {
       // Write to temp file
       final File aTempFile = aResMgr.createTempFile ();
-      try (final OutputStream aOS = StreamHelper.getBuffered (FileHelper.getOutputStream (aTempFile)))
+      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);
       }
