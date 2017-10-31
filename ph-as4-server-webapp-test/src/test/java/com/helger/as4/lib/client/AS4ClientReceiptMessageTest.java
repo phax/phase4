@@ -36,6 +36,7 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class AS4ClientReceiptMessageTest
@@ -111,7 +112,7 @@ public final class AS4ClientReceiptMessageTest
 
     aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
     aClient.setKeyStorePassword ("test");
-    aClient.setKeyStoreType ("jks");
+    aClient.setKeyStoreType (EKeyStoreType.JKS);
     aClient.setKeyStoreAlias ("ph-as4");
     aClient.setKeyStoreKeyPassword ("test");
 

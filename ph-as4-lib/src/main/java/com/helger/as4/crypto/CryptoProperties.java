@@ -30,6 +30,7 @@ import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.lang.NonBlockingProperties;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.security.keystore.EKeyStoreType;
 
 /**
  * Wrapper around the crypto properties file.
@@ -103,9 +104,10 @@ public class CryptoProperties implements Serializable
   }
 
   @Nullable
-  public String getKeyStoreType ()
+  public EKeyStoreType getKeyStoreType ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.type");
+    final String sProp = _getProperty ("org.apache.wss4j.crypto.merlin.keystore.type");
+    return EKeyStoreType.getFromIDOrNull (sProp);
   }
 
   @Nullable

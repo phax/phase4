@@ -39,6 +39,8 @@ import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
+import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.IKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
@@ -115,12 +117,12 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     }
   }
 
-  public static final String DEFAULT_KEYSTORE_TYPE = "jks";
+  public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
 
   // KeyStore attributes
   private IReadableResource m_aKeyStoreRes;
   private String m_sKeyStorePassword;
-  private String m_sKeyStoreType = DEFAULT_KEYSTORE_TYPE;
+  private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
   private String m_sKeyStoreAlias;
   private String m_sKeyStoreKeyPassword;
 
@@ -144,7 +146,7 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
       throw new IllegalStateException ("KeyStore resources is not configured.");
     if (!m_aKeyStoreRes.exists ())
       throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
-    if (StringHelper.hasNoText (m_sKeyStoreType))
+    if (m_aKeyStoreType == null)
       throw new IllegalStateException ("KeyStore type is not configured.");
     if (m_sKeyStorePassword == null)
       throw new IllegalStateException ("KeyStore password is not configured.");
@@ -162,7 +164,7 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
     final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
     aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
     aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreResource ().getPath ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ());
+    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ().getID ());
     aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", getKeyStorePassword ());
     aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", getKeyStoreAlias ());
     aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.private.password", getKeyStoreKeyPassword ());
@@ -226,10 +228,9 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
   }
 
   @Nonnull
-  @Nonempty
-  public String getKeyStoreType ()
+  public IKeyStoreType getKeyStoreType ()
   {
-    return m_sKeyStoreType;
+    return m_aKeyStoreType;
   }
 
   /**
@@ -237,13 +238,13 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
    * MANDATORY if you want to use sign or encryption of an user message.
    * Defaults to "jks".
    *
-   * @param sKeyStoreType
+   * @param aKeyStoreType
    *        keystore type that should be set, e.g. "jks"
    */
-  public void setKeyStoreType (@Nonnull @Nonempty final String sKeyStoreType)
+  public void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
   {
-    ValueEnforcer.notEmpty (sKeyStoreType, "KeyStoreType");
-    m_sKeyStoreType = sKeyStoreType;
+    ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
+    m_aKeyStoreType = aKeyStoreType;
   }
 
   @Nullable

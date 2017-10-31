@@ -135,7 +135,9 @@ public final class DropFolderUserMessage
           else
           {
             final CryptoProperties aCP = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
-            final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStorePath (), aCP.getKeyStorePassword ())
+            final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStoreType (),
+                                                                 aCP.getKeyStorePath (),
+                                                                 aCP.getKeyStorePassword ())
                                                   .getKeyStore ();
             final KeyStore.PrivateKeyEntry aOurCert = KeyStoreHelper.loadPrivateKey (aOurKS,
                                                                                      aCP.getKeyStorePath (),
