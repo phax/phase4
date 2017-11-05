@@ -51,7 +51,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class EbmsMessagingTest extends AbstractUserMessageTestSetUp
+public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 {
   private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.SOAP_12;
 

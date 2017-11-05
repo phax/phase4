@@ -37,7 +37,7 @@ import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 
-public final class AS4eSENSCEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
+public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
   /**
    * Prerequisite:<br>

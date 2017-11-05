@@ -78,11 +78,11 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 
-public final class AS4eSENSCEFOneWayTest extends AbstractCEFTestSetUp
+public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayTest.class);
+  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
 
-  public AS4eSENSCEFOneWayTest ()
+  public AS4eSENSCEFOneWayFuncTest ()
   {}
 
   /**

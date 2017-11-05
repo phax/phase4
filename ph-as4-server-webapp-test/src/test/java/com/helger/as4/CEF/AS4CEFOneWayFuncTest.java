@@ -72,7 +72,7 @@ import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.mime.CMimeType;
 
-public final class AS4CEFOneWayTest extends AbstractCEFTestSetUp
+public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
   /**
    * Prerequisite:<br>

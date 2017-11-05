@@ -26,7 +26,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @Ignore ("Enable only on demand - tests are run anyway")
 @RunWith (Suite.class)
 @SuiteClasses ({ com.helger.as4.server.message.UserMessageSoapBodyPayloadTest.class,
-                 com.helger.as4.server.message.EbmsMessagingTest.class,
+                 com.helger.as4.server.message.Ebms3MessagingTest.class,
                  com.helger.as4.server.message.ReceiptMessageTest.class,
                  com.helger.as4.server.message.UserMessageCompressionTest.class,
                  com.helger.as4.server.message.UserMessageFailureForgeryTest.class,
@@ -43,10 +43,10 @@ import org.junit.runners.Suite.SuiteClasses;
                  com.helger.as4.server.servlet.PModeCheckTest.class,
                  com.helger.as4.server.SPITest.class,
                  com.helger.as4.erb.ERBTest.class,
-                 com.helger.as4.CEF.AS4CEFOneWayTest.class,
-                 com.helger.as4.CEF.AS4eSENSCEFTwoWayTest.class,
-                 com.helger.as4.CEF.AS4CEFTwoWayTest.class,
-                 com.helger.as4.CEF.AS4eSENSCEFOneWayTest.class,
+                 com.helger.as4.CEF.AS4CEFOneWayFuncTest.class,
+                 com.helger.as4.CEF.AS4eSENSCEFTwoWayFuncTest.class,
+                 com.helger.as4.CEF.AS4CEFTwoWayFuncTest.class,
+                 com.helger.as4.CEF.AS4eSENSCEFOneWayFuncTest.class,
                  com.helger.as4.lib.client.AS4ClientUserMessageTest.class,
                  com.helger.as4.lib.client.AS4ClientReceiptMessageTest.class,
                  com.helger.as4.lib.client.AS4PullRequestTest.class })

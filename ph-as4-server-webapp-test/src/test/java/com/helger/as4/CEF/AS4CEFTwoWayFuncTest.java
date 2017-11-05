@@ -28,9 +28,9 @@ import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.commons.concurrent.ThreadHelper;
 
-public final class AS4CEFTwoWayTest extends AbstractCEFTwoWayTestSetUp
+public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
-  public AS4CEFTwoWayTest ()
+  public AS4CEFTwoWayFuncTest ()
   {
     // No retries
     super (0);

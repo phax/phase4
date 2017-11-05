@@ -16,7 +16,7 @@
  */
 package com.helger.as4;
 
-public class AS4TestConstants
+public final class AS4TestConstants
 {
   // Default values
   public static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/as4";
