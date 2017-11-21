@@ -72,6 +72,7 @@ import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.security.keystore.KeyStoreHelper;
+import com.helger.settings.ISettings;
 
 public final class DropFolderUserMessage
 {
@@ -236,10 +237,9 @@ public final class DropFolderUserMessage
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");
 
-    final Path aOutgoingDir = Paths.get (AS4ServerConfiguration.getSettings ().getAsString ("server.directory.outgoing",
-                                                                                            "out"));
-    final Path aIncomingDir = Paths.get (AS4ServerConfiguration.getSettings ().getAsString ("server.directory.incoming",
-                                                                                            "in"));
+    final ISettings aSettings = AS4ServerConfiguration.getSettings ();
+    final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
+    final Path aIncomingDir = Paths.get (aSettings.getAsString ("server.directory.incoming", "in"));
 
     try
     {
