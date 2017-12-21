@@ -103,8 +103,15 @@
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
+        <artifactId>ph-css-parent-pom</artifactId>
+        <version>6.0.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.0.0-SNAPSHOT</version>
+        <version>9.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
