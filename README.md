@@ -12,35 +12,35 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
-  * v0.8.0 - work in progress
-    * Updated to ph-commons 9.0.0
-    * Updated to BouncyCastle 1.58
-    * Updated to WSS4J 2.2
-    * Successfully send test messages to AS4.NET and Holodeck 3.x
-  * v0.7.0 - 2017-07-24
-    * Added HTTP retry for client
-    * Added server duplicate message detection for incoming messages
-    * `MessageInfo/Timestamp` uses UTC - thanks Sander
-    * Added two-way handling
-    * Fixed bug that Receipt is not signed (if desired)
-    * Removed `PModeConfig` in favor of redundant `PMode` objects
-    * Removed partner handling - not needed anymore 
-    * To be on the safe side, delete all previously created `as4-*.xml` files as there were incompatible changes.
-    * Added a second webapp - one for demo, one for testing
-  * v0.6.0 - 2017-01-26
-    * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
-    * Unified the namespaces across the sub-projects
-    * Requires ph-web 8.7.2 or higher
-    * Renamed `ph-as4-server` to `ph-as4-server-webapp-demo`
-  * v0.5.0 - 2017-01-18
-    * Initial release
-    * Has everything needs for sending and receiving using the eSENS P-Mode profiles
-    * Basic compatibility with Holodeck 2.1.2 is provided
-    * Supports signed messages
-    * Supports encrypted messages
-    * Supports compressed messages
-    * Targets to be easily integrateable into existing solutions
-    * Requires Java 8 for building and execution
+* v0.8.0 - work in progress
+  * Updated to ph-commons 9.0.0
+  * Updated to BouncyCastle 1.59
+  * Updated to WSS4J 2.2
+  * Successfully send test messages to AS4.NET and Holodeck 3.x
+* v0.7.0 - 2017-07-24
+  * Added HTTP retry for client
+  * Added server duplicate message detection for incoming messages
+  * `MessageInfo/Timestamp` uses UTC - thanks Sander
+  * Added two-way handling
+  * Fixed bug that Receipt is not signed (if desired)
+  * Removed `PModeConfig` in favor of redundant `PMode` objects
+  * Removed partner handling - not needed anymore 
+  * To be on the safe side, delete all previously created `as4-*.xml` files as there were incompatible changes.
+  * Added a second webapp - one for demo, one for testing
+* v0.6.0 - 2017-01-26
+  * Extracted subproject `ph-as4-servlet` with only the AS4Servlet
+  * Unified the namespaces across the sub-projects
+  * Requires ph-web 8.7.2 or higher
+  * Renamed `ph-as4-server` to `ph-as4-server-webapp-demo`
+* v0.5.0 - 2017-01-18
+  * Initial release
+  * Has everything needs for sending and receiving using the eSENS P-Mode profiles
+  * Basic compatibility with Holodeck 2.1.2 is provided
+  * Supports signed messages
+  * Supports encrypted messages
+  * Supports compressed messages
+  * Targets to be easily integrateable into existing solutions
+  * Requires Java 8 for building and execution
     
 ## Configuration
 
