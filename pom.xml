@@ -67,7 +67,7 @@
   </developers>
 
   <properties>
-    <wss4j.version>2.2.0</wss4j.version>
+    <wss4j.version>2.2.1</wss4j.version>
     <bc.version>1.59</bc.version>
   </properties>
   
