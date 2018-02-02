@@ -212,6 +212,7 @@
     </dependency>
   </dependencies>
 
+<!--  
   <build>
     <pluginManagement>
       <plugins>
@@ -219,11 +220,12 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-            <!-- Does this avoid the "Killed" problem on Travis? #8 -->
+            - - Does this avoid the "Killed" problem on Travis? #8 - -
             <forkMode>never</forkMode>
           </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
+  -->
 </project>
