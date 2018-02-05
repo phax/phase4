@@ -23,7 +23,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
   <welcome-file-list>
-    <welcome-file>secure</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   <listener>
     <listener-class>com.helger.as4.server.servlet.AS4WebAppListener</listener-class>

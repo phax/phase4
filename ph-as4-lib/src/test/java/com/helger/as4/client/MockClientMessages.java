@@ -137,6 +137,8 @@ final class MockClientMessages
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("ProcessInst", "PurchaseOrder:123456"));
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("ContextID", "987654321"));
+    aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1 OS"));
+    aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4 FR"));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, aAttachments);
