@@ -97,5 +97,5 @@ Just write me an email - see pom.xml for my email address - or tweet me @philiph
 
 ---
 
-My personal [Coding Styleguide](https://github.com/phax/meta/blob/master/CodeingStyleguide.md) |
+My personal [Coding Styleguide](https://github.com/phax/meta/blob/master/CodingStyleguide.md) |
 On Twitter: <a href="https://twitter.com/philiphelger">@philiphelger</a>
