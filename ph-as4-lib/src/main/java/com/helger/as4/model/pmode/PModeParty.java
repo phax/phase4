@@ -16,6 +16,8 @@
  */
 package com.helger.as4.model.pmode;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -28,7 +30,7 @@ import com.helger.commons.id.IHasID;
 import com.helger.commons.string.StringHelper;
 
 @Immutable
-public class PModeParty implements IHasID <String>
+public class PModeParty implements IHasID <String>, Serializable
 {
   /** Optional ID type */
   private final String m_sIDType;
@@ -48,7 +50,7 @@ public class PModeParty implements IHasID <String>
   // Status vars
 
   /** ID type and value combined */
-  private final String m_sID;
+  private final String m_sStatusID;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -62,9 +64,9 @@ public class PModeParty implements IHasID <String>
     m_sUserName = sUserName;
     m_sPassword = sPassword;
     if (StringHelper.hasText (m_sIDType))
-      m_sID = m_sIDType + ":" + m_sIDValue;
+      m_sStatusID = m_sIDType + ":" + m_sIDValue;
     else
-      m_sID = m_sIDValue;
+      m_sStatusID = m_sIDValue;
   }
 
   @Nullable
@@ -89,7 +91,7 @@ public class PModeParty implements IHasID <String>
   @Nonempty
   public String getID ()
   {
-    return m_sID;
+    return m_sStatusID;
   }
 
   @Nonnull

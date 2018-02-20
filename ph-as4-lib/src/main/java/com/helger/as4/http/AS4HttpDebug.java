@@ -61,7 +61,8 @@ public final class AS4HttpDebug
   }
 
   /**
-   * Debug the provided string if {@link #isEnabled()}
+   * Debug the provided string if {@link #isEnabled()}. Uses the logger to log
+   * to the console
    *
    * @param aMsg
    *        The message supplier. May not be <code>null</code>. Invoked only if

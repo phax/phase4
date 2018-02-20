@@ -37,12 +37,18 @@ import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
 
-public class BasicAS4Sender
+/**
+ * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and
+ * {@link HttpPost}.
+ * 
+ * @author Philip Helger
+ */
+public class BasicHttpPoster
 {
   // By default no special SSL context present
   private IHttpClientProvider m_aHTTPClientProvider = new HttpClientFactory ().setRetries (3);
 
-  public BasicAS4Sender ()
+  public BasicHttpPoster ()
   {}
 
   /**
@@ -66,7 +72,7 @@ public class BasicAS4Sender
    * @return this for chaining
    */
   @Nonnull
-  public BasicAS4Sender setHttpClientProvider (@Nonnull final IHttpClientProvider aHttpClientProvider)
+  public BasicHttpPoster setHttpClientProvider (@Nonnull final IHttpClientProvider aHttpClientProvider)
   {
     ValueEnforcer.notNull (aHttpClientProvider, "HttpClientProvider");
     m_aHTTPClientProvider = aHttpClientProvider;

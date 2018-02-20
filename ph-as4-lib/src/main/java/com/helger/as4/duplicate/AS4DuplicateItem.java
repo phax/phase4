@@ -103,6 +103,7 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final AS4DuplicateItem rhs = (AS4DuplicateItem) o;
+    // DT not contained!
     return m_sMessageID.equals (rhs.m_sMessageID) &&
            EqualsHelper.equals (m_sProfileID, rhs.m_sProfileID) &&
            EqualsHelper.equals (m_sPModeID, rhs.m_sPModeID);
@@ -111,6 +112,7 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   @Override
   public int hashCode ()
   {
+    // DT not contained!
     return new HashCodeGenerator (this).append (m_sMessageID).append (m_sProfileID).append (m_sPModeID).getHashCode ();
   }
 

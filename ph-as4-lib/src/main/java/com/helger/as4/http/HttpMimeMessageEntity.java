@@ -68,6 +68,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 
   public boolean isStreaming ()
   {
+    // Self contained? Depends on the underlying DataHandler
     return false;
   }
 

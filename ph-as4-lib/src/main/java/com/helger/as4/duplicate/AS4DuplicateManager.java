@@ -101,9 +101,11 @@ public final class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS
   @ReturnsMutableCopy
   public ICommonsList <String> evictAllItemsBefore (@Nonnull final LocalDateTime aRefDT)
   {
+    // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = getAllMapped (x -> x.getDateTime ().isBefore (aRefDT),
                                                             IAS4DuplicateItem::getMessageID);
     if (aEvictItems.isNotEmpty ())
+      // Bulk erase all
       m_aRWLock.writeLocked ( () -> {
         for (final String sItemID : aEvictItems)
           internalDeleteItem (sItemID);

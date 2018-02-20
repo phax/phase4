@@ -60,7 +60,7 @@ import com.helger.mail.datasource.InputStreamProviderDataSource;
  * Special WSS4J attachment with an InputStream provider instead of a fixed
  * InputStream<br>
  * Note: cannot be serializable because base class is not serializable and
- * because we're dealing with InputStreams
+ * because we're dealing with {@link InputStream}s.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -307,6 +307,9 @@ public class WSS4JAttachment extends Attachment
       // No compression - use file as-is
       aRealFile = aSrcFile;
     }
+
+    // Set a stream provider that can be read multiple times (opens a new
+    // FileInputStream internally)
     ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     return ret;
   }

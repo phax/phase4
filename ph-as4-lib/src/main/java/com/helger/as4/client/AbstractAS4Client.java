@@ -44,7 +44,7 @@ import com.helger.security.keystore.IKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
-public abstract class AbstractAS4Client extends BasicAS4Sender
+public abstract class AbstractAS4Client extends BasicHttpPoster
 {
   public static final class BuiltMessage
   {
@@ -172,6 +172,7 @@ public abstract class AbstractAS4Client extends BasicAS4Sender
   }
 
   @OverrideOnDemand
+  @Nonnull
   public abstract BuiltMessage buildMessage () throws Exception;
 
   @Nonnull

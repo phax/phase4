@@ -51,7 +51,7 @@ import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.client.BasicAS4Sender;
+import com.helger.as4.client.BasicHttpPoster;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
@@ -935,7 +935,7 @@ public final class AS4Handler implements AutoCloseable
             s_aLogger.info ("Responding asynchronous to: " + sAsyncResponseURL);
 
           // invoke client with new document
-          final BasicAS4Sender aSender = new BasicAS4Sender ();
+          final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
                                                                       aAsyncResponseFactory.getHttpEntity (eSOAPVersion),
                                                                       new ResponseHandlerXml ());

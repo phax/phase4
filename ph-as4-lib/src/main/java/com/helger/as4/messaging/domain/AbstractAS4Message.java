@@ -35,8 +35,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.traits.IGenericImplTrait;
 
-public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <IMPLTYPE>>
-                                         implements IAS4Message, IGenericImplTrait <IMPLTYPE>
+public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <IMPLTYPE>> implements
+                                         IAS4Message,
+                                         IGenericImplTrait <IMPLTYPE>
 {
   private final ESOAPVersion m_eSOAPVersion;
   private final EAS4MessageType m_eMsgType;
@@ -111,7 +112,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
       }
       default:
-        throw new IllegalStateException ("Unsupported SOAP version!");
+        throw new IllegalStateException ("Unsupported SOAP version " + m_eSOAPVersion);
     }
   }
 

@@ -68,12 +68,12 @@ public interface IAS4Message extends Serializable
 
   /**
    * Create a SOAP document from this message with the specified optional
-   * payload.
+   * payload. Attachments are not handled by this method.
    *
    * @param aPayload
    *        The payload to be added into the SOAP body. May be
    *        <code>null</code>.
-   * @return The created DOM document
+   * @return The created DOM document.
    */
   @Nonnull
   Document getAsSOAPDocument (@Nullable Node aPayload);

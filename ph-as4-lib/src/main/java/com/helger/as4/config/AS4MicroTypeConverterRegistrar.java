@@ -79,9 +79,7 @@ public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverter
                                                  new PModePayloadServiceMicroTypeConverter ());
     aRegistry.registerMicroElementTypeConverter (PModeReceptionAwareness.class,
                                                  new PModeReceptionAwarenessMicroTypeConverter ());
-
     aRegistry.registerMicroElementTypeConverter (MPC.class, new MPCMicroTypeConverter ());
-
     aRegistry.registerMicroElementTypeConverter (AS4DuplicateItem.class, new AS4DuplicateItemMicroTypeConverter ());
   }
 }

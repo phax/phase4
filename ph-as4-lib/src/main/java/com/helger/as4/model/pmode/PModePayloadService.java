@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.annotation.Nullable;
 
 import com.helger.as4.attachment.EAS4CompressionMode;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 
 public class PModePayloadService implements Serializable
@@ -57,7 +58,7 @@ public class PModePayloadService implements Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModePayloadService rhs = (PModePayloadService) o;
-    return m_eCompressionMode.equals (rhs.m_eCompressionMode);
+    return EqualsHelper.equals (m_eCompressionMode, rhs.m_eCompressionMode);
   }
 
   @Override

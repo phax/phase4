@@ -104,9 +104,9 @@ public final class AS4CryptoFactory implements Serializable
       {
         ret = CryptoFactory.getInstance (m_aCryptoProps.getAsProperties ());
       }
-      catch (final Throwable t)
+      catch (final Exception ex)
       {
-        throw new InitializationException ("Failed to init crypto properties!", t);
+        throw new InitializationException ("Failed to init crypto properties!", ex);
       }
       m_aCrypto = ret;
     }

@@ -53,7 +53,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
   private final AS4ResourceManager m_aResMgr;
 
-  public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <WSS4JAttachment> aAttachments,
+  public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aAttachments,
                                          @Nonnull final AS4ResourceManager aResMgr)
   {
     if (aAttachments != null)
@@ -73,13 +73,15 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   @ReturnsMutableCopy
   private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sID)
   {
-    if (m_aAttachmentMap.containsKey (sID))
-      return new CommonsArrayList <> (m_aAttachmentMap.get (sID));
+    final WSS4JAttachment aAttachment = m_aAttachmentMap.get (sID);
+    if (aAttachment != null)
+      return new CommonsArrayList <> (aAttachment);
 
+    // Use all
     return new CommonsArrayList <> (m_aAttachmentMap.values ());
   }
 
-  public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
+  public void handle (@Nonnull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
     for (final Callback aCallback : aCallbacks)
     {

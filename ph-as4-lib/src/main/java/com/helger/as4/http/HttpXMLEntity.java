@@ -24,6 +24,11 @@ import org.w3c.dom.Node;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 
+/**
+ * Special HTTP POST entity that contains a DOM Node as a serialized String.
+ * 
+ * @author Philip Helger
+ */
 public class HttpXMLEntity extends StringEntity
 {
   public HttpXMLEntity (@Nonnull final Node Node, @Nonnull final ESOAPVersion eSoapVersion)

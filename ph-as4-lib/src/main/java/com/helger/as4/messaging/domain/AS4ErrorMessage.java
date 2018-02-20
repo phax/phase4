@@ -31,7 +31,8 @@ import com.helger.commons.string.StringHelper;
  */
 public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
-  public AS4ErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                          @Nonnull final Ebms3SignalMessage aSignalMessage) throws IllegalArgumentException
   {
     super (eSOAPVersion, EAS4MessageType.ERROR_MESSAGE);
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");

@@ -39,6 +39,7 @@ import com.helger.commons.string.StringHelper;
  */
 public enum EAS4CompressionMode implements IHasID <String>
 {
+  /** GZip compression mode */
   GZIP ("gzip", CMimeType.APPLICATION_GZIP, ".gz")
   {
     @Override
@@ -99,9 +100,27 @@ public enum EAS4CompressionMode implements IHasID <String>
     return m_sFileExtension;
   }
 
+  /**
+   * Get an {@link InputStream} to decompress the provided {@link InputStream}.
+   * 
+   * @param aIS
+   *        The source {@link InputStream}. May not be <code>null</code>.
+   * @return The decompressing {@link InputStream}
+   * @throws IOException
+   *         In case of IO error
+   */
   @Nonnull
   public abstract InputStream getDecompressStream (@Nonnull InputStream aIS) throws IOException;
 
+  /**
+   * Get an {@link OutputStream} to compress the provided {@link OutputStream}.
+   * 
+   * @param aOS
+   *        The source {@link OutputStream}. May not be <code>null</code>.
+   * @return The compressing {@link OutputStream}
+   * @throws IOException
+   *         In case of IO error
+   */
   @Nonnull
   public abstract OutputStream getCompressStream (@Nonnull OutputStream aOS) throws IOException;
 

@@ -20,6 +20,11 @@ import com.helger.as4.CAS4;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
+/**
+ * A special namespace handler that contains all default Ebms3 mappings.
+ * 
+ * @author Philip Helger
+ */
 public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
 {
   public Ebms3NamespaceHandler ()
