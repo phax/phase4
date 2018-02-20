@@ -32,8 +32,8 @@ import com.helger.as4.error.EEbmsError;
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.mock.MockEbmsHelper;
@@ -161,24 +161,24 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
     final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aEbms3UserMessage.setPayloadInfo (UserMessageCreator.createEbms3PayloadInfo (aPayload, null));
+    aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (aPayload, null));
 
     // Default MessageInfo for testing
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Default CollaborationInfo for testing
-    aEbms3UserMessage.setCollaborationInfo (UserMessageCreator.createEbms3CollaborationInfo (CAS4.DEFAULT_ACTION_URL,
-                                                                                             null,
-                                                                                             CAS4.DEFAULT_SERVICE_URL,
-                                                                                             AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                             null,
-                                                                                             MockEbmsHelper.DEFAULT_AGREEMENT));
+    aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (null,
+                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                               null,
+                                                                                               CAS4.DEFAULT_SERVICE_URL,
+                                                                                               CAS4.DEFAULT_ACTION_URL,
+                                                                                               AS4TestConstants.TEST_CONVERSATION_ID));
 
     // Default PartyInfo for testing
-    aEbms3UserMessage.setPartyInfo (UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                             DEFAULT_PARTY_ID,
-                                                                             CAS4.DEFAULT_RESPONDER_URL,
-                                                                             DEFAULT_PARTY_ID));
+    aEbms3UserMessage.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                               DEFAULT_PARTY_ID,
+                                                                               CAS4.DEFAULT_RESPONDER_URL,
+                                                                               DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
     aEbms3UserMessage.setMessageProperties (_defaultProperties ());
 
@@ -187,7 +187,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getID ()));
     aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
-    final Document aSignedDoc = UserMessageCreator.getUserMessageAsAS4UserMessage (m_eSOAPVersion, aEbms3UserMessage)
+    final Document aSignedDoc = AS4UserMessage.create (m_eSOAPVersion, aEbms3UserMessage)
                                                   .setMustUnderstand (true)
                                                   .getAsSOAPDocument (aPayload);
 

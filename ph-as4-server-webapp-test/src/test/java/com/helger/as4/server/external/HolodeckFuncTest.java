@@ -35,7 +35,6 @@ import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
@@ -89,27 +88,27 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (null, aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (COLLABORATION_INFO_ACTION,
-                                                                                                            COLLABORATION_INFO_SERVICE_TYPE,
-                                                                                                            COLLABORATION_INFO_SERVICE,
-                                                                                                            AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                                                            true ? null
-                                                                                                                 : m_aESENSOneWayPMode.getID (),
-                                                                                                            true ? null
-                                                                                                                 : MockEbmsHelper.DEFAULT_AGREEMENT);
-    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                                    "ph-as4-sender",
-                                                                                    CAS4.DEFAULT_RESPONDER_URL,
-                                                                                    TO_PARTY_ID);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (null, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (true ? null
+         : m_aESENSOneWayPMode.getID (),
+                                                                                                              true ? null
+                                                                                                                   : MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                              COLLABORATION_INFO_SERVICE_TYPE,
+                                                                                                              COLLABORATION_INFO_SERVICE,
+                                                                                                              COLLABORATION_INFO_ACTION,
+                                                                                                              AS4TestConstants.TEST_CONVERSATION_ID);
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                                      "ph-as4-sender",
+                                                                                      CAS4.DEFAULT_RESPONDER_URL,
+                                                                                      TO_PARTY_ID);
 
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = MessageHelperMethods.createEmbs3PropertiesSpecial ("C1",
                                                                                                              "C4");
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("trackingidentifier", "tracker"));
-    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aUserMsg = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+    final AS4UserMessage aUserMsg = AS4UserMessage.create (aEbms3MessageInfo,
                                                                           aEbms3PayloadInfo,
                                                                           aEbms3CollaborationInfo,
                                                                           aEbms3PartyInfo,

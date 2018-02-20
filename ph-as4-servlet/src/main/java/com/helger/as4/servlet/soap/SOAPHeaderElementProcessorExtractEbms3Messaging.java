@@ -31,7 +31,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.marshaller.Ebms3ReaderBuilder;
-import com.helger.as4.messaging.domain.UserMessageCreator;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.mpc.MPCManager;
@@ -432,7 +432,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                     return ESuccess.FAILURE;
                   }
 
-                  final String sAttachmentID = StringHelper.trimStart (aPart.getHref (), UserMessageCreator.PREFIX_CID);
+                  final String sAttachmentID = StringHelper.trimStart (aPart.getHref (),
+                                                                       MessageHelperMethods.PREFIX_CID);
                   aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
                   bCompressionTypePresent = true;
                 }

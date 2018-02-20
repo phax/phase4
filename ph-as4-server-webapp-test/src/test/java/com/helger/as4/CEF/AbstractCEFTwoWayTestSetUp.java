@@ -37,7 +37,6 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPModeIDProvider;
@@ -132,24 +131,24 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
     final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
-    aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (AS4TestConstants.TEST_ACTION,
-                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                               MockPModeGenerator.SOAP11_SERVICE,
-                                                                               AS4TestConstants.TEST_CONVERSATION_ID,
-                                                                               m_aESENSTwoWayPMode.getID (),
-                                                                               MockEbmsHelper.DEFAULT_AGREEMENT);
-    aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                               AS4TestConstants.CEF_INITIATOR_ID,
-                                                               CAS4.DEFAULT_RESPONDER_URL,
-                                                               AS4TestConstants.CEF_RESPONDER_ID);
+    aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSTwoWayPMode.getID (),
+                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                 AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                 MockPModeGenerator.SOAP11_SERVICE,
+                                                                                 AS4TestConstants.TEST_ACTION,
+                                                                                 AS4TestConstants.TEST_CONVERSATION_ID);
+    aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                 AS4TestConstants.CEF_INITIATOR_ID,
+                                                                 CAS4.DEFAULT_RESPONDER_URL,
+                                                                 AS4TestConstants.CEF_RESPONDER_ID);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
-    final AS4UserMessage aDoc = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+    final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
                                                                       aEbms3PayloadInfo,
                                                                       aEbms3CollaborationInfo,
                                                                       aEbms3PartyInfo,

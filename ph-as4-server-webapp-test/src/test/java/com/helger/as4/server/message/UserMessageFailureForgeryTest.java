@@ -48,7 +48,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.domain.UserMessageCreator;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.mime.SoapMimeMultipart;
@@ -183,7 +183,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       final Node nNode = nList.item (i);
       final Element aElement = (Element) nNode;
       if (aElement.hasAttribute ("href"))
-        aElement.setAttribute ("href", UserMessageCreator.PREFIX_CID + "invalid" + i);
+        aElement.setAttribute ("href", MessageHelperMethods.PREFIX_CID + "invalid" + i);
     }
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
