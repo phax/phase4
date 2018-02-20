@@ -48,7 +48,7 @@ public class PModeParty implements IHasID <String>
   // Status vars
 
   /** ID type and value combined */
-  private String m_sID;
+  private final String m_sID;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -61,18 +61,21 @@ public class PModeParty implements IHasID <String>
     m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
     m_sUserName = sUserName;
     m_sPassword = sPassword;
-    m_sID = m_sIDValue;
-    if (!StringHelper.getNotNull (m_sIDType).equals (""))
-    {
+    if (StringHelper.hasText (m_sIDType))
       m_sID = m_sIDType + ":" + m_sIDValue;
-    }
-
+    else
+      m_sID = m_sIDValue;
   }
 
   @Nullable
   public String getIDType ()
   {
     return m_sIDType;
+  }
+
+  public boolean hasIDType ()
+  {
+    return StringHelper.hasText (m_sIDType);
   }
 
   @Nonnull
@@ -102,10 +105,20 @@ public class PModeParty implements IHasID <String>
     return m_sUserName;
   }
 
+  public boolean hasUserName ()
+  {
+    return StringHelper.hasText (m_sUserName);
+  }
+
   @Nullable
   public String getPassword ()
   {
     return m_sPassword;
+  }
+
+  public boolean hasPassword ()
+  {
+    return StringHelper.hasText (m_sPassword);
   }
 
   @Override
@@ -116,9 +129,9 @@ public class PModeParty implements IHasID <String>
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeParty rhs = (PModeParty) o;
-    return m_sIDType.equals (rhs.m_sIDType) &&
-           EqualsHelper.equals (m_sIDValue, rhs.m_sIDValue) &&
-           EqualsHelper.equals (m_sRole, rhs.m_sRole) &&
+    return EqualsHelper.equals (m_sIDType, rhs.m_sIDType) &&
+           m_sIDValue.equals (rhs.m_sIDValue) &&
+           m_sRole.equals (rhs.m_sRole) &&
            EqualsHelper.equals (m_sUserName, rhs.m_sUserName) &&
            EqualsHelper.equals (m_sPassword, rhs.m_sPassword);
   }

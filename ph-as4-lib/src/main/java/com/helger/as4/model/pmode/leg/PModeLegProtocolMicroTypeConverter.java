@@ -46,7 +46,9 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
     final String sAddress = aElement.getAttributeValue (ATTR_ADDRESS);
 
     final String sSOAPVersion = aElement.getAttributeValue (ATTR_SOAP_VERSION);
-    final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromVersionOrDefault (sSOAPVersion, ESOAPVersion.AS4_DEFAULT);
+    final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromVersionOrNull (sSOAPVersion);
+    if (eSOAPVersion == null)
+      throw new IllegalStateException ("Failed to resolve SOAP version '" + sSOAPVersion + "'");
 
     return new PModeLegProtocol (sAddress, eSOAPVersion);
   }

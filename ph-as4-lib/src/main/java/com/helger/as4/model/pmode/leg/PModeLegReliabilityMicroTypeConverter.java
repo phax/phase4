@@ -16,6 +16,8 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import javax.annotation.Nonnull;
+
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -36,6 +38,7 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
   private static final String ELEMENT_CORRELATION = "Correlation";
   private static final String ATTR_TERMINATE_GROUP = "TerminateGroup";
 
+  @Nonnull
   public IMicroElement convertToMicroElement (final PModeLegReliability aValue,
                                               final String sNamespaceURI,
                                               final String sTagName)
@@ -44,9 +47,9 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
 
     if (aValue.isAtLeastOnceContractDefined ())
       ret.setAttribute (ATTR_AT_LEAST_ONCE_CONTRACT, aValue.isAtLeastOnceContract ());
-    ret.setAttribute (ATTR_AT_LEAST_ONCE_CONTRACT_ACK_TO, aValue.getAtLeastOnceContractAcksTo ());
     if (aValue.isAtLeastOnceAckOnDeliveryDefined ())
       ret.setAttribute (ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY, aValue.isAtLeastOnceAckOnDelivery ());
+    ret.setAttribute (ATTR_AT_LEAST_ONCE_CONTRACT_ACK_TO, aValue.getAtLeastOnceContractAcksTo ());
     if (aValue.isAtLeastOnceContractAckResponseDefined ())
       ret.setAttribute (ATTR_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE, aValue.isAtLeastOnceContractAckResponse ());
     ret.setAttribute (ATTR_AT_LEAST_ONCE_REPLY_PATTERN, aValue.getAtLeastOnceReplyPattern ());
@@ -57,21 +60,19 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
     if (aValue.isStartGroupDefined ())
       ret.setAttribute (ATTR_START_GROUP, aValue.isStartGroup ());
     for (final String sCorrelation : aValue.getCorrelation ())
-    {
       ret.appendElement (sNamespaceURI, ELEMENT_CORRELATION).appendText (sCorrelation);
-    }
     if (aValue.isTerminateGroupDefined ())
       ret.setAttribute (ATTR_TERMINATE_GROUP, aValue.isTerminateGroup ());
     return ret;
   }
 
-  public PModeLegReliability convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PModeLegReliability convertToNative (@Nonnull final IMicroElement aElement)
   {
     final ETriState eAtLeastOnceContract = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_CONTRACT),
                                                         PModeLegReliability.DEFAULT_AT_LEAST_ONCE_CONTRACT);
     final ETriState eAtLeastOnceAckOnDelivery = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY),
                                                              PModeLegReliability.DEFAULT_AT_LEAST_ONCE_ACK_ON_DELIVERY);
-
     final String sAtLeastOnceContractAcksTo = aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_CONTRACT_ACK_TO);
     final ETriState eAtLeastOnceContractAckResponse = getTriState (aElement.getAttributeValue (ATTR_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE),
                                                                    PModeLegReliability.DEFAULT_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE);

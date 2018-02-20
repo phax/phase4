@@ -35,7 +35,7 @@ public class PModeAddressList implements Serializable
 {
   public static final char ADDRESS_SEPARATOR = ',';
 
-  private final ICommonsList <String> m_aAddresses = new CommonsArrayList<> ();
+  private final ICommonsList <String> m_aAddresses = new CommonsArrayList <> ();
 
   public PModeAddressList ()
   {}
@@ -97,13 +97,6 @@ public class PModeAddressList implements Serializable
     return StringHelper.getImploded (ADDRESS_SEPARATOR, m_aAddresses);
   }
 
-  @Nonnull
-  public static PModeAddressList createFromString (@Nullable final String sAddressString)
-  {
-    final ICommonsList <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);
-    return new PModeAddressList (aAddresses);
-  }
-
   @Override
   public boolean equals (final Object o)
   {
@@ -119,5 +112,12 @@ public class PModeAddressList implements Serializable
   public int hashCode ()
   {
     return new HashCodeGenerator (this).append (m_aAddresses).getHashCode ();
+  }
+
+  @Nonnull
+  public static PModeAddressList createFromString (@Nullable final String sAddressString)
+  {
+    final ICommonsList <String> aAddresses = StringHelper.getExploded (ADDRESS_SEPARATOR, sAddressString);
+    return new PModeAddressList (aAddresses);
   }
 }

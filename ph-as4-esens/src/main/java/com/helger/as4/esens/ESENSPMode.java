@@ -18,6 +18,7 @@ package com.helger.as4.esens;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
@@ -42,11 +43,45 @@ import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ETriState;
 
+@Immutable
 public final class ESENSPMode
 {
-
   private ESENSPMode ()
   {}
+
+  @Nonnull
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
+  {
+    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
+  }
+
+  @Nonnull
+  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  {
+    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+  }
+
+  @Nonnull
+  private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
+  {
+    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
+  }
+
+  @Nonnull
+  private static PModeLegSecurity _generatePModeLegSecurity ()
+  {
+    final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
+    aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
+    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
+    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
+    aPModeLegSecurity.setPModeAuthorize (false);
+    aPModeLegSecurity.setSendReceipt (true);
+    aPModeLegSecurity.setSendReceiptNonRepudiation (true);
+    aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+    return aPModeLegSecurity;
+  }
 
   /**
    * One-Way Version of the esens pmode uses one-way push
@@ -133,39 +168,5 @@ public final class ESENSPMode
     // Ensure it is stored
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     return aPMode;
-  }
-
-  @Nonnull
-  private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
-  {
-    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
-  }
-
-  @Nonnull
-  private static PModeLegSecurity _generatePModeLegSecurity ()
-  {
-    final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
-    aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
-    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
-    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
-    aPModeLegSecurity.setPModeAuthorize (false);
-    aPModeLegSecurity.setSendReceipt (true);
-    aPModeLegSecurity.setSendReceiptNonRepudiation (true);
-    aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
-    return aPModeLegSecurity;
-  }
-
-  @Nonnull
-  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
-  {
-    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
-  }
-
-  @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
-  {
-    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 }

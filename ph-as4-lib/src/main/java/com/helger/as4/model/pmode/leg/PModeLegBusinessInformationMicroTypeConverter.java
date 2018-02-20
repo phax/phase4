@@ -83,5 +83,4 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
                                             aPayloadProfileMaxKB,
                                             sMPCID);
   }
-
 }

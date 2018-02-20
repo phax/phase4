@@ -190,7 +190,6 @@ public class PModeLegSecurity implements Serializable
                            @Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern,
                            @Nonnull final ETriState eSendReceiptNonRepudiation)
   {
-
     setWSSVersion (eWSSVersion);
     setX509SignElement (aX509SignElement);
     setX509SignAttachment (aX509SignAttachment);
@@ -234,7 +233,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignElement ()
   {
-    return new CommonsArrayList<> (m_aX509SignElement);
+    return new CommonsArrayList <> (m_aX509SignElement);
   }
 
   public final void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
@@ -246,7 +245,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignAttachment ()
   {
-    return new CommonsArrayList<> (m_aX509SignAttachment);
+    return new CommonsArrayList <> (m_aX509SignAttachment);
   }
 
   public final void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
@@ -303,7 +302,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptElement ()
   {
-    return new CommonsArrayList<> (m_aX509EncryptionEncryptElement);
+    return new CommonsArrayList <> (m_aX509EncryptionEncryptElement);
   }
 
   public final void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
@@ -315,7 +314,7 @@ public class PModeLegSecurity implements Serializable
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptAttachment ()
   {
-    return new CommonsArrayList<> (m_aX509EncryptionEncryptAttachment);
+    return new CommonsArrayList <> (m_aX509EncryptionEncryptAttachment);
   }
 
   public final void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
@@ -400,7 +399,7 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
   }
 
-  public void setUsernameTokenDigest (final boolean bUsernameTokenDigest)
+  public final void setUsernameTokenDigest (final boolean bUsernameTokenDigest)
   {
     setUsernameTokenDigest (ETriState.valueOf (bUsernameTokenDigest));
   }
@@ -422,7 +421,7 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
   }
 
-  public void setUsernameTokenNonce (final boolean bUsernameTokenNonce)
+  public final void setUsernameTokenNonce (final boolean bUsernameTokenNonce)
   {
     setUsernameTokenNonce (ETriState.valueOf (bUsernameTokenNonce));
   }
@@ -444,7 +443,7 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
   }
 
-  public void setUsernameTokenCreated (final boolean bUsernameTokenCreated)
+  public final void setUsernameTokenCreated (final boolean bUsernameTokenCreated)
   {
     setUsernameTokenCreated (ETriState.valueOf (bUsernameTokenCreated));
   }
@@ -466,7 +465,7 @@ public class PModeLegSecurity implements Serializable
     return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
   }
 
-  public void setPModeAuthorize (final boolean bPModeAuthorize)
+  public final void setPModeAuthorize (final boolean bPModeAuthorize)
   {
     setPModeAuthorize (ETriState.valueOf (bPModeAuthorize));
   }
@@ -488,7 +487,7 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
 
-  public void setSendReceipt (final boolean bSendReceipt)
+  public final void setSendReceipt (final boolean bSendReceipt)
   {
     setSendReceipt (ETriState.valueOf (bSendReceipt));
   }
@@ -527,7 +526,7 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceiptNonRepudiation.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
 
-  public void setSendReceiptNonRepudiation (final boolean bSendReceiptNonRepudiation)
+  public final void setSendReceiptNonRepudiation (final boolean bSendReceiptNonRepudiation)
   {
     setSendReceiptNonRepudiation (ETriState.valueOf (bSendReceiptNonRepudiation));
   }
