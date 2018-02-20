@@ -34,7 +34,7 @@ import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.messaging.domain.UserMessageCreator;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -103,7 +103,7 @@ public class EncryptionCreator
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
-    aBuilder.getParts ().add (new WSEncryptionPart (UserMessageCreator.PREFIX_CID + "Attachments", "Content"));
+    aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
     if (CollectionHelper.isNotEmpty (aAttachments))

@@ -36,7 +36,7 @@ import com.sun.mail.handlers.text_plain;
 /**
  * Special DataContentHandler for SOAP 1.2 messages with the special MIME type.
  *
- * @author helger
+ * @author Philip Helger
  */
 public class DataContentHandlerSoap12 extends text_plain
 {

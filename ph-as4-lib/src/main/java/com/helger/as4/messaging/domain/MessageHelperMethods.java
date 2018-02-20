@@ -17,6 +17,7 @@
 package com.helger.as4.messaging.domain;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -28,12 +29,24 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.HttpMessage;
+import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
+import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Description;
+import com.helger.as4lib.ebms3header.Ebms3From;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
+import com.helger.as4lib.ebms3header.Ebms3PartInfo;
+import com.helger.as4lib.ebms3header.Ebms3PartProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyId;
+import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
+import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3Service;
+import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -54,6 +67,11 @@ import com.helger.datetime.util.PDTXMLConverter;
 @Immutable
 public final class MessageHelperMethods
 {
+  public static final String PART_PROPERTY_MIME_TYPE = "MimeType";
+  public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
+  public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
+  public static final String PREFIX_CID = "cid:";
+
   private MessageHelperMethods ()
   {}
 
@@ -154,18 +172,152 @@ public final class MessageHelperMethods
   }
 
   @Nonnull
-  public static Ebms3PartyId createEbms3PartyId (@Nonnull final String sValue)
+  public static Ebms3PartyId createEbms3PartyId (@Nonnull @Nonempty final String sValue)
   {
     return createEbms3PartyId (null, sValue);
   }
 
   @Nonnull
-  public static Ebms3PartyId createEbms3PartyId (@Nullable final String sType, @Nonnull final String sValue)
+  public static Ebms3PartyId createEbms3PartyId (@Nullable final String sType, @Nonnull @Nonempty final String sValue)
   {
+    ValueEnforcer.notEmpty (sValue, "Value");
+
     final Ebms3PartyId ret = new Ebms3PartyId ();
     ret.setType (sType);
     ret.setValue (sValue);
     return ret;
+  }
+
+  @Nonnull
+  public static Ebms3PartyInfo createEbms3ReversePartyInfo (@Nonnull final Ebms3PartyInfo aOrigPartyInfo)
+  {
+    ValueEnforcer.notNull (aOrigPartyInfo, "OriginalPartyInfo");
+
+    return createEbms3PartyInfo (aOrigPartyInfo.getTo ().getRole (),
+                                 aOrigPartyInfo.getTo ().getPartyIdAtIndex (0).getValue (),
+                                 aOrigPartyInfo.getFrom ().getRole (),
+                                 aOrigPartyInfo.getFrom ().getPartyIdAtIndex (0).getValue ());
+  }
+
+  @Nonnull
+  public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull @Nonempty final String sFromRole,
+                                                     @Nonnull @Nonempty final String sFromPartyID,
+                                                     @Nonnull @Nonempty final String sToRole,
+                                                     @Nonnull @Nonempty final String sToPartyID)
+  {
+    ValueEnforcer.notEmpty (sFromRole, "FromRole");
+    ValueEnforcer.notEmpty (sFromPartyID, "FromPartyID");
+    ValueEnforcer.notEmpty (sToRole, "ToRole");
+    ValueEnforcer.notEmpty (sToPartyID, "ToPartyID");
+
+    final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
+
+    // From => Sender
+    final Ebms3From aEbms3From = new Ebms3From ();
+    aEbms3From.setRole (sFromRole);
+    aEbms3From.addPartyId (createEbms3PartyId (sFromPartyID));
+    aEbms3PartyInfo.setFrom (aEbms3From);
+
+    // To => Receiver
+    final Ebms3To aEbms3To = new Ebms3To ();
+    aEbms3To.setRole (sToRole);
+    aEbms3To.addPartyId (createEbms3PartyId (sToPartyID));
+    aEbms3PartyInfo.setTo (aEbms3To);
+
+    return aEbms3PartyInfo;
+  }
+
+  @Nonnull
+  public static Ebms3MessageProperties createEbms3MessageProperties (@Nullable final List <Ebms3Property> aEbms3Properties)
+  {
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    aEbms3MessageProperties.setProperty (aEbms3Properties);
+    return aEbms3MessageProperties;
+  }
+
+  @Nonnull
+  public static Ebms3CollaborationInfo createEbms3CollaborationInfo (@Nullable final String sAgreementRefPMode,
+                                                                     @Nullable final String sAgreementRefValue,
+                                                                     @Nullable final String sServiceType,
+                                                                     @Nonnull @Nonempty final String sServiceValue,
+                                                                     @Nonnull @Nonempty final String sAction,
+                                                                     @Nonnull @Nonempty final String sConversationID)
+  {
+    ValueEnforcer.notEmpty (sServiceValue, "ServiceValue");
+    ValueEnforcer.notEmpty (sAction, "Action");
+    ValueEnforcer.notEmpty (sConversationID, "ConversationID");
+
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = new Ebms3CollaborationInfo ();
+    if (StringHelper.hasText (sAgreementRefValue))
+    {
+      final Ebms3AgreementRef aEbms3AgreementRef = new Ebms3AgreementRef ();
+      if (StringHelper.hasText (sAgreementRefPMode))
+        aEbms3AgreementRef.setPmode (sAgreementRefPMode);
+      aEbms3AgreementRef.setValue (sAgreementRefValue);
+      aEbms3CollaborationInfo.setAgreementRef (aEbms3AgreementRef);
+    }
+    {
+      final Ebms3Service aEbms3Service = new Ebms3Service ();
+      aEbms3Service.setType (sServiceType);
+      aEbms3Service.setValue (sServiceValue);
+      aEbms3CollaborationInfo.setService (aEbms3Service);
+    }
+    aEbms3CollaborationInfo.setAction (sAction);
+    aEbms3CollaborationInfo.setConversationId (sConversationID);
+    return aEbms3CollaborationInfo;
+  }
+
+  /**
+   * Add payload info if attachments are present.
+   *
+   * @param aPayload
+   *        Optional SOAP body payload. This must be <code>null</code> when
+   *        using MIME message layout!
+   * @param aAttachments
+   *        Used attachments
+   * @return <code>null</code> if no attachments are present.
+   */
+  @Nullable
+  public static Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
+                                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  {
+    final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
+
+    // Empty PayloadInfo only if sending as the body of the SOAP message
+    if (aPayload != null)
+      aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
+
+    if (aAttachments != null)
+      for (final WSS4JAttachment aAttachment : aAttachments)
+      {
+        final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+        aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                               aAttachment.getUncompressedMimeType ()));
+        if (aAttachment.hasCharset ())
+        {
+          aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                                 aAttachment.getCharset ().name ()));
+        }
+        if (aAttachment.hasCompressionMode ())
+        {
+          aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_COMPRESSION_TYPE,
+                                                                 aAttachment.getCompressionMode ()
+                                                                            .getMimeTypeAsString ()));
+        }
+
+        final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
+        aEbms3PartInfo.setHref (PREFIX_CID + aAttachment.getId ());
+        aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
+        aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
+      }
+
+    if (aEbms3PayloadInfo.getPartInfoCount () == 0)
+    {
+      // Neither payload nor attachments
+      return null;
+    }
+
+    return aEbms3PayloadInfo;
   }
 
   public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,

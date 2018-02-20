@@ -16,11 +16,17 @@
  */
 package com.helger.as4.messaging.domain;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
+import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.string.StringHelper;
 
 /**
  * AS4 pull request message
@@ -29,11 +35,50 @@ import com.helger.commons.ValueEnforcer;
  */
 public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMessage>
 {
+  private final Ebms3SignalMessage m_aSignalMessage;
+
   public AS4PullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                 @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSOAPVersion, EAS4MessageType.PULL_REQUEST);
+
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
+
+    m_aSignalMessage = aSignalMessage;
+  }
+
+  /**
+   * @return The {@link Ebms3SignalMessage} passed in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public final Ebms3SignalMessage getEbms3SignalMessage ()
+  {
+    return m_aSignalMessage;
+  }
+
+  @Nonnull
+  public static AS4PullRequestMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+                                              @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
+                                              @Nullable final String sMPC,
+                                              @Nullable final List <Object> aAny)
+  {
+    final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
+
+    // Message Info
+    aSignalMessage.setMessageInfo (aEbms3MessageInfo);
+
+    // PullRequest
+    if (StringHelper.hasText (sMPC))
+    {
+      final Ebms3PullRequest aEbms3PullRequest = new Ebms3PullRequest ();
+      aEbms3PullRequest.setMpc (sMPC);
+      aSignalMessage.setPullRequest (aEbms3PullRequest);
+    }
+
+    aSignalMessage.setAny (aAny);
+
+    return new AS4PullRequestMessage (eSOAPVersion, aSignalMessage);
   }
 }

@@ -81,6 +81,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   @Nonnull
   public final Document getAsSOAPDocument (@Nullable final Node aPayload)
   {
+    // Convert to DOM Node
     final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (m_aMessaging);
     if (aEbms3Document == null)
       throw new IllegalStateException ("Failed to write EBMS3 Messaging to XML");
@@ -119,6 +120,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion).getToString ();
+    return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion)
+                                       .append ("MsgType", m_eMsgType)
+                                       .getToString ();
   }
 }

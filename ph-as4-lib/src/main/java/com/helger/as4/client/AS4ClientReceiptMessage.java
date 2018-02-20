@@ -24,7 +24,6 @@ import org.w3c.dom.Node;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
-import com.helger.as4.messaging.domain.ReceiptMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
@@ -77,11 +76,11 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     _checkMandatoryAttributes ();
 
     final String sMessageID = createMessageID ();
-    final AS4ReceiptMessage aReceiptMsg = ReceiptMessageCreator.createReceiptMessage (getSOAPVersion (),
-                                                                                      sMessageID,
-                                                                                      m_aEbms3UserMessage,
-                                                                                      m_aSOAPDocument,
-                                                                                      m_bNonRepudiation);
+    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (getSOAPVersion (),
+                                                                    sMessageID,
+                                                                    m_aEbms3UserMessage,
+                                                                    m_aSOAPDocument,
+                                                                    m_bNonRepudiation);
 
     Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 

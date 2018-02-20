@@ -35,7 +35,6 @@ import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.domain.UserMessageCreator;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -206,21 +205,21 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = UserMessageCreator.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = UserMessageCreator.createEbms3CollaborationInfo (m_sAction,
-                                                                                                            m_sServiceType,
-                                                                                                            m_sServiceValue,
-                                                                                                            m_sConversationID,
-                                                                                                            sAgreementRefPMode,
-                                                                                                            m_sAgreementRefValue);
-    final Ebms3PartyInfo aEbms3PartyInfo = UserMessageCreator.createEbms3PartyInfo (m_sFromRole,
-                                                                                    m_sFromPartyID,
-                                                                                    m_sToRole,
-                                                                                    m_sToPartyID);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
+                                                                                                              m_sAgreementRefValue,
+                                                                                                              m_sServiceType,
+                                                                                                              m_sServiceValue,
+                                                                                                              m_sAction,
+                                                                                                              m_sConversationID);
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (m_sFromRole,
+                                                                                      m_sFromPartyID,
+                                                                                      m_sToRole,
+                                                                                      m_sToPartyID);
 
-    final Ebms3MessageProperties aEbms3MessageProperties = UserMessageCreator.createEbms3MessageProperties (m_aEbms3Properties);
+    final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (m_aEbms3Properties);
 
-    final AS4UserMessage aUserMsg = UserMessageCreator.createUserMessage (aEbms3MessageInfo,
+    final AS4UserMessage aUserMsg = AS4UserMessage.create (aEbms3MessageInfo,
                                                                           aEbms3PayloadInfo,
                                                                           aEbms3CollaborationInfo,
                                                                           aEbms3PartyInfo,

@@ -120,9 +120,8 @@ public final class MimeMessageCreator
     aMsg.saveChanges ();
 
     if (false)
-      try
+      try (final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ())
       {
-        final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ();
         aMsg.writeTo (aBAOS);
         final String s = aBAOS.getAsString (StandardCharsets.UTF_8);
         if (s.length () > 0)
