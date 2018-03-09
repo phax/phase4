@@ -25,12 +25,12 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
+import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -68,7 +68,7 @@ public final class ESENSPMode
   }
 
   @Nonnull
-  private static PModeLegSecurity _generatePModeLegSecurity ()
+  public static PModeLegSecurity generatePModeLegSecurity ()
   {
     final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
     aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
@@ -94,13 +94,17 @@ public final class ESENSPMode
    *        Responder URL
    * @param aPModeIDProvider
    *        PMode ID provider
+   * @param bPersist
+   *        <code>true</code> to persist the PMode <code>false</code> to have it
+   *        only in memory.
    * @return New PMode
    */
   @Nonnull
   public static PMode createESENSPMode (@Nonnull @Nonempty final String sInitiatorID,
                                         @Nonnull @Nonempty final String sResponderID,
                                         @Nullable final String sResponderAddress,
-                                        @Nonnull final IPModeIDProvider aPModeIDProvider)
+                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                        final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
@@ -108,20 +112,24 @@ public final class ESENSPMode
     final PMode aPMode = new PMode (aPModeIDProvider,
                                     aInitiator,
                                     aResponder,
-                                    MockEbmsHelper.DEFAULT_AGREEMENT,
+                                    "urn:as4:agreement",
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
                                     new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
                                                   _generatePModeLegBusinessInformation (),
                                                   _generatePModeLegErrorHandling (),
                                                   (PModeLegReliability) null,
-                                                  _generatePModeLegSecurity ()),
-                                    null,
-                                    null,
+                                                  generatePModeLegSecurity ()),
+                                    (PModeLeg) null,
+                                    (PModePayloadService) null,
                                     PModeReceptionAwareness.createDefault ());
     // Leg 2 stays null, because we only use one-way
-    // Ensure it is stored
-    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+
+    if (bPersist)
+    {
+      // Ensure it is stored
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    }
     return aPMode;
   }
 
@@ -136,13 +144,17 @@ public final class ESENSPMode
    *        Responder URL
    * @param aPModeIDProvider
    *        PMode ID provider
+   * @param bPersist
+   *        <code>true</code> to persist the PMode <code>false</code> to have it
+   *        only in memory.
    * @return New PMode
    */
   @Nonnull
   public static PMode createESENSPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
                                               @Nonnull @Nonempty final String sResponderID,
                                               @Nullable final String sResponderAddress,
-                                              @Nonnull final IPModeIDProvider aPModeIDProvider)
+                                              @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                              final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
@@ -150,23 +162,26 @@ public final class ESENSPMode
     final PMode aPMode = new PMode (aPModeIDProvider,
                                     aInitiator,
                                     aResponder,
-                                    MockEbmsHelper.DEFAULT_AGREEMENT,
+                                    "urn:as4:agreement",
                                     EMEP.TWO_WAY,
                                     EMEPBinding.PUSH_PUSH,
                                     new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
                                                   _generatePModeLegBusinessInformation (),
                                                   _generatePModeLegErrorHandling (),
                                                   (PModeLegReliability) null,
-                                                  _generatePModeLegSecurity ()),
+                                                  generatePModeLegSecurity ()),
                                     new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
                                                   _generatePModeLegBusinessInformation (),
                                                   _generatePModeLegErrorHandling (),
                                                   (PModeLegReliability) null,
-                                                  _generatePModeLegSecurity ()),
-                                    null,
+                                                  generatePModeLegSecurity ()),
+                                    (PModePayloadService) null,
                                     PModeReceptionAwareness.createDefault ());
-    // Ensure it is stored
-    MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    if (bPersist)
+    {
+      // Ensure it is stored
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
+    }
     return aPMode;
   }
 }

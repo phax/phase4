@@ -36,7 +36,6 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPMode;
@@ -67,7 +66,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",
                                                                                           AS4TestConstants.DEFAULT_SERVER_ADDRESS),
-                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
+                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                      false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
@@ -168,7 +168,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     // Default CollaborationInfo for testing
     aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (null,
-                                                                                               MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                               DEFAULT_AGREEMENT,
                                                                                                null,
                                                                                                CAS4.DEFAULT_SERVICE_URL,
                                                                                                CAS4.DEFAULT_ACTION_URL,
@@ -188,8 +188,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
     final Document aSignedDoc = AS4UserMessage.create (m_eSOAPVersion, aEbms3UserMessage)
-                                                  .setMustUnderstand (true)
-                                                  .getAsSOAPDocument (aPayload);
+                                              .setMustUnderstand (true)
+                                              .getAsSOAPDocument (aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion),
                       false,

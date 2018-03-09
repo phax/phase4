@@ -36,10 +36,9 @@ public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
     aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 () -> new ESENSCompatibilityValidator (),
-                                                () -> ESENSPMode.createESENSPMode ("TemplateInitiatorID",
-                                                                                   "TemplateResponderID",
-                                                                                   "https://test.example.org",
-                                                                                   aPModeIDProvider),
+                                                (i,
+                                                 r,
+                                                 a) -> ESENSPMode.createESENSPMode (i, r, a, aPModeIDProvider, true),
                                                 aPModeIDProvider));
   }
 }

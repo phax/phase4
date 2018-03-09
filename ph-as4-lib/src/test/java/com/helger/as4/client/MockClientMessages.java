@@ -37,7 +37,6 @@ import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -59,6 +58,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 final class MockClientMessages
 {
+  private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+
   private MockClientMessages ()
   {}
 
@@ -141,7 +142,7 @@ final class MockClientMessages
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pmode-twoway",
-                                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                              DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
@@ -153,12 +154,12 @@ final class MockClientMessages
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -174,7 +175,7 @@ final class MockClientMessages
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pm-esens-generic-resp",
-                                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                              DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
@@ -186,12 +187,12 @@ final class MockClientMessages
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -219,12 +220,12 @@ final class MockClientMessages
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 }

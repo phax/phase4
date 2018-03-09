@@ -38,7 +38,6 @@ import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.spi.MockMessageProcessorCheckingStreamsSPI;
 import com.helger.as4.soap.ESOAPVersion;
@@ -58,6 +57,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public final class MockMessages
 {
+  private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+  private static final String SOAP_12_PARTY_ID = "APP_000000000012";
+  private static final String SOAP_11_PARTY_ID = "APP_000000000011";
+
   private MockMessages ()
   {}
 
@@ -119,7 +122,7 @@ public final class MockMessages
                                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final String sPModeID;
 
@@ -130,44 +133,44 @@ public final class MockMessages
     final Ebms3PartyInfo aEbms3PartyInfo;
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
     {
-      sPModeID = MockEbmsHelper.SOAP_11_PARTY_ID + "-" + MockEbmsHelper.SOAP_11_PARTY_ID;
+      sPModeID = SOAP_11_PARTY_ID + "-" + SOAP_11_PARTY_ID;
 
       aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
-                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                   DEFAULT_AGREEMENT,
                                                                                    AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                    MockPModeGenerator.SOAP11_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
                                                                                    AS4TestConstants.TEST_CONVERSATION_ID);
       aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                   MockEbmsHelper.SOAP_11_PARTY_ID,
+                                                                   SOAP_11_PARTY_ID,
                                                                    CAS4.DEFAULT_RESPONDER_URL,
-                                                                   MockEbmsHelper.SOAP_11_PARTY_ID);
+                                                                   SOAP_11_PARTY_ID);
     }
     else
     {
-      sPModeID = MockEbmsHelper.SOAP_12_PARTY_ID + "-" + MockEbmsHelper.SOAP_12_PARTY_ID;
+      sPModeID = SOAP_12_PARTY_ID + "-" + SOAP_12_PARTY_ID;
 
       aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
-                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                   DEFAULT_AGREEMENT,
                                                                                    AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                    AS4TestConstants.TEST_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
                                                                                    AS4TestConstants.TEST_CONVERSATION_ID);
       aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                   MockEbmsHelper.SOAP_12_PARTY_ID,
+                                                                   SOAP_12_PARTY_ID,
                                                                    CAS4.DEFAULT_RESPONDER_URL,
-                                                                   MockEbmsHelper.SOAP_12_PARTY_ID);
+                                                                   SOAP_12_PARTY_ID);
     }
 
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -176,15 +179,15 @@ public final class MockMessages
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final String sPModeID = CAS4.DEFAULT_SENDER_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID +
-                                           "x",
-                                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                              "x",
+                                                                                                              DEFAULT_AGREEMENT,
                                                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
@@ -196,12 +199,12 @@ public final class MockMessages
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 
@@ -229,12 +232,12 @@ public final class MockMessages
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 }

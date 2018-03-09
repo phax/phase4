@@ -52,7 +52,6 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.MockMessages;
 import com.helger.as4.util.AS4ResourceManager;
@@ -92,7 +91,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void AS4_TA03 () throws Exception
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, null);
@@ -100,7 +99,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSOneWayPMode.getID (),
-                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                 DEFAULT_AGREEMENT,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  MockPModeGenerator.SOAP11_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
@@ -120,12 +119,12 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // aEbms3MessageProperties.addProperty (aPropOnlyName);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      m_eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       m_eSOAPVersion)
+                                              .setMustUnderstand (true);
 
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aDoc.getAsSOAPDocument (m_aPayload),

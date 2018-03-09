@@ -23,7 +23,6 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.DefaultPMode;
@@ -45,6 +44,9 @@ import com.helger.commons.state.ETriState;
 public final class MockPModeGenerator
 {
   public static final String SOAP11_SERVICE = "soap11";
+  private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+  private static final String SOAP_12_PARTY_ID = "APP_000000000012";
+  private static final String SOAP_11_PARTY_ID = "APP_000000000011";
 
   private MockPModeGenerator ()
   {}
@@ -59,7 +61,7 @@ public final class MockPModeGenerator
     final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC,
                                      aInitiator,
                                      aResponder,
-                                     MockEbmsHelper.DEFAULT_AGREEMENT,
+                                     DEFAULT_AGREEMENT,
                                      EMEP.ONE_WAY,
                                      EMEPBinding.PUSH,
                                      _generatePModeLeg (eSOAPVersion),
@@ -129,9 +131,9 @@ public final class MockPModeGenerator
   {
     String sPartyID;
     if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
-      sPartyID = MockEbmsHelper.SOAP_11_PARTY_ID;
+      sPartyID = SOAP_11_PARTY_ID;
     else
-      sPartyID = MockEbmsHelper.SOAP_12_PARTY_ID;
+      sPartyID = SOAP_12_PARTY_ID;
 
     if (bInitiator)
       return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_SENDER_URL);
@@ -146,12 +148,8 @@ public final class MockPModeGenerator
       aPModeMgr.deletePMode (sID);
 
     // Create new one
-    DefaultPMode.getOrCreateDefaultPMode (MockEbmsHelper.SOAP_11_PARTY_ID,
-                                          MockEbmsHelper.SOAP_11_PARTY_ID,
-                                          "http://test.mock11.org");
-    DefaultPMode.getOrCreateDefaultPMode (MockEbmsHelper.SOAP_12_PARTY_ID,
-                                          MockEbmsHelper.SOAP_12_PARTY_ID,
-                                          "http://test.mock11.org");
+    DefaultPMode.getOrCreateDefaultPMode (SOAP_11_PARTY_ID, SOAP_11_PARTY_ID, "http://test.mock11.org", true);
+    DefaultPMode.getOrCreateDefaultPMode (SOAP_12_PARTY_ID, SOAP_12_PARTY_ID, "http://test.mock11.org", true);
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aPModeMgr.createOrUpdatePMode (MockPModeGenerator.getTestPModeWithSecurity (e));
   }

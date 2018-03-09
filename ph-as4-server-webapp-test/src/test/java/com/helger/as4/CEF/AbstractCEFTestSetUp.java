@@ -35,7 +35,6 @@ import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.server.MockPModeGenerator;
@@ -54,6 +53,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
 {
+  protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+
   protected PMode m_aESENSOneWayPMode;
   protected ESOAPVersion m_eSOAPVersion;
   protected Node m_aPayload;
@@ -64,7 +65,8 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     m_aESENSOneWayPMode = ESENSPMode.createESENSPMode (AS4TestConstants.CEF_INITIATOR_ID,
                                                        AS4TestConstants.CEF_RESPONDER_ID,
                                                        AS4TestConstants.DEFAULT_SERVER_ADDRESS,
-                                                       IPModeIDProvider.DEFAULT_DYNAMIC);
+                                                       IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                       true);
 
     m_eSOAPVersion = m_aESENSOneWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
     try
@@ -99,14 +101,14 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSOneWayPMode.getID (),
-                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                 DEFAULT_AGREEMENT,
                                                                                  AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                  MockPModeGenerator.SOAP11_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
@@ -120,12 +122,12 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      m_eSOAPVersion)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       m_eSOAPVersion)
+                                              .setMustUnderstand (true);
     return aDoc.getAsSOAPDocument (aPayload);
   }
 

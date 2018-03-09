@@ -36,7 +36,8 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
     final PMode aPMode = ESENSPMode.createESENSPMode ("pullinitiator",
                                                       "pullresponder",
                                                       AS4ServerConfiguration.getServerAddress (),
-                                                      (i, r) -> "PullPMode");
+                                                      (i, r) -> "PullPMode",
+                                                      false);
     if (aSignalMessage.getPullRequest () != null)
     {
       if (!aSignalMessage.getAny ().isEmpty ())

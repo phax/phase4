@@ -37,7 +37,6 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
@@ -90,9 +89,9 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (null, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (true ? null
-         : m_aESENSOneWayPMode.getID (),
+                                                                                                                   : m_aESENSOneWayPMode.getID (),
                                                                                                               true ? null
-                                                                                                                   : MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                                   : DEFAULT_AGREEMENT,
                                                                                                               COLLABORATION_INFO_SERVICE_TYPE,
                                                                                                               COLLABORATION_INFO_SERVICE,
                                                                                                               COLLABORATION_INFO_ACTION,
@@ -103,18 +102,18 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                                       TO_PARTY_ID);
 
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MessageHelperMethods.createEmbs3PropertiesSpecial ("C1",
-                                                                                                             "C4");
+    final ICommonsList <Ebms3Property> aEbms3Properties = MessageHelperMethods.createEmbs3PropertiesOriginalSenderFinalRecipient ("C1",
+                                                                                                                                  "C4");
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("trackingidentifier", "tracker"));
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
     final AS4UserMessage aUserMsg = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                          aEbms3PayloadInfo,
-                                                                          aEbms3CollaborationInfo,
-                                                                          aEbms3PartyInfo,
-                                                                          aEbms3MessageProperties,
-                                                                          m_eSOAPVersion)
-                                                      .setMustUnderstand (true);
+                                                           aEbms3PayloadInfo,
+                                                           aEbms3CollaborationInfo,
+                                                           aEbms3PartyInfo,
+                                                           aEbms3MessageProperties,
+                                                           m_eSOAPVersion)
+                                                  .setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,

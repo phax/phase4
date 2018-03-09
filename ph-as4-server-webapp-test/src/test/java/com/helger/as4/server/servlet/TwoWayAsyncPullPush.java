@@ -78,7 +78,8 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",
                                                                                           AS4TestConstants.DEFAULT_SERVER_ADDRESS),
-                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
+                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                      false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 

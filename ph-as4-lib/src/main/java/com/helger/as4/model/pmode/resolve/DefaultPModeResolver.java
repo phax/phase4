@@ -54,16 +54,14 @@ public class DefaultPModeResolver implements IPModeResolver
     IPMode ret = null;
     if (StringHelper.hasText (sPModeID))
     {
-      // An ID is present - resolve this ID
-      // If provided ID is not present than the incoming message is rejected
-      // with an error!
+      // An ID is present - try to resolve this ID
       ret = aPModeMgr.getPModeOfID (sPModeID);
     }
 
     if (ret == null)
     {
       // the PMode id field is empty or null (or invalid)
-      // Use combination of service and action
+      // try a combination of service and action
       ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
     }
 
@@ -83,6 +81,6 @@ public class DefaultPModeResolver implements IPModeResolver
       return null;
     }
 
-    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress);
+    return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress, true);
   }
 }

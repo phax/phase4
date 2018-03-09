@@ -36,7 +36,6 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -57,6 +56,7 @@ import com.helger.xml.serialize.read.DOMReader;
 public final class AS4ClientUserMessageTest
 {
   private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
+  private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   private static AS4ResourceManager s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
@@ -99,12 +99,12 @@ public final class AS4ClientUserMessageTest
     aClient.setServiceType ("MyServiceType");
     aClient.setServiceValue ("OrderPaper");
     aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
-    aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
+    aClient.setAgreementRefValue (DEFAULT_AGREEMENT);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     aClient.setFromPartyID (sSenderID);
     aClient.setToRole (CAS4.DEFAULT_ROLE);
     aClient.setToPartyID (sResponderID);
-    aClient.setEbms3Properties (MockEbmsHelper.getEBMSProperties ());
+    aClient.setEbms3Properties (AS4TestConstants.getEBMSProperties ());
 
     return aClient;
   }
@@ -166,7 +166,7 @@ public final class AS4ClientUserMessageTest
     _ensureInvalidState (aClient);
     aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
     _ensureInvalidState (aClient);
-    aClient.setAgreementRefValue (MockEbmsHelper.DEFAULT_AGREEMENT);
+    aClient.setAgreementRefValue (DEFAULT_AGREEMENT);
     _ensureInvalidState (aClient);
     aClient.setFromRole (CAS4.DEFAULT_ROLE);
     _ensureInvalidState (aClient);
@@ -176,7 +176,7 @@ public final class AS4ClientUserMessageTest
     _ensureInvalidState (aClient);
     aClient.setToPartyID ("MyPartyIDforReceving");
     _ensureInvalidState (aClient);
-    aClient.setEbms3Properties (MockEbmsHelper.getEBMSProperties ());
+    aClient.setEbms3Properties (AS4TestConstants.getEBMSProperties ());
     _ensureValidState (aClient);
   }
 

@@ -46,7 +46,6 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -93,10 +92,10 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     // Default CollaborationInfo for testing
     m_aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (DEFAULT_PARTY_ID +
-                                            "12-" +
-                                            DEFAULT_PARTY_ID +
-                                            "12",
-                                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                 "12-" +
+                                                                                                 DEFAULT_PARTY_ID +
+                                                                                                 "12",
+                                                                                                 DEFAULT_AGREEMENT,
                                                                                                  null,
                                                                                                  CAS4.DEFAULT_SERVICE_URL,
                                                                                                  CAS4.DEFAULT_ACTION_URL,
@@ -126,8 +125,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.getCollaborationInfo ().setService (aService);
 
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
@@ -149,8 +148,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                        .setAction ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
 
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
@@ -165,9 +164,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     // Needed since different ids set in message and pmode otherwise
     m_aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (aPMode.getInitiatorID () +
-                                            "-" +
-                                            aPMode.getResponderID (),
-                                                                                                 MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                 "-" +
+                                                                                                 aPMode.getResponderID (),
+                                                                                                 DEFAULT_AGREEMENT,
                                                                                                  null,
                                                                                                  CAS4.DEFAULT_SERVICE_URL,
                                                                                                  CAS4.DEFAULT_ACTION_URL,
@@ -184,9 +183,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
       final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                             AS4UserMessage.create (m_eSOAPVersion,
-                                                                                                                               m_aEbms3UserMessage)
-                                                                                              .setMustUnderstand (true)
-                                                                                              .getAsSOAPDocument (m_aPayload),
+                                                                                                   m_aEbms3UserMessage)
+                                                                                          .setMustUnderstand (true)
+                                                                                          .getAsSOAPDocument (m_aPayload),
                                                                             m_eSOAPVersion,
                                                                             null,
                                                                             s_aResMgr,
@@ -225,18 +224,17 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       aPModeMgr.createOrUpdatePMode (aPMode);
       // Needed since different ids set in message and pmode otherwise
       m_aEbms3UserMessage.setCollaborationInfo (MessageHelperMethods.createEbms3CollaborationInfo (aPMode.getInitiatorID () +
-                                              "-" +
-                                              aPMode.getResponderID (),
-                                                                                                   MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                   "-" +
+                                                                                                   aPMode.getResponderID (),
+                                                                                                   DEFAULT_AGREEMENT,
                                                                                                    null,
                                                                                                    CAS4.DEFAULT_SERVICE_URL,
                                                                                                    CAS4.DEFAULT_ACTION_URL,
                                                                                                    AS4TestConstants.TEST_CONVERSATION_ID));
 
-      final Document aSignedDoc = AS4UserMessage.create (m_eSOAPVersion,
-                                                                                     m_aEbms3UserMessage)
-                                                    .setMustUnderstand (true)
-                                                    .getAsSOAPDocument (m_aPayload);
+      final Document aSignedDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
+                                                .setMustUnderstand (true)
+                                                .getAsSOAPDocument (m_aPayload);
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion),
                         false,
@@ -256,8 +254,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     m_aEbms3UserMessage.setMpc ("http://random.com/testmpc");
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
                       false,
@@ -269,8 +267,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     m_aEbms3UserMessage.setMessageProperties (null);
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), false, "");
   }
@@ -286,8 +284,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), false, "");
   }
@@ -296,7 +294,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageFinalRecipientButNoOriginalSender () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
     aEbms3Properties.removeIf (prop -> prop.getName ().equals (CAS4.ORIGINAL_SENDER));
 
     assertEquals (1, aEbms3Properties.size ());
@@ -306,8 +304,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
                       false,
@@ -318,7 +316,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageOriginalSenderButNoFinalRecipient () throws Exception
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
     aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (CAS4.FINAL_RECIPIENT));
 
     assertEquals (1, aEbms3Properties.size ());
@@ -328,8 +326,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage)
-                                            .setMustUnderstand (true)
-                                            .getAsSOAPDocument (m_aPayload);
+                                        .setMustUnderstand (true)
+                                        .getAsSOAPDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
                       false,

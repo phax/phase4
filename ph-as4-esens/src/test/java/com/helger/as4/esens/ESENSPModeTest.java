@@ -33,7 +33,8 @@ public final class ESENSPModeTest
     ESENSPMode.createESENSPMode ("TestInitiator",
                                  "TestResponder",
                                  "https://test.example.org",
-                                 IPModeIDProvider.DEFAULT_DYNAMIC);
+                                 IPModeIDProvider.DEFAULT_DYNAMIC,
+                                 false);
   }
 
   @Test
@@ -42,6 +43,7 @@ public final class ESENSPModeTest
     ESENSPMode.createESENSPModeTwoWay ("TestInitiator",
                                        "TestResponder",
                                        "https://test.example.org",
-                                       IPModeIDProvider.DEFAULT_DYNAMIC);
+                                       IPModeIDProvider.DEFAULT_DYNAMIC,
+                                       false);
   }
 }

@@ -16,6 +16,13 @@
  */
 package com.helger.as4;
 
+import javax.annotation.Nonnull;
+
+import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.impl.ICommonsList;
+
 public final class AS4TestConstants
 {
   // Default values
@@ -47,4 +54,14 @@ public final class AS4TestConstants
   public static final String NON_REPUDIATION_INFORMATION = "NonRepudiationInformation";
   public static final String RECEIPT_ASSERTCHECK = "Receipt";
   public static final String USERMESSAGE_ASSERTCHECK = "UserMessage";
+
+  private AS4TestConstants ()
+  {}
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ICommonsList <Ebms3Property> getEBMSProperties ()
+  {
+    return MessageHelperMethods.createEmbs3PropertiesOriginalSenderFinalRecipient ("C1-test", "C4-test");
+  }
 }

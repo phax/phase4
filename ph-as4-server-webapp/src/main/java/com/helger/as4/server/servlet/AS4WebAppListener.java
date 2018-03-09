@@ -24,6 +24,12 @@ import javax.servlet.ServletContext;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4.attachment.EAS4CompressionMode;
+import com.helger.as4.esens.ESENSPMode;
+import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.PModeManager;
+import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.debug.GlobalDebug;
@@ -88,6 +94,7 @@ public final class AS4WebAppListener extends WebAppListener
     // Ensure user exists
     final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
     if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
+    {
       aUserMgr.createPredefinedUser (CSecurity.USER_ADMINISTRATOR_ID,
                                      CSecurity.USER_ADMINISTRATOR_LOGIN,
                                      CSecurity.USER_ADMINISTRATOR_EMAIL,
@@ -98,6 +105,7 @@ public final class AS4WebAppListener extends WebAppListener
                                      Locale.US,
                                      null,
                                      false);
+    }
   }
 
   @Override
@@ -105,6 +113,70 @@ public final class AS4WebAppListener extends WebAppListener
   {
     AS4ServerInitializer.initAS4Server ();
     DropFolderUserMessage.init ();
+
+    // CEF conformance testing PModes
+
+    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    {
+      // SIMPLE_ONEWAY
+      // 1. MEP: One way - push
+      // 2. Compress: Yes
+      // 3. Retry: None
+      // 4. Sign: Yes
+      // 5. Encrypt: Yes
+      // 6. Service: SRV_SIMPLE_ONEWAY
+      // 7. Action: ACT_SIMPLE_ONEWAY
+      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
+                                                        "AnyResponderID",
+                                                        "AnyResponderAddress",
+                                                        (i, r) -> "SIMPLE_ONEWAY",
+                                                        false);
+      aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
+      aPMode.getReceptionAwareness ().setRetry (false);
+      aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_SIMPLE_ONEWAY");
+      aPMode.getLeg1 ().getBusinessInfo ().setAction ("ACT_SIMPLE_ONEWAY");
+      aPModeMgr.createOrUpdatePMode (aPMode);
+    }
+    {
+      // SIMPLE_TWOWAY
+      // 1. MEP: Two way push-and-push
+      // 2. Compress: Yes
+      // 3. Retry: None
+      // 4. Sign: Yes
+      // 5. Encrypt: Yes
+      // 6. Service: SRV_SIMPLE_TWOWAY
+      // 7. Action: ACT_SIMPLE_TWOWAY
+      final PMode aPMode = ESENSPMode.createESENSPModeTwoWay ("AnyInitiatorID",
+                                                              "AnyResponderID",
+                                                              "AnyResponderAddress",
+                                                              (i, r) -> "SIMPLE_TWOWAY",
+                                                              false);
+      aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
+      aPMode.getReceptionAwareness ().setRetry (false);
+      aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_SIMPLE_TWOWAY");
+      aPMode.getLeg1 ().getBusinessInfo ().setAction ("ACT_SIMPLE_TWOWAY");
+      aPModeMgr.createOrUpdatePMode (aPMode);
+    }
+    {
+      // ONEWAY_RETRY
+      // 1. MEP: One way - push
+      // 2. Compress: Yes
+      // 3. Retry: 5 (the interval between retries must be less than 3 minutes)
+      // 4. Sign: Yes
+      // 5. Encrypt: Yes
+      // 6. Service: SRV_ONEWAY_RETRY
+      // 7. Action: ACT_ONEWAY_RETRY
+      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
+                                                        "AnyResponderID",
+                                                        "AnyResponderAddress",
+                                                        (i, r) -> "ONEWAY_RETRY",
+                                                        false);
+      aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
+      aPMode.getReceptionAwareness ().setRetry (true);
+      aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_ONEWAY_RETRY");
+      aPMode.getLeg1 ().getBusinessInfo ().setAction ("ACT_ONEWAY_RETRY");
+      aPModeMgr.createOrUpdatePMode (aPMode);
+    }
   }
 
   @Override

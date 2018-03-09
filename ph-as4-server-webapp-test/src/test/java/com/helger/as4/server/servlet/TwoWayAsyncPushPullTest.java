@@ -78,7 +78,8 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",
                                                                                           AS4TestConstants.DEFAULT_SERVER_ADDRESS),
-                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID ());
+                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                      false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
@@ -97,7 +98,6 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     // Delete old PMode since it is getting created in the ESENS createPMode
     MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
-
   }
 
   @Test

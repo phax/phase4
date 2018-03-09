@@ -164,8 +164,8 @@ public final class MessageHelperMethods
 
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <Ebms3Property> createEmbs3PropertiesSpecial (@Nonnull final String sOriginalSender,
-                                                                           @Nonnull final String sFinalRecipient)
+  public static ICommonsList <Ebms3Property> createEmbs3PropertiesOriginalSenderFinalRecipient (@Nonnull final String sOriginalSender,
+                                                                                                @Nonnull final String sFinalRecipient)
   {
     return new CommonsArrayList <> (createEbms3Property (CAS4.ORIGINAL_SENDER, sOriginalSender),
                                     createEbms3Property (CAS4.FINAL_RECIPIENT, sFinalRecipient));

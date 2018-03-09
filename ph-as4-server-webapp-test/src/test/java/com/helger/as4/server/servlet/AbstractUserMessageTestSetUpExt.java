@@ -29,7 +29,6 @@ import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.soap.ESOAPVersion;
@@ -53,6 +52,8 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessageTestSetUp
 {
+  protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
+
   /**
    * Modify the standard user message to try special cases or provoke failure
    * messages.
@@ -147,7 +148,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sReferenceToMessageID);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAnotherOrWrongPModeID,
-                                                                                                              MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                                              DEFAULT_AGREEMENT,
                                                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               AS4TestConstants.TEST_ACTION,
@@ -158,12 +159,12 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                       sSetPartyIDResponder);
 
     final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                      aEbms3PayloadInfo,
-                                                                      aEbms3CollaborationInfo,
-                                                                      aEbms3PartyInfo,
-                                                                      aEbms3MessageProperties,
-                                                                      ESOAPVersion.AS4_DEFAULT)
-                                                  .setMustUnderstand (true);
+                                                       aEbms3PayloadInfo,
+                                                       aEbms3CollaborationInfo,
+                                                       aEbms3PartyInfo,
+                                                       aEbms3MessageProperties,
+                                                       ESOAPVersion.AS4_DEFAULT)
+                                              .setMustUnderstand (true);
 
     return aAttachments != null ? aDoc.getAsSOAPDocument (null) : aDoc.getAsSOAPDocument (aPayload);
   }
@@ -177,7 +178,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   protected Ebms3MessageProperties _defaultProperties ()
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);
     return aEbms3MessageProperties;

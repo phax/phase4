@@ -30,7 +30,6 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.IAS4MessageState;
@@ -61,6 +60,7 @@ import com.helger.xml.serialize.write.XMLWriter;
 public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessageProcessorSPI
 {
   public static final String ACTION_FAILURE = "Failure";
+  private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
@@ -135,7 +135,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
         // Add properties
-        final ICommonsList <Ebms3Property> aEbms3Properties = MockEbmsHelper.getEBMSProperties ();
+        final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
         final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
 
@@ -145,7 +145,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
         final Ebms3CollaborationInfo aEbms3CollaborationInfo;
         final Ebms3PartyInfo aEbms3PartyInfo;
         aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("PullPMode",
-                                                                                     MockEbmsHelper.DEFAULT_AGREEMENT,
+                                                                                     DEFAULT_AGREEMENT,
                                                                                      AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                      MockPModeGenerator.SOAP11_SERVICE,
                                                                                      AS4TestConstants.TEST_ACTION,

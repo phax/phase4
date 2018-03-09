@@ -38,13 +38,13 @@ public class AS4Profile implements IAS4Profile
   private final String m_sID;
   private final String m_sDisplayName;
   private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
-  private final ISupplier <? extends PMode> m_aDefaultPModeProvider;
+  private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
 
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
-                     @Nonnull final ISupplier <? extends PMode> aDefaultPModeProvider,
+                     @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
                      @Nonnull final IPModeIDProvider aPModeIDProvider)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
@@ -85,7 +85,7 @@ public class AS4Profile implements IAS4Profile
                                     @Nonnull @Nonempty final String sResponderID,
                                     @Nullable final String sAddress)
   {
-    return m_aDefaultPModeProvider.get ();
+    return m_aDefaultPModeProvider.getOrCreatePMode (sInitiatorID, sResponderID, sAddress);
   }
 
   @Override

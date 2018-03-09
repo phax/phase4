@@ -30,7 +30,6 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.IPModeIDProvider;
@@ -71,7 +70,8 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
     m_aPMode = ESENSPMode.createESENSPModeTwoWay ("TestInitiator",
                                                   "TestResponder",
                                                   "http://localhost:8080",
-                                                  IPModeIDProvider.DEFAULT_DYNAMIC);
+                                                  IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                  false);
   }
 
   @Test
@@ -159,7 +159,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
   }
@@ -169,7 +173,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (null);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
   }
@@ -180,7 +188,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
     assertNotSame (aSecurityLeg.getX509SignatureAlgorithm (), ECryptoAlgorithmSign.RSA_SHA_256);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
@@ -191,7 +203,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (null);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
   }
@@ -201,7 +217,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
@@ -212,7 +232,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (null);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
   }
@@ -222,7 +246,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_192_CBC);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
@@ -234,7 +262,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setWSSVersion (EWSSVersion.WSS_10);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
   }
@@ -253,7 +285,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setPModeAuthorize (true);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
@@ -264,7 +300,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg2 ().getSecurity ();
     aSecurityLeg.setSendReceipt (true);
     aSecurityLeg.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.CALLBACK);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, aSecurityLeg));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    aSecurityLeg));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("Only response is allowed as pattern")));
@@ -275,7 +315,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, null, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    null,
+                                    null,
+                                    null));
 
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
@@ -291,7 +335,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportAsResponse is a mandatory PMode parameter")));
@@ -307,7 +355,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportAsResponse (false);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportAsResponse has to be True")));
@@ -322,7 +374,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
@@ -338,7 +394,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
@@ -353,7 +413,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
@@ -369,7 +433,11 @@ public final class ESENSCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
     aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
-    m_aPMode.setLeg2 (new PModeLeg (MockEbmsHelper.createMockProtocol (), null, aErrorHandler, null, null));
+    m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("http://test.example.org"),
+                                    null,
+                                    aErrorHandler,
+                                    null,
+                                    null));
     aESENSCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));

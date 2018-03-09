@@ -22,7 +22,6 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.mock.MockEbmsHelper;
 import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
@@ -50,31 +49,18 @@ public final class DefaultPMode
   {}
 
   @Nonnull
-  public static IPMode getOrCreateDefaultPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                                @Nonnull @Nonempty final String sResponderID,
-                                                @Nullable final String sAddress)
+  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
+  }
 
-    // Add "default-" prefix to easily identify "default" PModes
-    final String sDefaultPModeID = "default-" +
-                                   IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (sInitiatorID, sResponderID);
-    // Create or update
-    // Leg 2 stays null, because we only use one-way
-    final PModeLeg aLeg1 = _generatePModeLeg (sAddress);
-    final PModeLeg aLeg2 = null;
-    final PMode aDefaultPMode = new PMode ( (i, r) -> sDefaultPModeID,
-                                            PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL),
-                                            PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
-                                            MockEbmsHelper.DEFAULT_AGREEMENT,
-                                            EMEP.ONE_WAY,
-                                            EMEPBinding.PUSH,
-                                            aLeg1,
-                                            aLeg2,
-                                            (PModePayloadService) null,
-                                            (PModeReceptionAwareness) null);
-    aPModeMgr.createOrUpdatePMode (aDefaultPMode);
-    return aDefaultPMode;
+  @Nonnull
+  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  {
+    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
+                                            CAS4.DEFAULT_ACTION_URL,
+                                            null,
+                                            CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
@@ -100,17 +86,29 @@ public final class DefaultPMode
   }
 
   @Nonnull
-  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  public static IPMode getOrCreateDefaultPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                                @Nonnull @Nonempty final String sResponderID,
+                                                @Nullable final String sAddress,
+                                                final boolean bPersist)
   {
-    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
-                                            CAS4.DEFAULT_ACTION_URL,
-                                            null,
-                                            CAS4.DEFAULT_MPC_ID);
-  }
-
-  @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
-  {
-    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
+    // Add "default-" prefix to easily identify "default" PModes
+    // Leg 2 stays null, because we only use one-way
+    final PMode aDefaultPMode = new PMode ( (i, r) -> "default-" + IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (i, r),
+                                            PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL),
+                                            PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
+                                            "urn:as4:agreement",
+                                            EMEP.ONE_WAY,
+                                            EMEPBinding.PUSH,
+                                            _generatePModeLeg (sAddress),
+                                            (PModeLeg) null,
+                                            (PModePayloadService) null,
+                                            (PModeReceptionAwareness) null);
+    if (bPersist)
+    {
+      // Create or update
+      final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+      aPModeMgr.createOrUpdatePMode (aDefaultPMode);
+    }
+    return aDefaultPMode;
   }
 }
