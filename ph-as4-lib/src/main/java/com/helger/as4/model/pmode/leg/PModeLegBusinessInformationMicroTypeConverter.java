@@ -72,8 +72,8 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
       aPayloadProfiles.put (aPayloadProfile.getName (), aPayloadProfile);
     }
 
-    final Integer aPayloadProfileMaxKB = aElement.getAttributeValueWithConversion (ATTR_PAYLOAD_PROFILE_MAX_KB,
-                                                                                   Integer.class);
+    final Long aPayloadProfileMaxKB = aElement.getAttributeValueWithConversion (ATTR_PAYLOAD_PROFILE_MAX_KB,
+                                                                                Long.class);
     final String sMPCID = aElement.getAttributeValue (ATTR_MPCID);
 
     return new PModeLegBusinessInformation (sService,

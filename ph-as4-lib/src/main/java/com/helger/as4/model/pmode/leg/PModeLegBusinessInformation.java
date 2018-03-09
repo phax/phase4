@@ -67,7 +67,7 @@ public class PModeLegBusinessInformation implements Serializable
    * This parameter allows for specifying a maximum size in kilobytes for the
    * entire payload, i.e. for the total of all payload parts.
    */
-  private Integer m_nPayloadProfileMaxKB;
+  private Long m_nPayloadProfileMaxKB;
 
   /**
    * The value of this parameter is the identifier of the MPC (Message Partition
@@ -78,7 +78,7 @@ public class PModeLegBusinessInformation implements Serializable
 
   public PModeLegBusinessInformation (@Nullable final String sService,
                                       @Nullable final String sAction,
-                                      @Nullable final Integer nPayloadProfileMaxKB,
+                                      @Nullable final Long nPayloadProfileMaxKB,
                                       @Nullable final String sMPCID)
   {
     this (sService, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
@@ -88,7 +88,7 @@ public class PModeLegBusinessInformation implements Serializable
                                       @Nullable final String sAction,
                                       @Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties,
                                       @Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles,
-                                      @Nullable final Integer nPayloadProfileMaxKB,
+                                      @Nullable final Long nPayloadProfileMaxKB,
                                       @Nullable final String sMPCID)
   {
     setService (sService);
@@ -174,12 +174,12 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nullable
-  public Integer getPayloadProfileMaxKB ()
+  public Long getPayloadProfileMaxKB ()
   {
     return m_nPayloadProfileMaxKB;
   }
 
-  public final void setPayloadProfileMaxKB (final Integer nPayloadProfileMaxKB)
+  public final void setPayloadProfileMaxKB (final Long nPayloadProfileMaxKB)
   {
     m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
   }
