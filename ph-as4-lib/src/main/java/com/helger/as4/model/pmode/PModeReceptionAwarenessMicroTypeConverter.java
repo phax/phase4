@@ -27,6 +27,8 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
 {
   private static final String ATTR_RECEPTION_AWARENESS = "ReceptionAwareness";
   private static final String ATTR_RETRY = "Retry";
+  private static final String ATTR_MAX_RETRIES = "MayRetries";
+  private static final String ATTR_RETRY_INTERVAL_MS = "RetryIntervalMS";
   private static final String ATTR_DUPLICATE_DETECTION = "DuplicateDetection";
 
   @Nonnull
@@ -39,6 +41,8 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
       ret.setAttribute (ATTR_RECEPTION_AWARENESS, aValue.isReceptionAwareness ());
     if (aValue.isRetryDefined ())
       ret.setAttribute (ATTR_RETRY, aValue.isRetry ());
+    ret.setAttribute (ATTR_MAX_RETRIES, aValue.getMaxRetries ());
+    ret.setAttribute (ATTR_RETRY_INTERVAL_MS, aValue.getRetryIntervalMS ());
     if (aValue.isDuplicateDetectionDefined ())
       ret.setAttribute (ATTR_DUPLICATE_DETECTION, aValue.isDuplicateDetection ());
     return ret;
@@ -51,8 +55,16 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
                                                        PModeReceptionAwareness.DEFAULT_RECEPTION_AWARENESS);
     final ETriState eRetry = getTriState (aElement.getAttributeValue (ATTR_RETRY),
                                           PModeReceptionAwareness.DEFAULT_RETRY);
+    final int nMaxRetries = aElement.getAttributeValueAsInt (ATTR_MAX_RETRIES,
+                                                             PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
+    final int nRetryIntervalMS = aElement.getAttributeValueAsInt (ATTR_RETRY_INTERVAL_MS,
+                                                                  PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS);
     final ETriState eDuplicateDetection = getTriState (aElement.getAttributeValue (ATTR_DUPLICATE_DETECTION),
                                                        PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 }

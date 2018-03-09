@@ -18,6 +18,7 @@ package com.helger.as4.model.pmode;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
@@ -28,18 +29,26 @@ public class PModeReceptionAwareness implements Serializable
 {
   public static final boolean DEFAULT_RECEPTION_AWARENESS = true;
   public static final boolean DEFAULT_RETRY = true;
+  public static final int DEFAULT_MAX_RETRIES = 1;
+  public static final int DEFAULT_RETRY_INTERVAL_MS = 10_000;
   public static final boolean DEFAULT_DUPLICATE_DETECTION = true;
 
   private ETriState m_eReceptionAwareness;
   private ETriState m_eRetry;
+  private int m_nMaxRetries;
+  private int m_nRetryIntervalMS;
   private ETriState m_eDuplicateDetection;
 
   public PModeReceptionAwareness (@Nonnull final ETriState eReceptionAwareness,
                                   @Nonnull final ETriState eRetry,
+                                  final int nMaxRetries,
+                                  final int nRetryIntervalMS,
                                   @Nonnull final ETriState eDuplicateDetection)
   {
     setReceptionAwareness (eReceptionAwareness);
     setRetry (eRetry);
+    setMaxRetries (nMaxRetries);
+    setRetryIntervalMS (nRetryIntervalMS);
     setDuplicateDetection (eDuplicateDetection);
   }
 
@@ -54,7 +63,7 @@ public class PModeReceptionAwareness implements Serializable
     return m_eReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
   }
 
-  public void setReceptionAwareness (final boolean bReceptionAwareness)
+  public final void setReceptionAwareness (final boolean bReceptionAwareness)
   {
     setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
   }
@@ -76,7 +85,7 @@ public class PModeReceptionAwareness implements Serializable
     return m_eRetry.getAsBooleanValue (DEFAULT_RETRY);
   }
 
-  public void setRetry (final boolean bRetry)
+  public final void setRetry (final boolean bRetry)
   {
     setRetry (ETriState.valueOf (bRetry));
   }
@@ -85,6 +94,30 @@ public class PModeReceptionAwareness implements Serializable
   {
     ValueEnforcer.notNull (eRetry, "Retry");
     m_eRetry = eRetry;
+  }
+
+  @Nonnegative
+  public int getMaxRetries ()
+  {
+    return m_nMaxRetries;
+  }
+
+  public final void setMaxRetries (@Nonnegative final int nMaxRetries)
+  {
+    ValueEnforcer.isGE0 (nMaxRetries, "MaxRetries");
+    m_nMaxRetries = nMaxRetries;
+  }
+
+  @Nonnegative
+  public int getRetryIntervalMS ()
+  {
+    return m_nRetryIntervalMS;
+  }
+
+  public final void setRetryIntervalMS (@Nonnegative final int nRetryIntervalMS)
+  {
+    ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
+    m_nRetryIntervalMS = nRetryIntervalMS;
   }
 
   public boolean isDuplicateDetectionDefined ()
@@ -98,7 +131,7 @@ public class PModeReceptionAwareness implements Serializable
     return m_eDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
   }
 
-  public void setDuplicateDetection (final boolean bDuplicateDetection)
+  public final void setDuplicateDetection (final boolean bDuplicateDetection)
   {
     setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
   }
@@ -119,6 +152,8 @@ public class PModeReceptionAwareness implements Serializable
     final PModeReceptionAwareness rhs = (PModeReceptionAwareness) o;
     return m_eReceptionAwareness.equals (rhs.m_eReceptionAwareness) &&
            m_eRetry.equals (rhs.m_eRetry) &&
+           m_nMaxRetries == rhs.m_nMaxRetries &&
+           m_nRetryIntervalMS == rhs.m_nRetryIntervalMS &&
            m_eDuplicateDetection.equals (rhs.m_eDuplicateDetection);
   }
 
@@ -127,6 +162,8 @@ public class PModeReceptionAwareness implements Serializable
   {
     return new HashCodeGenerator (this).append (m_eReceptionAwareness)
                                        .append (m_eRetry)
+                                       .append (m_nMaxRetries)
+                                       .append (m_nRetryIntervalMS)
                                        .append (m_eDuplicateDetection)
                                        .getHashCode ();
   }
@@ -136,6 +173,8 @@ public class PModeReceptionAwareness implements Serializable
   {
     return new PModeReceptionAwareness (ETriState.valueOf (DEFAULT_RECEPTION_AWARENESS),
                                         ETriState.valueOf (DEFAULT_RETRY),
+                                        DEFAULT_MAX_RETRIES,
+                                        DEFAULT_RETRY_INTERVAL_MS,
                                         ETriState.valueOf (DEFAULT_DUPLICATE_DETECTION));
   }
 }
