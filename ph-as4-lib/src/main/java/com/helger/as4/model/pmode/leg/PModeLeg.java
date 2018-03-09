@@ -22,14 +22,15 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.string.ToStringGenerator;
 
 public class PModeLeg implements Serializable
 {
-  private final PModeLegProtocol m_aProtocol;
-  private final PModeLegBusinessInformation m_aBusinessInfo;
-  private final PModeLegErrorHandling m_aErrorHandling;
-  private final PModeLegReliability m_aReliability;
-  private final PModeLegSecurity m_aSecurity;
+  private PModeLegProtocol m_aProtocol;
+  private PModeLegBusinessInformation m_aBusinessInfo;
+  private PModeLegErrorHandling m_aErrorHandling;
+  private PModeLegReliability m_aReliability;
+  private PModeLegSecurity m_aSecurity;
 
   public PModeLeg (@Nullable final PModeLegProtocol aProtocol,
                    @Nullable final PModeLegBusinessInformation aBusinessInfo,
@@ -37,11 +38,11 @@ public class PModeLeg implements Serializable
                    @Nullable final PModeLegReliability aReliability,
                    @Nullable final PModeLegSecurity aSecurity)
   {
-    m_aBusinessInfo = aBusinessInfo;
-    m_aErrorHandling = aErrorHandling;
-    m_aProtocol = aProtocol;
-    m_aReliability = aReliability;
-    m_aSecurity = aSecurity;
+    setProtocol (aProtocol);
+    setBusinessInfo (aBusinessInfo);
+    setErrorHandling (aErrorHandling);
+    setReliability (aReliability);
+    setSecurity (aSecurity);
   }
 
   @Nullable
@@ -50,10 +51,20 @@ public class PModeLeg implements Serializable
     return m_aProtocol;
   }
 
+  public final void setProtocol (@Nullable final PModeLegProtocol aProtocol)
+  {
+    m_aProtocol = aProtocol;
+  }
+
   @Nullable
   public PModeLegBusinessInformation getBusinessInfo ()
   {
     return m_aBusinessInfo;
+  }
+
+  public final void setBusinessInfo (@Nullable final PModeLegBusinessInformation aBusinessInfo)
+  {
+    m_aBusinessInfo = aBusinessInfo;
   }
 
   @Nullable
@@ -62,16 +73,31 @@ public class PModeLeg implements Serializable
     return m_aErrorHandling;
   }
 
+  public final void setErrorHandling (@Nullable final PModeLegErrorHandling aErrorHandling)
+  {
+    m_aErrorHandling = aErrorHandling;
+  }
+
   @Nullable
   public PModeLegReliability getReliability ()
   {
     return m_aReliability;
   }
 
+  public final void setReliability (@Nullable final PModeLegReliability aReliability)
+  {
+    m_aReliability = aReliability;
+  }
+
   @Nullable
   public PModeLegSecurity getSecurity ()
   {
     return m_aSecurity;
+  }
+
+  public final void setSecurity (@Nullable final PModeLegSecurity aSecurity)
+  {
+    m_aSecurity = aSecurity;
   }
 
   @Override
@@ -98,5 +124,16 @@ public class PModeLeg implements Serializable
                                        .append (m_aReliability)
                                        .append (m_aSecurity)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Protocol", m_aProtocol)
+                                       .append ("BusinessInfo", m_aBusinessInfo)
+                                       .append ("ErrorHandling", m_aErrorHandling)
+                                       .append ("Reliability", m_aReliability)
+                                       .append ("Security", m_aSecurity)
+                                       .getToString ();
   }
 }
