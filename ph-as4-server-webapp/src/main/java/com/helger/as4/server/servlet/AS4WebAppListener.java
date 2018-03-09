@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.mgr.MetaAS4Manager;
@@ -173,8 +174,53 @@ public final class AS4WebAppListener extends WebAppListener
                                                         false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (true);
+      aPMode.getReceptionAwareness ().setMaxRetries (5);
+      aPMode.getReceptionAwareness ().setRetryIntervalMS (10_000);
       aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_ONEWAY_RETRY");
       aPMode.getLeg1 ().getBusinessInfo ().setAction ("ACT_ONEWAY_RETRY");
+      aPModeMgr.createOrUpdatePMode (aPMode);
+    }
+    {
+      // ONEWAY_ONLY_SIGN
+      // 1. MEP: One way - push
+      // 2. Compress: Yes
+      // 3. Retry: None
+      // 4. Sign: Yes
+      // 5. Encrypt: No
+      // 6. Service: SRV_ONEWAY_SIGNONLY
+      // 7. Action: ACT_ONEWAY_SIGNONLY
+      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
+                                                        "AnyResponderID",
+                                                        "AnyResponderAddress",
+                                                        (i, r) -> "ONEWAY_ONLY_SIGN",
+                                                        false);
+      aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
+      aPMode.getReceptionAwareness ().setRetry (false);
+      aPMode.getLeg1 ().getSecurity ().setX509EncryptionAlgorithm (null);
+      aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_ONEWAY_SIGNONLY");
+      aPMode.getLeg1 ().getBusinessInfo ().setAction ("ACT_ONEWAY_SIGNONLY");
+      aPModeMgr.createOrUpdatePMode (aPMode);
+    }
+    {
+      // PING
+      // 1. MEP: One way - push
+      // 2. Compress: Yes
+      // 3. Retry: None
+      // 4. Sign: Yes
+      // 5. Encrypt: Yes
+      // 6. Service:
+      // http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service
+      // 7. Action:
+      // http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test
+      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
+                                                        "AnyResponderID",
+                                                        "AnyResponderAddress",
+                                                        (i, r) -> "PING",
+                                                        false);
+      aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
+      aPMode.getReceptionAwareness ().setRetry (false);
+      aPMode.getLeg1 ().getBusinessInfo ().setService (CAS4.DEFAULT_SERVICE_URL);
+      aPMode.getLeg1 ().getBusinessInfo ().setAction (CAS4.DEFAULT_ACTION_URL);
       aPModeMgr.createOrUpdatePMode (aPMode);
     }
   }
