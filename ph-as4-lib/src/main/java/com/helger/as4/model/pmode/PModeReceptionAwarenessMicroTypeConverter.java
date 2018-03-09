@@ -16,19 +16,23 @@
  */
 package com.helger.as4.model.pmode;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
 public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeReceptionAwareness>
 {
-  private static final String ATTR_RECEPTION_AWARENESS = "WSSVersion";
-  private static final String ATTR_RETRY = "X509Sign";
-  private static final String ATTR_DOUBLE_DETECTION = "X509SignatureCertificate";
+  private static final String ATTR_RECEPTION_AWARENESS = "ReceptionAwareness";
+  private static final String ATTR_RETRY = "Retry";
+  private static final String ATTR_DUPLICATE_DETECTION = "DuplicateDetection";
 
-  public IMicroElement convertToMicroElement (final PModeReceptionAwareness aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final PModeReceptionAwareness aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     if (aValue.isReceptionAwarenessDefined ())
@@ -36,20 +40,19 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
     if (aValue.isRetryDefined ())
       ret.setAttribute (ATTR_RETRY, aValue.isRetry ());
     if (aValue.isDuplicateDetectionDefined ())
-      ret.setAttribute (ATTR_DOUBLE_DETECTION, aValue.isDuplicateDetection ());
+      ret.setAttribute (ATTR_DUPLICATE_DETECTION, aValue.isDuplicateDetection ());
     return ret;
   }
 
+  @Nonnull
   public PModeReceptionAwareness convertToNative (final IMicroElement aElement)
   {
     final ETriState eReceptionAwareness = getTriState (aElement.getAttributeValue (ATTR_RECEPTION_AWARENESS),
                                                        PModeReceptionAwareness.DEFAULT_RECEPTION_AWARENESS);
     final ETriState eRetry = getTriState (aElement.getAttributeValue (ATTR_RETRY),
                                           PModeReceptionAwareness.DEFAULT_RETRY);
-    final ETriState eDoubleDetection = getTriState (aElement.getAttributeValue (ATTR_DOUBLE_DETECTION),
-                                                    PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
-
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, eDoubleDetection);
+    final ETriState eDuplicateDetection = getTriState (aElement.getAttributeValue (ATTR_DUPLICATE_DETECTION),
+                                                       PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
+    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, eDuplicateDetection);
   }
-
 }
