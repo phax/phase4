@@ -378,17 +378,9 @@ public final class AS4Handler implements AutoCloseable
                         "; error details: " +
                         aErrorList);
 
+        final String sRefToMessageID = aState.getRefToMessageID ();
         for (final IError aError : aErrorList)
         {
-          Ebms3MessageInfo aMsgInfo = null;
-          if (aState.getMessaging () != null)
-            if (aState.getMessaging ().hasUserMessageEntries ())
-              aMsgInfo = aState.getMessaging ().getUserMessageAtIndex (0).getMessageInfo ();
-            else
-              if (aState.getMessaging ().hasSignalMessageEntries ())
-                aMsgInfo = aState.getMessaging ().getSignalMessageAtIndex (0).getMessageInfo ();
-          final String sRefToMessageID = aMsgInfo != null ? aMsgInfo.getMessageId () : "";
-
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
           if (ePredefinedError != null)
             aErrorMessages.add (ePredefinedError.getAsEbms3Error (m_aLocale, sRefToMessageID));
@@ -730,10 +722,17 @@ public final class AS4Handler implements AutoCloseable
                              (aEbmsError != null ? 1 : 0);
       // Errors do not count
       if (nCountData != 1)
-        throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
+      {
+        // send EBMS:0001 error back
+        if (true)
+          aErrorMessages.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (m_aLocale,
+                                                                                    aState.getRefToMessageID ()));
+        else
+          throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
+      }
 
       // XXX debugging
-      if (aEbmsReceipt != null)
+      if (isDebug () && aEbmsReceipt != null)
       {
         s_aLogger.info ("RECEIPT INCOMING");
       }
@@ -1119,11 +1118,11 @@ public final class AS4Handler implements AutoCloseable
     }
 
     final AS4UserMessage aResponseUserMessage = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                                      aEbms3PayloadInfo,
-                                                                                      aEbms3CollaborationInfo,
-                                                                                      aEbms3PartyInfo,
-                                                                                      aEbms3MessageProperties,
-                                                                                      eSOAPVersion);
+                                                                       aEbms3PayloadInfo,
+                                                                       aEbms3CollaborationInfo,
+                                                                       aEbms3PartyInfo,
+                                                                       aEbms3MessageProperties,
+                                                                       eSOAPVersion);
     return aResponseUserMessage;
   }
 

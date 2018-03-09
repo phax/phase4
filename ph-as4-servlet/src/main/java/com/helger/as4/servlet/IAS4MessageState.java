@@ -32,6 +32,7 @@ import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -71,6 +72,20 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    */
   @Nullable
   Ebms3Messaging getMessaging ();
+
+  @Nullable
+  default String getRefToMessageID ()
+  {
+    Ebms3MessageInfo aMsgInfo = null;
+    final Ebms3Messaging aMessaging = getMessaging ();
+    if (aMessaging != null)
+      if (aMessaging.hasUserMessageEntries ())
+        aMsgInfo = aMessaging.getUserMessageAtIndex (0).getMessageInfo ();
+      else
+        if (aMessaging.hasSignalMessageEntries ())
+          aMsgInfo = aMessaging.getSignalMessageAtIndex (0).getMessageInfo ();
+    return aMsgInfo != null ? aMsgInfo.getMessageId () : "";
+  }
 
   /**
    * @return the PMode that is used with the current message

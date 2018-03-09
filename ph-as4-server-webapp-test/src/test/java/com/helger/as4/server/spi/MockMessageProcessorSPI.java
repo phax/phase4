@@ -96,15 +96,18 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 
     // Must be a pull-request
     final Ebms3PullRequest aPullRequest = aSignalMessage.getPullRequest ();
-    if (aPullRequest.getMpc ().equals (MPC_FAILURE))
+    if (aPullRequest != null)
     {
-      return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
-    }
+      if (aPullRequest.getMpc ().equals (MPC_FAILURE))
+      {
+        return AS4SignalMessageProcessorResult.createFailure ("Error in creating the usermessage - mock MPC 'failure' was used!");
+      }
 
-    // Empty MPC
-    if (aPullRequest.getMpc ().equals (MPC_EMPTY))
-    {
-      return AS4SignalMessageProcessorResult.createSuccess ();
+      // Empty MPC
+      if (aPullRequest.getMpc ().equals (MPC_EMPTY))
+      {
+        return AS4SignalMessageProcessorResult.createSuccess ();
+      }
     }
 
     try
@@ -140,7 +143,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       aUserMessage.setMessageProperties (aEbms3MessageProperties);
       aUserMessage.setPartyInfo (aEbms3PartyInfo);
       aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
-      aUserMessage.setMpc (aPullRequest.getMpc ());
+      if (aPullRequest != null)
+        aUserMessage.setMpc (aPullRequest.getMpc ());
 
       return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
     }

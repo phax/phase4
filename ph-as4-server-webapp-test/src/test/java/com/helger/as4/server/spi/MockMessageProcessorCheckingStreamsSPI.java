@@ -42,6 +42,7 @@ import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
+import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
@@ -128,7 +129,8 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
-    if (aSignalMessage.getPullRequest ().getMpc ().equals ("TWO-SPI"))
+    final Ebms3PullRequest aPR = aSignalMessage.getPullRequest ();
+    if (aPR != null && aPR.getMpc ().equals ("TWO-SPI"))
     {
       try
       {
