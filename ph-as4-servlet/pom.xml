@@ -82,8 +82,8 @@
             <Export-Package>com.helger.as4.servlet.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI)"; cardinality:=multiple,
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI)"; cardinality:=multiple</Require-Capability>
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI)"; cardinality:=multiple; resolution:=optional,
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
           </instructions>
         </configuration>
       </plugin>

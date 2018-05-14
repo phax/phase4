@@ -119,7 +119,7 @@
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple</Require-Capability>
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI</Provide-Capability>
           </instructions>
         </configuration>
