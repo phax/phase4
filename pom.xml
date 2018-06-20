@@ -67,7 +67,7 @@
   </developers>
 
   <properties>
-    <wss4j.version>2.2.1</wss4j.version>
+    <wss4j.version>2.2.2</wss4j.version>
   </properties>
   
   <dependencyManagement>
@@ -75,7 +75,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>9.1.2-SNAPSHOT</version>
+        <version>9.1.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
