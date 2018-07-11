@@ -109,6 +109,32 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.wss4j</groupId>
+      <artifactId>wss4j-ws-security-dom</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.xml.stream</groupId>
+          <artifactId>stax-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.javamail</groupId>
+          <artifactId>geronimo-javamail_1.4_mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-saml-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-xacml-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-xacml-saml-impl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
