@@ -62,7 +62,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class MainAS4Client
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (MainAS4Client.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainAS4Client.class);
 
   private MainAS4Client ()
   {}
@@ -106,7 +106,7 @@ public final class MainAS4Client
 
       final CloseableHttpClient aClient = new HttpClientFactory ().setSSLContext (aSSLContext).createHttpClient ();
 
-      s_aLogger.info ("Sending to " + sURL);
+      LOGGER.info ("Sending to " + sURL);
       final HttpPost aPost = new HttpPost (sURL);
 
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
@@ -189,18 +189,18 @@ public final class MainAS4Client
                 throw new IllegalStateException ("Some test message should be selected :)");
 
       // XXX reinstate if you wanna see the request that is getting sent
-      s_aLogger.info (EntityUtils.toString (aPost.getEntity ()));
+      LOGGER.info (EntityUtils.toString (aPost.getEntity ()));
 
       final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);
 
-      s_aLogger.info ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
+      LOGGER.info ("GET Response Status:: " + aHttpResponse.getStatusLine ().getStatusCode ());
 
       // print result
-      s_aLogger.info (EntityUtils.toString (aHttpResponse.getEntity ()));
+      LOGGER.info (EntityUtils.toString (aHttpResponse.getEntity ()));
     }
     catch (final Exception e)
     {
-      s_aLogger.error ("Error occurred while sending SOAP Request to Server", e);
+      LOGGER.error ("Error occurred while sending SOAP Request to Server", e);
     }
   }
 }

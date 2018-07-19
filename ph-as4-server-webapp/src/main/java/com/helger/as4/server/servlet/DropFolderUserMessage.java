@@ -80,7 +80,7 @@ public final class DropFolderUserMessage
   private static final IPeppolURLProvider UP = PeppolURLProvider.INSTANCE;
   private static final String PATH_DONE = "done";
   private static final String PATH_ERROR = "error";
-  private static final Logger s_aLogger = LoggerFactory.getLogger (DropFolderUserMessage.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (DropFolderUserMessage.class);
   private static WatchDir s_aWatch;
 
   private DropFolderUserMessage ()
@@ -99,7 +99,7 @@ public final class DropFolderUserMessage
   {
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
-    s_aLogger.info ("Trying to send " + aSendFile.toString ());
+    LOGGER.info ("Trying to send " + aSendFile.toString ());
     try
     {
       // Read generic SBD
@@ -107,7 +107,7 @@ public final class DropFolderUserMessage
                                                       .read (Files.newInputStream (aSendFile));
       if (aSBD == null)
       {
-        s_aLogger.error ("Failed to read " + aSendFile.toString () + " as SBDH document!");
+        LOGGER.error ("Failed to read " + aSendFile.toString () + " as SBDH document!");
       }
       else
       {
@@ -115,7 +115,7 @@ public final class DropFolderUserMessage
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
         if (aSBDH == null)
         {
-          s_aLogger.error ("Failed to read " + aSendFile.toString () + " as PEPPOL SBDH document!");
+          LOGGER.error ("Failed to read " + aSendFile.toString () + " as PEPPOL SBDH document!");
         }
         else
         {
@@ -126,7 +126,7 @@ public final class DropFolderUserMessage
                                                                  ESMPTransportProfile.TRANSPORT_PROFILE_BDXR_AS4);
           if (aEndpoint == null)
           {
-            s_aLogger.error ("Found no endpoint for:\n  Receiver ID: " +
+            LOGGER.error ("Found no endpoint for:\n  Receiver ID: " +
                              aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
                              "\n  Document type ID: " +
                              aSBDH.getDocumentTypeAsIdentifier ().getURIEncoded () +
@@ -185,7 +185,7 @@ public final class DropFolderUserMessage
 
             final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                new ResponseHandlerByteArray ());
-            s_aLogger.info ("Successfully transmitted document with message ID '" +
+            LOGGER.info ("Successfully transmitted document with message ID '" +
                             aResponseEntity.getMessageID () +
                             "' for '" +
                             aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
@@ -201,9 +201,9 @@ public final class DropFolderUserMessage
               final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
               final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
               if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
-                s_aLogger.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
+                LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
               else
-                s_aLogger.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
+                LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
             }
 
             bSuccess = true;
@@ -213,7 +213,7 @@ public final class DropFolderUserMessage
     }
     catch (final Throwable t)
     {
-      s_aLogger.error ("Error sending " + aSendFile.toString (), t);
+      LOGGER.error ("Error sending " + aSendFile.toString (), t);
     }
 
     // After the exception handler!
@@ -227,7 +227,7 @@ public final class DropFolderUserMessage
       }
       catch (final IOException ex)
       {
-        s_aLogger.error ("Error moving from '" + aSendFile.toString () + "' to '" + aDest + "'", ex);
+        LOGGER.error ("Error moving from '" + aSendFile.toString () + "' to '" + aDest + "'", ex);
       }
     }
   }
@@ -250,8 +250,8 @@ public final class DropFolderUserMessage
 
       // Start watching directory for changes
       final IWatchDirCallback aCB = (eAction, aCurFile) -> {
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("WatchEvent " + eAction + " - " + aCurFile);
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("WatchEvent " + eAction + " - " + aCurFile);
         if (!eAction.equals (EWatchDirAction.DELETE) &&
             aCurFile.toFile ().isFile () &&
             aCurFile.getFileName ().toString ().endsWith (".xml"))
@@ -285,7 +285,7 @@ public final class DropFolderUserMessage
     {
       StreamHelper.close (s_aWatch);
       s_aWatch = null;
-      s_aLogger.info ("Successfully shutdown WatchDir");
+      LOGGER.info ("Successfully shutdown WatchDir");
     }
   }
 }

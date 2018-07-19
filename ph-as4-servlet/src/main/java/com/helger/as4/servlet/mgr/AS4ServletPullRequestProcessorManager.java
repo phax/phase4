@@ -39,7 +39,7 @@ import com.helger.commons.lang.ServiceLoaderHelper;
 @ThreadSafe
 public final class AS4ServletPullRequestProcessorManager
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ServletPullRequestProcessorManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletPullRequestProcessorManager.class);
 
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
@@ -56,9 +56,9 @@ public final class AS4ServletPullRequestProcessorManager
   {
     final ICommonsList <IAS4ServletPullRequestProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletPullRequestProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
-      s_aLogger.warn ("No AS4 message processor is registered. All incoming pull requests will be discarded!");
+      LOGGER.warn ("No AS4 message processor is registered. All incoming pull requests will be discarded!");
     else
-      s_aLogger.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
+      LOGGER.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
 
     s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }

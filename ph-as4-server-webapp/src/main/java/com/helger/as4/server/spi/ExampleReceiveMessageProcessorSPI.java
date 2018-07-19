@@ -42,7 +42,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 @IsSPIImplementation
 public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (ExampleReceiveMessageProcessorSPI.class);
 
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
@@ -51,7 +51,7 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                           @Nonnull final IAS4MessageState aState)
   {
-    s_aLogger.info ("Received AS4 user message");
+    LOGGER.info ("Received AS4 user message");
 
     return AS4MessageProcessorResult.createSuccess (aIncomingAttachments, null);
   }
@@ -64,19 +64,19 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
     if (aSignalMessage.getReceipt () != null)
     {
       // Receipt - just acknowledge
-      s_aLogger.info ("Received AS4 Receipt");
+      LOGGER.info ("Received AS4 Receipt");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     if (!aSignalMessage.getError ().isEmpty ())
     {
       // Error - just acknowledge
-      s_aLogger.info ("Received AS4 Error");
+      LOGGER.info ("Received AS4 Error");
       return AS4SignalMessageProcessorResult.createSuccess ();
     }
 
     // Must be a pull-request
-    s_aLogger.info ("Received AS4 Pull-Request");
+    LOGGER.info ("Received AS4 Pull-Request");
     return AS4SignalMessageProcessorResult.createFailure ("Pull-Request is not supported by this example SPI");
   }
 }

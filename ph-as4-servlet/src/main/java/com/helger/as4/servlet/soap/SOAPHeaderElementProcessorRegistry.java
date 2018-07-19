@@ -42,7 +42,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
 @ThreadSafe
 public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSingleton
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorRegistry.class);
   @GuardedBy ("m_aRWLock")
   private final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> m_aMap = new CommonsLinkedHashMap <> ();
 
@@ -68,7 +68,7 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
         throw new IllegalArgumentException ("A processor for QName " + aQName.toString () + " is already registered!");
       m_aMap.put (aQName, aProcessor);
     });
-    s_aLogger.info ("Successfully registered SOAP header element processor for " + aQName.toString ());
+    LOGGER.info ("Successfully registered SOAP header element processor for " + aQName.toString ());
   }
 
   @Nullable

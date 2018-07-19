@@ -40,7 +40,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public final class AS4WorkerPool extends AbstractGlobalSingleton
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4WorkerPool.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4WorkerPool.class);
 
   private final ExecutorService m_aES;
 
@@ -63,9 +63,9 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
   @Override
   protected void onDestroy (@Nonnull final IScope aScopeInDestruction) throws Exception
   {
-    s_aLogger.info ("Global AS4 worker queue about to be closed");
+    LOGGER.info ("Global AS4 worker queue about to be closed");
     ExecutorServiceHelper.shutdownAndWaitUntilAllTasksAreFinished (m_aES);
-    s_aLogger.info ("Global AS4 worker queue closed!");
+    LOGGER.info ("Global AS4 worker queue closed!");
   }
 
   @Nonnull
@@ -78,7 +78,7 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
       }
       catch (final Throwable t)
       {
-        s_aLogger.error ("Error running AS4 runner " + aRunnable, t);
+        LOGGER.error ("Error running AS4 runner " + aRunnable, t);
       }
     }, m_aES);
   }
@@ -93,7 +93,7 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
       }
       catch (final Exception ex)
       {
-        s_aLogger.error ("Error running AS4 supplier " + aSupplier, ex);
+        LOGGER.error ("Error running AS4 supplier " + aSupplier, ex);
         return null;
       }
     }, m_aES);

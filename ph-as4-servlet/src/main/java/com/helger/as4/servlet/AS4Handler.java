@@ -213,7 +213,7 @@ public final class AS4Handler implements AutoCloseable
     }
   }
 
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Handler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Handler.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
   private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
@@ -346,13 +346,13 @@ public final class AS4Handler implements AutoCloseable
       {
         // no header element for current processor
         if (isDebug ())
-          s_aLogger.info ("Message contains no SOAP header element with QName " + aQName.toString ());
+          LOGGER.info ("Message contains no SOAP header element with QName " + aQName.toString ());
         continue;
       }
 
       final ISOAPHeaderElementProcessor aProcessor = aEntry.getValue ();
       if (isDebug ())
-        s_aLogger.info ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
+        LOGGER.info ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
@@ -371,7 +371,7 @@ public final class AS4Handler implements AutoCloseable
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        s_aLogger.warn ("Failed to process SOAP header element " +
+        LOGGER.warn ("Failed to process SOAP header element " +
                         aQName.toString () +
                         " with processor " +
                         aProcessor +
@@ -513,7 +513,7 @@ public final class AS4Handler implements AutoCloseable
       try
       {
         if (isDebug ())
-          s_aLogger.info ("Invoking AS4 message processor " + aProcessor);
+          LOGGER.info ("Invoking AS4 message processor " + aProcessor);
 
         // Main processing
         AS4MessageProcessorResult aResult;
@@ -538,7 +538,7 @@ public final class AS4Handler implements AutoCloseable
                                    sMessageID +
                                    "' returned a failure: " +
                                    aResult.getErrorMessage ();
-          s_aLogger.warn (sErrorMsg);
+          LOGGER.warn (sErrorMsg);
           aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
           // Stop processing
           return;
@@ -558,7 +558,7 @@ public final class AS4Handler implements AutoCloseable
                                        " on '" +
                                        sMessageID +
                                        "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
-              s_aLogger.warn (sErrorMsg);
+              LOGGER.warn (sErrorMsg);
               aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
                                                                                       sMessageID,
                                                                                       sErrorMsg));
@@ -593,7 +593,7 @@ public final class AS4Handler implements AutoCloseable
                                          " on '" +
                                          sMessageID +
                                          "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
-                s_aLogger.warn (sErrorMsg);
+                LOGGER.warn (sErrorMsg);
                 aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
                                                                                         sMessageID,
                                                                                         sErrorMsg));
@@ -612,7 +612,7 @@ public final class AS4Handler implements AutoCloseable
                                          " on '" +
                                          sMessageID +
                                          "' returned a failure: no UserMessage contained in the MPC";
-                s_aLogger.warn (sErrorMsg);
+                LOGGER.warn (sErrorMsg);
                 aErrorMessages.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
                                                                                                      sMessageID,
                                                                                                      sErrorMsg));
@@ -630,7 +630,7 @@ public final class AS4Handler implements AutoCloseable
         aResult.addAllAttachmentsTo (aResponseAttachments);
 
         if (isDebug ())
-          s_aLogger.info ("Successfully invoked AS4 message processor " + aProcessor);
+          LOGGER.info ("Successfully invoked AS4 message processor " + aProcessor);
       }
       catch (final Throwable t)
       {
@@ -663,10 +663,10 @@ public final class AS4Handler implements AutoCloseable
 
     if (isDebug ())
     {
-      s_aLogger.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
-      s_aLogger.info (AS4XMLHelper.serializeXML (aSOAPDocument));
-      s_aLogger.info ("Including the following " + aIncomingAttachments.size () + " attachments:");
-      s_aLogger.info (aIncomingAttachments.toString ());
+      LOGGER.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
+      LOGGER.info (AS4XMLHelper.serializeXML (aSOAPDocument));
+      LOGGER.info ("Including the following " + aIncomingAttachments.size () + " attachments:");
+      LOGGER.info (aIncomingAttachments.toString ());
     }
 
     // Collect all runtime errors
@@ -734,7 +734,7 @@ public final class AS4Handler implements AutoCloseable
       // XXX debugging
       if (isDebug () && aEbmsReceipt != null)
       {
-        s_aLogger.info ("RECEIPT INCOMING");
+        LOGGER.info ("RECEIPT INCOMING");
       }
 
       // Ensure the decrypted attachments are used
@@ -821,7 +821,7 @@ public final class AS4Handler implements AutoCloseable
                                                  .isBreak ();
       if (bIsDuplicate)
       {
-        s_aLogger.info ("Not invoking SPIs, because message was already handled!");
+        LOGGER.info ("Not invoking SPIs, because message was already handled!");
         aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
                                                                    sMessageID,
                                                                    "Another message with the same ID was already received!"));
@@ -865,10 +865,10 @@ public final class AS4Handler implements AutoCloseable
                      aState,
                      aSPIResult);
         if (aSPIResult.isFailure ())
-          s_aLogger.warn ("Error invoking synchronous SPIs");
+          LOGGER.warn ("Error invoking synchronous SPIs");
         else
           if (isDebug ())
-            s_aLogger.info ("Successfully invoked synchronous SPIs");
+            LOGGER.info ("Successfully invoked synchronous SPIs");
       }
       else
       {
@@ -927,7 +927,7 @@ public final class AS4Handler implements AutoCloseable
             throw new IllegalStateException ("No asynchronous response URL present!");
 
           if (isDebug ())
-            s_aLogger.info ("Responding asynchronous to: " + sAsyncResponseURL);
+            LOGGER.info ("Responding asynchronous to: " + sAsyncResponseURL);
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
@@ -955,7 +955,7 @@ public final class AS4Handler implements AutoCloseable
           final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aErrorMessages);
           return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
         }
-        s_aLogger.warn ("Not sending back the error, because sending error response is prohibited in PMode");
+        LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
       }
       else
       {
@@ -993,7 +993,7 @@ public final class AS4Handler implements AutoCloseable
                                               aResponseAttachments);
               }
               // else TODO
-              s_aLogger.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+              LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
             }
           }
           else
@@ -1380,7 +1380,7 @@ public final class AS4Handler implements AutoCloseable
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
       final Charset aCharset = Charset.defaultCharset ();
-      s_aLogger.info ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
+      LOGGER.info ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
       return DOMReader.readXMLDOM (aBytes);
     }
     return DOMReader.readXMLDOM (aRequestIS);
@@ -1404,7 +1404,7 @@ public final class AS4Handler implements AutoCloseable
 
     final MimeType aContentType = MimeTypeParser.parseMimeType (sContentType);
     if (isDebug ())
-      s_aLogger.info ("Received Content-Type: " + aContentType);
+      LOGGER.info ("Received Content-Type: " + aContentType);
     if (aContentType == null)
       throw new BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
 
@@ -1417,7 +1417,7 @@ public final class AS4Handler implements AutoCloseable
     {
       // MIME message
       if (isDebug ())
-        s_aLogger.info ("Received MIME message");
+        LOGGER.info ("Received MIME message");
 
       final String sBoundary = aContentType.getParameterValueWithName ("boundary");
       if (StringHelper.hasNoText (sBoundary))
@@ -1426,7 +1426,7 @@ public final class AS4Handler implements AutoCloseable
       }
 
       if (isDebug ())
-        s_aLogger.info ("MIME Boundary = " + sBoundary);
+        LOGGER.info ("MIME Boundary = " + sBoundary);
 
       // PARSING MIME Message via MultiPartStream
       final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
@@ -1442,7 +1442,7 @@ public final class AS4Handler implements AutoCloseable
           break;
 
         if (isDebug ())
-          s_aLogger.info ("Found MIME part " + nIndex);
+          LOGGER.info ("Found MIME part " + nIndex);
         final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
 
         final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
@@ -1470,7 +1470,7 @@ public final class AS4Handler implements AutoCloseable
     else
     {
       if (isDebug ())
-        s_aLogger.info ("Received plain message with Content-Type " + aContentType.getAsString ());
+        LOGGER.info ("Received plain message with Content-Type " + aContentType.getAsString ());
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests

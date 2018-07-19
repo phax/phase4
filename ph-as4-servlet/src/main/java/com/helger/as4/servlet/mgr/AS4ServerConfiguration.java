@@ -44,7 +44,7 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 @NotThreadSafe
 public final class AS4ServerConfiguration
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ServerConfiguration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerConfiguration.class);
   private static final Settings SETTINGS = new Settings ("as4-server");
   private static boolean s_bTestMode = false;
   private static final long DEFAULT_RESET_MINUTES = 10;
@@ -68,7 +68,7 @@ public final class AS4ServerConfiguration
     final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
       throw new InitializationException ("Failed to read AS4 server configuration file!");
-    s_aLogger.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
+    LOGGER.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
     SETTINGS.setAll (aCF.getSettings ());
   }
 

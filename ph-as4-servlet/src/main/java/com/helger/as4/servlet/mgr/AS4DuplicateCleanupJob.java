@@ -40,7 +40,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
 @DisallowConcurrentExecution
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4DuplicateCleanupJob.class);
   private static final String KEY_MINUTES = "mins";
 
   public AS4DuplicateCleanupJob ()
@@ -55,7 +55,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())
-      s_aLogger.info ("Evicted " + aEvicted.size () + " incoming duplicate message IDs");
+      LOGGER.info ("Evicted " + aEvicted.size () + " incoming duplicate message IDs");
   }
 
   private static final AtomicBoolean s_aScheduled = new AtomicBoolean (false);
@@ -82,7 +82,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     }
     else
     {
-      s_aLogger.warn ("Incoming duplicate message cleaning is disabled!");
+      LOGGER.warn ("Incoming duplicate message cleaning is disabled!");
     }
   }
 }

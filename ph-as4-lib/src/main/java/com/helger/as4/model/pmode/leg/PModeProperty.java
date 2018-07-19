@@ -49,7 +49,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
 {
   public static final String DATA_TYPE_STRING = "string";
 
-  private static final Logger s_aLogger = LoggerFactory.getLogger (PModeProperty.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PModeProperty.class);
 
   private final String m_sName;
   private final String m_sDescription;
@@ -59,7 +59,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   private static void _checkDataType (@Nonnull final String sDataType)
   {
     if (!DATA_TYPE_STRING.equals (sDataType))
-      s_aLogger.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
+      LOGGER.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
   }
 
   public PModeProperty (@Nonnull @Nonempty final String sName,

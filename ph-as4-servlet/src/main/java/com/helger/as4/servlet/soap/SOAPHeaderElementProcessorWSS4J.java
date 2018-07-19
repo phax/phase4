@@ -68,7 +68,7 @@ import com.helger.xml.XMLHelper;
  */
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
@@ -115,7 +115,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignAlgo == null)
         {
-          s_aLogger.info ("Error processing the Security Header, your signing algorithm '" +
+          LOGGER.info ("Error processing the Security Header, your signing algorithm '" +
                           sAlgorithm +
                           "' is incorrect. Expected one of the following '" +
                           Arrays.asList (ECryptoAlgorithmSign.values ()) +
@@ -126,8 +126,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           return ESuccess.FAILURE;
         }
 
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Using signature algorithm " + eSignAlgo);
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Using signature algorithm " + eSignAlgo);
 
         // Get Signature Digest Algorithm
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "Reference");
@@ -137,7 +137,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignDigestAlgo == null)
         {
-          s_aLogger.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+          LOGGER.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
                           Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
                           "' algorithms");
 
@@ -145,8 +145,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
           return ESuccess.FAILURE;
         }
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Using signature digest algorithm " + eSignDigestAlgo);
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Using signature digest algorithm " + eSignDigestAlgo);
       }
 
       // Check attachment validity only if a PartInfo element is available
@@ -166,7 +166,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                            .getHref ();
           if (!sHref.contains (sAttachmentId))
           {
-            s_aLogger.info ("Error processing the Attachments, the attachment '" +
+            LOGGER.info ("Error processing the Attachments, the attachment '" +
                             sHref +
                             "' is not valid with what is specified in the usermessage ('" +
                             sAttachmentId +
@@ -227,9 +227,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         if (aCertSet.size () > 1)
         {
           if (GlobalDebug.isDebugMode ())
-            s_aLogger.warn ("Found " + aCertSet.size () + " different certificates in message: " + aCertSet);
+            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message: " + aCertSet);
           else
-            s_aLogger.warn ("Found " + aCertSet.size () + " different certificates in message!");
+            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message!");
         }
 
         // Remember in State
@@ -256,7 +256,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       catch (final Exception ex)
       {
         // Decryption or Signature check failed
-        s_aLogger.info ("Error processing the WSSSecurity Header", ex);
+        LOGGER.info ("Error processing the WSSSecurity Header", ex);
 
         // TODO we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing

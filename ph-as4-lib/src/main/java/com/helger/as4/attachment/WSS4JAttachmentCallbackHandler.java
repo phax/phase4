@@ -48,7 +48,7 @@ import com.helger.commons.io.stream.HasInputStream;
  */
 public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
 
   private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
   private final AS4ResourceManager m_aResMgr;
@@ -90,8 +90,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         final AttachmentRequestCallback aAttachmentRequestCallback = (AttachmentRequestCallback) aCallback;
 
         final String sAttachmentID = aAttachmentRequestCallback.getAttachmentId ();
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Requesting attachment ID '" + sAttachmentID + "'");
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Requesting attachment ID '" + sAttachmentID + "'");
 
         final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
         if (aAttachments.isEmpty ())
@@ -106,8 +106,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
           final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
 
           final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
-          if (s_aLogger.isDebugEnabled ())
-            s_aLogger.debug ("Resulting attachment ID '" + sAttachmentID + "'");
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Resulting attachment ID '" + sAttachmentID + "'");
 
           // Convert
           final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResMgr, aResponseAttachment.getMimeType ());

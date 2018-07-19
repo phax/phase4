@@ -35,7 +35,7 @@ import com.helger.commons.datetime.PDTFactory;
 @ThreadSafe
 public final class AS4HttpDebug
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4HttpDebug.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4HttpDebug.class);
   private static final AtomicBoolean s_aEnabled = new AtomicBoolean (false);
 
   private AS4HttpDebug ()
@@ -71,6 +71,6 @@ public final class AS4HttpDebug
   public static void debug (@Nonnull final Supplier <? super String> aMsg)
   {
     if (isEnabled ())
-      s_aLogger.info ("$$$ AS4 HTTP [" + PDTFactory.getCurrentLocalTime ().toString () + "] " + aMsg.get ());
+      LOGGER.info ("$$$ AS4 HTTP [" + PDTFactory.getCurrentLocalTime ().toString () + "] " + aMsg.get ());
   }
 }

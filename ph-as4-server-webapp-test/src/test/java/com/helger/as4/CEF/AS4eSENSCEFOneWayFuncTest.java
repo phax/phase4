@@ -78,7 +78,7 @@ import io.netty.handler.codec.http.HttpResponse;
 
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
 
   public AS4eSENSCEFOneWayFuncTest ()
   {}
@@ -414,12 +414,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        final int nIndex = m_nFilterCount++;
                                                                        if (nIndex < nResponsesToIntercept)
                                                                        {
-                                                                         s_aLogger.error ("Proxy purposely intercepted call " +
+                                                                         LOGGER.error ("Proxy purposely intercepted call " +
                                                                                           nIndex);
                                                                          return null;
                                                                        }
 
-                                                                       s_aLogger.info ("Proxy purposely passes on call " +
+                                                                       LOGGER.info ("Proxy purposely passes on call " +
                                                                                        nIndex);
                                                                        return httpObject;
                                                                      }
@@ -519,7 +519,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                      @Override
                                                                      public HttpObject serverToProxyResponse (final HttpObject httpObject)
                                                                      {
-                                                                       s_aLogger.error ("Forcing a timeout from retryhandler ");
+                                                                       LOGGER.error ("Forcing a timeout from retryhandler ");
                                                                        return httpObject;
                                                                      }
                                                                    };
@@ -702,7 +702,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                      @Override
                                                                      public HttpObject serverToProxyResponse (final HttpObject httpObject)
                                                                      {
-                                                                       s_aLogger.error ("Forcing a timeout from retryhandler ");
+                                                                       LOGGER.error ("Forcing a timeout from retryhandler ");
                                                                        return null;
                                                                      }
                                                                    };

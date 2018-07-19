@@ -55,7 +55,7 @@ import com.helger.commons.string.StringHelper;
 final class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
   @SuppressWarnings ("unused")
-  private static final Logger s_aLogger = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
 
   public ESENSCompatibilityValidator ()
   {}

@@ -37,7 +37,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private static final String PMODE_XML = "as4-pmode.xml";
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
-  private static final Logger s_aLogger = LoggerFactory.getLogger (MetaAS4Manager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private MPCManager m_aMPCMgr;
   private PModeManager m_aPModeMgr;
@@ -68,7 +68,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       // Validate content
       m_aPModeMgr.validateAllPModes ();
 
-      s_aLogger.info (ClassHelper.getClassLocalName (this) + " was initialized");
+      LOGGER.info (ClassHelper.getClassLocalName (this) + " was initialized");
     }
     catch (final Throwable t)
     {

@@ -55,7 +55,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class AS4ClientUserMessageTest
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   private static AS4ResourceManager s_aResMgr;
@@ -299,7 +299,7 @@ public final class AS4ClientUserMessageTest
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
-    s_aLogger.info (MicroWriter.getNodeAsString (aDoc));
+    LOGGER.info (MicroWriter.getNodeAsString (aDoc));
   }
 
   @Test

@@ -46,7 +46,7 @@ import com.helger.commons.string.ToStringGenerator;
 @ThreadSafe
 public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ProfileManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ProfileManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
@@ -61,7 +61,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       aSPI.registerAS4Profile (this);
 
     final int nCount = getProfileCount ();
-    s_aLogger.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
+    LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
   }
 
   public AS4ProfileManager ()
@@ -79,7 +79,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
         throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
       m_aMap.put (sID, aAS4Profile);
     });
-    s_aLogger.info ("Registered AS4 profile '" + sID + "'");
+    LOGGER.info ("Registered AS4 profile '" + sID + "'");
   }
 
   @Nonnull

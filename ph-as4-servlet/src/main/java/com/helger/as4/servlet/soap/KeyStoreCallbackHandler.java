@@ -31,7 +31,7 @@ import com.helger.as4.servlet.mgr.AS4ServerSettings;
 
 final class KeyStoreCallbackHandler implements CallbackHandler
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
@@ -44,10 +44,10 @@ final class KeyStoreCallbackHandler implements CallbackHandler
         if (aCP.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
         {
           aPasswordCallback.setPassword (aCP.getKeyPassword ());
-          s_aLogger.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
+          LOGGER.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
         }
         else
-          s_aLogger.warn ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
+          LOGGER.warn ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
       }
       else
       {

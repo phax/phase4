@@ -63,7 +63,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   public static final String ACTION_FAILURE = "Failure";
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
-  private static final Logger s_aLogger = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final Ebms3UserMessage aUserMessage,
@@ -75,29 +75,29 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     // Needed for AS4_TA13 because we want to force a decompression failure and
     // for that to happen the stream has to be read
     {
-      s_aLogger.info ("Received AS4 message:");
-      s_aLogger.info ("  UserMessage: " + aUserMessage);
-      s_aLogger.info ("  Payload: " +
+      LOGGER.info ("Received AS4 message:");
+      LOGGER.info ("  UserMessage: " + aUserMessage);
+      LOGGER.info ("  Payload: " +
                       (aPayload == null ? "null" : true ? "present" : XMLWriter.getNodeAsString (aPayload)));
 
       if (aIncomingAttachments != null)
       {
-        s_aLogger.info ("  Attachments: " + aIncomingAttachments.size ());
+        LOGGER.info ("  Attachments: " + aIncomingAttachments.size ());
         for (final WSS4JAttachment x : aIncomingAttachments)
         {
-          s_aLogger.info ("    Attachment Content Type: " + x.getMimeType ());
+          LOGGER.info ("    Attachment Content Type: " + x.getMimeType ());
           if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
           {
             try
             {
               final InputStream aIS = x.getSourceStream ();
-              s_aLogger.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
+              LOGGER.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
               final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
-              s_aLogger.info ("    Attachment Content: " + sContent.length () + " chars");
+              LOGGER.info ("    Attachment Content: " + sContent.length () + " chars");
             }
             catch (final IllegalStateException ex)
             {
-              s_aLogger.warn ("    Attachment Content: CANNOT BE READ", ex);
+              LOGGER.warn ("    Attachment Content: CANNOT BE READ", ex);
             }
           }
         }
@@ -171,7 +171,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       }
       catch (final SAXException ex)
       {
-        s_aLogger.error ("Internal error", ex);
+        LOGGER.error ("Internal error", ex);
       }
     }
     return AS4SignalMessageProcessorResult.createSuccess ();

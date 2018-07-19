@@ -64,7 +64,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (PModeCheckTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PModeCheckTest.class);
 
   private ESOAPVersion m_eSOAPVersion;
   private Ebms3UserMessage m_aEbms3UserMessage;
@@ -84,7 +84,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     }
     catch (final SAXException ex)
     {
-      s_aLogger.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup", ex);
+      LOGGER.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup", ex);
     }
 
     // Default MessageInfo for testing

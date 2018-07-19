@@ -40,7 +40,7 @@ import com.helger.photon.security.object.BusinessObjectHelper;
 
 public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (PModeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManager.class);
 
   public PModeManager (@Nullable final String sFilename) throws DAOException
   {
@@ -59,7 +59,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       internalCreateItem (aPMode);
     });
     AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
-    s_aLogger.info ("Created PMode with ID '" + aPMode.getID () + "'");
+    LOGGER.info ("Created PMode with ID '" + aPMode.getID () + "'");
 
     return aPMode;
   }
@@ -96,7 +96,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPMode.getID ());
-    s_aLogger.info ("Updated PMode with ID '" + aPMode.getID () + "'");
+    LOGGER.info ("Updated PMode with ID '" + aPMode.getID () + "'");
 
     return EChange.CHANGED;
   }
@@ -126,7 +126,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
-    s_aLogger.info ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
+    LOGGER.info ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
 
     return EChange.CHANGED;
   }

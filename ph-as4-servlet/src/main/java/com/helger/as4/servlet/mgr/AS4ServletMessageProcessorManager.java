@@ -39,7 +39,7 @@ import com.helger.commons.lang.ServiceLoaderHelper;
 @ThreadSafe
 public final class AS4ServletMessageProcessorManager
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServletMessageProcessorManager.class);
 
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
@@ -55,10 +55,10 @@ public final class AS4ServletMessageProcessorManager
   {
     final ICommonsList <IAS4ServletMessageProcessorSPI> aProcessorSPIs = ServiceLoaderHelper.getAllSPIImplementations (IAS4ServletMessageProcessorSPI.class);
     if (aProcessorSPIs.isEmpty ())
-      s_aLogger.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
+      LOGGER.warn ("No AS4 message processor is registered. All incoming messages will be discarded!");
     else
-      if (s_aLogger.isDebugEnabled ())
-        s_aLogger.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
 
     s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }

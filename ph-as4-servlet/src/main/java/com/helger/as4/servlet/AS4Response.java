@@ -39,7 +39,7 @@ import com.helger.servlet.response.UnifiedResponse;
  */
 public class AS4Response extends UnifiedResponse
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4Response.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Response.class);
 
   public AS4Response (@Nonnull final EHttpVersion eHTTPVersion,
                       @Nonnull final EHttpMethod eHTTPMethod,
@@ -55,7 +55,7 @@ public class AS4Response extends UnifiedResponse
                                 @Nonnull final String sMsg,
                                 @Nullable final Throwable t)
   {
-    s_aLogger.error ("HTTP " + nStatusCode + ": " + sMsg, t);
+    LOGGER.error ("HTTP " + nStatusCode + ": " + sMsg, t);
 
     String sBody = sMsg;
     if (t != null)

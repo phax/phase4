@@ -35,7 +35,7 @@ import com.helger.commons.io.stream.StreamHelper;
 
 public class AS4ResourceManager implements Closeable
 {
-  private static final Logger s_aLogger = LoggerFactory.getLogger (AS4ResourceManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
@@ -81,7 +81,7 @@ public class AS4ResourceManager implements Closeable
     });
     if (aCloseables.isNotEmpty ())
     {
-      s_aLogger.info ("Closing " + aCloseables.size () + " stream handles");
+      LOGGER.info ("Closing " + aCloseables.size () + " stream handles");
       for (final Closeable aCloseable : aCloseables)
         StreamHelper.close (aCloseable);
     }
@@ -94,14 +94,14 @@ public class AS4ResourceManager implements Closeable
     });
     if (aFiles.isNotEmpty ())
     {
-      s_aLogger.info ("Deleting " + aFiles.size () + " temporary files");
+      LOGGER.info ("Deleting " + aFiles.size () + " temporary files");
       for (final File aFile : aFiles)
       {
-        if (s_aLogger.isDebugEnabled ())
-          s_aLogger.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
         final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
         if (aError.isFailure ())
-          s_aLogger.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
+          LOGGER.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
       }
     }
   }
