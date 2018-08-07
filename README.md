@@ -12,6 +12,8 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
+* v0.8.1 - work in progress
+  * The web application now uses LOG4J 2.x
 * v0.8.0 - 2018-06-21
   * Updated to ph-commons 9.1.2
   * Updated to BouncyCastle 1.59
