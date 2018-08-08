@@ -40,7 +40,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 
-public class SignedMessageCreator
+public final class SignedMessageCreator
 {
   private SignedMessageCreator ()
   {}
@@ -49,6 +49,8 @@ public class SignedMessageCreator
    * This method must be used if the message does not contain attachments, that
    * should be in a additional mime message part.
    *
+   * @param aCryptoFactory
+   *        CryptoFactory to use. May not be <code>null</code>.
    * @param aPreSigningMessage
    *        SOAP Document before signing
    * @param eSOAPVersion

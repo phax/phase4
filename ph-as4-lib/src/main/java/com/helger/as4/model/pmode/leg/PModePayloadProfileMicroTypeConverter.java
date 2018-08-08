@@ -45,7 +45,7 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
     ret.setAttribute (ATTR_MIME_TYPE, aValue.getMimeType ().getAsString ());
     ret.setAttribute (ATTR_XSD_FILENAME, aValue.getXSDFilename ());
     if (aValue.hasMaxSizeKB ())
-      ret.setAttribute (ATTR_MAX_SIZE_KB, aValue.getMaxSizeKB ());
+      ret.setAttribute (ATTR_MAX_SIZE_KB, aValue.getMaxSizeKB ().intValue ());
     ret.setAttribute (ATTR_MANDATORY, aValue.isMandatory ());
     return ret;
   }

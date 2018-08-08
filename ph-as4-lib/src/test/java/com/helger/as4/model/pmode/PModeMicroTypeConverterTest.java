@@ -137,7 +137,7 @@ public final class PModeMicroTypeConverterTest
                                                                               new MimeType (EMimeContentType.EXAMPLE,
                                                                                             "example"),
                                                                               "xsdfilename",
-                                                                              20001,
+                                                                              Integer.valueOf (20001),
                                                                               EMandatory.MANDATORY);
     final ICommonsOrderedMap <String, PModePayloadProfile> aPModePayloadProfiles = new CommonsLinkedHashMap <> ();
     aPModePayloadProfiles.put (aPModePayloadProfile.getName (), aPModePayloadProfile);
@@ -213,7 +213,7 @@ public final class PModeMicroTypeConverterTest
                                  aX509EncryptionEncrypt,
                                  "X509EncryptionCertificate",
                                  ECryptoAlgorithmCrypt.AES_128_GCM,
-                                 1,
+                                 Integer.valueOf (1),
                                  "usernametokenusername",
                                  "usernametokenpassword",
                                  ETriState.TRUE,
