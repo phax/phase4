@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSS4JConstants;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSAlgorithm;
 
 import com.helger.commons.annotation.Nonempty;
@@ -35,7 +34,7 @@ import com.helger.commons.lang.EnumHelper;
  */
 public enum ECryptoAlgorithmCrypt implements IHasID <String>
 {
-  CRYPT_3DES ("3des", PKCSObjectIdentifiers.des_EDE3_CBC, WSS4JConstants.TRIPLE_DES),
+  CRYPT_3DES ("3des", CMSAlgorithm.DES_EDE3_CBC, WSS4JConstants.TRIPLE_DES),
   AES_128_CBC ("aes128-cbc", CMSAlgorithm.AES128_CBC, WSS4JConstants.AES_128),
   AES_128_GCM ("aes128-gcm", CMSAlgorithm.AES128_GCM, WSS4JConstants.AES_128_GCM),
   AES_192_CBC ("aes192-cbc", CMSAlgorithm.AES192_CBC, WSS4JConstants.AES_192),

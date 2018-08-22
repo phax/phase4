@@ -36,17 +36,19 @@ import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.builder.IJAXBDocumentType;
 import com.helger.jaxb.builder.JAXBDocumentType;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
   MESSAGING (Ebms3Messaging.class,
-             new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
-                                     new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
-                                     new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
+             new CommonsArrayList <> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                      new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
+                                      new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
   NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class,
-                               new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
-                                                       new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
-  SOAP_11 (Soap11Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP11))),
-  SOAP_12 (Soap12Envelope.class, new CommonsArrayList<> (new ClassPathResource (CAS4.XSD_SOAP12)));
+                               new CommonsArrayList <> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd"),
+                                                        new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
+  SOAP_11 (Soap11Envelope.class, new CommonsArrayList <> (new ClassPathResource (CAS4.XSD_SOAP11))),
+  SOAP_12 (Soap12Envelope.class, new CommonsArrayList <> (new ClassPathResource (CAS4.XSD_SOAP12)));
 
   private final JAXBDocumentType m_aDocType;
 
@@ -56,12 +58,13 @@ public enum EEbms3DocumentType implements IJAXBDocumentType
     this (aClass, aXSDPaths, null);
   }
 
+  @SuppressFBWarnings ("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
                               @Nonnull final Iterable <? extends IReadableResource> aXSDPaths,
                               @Nullable final Function <String, String> aTypeToElementNameMapper)
   {
     m_aDocType = new JAXBDocumentType (aClass,
-                                       new CommonsArrayList<> (aXSDPaths, IReadableResource::getPath),
+                                       new CommonsArrayList <> (aXSDPaths, IReadableResource::getPath),
                                        aTypeToElementNameMapper);
   }
 
