@@ -21,15 +21,22 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 
+/**
+ * XML converter for objects of class {@link PModeReceptionAwareness}.
+ * 
+ * @author Philip Helger
+ */
 public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeReceptionAwareness>
 {
-  private static final String ATTR_RECEPTION_AWARENESS = "ReceptionAwareness";
-  private static final String ATTR_RETRY = "Retry";
-  private static final String ATTR_MAX_RETRIES = "MayRetries";
-  private static final String ATTR_RETRY_INTERVAL_MS = "RetryIntervalMS";
-  private static final String ATTR_DUPLICATE_DETECTION = "DuplicateDetection";
+  private static final IMicroQName ATTR_RECEPTION_AWARENESS = new MicroQName ("ReceptionAwareness");
+  private static final IMicroQName ATTR_RETRY = new MicroQName ("Retry");
+  private static final IMicroQName ATTR_MAX_RETRIES = new MicroQName ("MayRetries");
+  private static final IMicroQName ATTR_RETRY_INTERVAL_MS = new MicroQName ("RetryIntervalMS");
+  private static final IMicroQName ATTR_DUPLICATE_DETECTION = new MicroQName ("DuplicateDetection");
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final PModeReceptionAwareness aValue,

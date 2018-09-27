@@ -69,12 +69,6 @@ public class AS4Profile implements IAS4Profile
   }
 
   @Nonnull
-  public IPModeIDProvider getPModeIDProvider ()
-  {
-    return m_aPModeIDProvider;
-  }
-
-  @Nonnull
   public IAS4ProfileValidator getValidator ()
   {
     return m_aProfileValidatorProvider.get ();
@@ -86,6 +80,12 @@ public class AS4Profile implements IAS4Profile
                                     @Nullable final String sAddress)
   {
     return m_aDefaultPModeProvider.getOrCreatePMode (sInitiatorID, sResponderID, sAddress);
+  }
+
+  @Nonnull
+  public IPModeIDProvider getPModeIDProvider ()
+  {
+    return m_aPModeIDProvider;
   }
 
   @Override

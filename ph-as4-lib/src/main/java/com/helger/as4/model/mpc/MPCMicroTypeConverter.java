@@ -23,6 +23,11 @@ import com.helger.photon.security.object.AbstractBusinessObjectMicroTypeConverte
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
+/**
+ * XML converter for {@link MPC} objects.
+ * 
+ * @author Philip Helger
+ */
 public final class MPCMicroTypeConverter extends AbstractBusinessObjectMicroTypeConverter <MPC>
 {
   @Nonnull

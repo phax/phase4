@@ -42,9 +42,6 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
   @Nonnull
   IAS4ProfileValidator getValidator ();
 
-  @Nonnull
-  IPModeIDProvider getPModeIDProvider ();
-
   /**
    * @param sInitiatorID
    *        Initiator ID
@@ -60,4 +57,7 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
   PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
                              @Nonnull @Nonempty String sResponderID,
                              @Nullable String sAddress);
+
+  @Nonnull
+  IPModeIDProvider getPModeIDProvider ();
 }

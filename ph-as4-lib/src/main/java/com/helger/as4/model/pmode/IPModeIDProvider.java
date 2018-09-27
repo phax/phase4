@@ -22,9 +22,19 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.Nonempty;
 
+/**
+ * A nice little helper interface to dynamically create new PMode IDs based on
+ * Initiator ID and Responder ID.
+ *
+ * @author Philip Helger
+ */
 @FunctionalInterface
 public interface IPModeIDProvider extends Serializable
 {
+  /**
+   * The default implementation combines intiator ID and responder ID with a
+   * minus sign
+   */
   static IPModeIDProvider DEFAULT_DYNAMIC = (i, r) -> i + "-" + r;
 
   @Nonnull

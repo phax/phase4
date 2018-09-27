@@ -23,13 +23,21 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * Party within a PMode
+ *
+ * @author Philip Helger
+ */
 @Immutable
+@MustImplementEqualsAndHashcode
 public class PModeParty implements IHasID <String>, Serializable
 {
   /** Optional ID type */
@@ -50,7 +58,7 @@ public class PModeParty implements IHasID <String>, Serializable
   // Status vars
 
   /** ID type and value combined */
-  private final String m_sStatusID;
+  private transient String m_sStatusID;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -63,10 +71,6 @@ public class PModeParty implements IHasID <String>, Serializable
     m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
     m_sUserName = sUserName;
     m_sPassword = sPassword;
-    if (StringHelper.hasText (m_sIDType))
-      m_sStatusID = m_sIDType + ":" + m_sIDValue;
-    else
-      m_sStatusID = m_sIDValue;
   }
 
   @Nullable
@@ -91,7 +95,16 @@ public class PModeParty implements IHasID <String>, Serializable
   @Nonempty
   public String getID ()
   {
-    return m_sStatusID;
+    String ret = m_sStatusID;
+    if (ret == null)
+    {
+      if (StringHelper.hasText (m_sIDType))
+        ret = m_sIDType + ":" + m_sIDValue;
+      else
+        ret = m_sIDValue;
+      m_sStatusID = ret;
+    }
+    return ret;
   }
 
   @Nonnull
@@ -149,10 +162,21 @@ public class PModeParty implements IHasID <String>, Serializable
                                        .getHashCode ();
   }
 
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("IDType", m_sIDType)
+                                       .append ("IDValue", m_sIDValue)
+                                       .append ("Role", m_sRole)
+                                       .append ("UserName", m_sUserName)
+                                       .appendPassword ("Password")
+                                       .getToString ();
+  }
+
   @Nonnull
   public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue,
                                          @Nonnull @Nonempty final String sRole)
   {
-    return new PModeParty (null, sIDValue, sRole, null, null);
+    return new PModeParty ((String) null, sIDValue, sRole, (String) null, (String) null);
   }
 }

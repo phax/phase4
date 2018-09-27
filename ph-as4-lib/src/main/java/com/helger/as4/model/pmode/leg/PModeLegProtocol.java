@@ -25,8 +25,11 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.url.URLHelper;
 
 /**
@@ -35,6 +38,7 @@ import com.helger.commons.url.URLHelper;
  * @author Philip Helger
  */
 @NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeLegProtocol implements Serializable
 {
   /**
@@ -73,9 +77,13 @@ public class PModeLegProtocol implements Serializable
     return aURL == null ? null : aURL.getProtocol ();
   }
 
-  public final void setAddress (@Nullable final String sAddress)
+  @Nonnull
+  public final EChange setAddress (@Nullable final String sAddress)
   {
+    if (EqualsHelper.equals (sAddress, m_sAddress))
+      return EChange.UNCHANGED;
     m_sAddress = sAddress;
+    return EChange.CHANGED;
   }
 
   @Nonnull
@@ -84,10 +92,14 @@ public class PModeLegProtocol implements Serializable
     return m_eSOAPVersion;
   }
 
-  public final void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  @Nonnull
+  public final EChange setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    if (eSOAPVersion.equals (m_eSOAPVersion))
+      return EChange.UNCHANGED;
     m_eSOAPVersion = eSOAPVersion;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -105,6 +117,14 @@ public class PModeLegProtocol implements Serializable
   public int hashCode ()
   {
     return new HashCodeGenerator (this).append (m_sAddress).append (m_eSOAPVersion).getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Address", m_sAddress)
+                                       .append ("SOAPVersion", m_eSOAPVersion)
+                                       .getToString ();
   }
 
   @Nonnull

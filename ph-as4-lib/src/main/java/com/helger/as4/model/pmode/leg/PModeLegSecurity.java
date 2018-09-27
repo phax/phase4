@@ -20,24 +20,30 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
- * Security part.
+ * PMode security part.
  *
  * @author Philip Helger
  */
+@NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeLegSecurity implements Serializable
 {
   public static final boolean DEFAULT_USERNAME_TOKEN_DIGEST = false;
@@ -64,8 +70,8 @@ public class PModeLegSecurity implements Serializable
    * belongs). An element within the Attachment[] list is identified by the
    * Content-Id.
    */
-  private ICommonsList <String> m_aX509SignElement;
-  private ICommonsList <String> m_aX509SignAttachment;
+  private final ICommonsList <String> m_aX509SignElement = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509SignAttachment = new CommonsArrayList <> ();
   /**
    * The value of this parameter identifies the public certificate to use when
    * verifying signed data.
@@ -91,8 +97,8 @@ public class PModeLegSecurity implements Serializable
    * Encrypt.Attachment[]. An element within these lists is identified as in
    * Security.X509.Sign lists.
    */
-  private ICommonsList <String> m_aX509EncryptionEncryptElement;
-  private ICommonsList <String> m_aX509EncryptionEncryptAttachment;
+  private final ICommonsList <String> m_aX509EncryptionEncryptElement = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509EncryptionEncryptAttachment = new CommonsArrayList <> ();
 
   /**
    * The value of this parameter identifies the public certificate to use when
@@ -224,33 +230,45 @@ public class PModeLegSecurity implements Serializable
     return m_eWSSVersion == null ? null : m_eWSSVersion.getVersion ();
   }
 
-  public final void setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
+  @Nonnull
+  public final EChange setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
   {
+    if (EqualsHelper.equals (eWSSVersion, m_eWSSVersion))
+      return EChange.UNCHANGED;
     m_eWSSVersion = eWSSVersion;
+    return EChange.CHANGED;
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignElement ()
   {
-    return new CommonsArrayList <> (m_aX509SignElement);
+    return m_aX509SignElement.getClone ();
   }
 
-  public final void setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
+  @Nonnull
+  public final EChange setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
   {
-    m_aX509SignElement = aX509SignElement;
+    if (EqualsHelper.equals (aX509SignElement, m_aX509SignElement))
+      return EChange.UNCHANGED;
+    m_aX509SignElement.setAll (aX509SignElement);
+    return EChange.CHANGED;
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> getX509SignAttachment ()
   {
-    return new CommonsArrayList <> (m_aX509SignAttachment);
+    return m_aX509SignAttachment.getClone ();
   }
 
-  public final void setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
+  @Nonnull
+  public final EChange setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
   {
-    m_aX509SignAttachment = aX509SignAttachment;
+    if (EqualsHelper.equals (aX509SignAttachment, m_aX509SignAttachment))
+      return EChange.UNCHANGED;
+    m_aX509SignAttachment.setAll (aX509SignAttachment);
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -259,9 +277,13 @@ public class PModeLegSecurity implements Serializable
     return m_sX509SignatureCertificate;
   }
 
-  public final void setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
+  @Nonnull
+  public final EChange setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
   {
+    if (EqualsHelper.equals (sX509SignatureCertificate, m_sX509SignatureCertificate))
+      return EChange.UNCHANGED;
     m_sX509SignatureCertificate = sX509SignatureCertificate;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -276,9 +298,13 @@ public class PModeLegSecurity implements Serializable
     return m_eX509SignatureHashFunction == null ? null : m_eX509SignatureHashFunction.getID ();
   }
 
-  public final void setX509SignatureHashFunction (@Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction)
+  @Nonnull
+  public final EChange setX509SignatureHashFunction (@Nullable final ECryptoAlgorithmSignDigest eX509SignatureHashFunction)
   {
+    if (EqualsHelper.equals (eX509SignatureHashFunction, m_eX509SignatureHashFunction))
+      return EChange.UNCHANGED;
     m_eX509SignatureHashFunction = eX509SignatureHashFunction;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -293,33 +319,45 @@ public class PModeLegSecurity implements Serializable
     return m_eX509SignatureAlgorithm == null ? null : m_eX509SignatureAlgorithm.getID ();
   }
 
-  public final void setX509SignatureAlgorithm (@Nullable final ECryptoAlgorithmSign eX509SignatureAlgorithm)
+  @Nonnull
+  public final EChange setX509SignatureAlgorithm (@Nullable final ECryptoAlgorithmSign eX509SignatureAlgorithm)
   {
+    if (EqualsHelper.equals (eX509SignatureAlgorithm, m_eX509SignatureAlgorithm))
+      return EChange.UNCHANGED;
     m_eX509SignatureAlgorithm = eX509SignatureAlgorithm;
+    return EChange.CHANGED;
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptElement ()
   {
-    return new CommonsArrayList <> (m_aX509EncryptionEncryptElement);
+    return m_aX509EncryptionEncryptElement.getClone ();
   }
 
-  public final void setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
+  @Nonnull
+  public final EChange setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
   {
-    m_aX509EncryptionEncryptElement = aX509EncryptionEncryptElement;
+    if (EqualsHelper.equals (aX509EncryptionEncryptElement, m_aX509EncryptionEncryptElement))
+      return EChange.UNCHANGED;
+    m_aX509EncryptionEncryptElement.setAll (aX509EncryptionEncryptElement);
+    return EChange.CHANGED;
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> getX509EncryptionEncryptAttachment ()
   {
-    return new CommonsArrayList <> (m_aX509EncryptionEncryptAttachment);
+    return m_aX509EncryptionEncryptAttachment.getClone ();
   }
 
-  public final void setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
+  @Nonnull
+  public final EChange setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
   {
-    m_aX509EncryptionEncryptAttachment = aX509EncryptionEncryptAttachment;
+    if (EqualsHelper.equals (aX509EncryptionEncryptAttachment, m_aX509EncryptionEncryptAttachment))
+      return EChange.UNCHANGED;
+    m_aX509EncryptionEncryptAttachment.setAll (aX509EncryptionEncryptAttachment);
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -328,9 +366,13 @@ public class PModeLegSecurity implements Serializable
     return m_sX509EncryptionCertificate;
   }
 
-  public final void setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
+  @Nonnull
+  public final EChange setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
   {
+    if (EqualsHelper.equals (sX509EncryptionCertificate, m_sX509EncryptionCertificate))
+      return EChange.UNCHANGED;
     m_sX509EncryptionCertificate = sX509EncryptionCertificate;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -345,9 +387,13 @@ public class PModeLegSecurity implements Serializable
     return m_eX509EncryptionAlgorithm == null ? null : m_eX509EncryptionAlgorithm.getID ();
   }
 
-  public final void setX509EncryptionAlgorithm (@Nullable final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm)
+  @Nonnull
+  public final EChange setX509EncryptionAlgorithm (@Nullable final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm)
   {
+    if (EqualsHelper.equals (eX509EncryptionAlgorithm, m_eX509EncryptionAlgorithm))
+      return EChange.UNCHANGED;
     m_eX509EncryptionAlgorithm = eX509EncryptionAlgorithm;
+    return EChange.CHANGED;
   }
 
   public boolean hasX509EncryptionMinimumStrength ()
@@ -361,9 +407,13 @@ public class PModeLegSecurity implements Serializable
     return m_aX509EncryptionMinimumStrength;
   }
 
-  public final void setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
+  @Nonnull
+  public final EChange setX509EncryptionMinimumStrength (@Nullable final Integer aX509EncryptionMinimumStrength)
   {
+    if (EqualsHelper.equals (aX509EncryptionMinimumStrength, m_aX509EncryptionMinimumStrength))
+      return EChange.UNCHANGED;
     m_aX509EncryptionMinimumStrength = aX509EncryptionMinimumStrength;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -372,9 +422,13 @@ public class PModeLegSecurity implements Serializable
     return m_sUsernameTokenUsername;
   }
 
-  public final void setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
+  @Nonnull
+  public final EChange setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
   {
+    if (EqualsHelper.equals (sUsernameTokenUsername, m_sUsernameTokenUsername))
+      return EChange.UNCHANGED;
     m_sUsernameTokenUsername = sUsernameTokenUsername;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -383,9 +437,13 @@ public class PModeLegSecurity implements Serializable
     return m_sUsernameTokenPassword;
   }
 
-  public final void setUsernameTokenPassword (@Nullable final String sUsernameTokenPassword)
+  @Nonnull
+  public final EChange setUsernameTokenPassword (@Nullable final String sUsernameTokenPassword)
   {
+    if (EqualsHelper.equals (sUsernameTokenPassword, m_sUsernameTokenPassword))
+      return EChange.UNCHANGED;
     m_sUsernameTokenPassword = sUsernameTokenPassword;
+    return EChange.CHANGED;
   }
 
   public boolean isUsernameTokenDigestDefined ()
@@ -393,21 +451,25 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenDigest.isDefined ();
   }
 
-  @Nonnull
   public boolean isUsernameTokenDigest ()
   {
     return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
   }
 
-  public final void setUsernameTokenDigest (final boolean bUsernameTokenDigest)
+  @Nonnull
+  public final EChange setUsernameTokenDigest (final boolean bUsernameTokenDigest)
   {
-    setUsernameTokenDigest (ETriState.valueOf (bUsernameTokenDigest));
+    return setUsernameTokenDigest (ETriState.valueOf (bUsernameTokenDigest));
   }
 
-  public final void setUsernameTokenDigest (@Nonnull final ETriState eUsernameTokenDigest)
+  @Nonnull
+  public final EChange setUsernameTokenDigest (@Nonnull final ETriState eUsernameTokenDigest)
   {
     ValueEnforcer.notNull (eUsernameTokenDigest, "UsernameTokenDigest");
+    if (eUsernameTokenDigest.equals (m_eUsernameTokenDigest))
+      return EChange.UNCHANGED;
     m_eUsernameTokenDigest = eUsernameTokenDigest;
+    return EChange.CHANGED;
   }
 
   public boolean isUsernameTokenNonceDefined ()
@@ -415,21 +477,25 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenNonce.isDefined ();
   }
 
-  @Nonnull
   public boolean isUsernameTokenNonce ()
   {
     return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
   }
 
-  public final void setUsernameTokenNonce (final boolean bUsernameTokenNonce)
+  @Nonnull
+  public final EChange setUsernameTokenNonce (final boolean bUsernameTokenNonce)
   {
-    setUsernameTokenNonce (ETriState.valueOf (bUsernameTokenNonce));
+    return setUsernameTokenNonce (ETriState.valueOf (bUsernameTokenNonce));
   }
 
-  public final void setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
+  @Nonnull
+  public final EChange setUsernameTokenNonce (@Nonnull final ETriState eUsernameTokenNonce)
   {
     ValueEnforcer.notNull (eUsernameTokenNonce, "UsernameTokenNonce");
+    if (eUsernameTokenNonce.equals (m_eUsernameTokenNonce))
+      return EChange.UNCHANGED;
     m_eUsernameTokenNonce = eUsernameTokenNonce;
+    return EChange.CHANGED;
   }
 
   public boolean isUsernameTokenCreatedDefined ()
@@ -437,21 +503,25 @@ public class PModeLegSecurity implements Serializable
     return m_eUsernameTokenCreated.isDefined ();
   }
 
-  @Nonnull
   public boolean isUsernameTokenCreated ()
   {
     return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
   }
 
-  public final void setUsernameTokenCreated (final boolean bUsernameTokenCreated)
+  @Nonnull
+  public final EChange setUsernameTokenCreated (final boolean bUsernameTokenCreated)
   {
-    setUsernameTokenCreated (ETriState.valueOf (bUsernameTokenCreated));
+    return setUsernameTokenCreated (ETriState.valueOf (bUsernameTokenCreated));
   }
 
-  public final void setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
+  @Nonnull
+  public final EChange setUsernameTokenCreated (@Nonnull final ETriState eUsernameTokenCreated)
   {
     ValueEnforcer.notNull (eUsernameTokenCreated, "UsernameTokenCreated");
+    if (eUsernameTokenCreated.equals (m_eUsernameTokenCreated))
+      return EChange.UNCHANGED;
     m_eUsernameTokenCreated = eUsernameTokenCreated;
+    return EChange.CHANGED;
   }
 
   public boolean isPModeAuthorizeDefined ()
@@ -459,21 +529,25 @@ public class PModeLegSecurity implements Serializable
     return m_ePModeAuthorize.isDefined ();
   }
 
-  @Nonnull
   public boolean isPModeAuthorize ()
   {
     return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
   }
 
-  public final void setPModeAuthorize (final boolean bPModeAuthorize)
+  @Nonnull
+  public final EChange setPModeAuthorize (final boolean bPModeAuthorize)
   {
-    setPModeAuthorize (ETriState.valueOf (bPModeAuthorize));
+    return setPModeAuthorize (ETriState.valueOf (bPModeAuthorize));
   }
 
-  public final void setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
+  @Nonnull
+  public final EChange setPModeAuthorize (@Nonnull final ETriState ePModeAuthorize)
   {
     ValueEnforcer.notNull (ePModeAuthorize, "PModeAuthorize");
+    if (ePModeAuthorize.equals (m_ePModeAuthorize))
+      return EChange.UNCHANGED;
     m_ePModeAuthorize = ePModeAuthorize;
+    return EChange.CHANGED;
   }
 
   public boolean isSendReceiptDefined ()
@@ -481,21 +555,25 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceipt.isDefined ();
   }
 
-  @Nonnull
   public boolean isSendReceipt ()
   {
     return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
 
-  public final void setSendReceipt (final boolean bSendReceipt)
+  @Nonnull
+  public final EChange setSendReceipt (final boolean bSendReceipt)
   {
-    setSendReceipt (ETriState.valueOf (bSendReceipt));
+    return setSendReceipt (ETriState.valueOf (bSendReceipt));
   }
 
-  public final void setSendReceipt (@Nonnull final ETriState eSendReceipt)
+  @Nonnull
+  public final EChange setSendReceipt (@Nonnull final ETriState eSendReceipt)
   {
     ValueEnforcer.notNull (eSendReceipt, "SendReceipt");
+    if (eSendReceipt.equals (m_eSendReceipt))
+      return EChange.UNCHANGED;
     m_eSendReceipt = eSendReceipt;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -504,15 +582,18 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceiptReplyPattern;
   }
 
-  @Nullable
   public String getSendReceiptReplyPatternID ()
   {
     return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
   }
 
-  public final void setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
+  @Nonnull
+  public final EChange setSendReceiptReplyPattern (@Nullable final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern)
   {
+    if (EqualsHelper.equals (eSendReceiptReplyPattern, m_eSendReceiptReplyPattern))
+      return EChange.UNCHANGED;
     m_eSendReceiptReplyPattern = eSendReceiptReplyPattern;
+    return EChange.CHANGED;
   }
 
   public boolean isSendReceiptNonRepudiationDefined ()
@@ -520,21 +601,25 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceiptNonRepudiation.isDefined ();
   }
 
-  @Nonnull
   public boolean isSendReceiptNonRepudiation ()
   {
     return m_eSendReceiptNonRepudiation.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
 
-  public final void setSendReceiptNonRepudiation (final boolean bSendReceiptNonRepudiation)
+  @Nonnull
+  public final EChange setSendReceiptNonRepudiation (final boolean bSendReceiptNonRepudiation)
   {
-    setSendReceiptNonRepudiation (ETriState.valueOf (bSendReceiptNonRepudiation));
+    return setSendReceiptNonRepudiation (ETriState.valueOf (bSendReceiptNonRepudiation));
   }
 
-  public final void setSendReceiptNonRepudiation (@Nonnull final ETriState eSendReceiptNonRepudiation)
+  @Nonnull
+  public final EChange setSendReceiptNonRepudiation (@Nonnull final ETriState eSendReceiptNonRepudiation)
   {
     ValueEnforcer.notNull (eSendReceiptNonRepudiation, "SendReceiptNonRepudiation");
+    if (eSendReceiptNonRepudiation.equals (m_eSendReceiptNonRepudiation))
+      return EChange.UNCHANGED;
     m_eSendReceiptNonRepudiation = eSendReceiptNonRepudiation;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -545,49 +630,77 @@ public class PModeLegSecurity implements Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegSecurity rhs = (PModeLegSecurity) o;
-    return EqualsHelper.equals (m_aX509EncryptionEncryptElement, rhs.m_aX509EncryptionEncryptElement) &&
-           EqualsHelper.equals (m_aX509EncryptionEncryptAttachment, rhs.m_aX509EncryptionEncryptAttachment) &&
-           EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
+    return EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
            EqualsHelper.equals (m_aX509SignElement, rhs.m_aX509SignElement) &&
            EqualsHelper.equals (m_aX509SignAttachment, rhs.m_aX509SignAttachment) &&
-           EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
-           EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
-           EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
+           EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
+           EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
+           EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptElement, rhs.m_aX509EncryptionEncryptElement) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptAttachment, rhs.m_aX509EncryptionEncryptAttachment) &&
+           EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
+           EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
+           EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
+           EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
+           EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
            EqualsHelper.equals (m_eUsernameTokenDigest, rhs.m_eUsernameTokenDigest) &&
            EqualsHelper.equals (m_eUsernameTokenNonce, rhs.m_eUsernameTokenNonce) &&
+           EqualsHelper.equals (m_eUsernameTokenCreated, rhs.m_eUsernameTokenCreated) &&
+           EqualsHelper.equals (m_ePModeAuthorize, rhs.m_ePModeAuthorize) &&
+           EqualsHelper.equals (m_eSendReceipt, rhs.m_eSendReceipt) &&
            EqualsHelper.equals (m_eSendReceiptReplyPattern, rhs.m_eSendReceiptReplyPattern) &&
-           EqualsHelper.equals (m_sUsernameTokenPassword, rhs.m_sUsernameTokenPassword) &&
-           EqualsHelper.equals (m_sUsernameTokenUsername, rhs.m_sUsernameTokenUsername) &&
-           EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
-           EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
-           EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
-           EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
-           EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
-           EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction);
+           EqualsHelper.equals (m_eSendReceiptNonRepudiation, rhs.m_eSendReceiptNonRepudiation);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aX509EncryptionEncryptElement)
-                                       .append (m_aX509EncryptionEncryptAttachment)
-                                       .append (m_aX509EncryptionMinimumStrength)
+    return new HashCodeGenerator (this).append (m_eWSSVersion)
                                        .append (m_aX509SignElement)
                                        .append (m_aX509SignAttachment)
-                                       .append (m_ePModeAuthorize)
-                                       .append (m_eSendReceipt)
-                                       .append (m_eUsernameTokenCreated)
-                                       .append (m_eUsernameTokenDigest)
-                                       .append (m_eUsernameTokenNonce)
-                                       .append (m_eSendReceiptReplyPattern)
-                                       .append (m_sUsernameTokenPassword)
-                                       .append (m_sUsernameTokenUsername)
-                                       .append (m_eWSSVersion)
-                                       .append (m_eX509EncryptionAlgorithm)
-                                       .append (m_sX509EncryptionCertificate)
-                                       .append (m_eX509SignatureAlgorithm)
                                        .append (m_sX509SignatureCertificate)
                                        .append (m_eX509SignatureHashFunction)
+                                       .append (m_eX509SignatureAlgorithm)
+                                       .append (m_aX509EncryptionEncryptElement)
+                                       .append (m_aX509EncryptionEncryptAttachment)
+                                       .append (m_sX509EncryptionCertificate)
+                                       .append (m_eX509EncryptionAlgorithm)
+                                       .append (m_aX509EncryptionMinimumStrength)
+                                       .append (m_sUsernameTokenUsername)
+                                       .append (m_sUsernameTokenPassword)
+                                       .append (m_eUsernameTokenDigest)
+                                       .append (m_eUsernameTokenNonce)
+                                       .append (m_eUsernameTokenCreated)
+                                       .append (m_ePModeAuthorize)
+                                       .append (m_eSendReceipt)
+                                       .append (m_eSendReceiptReplyPattern)
+                                       .append (m_eSendReceiptNonRepudiation)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("WSSVersion", m_eWSSVersion)
+                                       .append ("X509SignElement", m_aX509SignElement)
+                                       .append ("X509SignAttachment", m_aX509SignAttachment)
+                                       .append ("X509SignatureCertificate", m_sX509SignatureCertificate)
+                                       .append ("X509SignatureHashFunction", m_eX509SignatureHashFunction)
+                                       .append ("X509SignatureAlgorithm", m_eX509SignatureAlgorithm)
+                                       .append ("X509EncryptionEncryptElement", m_aX509EncryptionEncryptElement)
+                                       .append ("X509EncryptionEncryptAttachment", m_aX509EncryptionEncryptAttachment)
+                                       .append ("X509EncryptionCertificate", m_sX509EncryptionCertificate)
+                                       .append ("X509EncryptionAlgorithm", m_eX509EncryptionAlgorithm)
+                                       .append ("X509EncryptionMinimumStrength", m_aX509EncryptionMinimumStrength)
+                                       .append ("UsernameTokenUsername", m_sUsernameTokenUsername)
+                                       .append ("UsernameTokenPassword", m_sUsernameTokenPassword)
+                                       .append ("UsernameTokenDigest", m_eUsernameTokenDigest)
+                                       .append ("UsernameTokenNonce", m_eUsernameTokenNonce)
+                                       .append ("UsernameTokenCreated", m_eUsernameTokenCreated)
+                                       .append ("PModeAuthorize", m_ePModeAuthorize)
+                                       .append ("SendReceipt", m_eSendReceipt)
+                                       .append ("SendReceiptReplyPattern", m_eSendReceiptReplyPattern)
+                                       .append ("SendReceiptNonRepudiation", m_eSendReceiptNonRepudiation)
+                                       .getToString ();
   }
 }

@@ -24,16 +24,23 @@ import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.photon.security.object.AbstractBusinessObjectMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
+/**
+ * XML converter for objects of class {@link PMode}.
+ *
+ * @author Philip Helger
+ */
 public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTypeConverter <PMode>
 {
   private static final String ELEMENT_INITIATOR = "Initiator";
   private static final String ELEMENT_RESPONDER = "Responder";
-  private static final String ATTR_AGREEMENT = "Agreement";
-  private static final String ATTR_MEP = "MEP";
-  private static final String ATTR_MEP_BINDING = "MEPBinding";
+  private static final IMicroQName ATTR_AGREEMENT = new MicroQName ("Agreement");
+  private static final IMicroQName ATTR_MEP = new MicroQName ("MEP");
+  private static final IMicroQName ATTR_MEP_BINDING = new MicroQName ("MEPBinding");
   private static final String ELEMENT_LEG1 = "Leg1";
   private static final String ELEMENT_LEG2 = "Leg2";
   private static final String ELEMENT_PAYLOADSERVICE = "PayloadServices";

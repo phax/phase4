@@ -19,17 +19,24 @@ package com.helger.as4.model.pmode.leg;
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
+/**
+ * XML converter for objects of class {@link PModeLegErrorHandling}.
+ *
+ * @author Philip Helger
+ */
 public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegErrorHandling>
 {
   private static final String ELEMENT_REPORT_RECEIVER_ERRORS_TO = "ReportReceiverErrorsTo";
   private static final String ELEMENT_REPORT_SENDER_ERRORS_TO = "ReportSenderErrorsTo";
-  private static final String ATTR_REPORT_AS_RESPONSE = "ReportAsResponse";
-  private static final String ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER = "ReportProcessErrorNotifyConsumer";
-  private static final String ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = "ReportProcessErrorNotifyProducer";
-  private static final String ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = "ReportDeliveryFailuresNotifyProducer";
+  private static final IMicroQName ATTR_REPORT_AS_RESPONSE = new MicroQName ("ReportAsResponse");
+  private static final IMicroQName ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER = new MicroQName ("ReportProcessErrorNotifyConsumer");
+  private static final IMicroQName ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = new MicroQName ("ReportProcessErrorNotifyProducer");
+  private static final IMicroQName ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = new MicroQName ("ReportDeliveryFailuresNotifyProducer");
 
   public IMicroElement convertToMicroElement (final PModeLegErrorHandling aValue,
                                               final String sNamespaceURI,
@@ -62,7 +69,6 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
 
     final ETriState eReportAsResponse = getTriState (aElement.getAttributeValue (ATTR_REPORT_AS_RESPONSE),
                                                      PModeLegSecurity.DEFAULT_PMODE_AUTHORIZE);
-
     final ETriState eReportProcessErrorNotifyConsumer = getTriState (aElement.getAttributeValue (ATTR_REPORT_PROCESS_ERROR_NOTFIY_CONSUMER),
                                                                      PModeLegSecurity.DEFAULT_USERNAME_TOKEN_CREATED);
     final ETriState eReportProcessErrorNotifyProducer = getTriState (aElement.getAttributeValue (ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER),

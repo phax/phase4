@@ -17,31 +17,39 @@
 package com.helger.as4.model.pmode.leg;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ETriState;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 
+/**
+ * XML converter for objects of class {@link PModeLegReliability}.
+ *
+ * @author Philip Helger
+ */
 public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegReliability>
 {
-  private static final String ATTR_AT_LEAST_ONCE_CONTRACT = "AtLeastOnceContract";
-  private static final String ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY = "AtLeastOnceAckOnDelivery";
-  private static final String ATTR_AT_LEAST_ONCE_CONTRACT_ACK_TO = "AtLeastOnceContractAcksTo";
-  private static final String ATTR_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE = "AtLeastOnceContractAckResponse";
-  private static final String ATTR_AT_LEAST_ONCE_REPLY_PATTERN = "AtLeastOnceReplyPattern";
-  private static final String ATTR_AT_MOST_ONCE_CONTRACT = "AtMostOnceContract";
-  private static final String ATTR_IN_ORDER_CONTRACT = "InOrderContract";
-  private static final String ATTR_START_GROUP = "StartGroup";
+  private static final IMicroQName ATTR_AT_LEAST_ONCE_CONTRACT = new MicroQName ("AtLeastOnceContract");
+  private static final IMicroQName ATTR_AT_LEAST_ONCE_ACK_ON_DELIVERY = new MicroQName ("AtLeastOnceAckOnDelivery");
+  private static final IMicroQName ATTR_AT_LEAST_ONCE_CONTRACT_ACK_TO = new MicroQName ("AtLeastOnceContractAcksTo");
+  private static final IMicroQName ATTR_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE = new MicroQName ("AtLeastOnceContractAckResponse");
+  private static final IMicroQName ATTR_AT_LEAST_ONCE_REPLY_PATTERN = new MicroQName ("AtLeastOnceReplyPattern");
+  private static final IMicroQName ATTR_AT_MOST_ONCE_CONTRACT = new MicroQName ("AtMostOnceContract");
+  private static final IMicroQName ATTR_IN_ORDER_CONTRACT = new MicroQName ("InOrderContract");
+  private static final IMicroQName ATTR_START_GROUP = new MicroQName ("StartGroup");
   private static final String ELEMENT_CORRELATION = "Correlation";
-  private static final String ATTR_TERMINATE_GROUP = "TerminateGroup";
+  private static final IMicroQName ATTR_TERMINATE_GROUP = new MicroQName ("TerminateGroup");
 
   @Nonnull
-  public IMicroElement convertToMicroElement (final PModeLegReliability aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  public IMicroElement convertToMicroElement (@Nonnull final PModeLegReliability aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 

@@ -22,16 +22,28 @@ import java.util.Collection;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.lang.ICloneable;
+import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
-public class PModeAddressList implements Serializable
+/**
+ * List of addresses
+ *
+ * @author Philip Helger
+ */
+@Immutable
+@MustImplementEqualsAndHashcode
+public class PModeAddressList implements Serializable, ICloneable <PModeAddressList>
 {
   public static final char ADDRESS_SEPARATOR = ',';
 
@@ -59,14 +71,16 @@ public class PModeAddressList implements Serializable
     m_aAddresses.add (sAddress);
   }
 
-  public void removeAddress (@Nullable final String sAddress)
+  @Nonnull
+  public EChange removeAddress (@Nullable final String sAddress)
   {
-    m_aAddresses.remove (sAddress);
+    return m_aAddresses.removeObject (sAddress);
   }
 
-  public void removeAllAddresses ()
+  @Nonnull
+  public EChange removeAllAddresses ()
   {
-    m_aAddresses.clear ();
+    return m_aAddresses.removeAll ();
   }
 
   @Nonnull
@@ -97,6 +111,13 @@ public class PModeAddressList implements Serializable
     return StringHelper.getImploded (ADDRESS_SEPARATOR, m_aAddresses);
   }
 
+  @Nonnull
+  @ReturnsMutableCopy
+  public PModeAddressList getClone ()
+  {
+    return new PModeAddressList (m_aAddresses);
+  }
+
   @Override
   public boolean equals (final Object o)
   {
@@ -112,6 +133,12 @@ public class PModeAddressList implements Serializable
   public int hashCode ()
   {
     return new HashCodeGenerator (this).append (m_aAddresses).getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Addresses", m_aAddresses).getToString ();
   }
 
   @Nonnull

@@ -23,6 +23,11 @@ import com.helger.commons.type.ObjectType;
 import com.helger.photon.security.object.StubObject;
 import com.helger.tenancy.AbstractBusinessObject;
 
+/**
+ * Default implementation for an MPC
+ * 
+ * @author Philip Helger
+ */
 public class MPC extends AbstractBusinessObject implements IMPC
 {
   public static final ObjectType OT = new ObjectType ("as4.mpc");

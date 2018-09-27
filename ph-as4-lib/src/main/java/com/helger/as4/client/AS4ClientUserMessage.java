@@ -159,16 +159,41 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   {
     if (m_aPMode != null)
     {
-      final PModeLeg aEffectiveLeg = m_aPMode.getLeg1 ();
+      PModeLeg aEffectiveLeg = m_aPMode.getLeg1 ();
       if (!m_bUseLeg1)
-        m_aPMode.getLeg2 ();
-      m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
-      m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
+        aEffectiveLeg = m_aPMode.getLeg2 ();
+
+      if (aEffectiveLeg.hasBusinessInfo ())
+      {
+        m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
+        m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
+      }
+      else
+      {
+        m_sAction = null;
+        m_sServiceValue = null;
+      }
       m_sAgreementRefValue = m_aPMode.getAgreement ();
-      m_sFromRole = m_aPMode.getInitiator ().getRole ();
-      m_sFromPartyID = m_aPMode.getInitiatorID ();
-      m_sToRole = m_aPMode.getResponder ().getRole ();
-      m_sToPartyID = m_aPMode.getResponderID ();
+      if (m_aPMode.hasInitiator ())
+      {
+        m_sFromRole = m_aPMode.getInitiator ().getRole ();
+        m_sFromPartyID = m_aPMode.getInitiator ().getID ();
+      }
+      else
+      {
+        m_sFromRole = null;
+        m_sFromPartyID = null;
+      }
+      if (m_aPMode.hasResponder ())
+      {
+        m_sToRole = m_aPMode.getResponder ().getRole ();
+        m_sToPartyID = m_aPMode.getResponder ().getID ();
+      }
+      else
+      {
+        m_sToRole = null;
+        m_sToPartyID = null;
+      }
 
       setCryptoAlgorithmSign (aEffectiveLeg.getSecurity ().getX509SignatureAlgorithm ());
       setCryptoAlgorithmSignDigest (aEffectiveLeg.getSecurity ().getX509SignatureHashFunction ());
@@ -220,12 +245,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (m_aEbms3Properties);
 
     final AS4UserMessage aUserMsg = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                          aEbms3PayloadInfo,
-                                                                          aEbms3CollaborationInfo,
-                                                                          aEbms3PartyInfo,
-                                                                          aEbms3MessageProperties,
-                                                                          getSOAPVersion ())
-                                                      .setMustUnderstand (true);
+                                                           aEbms3PayloadInfo,
+                                                           aEbms3CollaborationInfo,
+                                                           aEbms3PartyInfo,
+                                                           aEbms3MessageProperties,
+                                                           getSOAPVersion ())
+                                                  .setMustUnderstand (true);
     Document aDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
 
     // 1. compress

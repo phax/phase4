@@ -26,31 +26,38 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.util.MicroHelper;
 
+/**
+ * XML converter for objects of class {@link PModeLegSecurity}.
+ *
+ * @author Philip Helger
+ */
 public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegSecurity>
 {
-  private static final String ATTR_WSS_VERSION = "WSSVersion";
+  private static final IMicroQName ATTR_WSS_VERSION = new MicroQName ("WSSVersion");
   private static final String ELEMENT_X509_SIGN_ELEMENT = "X509SignElement";
   private static final String ELEMENT_X509_SIGN_ATTACHMENT = "X509SignAttachment";
   private static final String ELEMENT_X509_SIGNATURE_CERTIFICATE = "X509SignatureCertificate";
-  private static final String ATTR_X509_SIGNATURE_HASH_FUNCTION = "X509SignatureHashFunction";
-  private static final String ATTR_X509_SIGNATURE_ALGORITHM = "X509SignatureAlgorithm";
+  private static final IMicroQName ATTR_X509_SIGNATURE_HASH_FUNCTION = new MicroQName ("X509SignatureHashFunction");
+  private static final IMicroQName ATTR_X509_SIGNATURE_ALGORITHM = new MicroQName ("X509SignatureAlgorithm");
   private static final String ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT = "X509EncryptionEncryptElement";
   private static final String ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT = "X509EncryptionEncryptAttachment";
   private static final String ELEMENT_X509_ENCRYPTION_CERTIFICATE = "X509EncryptionCertificate";
-  private static final String ATTR_X509_ENCRYPTION_ALGORITHM = "X509EncryptionAlgorithm";
-  private static final String ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH = "X509EncryptionMinimumStrength";
-  private static final String ATTR_USERNAME_TOKEN_USERNAME = "UsernameTokenUsername";
-  private static final String ATTR_USERNAME_TOKEN_PASSWORD = "UsernameTokenPassword";
-  private static final String ATTR_USERNAME_TOKEN_DIGEST = "UsernameTokenDigest";
-  private static final String ATTR_USERNAME_TOKEN_NONCE = "UsernameTokenNonce";
-  private static final String ATTR_USERNAME_TOKEN_CREATED = "UsernameTokenCreated";
-  private static final String ATTR_PMODE_AUTHORIZE = "PModeAuthorize";
-  private static final String ATTR_SEND_RECEIPT = "SendReceipt";
-  private static final String ATTR_SEND_RECEIPT_REPLY_PATTERN = "SendReceiptReplyPattern";
-  private static final String ATTR_SEND_RECEIPT_NON_REPUDIATION = "SendReceiptNonRepudiation";
+  private static final IMicroQName ATTR_X509_ENCRYPTION_ALGORITHM = new MicroQName ("X509EncryptionAlgorithm");
+  private static final IMicroQName ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH = new MicroQName ("X509EncryptionMinimumStrength");
+  private static final IMicroQName ATTR_USERNAME_TOKEN_USERNAME = new MicroQName ("UsernameTokenUsername");
+  private static final IMicroQName ATTR_USERNAME_TOKEN_PASSWORD = new MicroQName ("UsernameTokenPassword");
+  private static final IMicroQName ATTR_USERNAME_TOKEN_DIGEST = new MicroQName ("UsernameTokenDigest");
+  private static final IMicroQName ATTR_USERNAME_TOKEN_NONCE = new MicroQName ("UsernameTokenNonce");
+  private static final IMicroQName ATTR_USERNAME_TOKEN_CREATED = new MicroQName ("UsernameTokenCreated");
+  private static final IMicroQName ATTR_PMODE_AUTHORIZE = new MicroQName ("PModeAuthorize");
+  private static final IMicroQName ATTR_SEND_RECEIPT = new MicroQName ("SendReceipt");
+  private static final IMicroQName ATTR_SEND_RECEIPT_REPLY_PATTERN = new MicroQName ("SendReceiptReplyPattern");
+  private static final IMicroQName ATTR_SEND_RECEIPT_NON_REPUDIATION = new MicroQName ("SendReceiptNonRepudiation");
 
   public IMicroElement convertToMicroElement (final PModeLegSecurity aValue,
                                               final String sNamespaceURI,

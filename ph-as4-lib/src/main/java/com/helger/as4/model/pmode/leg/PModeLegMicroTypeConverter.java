@@ -16,11 +16,19 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
+/**
+ * XML converter for {@link PModeLeg}.
+ * 
+ * @author Philip Helger
+ */
 public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLeg>
 {
   private static final String ELEMENT_PROTOCOL = "Protocol";
@@ -29,7 +37,10 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter 
   private static final String ELEMENT_RELIABILITY = "Reliability";
   private static final String ELEMENT_SECURITY = "Security";
 
-  public IMicroElement convertToMicroElement (final PModeLeg aValue, final String sNamespaceURI, final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final PModeLeg aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getProtocol (), sNamespaceURI, ELEMENT_PROTOCOL));
@@ -46,7 +57,8 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter 
     return ret;
   }
 
-  public PModeLeg convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PModeLeg convertToNative (@Nonnull final IMicroElement aElement)
   {
     final PModeLegProtocol aProtocol = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_PROTOCOL),
                                                                            PModeLegProtocol.class);

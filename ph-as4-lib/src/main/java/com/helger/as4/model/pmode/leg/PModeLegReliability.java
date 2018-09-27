@@ -17,19 +17,29 @@
 package com.helger.as4.model.pmode.leg;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * PMode reliability stuff.
+ *
+ * @author Philip Helger
+ */
+@NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeLegReliability implements Serializable
 {
   public static final boolean DEFAULT_TERMINATE_GROUP = false;
@@ -165,21 +175,25 @@ public class PModeLegReliability implements Serializable
     return m_eAtLeastOnceContract.isDefined ();
   }
 
-  @Nonnull
   public boolean isAtLeastOnceContract ()
   {
     return m_eAtLeastOnceContract.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT);
   }
 
-  public final void setAtLeastOnceContract (final boolean bAtLeastOnceContract)
+  @Nonnull
+  public final EChange setAtLeastOnceContract (final boolean bAtLeastOnceContract)
   {
-    setAtLeastOnceContract (ETriState.valueOf (bAtLeastOnceContract));
+    return setAtLeastOnceContract (ETriState.valueOf (bAtLeastOnceContract));
   }
 
-  public final void setAtLeastOnceContract (@Nonnull final ETriState eAtLeastOnceContract)
+  @Nonnull
+  public final EChange setAtLeastOnceContract (@Nonnull final ETriState eAtLeastOnceContract)
   {
     ValueEnforcer.notNull (eAtLeastOnceContract, "AtLeastOnceContract");
+    if (eAtLeastOnceContract.equals (m_eAtLeastOnceContract))
+      return EChange.UNCHANGED;
     m_eAtLeastOnceContract = eAtLeastOnceContract;
+    return EChange.CHANGED;
   }
 
   public boolean isAtLeastOnceAckOnDeliveryDefined ()
@@ -187,21 +201,25 @@ public class PModeLegReliability implements Serializable
     return m_eAtLeastOnceAckOnDelivery.isDefined ();
   }
 
-  @Nonnull
   public boolean isAtLeastOnceAckOnDelivery ()
   {
     return m_eAtLeastOnceAckOnDelivery.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_ACK_ON_DELIVERY);
   }
 
-  public final void setAtLeastOnceAckOnDelivery (final boolean bAtLeastOnceAckOnDelivery)
+  @Nonnull
+  public final EChange setAtLeastOnceAckOnDelivery (final boolean bAtLeastOnceAckOnDelivery)
   {
-    setAtLeastOnceAckOnDelivery (ETriState.valueOf (bAtLeastOnceAckOnDelivery));
+    return setAtLeastOnceAckOnDelivery (ETriState.valueOf (bAtLeastOnceAckOnDelivery));
   }
 
-  public final void setAtLeastOnceAckOnDelivery (@Nonnull final ETriState eAtLeastOnceAckOnDelivery)
+  @Nonnull
+  public final EChange setAtLeastOnceAckOnDelivery (@Nonnull final ETriState eAtLeastOnceAckOnDelivery)
   {
     ValueEnforcer.notNull (eAtLeastOnceAckOnDelivery, "AtLeastOnceAckOnDelivery");
+    if (eAtLeastOnceAckOnDelivery.equals (m_eAtLeastOnceAckOnDelivery))
+      return EChange.UNCHANGED;
     m_eAtLeastOnceAckOnDelivery = eAtLeastOnceAckOnDelivery;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -210,9 +228,13 @@ public class PModeLegReliability implements Serializable
     return m_sAtLeastOnceContractAcksTo;
   }
 
-  public final void setAtLeastOnceContractAcksTo (@Nullable final String sAtLeastOnceContractAcksTo)
+  @Nonnull
+  public final EChange setAtLeastOnceContractAcksTo (@Nullable final String sAtLeastOnceContractAcksTo)
   {
+    if (EqualsHelper.equals (sAtLeastOnceContractAcksTo, m_sAtLeastOnceContractAcksTo))
+      return EChange.UNCHANGED;
     m_sAtLeastOnceContractAcksTo = sAtLeastOnceContractAcksTo;
+    return EChange.CHANGED;
   }
 
   public boolean isAtLeastOnceContractAckResponseDefined ()
@@ -220,21 +242,25 @@ public class PModeLegReliability implements Serializable
     return m_eAtLeastOnceContractAckResponse.isDefined ();
   }
 
-  @Nonnull
   public boolean isAtLeastOnceContractAckResponse ()
   {
     return m_eAtLeastOnceContractAckResponse.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE);
   }
 
-  public final void setAtLeastOnceContractAckResponse (final boolean bAtLeastOnceContractAckResponse)
+  @Nonnull
+  public final EChange setAtLeastOnceContractAckResponse (final boolean bAtLeastOnceContractAckResponse)
   {
-    setAtLeastOnceContractAckResponse (ETriState.valueOf (bAtLeastOnceContractAckResponse));
+    return setAtLeastOnceContractAckResponse (ETriState.valueOf (bAtLeastOnceContractAckResponse));
   }
 
-  public final void setAtLeastOnceContractAckResponse (@Nonnull final ETriState eAtLeastOnceContractAckResponse)
+  @Nonnull
+  public final EChange setAtLeastOnceContractAckResponse (@Nonnull final ETriState eAtLeastOnceContractAckResponse)
   {
     ValueEnforcer.notNull (eAtLeastOnceContractAckResponse, "AtLeastOnceContractAckResponse");
+    if (eAtLeastOnceContractAckResponse.equals (m_eAtLeastOnceContractAckResponse))
+      return EChange.UNCHANGED;
     m_eAtLeastOnceContractAckResponse = eAtLeastOnceContractAckResponse;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -243,9 +269,13 @@ public class PModeLegReliability implements Serializable
     return m_sAtLeastOnceReplyPattern;
   }
 
-  public final void setAtLeastOnceReplyPattern (@Nullable final String eAtLeastOnceReplyPattern)
+  @Nonnull
+  public final EChange setAtLeastOnceReplyPattern (@Nullable final String sAtLeastOnceReplyPattern)
   {
-    m_sAtLeastOnceReplyPattern = eAtLeastOnceReplyPattern;
+    if (EqualsHelper.equals (sAtLeastOnceReplyPattern, m_sAtLeastOnceReplyPattern))
+      return EChange.UNCHANGED;
+    m_sAtLeastOnceReplyPattern = sAtLeastOnceReplyPattern;
+    return EChange.CHANGED;
   }
 
   public boolean isAtMostOnceContractDefined ()
@@ -258,15 +288,20 @@ public class PModeLegReliability implements Serializable
     return m_eAtMostOnceContract.getAsBooleanValue (DEFAULT_AT_MOST_ONCE_CONTRACT);
   }
 
-  public final void setAtMostOnceContract (final boolean bAtMostOnceContract)
+  @Nonnull
+  public final EChange setAtMostOnceContract (final boolean bAtMostOnceContract)
   {
-    setAtMostOnceContract (ETriState.valueOf (bAtMostOnceContract));
+    return setAtMostOnceContract (ETriState.valueOf (bAtMostOnceContract));
   }
 
-  public final void setAtMostOnceContract (@Nonnull final ETriState eAtMostOnceContract)
+  @Nonnull
+  public final EChange setAtMostOnceContract (@Nonnull final ETriState eAtMostOnceContract)
   {
     ValueEnforcer.notNull (eAtMostOnceContract, "AtMostOnceContract");
+    if (eAtMostOnceContract.equals (m_eAtMostOnceContract))
+      return EChange.UNCHANGED;
     m_eAtMostOnceContract = eAtMostOnceContract;
+    return EChange.CHANGED;
   }
 
   public boolean isInOrderContractDefined ()
@@ -274,21 +309,25 @@ public class PModeLegReliability implements Serializable
     return m_eInOrderContract.isDefined ();
   }
 
-  @Nonnull
   public boolean isInOrderContract ()
   {
     return m_eInOrderContract.getAsBooleanValue (DEFAULT_IN_ORDER_CONTACT);
   }
 
-  public final void setInOrderContract (final boolean bInOrderContract)
+  @Nonnull
+  public final EChange setInOrderContract (final boolean bInOrderContract)
   {
-    setInOrderContract (ETriState.valueOf (bInOrderContract));
+    return setInOrderContract (ETriState.valueOf (bInOrderContract));
   }
 
-  public final void setInOrderContract (@Nonnull final ETriState eInOrderContract)
+  @Nonnull
+  public final EChange setInOrderContract (@Nonnull final ETriState eInOrderContract)
   {
     ValueEnforcer.notNull (eInOrderContract, "InOrderContract");
+    if (eInOrderContract.equals (m_eInOrderContract))
+      return EChange.UNCHANGED;
     m_eInOrderContract = eInOrderContract;
+    return EChange.CHANGED;
   }
 
   public boolean isStartGroupDefined ()
@@ -296,21 +335,25 @@ public class PModeLegReliability implements Serializable
     return m_eStartGroup.isDefined ();
   }
 
-  @Nonnull
   public boolean isStartGroup ()
   {
     return m_eStartGroup.getAsBooleanValue (DEFAULT_START_GROUP);
   }
 
-  public final void setStartGroup (final boolean bStartGroup)
+  @Nonnull
+  public final EChange setStartGroup (final boolean bStartGroup)
   {
-    setStartGroup (ETriState.valueOf (bStartGroup));
+    return setStartGroup (ETriState.valueOf (bStartGroup));
   }
 
-  public final void setStartGroup (@Nonnull final ETriState eStartGroup)
+  @Nonnull
+  public final EChange setStartGroup (@Nonnull final ETriState eStartGroup)
   {
     ValueEnforcer.notNull (eStartGroup, "StartGroup");
+    if (eStartGroup.equals (m_eStartGroup))
+      return EChange.UNCHANGED;
     m_eStartGroup = eStartGroup;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -320,9 +363,14 @@ public class PModeLegReliability implements Serializable
     return m_aCorrelation.getClone ();
   }
 
-  public final void setCorrelation (@Nullable final List <String> aCorrelation)
+  @Nonnull
+  public final EChange setCorrelation (@Nullable final ICommonsList <String> aCorrelation)
   {
+    // Ensure same type
+    if (EqualsHelper.equals (aCorrelation, m_aCorrelation))
+      return EChange.UNCHANGED;
     m_aCorrelation.setAll (aCorrelation);
+    return EChange.CHANGED;
   }
 
   public boolean isTerminateGroupDefined ()
@@ -330,21 +378,25 @@ public class PModeLegReliability implements Serializable
     return m_eTerminateGroup.isDefined ();
   }
 
-  @Nonnull
   public boolean isTerminateGroup ()
   {
     return m_eTerminateGroup.getAsBooleanValue (DEFAULT_TERMINATE_GROUP);
   }
 
-  public final void setTerminateGroup (final boolean bTerminateGroup)
+  @Nonnull
+  public final EChange setTerminateGroup (final boolean bTerminateGroup)
   {
-    setTerminateGroup (ETriState.valueOf (bTerminateGroup));
+    return setTerminateGroup (ETriState.valueOf (bTerminateGroup));
   }
 
-  public final void setTerminateGroup (@Nonnull final ETriState eTerminateGroup)
+  @Nonnull
+  public final EChange setTerminateGroup (@Nonnull final ETriState eTerminateGroup)
   {
     ValueEnforcer.notNull (eTerminateGroup, "TerminateGroup");
+    if (eTerminateGroup.equals (m_eTerminateGroup))
+      return EChange.UNCHANGED;
     m_eTerminateGroup = eTerminateGroup;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -381,5 +433,21 @@ public class PModeLegReliability implements Serializable
                                        .append (m_aCorrelation)
                                        .append (m_eTerminateGroup)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("AtLeastOnceContract", m_eAtLeastOnceContract)
+                                       .append ("AtLeastOnceAckOnDelivery", m_eAtLeastOnceAckOnDelivery)
+                                       .append ("AtLeastOnceContractAcksTo", m_sAtLeastOnceContractAcksTo)
+                                       .append ("AtLeastOnceContractAckResponse", m_eAtLeastOnceContractAckResponse)
+                                       .append ("AtLeastOnceReplyPattern", m_sAtLeastOnceReplyPattern)
+                                       .append ("AtMostOnceContract", m_eAtMostOnceContract)
+                                       .append ("InOrderContract", m_eInOrderContract)
+                                       .append ("StartGroup", m_eStartGroup)
+                                       .append ("Correlation", m_aCorrelation)
+                                       .append ("TerminateGroup", m_eTerminateGroup)
+                                       .getToString ();
   }
 }

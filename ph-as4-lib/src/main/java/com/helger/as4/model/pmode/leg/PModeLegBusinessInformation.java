@@ -24,11 +24,16 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
+import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * Business information - This set of parameters only applies to user messages.
@@ -36,6 +41,7 @@ import com.helger.commons.hashcode.HashCodeGenerator;
  * @author Philip Helger
  */
 @NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeLegBusinessInformation implements Serializable
 {
   /**
@@ -67,7 +73,7 @@ public class PModeLegBusinessInformation implements Serializable
    * This parameter allows for specifying a maximum size in kilobytes for the
    * entire payload, i.e. for the total of all payload parts.
    */
-  private Long m_nPayloadProfileMaxKB;
+  private Long m_aPayloadProfileMaxKB;
 
   /**
    * The value of this parameter is the identifier of the MPC (Message Partition
@@ -105,9 +111,18 @@ public class PModeLegBusinessInformation implements Serializable
     return m_sService;
   }
 
-  public final void setService (@Nullable final String sService)
+  public boolean hasService ()
   {
+    return StringHelper.hasText (m_sService);
+  }
+
+  @Nonnull
+  public final EChange setService (@Nullable final String sService)
+  {
+    if (EqualsHelper.equals (sService, m_sService))
+      return EChange.UNCHANGED;
     m_sService = sService;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -116,9 +131,18 @@ public class PModeLegBusinessInformation implements Serializable
     return m_sAction;
   }
 
-  public final void setAction (@Nullable final String sAction)
+  public boolean hasAction ()
   {
+    return StringHelper.hasText (m_sAction);
+  }
+
+  @Nonnull
+  public final EChange setAction (@Nullable final String sAction)
+  {
+    if (EqualsHelper.equals (sAction, m_sAction))
+      return EChange.UNCHANGED;
     m_sAction = sAction;
+    return EChange.CHANGED;
   }
 
   @Nonnull
@@ -133,9 +157,15 @@ public class PModeLegBusinessInformation implements Serializable
     m_aProperties.forEachValue (aConsumer);
   }
 
-  public final void setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
+  @Nonnull
+  public final EChange setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
   {
+    // Ensure same type
+    final CommonsLinkedHashMap <String, PModeProperty> aRealMap = new CommonsLinkedHashMap <> (aProperties);
+    if (aRealMap.equals (m_aProperties))
+      return EChange.UNCHANGED;
     m_aProperties.setAll (aProperties);
+    return EChange.CHANGED;
   }
 
   public final void addProperty (@Nonnull final PModeProperty aProperty)
@@ -159,9 +189,15 @@ public class PModeLegBusinessInformation implements Serializable
     m_aPayloadProfiles.forEachValue (aConsumer);
   }
 
-  public final void setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
+  @Nonnull
+  public final EChange setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
   {
+    // Ensure same type
+    final CommonsLinkedHashMap <String, PModePayloadProfile> aRealMap = new CommonsLinkedHashMap <> (aPayloadProfiles);
+    if (aRealMap.equals (m_aPayloadProfiles))
+      return EChange.UNCHANGED;
     m_aPayloadProfiles.setAll (aPayloadProfiles);
+    return EChange.CHANGED;
   }
 
   public final void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
@@ -176,12 +212,21 @@ public class PModeLegBusinessInformation implements Serializable
   @Nullable
   public Long getPayloadProfileMaxKB ()
   {
-    return m_nPayloadProfileMaxKB;
+    return m_aPayloadProfileMaxKB;
   }
 
-  public final void setPayloadProfileMaxKB (final Long nPayloadProfileMaxKB)
+  public boolean hasPayloadProfileMaxKB ()
   {
-    m_nPayloadProfileMaxKB = nPayloadProfileMaxKB;
+    return m_aPayloadProfileMaxKB != null;
+  }
+
+  @Nonnull
+  public final EChange setPayloadProfileMaxKB (@Nullable final Long nPayloadProfileMaxKB)
+  {
+    if (EqualsHelper.equals (nPayloadProfileMaxKB, m_aPayloadProfileMaxKB))
+      return EChange.UNCHANGED;
+    m_aPayloadProfileMaxKB = nPayloadProfileMaxKB;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -190,9 +235,18 @@ public class PModeLegBusinessInformation implements Serializable
     return m_sMPCID;
   }
 
-  public final void setMPCID (@Nullable final String sMPCID)
+  public boolean hasMPCID ()
   {
+    return StringHelper.hasText (m_sMPCID);
+  }
+
+  @Nonnull
+  public final EChange setMPCID (@Nullable final String sMPCID)
+  {
+    if (EqualsHelper.equals (sMPCID, m_sMPCID))
+      return EChange.UNCHANGED;
     m_sMPCID = sMPCID;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -203,23 +257,35 @@ public class PModeLegBusinessInformation implements Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegBusinessInformation rhs = (PModeLegBusinessInformation) o;
-    return m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
-           EqualsHelper.equals (m_aProperties, rhs.m_aProperties) &&
-           EqualsHelper.equals (m_nPayloadProfileMaxKB, rhs.m_nPayloadProfileMaxKB) &&
+    return EqualsHelper.equals (m_sService, rhs.m_sService) &&
            EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
-           EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID) &&
-           EqualsHelper.equals (m_sService, rhs.m_sService);
+           m_aProperties.equals (rhs.m_aProperties) &&
+           m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
+           EqualsHelper.equals (m_aPayloadProfileMaxKB, rhs.m_aPayloadProfileMaxKB) &&
+           EqualsHelper.equals (m_sMPCID, rhs.m_sMPCID);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aPayloadProfiles)
-                                       .append (m_aProperties)
-                                       .append (m_nPayloadProfileMaxKB)
+    return new HashCodeGenerator (this).append (m_sService)
                                        .append (m_sAction)
+                                       .append (m_aProperties)
+                                       .append (m_aPayloadProfiles)
+                                       .append (m_aPayloadProfileMaxKB)
                                        .append (m_sMPCID)
-                                       .append (m_sService)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).appendIfNotNull ("Service", m_sService)
+                                       .appendIfNotNull ("Action", m_sAction)
+                                       .appendIf ("Properties", m_aProperties, ICommonsMap::isNotEmpty)
+                                       .appendIf ("PayloadProfiles", m_aPayloadProfiles, ICommonsMap::isNotEmpty)
+                                       .appendIfNotNull ("PayloadProfileMaxMB", m_aPayloadProfileMaxKB)
+                                       .appendIfNotNull ("MPCID", m_sMPCID)
+                                       .getToString ();
   }
 }

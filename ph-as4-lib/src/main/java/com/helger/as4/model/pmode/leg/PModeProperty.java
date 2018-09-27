@@ -20,17 +20,20 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.name.IHasName;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.text.IHasDescription;
 
 /**
@@ -45,9 +48,12 @@ import com.helger.commons.text.IHasDescription;
  *
  * @author Philip Helger
  */
+@Immutable
+@MustImplementEqualsAndHashcode
 public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndicator, Serializable
 {
   public static final String DATA_TYPE_STRING = "string";
+  public static final boolean DEFAULT_MANDATORY = false;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeProperty.class);
 
@@ -59,7 +65,8 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   private static void _checkDataType (@Nonnull final String sDataType)
   {
     if (!DATA_TYPE_STRING.equals (sDataType))
-      LOGGER.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
+      if (LOGGER.isWarnEnabled ())
+        LOGGER.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
   }
 
   public PModeProperty (@Nonnull @Nonempty final String sName,
@@ -112,7 +119,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeProperty rhs = (PModeProperty) o;
-    return EqualsHelper.equals (m_sName, rhs.m_sName) &&
+    return m_sName.equals (rhs.m_sName) &&
            EqualsHelper.equals (m_sDescription, rhs.m_sDescription) &&
            m_sDataType.equals (rhs.m_sDataType) &&
            m_eMandatory.equals (rhs.m_eMandatory);
@@ -126,5 +133,15 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
                                        .append (m_sDataType)
                                        .append (m_eMandatory)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Name", m_sName)
+                                       .append ("Description", m_sDescription)
+                                       .append ("DataType", m_sDataType)
+                                       .append ("Mandatory", m_eMandatory)
+                                       .getToString ();
   }
 }

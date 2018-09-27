@@ -22,12 +22,19 @@ import javax.annotation.Nullable;
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 
+/**
+ * XML converter for objects of class {@link PModeLegProtocol}.
+ *
+ * @author Philip Helger
+ */
 public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegProtocol>
 {
-  private static final String ATTR_ADDRESS = "Address";
-  private static final String ATTR_SOAP_VERSION = "SOAPVersion";
+  private static final IMicroQName ATTR_ADDRESS = new MicroQName ("Address");
+  private static final IMicroQName ATTR_SOAP_VERSION = new MicroQName ("SOAPVersion");
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final PModeLegProtocol aValue,

@@ -20,18 +20,25 @@ import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.MicroTypeConverter;
 
+/**
+ * XML converter for objects of class {@link PModeLegBusinessInformation}.
+ *
+ * @author Philip Helger
+ */
 public class PModeLegBusinessInformationMicroTypeConverter extends
                                                            AbstractPModeMicroTypeConverter <PModeLegBusinessInformation>
 {
-  private static final String ATTR_SERVICE = "Service";
-  private static final String ATTR_ACTION = "Action";
+  private static final IMicroQName ATTR_SERVICE = new MicroQName ("Service");
+  private static final IMicroQName ATTR_ACTION = new MicroQName ("Action");
   private static final String ELEMENT_PROPERTIES = "Properties";
   private static final String ELEMENT_PAYLOAD_PROFILE = "PayloadProfile";
-  private static final String ATTR_PAYLOAD_PROFILE_MAX_KB = "PayloadProfileMaxKB";
-  private static final String ATTR_MPCID = "MPCID";
+  private static final IMicroQName ATTR_PAYLOAD_PROFILE_MAX_KB = new MicroQName ("PayloadProfileMaxKB");
+  private static final IMicroQName ATTR_MPCID = new MicroQName ("MPCID");
 
   public IMicroElement convertToMicroElement (final PModeLegBusinessInformation aValue,
                                               final String sNamespaceURI,

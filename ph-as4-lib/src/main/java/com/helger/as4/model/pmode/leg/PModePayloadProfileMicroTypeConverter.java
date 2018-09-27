@@ -17,27 +17,34 @@
 package com.helger.as4.model.pmode.leg;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.EMandatory;
-import com.helger.commons.string.StringParser;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 
+/**
+ * XML converter for objects of class {@link PModePayloadProfile}.
+ *
+ * @author Philip Helger
+ */
 public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModePayloadProfile>
 {
-  private static final String ATTR_NAME = "Name";
-  private static final String ATTR_MIME_TYPE = "MimeType";
-  private static final String ATTR_XSD_FILENAME = "XSDFilename";
-  private static final String ATTR_MAX_SIZE_KB = "MaxSizeKB";
-  private static final String ATTR_MANDATORY = "Mandatory";
+  private static final IMicroQName ATTR_NAME = new MicroQName ("Name");
+  private static final IMicroQName ATTR_MIME_TYPE = new MicroQName ("MimeType");
+  private static final IMicroQName ATTR_XSD_FILENAME = new MicroQName ("XSDFilename");
+  private static final IMicroQName ATTR_MAX_SIZE_KB = new MicroQName ("MaxSizeKB");
+  private static final IMicroQName ATTR_MANDATORY = new MicroQName ("Mandatory");
 
   @Nonnull
-  public IMicroElement convertToMicroElement (final PModePayloadProfile aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  public IMicroElement convertToMicroElement (@Nonnull final PModePayloadProfile aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
@@ -57,8 +64,8 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
     final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAttributeValue (ATTR_MIME_TYPE));
     final String sXSDFilename = aElement.getAttributeValue (ATTR_XSD_FILENAME);
     final Integer aMaxSizeKB = aElement.getAttributeValueWithConversion (ATTR_MAX_SIZE_KB, Integer.class);
-    final EMandatory eMandatory = EMandatory.valueOf (StringParser.parseBool (aElement.getAttributeValue (ATTR_MANDATORY),
-                                                                              false));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY,
+                                                                                        PModePayloadProfile.DEFAULT_MANDATORY));
 
     return new PModePayloadProfile (sName, aMimeType, sXSDFilename, aMaxSizeKB, eMandatory);
   }

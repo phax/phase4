@@ -18,11 +18,10 @@ package com.helger.as4.model.mpc;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.as4.CAS4;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.dao.DAOException;
@@ -30,6 +29,12 @@ import com.helger.photon.basic.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
+/**
+ * Manager for {@link MPC} objects.
+ *
+ * @author Philip Helger
+ */
+@ThreadSafe
 public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
 {
   public MPCManager (@Nullable final String sFilename) throws DAOException
@@ -66,6 +71,11 @@ public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
     if (aRealMPC == null)
     {
       AuditHelper.onAuditModifyFailure (MPC.OT, aMPC.getID (), "no-such-id");
+      return EChange.UNCHANGED;
+    }
+    if (aRealMPC.isDeleted ())
+    {
+      AuditHelper.onAuditModifyFailure (MPC.OT, aMPC.getID (), "already-deleted");
       return EChange.UNCHANGED;
     }
 
@@ -135,13 +145,6 @@ public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
     AuditHelper.onAuditDeleteSuccess (MPC.OT, sMPCID);
 
     return EChange.CHANGED;
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <IMPC> getAllMPCs ()
-  {
-    return getAll ();
   }
 
   @Nullable

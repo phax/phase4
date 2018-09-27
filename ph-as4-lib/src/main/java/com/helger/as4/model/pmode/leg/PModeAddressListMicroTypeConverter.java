@@ -16,19 +16,28 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 
+/**
+ * XML converter for {@link PModeAddressList} objects.
+ *
+ * @author Philip Helger
+ */
 public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeAddressList>
 {
   private static final String ELEMENT_ADDRESSES = "Addresses";
 
-  public IMicroElement convertToMicroElement (final PModeAddressList aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final PModeAddressList aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     for (final String sEncrypt : aValue.getAllAddresses ())
@@ -38,12 +47,13 @@ public class PModeAddressListMicroTypeConverter extends AbstractPModeMicroTypeCo
     return ret;
   }
 
-  public PModeAddressList convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PModeAddressList convertToNative (@Nonnull final IMicroElement aElement)
   {
     final ICommonsList <String> aAddresses = new CommonsArrayList <> ();
-    for (final IMicroElement aEncryptElement : aElement.getAllChildElements (ELEMENT_ADDRESSES))
+    for (final IMicroElement eItem : aElement.getAllChildElements (ELEMENT_ADDRESSES))
     {
-      aAddresses.add (aEncryptElement.getTextContentTrimmed ());
+      aAddresses.add (eItem.getTextContentTrimmed ());
     }
 
     return new PModeAddressList (aAddresses);

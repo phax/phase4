@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -38,6 +40,12 @@ import com.helger.photon.basic.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.basic.audit.AuditHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
+/**
+ * Persisting manager for {@link PMode} objects.
+ *
+ * @author Philip Helger
+ */
+@ThreadSafe
 public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeManager.class);
@@ -72,6 +80,11 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     if (aRealPMode == null)
     {
       AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "no-such-id");
+      return EChange.UNCHANGED;
+    }
+    if (aRealPMode.isDeleted ())
+    {
+      AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "already-deleted");
       return EChange.UNCHANGED;
     }
 
@@ -156,13 +169,11 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
   }
 
   @Nonnull
-  public static Predicate <IPMode> getPModeFilter (@Nonnull final String sID,
-                                                   @Nullable final String sInitiatorID,
-                                                   @Nullable final String sResponderID)
+  public static IPredicate <IPMode> getPModeFilter (@Nonnull final String sID,
+                                                    @Nullable final String sInitiatorID,
+                                                    @Nullable final String sResponderID)
   {
-    return p -> p.getID ().equals (sID) &&
-                EqualsHelper.equals (p.getInitiatorID (), sInitiatorID) &&
-                EqualsHelper.equals (p.getResponderID (), sResponderID);
+    return p -> p.getID ().equals (sID) && p.hasInitiatorID (sInitiatorID) && p.hasResponderID (sResponderID);
   }
 
   @Nullable
@@ -233,38 +244,28 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     if (aInitiator != null)
     {
       // INITIATOR PARTY_ID
-      if (aInitiator.getIDValue () == null)
-      {
+      if (StringHelper.hasNoText (aInitiator.getIDValue ()))
         throw new IllegalStateException ("No PMode Initiator ID present");
-      }
 
       // INITIATOR ROLE
-      if (aInitiator.getRole () == null)
-      {
+      if (StringHelper.hasNoText (aInitiator.getRole ()))
         throw new IllegalStateException ("No PMode Initiator Role present");
-      }
     }
 
     final PModeParty aResponder = aPMode.getResponder ();
     if (aResponder != null)
     {
       // RESPONDER PARTY_ID
-      if (aResponder.getIDValue () == null)
-      {
+      if (StringHelper.hasNoText (aResponder.getIDValue ()))
         throw new IllegalStateException ("No PMode Responder ID present");
-      }
 
       // RESPONDER ROLE
-      if (aResponder.getRole () == null)
-      {
+      if (StringHelper.hasNoText (aResponder.getRole ()))
         throw new IllegalStateException ("No PMode Responder Role present");
-      }
     }
 
     if (aResponder == null && aInitiator == null)
-    {
       throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
-    }
 
     return ESuccess.SUCCESS;
   }

@@ -36,8 +36,7 @@ import com.helger.commons.state.ETriState;
 
 /**
  * Default PMode configuration Specification from
- * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.
- * pdf
+ * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/core/os/ebms_core-3.0-spec-os.pdf</code>
  *
  * @author bayerlma
  * @author Philip Helger

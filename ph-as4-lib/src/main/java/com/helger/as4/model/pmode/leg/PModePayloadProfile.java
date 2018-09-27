@@ -20,8 +20,10 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
@@ -30,6 +32,7 @@ import com.helger.commons.name.IHasName;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.ToStringGenerator;
 
 /**
  * A payload part is a data structure that consists of five properties: name (or
@@ -42,8 +45,12 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
+@Immutable
+@MustImplementEqualsAndHashcode
 public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Serializable
 {
+  public static final boolean DEFAULT_MANDATORY = false;
+
   private final String m_sName;
   private final IMimeType m_aMimeType;
   private final String m_sXSDFilename;
@@ -116,21 +123,32 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModePayloadProfile rhs = (PModePayloadProfile) o;
-    return m_aMaxSizeKB.equals (rhs.m_aMaxSizeKB) &&
-           EqualsHelper.equals (m_aMimeType, rhs.m_aMimeType) &&
-           EqualsHelper.equals (m_eMandatory, rhs.m_eMandatory) &&
-           EqualsHelper.equals (m_sName, rhs.m_sName) &&
-           EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename);
+    return m_sName.equals (rhs.m_sName) &&
+           m_aMimeType.equals (rhs.m_aMimeType) &&
+           EqualsHelper.equals (m_sXSDFilename, rhs.m_sXSDFilename) &&
+           EqualsHelper.equals (m_aMaxSizeKB, rhs.m_aMaxSizeKB) &&
+           m_eMandatory.equals (rhs.m_eMandatory);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_aMaxSizeKB)
+    return new HashCodeGenerator (this).append (m_sName)
                                        .append (m_aMimeType)
-                                       .append (m_eMandatory)
-                                       .append (m_sName)
                                        .append (m_sXSDFilename)
+                                       .append (m_aMaxSizeKB)
+                                       .append (m_eMandatory)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Name", m_sName)
+                                       .append ("MimeType", m_aMimeType)
+                                       .append ("XSDFilename", m_sXSDFilename)
+                                       .append ("MaxSizeKB", m_aMaxSizeKB)
+                                       .append ("Mandatory", m_eMandatory)
+                                       .getToString ();
   }
 }

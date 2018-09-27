@@ -42,6 +42,11 @@ public class DefaultPModeResolver implements IPModeResolver
     m_bUseDefaultAsFallback = bUseDefaultAsFallback;
   }
 
+  public final boolean isUseDefaultAsFallback ()
+  {
+    return m_bUseDefaultAsFallback;
+  }
+
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sPModeID,
                               @Nonnull final String sService,
@@ -56,15 +61,13 @@ public class DefaultPModeResolver implements IPModeResolver
     {
       // An ID is present - try to resolve this ID
       ret = aPModeMgr.getPModeOfID (sPModeID);
+      if (ret != null)
+        return ret;
     }
 
-    if (ret == null)
-    {
-      // the PMode id field is empty or null (or invalid)
-      // try a combination of service and action
-      ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
-    }
-
+    // the PMode id field is empty or null (or invalid)
+    // try a combination of service and action
+    ret = aPModeMgr.getPModeOfServiceAndAction (sService, sAction);
     if (ret != null)
       return ret;
 

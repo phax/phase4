@@ -18,12 +18,19 @@ package com.helger.as4.model.pmode;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.as4.attachment.EAS4CompressionMode;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
+import com.helger.commons.string.ToStringGenerator;
 
+@NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModePayloadService implements Serializable
 {
   private EAS4CompressionMode m_eCompressionMode;
@@ -45,9 +52,13 @@ public class PModePayloadService implements Serializable
     return m_eCompressionMode == null ? null : m_eCompressionMode.getID ();
   }
 
-  public final void setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
+  @Nonnull
+  public final EChange setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
   {
+    if (EqualsHelper.equals (eCompressionMode, m_eCompressionMode))
+      return EChange.UNCHANGED;
     m_eCompressionMode = eCompressionMode;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -65,5 +76,11 @@ public class PModePayloadService implements Serializable
   public int hashCode ()
   {
     return new HashCodeGenerator (this).append (m_eCompressionMode).getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("CompressionMode", m_eCompressionMode).getToString ();
   }
 }

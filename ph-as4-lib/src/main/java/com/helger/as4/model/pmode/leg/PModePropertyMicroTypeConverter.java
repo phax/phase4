@@ -16,21 +16,32 @@
  */
 package com.helger.as4.model.pmode.leg;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.as4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.commons.state.EMandatory;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 
+/**
+ * XML converter for objects of class {@link PModeProperty}.
+ *
+ * @author Philip Helger
+ */
 public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeProperty>
 {
-  private static final String ATTR_NAME = "Name";
-  private static final String ATTR_DESCRIPTION = "Description";
-  private static final String ATTR_DATA_TYPE = "DataType";
-  private static final String ATTR_MANDATORY = "Mandatory";
+  private static final IMicroQName ATTR_NAME = new MicroQName ("Name");
+  private static final IMicroQName ATTR_DESCRIPTION = new MicroQName ("Description");
+  private static final IMicroQName ATTR_DATA_TYPE = new MicroQName ("DataType");
+  private static final IMicroQName ATTR_MANDATORY = new MicroQName ("Mandatory");
 
-  public IMicroElement convertToMicroElement (final PModeProperty aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final PModeProperty aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_NAME, aValue.getName ());
@@ -40,12 +51,15 @@ public class PModePropertyMicroTypeConverter extends AbstractPModeMicroTypeConve
     return ret;
   }
 
-  public PModeProperty convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PModeProperty convertToNative (@Nonnull final IMicroElement aElement)
   {
     final String sName = aElement.getAttributeValue (ATTR_NAME);
     final String sDescription = aElement.getAttributeValue (ATTR_DESCRIPTION);
     final String sDataType = aElement.getAttributeValue (ATTR_DATA_TYPE);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY, false));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY,
+                                                                                        PModeProperty.DEFAULT_MANDATORY));
+
     return new PModeProperty (sName, sDescription, sDataType, eMandatory);
   }
 }

@@ -18,12 +18,23 @@ package com.helger.as4.model.pmode.leg;
 
 import java.io.Serializable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
 import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * Contains the information for a single direction (leg) of a PMode
+ *
+ * @author Philip Helger
+ */
+@NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeLeg implements Serializable
 {
   private PModeLegProtocol m_aProtocol;
@@ -51,9 +62,13 @@ public class PModeLeg implements Serializable
     return m_aProtocol;
   }
 
-  public final void setProtocol (@Nullable final PModeLegProtocol aProtocol)
+  @Nonnull
+  public final EChange setProtocol (@Nullable final PModeLegProtocol aProtocol)
   {
+    if (EqualsHelper.equals (aProtocol, m_aProtocol))
+      return EChange.UNCHANGED;
     m_aProtocol = aProtocol;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -62,9 +77,18 @@ public class PModeLeg implements Serializable
     return m_aBusinessInfo;
   }
 
-  public final void setBusinessInfo (@Nullable final PModeLegBusinessInformation aBusinessInfo)
+  public boolean hasBusinessInfo ()
   {
+    return m_aBusinessInfo != null;
+  }
+
+  @Nonnull
+  public final EChange setBusinessInfo (@Nullable final PModeLegBusinessInformation aBusinessInfo)
+  {
+    if (EqualsHelper.equals (aBusinessInfo, m_aBusinessInfo))
+      return EChange.UNCHANGED;
     m_aBusinessInfo = aBusinessInfo;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -73,9 +97,13 @@ public class PModeLeg implements Serializable
     return m_aErrorHandling;
   }
 
-  public final void setErrorHandling (@Nullable final PModeLegErrorHandling aErrorHandling)
+  @Nonnull
+  public final EChange setErrorHandling (@Nullable final PModeLegErrorHandling aErrorHandling)
   {
+    if (EqualsHelper.equals (aErrorHandling, m_aErrorHandling))
+      return EChange.UNCHANGED;
     m_aErrorHandling = aErrorHandling;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -84,9 +112,13 @@ public class PModeLeg implements Serializable
     return m_aReliability;
   }
 
-  public final void setReliability (@Nullable final PModeLegReliability aReliability)
+  @Nonnull
+  public final EChange setReliability (@Nullable final PModeLegReliability aReliability)
   {
+    if (EqualsHelper.equals (aReliability, m_aReliability))
+      return EChange.UNCHANGED;
     m_aReliability = aReliability;
+    return EChange.CHANGED;
   }
 
   @Nullable
@@ -95,9 +127,13 @@ public class PModeLeg implements Serializable
     return m_aSecurity;
   }
 
-  public final void setSecurity (@Nullable final PModeLegSecurity aSecurity)
+  @Nonnull
+  public final EChange setSecurity (@Nullable final PModeLegSecurity aSecurity)
   {
+    if (EqualsHelper.equals (aSecurity, m_aSecurity))
+      return EChange.UNCHANGED;
     m_aSecurity = aSecurity;
+    return EChange.CHANGED;
   }
 
   @Override

@@ -20,11 +20,17 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.hashcode.HashCodeGenerator;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.ToStringGenerator;
 
+@NotThreadSafe
+@MustImplementEqualsAndHashcode
 public class PModeReceptionAwareness implements Serializable
 {
   public static final boolean DEFAULT_RECEPTION_AWARENESS = true;
@@ -57,21 +63,25 @@ public class PModeReceptionAwareness implements Serializable
     return m_eReceptionAwareness.isDefined ();
   }
 
-  @Nonnull
   public boolean isReceptionAwareness ()
   {
     return m_eReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
   }
 
-  public final void setReceptionAwareness (final boolean bReceptionAwareness)
+  @Nonnull
+  public final EChange setReceptionAwareness (final boolean bReceptionAwareness)
   {
-    setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
+    return setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
   }
 
-  public final void setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
+  @Nonnull
+  public final EChange setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
   {
     ValueEnforcer.notNull (eReceptionAwareness, "ReceptionAwareness");
+    if (eReceptionAwareness.equals (m_eReceptionAwareness))
+      return EChange.UNCHANGED;
     m_eReceptionAwareness = eReceptionAwareness;
+    return EChange.CHANGED;
   }
 
   public boolean isRetryDefined ()
@@ -79,21 +89,25 @@ public class PModeReceptionAwareness implements Serializable
     return m_eRetry.isDefined ();
   }
 
-  @Nonnull
   public boolean isRetry ()
   {
     return m_eRetry.getAsBooleanValue (DEFAULT_RETRY);
   }
 
-  public final void setRetry (final boolean bRetry)
+  @Nonnull
+  public final EChange setRetry (final boolean bRetry)
   {
-    setRetry (ETriState.valueOf (bRetry));
+    return setRetry (ETriState.valueOf (bRetry));
   }
 
-  public final void setRetry (@Nonnull final ETriState eRetry)
+  @Nonnull
+  public final EChange setRetry (@Nonnull final ETriState eRetry)
   {
     ValueEnforcer.notNull (eRetry, "Retry");
+    if (eRetry.equals (m_eRetry))
+      return EChange.UNCHANGED;
     m_eRetry = eRetry;
+    return EChange.CHANGED;
   }
 
   @Nonnegative
@@ -102,10 +116,14 @@ public class PModeReceptionAwareness implements Serializable
     return m_nMaxRetries;
   }
 
-  public final void setMaxRetries (@Nonnegative final int nMaxRetries)
+  @Nonnull
+  public final EChange setMaxRetries (@Nonnegative final int nMaxRetries)
   {
     ValueEnforcer.isGE0 (nMaxRetries, "MaxRetries");
+    if (nMaxRetries == m_nMaxRetries)
+      return EChange.UNCHANGED;
     m_nMaxRetries = nMaxRetries;
+    return EChange.CHANGED;
   }
 
   @Nonnegative
@@ -114,10 +132,14 @@ public class PModeReceptionAwareness implements Serializable
     return m_nRetryIntervalMS;
   }
 
-  public final void setRetryIntervalMS (@Nonnegative final int nRetryIntervalMS)
+  @Nonnull
+  public final EChange setRetryIntervalMS (@Nonnegative final int nRetryIntervalMS)
   {
     ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
+    if (nRetryIntervalMS == m_nRetryIntervalMS)
+      return EChange.UNCHANGED;
     m_nRetryIntervalMS = nRetryIntervalMS;
+    return EChange.CHANGED;
   }
 
   public boolean isDuplicateDetectionDefined ()
@@ -125,21 +147,25 @@ public class PModeReceptionAwareness implements Serializable
     return m_eDuplicateDetection.isDefined ();
   }
 
-  @Nonnull
   public boolean isDuplicateDetection ()
   {
     return m_eDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
   }
 
-  public final void setDuplicateDetection (final boolean bDuplicateDetection)
+  @Nonnull
+  public final EChange setDuplicateDetection (final boolean bDuplicateDetection)
   {
-    setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
+    return setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
   }
 
-  public final void setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
+  @Nonnull
+  public final EChange setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
   {
     ValueEnforcer.notNull (eDuplicateDetection, "DuplicateDetection");
+    if (eDuplicateDetection.equals (m_eDuplicateDetection))
+      return EChange.UNCHANGED;
     m_eDuplicateDetection = eDuplicateDetection;
+    return EChange.CHANGED;
   }
 
   @Override
@@ -166,6 +192,17 @@ public class PModeReceptionAwareness implements Serializable
                                        .append (m_nRetryIntervalMS)
                                        .append (m_eDuplicateDetection)
                                        .getHashCode ();
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("ReceptionAwareness", m_eReceptionAwareness)
+                                       .append ("Retry", m_eRetry)
+                                       .append ("MaxRetries", m_nMaxRetries)
+                                       .append ("RetryIntervalMS", m_nRetryIntervalMS)
+                                       .append ("DuplicateDetection", m_eDuplicateDetection)
+                                       .getToString ();
   }
 
   @Nonnull

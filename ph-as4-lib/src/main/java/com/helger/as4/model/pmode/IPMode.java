@@ -23,12 +23,24 @@ import com.helger.as4.model.EMEP;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.equals.EqualsHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.tenancy.IBusinessObject;
 
+/**
+ * Base read-only interface for a single {@link PMode}.
+ *
+ * @author Philip Helger
+ */
 public interface IPMode extends IBusinessObject
 {
   @Nullable
   PModeParty getInitiator ();
+
+  default boolean hasInitiator ()
+  {
+    return getInitiator () != null;
+  }
 
   @Nullable
   default String getInitiatorID ()
@@ -37,8 +49,18 @@ public interface IPMode extends IBusinessObject
     return aParty == null ? null : aParty.getID ();
   }
 
+  default boolean hasInitiatorID (@Nullable final String sID)
+  {
+    return EqualsHelper.equals (sID, getInitiatorID ());
+  }
+
   @Nullable
   PModeParty getResponder ();
+
+  default boolean hasResponder ()
+  {
+    return getResponder () != null;
+  }
 
   @Nullable
   default String getResponderID ()
@@ -47,8 +69,18 @@ public interface IPMode extends IBusinessObject
     return aParty == null ? null : aParty.getID ();
   }
 
+  default boolean hasResponderID (@Nullable final String sID)
+  {
+    return EqualsHelper.equals (sID, getResponderID ());
+  }
+
   @Nullable
   String getAgreement ();
+
+  default boolean hasAgreement ()
+  {
+    return StringHelper.hasText (getAgreement ());
+  }
 
   @Nonnull
   EMEP getMEP ();
@@ -73,12 +105,32 @@ public interface IPMode extends IBusinessObject
   @Nullable
   PModeLeg getLeg1 ();
 
+  default boolean hasLeg1 ()
+  {
+    return getLeg1 () != null;
+  }
+
   @Nullable
   PModeLeg getLeg2 ();
+
+  default boolean hasLeg2 ()
+  {
+    return getLeg2 () != null;
+  }
 
   @Nullable
   PModePayloadService getPayloadService ();
 
+  default boolean hasPayloadService ()
+  {
+    return getPayloadService () != null;
+  }
+
   @Nullable
   PModeReceptionAwareness getReceptionAwareness ();
+
+  default boolean hasReceptionAwareness ()
+  {
+    return getReceptionAwareness () != null;
+  }
 }

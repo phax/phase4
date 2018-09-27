@@ -21,12 +21,19 @@ import javax.annotation.Nullable;
 
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
+/**
+ * XML converter for objects of class {@link PModePayloadService}.
+ * 
+ * @author Philip Helger
+ */
 public final class PModePayloadServiceMicroTypeConverter implements IMicroTypeConverter <PModePayloadService>
 {
-  private static final String ATTR_COMPRESSION_MODE = "CompressionMode";
+  private static final IMicroQName ATTR_COMPRESSION_MODE = new MicroQName ("CompressionMode");
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final PModePayloadService aValue,

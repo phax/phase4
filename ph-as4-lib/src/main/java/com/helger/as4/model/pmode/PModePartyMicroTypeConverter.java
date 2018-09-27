@@ -20,16 +20,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.xml.microdom.IMicroElement;
+import com.helger.xml.microdom.IMicroQName;
 import com.helger.xml.microdom.MicroElement;
+import com.helger.xml.microdom.MicroQName;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
+/**
+ * XML converter for objects of class {@link PModeParty}.
+ *
+ * @author Philip Helger
+ */
 public final class PModePartyMicroTypeConverter implements IMicroTypeConverter <PModeParty>
 {
-  private static final String ATTR_ID_TYPE = "IDType";
-  private static final String ATTR_ID_VALUE = "IDValue";
-  private static final String ATTR_ROLE = "Role";
-  private static final String ATTR_USER_NAME = "Username";
-  private static final String ATTR_PASSWORD = "Password";
+  private static final IMicroQName ATTR_ID_TYPE = new MicroQName ("IDType");
+  private static final IMicroQName ATTR_ID_VALUE = new MicroQName ("IDValue");
+  private static final IMicroQName ATTR_ROLE = new MicroQName ("Role");
+  private static final IMicroQName ATTR_USER_NAME = new MicroQName ("Username");
+  private static final IMicroQName ATTR_PASSWORD = new MicroQName ("Password");
 
   @Nonnull
   public IMicroElement convertToMicroElement (@Nonnull final PModeParty aValue,
