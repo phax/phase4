@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.helger.commons.http.EHttpMethod;
+import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
@@ -64,7 +65,7 @@ public final class AS4XServletHandler implements IXServletSimpleHandler
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
-    final AS4Response aHttpResponse = (AS4Response) aUnifiedResponse;
+    final AS4Response aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     try (final AS4Handler aHandler = new AS4Handler ())
     {
