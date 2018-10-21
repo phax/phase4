@@ -113,107 +113,99 @@ public final class DropFolderUserMessage
       {
         // Extract PEPPOL specific data
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
-        if (aSBDH == null)
+        final SMPClient aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
+        final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
+                                                               aSBDH.getDocumentTypeAsIdentifier (),
+                                                               aSBDH.getProcessAsIdentifier (),
+                                                               ESMPTransportProfile.TRANSPORT_PROFILE_BDXR_AS4);
+        if (aEndpoint == null)
         {
-          LOGGER.error ("Failed to read " + aSendFile.toString () + " as PEPPOL SBDH document!");
+          LOGGER.error ("Found no endpoint for:\n  Receiver ID: " +
+                        aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                        "\n  Document type ID: " +
+                        aSBDH.getDocumentTypeAsIdentifier ().getURIEncoded () +
+                        "\n  Process ID: " +
+                        aSBDH.getProcessAsIdentifier ().getURIEncoded ());
         }
         else
         {
-          final SMPClient aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
-          final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
-                                                                 aSBDH.getDocumentTypeAsIdentifier (),
-                                                                 aSBDH.getProcessAsIdentifier (),
-                                                                 ESMPTransportProfile.TRANSPORT_PROFILE_BDXR_AS4);
-          if (aEndpoint == null)
+          final CryptoProperties aCP = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
+          final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStoreType (),
+                                                               aCP.getKeyStorePath (),
+                                                               aCP.getKeyStorePassword ())
+                                                .getKeyStore ();
+          final KeyStore.PrivateKeyEntry aOurCert = KeyStoreHelper.loadPrivateKey (aOurKS,
+                                                                                   aCP.getKeyStorePath (),
+                                                                                   aCP.getKeyAlias (),
+                                                                                   aCP.getKeyPassword ().toCharArray ())
+                                                                  .getKeyEntry ();
+          final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
+
+          final AS4ClientUserMessage aClient = new AS4ClientUserMessage ();
+          aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
+
+          // Keystore data
+          IReadableResource aRes = new ClassPathResource (aCP.getKeyStorePath ());
+          if (!aRes.exists ())
+            aRes = new FileSystemResource (aCP.getKeyStorePath ());
+          aClient.setKeyStoreResource (aRes);
+          aClient.setKeyStorePassword (aCP.getKeyStorePassword ());
+          aClient.setKeyStoreType (aCP.getKeyStoreType ());
+          aClient.setKeyStoreAlias (aCP.getKeyAlias ());
+          aClient.setKeyStoreKeyPassword (aCP.getKeyPassword ());
+
+          aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
+          aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
+
+          // XXX
+          // to send the message too
+          aClient.setAction ("xxx");
+          aClient.setServiceType ("xxx");
+          aClient.setServiceValue ("xxx");
+          aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
+          aClient.setAgreementRefValue ("xxx");
+
+          aClient.setFromRole (CAS4.DEFAULT_ROLE);
+          aClient.setFromPartyID (_getCN (((X509Certificate) aOurCert.getCertificate ()).getSubjectX500Principal ()
+                                                                                        .getName ()));
+          aClient.setToRole (CAS4.DEFAULT_ROLE);
+          aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
+          aClient.setEbms3Properties (new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+                                                                                                         aSBDH.getSenderValue ()),
+                                                               MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                                                                         aSBDH.getReceiverValue ())));
+          aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
+
+          final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
+                                                                             new ResponseHandlerByteArray ());
+          LOGGER.info ("Successfully transmitted document with message ID '" +
+                       aResponseEntity.getMessageID () +
+                       "' for '" +
+                       aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
+                       "' to '" +
+                       W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()) +
+                       "' in " +
+                       aSW.stopAndGetMillis () +
+                       " ms");
+
+          if (aResponseEntity.hasResponse ())
           {
-            LOGGER.error ("Found no endpoint for:\n  Receiver ID: " +
-                             aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
-                             "\n  Document type ID: " +
-                             aSBDH.getDocumentTypeAsIdentifier ().getURIEncoded () +
-                             "\n  Process ID: " +
-                             aSBDH.getProcessAsIdentifier ().getURIEncoded ());
+            final String sMessageID = aResponseEntity.getMessageID ();
+            final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
+            final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
+            if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
+              LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
+            else
+              LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
           }
-          else
-          {
-            final CryptoProperties aCP = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
-            final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStoreType (),
-                                                                 aCP.getKeyStorePath (),
-                                                                 aCP.getKeyStorePassword ())
-                                                  .getKeyStore ();
-            final KeyStore.PrivateKeyEntry aOurCert = KeyStoreHelper.loadPrivateKey (aOurKS,
-                                                                                     aCP.getKeyStorePath (),
-                                                                                     aCP.getKeyAlias (),
-                                                                                     aCP.getKeyPassword ()
-                                                                                        .toCharArray ())
-                                                                    .getKeyEntry ();
-            final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
 
-            final AS4ClientUserMessage aClient = new AS4ClientUserMessage ();
-            aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
-
-            // Keystore data
-            IReadableResource aRes = new ClassPathResource (aCP.getKeyStorePath ());
-            if (!aRes.exists ())
-              aRes = new FileSystemResource (aCP.getKeyStorePath ());
-            aClient.setKeyStoreResource (aRes);
-            aClient.setKeyStorePassword (aCP.getKeyStorePassword ());
-            aClient.setKeyStoreType (aCP.getKeyStoreType ());
-            aClient.setKeyStoreAlias (aCP.getKeyAlias ());
-            aClient.setKeyStoreKeyPassword (aCP.getKeyPassword ());
-
-            aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
-            aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
-
-            // XXX
-            // to send the message too
-            aClient.setAction ("xxx");
-            aClient.setServiceType ("xxx");
-            aClient.setServiceValue ("xxx");
-            aClient.setConversationID (MessageHelperMethods.createRandomConversationID ());
-            aClient.setAgreementRefValue ("xxx");
-
-            aClient.setFromRole (CAS4.DEFAULT_ROLE);
-            aClient.setFromPartyID (_getCN (((X509Certificate) aOurCert.getCertificate ()).getSubjectX500Principal ()
-                                                                                          .getName ()));
-            aClient.setToRole (CAS4.DEFAULT_ROLE);
-            aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
-            aClient.setEbms3Properties (new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
-                                                                                                           aSBDH.getSenderValue ()),
-                                                                 MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
-                                                                                                           aSBDH.getReceiverValue ())));
-            aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
-
-            final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                               new ResponseHandlerByteArray ());
-            LOGGER.info ("Successfully transmitted document with message ID '" +
-                            aResponseEntity.getMessageID () +
-                            "' for '" +
-                            aSBDH.getReceiverAsIdentifier ().getURIEncoded () +
-                            "' to '" +
-                            W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()) +
-                            "' in " +
-                            aSW.stopAndGetMillis () +
-                            " ms");
-
-            if (aResponseEntity.hasResponse ())
-            {
-              final String sMessageID = aResponseEntity.getMessageID ();
-              final String sFilename = FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) + "-response.xml";
-              final File aResponseFile = aIncomingDir.resolve (sFilename).toFile ();
-              if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
-                LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
-              else
-                LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
-            }
-
-            bSuccess = true;
-          }
+          bSuccess = true;
         }
       }
     }
-    catch (final Throwable t)
+    catch (final Exception ex)
     {
-      LOGGER.error ("Error sending " + aSendFile.toString (), t);
+      LOGGER.error ("Error sending " + aSendFile.toString (), ex);
     }
 
     // After the exception handler!
@@ -254,6 +246,7 @@ public final class DropFolderUserMessage
           LOGGER.debug ("WatchEvent " + eAction + " - " + aCurFile);
         if (!eAction.equals (EWatchDirAction.DELETE) &&
             aCurFile.toFile ().isFile () &&
+            aCurFile.getFileName () != null &&
             aCurFile.getFileName ().toString ().endsWith (".xml"))
         {
           _send (aCurFile, aIncomingDir);
@@ -264,6 +257,7 @@ public final class DropFolderUserMessage
       // Send initially for all existing files
       try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
                                                                             x -> x.toFile ().isFile () &&
+                                                                                 x.getFileName () != null &&
                                                                                  x.getFileName ()
                                                                                   .toString ()
                                                                                   .endsWith (".xml")))

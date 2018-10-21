@@ -113,7 +113,7 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  private void _checkIfLegIsValid (final IPMode aPMode, final ErrorList aErrorList, final PModeLeg aPModeLeg)
+  private void _checkIfLegIsValid (final IPMode aPMode, final ErrorList aErrorList, @Nonnull final PModeLeg aPModeLeg)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
@@ -145,15 +145,10 @@ final class ESENSCompatibilityValidator implements IAS4ProfileValidator
           }
 
       final ESOAPVersion eSOAPVersion = aLegProtocol.getSOAPVersion ();
-      if (eSOAPVersion == null)
+      if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError ("PMode Leg 1 is missing SOAPVersion"));
+        aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));
       }
-      else
-        if (!eSOAPVersion.isAS4Default ())
-        {
-          aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));
-        }
     }
 
     // Only check the security features if a Security Leg is currently present
