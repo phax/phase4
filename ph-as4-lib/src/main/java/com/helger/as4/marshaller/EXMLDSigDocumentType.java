@@ -24,22 +24,22 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.builder.IJAXBDocumentType;
 import com.helger.jaxb.builder.JAXBDocumentType;
+import com.helger.xsds.xmldsig.CXMLDSig;
 import com.helger.xsds.xmldsig.ReferenceType;
 
 public enum EXMLDSigDocumentType implements IJAXBDocumentType
 {
-  REFERENCE (ReferenceType.class, new CommonsArrayList<> (new ClassPathResource ("/schemas/xmldsig-core-schema.xsd")));
+  REFERENCE (ReferenceType.class, new CommonsArrayList <> (CXMLDSig.getXSDResource ()));
 
   private final JAXBDocumentType m_aDocType;
 
   private EXMLDSigDocumentType (@Nonnull final Class <?> aClass,
                                 @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
   {
-    m_aDocType = new JAXBDocumentType (aClass, new CommonsArrayList<> (aXSDPaths, IReadableResource::getPath), null);
+    m_aDocType = new JAXBDocumentType (aClass, new CommonsArrayList <> (aXSDPaths, IReadableResource::getPath), null);
   }
 
   @Nonnull
