@@ -39,6 +39,7 @@ public final class PModeTest
   public final TestRule m_aTestRule = new AS4TestRule ();
 
   @Test
+  @SuppressWarnings ("unused")
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
   public void testInvalidCtor ()
   {
