@@ -14,7 +14,7 @@ It consists of the following sub-projects:
 
 * v0.8.1 - work in progress
     * The web application now uses LOG4J 2.x
-    * Requires at least ph-commons 9.1.8
+    * Requires at least ph-commons 9.2.0
     * Added `@type`-fix from https://issues.oasis-open.org/projects/EBXMLMSG/issues/EBXMLMSG-2
 * v0.8.0 - 2018-06-21
     * Updated to ph-commons 9.1.2
