@@ -16,8 +16,8 @@ S0T1+dWofRI4SObpxaW6ZrEW/+7RbYmYduzfPIQ+QV9MBAQs2AyeYZeYSsGfLpor4WrbL7bf5w7P3vHT
 
 jdk:
   - oraclejdk8
-  - oraclejdk11
-  - openjdk11
+#  - oraclejdk11
+#  - openjdk11
   
 install:
   - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -e
