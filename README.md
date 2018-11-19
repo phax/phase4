@@ -80,6 +80,10 @@ server.proxy.enabled=false
 server.proxy.address=10.0.0.1
 server.proxy.port=8080
 ``` 
+
+## Building from source
+
+After initial checkout, it is necessary to run `mvn gnerate-sources` once on the `as4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.  
     
 ## Known limitations
 
