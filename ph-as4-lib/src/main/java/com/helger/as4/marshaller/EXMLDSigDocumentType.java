@@ -16,15 +16,16 @@
  */
 package com.helger.as4.marshaller;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.validation.Schema;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.jaxb.builder.IJAXBDocumentType;
 import com.helger.jaxb.builder.JAXBDocumentType;
 import com.helger.xsds.xmldsig.CXMLDSig;
@@ -37,9 +38,9 @@ public enum EXMLDSigDocumentType implements IJAXBDocumentType
   private final JAXBDocumentType m_aDocType;
 
   private EXMLDSigDocumentType (@Nonnull final Class <?> aClass,
-                                @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
+                                @Nonnull final List <? extends ClassPathResource> aXSDPaths)
   {
-    m_aDocType = new JAXBDocumentType (aClass, new CommonsArrayList <> (aXSDPaths, IReadableResource::getPath), null);
+    m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, null);
   }
 
   @Nonnull
@@ -51,9 +52,9 @@ public enum EXMLDSigDocumentType implements IJAXBDocumentType
   @Nonnull
   @Nonempty
   @ReturnsMutableCopy
-  public ICommonsList <String> getAllXSDPaths ()
+  public ICommonsList <ClassPathResource> getAllXSDResources ()
   {
-    return m_aDocType.getAllXSDPaths ();
+    return m_aDocType.getAllXSDResources ();
   }
 
   @Nonnull
@@ -70,8 +71,8 @@ public enum EXMLDSigDocumentType implements IJAXBDocumentType
   }
 
   @Nonnull
-  public Schema getSchema (@Nullable final ClassLoader aClassLoader)
+  public Schema getSchema ()
   {
-    return m_aDocType.getSchema (aClassLoader);
+    return m_aDocType.getSchema ();
   }
 }

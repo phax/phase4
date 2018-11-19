@@ -16,6 +16,7 @@
  */
 package com.helger.as4.marshaller;
 
+import java.util.List;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
@@ -32,12 +33,9 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.resource.IReadableResource;
 import com.helger.jaxb.builder.IJAXBDocumentType;
 import com.helger.jaxb.builder.JAXBDocumentType;
 import com.helger.xsds.xmldsig.CXMLDSig;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
@@ -54,19 +52,16 @@ public enum EEbms3DocumentType implements IJAXBDocumentType
   private final JAXBDocumentType m_aDocType;
 
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
-                              @Nonnull final Iterable <? extends IReadableResource> aXSDPaths)
+                              @Nonnull final List <? extends ClassPathResource> aXSDPaths)
   {
     this (aClass, aXSDPaths, null);
   }
 
-  @SuppressFBWarnings ("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
-                              @Nonnull final Iterable <? extends IReadableResource> aXSDPaths,
+                              @Nonnull final List <? extends ClassPathResource> aXSDPaths,
                               @Nullable final Function <String, String> aTypeToElementNameMapper)
   {
-    m_aDocType = new JAXBDocumentType (aClass,
-                                       new CommonsArrayList <> (aXSDPaths, IReadableResource::getPath),
-                                       aTypeToElementNameMapper);
+    m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, aTypeToElementNameMapper);
   }
 
   @Nonnull
@@ -78,9 +73,9 @@ public enum EEbms3DocumentType implements IJAXBDocumentType
   @Nonnull
   @Nonempty
   @ReturnsMutableCopy
-  public ICommonsList <String> getAllXSDPaths ()
+  public ICommonsList <ClassPathResource> getAllXSDResources ()
   {
-    return m_aDocType.getAllXSDPaths ();
+    return m_aDocType.getAllXSDResources ();
   }
 
   @Nonnull
@@ -97,8 +92,8 @@ public enum EEbms3DocumentType implements IJAXBDocumentType
   }
 
   @Nonnull
-  public Schema getSchema (@Nullable final ClassLoader aClassLoader)
+  public Schema getSchema ()
   {
-    return m_aDocType.getSchema (aClassLoader);
+    return m_aDocType.getSchema ();
   }
 }
