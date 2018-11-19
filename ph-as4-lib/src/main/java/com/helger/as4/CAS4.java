@@ -16,7 +16,10 @@
  */
 package com.helger.as4;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+
+import com.helger.commons.io.resource.ClassPathResource;
 
 /**
  * AS4 constants
@@ -26,13 +29,23 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class CAS4
 {
+  @Nonnull
+  private static ClassLoader _getCL ()
+  {
+    return CAS4.class.getClassLoader ();
+  }
+
   // XSD
   public static final String PATH_SCHEMATA = "/schemas/";
-  public static final String XSD_EBMS_HEADER = PATH_SCHEMATA + "ebms-header-3_0-200704.xsd";
-  public static final String XSD_EBBP_SIGNALS = PATH_SCHEMATA + "ebbp-signals-2.0.4.xsd";
-  public static final String XSD_SOAP11 = PATH_SCHEMATA + "soap11.xsd";
-  public static final String XSD_SOAP12 = PATH_SCHEMATA + "soap12.xsd";
-  public static final String XSD_XML = PATH_SCHEMATA + "xml.xsd";
+  public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA +
+                                                                                 "ebms-header-3_0-200704.xsd",
+                                                                                 _getCL ());
+  public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA +
+                                                                                  "ebbp-signals-2.0.4.xsd",
+                                                                                  _getCL ());
+  public static final ClassPathResource XSD_SOAP11 = new ClassPathResource (PATH_SCHEMATA + "soap11.xsd", _getCL ());
+  public static final ClassPathResource XSD_SOAP12 = new ClassPathResource (PATH_SCHEMATA + "soap12.xsd", _getCL ());
+  public static final ClassPathResource XSD_XML = new ClassPathResource (PATH_SCHEMATA + "xml.xsd", _getCL ());
 
   // Namespaces
   public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";

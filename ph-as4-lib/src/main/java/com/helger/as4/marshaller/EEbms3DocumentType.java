@@ -17,10 +17,8 @@
 package com.helger.as4.marshaller;
 
 import java.util.List;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.validation.Schema;
 
 import com.helger.as4.CAS4;
@@ -40,28 +38,18 @@ import com.helger.xsds.xmldsig.CXMLDSig;
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
   MESSAGING (Ebms3Messaging.class,
-             new CommonsArrayList <> (CXMLDSig.getXSDResource (),
-                                      new ClassPathResource (CAS4.XSD_EBBP_SIGNALS),
-                                      new ClassPathResource (CAS4.XSD_EBMS_HEADER))),
+             new CommonsArrayList <> (CXMLDSig.getXSDResource (), CAS4.XSD_EBBP_SIGNALS, CAS4.XSD_EBMS_HEADER)),
   NON_REPUDIATION_INFORMATION (NonRepudiationInformation.class,
-                               new CommonsArrayList <> (CXMLDSig.getXSDResource (),
-                                                        new ClassPathResource (CAS4.XSD_EBBP_SIGNALS))),
-  SOAP_11 (Soap11Envelope.class, new CommonsArrayList <> (new ClassPathResource (CAS4.XSD_SOAP11))),
-  SOAP_12 (Soap12Envelope.class, new CommonsArrayList <> (new ClassPathResource (CAS4.XSD_SOAP12)));
+                               new CommonsArrayList <> (CXMLDSig.getXSDResource (), CAS4.XSD_EBBP_SIGNALS)),
+  SOAP_11 (Soap11Envelope.class, new CommonsArrayList <> (CAS4.XSD_SOAP11)),
+  SOAP_12 (Soap12Envelope.class, new CommonsArrayList <> (CAS4.XSD_SOAP12));
 
   private final JAXBDocumentType m_aDocType;
 
   private EEbms3DocumentType (@Nonnull final Class <?> aClass,
                               @Nonnull final List <? extends ClassPathResource> aXSDPaths)
   {
-    this (aClass, aXSDPaths, null);
-  }
-
-  private EEbms3DocumentType (@Nonnull final Class <?> aClass,
-                              @Nonnull final List <? extends ClassPathResource> aXSDPaths,
-                              @Nullable final Function <String, String> aTypeToElementNameMapper)
-  {
-    m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, aTypeToElementNameMapper);
+    m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, null);
   }
 
   @Nonnull
