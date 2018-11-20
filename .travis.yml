@@ -1,5 +1,4 @@
 language: java
-
 # Required to avoid timeout!
 # This is still needed when "travis_wait" is used!
 sudo: true
@@ -14,18 +13,28 @@ WR0yz61TQpebBbjE/7CxlUKM01X901GScmqNI5K+kmLLCHhygbSNh3l5P7OLiCdAHTVPEZXWIy1ifeq+
 S0T1+dWofRI4SObpxaW6ZrEW/+7RbYmYduzfPIQ+QV9MBAQs2AyeYZeYSsGfLpor4WrbL7bf5w7P3vHTVs6PD4b08ytW3bndwmAUlQN9dvLgJoL9ifGGpK7P
 9EQxJMVhBpJ+pauvbRL45pCYRhOda8GPHQ6S7m1M6zkKVDF69phGJN5YuoZKfuoPcsXwQyt9Au136CAZnKN5eKAngSdkVA="
 
-jdk:
-  - oraclejdk8
-#  - oraclejdk11
-#  - openjdk11
-  
 install:
   - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -e
   
 cache:
   directories:
-  - $HOME/.m2
+    - $HOME/.m2
 
-after_success:
-  - mvn deploy --settings travis-settings.xml -DskipTests=true -B -P travis-deploy
+jobs:
+  include:
+    - stage: test
+      jdk: oraclejdk8
+      script:
+        - mvn test -B -P coverage
+      after_success:
+        - mvn deploy --settings travis-settings.xml -DskipTests=true -B -P travis-deploy
+        - bash <(curl -s https://codecov.io/bash)
+    - stage: test
+      jdk: oraclejdk11
+      script:
+        - mvn test -B
+    - stage: test
+      jdk: openjdk11
+      script:
+        - mvn test -B
   
