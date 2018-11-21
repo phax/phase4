@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
@@ -372,11 +371,11 @@ public final class AS4Handler implements AutoCloseable
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
         LOGGER.warn ("Failed to process SOAP header element " +
-                        aQName.toString () +
-                        " with processor " +
-                        aProcessor +
-                        "; error details: " +
-                        aErrorList);
+                     aQName.toString () +
+                     " with processor " +
+                     aProcessor +
+                     "; error details: " +
+                     aErrorList);
 
         final String sRefToMessageID = aState.getRefToMessageID ();
         for (final IError aError : aErrorList)
@@ -1374,7 +1373,7 @@ public final class AS4Handler implements AutoCloseable
   }
 
   @Nonnull
-  private static Document _readXML (@Nonnull final InputStream aRequestIS) throws SAXException
+  private static Document _readXML (@Nonnull final InputStream aRequestIS)
   {
     if (isDebug ())
     {
@@ -1390,7 +1389,6 @@ public final class AS4Handler implements AutoCloseable
                              @Nonnull final AS4Response aHttpResponse) throws BadRequestException,
                                                                        IOException,
                                                                        MessagingException,
-                                                                       SAXException,
                                                                        WSSecurityException
   {
     AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());

@@ -18,6 +18,8 @@ package com.helger.as4.server.supplementary.test;
 
 import static org.junit.Assert.assertFalse;
 
+import javax.annotation.Nullable;
+
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.XMLUtils;
@@ -26,7 +28,6 @@ import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
@@ -40,7 +41,7 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class EncryptionTest
 {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
+  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
 
   private final Crypto m_aCrypto;
   private final AS4CryptoFactory m_aAS4CryptoFactory;
@@ -53,7 +54,8 @@ public final class EncryptionTest
     m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
   }
 
-  private static Document _getSoapEnvelope11 () throws SAXException
+  @Nullable
+  private static Document _getSoapEnvelope11 ()
   {
     return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
@@ -85,9 +87,9 @@ public final class EncryptionTest
     final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESOAPVersion.SOAP_11.getNamespaceURI (), "Element");
     aBuilder.getParts ().add (encP);
 
-    LOG.info ("Before Encryption AES 128/RSA-15....");
+    LOGGER.info ("Before Encryption AES 128/RSA-15....");
     final Document encryptedDoc = aBuilder.build (m_aCrypto);
-    LOG.info ("After Encryption AES 128/RSA-15....");
+    LOGGER.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
     assertFalse (outputString.contains ("counter_port_type"));

@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
@@ -78,7 +77,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       LOGGER.info ("Received AS4 message:");
       LOGGER.info ("  UserMessage: " + aUserMessage);
       LOGGER.info ("  Payload: " +
-                      (aPayload == null ? "null" : true ? "present" : XMLWriter.getNodeAsString (aPayload)));
+                   (aPayload == null ? "null" : true ? "present" : XMLWriter.getNodeAsString (aPayload)));
 
       if (aIncomingAttachments != null)
       {
@@ -132,47 +131,40 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
     final Ebms3PullRequest aPR = aSignalMessage.getPullRequest ();
     if (aPR != null && aPR.getMpc ().equals ("TWO-SPI"))
     {
-      try
-      {
-        final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+      final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
-        // Add properties
-        final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
+      // Add properties
+      final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
-        final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
+      final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
 
-        final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (aMessageInfo.getMessageId ());
-        final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (aMessageInfo.getMessageId ());
+      final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
 
-        final Ebms3CollaborationInfo aEbms3CollaborationInfo;
-        final Ebms3PartyInfo aEbms3PartyInfo;
-        aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("PullPMode",
-                                                                                     DEFAULT_AGREEMENT,
-                                                                                     AS4TestConstants.TEST_SERVICE_TYPE,
-                                                                                     MockPModeGenerator.SOAP11_SERVICE,
-                                                                                     AS4TestConstants.TEST_ACTION,
-                                                                                     AS4TestConstants.TEST_CONVERSATION_ID);
-        aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                     "pullinitiator",
-                                                                     CAS4.DEFAULT_RESPONDER_URL,
-                                                                     "pullresponder");
+      final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+      final Ebms3PartyInfo aEbms3PartyInfo;
+      aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("PullPMode",
+                                                                                   DEFAULT_AGREEMENT,
+                                                                                   AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                   MockPModeGenerator.SOAP11_SERVICE,
+                                                                                   AS4TestConstants.TEST_ACTION,
+                                                                                   AS4TestConstants.TEST_CONVERSATION_ID);
+      aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+                                                                   "pullinitiator",
+                                                                   CAS4.DEFAULT_RESPONDER_URL,
+                                                                   "pullresponder");
 
-        final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
+      final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (aEbms3Properties);
 
-        final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
-        aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
-        aUserMessage.setMessageInfo (aEbms3MessageInfo);
-        aUserMessage.setMessageProperties (aEbms3MessageProperties);
-        aUserMessage.setPartyInfo (aEbms3PartyInfo);
-        aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
-        aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
+      final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
+      aUserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+      aUserMessage.setMessageInfo (aEbms3MessageInfo);
+      aUserMessage.setMessageProperties (aEbms3MessageProperties);
+      aUserMessage.setPartyInfo (aEbms3PartyInfo);
+      aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
+      aUserMessage.setMpc (aSignalMessage.getPullRequest ().getMpc ());
 
-        return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
-      }
-      catch (final SAXException ex)
-      {
-        LOGGER.error ("Internal error", ex);
-      }
+      return AS4SignalMessageProcessorResult.createSuccess (null, null, aUserMessage);
     }
     return AS4SignalMessageProcessorResult.createSuccess ();
   }

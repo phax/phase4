@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
@@ -77,15 +76,10 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage = new Ebms3UserMessage ();
 
     // Default Payload for testing
-    try
-    {
-      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-      m_aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, null));
-    }
-    catch (final SAXException ex)
-    {
-      LOGGER.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup", ex);
-    }
+    m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    if (m_aPayload == null)
+      LOGGER.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup");
+    m_aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, null));
 
     // Default MessageInfo for testing
     m_aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());

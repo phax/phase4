@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
@@ -99,14 +98,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                                              true);
 
     m_eSOAPVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
-    try
-    {
-      m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    }
-    catch (final SAXException ex)
-    {
-      throw new IllegalStateException ("Failed to parse example XML", ex);
-    }
+    m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 
   protected Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,

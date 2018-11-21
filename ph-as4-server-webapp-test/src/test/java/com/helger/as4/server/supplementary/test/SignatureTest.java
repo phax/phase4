@@ -19,6 +19,8 @@ package com.helger.as4.server.supplementary.test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
+import javax.annotation.Nullable;
+
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
@@ -29,7 +31,6 @@ import org.apache.wss4j.dom.message.WSSecSignature;
 import org.apache.wss4j.dom.str.STRParser.REFERENCE_TYPE;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.CryptoProperties;
@@ -43,7 +44,8 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class SignatureTest
 {
-  private static Document _getSoapEnvelope11 () throws SAXException
+  @Nullable
+  private static Document _getSoapEnvelope11 ()
   {
     return DOMReader.readXMLDOM (new ClassPathResource ("UserMessageWithoutWSSE.xml"));
   }
