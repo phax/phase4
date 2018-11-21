@@ -25,15 +25,16 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4XMLHelper;
 
 /**
- * Special HTTP POST entity that contains a DOM Node as a serialized String.
- * 
+ * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized
+ * String.
+ *
  * @author Philip Helger
  */
 public class HttpXMLEntity extends StringEntity
 {
-  public HttpXMLEntity (@Nonnull final Node Node, @Nonnull final ESOAPVersion eSoapVersion)
+  public HttpXMLEntity (@Nonnull final Node aNode, @Nonnull final ESOAPVersion eSoapVersion)
   {
-    super (AS4XMLHelper.serializeXML (Node), AS4XMLHelper.XWS.getCharset ());
+    super (AS4XMLHelper.serializeXML (aNode), AS4XMLHelper.XWS.getCharset ());
     // Required for AS4.NET
     setContentType (eSoapVersion.getMimeType ().getAsString ());
   }
