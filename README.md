@@ -12,7 +12,7 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
-* v0.8.1 - work in progress
+* v0.8.1 - 2018-11-26
     * The web application now uses LOG4J 2.x
     * Requires at least ph-commons 9.2.0
     * Added `@type`-fix from https://issues.oasis-open.org/projects/EBXMLMSG/issues/EBXMLMSG-2
