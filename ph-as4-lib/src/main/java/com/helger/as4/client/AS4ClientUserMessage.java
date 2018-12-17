@@ -38,7 +38,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
-import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -89,7 +89,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   private String m_sToPartyID;
 
   private boolean m_bUseLeg1 = true;
-  private PMode m_aPMode;
+  private IPMode m_aPMode;
   private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
                                                                             "-" +
                                                                             x.getToPartyID ();
@@ -202,9 +202,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * Build the AS4 message to be sent. It uses all the attributes of this class
-   * to build the final message. Compression, signing and encryption happens in
-   * this methods.
+   * Build the AS4 message to be sent. It uses all the attributes of this class to
+   * build the final message. Compression, signing and encryption happens in this
+   * methods.
    *
    * @return The HTTP entity to be sent. Never <code>null</code>.
    * @throws Exception
@@ -318,19 +318,20 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
+  @Nullable
   public Node getPayload ()
   {
     return m_aPayload;
   }
 
   /**
-   * Sets the payload for a usermessage. The payload unlike an attachment will
-   * be added into the SOAP-Body of the message.
+   * Sets the payload for a usermessage. The payload unlike an attachment will be
+   * added into the SOAP-Body of the message.
    *
    * @param aPayload
    *        the Payload to be added
    */
-  public void setPayload (final Node aPayload)
+  public void setPayload (@Nullable final Node aPayload)
   {
     m_aPayload = aPayload;
   }
@@ -368,8 +369,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param aMimeType
    *        MIME type of the given file. May not be <code>null</code>.
    * @param eAS4CompressionMode
-   *        which compression type should be used to compress the attachment.
-   *        May be <code>null</code>.
+   *        which compression type should be used to compress the attachment. May
+   *        be <code>null</code>.
    * @return this for chaining
    * @throws IOException
    *         if something goes wrong in the adding process or the compression
@@ -411,8 +412,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * With properties optional info can be added for the receiving party. If you
    * want to be AS4 Profile conform you need to add two properties to your
-   * message: originalSender and finalRecipient these two correlate to C1 and
-   * C4.
+   * message: originalSender and finalRecipient these two correlate to C1 and C4.
    *
    * @param aEbms3Properties
    *        Properties that should be set in the current user message
@@ -491,8 +491,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * The element is a string identifying the set of related messages that make
-   * up a conversation between Parties.<br>
+   * The element is a string identifying the set of related messages that make up
+   * a conversation between Parties.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:ConversationId&gt;4321&lt;/eb:ConversationId&gt;</code><br>
    * This is MANDATORY.
@@ -534,8 +534,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * The value of the Role element is a non-empty string, with a default value
-   * of
+   * The value of the Role element is a non-empty string, with a default value of
    * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole</code>
    * .
    *
@@ -607,30 +606,33 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * DEFAULT is set to TRUE, if you want to use leg2 for the message set FALSE
+   * DEFAULT is set to <code>true</code>, if you want to use leg2 for the message
+   * set <code>false</code>.
    *
    * @param bUseLeg1
-   *        true if leg1 should be used, false if leg2 should be used
+   *        <code>true</code> if leg1 should be used, <code>false</code> if leg2
+   *        should be used
    */
   public void setUseLeg1 (final boolean bUseLeg1)
   {
     m_bUseLeg1 = bUseLeg1;
   }
 
-  public PMode getPmode ()
+  @Nullable
+  public IPMode getPMode ()
   {
     return m_aPMode;
   }
 
   /**
-   * This method should be used if you do not want to set each parameter and
-   * have a PMOde ready that you wish to use. Some parameters still must be set
-   * with the remaining setters.
+   * This method should be used if you do not want to set each parameter and have
+   * a PMOde ready that you wish to use. Some parameters still must be set with
+   * the remaining setters.
    *
    * @param aPmode
    *        that should be used
    */
-  public void setPmode (final PMode aPmode)
+  public void setPMode (@Nullable final IPMode aPmode)
   {
     m_aPMode = aPmode;
   }

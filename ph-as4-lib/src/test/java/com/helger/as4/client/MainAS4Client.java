@@ -110,7 +110,7 @@ public final class MainAS4Client
       final HttpPost aPost = new HttpPost (sURL);
 
       if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
-        aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.12", 8080)).build ());
+        aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.6", 8080)).build ());
 
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
