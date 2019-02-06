@@ -52,6 +52,7 @@ public final class ESENSPMode
   @Nonnull
   private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
+    // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 
