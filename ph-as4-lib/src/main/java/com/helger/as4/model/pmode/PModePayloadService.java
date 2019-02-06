@@ -41,13 +41,13 @@ public class PModePayloadService implements Serializable
   }
 
   @Nullable
-  public EAS4CompressionMode getCompressionMode ()
+  public final EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;
   }
 
   @Nullable
-  public String getCompressionModeID ()
+  public final String getCompressionModeID ()
   {
     return m_eCompressionMode == null ? null : m_eCompressionMode.getID ();
   }
