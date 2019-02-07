@@ -46,14 +46,14 @@ public final class AS4ServerConfiguration
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerConfiguration.class);
   private static final Settings SETTINGS = new Settings ("as4-server");
-  private static boolean s_bTestMode = false;
+  private static boolean s_bUnitTestMode = false;
   private static final long DEFAULT_RESET_MINUTES = 10;
 
-  public static void reinit (final boolean bForTest)
+  public static void reinit (final boolean bForUnitTest)
   {
-    s_bTestMode = bForTest;
+    s_bUnitTestMode = bForUnitTest;
     final ConfigFileBuilder aBuilder = new ConfigFileBuilder ();
-    if (bForTest)
+    if (bForUnitTest)
     {
       aBuilder.addPathFromEnvVar ("AS4_SERVER_TEST_CONFIG")
               .addPathFromSystemProperty ("as4.server.test.configfile")
@@ -81,7 +81,7 @@ public final class AS4ServerConfiguration
     // file but only if it wasn't read in test mode before.
     // This is necessary to avoid that the dynamic properties from the test
     // suites are overwritten with each new test
-    if (!s_bTestMode)
+    if (!s_bUnitTestMode)
       reinit (true);
   }
 
