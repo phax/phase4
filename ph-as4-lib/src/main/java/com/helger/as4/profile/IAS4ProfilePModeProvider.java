@@ -27,6 +27,17 @@ import com.helger.commons.annotation.Nonempty;
 @FunctionalInterface
 public interface IAS4ProfilePModeProvider extends Serializable
 {
+  /**
+   * Get an existing or create a new PMode.
+   *
+   * @param sInitiatorID
+   *        The initiator ID. May neither be <code>null</code> nor empty.
+   * @param sResponderID
+   *        The responder ID. May neither be <code>null</code> nor empty.
+   * @param sResponderAddress
+   *        The endpoint URL address. May be <code>null</code>.
+   * @return
+   */
   @Nullable
   PMode getOrCreatePMode (@Nonnull @Nonempty String sInitiatorID,
                           @Nonnull @Nonempty String sResponderID,

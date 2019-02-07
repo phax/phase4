@@ -54,6 +54,7 @@ public final class ESENSPMode
   @Nonnull
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
+    // Set the endpoint URL
     return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 
@@ -107,8 +108,8 @@ public final class ESENSPMode
    * @param aPModeIDProvider
    *        PMode ID provider
    * @param bPersist
-   *        <code>true</code> to persist the PMode <code>false</code> to have it
-   *        only in memory.
+   *        <code>true</code> to persist the PMode in the PModeManager,
+   *        <code>false</code> to have it only in memory.
    * @return New PMode
    */
   @Nonnull
