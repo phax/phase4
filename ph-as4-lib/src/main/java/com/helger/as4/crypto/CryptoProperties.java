@@ -107,7 +107,7 @@ public class CryptoProperties implements Serializable
   public EKeyStoreType getKeyStoreType ()
   {
     final String sProp = _getProperty ("org.apache.wss4j.crypto.merlin.keystore.type");
-    return EKeyStoreType.getFromIDOrNull (sProp);
+    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
   }
 
   @Nullable
