@@ -46,23 +46,25 @@ import com.helger.commons.state.ETriState;
 @Immutable
 public final class ESENSPMode
 {
+  private static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
+
   private ESENSPMode ()
   {}
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
+  public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
   }
 
   @Nonnull
-  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
-  private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
+  public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
     return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
   }
@@ -81,6 +83,16 @@ public final class ESENSPMode
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     return aPModeLegSecurity;
+  }
+
+  @Nonnull
+  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
+  {
+    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
+                         generatePModeLegBusinessInformation (),
+                         generatePModeLegErrorHandling (),
+                         (PModeLegReliability) null,
+                         generatePModeLegSecurity ());
   }
 
   /**
@@ -112,14 +124,10 @@ public final class ESENSPMode
     final PMode aPMode = new PMode (aPModeIDProvider,
                                     aInitiator,
                                     aResponder,
-                                    "urn:as4:agreement",
+                                    DEFAULT_AGREEMENT_ID,
                                     EMEP.ONE_WAY,
                                     EMEPBinding.PUSH,
-                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
-                                                  _generatePModeLegBusinessInformation (),
-                                                  _generatePModeLegErrorHandling (),
-                                                  (PModeLegReliability) null,
-                                                  generatePModeLegSecurity ()),
+                                    generatePModeLeg (sResponderAddress),
                                     (PModeLeg) null,
                                     (PModePayloadService) null,
                                     PModeReceptionAwareness.createDefault ());
@@ -162,19 +170,11 @@ public final class ESENSPMode
     final PMode aPMode = new PMode (aPModeIDProvider,
                                     aInitiator,
                                     aResponder,
-                                    "urn:as4:agreement",
+                                    DEFAULT_AGREEMENT_ID,
                                     EMEP.TWO_WAY,
                                     EMEPBinding.PUSH_PUSH,
-                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
-                                                  _generatePModeLegBusinessInformation (),
-                                                  _generatePModeLegErrorHandling (),
-                                                  (PModeLegReliability) null,
-                                                  generatePModeLegSecurity ()),
-                                    new PModeLeg (_generatePModeLegProtocol (sResponderAddress),
-                                                  _generatePModeLegBusinessInformation (),
-                                                  _generatePModeLegErrorHandling (),
-                                                  (PModeLegReliability) null,
-                                                  generatePModeLegSecurity ()),
+                                    generatePModeLeg (sResponderAddress),
+                                    generatePModeLeg (sResponderAddress),
                                     (PModePayloadService) null,
                                     PModeReceptionAwareness.createDefault ());
     if (bPersist)

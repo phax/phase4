@@ -24,6 +24,11 @@ import com.helger.as4.profile.IAS4ProfileRegistrar;
 import com.helger.as4.profile.IAS4ProfileRegistrarSPI;
 import com.helger.commons.annotation.IsSPIImplementation;
 
+/**
+ * Library specific implementation of {@link IAS4ProfileRegistrarSPI}.
+ * 
+ * @author Philip Helger
+ */
 @IsSPIImplementation
 public final class AS4ESENSProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {

@@ -17,7 +17,6 @@
 package com.helger.as4.model.pmode.leg;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +24,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
@@ -99,19 +98,21 @@ public class PModeLegBusinessInformation implements Serializable
   {
     setService (sService);
     setAction (sAction);
-    setAllProperties (aProperties);
-    setAllPayloadProfiles (aPayloadProfiles);
+    if (aProperties != null)
+      m_aProperties.putAll (aProperties);
+    if (aPayloadProfiles != null)
+      m_aPayloadProfiles.putAll (aPayloadProfiles);
     setPayloadProfileMaxKB (nPayloadProfileMaxKB);
     setMPCID (sMPCID);
   }
 
   @Nullable
-  public String getService ()
+  public final String getService ()
   {
     return m_sService;
   }
 
-  public boolean hasService ()
+  public final boolean hasService ()
   {
     return StringHelper.hasText (m_sService);
   }
@@ -126,12 +127,12 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nullable
-  public String getAction ()
+  public final String getAction ()
   {
     return m_sAction;
   }
 
-  public boolean hasAction ()
+  public final boolean hasAction ()
   {
     return StringHelper.hasText (m_sAction);
   }
@@ -146,26 +147,10 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsOrderedMap <String, PModeProperty> getAllProperties ()
+  @ReturnsMutableObject
+  public final ICommonsOrderedMap <String, PModeProperty> properties ()
   {
-    return m_aProperties.getClone ();
-  }
-
-  public void forAllProperties (@Nonnull final Consumer <? super PModeProperty> aConsumer)
-  {
-    m_aProperties.forEachValue (aConsumer);
-  }
-
-  @Nonnull
-  public final EChange setAllProperties (@Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties)
-  {
-    // Ensure same type
-    final CommonsLinkedHashMap <String, PModeProperty> aRealMap = new CommonsLinkedHashMap <> (aProperties);
-    if (aRealMap.equals (m_aProperties))
-      return EChange.UNCHANGED;
-    m_aProperties.setAll (aProperties);
-    return EChange.CHANGED;
+    return m_aProperties;
   }
 
   public final void addProperty (@Nonnull final PModeProperty aProperty)
@@ -178,26 +163,10 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsOrderedMap <String, PModePayloadProfile> getAllPayloadProfiles ()
+  @ReturnsMutableObject
+  public final ICommonsOrderedMap <String, PModePayloadProfile> payloadProfiles ()
   {
-    return m_aPayloadProfiles.getClone ();
-  }
-
-  public void forAllPayloadProfiles (@Nonnull final Consumer <? super PModePayloadProfile> aConsumer)
-  {
-    m_aPayloadProfiles.forEachValue (aConsumer);
-  }
-
-  @Nonnull
-  public final EChange setAllPayloadProfiles (@Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles)
-  {
-    // Ensure same type
-    final CommonsLinkedHashMap <String, PModePayloadProfile> aRealMap = new CommonsLinkedHashMap <> (aPayloadProfiles);
-    if (aRealMap.equals (m_aPayloadProfiles))
-      return EChange.UNCHANGED;
-    m_aPayloadProfiles.setAll (aPayloadProfiles);
-    return EChange.CHANGED;
+    return m_aPayloadProfiles;
   }
 
   public final void addPayloadProfile (@Nonnull final PModePayloadProfile aPayloadProfile)
@@ -210,12 +179,12 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nullable
-  public Long getPayloadProfileMaxKB ()
+  public final Long getPayloadProfileMaxKB ()
   {
     return m_aPayloadProfileMaxKB;
   }
 
-  public boolean hasPayloadProfileMaxKB ()
+  public final boolean hasPayloadProfileMaxKB ()
   {
     return m_aPayloadProfileMaxKB != null;
   }
@@ -230,12 +199,12 @@ public class PModeLegBusinessInformation implements Serializable
   }
 
   @Nullable
-  public String getMPCID ()
+  public final String getMPCID ()
   {
     return m_sMPCID;
   }
 
-  public boolean hasMPCID ()
+  public final boolean hasMPCID ()
   {
     return StringHelper.hasText (m_sMPCID);
   }

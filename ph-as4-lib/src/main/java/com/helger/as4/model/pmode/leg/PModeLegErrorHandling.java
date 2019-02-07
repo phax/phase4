@@ -113,7 +113,7 @@ public class PModeLegErrorHandling implements Serializable
   }
 
   @Nullable
-  public PModeAddressList getReportSenderErrorsTo ()
+  public final PModeAddressList getReportSenderErrorsTo ()
   {
     return m_aReportSenderErrorsTo;
   }
@@ -128,7 +128,7 @@ public class PModeLegErrorHandling implements Serializable
   }
 
   @Nullable
-  public PModeAddressList getReportReceiverErrorsTo ()
+  public final PModeAddressList getReportReceiverErrorsTo ()
   {
     return m_aReportReceiverErrorsTo;
   }
@@ -142,12 +142,12 @@ public class PModeLegErrorHandling implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isReportAsResponseDefined ()
+  public final boolean isReportAsResponseDefined ()
   {
     return m_eReportAsResponse.isDefined ();
   }
 
-  public boolean isReportAsResponse ()
+  public final boolean isReportAsResponse ()
   {
     return m_eReportAsResponse.getAsBooleanValue (DEFAULT_REPORT_AS_RESPONSE);
   }
@@ -168,12 +168,12 @@ public class PModeLegErrorHandling implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isReportProcessErrorNotifyConsumerDefined ()
+  public final boolean isReportProcessErrorNotifyConsumerDefined ()
   {
     return m_eReportProcessErrorNotifyConsumer.isDefined ();
   }
 
-  public boolean isReportProcessErrorNotifyConsumer ()
+  public final boolean isReportProcessErrorNotifyConsumer ()
   {
     return m_eReportProcessErrorNotifyConsumer.getAsBooleanValue (DEFAULT_REPORT_PROCESS_ERROR_NOTIFY_CONSUMER);
   }
@@ -194,12 +194,12 @@ public class PModeLegErrorHandling implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isReportProcessErrorNotifyProducerDefined ()
+  public final boolean isReportProcessErrorNotifyProducerDefined ()
   {
     return m_eReportProcessErrorNotifyProducer.isDefined ();
   }
 
-  public boolean isReportProcessErrorNotifyProducer ()
+  public final boolean isReportProcessErrorNotifyProducer ()
   {
     return m_eReportProcessErrorNotifyProducer.getAsBooleanValue (DEFAULT_REPORT_PROCESS_ERROR_NOTIFY_PRDOUCER);
   }
@@ -220,12 +220,12 @@ public class PModeLegErrorHandling implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isReportDeliveryFailuresNotifyProducerDefined ()
+  public final boolean isReportDeliveryFailuresNotifyProducerDefined ()
   {
     return m_eReportDeliveryFailuresNotifyProducer.isDefined ();
   }
 
-  public boolean isReportDeliveryFailuresNotifyProducer ()
+  public final boolean isReportDeliveryFailuresNotifyProducer ()
   {
     return m_eReportDeliveryFailuresNotifyProducer.getAsBooleanValue (DEFAULT_REPORT_DELIVERY_FAILURES_NOTIFY_PRODUCER);
   }

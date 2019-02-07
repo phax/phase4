@@ -58,12 +58,12 @@ public class PModeReceptionAwareness implements Serializable
     setDuplicateDetection (eDuplicateDetection);
   }
 
-  public boolean isReceptionAwarenessDefined ()
+  public final boolean isReceptionAwarenessDefined ()
   {
     return m_eReceptionAwareness.isDefined ();
   }
 
-  public boolean isReceptionAwareness ()
+  public final boolean isReceptionAwareness ()
   {
     return m_eReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
   }
@@ -84,12 +84,12 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isRetryDefined ()
+  public final boolean isRetryDefined ()
   {
     return m_eRetry.isDefined ();
   }
 
-  public boolean isRetry ()
+  public final boolean isRetry ()
   {
     return m_eRetry.getAsBooleanValue (DEFAULT_RETRY);
   }
@@ -111,7 +111,7 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   @Nonnegative
-  public int getMaxRetries ()
+  public final int getMaxRetries ()
   {
     return m_nMaxRetries;
   }
@@ -127,7 +127,7 @@ public class PModeReceptionAwareness implements Serializable
   }
 
   @Nonnegative
-  public int getRetryIntervalMS ()
+  public final int getRetryIntervalMS ()
   {
     return m_nRetryIntervalMS;
   }
@@ -142,12 +142,12 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isDuplicateDetectionDefined ()
+  public final boolean isDuplicateDetectionDefined ()
   {
     return m_eDuplicateDetection.isDefined ();
   }
 
-  public boolean isDuplicateDetection ()
+  public final boolean isDuplicateDetection ()
   {
     return m_eDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
   }
@@ -205,6 +205,14 @@ public class PModeReceptionAwareness implements Serializable
                                        .getToString ();
   }
 
+  /**
+   * @return A new {@link PModeReceptionAwareness} using the default values.
+   * @see #DEFAULT_RECEPTION_AWARENESS
+   * @see #DEFAULT_RETRY
+   * @see #DEFAULT_MAX_RETRIES
+   * @see #DEFAULT_RETRY_INTERVAL_MS
+   * @see #DEFAULT_DUPLICATE_DETECTION
+   */
   @Nonnull
   public static PModeReceptionAwareness createDefault ()
   {

@@ -52,7 +52,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author bayerlma
  */
-final class ESENSCompatibilityValidator implements IAS4ProfileValidator
+public class ESENSCompatibilityValidator implements IAS4ProfileValidator
 {
   @SuppressWarnings ("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);

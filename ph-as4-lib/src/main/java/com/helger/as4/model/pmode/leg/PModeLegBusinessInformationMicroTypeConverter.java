@@ -47,13 +47,15 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_SERVICE, aValue.getService ());
     ret.setAttribute (ATTR_ACTION, aValue.getAction ());
-    aValue.forAllProperties (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
-                                                                                             sNamespaceURI,
-                                                                                             ELEMENT_PROPERTIES)));
-    aValue.forAllPayloadProfiles (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
-                                                                                                  sNamespaceURI,
-                                                                                                  ELEMENT_PAYLOAD_PROFILE)));
-    if (aValue.getPayloadProfileMaxKB () != null)
+    aValue.properties ()
+          .forEachValue (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
+                                                                                         sNamespaceURI,
+                                                                                         ELEMENT_PROPERTIES)));
+    aValue.payloadProfiles ()
+          .forEachValue (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
+                                                                                         sNamespaceURI,
+                                                                                         ELEMENT_PAYLOAD_PROFILE)));
+    if (aValue.hasPayloadProfileMaxKB ())
       ret.setAttribute (ATTR_PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
     ret.setAttribute (ATTR_MPCID, aValue.getMPCID ());
     return ret;
