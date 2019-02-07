@@ -32,11 +32,20 @@ import com.helger.commons.annotation.Nonempty;
 public interface IPModeIDProvider extends Serializable
 {
   /**
-   * The default implementation combines intiator ID and responder ID with a
+   * The default implementation combines initiator ID and responder ID with a
    * minus sign
    */
   static IPModeIDProvider DEFAULT_DYNAMIC = (i, r) -> i + "-" + r;
 
+  /**
+   * Create a PMode ID from initiator ID and responder ID.
+   * 
+   * @param sInitiatorID
+   *        Non-<code>null</code> and non-empty initiator ID.
+   * @param sResponderID
+   *        Non-<code>null</code> and non-empty responder ID.
+   * @return The created non-<code>null</code> PMode ID.
+   */
   @Nonnull
   String getPModeID (@Nonnull @Nonempty String sInitiatorID, @Nonnull @Nonempty String sResponderID);
 }

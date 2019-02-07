@@ -36,10 +36,9 @@ import com.helger.commons.name.IHasDisplayName;
 public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializable
 {
   /**
-   * @return A non-<code>null</code> validator. May not validate anything but
-   *         must be present.
+   * @return An optional validator. May be <code>null</code>.
    */
-  @Nonnull
+  @Nullable
   IAS4ProfileValidator getValidator ();
 
   /**

@@ -41,6 +41,21 @@ public class AS4Profile implements IAS4Profile
   private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
 
+  /**
+   * Constructor
+   *
+   * @param sID
+   *        Profile ID. May neither be <code>null</code> nor empty.
+   * @param sDisplayName
+   *        Profile display name. May neither be <code>null</code> nor empty.
+   * @param aProfileValidatorProvider
+   *        Profile validator supplier. May not be <code>null</code>. The supplier
+   *        may supply <code>null</code> values.
+   * @param aDefaultPModeProvider
+   *        Default PMode supplier. May not be <code>null</code>.
+   * @param aPModeIDProvider
+   *        PMode ID provider. May not be <code>null</code>.
+   */
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
@@ -68,7 +83,7 @@ public class AS4Profile implements IAS4Profile
     return m_sDisplayName;
   }
 
-  @Nonnull
+  @Nullable
   public IAS4ProfileValidator getValidator ()
   {
     return m_aProfileValidatorProvider.get ();
