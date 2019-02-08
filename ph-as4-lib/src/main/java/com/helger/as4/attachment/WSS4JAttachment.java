@@ -146,8 +146,8 @@ public class WSS4JAttachment extends Attachment
   }
 
   /**
-   * @return The content transfer encoding to be used. Required for MIME
-   *         multipart handling only.
+   * @return The content transfer encoding to be used. Required for MIME multipart
+   *         handling only.
    */
   @Nonnull
   public final EContentTransferEncoding getContentTransferEncoding ()
@@ -339,7 +339,7 @@ public class WSS4JAttachment extends Attachment
                                                               @Nonnull final AS4ResourceManager aResMgr) throws IOException
   {
     ValueEnforcer.notNull (aSrcData, "Data");
-    ValueEnforcer.notNull (sFilename, "Filename");
+    ValueEnforcer.notEmpty (sFilename, "Filename");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());

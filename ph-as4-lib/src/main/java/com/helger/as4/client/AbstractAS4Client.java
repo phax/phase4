@@ -193,7 +193,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   @Nullable
-  public IReadableResource getKeyStoreResource ()
+  public final IReadableResource getKeyStoreResource ()
   {
     return m_aKeyStoreRes;
   }
@@ -205,13 +205,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param aKeyStoreRes
    *        the keystore file that should be used
    */
-  public void setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
+  public final void setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
   {
     m_aKeyStoreRes = aKeyStoreRes;
   }
 
   @Nullable
-  public String getKeyStorePassword ()
+  public final String getKeyStorePassword ()
   {
     return m_sKeyStorePassword;
   }
@@ -223,33 +223,33 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param sKeyStorePassword
    *        password that should be set
    */
-  public void setKeyStorePassword (@Nullable final String sKeyStorePassword)
+  public final void setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
     m_sKeyStorePassword = sKeyStorePassword;
   }
 
   @Nonnull
-  public IKeyStoreType getKeyStoreType ()
+  public final IKeyStoreType getKeyStoreType ()
   {
     return m_aKeyStoreType;
   }
 
   /**
    * The type of the keystore needs to be set if a keystore is used.<br>
-   * MANDATORY if you want to use sign or encryption of an user message.
-   * Defaults to "jks".
+   * MANDATORY if you want to use sign or encryption of an user message. Defaults
+   * to "jks".
    *
    * @param aKeyStoreType
    *        keystore type that should be set, e.g. "jks"
    */
-  public void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
+  public final void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
   {
     ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
     m_aKeyStoreType = aKeyStoreType;
   }
 
   @Nullable
-  public String getKeyStoreAlias ()
+  public final String getKeyStoreAlias ()
   {
     return m_sKeyStoreAlias;
   }
@@ -261,13 +261,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param sKeyStoreAlias
    *        alias that should be set
    */
-  public void setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
+  public final void setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
   {
     m_sKeyStoreAlias = sKeyStoreAlias;
   }
 
   @Nullable
-  public String getKeyStoreKeyPassword ()
+  public final String getKeyStoreKeyPassword ()
   {
     return m_sKeyStoreKeyPassword;
   }
@@ -279,13 +279,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param sKeyStoreKeyPassword
    *        password that should be set
    */
-  public void setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
+  public final void setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
   {
     m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
   }
 
   @Nullable
-  public ECryptoAlgorithmSign getCryptoAlgorithmSign ()
+  public final ECryptoAlgorithmSign getCryptoAlgorithmSign ()
   {
     return m_eCryptoAlgorithmSign;
   }
@@ -298,13 +298,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param eCryptoAlgorithmSign
    *        the signing algorithm that should be set
    */
-  public void setCryptoAlgorithmSign (@Nullable final ECryptoAlgorithmSign eCryptoAlgorithmSign)
+  public final void setCryptoAlgorithmSign (@Nullable final ECryptoAlgorithmSign eCryptoAlgorithmSign)
   {
     m_eCryptoAlgorithmSign = eCryptoAlgorithmSign;
   }
 
   @Nullable
-  public ECryptoAlgorithmSignDigest getCryptoAlgorithmSignDigest ()
+  public final ECryptoAlgorithmSignDigest getCryptoAlgorithmSignDigest ()
   {
     return m_eCryptoAlgorithmSignDigest;
   }
@@ -317,13 +317,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param eCryptoAlgorithmSignDigest
    *        the signing digest algorithm that should be set
    */
-  public void setCryptoAlgorithmSignDigest (@Nullable final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest)
+  public final void setCryptoAlgorithmSignDigest (@Nullable final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest)
   {
     m_eCryptoAlgorithmSignDigest = eCryptoAlgorithmSignDigest;
   }
 
   @Nullable
-  public ECryptoAlgorithmCrypt getCryptoAlgorithmCrypt ()
+  public final ECryptoAlgorithmCrypt getCryptoAlgorithmCrypt ()
   {
     return m_eCryptoAlgorithmCrypt;
   }
@@ -335,13 +335,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param eCryptoAlgorithmCrypt
    *        the encryption algorithm that should be set
    */
-  public void setCryptoAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eCryptoAlgorithmCrypt)
+  public final void setCryptoAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eCryptoAlgorithmCrypt)
   {
     m_eCryptoAlgorithmCrypt = eCryptoAlgorithmCrypt;
   }
 
   @Nonnull
-  public ISupplier <String> getMessageIDFactory ()
+  public final ISupplier <String> getMessageIDFactory ()
   {
     return m_aMessageIDFactory;
   }
@@ -352,7 +352,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param aMessageIDFactory
    *        Factory to be used. May not be <code>null</code>.
    */
-  public void setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
+  public final void setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
   {
     ValueEnforcer.notNull (aMessageIDFactory, "MessageIDFactory");
     m_aMessageIDFactory = aMessageIDFactory;
@@ -369,7 +369,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   @Nonnull
-  public ESOAPVersion getSOAPVersion ()
+  public final ESOAPVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
   }
@@ -380,7 +380,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param eSOAPVersion
    *        SOAPVersion which should be set
    */
-  public void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  public final void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eSOAPVersion = eSOAPVersion;

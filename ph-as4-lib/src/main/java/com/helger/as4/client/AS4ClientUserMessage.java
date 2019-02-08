@@ -105,19 +105,19 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     m_aResMgr = aResMgr;
   }
 
-  public void setPModeID (@Nullable final String sPModeID)
+  public final void setPModeID (@Nullable final String sPModeID)
   {
     setPModeIDFactory (x -> sPModeID);
   }
 
-  public void setPModeIDFactory (@Nonnull final IFunction <AS4ClientUserMessage, String> aPModeIDFactory)
+  public final void setPModeIDFactory (@Nonnull final IFunction <AS4ClientUserMessage, String> aPModeIDFactory)
   {
     ValueEnforcer.notNull (aPModeIDFactory, "PModeIDFactory");
     m_aPModeIDFactory = aPModeIDFactory;
   }
 
   @Nonnull
-  protected AS4ResourceManager getResourceMgr ()
+  public final AS4ResourceManager getResourceMgr ()
   {
     return m_aResMgr;
   }
