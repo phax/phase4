@@ -105,7 +105,7 @@ public final class SignedMessageCreator
     aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
 
     // Sign the messaging element itself
-    aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + sMessagingID, "Content"));
+    aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));
 
     // Sign the SOAP body
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
@@ -114,7 +114,7 @@ public final class SignedMessageCreator
     {
       // Modify builder for attachments
 
-      // XXX where is this ID used????
+      // "cid:Attachments" is a predefined ID used inside WSSecSignatureBase
       aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,

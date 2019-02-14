@@ -103,6 +103,7 @@ public class EncryptionCreator
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
+    // "cid:Attachments" is a predefined constant
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;

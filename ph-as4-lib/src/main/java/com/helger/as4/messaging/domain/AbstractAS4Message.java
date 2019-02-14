@@ -20,10 +20,12 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.as4.CAS4;
 import com.helger.as4.marshaller.Ebms3WriterBuilder;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
@@ -44,6 +46,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
 {
   private final ESOAPVersion m_eSOAPVersion;
   private final EAS4MessageType m_eMsgType;
+  private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
   public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
@@ -51,7 +54,12 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
     // Assign a random ID for signing
-    m_aMessaging.setId (UUID.randomUUID ().toString ());
+    // Data type is "xs:ID", derived from "xs:NCName"
+    // --> cannot start with a number
+    m_sMessagingID = "id-" + UUID.randomUUID ().toString ();
+
+    // Must be a "wsu:Id" for WSSec to be found
+    m_aMessaging.getOtherAttributes ().put (new QName (CAS4.WSU_NS, "Id"), m_sMessagingID);
   }
 
   @Nonnull
@@ -70,7 +78,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   @Nonempty
   public final String getMessagingID ()
   {
-    return m_aMessaging.getId ();
+    return m_sMessagingID;
   }
 
   @Nonnull
