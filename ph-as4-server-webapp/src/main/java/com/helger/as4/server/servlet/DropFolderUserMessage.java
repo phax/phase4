@@ -45,7 +45,6 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -170,10 +169,9 @@ public final class DropFolderUserMessage
                                                                                         .getName ()));
           aClient.setToRole (CAS4.DEFAULT_ROLE);
           aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
-          aClient.setEbms3Properties (new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
-                                                                                                         aSBDH.getSenderValue ()),
-                                                               MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
-                                                                                                         aSBDH.getReceiverValue ())));
+          aClient.ebms3Properties ()
+                 .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSBDH.getSenderValue ()),
+                          MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aSBDH.getReceiverValue ()));
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
           final SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),

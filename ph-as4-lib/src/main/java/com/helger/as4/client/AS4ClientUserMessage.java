@@ -49,6 +49,7 @@ import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.functional.IFunction;
@@ -127,8 +128,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (StringHelper.hasNoText (m_sAction))
       throw new IllegalStateException ("Action needs to be set");
 
-    if (StringHelper.hasNoText (m_sServiceType))
-      throw new IllegalStateException ("ServiceType needs to be set");
+    if (false)
+      if (StringHelper.hasNoText (m_sServiceType))
+        throw new IllegalStateException ("ServiceType needs to be set");
 
     if (StringHelper.hasNoText (m_sServiceValue))
       throw new IllegalStateException ("ServiceValue needs to be set");
@@ -136,8 +138,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (StringHelper.hasNoText (m_sConversationID))
       throw new IllegalStateException ("ConversationID needs to be set");
 
-    if (StringHelper.hasNoText (m_sAgreementRefValue))
-      throw new IllegalStateException ("AgreementRefValue needs to be set");
+    if (false)
+      if (StringHelper.hasNoText (m_sAgreementRefValue))
+        throw new IllegalStateException ("AgreementRefValue needs to be set");
 
     if (StringHelper.hasNoText (m_sFromRole))
       throw new IllegalStateException ("FromRole needs to be set");
@@ -151,8 +154,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (StringHelper.hasNoText (m_sToPartyID))
       throw new IllegalStateException ("ToPartyID needs to be set");
 
-    if (m_aEbms3Properties.isEmpty ())
-      throw new IllegalStateException ("Mandatory properties finalRecipient and originalSender are missing");
+    if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.ORIGINAL_SENDER)))
+      throw new IllegalStateException ("Mandatory property originalSender is missing");
+    if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.FINAL_RECIPIENT)))
+      throw new IllegalStateException ("Mandatory property finalRecipient is missing");
   }
 
   private void _setValuesWithPMode ()
@@ -319,7 +324,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   @Nullable
-  public Node getPayload ()
+  public final Node getPayload ()
   {
     return m_aPayload;
   }
@@ -331,7 +336,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param aPayload
    *        the Payload to be added
    */
-  public void setPayload (@Nullable final Node aPayload)
+  public final void setPayload (@Nullable final Node aPayload)
   {
     m_aPayload = aPayload;
   }
@@ -402,6 +407,26 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     return this;
   }
 
+  /**
+   * With properties optional info can be added for the receiving party. If you
+   * want to be AS4 Profile conform you need to add two properties to your
+   * message: originalSender and finalRecipient these two correlate to C1 and C4.
+   *
+   * @return The mutable list. Never <code>null</code>.
+   * @since 0.8.2
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsList <Ebms3Property> ebms3Properties ()
+  {
+    return m_aEbms3Properties;
+  }
+
+  /**
+   * @return A copy of all properties.
+   * @deprecated Use {@link #ebms3Properties()} directly.
+   */
+  @Deprecated
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <Ebms3Property> getAllEbms3Properties ()
@@ -416,14 +441,16 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    *
    * @param aEbms3Properties
    *        Properties that should be set in the current user message
+   * @deprecated Use {@link #ebms3Properties()} directly
    */
+  @Deprecated
   public void setEbms3Properties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
   {
     m_aEbms3Properties.setAll (aEbms3Properties);
   }
 
   @Nullable
-  public String getAction ()
+  public final String getAction ()
   {
     return m_sAction;
   }
@@ -438,13 +465,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sAction
    *        the action that should be there.
    */
-  public void setAction (@Nullable final String sAction)
+  public final void setAction (@Nullable final String sAction)
   {
     m_sAction = sAction;
   }
 
   @Nullable
-  public String getServiceType ()
+  public final String getServiceType ()
   {
     return m_sServiceType;
   }
@@ -458,13 +485,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sServiceType
    *        serviceType that should be set
    */
-  public void setServiceType (@Nullable final String sServiceType)
+  public final void setServiceType (@Nullable final String sServiceType)
   {
     m_sServiceType = sServiceType;
   }
 
   @Nullable
-  public String getServiceValue ()
+  public final String getServiceValue ()
   {
     return m_sServiceValue;
   }
@@ -479,13 +506,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sServiceValue
    *        the service value that should be set
    */
-  public void setServiceValue (@Nullable final String sServiceValue)
+  public final void setServiceValue (@Nullable final String sServiceValue)
   {
     m_sServiceValue = sServiceValue;
   }
 
   @Nullable
-  public String getConversationID ()
+  public final String getConversationID ()
   {
     return m_sConversationID;
   }
@@ -500,13 +527,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sConversationID
    *        the conversationID that should be set
    */
-  public void setConversationID (@Nullable final String sConversationID)
+  public final void setConversationID (@Nullable final String sConversationID)
   {
     m_sConversationID = sConversationID;
   }
 
   @Nullable
-  public String getAgreementRefValue ()
+  public final String getAgreementRefValue ()
   {
     return m_sAgreementRefValue;
   }
@@ -522,13 +549,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sAgreementRefValue
    *        agreement reference that should be set
    */
-  public void setAgreementRefValue (@Nullable final String sAgreementRefValue)
+  public final void setAgreementRefValue (@Nullable final String sAgreementRefValue)
   {
     m_sAgreementRefValue = sAgreementRefValue;
   }
 
   @Nullable
-  public String getFromRole ()
+  public final String getFromRole ()
   {
     return m_sFromRole;
   }
@@ -541,13 +568,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sFromRole
    *        the role that should be set
    */
-  public void setFromRole (@Nullable final String sFromRole)
+  public final void setFromRole (@Nullable final String sFromRole)
   {
     m_sFromRole = sFromRole;
   }
 
   @Nullable
-  public String getFromPartyID ()
+  public final String getFromPartyID ()
   {
     return m_sFromPartyID;
   }
@@ -562,13 +589,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sFromPartyID
    *        the partyID that should be set
    */
-  public void setFromPartyID (@Nullable final String sFromPartyID)
+  public final void setFromPartyID (@Nullable final String sFromPartyID)
   {
     m_sFromPartyID = sFromPartyID;
   }
 
   @Nullable
-  public String getToRole ()
+  public final String getToRole ()
   {
     return m_sToRole;
   }
@@ -578,13 +605,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sToRole
    *        the role that should be used
    */
-  public void setToRole (@Nullable final String sToRole)
+  public final void setToRole (@Nullable final String sToRole)
   {
     m_sToRole = sToRole;
   }
 
   @Nullable
-  public String getToPartyID ()
+  public final String getToPartyID ()
   {
     return m_sToPartyID;
   }
@@ -595,12 +622,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param sToPartyID
    *        the PartyID that should be set
    */
-  public void setToPartyID (@Nullable final String sToPartyID)
+  public final void setToPartyID (@Nullable final String sToPartyID)
   {
     m_sToPartyID = sToPartyID;
   }
 
-  public boolean isUseLeg1 ()
+  public final boolean isUseLeg1 ()
   {
     return m_bUseLeg1;
   }
@@ -613,13 +640,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    *        <code>true</code> if leg1 should be used, <code>false</code> if leg2
    *        should be used
    */
-  public void setUseLeg1 (final boolean bUseLeg1)
+  public final void setUseLeg1 (final boolean bUseLeg1)
   {
     m_bUseLeg1 = bUseLeg1;
   }
 
   @Nullable
-  public IPMode getPMode ()
+  public final IPMode getPMode ()
   {
     return m_aPMode;
   }
@@ -632,7 +659,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param aPmode
    *        that should be used
    */
-  public void setPMode (@Nullable final IPMode aPmode)
+  public final void setPMode (@Nullable final IPMode aPmode)
   {
     m_aPMode = aPmode;
   }

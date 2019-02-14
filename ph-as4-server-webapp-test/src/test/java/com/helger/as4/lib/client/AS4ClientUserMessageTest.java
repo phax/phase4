@@ -104,7 +104,7 @@ public final class AS4ClientUserMessageTest
     aClient.setFromPartyID (sSenderID);
     aClient.setToRole (CAS4.DEFAULT_ROLE);
     aClient.setToPartyID (sResponderID);
-    aClient.setEbms3Properties (AS4TestConstants.getEBMSProperties ());
+    aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
 
     return aClient;
   }
@@ -176,7 +176,7 @@ public final class AS4ClientUserMessageTest
     _ensureInvalidState (aClient);
     aClient.setToPartyID ("MyPartyIDforReceving");
     _ensureInvalidState (aClient);
-    aClient.setEbms3Properties (AS4TestConstants.getEBMSProperties ());
+    aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
     _ensureValidState (aClient);
   }
 
