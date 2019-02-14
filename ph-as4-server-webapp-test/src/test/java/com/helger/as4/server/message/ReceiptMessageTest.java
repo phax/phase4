@@ -34,7 +34,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -46,7 +46,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESOAPVersion.values (), x -> new Object [] { x });
   }
 
   private final ESOAPVersion m_eSOAPVersion;
@@ -61,7 +61,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
-                                      .getAsSOAPDocument ();
+                                      .getAsSOAPDocument (aPayload);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
