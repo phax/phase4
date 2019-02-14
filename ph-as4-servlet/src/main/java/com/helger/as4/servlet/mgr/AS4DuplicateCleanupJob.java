@@ -55,7 +55,8 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())
-      LOGGER.info ("Evicted " + aEvicted.size () + " incoming duplicate message IDs");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Evicted " + aEvicted.size () + " incoming duplicate message IDs before " + aOldDT.toString ());
   }
 
   private static final AtomicBoolean s_aScheduled = new AtomicBoolean (false);
