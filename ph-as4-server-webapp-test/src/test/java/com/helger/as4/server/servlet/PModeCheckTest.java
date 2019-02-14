@@ -59,6 +59,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
@@ -79,7 +80,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     if (m_aPayload == null)
       LOGGER.warn ("SOAPBodyPayload.xml could not be found no payload attached in PModeCheckTest setup");
-    m_aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, null));
+    m_aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, null));
 
     // Default MessageInfo for testing
     m_aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
@@ -175,12 +176,11 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
       aPModeMgr.createOrUpdatePMode (aPMode);
 
+      final AS4UserMessage aMsg = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage).setMustUnderstand (true);
       final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                            AS4UserMessage.create (m_eSOAPVersion,
-                                                                                                   m_aEbms3UserMessage)
-                                                                                          .setMustUnderstand (true)
-                                                                                          .getAsSOAPDocument (m_aPayload),
+                                                                            aMsg.getAsSOAPDocument (m_aPayload),
                                                                             m_eSOAPVersion,
+                                                                            aMsg.getMessagingID (),
                                                                             null,
                                                                             s_aResMgr,
                                                                             false,
@@ -363,12 +363,18 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     {
       aPModeMgr.createPMode (aPMode);
 
+      final Wrapper <String> aMsgID = new Wrapper <> ();
+      final Document aDoc = _modifyUserMessage (sPModeID,
+                                                null,
+                                                null,
+                                                _defaultProperties (),
+                                                null,
+                                                null,
+                                                x -> aMsgID.set (x));
       final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                            _modifyUserMessage (sPModeID,
-                                                                                                null,
-                                                                                                null,
-                                                                                                _defaultProperties ()),
+                                                                            aDoc,
                                                                             m_eSOAPVersion,
+                                                                            aMsgID.get (),
                                                                             null,
                                                                             s_aResMgr,
                                                                             false,

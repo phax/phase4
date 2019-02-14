@@ -37,6 +37,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 
@@ -55,6 +56,8 @@ public final class SignedMessageCreator
    *        SOAP Document before signing
    * @param eSOAPVersion
    *        SOAP version to use
+   * @param sMessagingID
+   *        The ID of the "Messaging" element to sign.
    * @param aAttachments
    *        Optional list of attachments
    * @param aResMgr
@@ -73,6 +76,7 @@ public final class SignedMessageCreator
   public static Document createSignedMessage (@Nonnull final AS4CryptoFactory aCryptoFactory,
                                               @Nonnull final Document aPreSigningMessage,
                                               @Nonnull final ESOAPVersion eSOAPVersion,
+                                              @Nonnull @Nonempty final String sMessagingID,
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                               @Nonnull final AS4ResourceManager aResMgr,
                                               final boolean bMustUnderstand,
@@ -82,6 +86,7 @@ public final class SignedMessageCreator
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     ValueEnforcer.notNull (eCryptoAlgorithmSign, "CryptoAlgorithmSign");
     ValueEnforcer.notNull (eCryptoAlgorithmSignDigest, "CryptoAlgorithmSignDigest");
@@ -99,10 +104,16 @@ public final class SignedMessageCreator
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
 
+    // Sign the messaging element itself
+    aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + sMessagingID, "Content"));
+
+    // Sign the SOAP body
+    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
+
     if (CollectionHelper.isNotEmpty (aAttachments))
     {
       // Modify builder for attachments
-      aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
+
       // XXX where is this ID used????
       aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 

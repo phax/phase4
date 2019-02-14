@@ -117,7 +117,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final String sPModeID = SOAP_12_PARTY_ID + "-" + SOAP_12_PARTY_ID;
 
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
@@ -163,7 +163,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     // Fake an incoming message
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final String sPModeID = SOAP_12_PARTY_ID + "-" + SOAP_12_PARTY_ID;
     aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
@@ -188,7 +188,8 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Now send receipt
-    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null);
+    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null)
+                                      .getAsSOAPDocument ();
 
     // We've got our response
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);

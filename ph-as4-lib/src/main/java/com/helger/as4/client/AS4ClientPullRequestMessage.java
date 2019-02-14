@@ -85,6 +85,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
       aDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
                                                        aDoc,
                                                        getSOAPVersion (),
+                                                       aPullRequest.getMessagingID (),
                                                        null,
                                                        m_aResMgr,
                                                        bMustUnderstand,

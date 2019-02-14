@@ -48,16 +48,17 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void sendPullRequestSuccess () throws Exception
   {
-    Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
-                                                  MessageHelperMethods.createEbms3MessageInfo (),
-                                                  AS4TestConstants.DEFAULT_MPC,
-                                                  null)
-                                         .getAsSOAPDocument ();
+    final AS4PullRequestMessage aPullReqMsg = AS4PullRequestMessage.create (m_eSOAPVersion,
+                                                                            MessageHelperMethods.createEbms3MessageInfo (),
+                                                                            AS4TestConstants.DEFAULT_MPC,
+                                                                            null);
+    Document aDoc = aPullReqMsg.getAsSOAPDocument ();
 
     final boolean bMustUnderstand = true;
     aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                      aDoc,
                                                      m_eSOAPVersion,
+                                                     aPullReqMsg.getMessagingID (),
                                                      null,
                                                      new AS4ResourceManager (),
                                                      bMustUnderstand,

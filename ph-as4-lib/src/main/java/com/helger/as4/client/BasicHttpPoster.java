@@ -116,7 +116,7 @@ public class BasicHttpPoster
         {
           ret.append ("\n");
           for (final Header h : aPost.getAllHeaders ())
-            ret.append (h.getName ()).append ('=').append (h.getValue ()).append (CHttp.EOL);
+            ret.append (h.getName ()).append (": ").append (h.getValue ()).append (CHttp.EOL);
           ret.append (CHttp.EOL);
           ret.append (EntityUtils.toString (aHttpEntity));
         }

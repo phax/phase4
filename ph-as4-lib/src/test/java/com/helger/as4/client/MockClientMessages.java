@@ -55,6 +55,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * Only used for SOAPClientSAAJ.java as test message constructor.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 final class MockClientMessages
 {
@@ -68,11 +69,11 @@ final class MockClientMessages
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
+    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                          testUserMessageSoapNotSigned (eSOAPVersion,
-                                                                                                        aPayload,
-                                                                                                        aAttachments),
+                                                                          aMsg.getAsSOAPDocument (aPayload),
                                                                           eSOAPVersion,
+                                                                          aMsg.getMessagingID (),
                                                                           aAttachments,
                                                                           aResMgr,
                                                                           false,
@@ -87,12 +88,11 @@ final class MockClientMessages
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aEbms3ErrorList).setMustUnderstand (true);
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                          AS4ErrorMessage.create (eSOAPVersion,
-                                                                                                  aEbms3ErrorList)
-                                                                                         .setMustUnderstand (true)
-                                                                                         .getAsSOAPDocument (),
+                                                                          aErrorMsg.getAsSOAPDocument (),
                                                                           eSOAPVersion,
+                                                                          aErrorMsg.getMessagingID (),
                                                                           aAttachments,
                                                                           aResMgr,
                                                                           false,
@@ -109,17 +109,18 @@ final class MockClientMessages
   {
     final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
 
-    final Document aDoc = AS4ReceiptMessage.create (eSOAPVersion,
-                                                    MessageHelperMethods.createRandomMessageID (),
-                                                    null,
-                                                    aUserMessage,
-                                                    true)
-                                           .setMustUnderstand (true)
-                                           .getAsSOAPDocument ();
+    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (eSOAPVersion,
+                                                                    MessageHelperMethods.createRandomMessageID (),
+                                                                    null,
+                                                                    aUserMessage,
+                                                                    true)
+                                                           .setMustUnderstand (true);
+    final Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aDoc,
                                                                           eSOAPVersion,
+                                                                          aReceiptMsg.getMessagingID (),
                                                                           aAttachments,
                                                                           aResMgr,
                                                                           false,
@@ -128,9 +129,9 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                       @Nullable final Node aPayload,
-                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                             @Nullable final Node aPayload,
+                                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
@@ -140,7 +141,8 @@ final class MockClientMessages
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4 FR"));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pmode-twoway",
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
@@ -160,7 +162,7 @@ final class MockClientMessages
                                                        aEbms3MessageProperties,
                                                        eSOAPVersion)
                                               .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aDoc;
   }
 
   public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESOAPVersion eSOAPVersion,
@@ -173,7 +175,8 @@ final class MockClientMessages
     aEbms3Properties.add (MessageHelperMethods.createEbms3Property ("ContextID", "987654321"));
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo ("pm-esens-generic-resp",
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               "MyServiceTypes",
@@ -209,7 +212,8 @@ final class MockClientMessages
 
     // Use an empty message info by purpose
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
+                                                                                            aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                               null,
                                                                                                               null,

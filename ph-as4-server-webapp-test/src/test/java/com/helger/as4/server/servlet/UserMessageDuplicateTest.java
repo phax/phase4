@@ -39,7 +39,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
+                                      .getAsSOAPDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
 
@@ -54,7 +55,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void sendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
+                                      .getAsSOAPDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
 

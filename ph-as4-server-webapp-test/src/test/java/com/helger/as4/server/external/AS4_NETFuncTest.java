@@ -87,7 +87,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 
     // New message ID
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (null, aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (m_aESENSOneWayPMode.getID (),
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               COLLABORATION_INFO_SERVICE_TYPE,
@@ -117,6 +117,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aUserMsg.getAsSOAPDocument (),
                                                                           m_eSOAPVersion,
+                                                                          aUserMsg.getMessagingID (),
                                                                           aAttachments,
                                                                           new AS4ResourceManager (),
                                                                           false,

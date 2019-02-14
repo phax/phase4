@@ -16,6 +16,8 @@
  */
 package com.helger.as4.messaging.domain;
 
+import java.util.UUID;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -32,6 +34,7 @@ import com.helger.as4lib.soap12.Soap12Body;
 import com.helger.as4lib.soap12.Soap12Envelope;
 import com.helger.as4lib.soap12.Soap12Header;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.traits.IGenericImplTrait;
 
@@ -47,6 +50,8 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   {
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
+    // Assign a random ID for signing
+    m_aMessaging.setId (UUID.randomUUID ().toString ());
   }
 
   @Nonnull
@@ -59,6 +64,13 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   public final EAS4MessageType getMessageType ()
   {
     return m_eMsgType;
+  }
+
+  @Nonnull
+  @Nonempty
+  public final String getMessagingID ()
+  {
+    return m_aMessaging.getId ();
   }
 
   @Nonnull

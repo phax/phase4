@@ -91,7 +91,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -113,7 +113,13 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     s_aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
+                                              null,
+                                              null,
+                                              _defaultProperties (),
+                                              aAttachments,
+                                              null,
+                                              null);
     final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
@@ -138,7 +144,13 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
+                                              null,
+                                              null,
+                                              _defaultProperties (),
+                                              aAttachments,
+                                              null,
+                                              null);
     final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
@@ -161,7 +173,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
     final Document aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (aPayload, null));
+    aEbms3UserMessage.setPayloadInfo (MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null));
 
     // Default MessageInfo for testing
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
@@ -203,7 +215,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
@@ -215,7 +227,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     m_aPMode.setLeg2 (null);
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties ());
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());

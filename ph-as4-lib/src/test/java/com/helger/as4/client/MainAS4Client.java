@@ -27,7 +27,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,6 +44,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -104,13 +104,17 @@ public final class MainAS4Client
                           RandomHelper.getSecureRandom ());
       }
 
-      final CloseableHttpClient aClient = new HttpClientFactory ().setSSLContext (aSSLContext).createHttpClient ();
+      final HttpClientFactory aHCF = new HttpClientFactory ();
+      aHCF.setSSLContext (aSSLContext);
+      if (true)
+      {
+        aHCF.setProxy (new HttpHost ("172.30.9.6", 8080));
+        aHCF.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
+      }
+      final CloseableHttpClient aClient = aHCF.createHttpClient ();
 
       LOGGER.info ("Sending to " + sURL);
       final HttpPost aPost = new HttpPost (sURL);
-
-      if (!sURL.contains ("localhost") && !sURL.contains ("127.0.0.1"))
-        aPost.setConfig (RequestConfig.custom ().setProxy (new HttpHost ("172.30.9.6", 8080)).build ());
 
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
@@ -122,7 +126,10 @@ public final class MainAS4Client
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
+        final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                     aPayload,
+                                                                                     aAttachments);
+        final Document aDoc = aMsg.getAsSOAPDocument (aPayload);
         aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
       }
       else
@@ -139,7 +146,10 @@ public final class MainAS4Client
         else
           if (false)
           {
-            Document aDoc = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
+            final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                         aPayload,
+                                                                                         aAttachments);
+            Document aDoc = aMsg.getAsSOAPDocument (aPayload);
             aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (eSOAPVersion,
                                                                                                      aDoc,
                                                                                                      false,
@@ -154,23 +164,24 @@ public final class MainAS4Client
                                                                               CMimeType.APPLICATION_GZIP,
                                                                               null,
                                                                               aResMgr));
-
-              final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
-                                                                               SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                                                                         MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
-                                                                                                                                                                          null,
-                                                                                                                                                                          aAttachments),
-                                                                                                                         eSOAPVersion,
-                                                                                                                         aAttachments,
-                                                                                                                         aResMgr,
-                                                                                                                         false,
-                                                                                                                         ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                                                         ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
-                                                                               aAttachments);
+              final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
+                                                                                           null,
+                                                                                           aAttachments);
+              final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
+                                                                                   SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                                                                             aMsg.getAsSOAPDocument (null),
+                                                                                                                             eSOAPVersion,
+                                                                                                                             aMsg.getMessagingID (),
+                                                                                                                             aAttachments,
+                                                                                                                             aResMgr,
+                                                                                                                             false,
+                                                                                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                                                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
+                                                                                   aAttachments);
 
               // Move all global mime headers to the POST request
-              MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMsg, aPost);
-              aPost.setEntity (new HttpMimeMessageEntity (aMsg));
+              MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aMimeMsg, aPost);
+              aPost.setEntity (new HttpMimeMessageEntity (aMimeMsg));
             }
             else
               if (false)

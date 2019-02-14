@@ -74,15 +74,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
-   * message to the RMSH with parameter MESSAGEPROPERTIES containing: A property
-   * with attributes "name" and "type" present. A property with only attribute
-   * "name" present.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User message to
+   * the RMSH with parameter MESSAGEPROPERTIES containing: A property with
+   * attributes "name" and "type" present. A property with only attribute "name"
+   * present.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with
-   * status code 2XX.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with status
+   * code 2XX.
    *
    * @throws Exception
    *         In case of error
@@ -94,7 +94,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, null);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, null);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
@@ -118,7 +118,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // aPropOnlyName.setName ("OnlyName");
     // aEbms3MessageProperties.addProperty (aPropOnlyName);
 
-    final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
+    final AS4UserMessage aMsg = AS4UserMessage.create (aEbms3MessageInfo,
                                                        aEbms3PayloadInfo,
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
@@ -127,8 +127,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                          aDoc.getAsSOAPDocument (m_aPayload),
+                                                                          aMsg.getAsSOAPDocument (m_aPayload),
                                                                           m_eSOAPVersion,
+                                                                          aMsg.getMessagingID (),
                                                                           null,
                                                                           new AS4ResourceManager (),
                                                                           false,
@@ -146,9 +147,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile: One-Way/Push MEP. SMSH sends an AS4 message (User Message
-   * with payload) to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile: One-Way/Push MEP. SMSH sends an AS4 message (User Message with
+   * payload) to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends a non-repudiation receipt to the SMSH.
@@ -184,8 +185,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits a Message with metadata
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits a Message with metadata
    * information and XML payload to the SMSH.<br>
    * <br>
    * Predicate: <br>
@@ -216,8 +217,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits a Message with metadata
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits a Message with metadata
    * information and payload to the SMSH.<br>
    * <br>
    * Predicate: <br>
@@ -246,10 +247,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
-   * with payload (ex: xml document) and metadata information including a
-   * property element with name "MimeType" and value ("application/xml").<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with
+   * payload (ex: xml document) and metadata information including a property
+   * element with name "MimeType" and value ("application/xml").<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "MimeType" present and
@@ -276,9 +277,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). The SMSH is simulated to send an AS4
-   * message without property "MimeType" present to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). The SMSH is simulated to send an AS4 message
+   * without property "MimeType" present to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends a synchronous ebMS error response.
@@ -306,10 +307,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
-   * with xml (UTF-16) payload and metadata information including payload
-   * characterset info.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with xml
+   * (UTF-16) payload and metadata information including payload characterset
+   * info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -350,10 +351,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
-   * with xml (UTF-8) payload and metadata information including payload
-   * characterset info.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with xml
+   * (UTF-8) payload and metadata information including payload characterset
+   * info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -393,15 +394,13 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   }
 
   /**
-   * Note: Not testable (might become valid after the requirements EBXMLMSG-87
-   * and EBXMLMSG-88 are validated). <= thats what is standing in the
-   * document<br>
+   * Note: Not testable (might become valid after the requirements EBXMLMSG-87 and
+   * EBXMLMSG-88 are validated). <= thats what is standing in the document<br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 message
-   * with property element "CharacterSet" set to value not conform to section
-   * 4.3.3 of [XML10] (example: "!utf*"). The SMSH sends the AS4 message to the
-   * RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 message with
+   * property element "CharacterSet" set to value not conform to section 4.3.3 of
+   * [XML10] (example: "!utf*"). The SMSH sends the AS4 message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH returns a synchronous ebMS error message.
@@ -414,10 +413,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
-   * Message with compressed but damaged payloads. The SMSH sends the AS4 User
-   * Message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User Message
+   * with compressed but damaged payloads. The SMSH sends the AS4 User Message to
+   * the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back a synchronous error response with error code "Code =
@@ -438,12 +437,16 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     aAttachment.setCharset (StandardCharsets.UTF_8);
     aAttachments.add (aAttachment);
 
-    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
+    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (m_aPayload, aAttachments);
     // Damaged payload: txt file
     aAttachments.get (0).setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                         aMsg.getAsSOAPDocument (m_aPayload),
+                                                                         aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
+                     false,
+                     EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
   /**
@@ -466,9 +469,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a
-   * compressed payload to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a compressed
+   * payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH delivers the message with decompressed payload to the consumer.
@@ -494,9 +497,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a
-   * several compressed payloads (XML and non XML) to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a several
+   * compressed payloads (XML and non XML) to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH delivers the message with decompressed payloads to the consumer.
@@ -558,8 +561,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA13<br>
-   * Simulated SMSH sends a signed AS4 User Message with a signed then
-   * compressed payload to the RMSH.<br>
+   * Simulated SMSH sends a signed AS4 User Message with a signed then compressed
+   * payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The SMSH receives a WS-Security SOAP Fault.
@@ -594,8 +597,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA14.<br>
-   * The SMSH is simulated to send a compressed then encrypted AS4 message to
-   * the RMSH.<br>
+   * The SMSH is simulated to send a compressed then encrypted AS4 message to the
+   * RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back an AS4 non-repudiation receipt.
@@ -612,15 +615,14 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                      null,
-                                                                                                                                                      aAttachments),
-                                                                                                           false,
-                                                                                                           aAttachments,
-                                                                                                           s_aResMgr,
-                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                               aMsg.getAsSOAPDocument (),
+                                                                                                               false,
+                                                                                                               aAttachments,
+                                                                                                               s_aResMgr,
+                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
   }
@@ -628,8 +630,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA14.<br>
-   * Simulated SMSH sends a signed AS4 User Message with an encrypted first,
-   * then compressed payload to the RMSH.<br>
+   * Simulated SMSH sends a signed AS4 User Message with an encrypted first, then
+   * compressed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The SMSH receives a WS-Security SOAP Fault.
@@ -640,10 +642,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA20 () throws Exception
   {
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, m_aPayload, null);
     final Document aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
-                                                                                                            MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                       m_aPayload,
-                                                                                                                                                       null),
+                                                                                                            aMsg.getAsSOAPDocument (m_aPayload),
                                                                                                             true,
                                                                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
@@ -672,9 +673,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). The SMSH sends an AS4 message with a
-   * compressed then encrypted and signed payload to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). The SMSH sends an AS4 message with a compressed
+   * then encrypted and signed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back an AS4 non-repudiation receipt.
@@ -691,24 +692,24 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                    MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                               null,
-                                                                                                               aAttachments),
+                                                                    aMsg.getAsSOAPDocument (null),
                                                                     m_eSOAPVersion,
+                                                                    aMsg.getMessagingID (),
                                                                     aAttachments,
                                                                     s_aResMgr,
                                                                     false,
                                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                           aDoc,
-                                                                                                           false,
-                                                                                                           aAttachments,
-                                                                                                           s_aResMgr,
-                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                               aDoc,
+                                                                                                               false,
+                                                                                                               aAttachments,
+                                                                                                               s_aResMgr,
+                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
@@ -727,9 +728,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User message to the
-   * RMSH. <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH sends an AS4 User message to the RMSH. <br>
    * <br>
    * Predicate: <br>
    * In the message sender|receiver elements reference the MSHs and not the
@@ -741,7 +741,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA27 () throws Exception
   {
-    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null);
+    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null).getAsSOAPDocument (m_aPayload);
 
     NodeList nList = aDoc.getElementsByTagName ("eb:PartyId");
     final String sPartyID = nList.item (0).getTextContent ();
@@ -755,10 +755,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Note: Only when using SBDH<br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). Producer submits two payloads, first
-   * being an SBDH document, second being an actual payload (non-XML payload).
-   * SMSH sends an AS4 User Message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). Producer submits two payloads, first being an
+   * SBDH document, second being an actual payload (non-XML payload). SMSH sends
+   * an AS4 User Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * Message has two additional MIME parts. The first mime part is the SBDH
@@ -785,7 +785,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
                                                                      MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                 null,
-                                                                                                                aAttachments),
+                                                                                                                aAttachments)
+                                                                                 .getAsSOAPDocument (),
                                                                      aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
@@ -794,15 +795,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the
-   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
-   * message to the RMSH with parameter PARTPROPERTIES containing: A property
-   * with attributes "name" and "type" present. A property with only attribute
-   * "name" present. <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
+   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User message to
+   * the RMSH with parameter PARTPROPERTIES containing: A property with attributes
+   * "name" and "type" present. A property with only attribute "name" present.
+   * <br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with
-   * status code 2XX.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with status
+   * code 2XX.
    */
   @Test
   public void AS4_TA29 ()

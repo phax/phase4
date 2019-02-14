@@ -48,6 +48,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -166,11 +167,11 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                    MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                               null,
-                                                                                                               aAttachments),
+                                                                    aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
+                                                                    aMsg.getMessagingID (),
                                                                     aAttachments,
                                                                     s_aResMgr,
                                                                     false,
@@ -185,8 +186,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
       if (aElement.hasAttribute ("href"))
         aElement.setAttribute ("href", MessageHelperMethods.PREFIX_CID + "invalid" + i);
     }
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   // Encryption
@@ -203,31 +204,33 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                           MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                      null,
-                                                                                                                                                      aAttachments),
-                                                                                                           true,
-                                                                                                           aAttachments,
-                                                                                                           s_aResMgr,
-                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                               MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                                                          null,
+                                                                                                                                                          aAttachments)
+                                                                                                                           .getAsSOAPDocument (),
+                                                                                                               true,
+                                                                                                               aAttachments,
+                                                                                                               s_aResMgr,
+                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
-    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
+    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
     if (true)
       aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1),
                                 CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
-    aMsg.saveChanges ();
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    aMimeMsg.saveChanges ();
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   @Test
   public void testUserMessageWithPayloadInfoOnly () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
+                                      .getAsSOAPDocument (aPayload);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
     // the payload is missing
@@ -248,7 +251,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageWithBodyPayloadOnlyNoInfo () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
+                                      .getAsSOAPDocument (aPayload);
 
     // Delete the added Payload in the soap body to confirm right behaviour when
     // the payload is missing
@@ -275,20 +279,22 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                null,
-                                                                                                                aAttachments),
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                         MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                    null,
+                                                                                                                    aAttachments)
+                                                                                     .getAsSOAPDocument (),
+                                                                         aAttachments);
 
-                                                                     aAttachments);
-
-    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMsg.getContent ();
+    final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
 
     // Since we want to remove the attachment
     aMultipart.removeBodyPart (1);
 
-    aMsg.saveChanges ();
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    aMimeMsg.saveChanges ();
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
+                     false,
+                     EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Test
@@ -296,7 +302,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
 
-    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
+                                          .getAsSOAPDocument ();
     final AS4ResourceManager aResMgr = s_aResMgr;
 
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
@@ -304,12 +311,11 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     aSoapDoc,
-
-                                                                     aAttachments);
-    aMsg.saveChanges ();
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSoapDoc, aAttachments);
+    aMimeMsg.saveChanges ();
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
+                     false,
+                     EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Test
@@ -322,7 +328,8 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
+                                          .getAsSOAPDocument ();
     final AS4ResourceManager aResMgr1 = s_aResMgr;
 
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
@@ -335,9 +342,11 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr2));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSoapDoc, aAttachments);
-    aMsg.saveChanges ();
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSoapDoc, aAttachments);
+    aMimeMsg.saveChanges ();
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
+                     false,
+                     EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
 
   @Test

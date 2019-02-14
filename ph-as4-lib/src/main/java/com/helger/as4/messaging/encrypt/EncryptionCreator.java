@@ -127,10 +127,11 @@ public class EncryptionCreator
     {
       aEncryptedAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
       // MIME Type and CTE must be set for encrypted attachments!
-      aEncryptedAttachments.forEach (x -> {
-        x.overwriteMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
-        x.setContentTransferEncoding (EContentTransferEncoding.BINARY);
-      });
+      for (final WSS4JAttachment aAttachment : aEncryptedAttachments)
+      {
+        aAttachment.overwriteMimeType (CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+        aAttachment.setContentTransferEncoding (EContentTransferEncoding.BINARY);
+      }
     }
 
     // Use the encrypted attachments!

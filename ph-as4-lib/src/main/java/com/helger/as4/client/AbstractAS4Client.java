@@ -43,6 +43,8 @@ import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
+import com.helger.xml.serialize.write.EXMLSerializeIndent;
+import com.helger.xml.serialize.write.XMLWriterSettings;
 
 public abstract class AbstractAS4Client extends BasicHttpPoster
 {
@@ -188,7 +190,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
     final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ()).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
+                               MicroWriter.getNodeAsString (ret,
+                                                            new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
     return ret;
   }
 

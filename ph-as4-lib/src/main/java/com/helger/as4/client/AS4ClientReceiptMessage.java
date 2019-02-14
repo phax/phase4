@@ -94,6 +94,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
       aDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
                                                        aDoc,
                                                        getSOAPVersion (),
+                                                       aReceiptMsg.getMessagingID (),
                                                        null,
                                                        m_aResMgr,
                                                        bMustUnderstand,
@@ -126,8 +127,8 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   /**
-   * As node set the usermessage if it is signed, so the references can be
-   * counted and used in non repudiation.
+   * As node set the usermessage if it is signed, so the references can be counted
+   * and used in non repudiation.
    *
    * @param aSOAPDocument
    *        Signed UserMessage

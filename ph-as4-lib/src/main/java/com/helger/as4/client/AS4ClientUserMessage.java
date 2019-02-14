@@ -31,6 +31,7 @@ import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -55,6 +56,9 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.functional.IFunction;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
+import com.helger.xml.serialize.write.EXMLSerializeIndent;
+import com.helger.xml.serialize.write.XMLWriter;
+import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
  * AS4 standalone client invoker.
@@ -235,7 +239,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload, m_aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
+                                                                                            m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,
@@ -265,6 +270,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
     {
+      final Document aPureDoc = aDoc;
+      AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
+                                 XMLWriter.getNodeAsString (aPureDoc,
+                                                            new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
+
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       // 2a. sign
@@ -274,12 +284,17 @@ public class AS4ClientUserMessage extends AbstractAS4Client
         final Document aSignedDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
                                                                               aDoc,
                                                                               getSOAPVersion (),
+                                                                              aUserMsg.getMessagingID (),
                                                                               m_aAttachments,
                                                                               m_aResMgr,
                                                                               bMustUnderstand,
                                                                               getCryptoAlgorithmSign (),
                                                                               getCryptoAlgorithmSignDigest ());
         aDoc = aSignedDoc;
+
+        AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
+                                   XMLWriter.getNodeAsString (aSignedDoc,
+                                                              new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
       }
 
       // 2b. encrypt

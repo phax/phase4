@@ -139,7 +139,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
       final Ebms3MessageInfo aMessageInfo = aSignalMessage.getMessageInfo ();
 
       final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (aMessageInfo.getMessageId ());
-      final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
+      final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null);
 
       final Ebms3CollaborationInfo aEbms3CollaborationInfo;
       final Ebms3PartyInfo aEbms3PartyInfo;

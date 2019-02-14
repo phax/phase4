@@ -100,6 +100,7 @@ import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -913,7 +914,8 @@ public final class AS4Handler implements AutoCloseable
             // Send UserMessage or receipt
             aAsyncResponseFactory = _createResponseUserMessage (aResponseAttachments,
                                                                 aEffectiveLeg,
-                                                                aResponseUserMsg.getAsSOAPDocument ());
+                                                                aResponseUserMsg.getAsSOAPDocument (),
+                                                                aResponseUserMsg.getMessagingID ());
 
           }
           else
@@ -1015,7 +1017,10 @@ public final class AS4Handler implements AutoCloseable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
-              return _createResponseUserMessage (aResponseAttachments, aLeg2, aResponseUserMsg.getAsSOAPDocument ());
+              return _createResponseUserMessage (aResponseAttachments,
+                                                 aLeg2,
+                                                 aResponseUserMsg.getAsSOAPDocument (),
+                                                 aResponseUserMsg.getMessagingID ());
             }
           }
         }
@@ -1058,7 +1063,8 @@ public final class AS4Handler implements AutoCloseable
     aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
                                           aEffectiveLeg.getSecurity (),
                                           aResponseDoc,
-                                          aEffectiveLeg.getProtocol ().getSOAPVersion ());
+                                          aEffectiveLeg.getProtocol ().getSOAPVersion (),
+                                          aReceiptMessage.getMessagingID ());
     return new AS4ResponseFactoryXML (aResponseDoc);
   }
 
@@ -1083,7 +1089,8 @@ public final class AS4Handler implements AutoCloseable
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
                                                                                             aUserMessage.getMessageInfo ()
                                                                                                         .getMessageId ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (null, aResponseAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false,
+                                                                                            aResponseAttachments);
 
     // Invert from and to role from original user message
     final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
@@ -1141,14 +1148,17 @@ public final class AS4Handler implements AutoCloseable
    *        be used
    * @param aDoc
    *        the message that should be sent
+   * @param sMessagingID
+   *        ID of the "Messaging" element
    * @throws WSSecurityException
    * @throws MessagingException
    */
   @Nonnull
   private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                           @Nonnull final PModeLeg aLeg,
-                                                          @Nonnull final Document aDoc) throws WSSecurityException,
-                                                                                        MessagingException
+                                                          @Nonnull final Document aDoc,
+                                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException,
+                                                                                                        MessagingException
   {
     Document aResponseDoc;
     if (aLeg.getSecurity () != null)
@@ -1156,7 +1166,8 @@ public final class AS4Handler implements AutoCloseable
       aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
                                             aLeg.getSecurity (),
                                             aDoc,
-                                            aLeg.getProtocol ().getSOAPVersion ());
+                                            aLeg.getProtocol ().getSOAPVersion (),
+                                            sMessagingID);
     }
     else
     {
@@ -1184,6 +1195,8 @@ public final class AS4Handler implements AutoCloseable
    *        the message that should be signed
    * @param eSOAPVersion
    *        SOAPVersion that is used
+   * @param sMessagingID
+   *        The messaging ID to be used for signing
    * @return returns the signed response or just the input document if no
    *         X509SignatureAlgorithm and no X509SignatureHashFunction was set.
    * @throws WSSecurityException
@@ -1192,7 +1205,8 @@ public final class AS4Handler implements AutoCloseable
   private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                           @Nonnull final PModeLegSecurity aSecurity,
                                           @Nonnull final Document aDocToBeSigned,
-                                          @Nonnull final ESOAPVersion eSOAPVersion) throws WSSecurityException
+                                          @Nonnull final ESOAPVersion eSOAPVersion,
+                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
   {
     if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
@@ -1200,6 +1214,7 @@ public final class AS4Handler implements AutoCloseable
       return SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                        aDocToBeSigned,
                                                        eSOAPVersion,
+                                                       sMessagingID,
                                                        aResponseAttachments,
                                                        m_aResMgr,
                                                        bMustUnderstand,

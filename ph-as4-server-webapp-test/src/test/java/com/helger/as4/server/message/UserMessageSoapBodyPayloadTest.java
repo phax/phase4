@@ -70,7 +70,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   public void testSendUnsignedMessageSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, null)
+                                      .getAsSOAPDocument (aPayload);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -115,7 +116,8 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments);
+    Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments)
+                                .getAsSOAPDocument (aPayload);
     aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
                                                                                              aDoc,
                                                                                              false,

@@ -38,6 +38,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
@@ -75,14 +76,14 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                null,
-                                                                                                                aAttachments),
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                         MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                    null,
+                                                                                                                    aAttachments)
+                                                                                     .getAsSOAPDocument (),
+                                                                         aAttachments);
 
-                                                                     aAttachments);
-
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
 
   @Test
@@ -94,19 +95,19 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                    MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                               null,
-                                                                                                               aAttachments),
+                                                                    aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
+                                                                    aMsg.getMessagingID (),
                                                                     aAttachments,
                                                                     s_aResMgr,
                                                                     false,
                                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
 
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
 
   @Test
@@ -118,7 +119,8 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
+                                      .getAsSOAPDocument ();
 
     final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
                                                                                                            aDoc,
@@ -138,24 +140,24 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
+    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                    MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                               null,
-                                                                                                               aAttachments),
+                                                                    aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
+                                                                    aMsg.getMessagingID (),
                                                                     aAttachments,
                                                                     s_aResMgr,
                                                                     false,
                                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                           aDoc,
-                                                                                                           false,
-                                                                                                           aAttachments,
-                                                                                                           s_aResMgr,
-                                                                                                           ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
-    sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
+                                                                                                               aDoc,
+                                                                                                               false,
+                                                                                                               aAttachments,
+                                                                                                               s_aResMgr,
+                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
 
   @Test

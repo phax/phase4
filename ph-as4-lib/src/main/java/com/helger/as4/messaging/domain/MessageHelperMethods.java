@@ -29,7 +29,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.http.HttpMessage;
-import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
@@ -270,21 +269,21 @@ public final class MessageHelperMethods
   /**
    * Add payload info if attachments are present.
    *
-   * @param aPayload
-   *        Optional SOAP body payload. This must be <code>null</code> when
-   *        using MIME message layout!
+   * @param bHasSOAPPayload
+   *        <code>true</code> if SOAP payload is present. This must be
+   *        <code>false</code> when using MIME message layout!
    * @param aAttachments
    *        Used attachments
    * @return <code>null</code> if no attachments are present.
    */
   @Nullable
-  public static Ebms3PayloadInfo createEbms3PayloadInfo (@Nullable final Node aPayload,
+  public static Ebms3PayloadInfo createEbms3PayloadInfo (final boolean bHasSOAPPayload,
                                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
     // Empty PayloadInfo only if sending as the body of the SOAP message
-    if (aPayload != null)
+    if (bHasSOAPPayload)
       aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
 
     if (aAttachments != null)

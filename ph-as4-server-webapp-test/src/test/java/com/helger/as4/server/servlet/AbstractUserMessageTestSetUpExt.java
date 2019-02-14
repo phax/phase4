@@ -16,6 +16,7 @@
  */
 package com.helger.as4.server.servlet;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,6 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
 import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
-import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
@@ -71,63 +71,10 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
                                          @Nullable final String sAnotherOrWrongPartyIdInitiator,
                                          @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties) throws Exception
-  {
-    return _modifyUserMessage (sAnotherOrWrongPModeID,
-                               sAnotherOrWrongPartyIdInitiator,
-                               sAnotherOrWrongPartyIdResponder,
-                               aEbms3MessageProperties,
-                               null);
-  }
-
-  /**
-   * Modify the standard user message to try special cases or provoke failure
-   * messages.
-   *
-   * @param sAnotherOrWrongPModeID
-   * @param sAnotherOrWrongPartyIdInitiator
-   * @param sAnotherOrWrongPartyIdResponder
-   * @param aEbms3MessageProperties
-   *        Default should be with _defaultProperties(), only if you do not want
-   *        them change this
-   * @return
-   * @throws Exception
-   */
-  @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
-                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments) throws Exception
-  {
-    return _modifyUserMessage (sAnotherOrWrongPModeID,
-                               sAnotherOrWrongPartyIdInitiator,
-                               sAnotherOrWrongPartyIdResponder,
-                               aEbms3MessageProperties,
-                               aAttachments,
-                               null);
-  }
-
-  /**
-   * Modify the standard user message to try special cases or provoke failure
-   * messages.
-   *
-   * @param sAnotherOrWrongPModeID
-   * @param sAnotherOrWrongPartyIdInitiator
-   * @param sAnotherOrWrongPartyIdResponder
-   * @param aEbms3MessageProperties
-   *        Default should be with _defaultProperties(), only if you do not want
-   *        them change this
-   * @return
-   * @throws Exception
-   */
-  @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
-                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
                                          @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                         @Nullable final String sReferenceToMessageID) throws Exception
+                                         @Nullable final String sReferenceToMessageID,
+                                         @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID
@@ -139,11 +86,11 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     if (aAttachments == null)
     {
       aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-      aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload, null);
+      aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null);
     }
     else
     {
-      aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (null, aAttachments);
+      aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aAttachments);
     }
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sReferenceToMessageID);
@@ -158,7 +105,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       sSetPartyIDResponder);
 
-    final AS4UserMessage aDoc = AS4UserMessage.create (aEbms3MessageInfo,
+    final AS4UserMessage aMsg = AS4UserMessage.create (aEbms3MessageInfo,
                                                        aEbms3PayloadInfo,
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
@@ -166,7 +113,10 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                        ESOAPVersion.AS4_DEFAULT)
                                               .setMustUnderstand (true);
 
-    return aAttachments != null ? aDoc.getAsSOAPDocument (null) : aDoc.getAsSOAPDocument (aPayload);
+    if (aMessagingIDConsumer != null)
+      aMessagingIDConsumer.accept (aMsg.getMessagingID ());
+
+    return aAttachments != null ? aMsg.getAsSOAPDocument (null) : aMsg.getAsSOAPDocument (aPayload);
   }
 
   @Nonnull
@@ -175,12 +125,12 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     return p -> p.getID ().equals (sID);
   }
 
-  protected Ebms3MessageProperties _defaultProperties ()
+  @Nonnull
+  protected static Ebms3MessageProperties _defaultProperties ()
   {
     // Add properties
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    aEbms3MessageProperties.setProperty (aEbms3Properties);
+    aEbms3MessageProperties.setProperty (AS4TestConstants.getEBMSProperties ());
     return aEbms3MessageProperties;
   }
 }
