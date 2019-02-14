@@ -40,42 +40,42 @@ import com.helger.httpclient.IHttpClientProvider;
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and
  * {@link HttpPost}.
- * 
+ *
  * @author Philip Helger
  */
 public class BasicHttpPoster
 {
   // By default no special SSL context present
-  private IHttpClientProvider m_aHTTPClientProvider = new HttpClientFactory ().setRetries (3);
+  private HttpClientFactory m_aHTTPClientFactory = new HttpClientFactory ().setRetries (3);
 
   public BasicHttpPoster ()
   {}
 
   /**
-   * @return The internal http client provider used in
+   * @return The internal http client factory used in
    *         {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
    */
   @Nonnull
-  protected IHttpClientProvider getHttpClientProvider ()
+  public final HttpClientFactory getHttpClientFactory ()
   {
-    return m_aHTTPClientProvider;
+    return m_aHTTPClientFactory;
   }
 
   /**
-   * Set the HTTP client provider to be used. This is e.g. necessary when a
-   * custom SSL context is to be used. See {@link HttpClientFactory} as the
-   * default implementation of {@link IHttpClientProvider}. This provider is
-   * used in {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
+   * Set the HTTP client provider to be used. This is e.g. necessary when a custom
+   * SSL context is to be used. See {@link HttpClientFactory} as the default
+   * implementation of {@link IHttpClientProvider}. This provider is used in
+   * {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
    *
    * @param aHttpClientProvider
    *        The HTTP client provider to be used. May not be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
-  public BasicHttpPoster setHttpClientProvider (@Nonnull final IHttpClientProvider aHttpClientProvider)
+  public BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
   {
-    ValueEnforcer.notNull (aHttpClientProvider, "HttpClientProvider");
-    m_aHTTPClientProvider = aHttpClientProvider;
+    ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
+    m_aHTTPClientFactory = aHttpClientFactory;
     return this;
   }
 
@@ -97,7 +97,7 @@ public class BasicHttpPoster
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
-    try (final HttpClientManager aClient = new HttpClientManager (m_aHTTPClientProvider))
+    try (final HttpClientManager aClient = new HttpClientManager (m_aHTTPClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
       if (aHttpEntity instanceof HttpMimeMessageEntity)
