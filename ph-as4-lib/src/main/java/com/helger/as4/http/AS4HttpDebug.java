@@ -50,7 +50,9 @@ public final class AS4HttpDebug
     for (final ESOAPVersion e : ESOAPVersion.values ())
       aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
     aNSCtx.addMapping ("ds", "http://www.w3.org/2000/09/xmldsig#");
+    aNSCtx.addMapping ("wss", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
     aNSCtx.addMapping ("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+    aNSCtx.addMapping ("ebms", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/");
     s_aXWS.setNamespaceContext (aNSCtx);
   }
 
