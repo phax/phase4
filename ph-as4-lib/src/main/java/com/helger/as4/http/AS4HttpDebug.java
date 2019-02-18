@@ -25,7 +25,12 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.datetime.PDTFactory;
+import com.helger.xml.namespace.MapBasedNamespaceContext;
+import com.helger.xml.serialize.write.EXMLSerializeIndent;
+import com.helger.xml.serialize.write.IXMLWriterSettings;
+import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
  * Turn on/off AS4 HTTP debug logging
@@ -37,6 +42,17 @@ public final class AS4HttpDebug
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4HttpDebug.class);
   private static final AtomicBoolean s_aEnabled = new AtomicBoolean (false);
+  private static final XMLWriterSettings s_aXWS = new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN);
+
+  static
+  {
+    final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
+    for (final ESOAPVersion e : ESOAPVersion.values ())
+      aNSCtx.addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
+    aNSCtx.addMapping ("ds", "http://www.w3.org/2000/09/xmldsig#");
+    aNSCtx.addMapping ("wsu", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+    s_aXWS.setNamespaceContext (aNSCtx);
+  }
 
   private AS4HttpDebug ()
   {}
@@ -61,8 +77,8 @@ public final class AS4HttpDebug
   }
 
   /**
-   * Debug the provided string if {@link #isEnabled()}. Uses the logger to log
-   * to the console
+   * Debug the provided string if {@link #isEnabled()}. Uses the logger to log to
+   * the console
    *
    * @param aMsg
    *        The message supplier. May not be <code>null</code>. Invoked only if
@@ -72,5 +88,15 @@ public final class AS4HttpDebug
   {
     if (isEnabled ())
       LOGGER.info ("$$$ AS4 HTTP [" + PDTFactory.getCurrentLocalTime ().toString () + "] " + aMsg.get ());
+  }
+
+  /**
+   * @return XML writer setting to debug XML documents. It uses formatting and a
+   *         predefined namespace context. Never <code>null</code>.
+   */
+  @Nonnull
+  public static IXMLWriterSettings getDebugXMLWriterSettings ()
+  {
+    return s_aXWS;
   }
 }

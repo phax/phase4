@@ -56,9 +56,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.functional.IFunction;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
-import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
  * AS4 standalone client invoker.
@@ -272,8 +270,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     {
       final Document aPureDoc = aDoc;
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
-                                 XMLWriter.getNodeAsString (aPureDoc,
-                                                            new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
+                                 XMLWriter.getNodeAsString (aPureDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
@@ -293,8 +290,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
         aDoc = aSignedDoc;
 
         AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
-                                   XMLWriter.getNodeAsString (aSignedDoc,
-                                                              new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)));
+                                   XMLWriter.getNodeAsString (aSignedDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
       }
 
       // 2b. encrypt

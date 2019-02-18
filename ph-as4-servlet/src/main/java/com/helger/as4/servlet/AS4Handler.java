@@ -125,9 +125,7 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
-import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
-import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
  * Process incoming AS4 transmissions.
@@ -942,7 +940,7 @@ public final class AS4Handler implements AutoCloseable
                                                                       new ResponseHandlerXml ());
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                new XMLWriterSettings ().setIndent (EXMLSerializeIndent.NONE)));
+                                                                AS4HttpDebug.getDebugXMLWriterSettings ()));
         });
       }
     }
