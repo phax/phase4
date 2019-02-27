@@ -12,6 +12,8 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
+* v0.8.2 - 2019-02-27
+    * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
     * The web application now uses LOG4J 2.x
     * Requires at least ph-commons 9.2.0

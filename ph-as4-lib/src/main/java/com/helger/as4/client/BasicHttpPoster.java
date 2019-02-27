@@ -62,13 +62,13 @@ public class BasicHttpPoster
   }
 
   /**
-   * Set the HTTP client provider to be used. This is e.g. necessary when a custom
-   * SSL context is to be used. See {@link HttpClientFactory} as the default
-   * implementation of {@link IHttpClientProvider}. This provider is used in
-   * {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
+   * Set the HTTP client provider to be used. This is e.g. necessary when a
+   * custom SSL context is to be used. See {@link HttpClientFactory} as the
+   * default implementation of {@link IHttpClientProvider}. This provider is
+   * used in {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
    *
-   * @param aHttpClientProvider
-   *        The HTTP client provider to be used. May not be <code>null</code>.
+   * @param aHttpClientFactory
+   *        The HTTP client factory to be used. May not be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
