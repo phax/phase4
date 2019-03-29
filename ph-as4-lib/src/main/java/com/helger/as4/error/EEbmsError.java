@@ -24,6 +24,12 @@ import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 
+/**
+ * Enumeration with all predefined EBMS errors based on the specs. Use
+ * {@link IEbmsError} for a generic interface.
+ *
+ * @author Philip Helger
+ */
 public enum EEbmsError implements IEbmsError
 {
   // ebMs Processing Errors - from OASIS ebXML Messaging Service

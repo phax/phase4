@@ -35,6 +35,11 @@ import com.helger.jaxb.builder.IJAXBDocumentType;
 import com.helger.jaxb.builder.JAXBDocumentType;
 import com.helger.xsds.xmldsig.CXMLDSig;
 
+/**
+ * Enumeration wizh all known EBMS document types.
+ * 
+ * @author Philip Helger
+ */
 public enum EEbms3DocumentType implements IJAXBDocumentType
 {
   MESSAGING (Ebms3Messaging.class,

@@ -53,6 +53,11 @@ import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI;
 import com.helger.xml.microdom.convert.IMicroTypeConverterRegistry;
 
+/**
+ * MicroType converter registry for this project. Invoked via SPI.
+ * 
+ * @author Philip Helger
+ */
 @Immutable
 @IsSPIImplementation
 public final class AS4MicroTypeConverterRegistrar implements IMicroTypeConverterRegistrarSPI

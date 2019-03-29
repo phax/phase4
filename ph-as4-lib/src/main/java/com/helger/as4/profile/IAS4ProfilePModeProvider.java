@@ -24,6 +24,11 @@ import javax.annotation.Nullable;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.annotation.Nonempty;
 
+/**
+ * PMode provider interface
+ * 
+ * @author Philip Helger
+ */
 @FunctionalInterface
 public interface IAS4ProfilePModeProvider extends Serializable
 {

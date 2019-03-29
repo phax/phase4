@@ -30,6 +30,11 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
 
+/**
+ * AS4 client for {@link AS4PullRequestMessage} objects.
+ *
+ * @author Philip Helger
+ */
 public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 {
   private final AS4ResourceManager m_aResMgr;

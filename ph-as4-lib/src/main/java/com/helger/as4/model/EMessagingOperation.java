@@ -16,6 +16,11 @@
  */
 package com.helger.as4.model;
 
+/**
+ * Messaging operation to use.
+ * 
+ * @author Philip Helger
+ */
 public enum EMessagingOperation
 {
   /**

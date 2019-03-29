@@ -21,6 +21,11 @@ import javax.annotation.Nonnull;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.name.IHasDisplayName;
 
+/**
+ * EBMS error category enumeration
+ * 
+ * @author Philip Helger
+ */
 public enum EEbmsErrorCategory implements IHasDisplayName
 {
   CONTENT ("Content"),

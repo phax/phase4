@@ -31,6 +31,11 @@ import com.helger.jaxb.builder.JAXBDocumentType;
 import com.helger.xsds.xmldsig.CXMLDSig;
 import com.helger.xsds.xmldsig.ReferenceType;
 
+/**
+ * XMLDSig document type enumeration.
+ * 
+ * @author Philip Helger
+ */
 public enum EXMLDSigDocumentType implements IJAXBDocumentType
 {
   REFERENCE (ReferenceType.class, new CommonsArrayList <> (CXMLDSig.getXSDResource ()));

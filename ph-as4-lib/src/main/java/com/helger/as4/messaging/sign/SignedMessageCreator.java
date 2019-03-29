@@ -41,6 +41,11 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 
+/**
+ * Message singing helper.
+ * 
+ * @author Philip Helger
+ */
 public final class SignedMessageCreator
 {
   private SignedMessageCreator ()

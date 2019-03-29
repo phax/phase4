@@ -124,16 +124,6 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
 
-  /**
-   * @return The default message ID factory to be used.
-   * @since 0.8.3
-   */
-  @Nonnull
-  public static ISupplier <String> createDefaultMessageIDFactory ()
-  {
-    return MessageHelperMethods::createRandomMessageID;
-  }
-
   // KeyStore attributes
   private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
   private IReadableResource m_aKeyStoreRes;
@@ -152,17 +142,27 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
+  /**
+   * @return The default message ID factory to be used.
+   * @since 0.8.3
+   */
+  @Nonnull
+  public static ISupplier <String> createDefaultMessageIDFactory ()
+  {
+    return MessageHelperMethods::createRandomMessageID;
+  }
+
   protected AbstractAS4Client ()
   {}
 
   private void _checkKeyStoreAttributes ()
   {
+    if (m_aKeyStoreType == null)
+      throw new IllegalStateException ("KeyStore type is not configured.");
     if (m_aKeyStoreRes == null)
       throw new IllegalStateException ("KeyStore resources is not configured.");
     if (!m_aKeyStoreRes.exists ())
       throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
-    if (m_aKeyStoreType == null)
-      throw new IllegalStateException ("KeyStore type is not configured.");
     if (m_sKeyStorePassword == null)
       throw new IllegalStateException ("KeyStore password is not configured.");
     if (StringHelper.hasNoText (m_sKeyStoreAlias))
@@ -208,6 +208,34 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     return ret;
   }
 
+  /**
+   * @return The keystore type to use. Never <code>null</code>. Default is
+   *         {@link #DEFAULT_KEYSTORE_TYPE}.
+   */
+  @Nonnull
+  public final IKeyStoreType getKeyStoreType ()
+  {
+    return m_aKeyStoreType;
+  }
+
+  /**
+   * The type of the keystore needs to be set if a keystore is used.<br>
+   * MANDATORY if you want to use sign or encryption of an user message.
+   * Defaults to "jks".
+   *
+   * @param aKeyStoreType
+   *        keystore type that should be set, e.g. "jks". May not be
+   *        <code>null</code>.
+   */
+  public final void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
+  {
+    ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
+    m_aKeyStoreType = aKeyStoreType;
+  }
+
+  /**
+   * @return The keystore resource to use. May be <code>null</code>.
+   */
   @Nullable
   public final IReadableResource getKeyStoreResource ()
   {
@@ -226,6 +254,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_aKeyStoreRes = aKeyStoreRes;
   }
 
+  /**
+   * @return The keystore password to use. May be <code>null</code>.
+   */
   @Nullable
   public final String getKeyStorePassword ()
   {
@@ -244,26 +275,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_sKeyStorePassword = sKeyStorePassword;
   }
 
-  @Nonnull
-  public final IKeyStoreType getKeyStoreType ()
-  {
-    return m_aKeyStoreType;
-  }
-
   /**
-   * The type of the keystore needs to be set if a keystore is used.<br>
-   * MANDATORY if you want to use sign or encryption of an user message.
-   * Defaults to "jks".
-   *
-   * @param aKeyStoreType
-   *        keystore type that should be set, e.g. "jks"
+   * @return The keystore key alias to use. May be <code>null</code>.
    */
-  public final void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
-  {
-    ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
-    m_aKeyStoreType = aKeyStoreType;
-  }
-
   @Nullable
   public final String getKeyStoreAlias ()
   {
@@ -281,6 +295,10 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     m_sKeyStoreAlias = sKeyStoreAlias;
   }
+
+  /**
+   * @return The keystore key password to use. May be <code>null</code>.
+   */
 
   @Nullable
   public final String getKeyStoreKeyPassword ()
@@ -300,6 +318,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
   }
 
+  /**
+   * @return The signing algorithm to use. May be <code>null</code>.
+   */
   @Nullable
   public final ECryptoAlgorithmSign getCryptoAlgorithmSign ()
   {
@@ -319,6 +340,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_eCryptoAlgorithmSign = eCryptoAlgorithmSign;
   }
 
+  /**
+   * @return The signing digest algorithm to use. May be <code>null</code>.
+   */
   @Nullable
   public final ECryptoAlgorithmSignDigest getCryptoAlgorithmSignDigest ()
   {
@@ -338,6 +362,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_eCryptoAlgorithmSignDigest = eCryptoAlgorithmSignDigest;
   }
 
+  /**
+   * @return The encryption algorithm to use. May be <code>null</code>.
+   */
   @Nullable
   public final ECryptoAlgorithmCrypt getCryptoAlgorithmCrypt ()
   {
@@ -356,6 +383,9 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_eCryptoAlgorithmCrypt = eCryptoAlgorithmCrypt;
   }
 
+  /**
+   * @return The Message ID factory to be used. May not be <code>null</code>.
+   */
   @Nonnull
   public final ISupplier <String> getMessageIDFactory ()
   {
@@ -380,10 +410,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     final String ret = m_aMessageIDFactory.get ();
     if (StringHelper.hasNoText (ret))
-      throw new IllegalStateException ("An empty MessageID was generate!");
+      throw new IllegalStateException ("An empty MessageID was generated!");
     return ret;
   }
 
+  /**
+   * @return The SOAP version to be used. May not be <code>null</code>.
+   */
   @Nonnull
   public final ESOAPVersion getSOAPVersion ()
   {
@@ -391,10 +424,10 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   /**
-   * This method sets the SOAP Version. AS4 - Profile Default is SOAP 1.2
+   * This method sets the SOAP Version. AS4 - Profile default is SOAP 1.2
    *
    * @param eSOAPVersion
-   *        SOAPVersion which should be set
+   *        SOAPVersion which should be set. MAy not be <code>null</code>.
    */
   public final void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {

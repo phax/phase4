@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -45,6 +46,7 @@ import com.helger.commons.io.stream.HasInputStream;
  * xop:Include in the case of MTOM.
  *
  * @author Apache WSS4J
+ * @author Philip Helger
  */
 public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 {
@@ -56,10 +58,22 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aAttachments,
                                          @Nonnull final AS4ResourceManager aResMgr)
   {
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
+
     if (aAttachments != null)
       for (final WSS4JAttachment aAttachment : aAttachments)
         m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
-    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+    m_aResMgr = aResMgr;
+  }
+
+  /**
+   * @return The resource manager as passed in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public final AS4ResourceManager getResourceMgr ()
+  {
+    return m_aResMgr;
   }
 
   /**
@@ -114,7 +128,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
           aRealAttachment.setId (sAttachmentID);
           aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
           // Use supplier to ensure stream is opened only when needed
-          aRealAttachment.setSourceStreamProvider (HasInputStream.once ( () -> aResponseAttachment.getSourceStream ()));
+          aRealAttachment.setSourceStreamProvider (HasInputStream.once (aResponseAttachment::getSourceStream));
 
           m_aAttachmentMap.put (sAttachmentID, aRealAttachment);
         }
@@ -130,5 +144,12 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   public ICommonsList <WSS4JAttachment> getAllResponseAttachments ()
   {
     return m_aAttachmentMap.copyOfValues ();
+  }
+
+  @Nonnull
+  @ReturnsMutableObject
+  public ICommonsOrderedMap <String, WSS4JAttachment> responseAttachments ()
+  {
+    return m_aAttachmentMap;
   }
 }

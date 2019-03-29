@@ -329,12 +329,13 @@ public final class MessageHelperMethods
     final Enumeration <Header> aEnum = aMimeMsg.getAllHeaders ();
     while (aEnum.hasMoreElements ())
     {
-      final Header h = aEnum.nextElement ();
+      final Header aHeader = aEnum.nextElement ();
+
       // Make a single-line HTTP header value!
-      aHttpMsg.addHeader (h.getName (), HttpHeaderMap.getUnifiedValue (h.getValue ()));
+      aHttpMsg.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
 
       // Remove from MIME message!
-      aMimeMsg.removeHeader (h.getName ());
+      aMimeMsg.removeHeader (aHeader.getName ());
     }
   }
 }

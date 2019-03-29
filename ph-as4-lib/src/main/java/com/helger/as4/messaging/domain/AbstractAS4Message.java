@@ -40,6 +40,13 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.traits.IGenericImplTrait;
 
+/**
+ * Abstract AS4 message implementation
+ *
+ * @author Philip Helger
+ * @param <IMPLTYPE>
+ *        Real implementation type.
+ */
 public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <IMPLTYPE>> implements
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
@@ -49,14 +56,21 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
+  @Nonnull
+  @Nonempty
+  public static String createRandomMessagingID ()
+  {
+    // Assign a random ID for signing
+    // Data type is "xs:ID", derived from "xs:NCName"
+    // --> cannot start with a number
+    return CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
+  }
+
   public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
   {
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
-    // Assign a random ID for signing
-    // Data type is "xs:ID", derived from "xs:NCName"
-    // --> cannot start with a number
-    m_sMessagingID = "id-" + UUID.randomUUID ().toString ();
+    m_sMessagingID = createRandomMessagingID ();
 
     // Must be a "wsu:Id" for WSSec to be found
     m_aMessaging.getOtherAttributes ().put (new QName (CAS4.WSU_NS, "Id"), m_sMessagingID);
@@ -93,7 +107,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         m_aMessaging.setS12MustUnderstand (Boolean.valueOf (bMustUnderstand));
         break;
       default:
-        throw new IllegalStateException ("Unsupported SOAP version");
+        throw new IllegalStateException ("Unsupported SOAP version " + m_eSOAPVersion);
     }
     return thisAsT ();
   }
@@ -142,6 +156,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   {
     return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion)
                                        .append ("MsgType", m_eMsgType)
+                                       .append ("MessagingID", m_sMessagingID)
                                        .getToString ();
   }
 }

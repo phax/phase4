@@ -44,6 +44,11 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
+/**
+ * Encryption helper
+ * 
+ * @author Philip Helger
+ */
 public class EncryptionCreator
 {
   private final AS4CryptoFactory m_aCryptoFactory;

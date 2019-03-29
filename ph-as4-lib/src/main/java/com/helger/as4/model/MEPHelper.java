@@ -20,21 +20,15 @@ import javax.annotation.Nonnull;
 
 import com.helger.as4.messaging.domain.EAS4MessageType;
 
+/**
+ * Message Exchange Pattern helper
+ *
+ * @author Philip Helger
+ */
 public final class MEPHelper
 {
-  public static boolean isValidResponseTypeLeg1 (@Nonnull final EMEP eMEP,
-                                                 @Nonnull final EMEPBinding eMEPBinding,
-                                                 @Nonnull final EAS4MessageType eMsgType)
-  {
-    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, true);
-  }
-
-  public static boolean isValidResponseTypeLeg2 (@Nonnull final EMEP eMEP,
-                                                 @Nonnull final EMEPBinding eMEPBinding,
-                                                 @Nonnull final EAS4MessageType eMsgType)
-  {
-    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, false);
-  }
+  private MEPHelper ()
+  {}
 
   private static boolean _isValidResponseType (@Nonnull final EMEP eMEP,
                                                @Nonnull final EMEPBinding eMEPBinding,
@@ -88,5 +82,19 @@ public final class MEPHelper
       }
     }
     throw new IllegalStateException ("Unhandled combination: " + eMEP + "/" + eMEPBinding + "/" + eMsgType);
+  }
+
+  public static boolean isValidResponseTypeLeg1 (@Nonnull final EMEP eMEP,
+                                                 @Nonnull final EMEPBinding eMEPBinding,
+                                                 @Nonnull final EAS4MessageType eMsgType)
+  {
+    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, true);
+  }
+
+  public static boolean isValidResponseTypeLeg2 (@Nonnull final EMEP eMEP,
+                                                 @Nonnull final EMEPBinding eMEPBinding,
+                                                 @Nonnull final EAS4MessageType eMsgType)
+  {
+    return _isValidResponseType (eMEP, eMEPBinding, eMsgType, false);
   }
 }

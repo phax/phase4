@@ -24,7 +24,7 @@ import org.apache.xml.security.binding.xmldsig.ReferenceType;
 import com.helger.jaxb.builder.JAXBWriterBuilder;
 
 /**
- * A reader builder for XMLDSig documents.
+ * A writer builder for XMLDSig documents.
  *
  * @author Philip Helger
  * @param <JAXBTYPE>
@@ -42,6 +42,6 @@ public class XMLDSigWriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE
   @Nonnull
   public static XMLDSigWriterBuilder <ReferenceType> dsigReference ()
   {
-    return new XMLDSigWriterBuilder<> (EXMLDSigDocumentType.REFERENCE);
+    return new XMLDSigWriterBuilder <> (EXMLDSigDocumentType.REFERENCE);
   }
 }

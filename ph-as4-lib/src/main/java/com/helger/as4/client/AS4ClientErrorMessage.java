@@ -34,6 +34,11 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.StringHelper;
 
+/**
+ * AS4 client for {@link AS4ErrorMessage} objects.
+ *
+ * @author Philip Helger
+ */
 public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();

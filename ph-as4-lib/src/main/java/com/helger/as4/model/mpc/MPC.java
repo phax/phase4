@@ -25,7 +25,7 @@ import com.helger.tenancy.AbstractBusinessObject;
 
 /**
  * Default implementation for an MPC
- * 
+ *
  * @author Philip Helger
  */
 public class MPC extends AbstractBusinessObject implements IMPC
@@ -37,13 +37,13 @@ public class MPC extends AbstractBusinessObject implements IMPC
     this (StubObject.createForCurrentUserAndID (sID));
   }
 
-  MPC (@Nonnull final StubObject aStubObject)
+  protected MPC (@Nonnull final StubObject aStubObject)
   {
     super (aStubObject);
   }
 
   @Nonnull
-  public ObjectType getObjectType ()
+  public final ObjectType getObjectType ()
   {
     return OT;
   }

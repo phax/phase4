@@ -23,6 +23,11 @@ import com.helger.commons.error.level.EErrorLevel;
 import com.helger.commons.error.level.IErrorLevel;
 import com.helger.commons.error.level.IHasErrorLevelComparable;
 
+/**
+ * EBMS error severity with mapping to {@link IErrorLevel}.
+ * 
+ * @author Philip Helger
+ */
 public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSeverity>
 {
   FAILURE ("failure", EErrorLevel.ERROR),

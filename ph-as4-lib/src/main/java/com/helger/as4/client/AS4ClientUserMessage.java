@@ -59,7 +59,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
- * AS4 standalone client invoker.
+ * AS4 client for {@link AS4UserMessage} objects.
  *
  * @author Philip Helger
  * @author bayerlma
@@ -209,9 +209,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * Build the AS4 message to be sent. It uses all the attributes of this class to
-   * build the final message. Compression, signing and encryption happens in this
-   * methods.
+   * Build the AS4 message to be sent. It uses all the attributes of this class
+   * to build the final message. Compression, signing and encryption happens in
+   * this methods.
    *
    * @return The HTTP entity to be sent. Never <code>null</code>.
    * @throws Exception
@@ -341,8 +341,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * Sets the payload for a usermessage. The payload unlike an attachment will be
-   * added into the SOAP-Body of the message.
+   * Sets the payload for a usermessage. The payload unlike an attachment will
+   * be added into the SOAP-Body of the message.
    *
    * @param aPayload
    *        the Payload to be added
@@ -385,8 +385,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * @param aMimeType
    *        MIME type of the given file. May not be <code>null</code>.
    * @param eAS4CompressionMode
-   *        which compression type should be used to compress the attachment. May
-   *        be <code>null</code>.
+   *        which compression type should be used to compress the attachment.
+   *        May be <code>null</code>.
    * @return this for chaining
    * @throws IOException
    *         if something goes wrong in the adding process or the compression
@@ -421,7 +421,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * With properties optional info can be added for the receiving party. If you
    * want to be AS4 Profile conform you need to add two properties to your
-   * message: originalSender and finalRecipient these two correlate to C1 and C4.
+   * message: originalSender and finalRecipient these two correlate to C1 and
+   * C4.
    *
    * @return The mutable list. Never <code>null</code>.
    * @since 0.8.2
@@ -448,7 +449,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   /**
    * With properties optional info can be added for the receiving party. If you
    * want to be AS4 Profile conform you need to add two properties to your
-   * message: originalSender and finalRecipient these two correlate to C1 and C4.
+   * message: originalSender and finalRecipient these two correlate to C1 and
+   * C4.
    *
    * @param aEbms3Properties
    *        Properties that should be set in the current user message
@@ -529,8 +531,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * The element is a string identifying the set of related messages that make up
-   * a conversation between Parties.<br>
+   * The element is a string identifying the set of related messages that make
+   * up a conversation between Parties.<br>
    * Example of what will be written in the user message:
    * <code>&lt;eb:ConversationId&gt;4321&lt;/eb:ConversationId&gt;</code><br>
    * This is MANDATORY.
@@ -572,7 +574,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * The value of the Role element is a non-empty string, with a default value of
+   * The value of the Role element is a non-empty string, with a default value
+   * of
    * <code>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole</code>
    * .
    *
@@ -644,8 +647,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * DEFAULT is set to <code>true</code>, if you want to use leg2 for the message
-   * set <code>false</code>.
+   * DEFAULT is set to <code>true</code>, if you want to use leg2 for the
+   * message set <code>false</code>.
    *
    * @param bUseLeg1
    *        <code>true</code> if leg1 should be used, <code>false</code> if leg2
@@ -663,9 +666,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   }
 
   /**
-   * This method should be used if you do not want to set each parameter and have
-   * a PMOde ready that you wish to use. Some parameters still must be set with
-   * the remaining setters.
+   * This method should be used if you do not want to set each parameter and
+   * have a PMOde ready that you wish to use. Some parameters still must be set
+   * with the remaining setters.
    *
    * @param aPmode
    *        that should be used

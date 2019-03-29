@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
+import com.helger.commons.string.StringHelper;
 
 /**
  * Base interface for a single duplication check item.
@@ -52,8 +53,28 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
   String getProfileID ();
 
   /**
+   * @return <code>true</code> if an AS4 profile ID is present,
+   *         <code>false</code> if not.
+   * @since 0.8.3
+   */
+  default boolean hasProfileID ()
+  {
+    return StringHelper.hasText (getProfileID ());
+  }
+
+  /**
    * @return The AS4 PMode ID in use. May be <code>null</code>.
    */
   @Nullable
   String getPModeID ();
+
+  /**
+   * @return <code>true</code> if an AS4 PMode ID is present, <code>false</code>
+   *         if not.
+   * @since 0.8.3
+   */
+  default boolean hasPModeID ()
+  {
+    return StringHelper.hasText (getPModeID ());
+  }
 }

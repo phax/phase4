@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -29,8 +30,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.mime.CMimeType;
 import com.sun.mail.handlers.text_plain;
 
 /**
@@ -41,7 +42,8 @@ import com.sun.mail.handlers.text_plain;
 public class DataContentHandlerSoap12 extends text_plain
 {
   private static final ActivationDataFlavor [] FLAVORS = { new ActivationDataFlavor (StreamSource.class,
-                                                                                     CMimeType.APPLICATION_SOAP_XML.getAsStringWithoutParameters (),
+                                                                                     ESOAPVersion.SOAP_12.getMimeType ()
+                                                                                                         .getAsStringWithoutParameters (),
                                                                                      "SOAP") };
 
   @Override
@@ -65,29 +67,29 @@ public class DataContentHandlerSoap12 extends text_plain
   /**
    */
   @Override
-  public void writeTo (@Nonnull final Object obj,
+  public void writeTo (@Nonnull final Object aObj,
                        @Nonnull final String sMimeType,
-                       @Nonnull final OutputStream os) throws IOException
+                       @Nonnull @WillNotClose final OutputStream aOS) throws IOException
   {
     try
     {
       final Transformer transformer = TransformerFactory.newInstance ().newTransformer ();
-      final StreamResult result = new StreamResult (os);
-      if (obj instanceof DataSource)
+      final StreamResult result = new StreamResult (aOS);
+      if (aObj instanceof DataSource)
       {
         // Streaming transform applies only to
         // javax.xml.transform.StreamSource
-        transformer.transform (new StreamSource (((DataSource) obj).getInputStream ()), result);
+        transformer.transform (new StreamSource (((DataSource) aObj).getInputStream ()), result);
       }
       else
-        if (obj instanceof Source)
+        if (aObj instanceof Source)
         {
-          transformer.transform ((Source) obj, result);
+          transformer.transform ((Source) aObj, result);
         }
         else
         {
           throw new IOException ("Invalid Object type = " +
-                                 obj.getClass () +
+                                 aObj.getClass () +
                                  ". DataContentHandlerSoap12 can only convert DataSource or Source to XML.");
         }
     }

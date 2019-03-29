@@ -20,9 +20,15 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 
+/**
+ * Abstract AS4 client for signal messages with arbitrary content.
+ *
+ * @author Philip Helger
+ */
 public abstract class AbstractAS4ClientSignalMessage extends AbstractAS4Client
 {
   private final ICommonsList <Object> m_aAny = new CommonsArrayList <> ();
@@ -32,6 +38,13 @@ public abstract class AbstractAS4ClientSignalMessage extends AbstractAS4Client
   public ICommonsList <Object> getAllAny ()
   {
     return m_aAny.getClone ();
+  }
+
+  @Nonnull
+  @ReturnsMutableObject
+  public ICommonsList <Object> any ()
+  {
+    return m_aAny;
   }
 
   public void setAny (@Nonnull final Iterable <Object> aAny)

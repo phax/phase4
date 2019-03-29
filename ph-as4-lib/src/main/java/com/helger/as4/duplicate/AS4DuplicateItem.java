@@ -32,7 +32,8 @@ import com.helger.commons.string.ToStringGenerator;
  * This class represents a single "duplication check" item. It works for
  * incoming and outgoing duplication checks
  *
- * @author Martin Bayerl, Philip Helger
+ * @author Martin Bayerl
+ * @author Philip Helger
  */
 public class AS4DuplicateItem implements IAS4DuplicateItem
 {

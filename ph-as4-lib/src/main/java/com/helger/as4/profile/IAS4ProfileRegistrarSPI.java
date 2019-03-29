@@ -20,6 +20,11 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.IsSPIInterface;
 
+/**
+ * AS4 profile registrar SPI interface
+ *
+ * @author Philip Helger
+ */
 @IsSPIInterface
 public interface IAS4ProfileRegistrarSPI
 {

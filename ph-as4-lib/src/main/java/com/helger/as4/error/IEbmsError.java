@@ -30,6 +30,11 @@ import com.helger.commons.error.SingleError;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.text.display.IHasDisplayText;
 
+/**
+ * Base interface for a single EBMS error
+ *
+ * @author Philip Helger
+ */
 public interface IEbmsError extends Serializable
 {
   /**

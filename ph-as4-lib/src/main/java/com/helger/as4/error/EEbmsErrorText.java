@@ -24,6 +24,11 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.text.display.IHasDisplayText;
 
+/**
+ * Translatable error texts for EBMS error messages
+ * 
+ * @author Philip Helger
+ */
 public enum EEbmsErrorText implements IHasDisplayText
 {
   VALUE_NOT_RECOGNIZED ("Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by the MSH."),

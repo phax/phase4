@@ -39,7 +39,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
-import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 public final class MimeMessageCreator
@@ -77,7 +76,7 @@ public final class MimeMessageCreator
 
     {
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
-      aCommandMap.addMailcap (CMimeType.APPLICATION_SOAP_XML.getAsStringWithoutParameters () +
+      aCommandMap.addMailcap (ESOAPVersion.SOAP_12.getMimeType ().getAsStringWithoutParameters () +
                               ";; x-java-content-handler=" +
                               DataContentHandlerSoap12.class.getName ());
       CommandMap.setDefaultCommandMap (aCommandMap);

@@ -29,6 +29,11 @@ import com.helger.as4.util.AS4ResourceManager;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 
+/**
+ * AS4 client for {@link AS4ReceiptMessage} objects.
+ *
+ * @author Philip Helger
+ */
 public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 {
   private final AS4ResourceManager m_aResMgr;
@@ -127,8 +132,8 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   /**
-   * As node set the usermessage if it is signed, so the references can be counted
-   * and used in non repudiation.
+   * As node set the usermessage if it is signed, so the references can be
+   * counted and used in non repudiation.
    *
    * @param aSOAPDocument
    *        Signed UserMessage

@@ -21,8 +21,8 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
 /**
- * A special namespace handler that contains all default Ebms3 mappings.
- * 
+ * A special XML namespace context that contains all default Ebms3 mappings.
+ *
  * @author Philip Helger
  */
 public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
@@ -31,9 +31,10 @@ public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
   {
     addMapping ("ds", CAS4.DS_NS);
     addMapping ("eb", CAS4.EBMS_NS);
+    addMapping ("ebbp", CAS4.EBBP_NS);
     addMapping ("wsse", CAS4.WSSE_NS);
     addMapping ("wsu", CAS4.WSU_NS);
-    addMapping ("ebbp", CAS4.EBBP_NS);
+    addMapping ("xenc", CAS4.XENC_NS);
     addMapping ("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
     addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
     addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");

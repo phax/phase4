@@ -31,6 +31,11 @@ import com.helger.commons.lang.ClassHelper;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
+/**
+ * Meta manager with all known managers.
+ *
+ * @author Philip Helger
+ */
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
   private static final String MPC_XML = "as4-mpc.xml";
@@ -70,9 +75,9 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
       LOGGER.info (ClassHelper.getClassLocalName (this) + " was initialized");
     }
-    catch (final Throwable t)
+    catch (final Exception ex)
     {
-      throw new InitializationException ("Failed to init " + ClassHelper.getClassLocalName (this), t);
+      throw new InitializationException ("Failed to init " + ClassHelper.getClassLocalName (this), ex);
     }
   }
 
