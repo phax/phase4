@@ -57,7 +57,8 @@ The configuration of ph-as4 is based on 2 different files:
 ### crypto.properties
 
 Use the following file as a template and fill in your key structure:
-```
+
+```ini
 org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
 org.apache.wss4j.crypto.merlin.keystore.file=keys/dummy-pw-test.jks
 org.apache.wss4j.crypto.merlin.keystore.password=test
@@ -65,6 +66,7 @@ org.apache.wss4j.crypto.merlin.keystore.type=jks
 org.apache.wss4j.crypto.merlin.keystore.alias=ph-as4
 org.apache.wss4j.crypto.merlin.keystore.private.password=test
 ```
+
 The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
 
 PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
@@ -72,7 +74,8 @@ PEPPOL users: the key store must contain the AccessPoint private key and the tru
 ### as4.properties
 
 This AS4 server specific file contains the following properties:
-```
+
+```ini
 server.debug=true
 server.production=false
 server.nostartupinfo=true
@@ -81,7 +84,7 @@ server.datapath=/var/www/as4/data
 server.proxy.enabled=false
 server.proxy.address=10.0.0.1
 server.proxy.port=8080
-``` 
+```
 
 ## Building from source
 
