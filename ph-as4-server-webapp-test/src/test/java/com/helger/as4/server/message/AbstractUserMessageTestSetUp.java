@@ -68,7 +68,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   public static final String SETTINGS_SERVER_PROXY_PORT = "server.proxy.port";
 
   protected static AS4ResourceManager s_aResMgr;
-  private CloseableHttpClient m_aClient;
+  private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 
   protected AbstractUserMessageTestSetUp ()
@@ -102,7 +102,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
 
-    m_aClient = new HttpClientFactory ()
+    final HttpClientFactory aFactory = new HttpClientFactory ()
     {
       @Override
       @Nonnull
@@ -110,16 +110,17 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
       {
         return super.createRequestConfigBuilder ().setSocketTimeout (500_000);
       }
-    }.setSSLContext (aSSLContext).setRetries (m_nRetries).setRetryMode (ERetryMode.RETRY_ALWAYS).createHttpClient ();
+    }.setSSLContext (aSSLContext).setRetries (m_nRetries).setRetryMode (ERetryMode.RETRY_ALWAYS);
+    m_aHttpClient = aFactory.createHttpClient ();
   }
 
   @After
   public void destroyHttpClient ()
   {
-    if (m_aClient != null)
+    if (m_aHttpClient != null)
     {
-      StreamHelper.close (m_aClient);
-      m_aClient = null;
+      StreamHelper.close (m_aHttpClient);
+      m_aHttpClient = null;
     }
   }
 
@@ -172,7 +173,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 
     aPost.setEntity (aHttpEntity);
 
-    try (final CloseableHttpResponse aHttpResponse = m_aClient.execute (aPost))
+    try (final CloseableHttpResponse aHttpResponse = m_aHttpClient.execute (aPost))
     {
       final int nStatusCode = aHttpResponse.getStatusLine ().getStatusCode ();
       final HttpEntity aEntity = aHttpResponse.getEntity ();

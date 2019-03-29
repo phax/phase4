@@ -69,7 +69,7 @@ public final class AS4CryptoFactory implements Serializable
 
   /**
    * Should be used if you want to use a non-default crypto properties to create
-   * your Crypto-Instance.
+   * your Crypto-Instance. This constructor reads the properties from a file.
    *
    * @param sCryptoPropertiesPath
    *        when this parameter is <code>null</code>, the default values will
@@ -83,17 +83,35 @@ public final class AS4CryptoFactory implements Serializable
       throw new InitializationException ("Failed to locate crypto properties in '" + sCryptoPropertiesPath + "'");
   }
 
+  /**
+   * This constructor takes the crypto properties directly from a map. No file
+   * access is performed. See the
+   * {@link com.helger.as4.client.AbstractAS4Client} for a usage example.
+   *
+   * @param aProps
+   *        The properties to be used. May be <code>null</code>.
+   */
   public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
   {
     m_aCryptoProps = new CryptoProperties (aProps);
   }
 
+  /**
+   * @return The crypto properties as created in the constructor. Never
+   *         <code>null</code>.
+   */
   @Nonnull
   public CryptoProperties getCryptoProperties ()
   {
     return m_aCryptoProps;
   }
 
+  /**
+   * Lazily create a {@link Crypto} instance using the properties from
+   * {@link #getCryptoProperties()}.
+   *
+   * @return A {@link Crypto} instance and never <code>null</code>.
+   */
   @Nonnull
   public Crypto getCrypto ()
   {

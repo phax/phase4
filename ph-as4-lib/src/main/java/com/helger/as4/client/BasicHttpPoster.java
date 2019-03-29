@@ -16,8 +16,6 @@
  */
 package com.helger.as4.client;
 
-import java.io.IOException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +29,7 @@ import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.OverrideOnDemand;
+import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
@@ -45,8 +43,21 @@ import com.helger.httpclient.IHttpClientProvider;
  */
 public class BasicHttpPoster
 {
+  public static final int DEFAULT_RETRIES = 3;
+
+  /**
+   * @return The default {@link HttpClientFactory} to be used.
+   * @since 0.8.3
+   */
+  @Nonnull
+  public static HttpClientFactory createDefaultHttpClientFactory ()
+  {
+    return new HttpClientFactory ().setRetries (DEFAULT_RETRIES);
+  }
+
   // By default no special SSL context present
-  private HttpClientFactory m_aHTTPClientFactory = new HttpClientFactory ().setRetries (3);
+  private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
+  private IConsumer <HttpPost> m_aHttpCustomizer;
 
   public BasicHttpPoster ()
   {}
@@ -58,14 +69,15 @@ public class BasicHttpPoster
   @Nonnull
   public final HttpClientFactory getHttpClientFactory ()
   {
-    return m_aHTTPClientFactory;
+    return m_aHttpClientFactory;
   }
 
   /**
    * Set the HTTP client provider to be used. This is e.g. necessary when a
-   * custom SSL context is to be used. See {@link HttpClientFactory} as the
-   * default implementation of {@link IHttpClientProvider}. This provider is
-   * used in {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
+   * custom SSL context or a proxy server is to be used. See
+   * {@link #createDefaultHttpClientFactory()} as the default implementation of
+   * {@link IHttpClientProvider}. This factory is used in
+   * {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
@@ -75,19 +87,34 @@ public class BasicHttpPoster
   public BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
-    m_aHTTPClientFactory = aHttpClientFactory;
+    m_aHttpClientFactory = aHttpClientFactory;
     return this;
   }
 
   /**
-   * Customize the HTTP Post before it is to be sent.
-   *
-   * @param aPost
-   *        The post to be modified. Never <code>null</code>.
+   * @return The HTTP Post customizer to be used. May be <code>null</code>.
+   * @since 0.8.3
    */
-  @OverrideOnDemand
-  protected void customizeHttpPost (@Nonnull final HttpPost aPost)
-  {}
+  @Nullable
+  public final IConsumer <HttpPost> getHttpCustomizer ()
+  {
+    return m_aHttpCustomizer;
+  }
+
+  /**
+   * Set the HTTP Post Customizer to be used.
+   *
+   * @param aHttpCustomizer
+   *        The new customizer. May be <code>null</code>.
+   * @return this for chaining
+   * @since 0.8.3
+   */
+  @Nonnull
+  public BasicHttpPoster setHttpCustomizer (@Nullable final IConsumer <HttpPost> aHttpCustomizer)
+  {
+    m_aHttpCustomizer = aHttpCustomizer;
+    return this;
+  }
 
   @Nullable
   public <T> T sendGenericMessage (@Nonnull final String sURL,
@@ -97,7 +124,7 @@ public class BasicHttpPoster
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
-    try (final HttpClientManager aClient = new HttpClientManager (m_aHTTPClientFactory))
+    try (final HttpClientManager aClient = new HttpClientManager (m_aHttpClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
       if (aHttpEntity instanceof HttpMimeMessageEntity)
@@ -107,20 +134,22 @@ public class BasicHttpPoster
       }
       aPost.setEntity (aHttpEntity);
 
-      // Overridable method
-      customizeHttpPost (aPost);
+      // Invoke optional customizer
+      if (m_aHttpCustomizer != null)
+        m_aHttpCustomizer.accept (aPost);
 
+      // Debug sending
       AS4HttpDebug.debug ( () -> {
         final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL);
         try
         {
           ret.append ("\n");
-          for (final Header h : aPost.getAllHeaders ())
-            ret.append (h.getName ()).append (": ").append (h.getValue ()).append (CHttp.EOL);
+          for (final Header aHeader : aPost.getAllHeaders ())
+            ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
           ret.append (CHttp.EOL);
           ret.append (EntityUtils.toString (aHttpEntity));
         }
-        catch (final IOException ex)
+        catch (final Exception ex)
         { /* ignore */ }
         return ret.toString ();
       });

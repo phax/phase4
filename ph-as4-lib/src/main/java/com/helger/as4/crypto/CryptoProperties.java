@@ -36,10 +36,17 @@ import com.helger.security.keystore.EKeyStoreType;
  * Wrapper around the crypto properties file.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 @Immutable
 public class CryptoProperties implements Serializable
 {
+  public static final String KEYSTORE_TYPE = "org.apache.wss4j.crypto.merlin.keystore.type";
+  public static final String KEYSTORE_FILE = "org.apache.wss4j.crypto.merlin.keystore.file";
+  public static final String KEYSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.keystore.password";
+  public static final String KEY_ALIAS = "org.apache.wss4j.crypto.merlin.keystore.alias";
+  public static final String KEY_PASSWORD = "org.apache.wss4j.crypto.merlin.keystore.private.password";
+
   private NonBlockingProperties m_aProps;
 
   public CryptoProperties (@Nullable final Map <String, String> aProps)
@@ -92,34 +99,34 @@ public class CryptoProperties implements Serializable
   }
 
   @Nullable
+  public EKeyStoreType getKeyStoreType ()
+  {
+    final String sProp = _getProperty (KEYSTORE_TYPE);
+    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
+  }
+
+  @Nullable
   public String getKeyStorePath ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.file");
+    return _getProperty (KEYSTORE_FILE);
   }
 
   @Nullable
   public String getKeyStorePassword ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.password");
-  }
-
-  @Nullable
-  public EKeyStoreType getKeyStoreType ()
-  {
-    final String sProp = _getProperty ("org.apache.wss4j.crypto.merlin.keystore.type");
-    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
+    return _getProperty (KEYSTORE_PASSWORD);
   }
 
   @Nullable
   public String getKeyAlias ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.alias");
+    return _getProperty (KEY_ALIAS);
   }
 
   @Nullable
   public String getKeyPassword ()
   {
-    return _getProperty ("org.apache.wss4j.crypto.merlin.keystore.private.password");
+    return _getProperty (KEY_PASSWORD);
   }
 
   @Override

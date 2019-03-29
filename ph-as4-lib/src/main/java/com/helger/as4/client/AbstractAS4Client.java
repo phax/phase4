@@ -44,6 +44,11 @@ import com.helger.security.keystore.IKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
+/**
+ * Abstract AS4 client based in HTTP client
+ *
+ * @author Philip Helger
+ */
 public abstract class AbstractAS4Client extends BasicHttpPoster
 {
   public static final class BuiltMessage
@@ -119,10 +124,20 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
 
+  /**
+   * @return The default message ID factory to be used.
+   * @since 0.8.3
+   */
+  @Nonnull
+  public static ISupplier <String> createDefaultMessageIDFactory ()
+  {
+    return MessageHelperMethods::createRandomMessageID;
+  }
+
   // KeyStore attributes
+  private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
   private IReadableResource m_aKeyStoreRes;
   private String m_sKeyStorePassword;
-  private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
   private String m_sKeyStoreAlias;
   private String m_sKeyStoreKeyPassword;
 
@@ -133,7 +148,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
   // For Message Info
-  private ISupplier <String> m_aMessageIDFactory = () -> MessageHelperMethods.createRandomMessageID ();
+  private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
@@ -237,8 +252,8 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   /**
    * The type of the keystore needs to be set if a keystore is used.<br>
-   * MANDATORY if you want to use sign or encryption of an user message. Defaults
-   * to "jks".
+   * MANDATORY if you want to use sign or encryption of an user message.
+   * Defaults to "jks".
    *
    * @param aKeyStoreType
    *        keystore type that should be set, e.g. "jks"
