@@ -27,24 +27,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.stream.StreamHelper;
 
+/**
+ * A central resource manager that keeps track of temporary files and other
+ * closables that will be closed when this manager is closed. When calling
+ * {@link #createTempFile()} a new filename is created and added to the list.
+ * When using {@link #addCloseable(Closeable)} it is added for postponed
+ * closing.
+ *
+ * @author Philip Helger
+ */
 public class AS4ResourceManager implements Closeable
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceManager.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
-  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList<> ();
-  private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList<> ();
+  private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
+  private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList <> ();
 
   public AS4ResourceManager ()
   {}
 
+  /**
+   * @return A new temporary {@link File} that will be deleted when
+   *         {@link #close()} is called.
+   * @throws IOException
+   *         When temp file creation fails.
+   * @throws IllegalStateException
+   *         If {@link #close()} was already called before
+   */
   @Nonnull
   public File createTempFile () throws IOException
   {
@@ -58,6 +76,26 @@ public class AS4ResourceManager implements Closeable
     return ret;
   }
 
+  /**
+   * @return A list of all known temp files. Never <code>null</code> but maybe
+   *         empty.
+   * @since 0.8.3
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <File> getAllTempFiles ()
+  {
+    return m_aRWLock.readLocked (m_aTempFiles::getClone);
+  }
+
+  /**
+   * Add a new closable for later closing.
+   *
+   * @param aCloseable
+   *        The closable to be closed later. May not be <code>null</code>.
+   * @throws IllegalStateException
+   *         If {@link #close()} was already called before
+   */
   public void addCloseable (@Nonnull final Closeable aCloseable)
   {
     ValueEnforcer.notNull (aCloseable, "Closeable");
@@ -66,6 +104,18 @@ public class AS4ResourceManager implements Closeable
       throw new IllegalStateException ("ResourceManager is already closing/closed!");
 
     m_aCloseables.add (aCloseable);
+  }
+
+  /**
+   * @return A list of all known closables. Never <code>null</code> but maybe
+   *         empty.
+   * @since 0.8.3
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <Closeable> getAllCloseables ()
+  {
+    return m_aRWLock.readLocked (m_aCloseables::getClone);
   }
 
   public void close ()

@@ -23,6 +23,11 @@ import com.helger.commons.error.SingleError;
 import com.helger.commons.io.file.FileOperationManager;
 import com.helger.commons.io.file.LoggingFileOperationCallback;
 
+/**
+ * IO related helper classes
+ * 
+ * @author Philip Helger
+ */
 @Immutable
 public final class AS4IOHelper
 {

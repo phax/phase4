@@ -40,13 +40,17 @@ import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
+/**
+ * AS4 XML helper methods.
+ *
+ * @author Philip Helger
+ */
 public final class AS4XMLHelper
 {
-  public static final XMLWriterSettings XWS = new XMLWriterSettings ();
+  public static final XMLWriterSettings XWS = XMLWriterSettings.createForCanonicalization ();
   static
   {
     XWS.setNamespaceContext (new Ebms3NamespaceHandler ());
-    XWS.setPutNamespaceContextPrefixesInRoot (true);
     XWS.setIndent (EXMLSerializeIndent.NONE);
   }
 
@@ -79,7 +83,9 @@ public final class AS4XMLHelper
   public static String serializeXML (@Nonnull final Node aNode)
   {
     // Use runtime serialization otherwise XMLDsig signature wont work
-    return true ? _serializeRT (aNode) : _serializePh (aNode);
+    if (true)
+      return _serializeRT (aNode);
+    return _serializePh (aNode);
   }
 
   /**
