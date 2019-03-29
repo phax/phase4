@@ -44,10 +44,11 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
 @NotThreadSafe
 public final class AS4ServerConfiguration
 {
+  public static final long DEFAULT_RESET_MINUTES = 10;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerConfiguration.class);
   private static final Settings SETTINGS = new Settings ("as4-server");
   private static boolean s_bUnitTestMode = false;
-  private static final long DEFAULT_RESET_MINUTES = 10;
 
   public static void reinit (final boolean bForUnitTest)
   {
@@ -70,6 +71,7 @@ public final class AS4ServerConfiguration
     final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
       throw new InitializationException ("Failed to read AS4 server configuration file!");
+
     LOGGER.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
     SETTINGS.setAll (aCF.getSettings ());
   }
@@ -114,7 +116,7 @@ public final class AS4ServerConfiguration
   @Nonnull
   public static boolean isGlobalDebug ()
   {
-    return getSettings ().getAsBoolean ("server.debug", true);
+    return getSettings ().getAsBoolean ("server.debug", false);
   }
 
   @Nonnull
@@ -126,7 +128,7 @@ public final class AS4ServerConfiguration
   @Nonnull
   public static boolean isNoStartupInfo ()
   {
-    return getSettings ().getAsBoolean ("server.nostartupinfo", false);
+    return getSettings ().getAsBoolean ("server.nostartupinfo", true);
   }
 
   @Nonnull
@@ -138,8 +140,7 @@ public final class AS4ServerConfiguration
 
   public static long getIncomingDuplicateDisposalMinutes ()
   {
-    final String sFieldName = "server.incoming.duplicatedisposal.minutes";
-    return getSettings ().getAsLong (sFieldName, DEFAULT_RESET_MINUTES);
+    return getSettings ().getAsLong ("server.incoming.duplicatedisposal.minutes", DEFAULT_RESET_MINUTES);
   }
 
   @Nullable
