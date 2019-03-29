@@ -76,15 +76,29 @@ PEPPOL users: the key store must contain the AccessPoint private key and the tru
 This AS4 server specific file contains the following properties:
 
 ```ini
-server.debug=true
+#server.profile=
+server.debug=false
 server.production=false
 server.nostartupinfo=true
 server.datapath=/var/www/as4/data
-
-server.proxy.enabled=false
-server.proxy.address=10.0.0.1
-server.proxy.port=8080
+#server.incoming.duplicatedisposal.minutes=10
+#server.address=
 ```
+
+The file is searched in the locations specified as follows:
+* A path denoted by the environment variable `AS4_SERVER_CONFIG`
+* A path denoted by the system property `as4.server.configfile`
+* A file named `private-as4.properties` within your classpath
+* A file named `as4.properties` within your classpath
+
+The properties have the following meaning
+* **`server.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
+* **`server.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false`.
+* **`server.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false`.
+* **`server.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
+* **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
+* **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
+* **`server.address``**: the public URL of this AS4 server to send responses to. This value is optional.
 
 ## Building from source
 
