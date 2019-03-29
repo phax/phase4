@@ -98,7 +98,7 @@ The properties have the following meaning
 * **`server.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
 * **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
 * **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
-* **`server.address``**: the public URL of this AS4 server to send responses to. This value is optional.
+* **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
 
 ## Building from source
 
