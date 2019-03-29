@@ -79,7 +79,10 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
                                            AS4DuplicateCleanupJob.class,
                                            aJobDataMap);
       }
-      // else already scheduled
+      else
+      {
+        LOGGER.warn ("AS4DuplicateCleanupJob is already scheduled");
+      }
     }
     else
     {
