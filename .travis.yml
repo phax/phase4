@@ -27,7 +27,7 @@ branches:
 jobs:
   include:
     - stage: test
-      jdk: oraclejdk8
+      jdk: openjdk8
       script:
         - mvn test -B -P coverage
       after_success:
