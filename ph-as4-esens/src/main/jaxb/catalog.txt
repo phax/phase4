@@ -1,1 +1,5 @@
 PUBLIC "http://www.w3.org/2000/09/xmldsig#" "maven:com.helger:ph-xsds-xmldsig:jar::!/schemas/xmldsig-core-schema.xsd"
+PUBLIC "http://www.w3.org/2009/xmldsig11#"  "maven:com.helger:ph-xsds-xmldsig11:jar::!/schemas/xmldsig11-schema.xsd"
+PUBLIC "http://uri.etsi.org/01903/v1.3.2#"  "maven:com.helger:ph-xsds-xades132:jar::!/schemas/XAdES01903v132-201601.xsd"
+PUBLIC "http://uri.etsi.org/01903/v1.4.1#"  "maven:com.helger:ph-xsds-xades141:jar::!/schemas/XAdES01903v141-201601.xsd"
+PUBLIC "urn:un:unece:uncefact:data:specification:CoreComponentTypeSchemaModule:2" "maven:com.helger:ph-xsds-ccts-cct-schemamodule:jar::!/schemas/CCTS_CCT_SchemaModule.xsd"
