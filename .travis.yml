@@ -35,10 +35,14 @@ jobs:
         - mvn deploy --settings travis-settings.xml -DskipTests=true -B -P travis-deploy
         - bash <(curl -s https://codecov.io/bash)
     - stage: test
+      jdk: openjdk11
+      script:
+        - mvn test -B
+    - stage: test
       jdk: oraclejdk11
       script:
         - mvn test -B
     - stage: test
-      jdk: openjdk11
+      jdk: openjdk12
       script:
         - mvn test -B
