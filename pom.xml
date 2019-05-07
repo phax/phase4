@@ -125,7 +125,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>6.2.4</version>
+        <version>6.2.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
