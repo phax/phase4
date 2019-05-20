@@ -16,6 +16,7 @@ It consists of the following sub-projects:
     * Updated to WSS4J 2.2.3
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
+    * The submodule `ph-as4-esens` was renamed to `ph-as4-profile-cef`
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
