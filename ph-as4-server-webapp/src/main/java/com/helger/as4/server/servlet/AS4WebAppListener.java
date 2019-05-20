@@ -26,11 +26,11 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
 import com.helger.as4.model.pmode.PModePayloadService;
+import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.debug.GlobalDebug;
@@ -127,11 +127,11 @@ public final class AS4WebAppListener extends WebAppListener
       // 5. Encrypt: Yes
       // 6. Service: SRV_SIMPLE_ONEWAY
       // 7. Action: ACT_SIMPLE_ONEWAY
-      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
-                                                        "AnyResponderID",
-                                                        "AnyResponderAddress",
-                                                        (i, r) -> "SIMPLE_ONEWAY",
-                                                        false);
+      final PMode aPMode = CEFPMode.createCEFPMode ("AnyInitiatorID",
+                                                      "AnyResponderID",
+                                                      "AnyResponderAddress",
+                                                      (i, r) -> "SIMPLE_ONEWAY",
+                                                      false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (false);
       aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_SIMPLE_ONEWAY");
@@ -147,11 +147,11 @@ public final class AS4WebAppListener extends WebAppListener
       // 5. Encrypt: Yes
       // 6. Service: SRV_SIMPLE_TWOWAY
       // 7. Action: ACT_SIMPLE_TWOWAY
-      final PMode aPMode = ESENSPMode.createESENSPModeTwoWay ("AnyInitiatorID",
-                                                              "AnyResponderID",
-                                                              "AnyResponderAddress",
-                                                              (i, r) -> "SIMPLE_TWOWAY",
-                                                              false);
+      final PMode aPMode = CEFPMode.createCEFPModeTwoWay ("AnyInitiatorID",
+                                                            "AnyResponderID",
+                                                            "AnyResponderAddress",
+                                                            (i, r) -> "SIMPLE_TWOWAY",
+                                                            false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (false);
       aPMode.getLeg1 ().getBusinessInfo ().setService ("SRV_SIMPLE_TWOWAY");
@@ -167,11 +167,11 @@ public final class AS4WebAppListener extends WebAppListener
       // 5. Encrypt: Yes
       // 6. Service: SRV_ONEWAY_RETRY
       // 7. Action: ACT_ONEWAY_RETRY
-      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
-                                                        "AnyResponderID",
-                                                        "AnyResponderAddress",
-                                                        (i, r) -> "ONEWAY_RETRY",
-                                                        false);
+      final PMode aPMode = CEFPMode.createCEFPMode ("AnyInitiatorID",
+                                                      "AnyResponderID",
+                                                      "AnyResponderAddress",
+                                                      (i, r) -> "ONEWAY_RETRY",
+                                                      false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (true);
       aPMode.getReceptionAwareness ().setMaxRetries (5);
@@ -189,11 +189,11 @@ public final class AS4WebAppListener extends WebAppListener
       // 5. Encrypt: No
       // 6. Service: SRV_ONEWAY_SIGNONLY
       // 7. Action: ACT_ONEWAY_SIGNONLY
-      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
-                                                        "AnyResponderID",
-                                                        "AnyResponderAddress",
-                                                        (i, r) -> "ONEWAY_ONLY_SIGN",
-                                                        false);
+      final PMode aPMode = CEFPMode.createCEFPMode ("AnyInitiatorID",
+                                                      "AnyResponderID",
+                                                      "AnyResponderAddress",
+                                                      (i, r) -> "ONEWAY_ONLY_SIGN",
+                                                      false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (false);
       aPMode.getLeg1 ().getSecurity ().setX509EncryptionAlgorithm (null);
@@ -212,11 +212,11 @@ public final class AS4WebAppListener extends WebAppListener
       // http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service
       // 7. Action:
       // http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test
-      final PMode aPMode = ESENSPMode.createESENSPMode ("AnyInitiatorID",
-                                                        "AnyResponderID",
-                                                        "AnyResponderAddress",
-                                                        (i, r) -> "PING",
-                                                        false);
+      final PMode aPMode = CEFPMode.createCEFPMode ("AnyInitiatorID",
+                                                      "AnyResponderID",
+                                                      "AnyResponderAddress",
+                                                      (i, r) -> "PING",
+                                                      false);
       aPMode.setPayloadService (new PModePayloadService (EAS4CompressionMode.GZIP));
       aPMode.getReceptionAwareness ().setRetry (false);
       aPMode.getLeg1 ().getBusinessInfo ().setService (CAS4.DEFAULT_SERVICE_URL);

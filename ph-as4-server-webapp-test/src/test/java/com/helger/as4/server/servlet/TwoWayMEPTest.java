@@ -29,7 +29,6 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -42,6 +41,7 @@ import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -61,7 +61,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode (AS4TestConstants.TEST_INITIATOR,
+    final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                       AS4TestConstants.TEST_RESPONDER,
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",

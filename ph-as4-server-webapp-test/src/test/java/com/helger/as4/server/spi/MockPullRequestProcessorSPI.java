@@ -20,9 +20,9 @@ import javax.annotation.Nonnull;
 
 import org.w3c.dom.Element;
 
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
@@ -33,7 +33,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
 {
   public PMode processAS4UserMessage (@Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode ("pullinitiator",
+    final PMode aPMode = CEFPMode.createCEFPMode ("pullinitiator",
                                                       "pullresponder",
                                                       AS4ServerConfiguration.getServerAddress (),
                                                       (i, r) -> "PullPMode",

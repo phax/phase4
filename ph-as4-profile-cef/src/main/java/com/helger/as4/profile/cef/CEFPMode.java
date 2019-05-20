@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.esens;
+package com.helger.as4.profile.cef;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,11 +44,11 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ETriState;
 
 @Immutable
-public final class ESENSPMode
+public final class CEFPMode
 {
   private static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
 
-  private ESENSPMode ()
+  private CEFPMode ()
   {}
 
   @Nonnull
@@ -97,7 +97,7 @@ public final class ESENSPMode
   }
 
   /**
-   * One-Way Version of the esens pmode uses one-way push
+   * One-Way Version of the CEF pmode uses one-way push
    *
    * @param sInitiatorID
    *        Initiator ID
@@ -113,11 +113,11 @@ public final class ESENSPMode
    * @return New PMode
    */
   @Nonnull
-  public static PMode createESENSPMode (@Nonnull @Nonempty final String sInitiatorID,
-                                        @Nonnull @Nonempty final String sResponderID,
-                                        @Nullable final String sResponderAddress,
-                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                        final boolean bPersist)
+  public static PMode createCEFPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                      @Nonnull @Nonempty final String sResponderID,
+                                      @Nullable final String sResponderAddress,
+                                      @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                      final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
@@ -143,7 +143,7 @@ public final class ESENSPMode
   }
 
   /**
-   * Two-Way Version of the esens pmode uses two-way push-push
+   * Two-Way Version of the CEF pmode uses two-way push-push
    *
    * @param sInitiatorID
    *        Initiator ID
@@ -159,11 +159,11 @@ public final class ESENSPMode
    * @return New PMode
    */
   @Nonnull
-  public static PMode createESENSPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
-                                              @Nonnull @Nonempty final String sResponderID,
-                                              @Nullable final String sResponderAddress,
-                                              @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                              final boolean bPersist)
+  public static PMode createCEFPModeTwoWay (@Nonnull @Nonempty final String sInitiatorID,
+                                            @Nonnull @Nonempty final String sResponderID,
+                                            @Nullable final String sResponderAddress,
+                                            @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                            final boolean bPersist)
   {
     final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);

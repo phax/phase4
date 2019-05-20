@@ -30,12 +30,12 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.soap.ESOAPVersion;
@@ -61,7 +61,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   @Before
   public void setUpCEF ()
   {
-    m_aESENSOneWayPMode = ESENSPMode.createESENSPMode (AS4TestConstants.CEF_INITIATOR_ID,
+    m_aESENSOneWayPMode = CEFPMode.createCEFPMode (AS4TestConstants.CEF_INITIATOR_ID,
                                                        AS4TestConstants.CEF_RESPONDER_ID,
                                                        AS4TestConstants.DEFAULT_SERVER_ADDRESS,
                                                        IPModeIDProvider.DEFAULT_DYNAMIC,

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.esens;
+package com.helger.as4.profile.cef;
 
 import javax.annotation.Nonnull;
 
@@ -48,16 +48,16 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.string.StringHelper;
 
 /**
- * Validate certain requirements imposed by the e-SENS project.
+ * Validate certain requirements imposed by the CEF project.
  *
  * @author bayerlma
  */
-public class ESENSCompatibilityValidator implements IAS4ProfileValidator
+public class CEFCompatibilityValidator implements IAS4ProfileValidator
 {
   @SuppressWarnings ("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger (ESENSCompatibilityValidator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (CEFCompatibilityValidator.class);
 
-  public ESENSCompatibilityValidator ()
+  public CEFCompatibilityValidator ()
   {}
 
   @Nonnull

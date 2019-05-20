@@ -29,7 +29,6 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.duplicate.AS4DuplicateManager;
-import com.helger.as4.esens.ESENSPMode;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -39,6 +38,7 @@ import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
@@ -73,7 +73,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
   @Before
   public void createTwoWayPMode ()
   {
-    final PMode aPMode = ESENSPMode.createESENSPMode (AS4TestConstants.TEST_INITIATOR,
+    final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                       AS4TestConstants.TEST_RESPONDER,
                                                       AS4ServerConfiguration.getSettings ()
                                                                             .getAsString ("server.address",

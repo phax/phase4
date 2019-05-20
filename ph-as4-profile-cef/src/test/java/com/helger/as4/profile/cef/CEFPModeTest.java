@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.esens;
+package com.helger.as4.profile.cef;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -22,28 +22,28 @@ import org.junit.Test;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
-public final class ESENSPModeTest
+public final class CEFPModeTest
 {
   @ClassRule
   public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
 
   @Test
-  public void testESENSPMode ()
+  public void testCEFPMode ()
   {
-    ESENSPMode.createESENSPMode ("TestInitiator",
-                                 "TestResponder",
-                                 "https://test.example.org",
-                                 IPModeIDProvider.DEFAULT_DYNAMIC,
-                                 false);
+    CEFPMode.createCEFPMode ("TestInitiator",
+                             "TestResponder",
+                             "https://test.example.org",
+                             IPModeIDProvider.DEFAULT_DYNAMIC,
+                             false);
   }
 
   @Test
-  public void testESENSPModeTwoWay ()
+  public void testCEFPModeTwoWay ()
   {
-    ESENSPMode.createESENSPModeTwoWay ("TestInitiator",
-                                       "TestResponder",
-                                       "https://test.example.org",
-                                       IPModeIDProvider.DEFAULT_DYNAMIC,
-                                       false);
+    CEFPMode.createCEFPModeTwoWay ("TestInitiator",
+                                   "TestResponder",
+                                   "https://test.example.org",
+                                   IPModeIDProvider.DEFAULT_DYNAMIC,
+                                   false);
   }
 }
