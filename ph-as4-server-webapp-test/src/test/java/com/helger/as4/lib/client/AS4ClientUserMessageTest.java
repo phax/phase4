@@ -36,6 +36,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -67,6 +69,7 @@ public final class AS4ClientUserMessageTest
     AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
+    MetaAS4Manager.getProfileMgr ().setDefaultProfile (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_NEW);
     MockPModeGenerator.ensureMockPModesArePresent ();
   }
 

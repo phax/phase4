@@ -47,10 +47,10 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
     final IPModeIDProvider aPModeIDProvider = IPModeIDProvider.DEFAULT_DYNAMIC;
     final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = () -> new CEFCompatibilityValidator ();
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> CEFPMode.createCEFPMode (i,
-                                                                                                   r,
-                                                                                                   a,
-                                                                                                   aPModeIDProvider,
-                                                                                                   true);
+                                                                                                 r,
+                                                                                                 a,
+                                                                                                 aPModeIDProvider,
+                                                                                                 true);
     aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,

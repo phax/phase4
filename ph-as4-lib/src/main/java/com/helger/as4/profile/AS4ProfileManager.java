@@ -50,7 +50,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("m_aRWLock")
-  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap<> ();
+  private final ICommonsMap <String, IAS4Profile> m_aMap = new CommonsHashMap <> ();
   @GuardedBy ("m_aRWLock")
   private IAS4Profile m_aDefaultProfile;
 
@@ -60,8 +60,11 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
 
-    final int nCount = getProfileCount ();
-    LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
+    if (LOGGER.isInfoEnabled ())
+    {
+      final int nCount = getProfileCount ();
+      LOGGER.info ((nCount == 1 ? "1 AS4 profile is registered " : nCount + " AS4 profiles are registered"));
+    }
   }
 
   public AS4ProfileManager ()

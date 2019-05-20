@@ -56,7 +56,6 @@ import com.helger.as4.messaging.mime.SoapMimeMultipart;
 import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -77,7 +76,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESOAPVersion.values (), x -> new Object [] { x });
   }
 
   private final ESOAPVersion m_eSOAPVersion;
