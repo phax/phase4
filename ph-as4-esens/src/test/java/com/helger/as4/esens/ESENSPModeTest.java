@@ -20,12 +20,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.helger.as4.model.pmode.IPModeIDProvider;
-import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
+import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 public final class ESENSPModeTest
 {
   @ClassRule
-  public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();
+  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
 
   @Test
   public void testESENSPMode ()

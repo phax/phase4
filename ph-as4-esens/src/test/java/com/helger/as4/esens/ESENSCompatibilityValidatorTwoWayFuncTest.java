@@ -50,12 +50,12 @@ import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ETriState;
-import com.helger.photon.basic.mock.PhotonBasicWebTestRule;
+import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 public final class ESENSCompatibilityValidatorTwoWayFuncTest
 {
   @ClassRule
-  public static final PhotonBasicWebTestRule s_aRule = new PhotonBasicWebTestRule ();
+  public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
   private final ESENSCompatibilityValidator aESENSCompatibilityValidator = new ESENSCompatibilityValidator ();

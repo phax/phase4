@@ -12,8 +12,10 @@ It consists of the following sub-projects:
 
 ## News and noteworthy
 
-* v0.8.3 - work in progress
+* v0.9.0 - work in progress
     * Updated to WSS4J 2.2.3
+    * Updated to ph-oton 8.2.0
+    * Updated to peppol-commons 7.0.0
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
