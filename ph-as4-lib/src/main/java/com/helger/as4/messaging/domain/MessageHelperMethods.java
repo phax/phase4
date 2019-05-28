@@ -19,6 +19,7 @@ package com.helger.as4.messaging.domain;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -52,7 +53,6 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.random.RandomHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTXMLConverter;
 
@@ -70,6 +70,7 @@ public final class MessageHelperMethods
   public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = "cid:";
+  private static final Random RND = new Random ();
 
   private MessageHelperMethods ()
   {}
@@ -78,7 +79,7 @@ public final class MessageHelperMethods
   @Nonempty
   public static String createRandomConversationID ()
   {
-    return CAS4.LIB_NAME + "@Conv" + RandomHelper.getRandom ().nextLong ();
+    return CAS4.LIB_NAME + "@Conv" + RND.nextLong ();
   }
 
   @Nonnull

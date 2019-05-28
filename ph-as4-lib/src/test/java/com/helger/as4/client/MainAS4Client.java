@@ -55,7 +55,6 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
-import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.xml.serialize.read.DOMReader;
@@ -99,9 +98,7 @@ public final class MainAS4Client
       if (sURL.startsWith ("https"))
       {
         aSSLContext = SSLContext.getInstance ("TLS");
-        aSSLContext.init (null,
-                          new TrustManager [] { new TrustManagerTrustAll (false) },
-                          RandomHelper.getSecureRandom ());
+        aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
       }
 
       final HttpClientFactory aHCF = new HttpClientFactory ();

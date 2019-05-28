@@ -58,7 +58,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.random.RandomHelper;
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
@@ -104,7 +103,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   public void setUpHttpClient () throws GeneralSecurityException
   {
     final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
-    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, RandomHelper.getSecureRandom ());
+    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
 
     final HttpClientFactory aFactory = new HttpClientFactory ()
     {
