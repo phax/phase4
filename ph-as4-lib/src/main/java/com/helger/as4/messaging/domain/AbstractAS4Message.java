@@ -16,8 +16,6 @@
  */
 package com.helger.as4.messaging.domain;
 
-import java.util.UUID;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
@@ -56,21 +54,11 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
-  @Nonnull
-  @Nonempty
-  public static String createRandomMessagingID ()
-  {
-    // Assign a random ID for signing
-    // Data type is "xs:ID", derived from "xs:NCName"
-    // --> cannot start with a number
-    return CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
-  }
-
   public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
   {
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
-    m_sMessagingID = createRandomMessagingID ();
+    m_sMessagingID = MessageHelperMethods.createRandomMessagingID ();
 
     // Must be a "wsu:Id" for WSSec to be found
     m_aMessaging.getOtherAttributes ().put (new QName (CAS4.WSU_NS, "Id"), m_sMessagingID);

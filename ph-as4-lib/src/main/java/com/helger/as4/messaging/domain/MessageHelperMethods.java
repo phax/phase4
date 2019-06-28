@@ -89,6 +89,16 @@ public final class MessageHelperMethods
     return CAS4.LIB_NAME + "@" + UUID.randomUUID ().toString ();
   }
 
+  @Nonnull
+  @Nonempty
+  public static String createRandomMessagingID ()
+  {
+    // Assign a random ID for signing
+    // Data type is "xs:ID", derived from "xs:NCName"
+    // --> cannot start with a number
+    return CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
+  }
+
   /**
    * Create a new message info with a UUID as message ID.
    *

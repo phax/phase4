@@ -16,6 +16,8 @@
  */
 package com.helger.as4.servlet.spi;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -36,7 +38,7 @@ import com.helger.commons.http.HttpHeaderMap;
  * @author Philip Helger
  */
 @IsSPIInterface
-public interface IAS4ServletMessageProcessorSPI
+public interface IAS4ServletMessageProcessorSPI extends Serializable
 {
   /**
    * Process incoming AS4 user message

@@ -107,6 +107,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
@@ -225,6 +226,9 @@ public class AS4Handler implements AutoCloseable
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
+  /** By default get all message processors from the global SPI registry */
+  private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
+
   /**
    * @return <code>true</code> if internal debugging is enabled,
    *         <code>false</code> otherwise.
@@ -254,16 +258,30 @@ public class AS4Handler implements AutoCloseable
   }
 
   @Nonnull
-  public Locale getLocale ()
+  public final Locale getLocale ()
   {
     return m_aLocale;
   }
 
   @Nonnull
-  public AS4Handler setLocale (@Nonnull final Locale aLocale)
+  public final AS4Handler setLocale (@Nonnull final Locale aLocale)
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     m_aLocale = aLocale;
+    return this;
+  }
+
+  @Nonnull
+  public final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()
+  {
+    return m_aProcessorSupplier;
+  }
+
+  @Nonnull
+  public final AS4Handler setProcessorSupplier (@Nonnull final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
+  {
+    ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
+    m_aProcessorSupplier = aProcessorSupplier;
     return this;
   }
 
@@ -515,91 +533,58 @@ public class AS4Handler implements AutoCloseable
                                              : aSignalMessage.getMessageInfo ().getMessageId ();
 
     // Invoke all SPIs
-    for (final IAS4ServletMessageProcessorSPI aProcessor : AS4ServletMessageProcessorManager.getAllProcessors ())
-      try
-      {
-        if (isDebug ())
-          LOGGER.info ("Invoking AS4 message processor " + aProcessor);
-
-        // Main processing
-        AS4MessageProcessorResult aResult;
-        if (bIsUserMessage)
-          aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
-                                                      aUserMessage,
-                                                      aPMode,
-                                                      aPayloadNode,
-                                                      aDecryptedAttachments,
-                                                      aState);
-        else
-          aResult = aProcessor.processAS4SignalMessage (aHttpHeaders, aSignalMessage, aPMode, aState);
-
-        // Result returned?
-        if (aResult == null)
-          throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
-
-        if (aResult.isFailure ())
+    final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
+    for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
+      if (aProcessor != null)
+        try
         {
-          final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                   aProcessor +
-                                   " on '" +
-                                   sMessageID +
-                                   "' returned a failure: " +
-                                   aResult.getErrorMessage ();
-          LOGGER.warn (sErrorMsg);
-          aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
-          // Stop processing
-          return;
-        }
+          if (isDebug ())
+            LOGGER.info ("Invoking AS4 message processor " + aProcessor);
 
-        // SPI invocation was okay
-        {
-          final String sAsyncResultURL = aResult.getAsyncResponseURL ();
-          if (StringHelper.hasText (sAsyncResultURL))
+          // Main processing
+          AS4MessageProcessorResult aResult;
+          if (bIsUserMessage)
+            aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
+                                                        aUserMessage,
+                                                        aPMode,
+                                                        aPayloadNode,
+                                                        aDecryptedAttachments,
+                                                        aState);
+          else
+            aResult = aProcessor.processAS4SignalMessage (aHttpHeaders, aSignalMessage, aPMode, aState);
+
+          // Result returned?
+          if (aResult == null)
+            throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
+
+          if (aResult.isFailure ())
           {
-            // URL present
-            if (aSPIResult.hasAsyncResponseURL ())
-            {
-              // A second processor returned a response URL - not allowed
-              final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                       aProcessor +
-                                       " on '" +
-                                       sMessageID +
-                                       "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
-              LOGGER.warn (sErrorMsg);
-              aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                      sMessageID,
-                                                                                      sErrorMsg));
-              // Stop processing
-              return;
-            }
-            aSPIResult.setAsyncResponseURL (sAsyncResultURL);
+            final String sErrorMsg = "Invoked AS4 message processor SPI " +
+                                     aProcessor +
+                                     " on '" +
+                                     sMessageID +
+                                     "' returned a failure: " +
+                                     aResult.getErrorMessage ();
+            LOGGER.warn (sErrorMsg);
+            aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
+            // Stop processing
+            return;
           }
-        }
 
-        if (bIsUserMessage)
-        {
-          // User message specific processing result handling
-
-          // empty
-        }
-        else
-        {
-          // Signal message specific processing result handling
-          if (aSignalMessage.getReceipt () == null)
+          // SPI invocation was okay
           {
-            final Ebms3UserMessage aPullReturnUserMsg = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
-            if (aSPIResult.hasPullReturnUserMsg ())
+            final String sAsyncResultURL = aResult.getAsyncResponseURL ();
+            if (StringHelper.hasText (sAsyncResultURL))
             {
-              // A second processor has commited a response to the pullrequest
-              // Which is not allowed since only one response can be sent back
-              // to the pullrequest initiator
-              if (aPullReturnUserMsg != null)
+              // URL present
+              if (aSPIResult.hasAsyncResponseURL ())
               {
+                // A second processor returned a response URL - not allowed
                 final String sErrorMsg = "Invoked AS4 message processor SPI " +
                                          aProcessor +
                                          " on '" +
                                          sMessageID +
-                                         "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
+                                         "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
                 LOGGER.warn (sErrorMsg);
                 aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
                                                                                         sMessageID,
@@ -607,52 +592,88 @@ public class AS4Handler implements AutoCloseable
                 // Stop processing
                 return;
               }
-            }
-            else
-            {
-              // Initial return user msg
-              if (aPullReturnUserMsg == null)
-              {
-                // No message contained in the MPC
-                final String sErrorMsg = "Invoked AS4 message processor SPI " +
-                                         aProcessor +
-                                         " on '" +
-                                         sMessageID +
-                                         "' returned a failure: no UserMessage contained in the MPC";
-                LOGGER.warn (sErrorMsg);
-                aErrorMessages.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
-                                                                                                     sMessageID,
-                                                                                                     sErrorMsg));
-                // Stop processing
-                return;
-              }
-
-              // We have something :)
-              aSPIResult.setPullReturnUserMsg (aPullReturnUserMsg);
+              aSPIResult.setAsyncResponseURL (sAsyncResultURL);
             }
           }
+
+          if (bIsUserMessage)
+          {
+            // User message specific processing result handling
+
+            // empty
+          }
+          else
+          {
+            // Signal message specific processing result handling
+            if (aSignalMessage.getReceipt () == null)
+            {
+              final Ebms3UserMessage aPullReturnUserMsg = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
+              if (aSPIResult.hasPullReturnUserMsg ())
+              {
+                // A second processor has committed a response to the
+                // pullrequest
+                // Which is not allowed since only one response can be sent back
+                // to the pullrequest initiator
+                if (aPullReturnUserMsg != null)
+                {
+                  final String sErrorMsg = "Invoked AS4 message processor SPI " +
+                                           aProcessor +
+                                           " on '" +
+                                           sMessageID +
+                                           "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
+                  LOGGER.warn (sErrorMsg);
+                  aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                          sMessageID,
+                                                                                          sErrorMsg));
+                  // Stop processing
+                  return;
+                }
+              }
+              else
+              {
+                // Initial return user msg
+                if (aPullReturnUserMsg == null)
+                {
+                  // No message contained in the MPC
+                  final String sErrorMsg = "Invoked AS4 message processor SPI " +
+                                           aProcessor +
+                                           " on '" +
+                                           sMessageID +
+                                           "' returned a failure: no UserMessage contained in the MPC";
+                  LOGGER.warn (sErrorMsg);
+                  aErrorMessages.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
+                                                                                                       sMessageID,
+                                                                                                       sErrorMsg));
+                  // Stop processing
+                  return;
+                }
+
+                // We have something :)
+                aSPIResult.setPullReturnUserMsg (aPullReturnUserMsg);
+              }
+            }
+          }
+
+          // Add response attachments, payloads
+          aResult.addAllAttachmentsTo (aResponseAttachments);
+
+          if (isDebug ())
+            LOGGER.info ("Successfully invoked AS4 message processor " + aProcessor);
         }
-
-        // Add response attachments, payloads
-        aResult.addAllAttachmentsTo (aResponseAttachments);
-
-        if (isDebug ())
-          LOGGER.info ("Successfully invoked AS4 message processor " + aProcessor);
-      }
-      catch (final Throwable t)
-      {
-        // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-        if (t.getCause () instanceof ZipException)
+        catch (final Throwable t)
         {
-          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
-          return;
-        }
+          // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
+          if (t.getCause () instanceof ZipException)
+          {
+            aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
+            return;
+          }
 
-        // Re-throw
-        if (t instanceof RuntimeException)
-          throw (RuntimeException) t;
-        throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
-      }
+          // Re-throw
+          if (t instanceof RuntimeException)
+            throw (RuntimeException) t;
+          throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
+        }
 
     // Remember success
     aSPIResult.setSuccess (true);

@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.as4.servlet.AS4XServletHandler;
+import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -22,6 +24,10 @@ public class C2Servlet extends AbstractXServlet
     final AS4XServletHandler aServletHandler = new AS4XServletHandler ();
     aServletHandler.setHandlerCustomizer ( (req, resp, hdl) -> {
       LOGGER.info ("Got /c2 request: " + req.getURL ());
+
+      // TODO
+      final IAS4ServletMessageProcessorSPI aProc = null;
+      hdl.setProcessorSupplier ( () -> new CommonsArrayList <> (aProc));
     });
     handlerRegistry ().registerHandler (EHttpMethod.POST, aServletHandler);
   }

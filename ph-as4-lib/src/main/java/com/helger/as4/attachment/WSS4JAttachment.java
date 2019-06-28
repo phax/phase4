@@ -80,6 +80,9 @@ public class WSS4JAttachment extends Attachment
     overwriteMimeType (sMimeType);
   }
 
+  /**
+   * Create a random UUID based ID and call {@link #setId(String)}
+   */
   public void setUniqueID ()
   {
     setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());

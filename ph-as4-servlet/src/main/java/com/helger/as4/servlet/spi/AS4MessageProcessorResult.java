@@ -16,6 +16,7 @@
  */
 package com.helger.as4.servlet.spi;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -39,7 +40,7 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Philip Helger
  */
-public class AS4MessageProcessorResult implements ISuccessIndicator
+public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
 {
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
@@ -101,8 +102,8 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public String toString ()
   {
     return new ToStringGenerator (this).append ("Success", m_eSuccess)
-                                       .appendIf ("ErrorMsg", m_sErrorMsg, x -> m_eSuccess.isFailure ())
-                                       .appendIf ("Attachments", m_aAttachments, x -> m_eSuccess.isSuccess ())
+                                       .appendIf ("ErrorMsg", m_sErrorMsg, m_eSuccess::isFailure)
+                                       .appendIf ("Attachments", m_aAttachments, m_eSuccess::isSuccess)
                                        .appendIfNotNull ("AsyncResponseURL", m_sAsyncResponseURL)
                                        .getToString ();
   }

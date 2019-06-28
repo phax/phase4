@@ -110,6 +110,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   public final void setPModeID (@Nullable final String sPModeID)
   {
+    // Just set a constant PMode factory
     setPModeIDFactory (x -> sPModeID);
   }
 
@@ -432,34 +433,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   public final ICommonsList <Ebms3Property> ebms3Properties ()
   {
     return m_aEbms3Properties;
-  }
-
-  /**
-   * @return A copy of all properties.
-   * @deprecated Use {@link #ebms3Properties()} directly.
-   */
-  @Deprecated
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <Ebms3Property> getAllEbms3Properties ()
-  {
-    return m_aEbms3Properties.getClone ();
-  }
-
-  /**
-   * With properties optional info can be added for the receiving party. If you
-   * want to be AS4 Profile conform you need to add two properties to your
-   * message: originalSender and finalRecipient these two correlate to C1 and
-   * C4.
-   *
-   * @param aEbms3Properties
-   *        Properties that should be set in the current user message
-   * @deprecated Use {@link #ebms3Properties()} directly
-   */
-  @Deprecated
-  public void setEbms3Properties (@Nullable final ICommonsList <Ebms3Property> aEbms3Properties)
-  {
-    m_aEbms3Properties.setAll (aEbms3Properties);
   }
 
   @Nullable
