@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,7 @@ import com.helger.quartz.IJobExecutionContext;
 import com.helger.quartz.JobDataMap;
 import com.helger.quartz.JobExecutionException;
 import com.helger.quartz.SimpleScheduleBuilder;
+import com.helger.quartz.TriggerKey;
 import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
@@ -61,23 +63,36 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 
   private static final AtomicBoolean s_aScheduled = new AtomicBoolean (false);
 
-  public static void scheduleMe (final long nDisposalMinutes)
+  /**
+   * Start a job that runs every minute, that removes all messages older than a
+   * certain time from duplication check. If the job is already scheduled, it
+   * cannot be scheduled again.
+   *
+   * @param nDisposalMinutes
+   *        Messages older than this number of minutes will not be checked for
+   *        duplicates. Must be &gt; 0.
+   * @return <code>null</code> if no job was scheduled, the trigger key of the
+   *         respective job otherwise.
+   */
+  @Nullable
+  public static TriggerKey scheduleMe (final long nDisposalMinutes)
   {
+    TriggerKey aTriggerKey = null;
     if (nDisposalMinutes > 0)
     {
       if (!s_aScheduled.getAndSet (true))
       {
         final JobDataMap aJobDataMap = new JobDataMap ();
         aJobDataMap.putIn (KEY_MINUTES, nDisposalMinutes);
-        GlobalQuartzScheduler.getInstance ()
-                             .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
-                                           "-" +
-                                           nDisposalMinutes,
-                                           JDK8TriggerBuilder.newTrigger ()
-                                                             .startNow ()
-                                                             .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever (5)),
-                                           AS4DuplicateCleanupJob.class,
-                                           aJobDataMap);
+        aTriggerKey = GlobalQuartzScheduler.getInstance ()
+                                           .scheduleJob (ClassHelper.getClassLocalName (AS4DuplicateCleanupJob.class) +
+                                                         "-" +
+                                                         nDisposalMinutes,
+                                                         JDK8TriggerBuilder.newTrigger ()
+                                                                           .startNow ()
+                                                                           .withSchedule (SimpleScheduleBuilder.repeatMinutelyForever ()),
+                                                         AS4DuplicateCleanupJob.class,
+                                                         aJobDataMap);
       }
       else
       {
@@ -88,5 +103,6 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     {
       LOGGER.warn ("Incoming duplicate message cleaning is disabled!");
     }
+    return aTriggerKey;
   }
 }
