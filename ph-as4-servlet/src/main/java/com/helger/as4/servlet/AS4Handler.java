@@ -464,6 +464,8 @@ public final class AS4Handler implements AutoCloseable
   /**
    * Invoke custom SPI message processors
    *
+   * @param aHttpHeaders
+   *        The received HTTP headers. Never <code>null</code>.
    * @param aUserMessage
    *        Current user message. Either this OR signal message must be
    *        non-<code>null</code>.
@@ -488,7 +490,8 @@ public final class AS4Handler implements AutoCloseable
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
-  private void _invokeSPIs (@Nullable final Ebms3UserMessage aUserMessage,
+  private void _invokeSPIs (@Nonnull final HttpHeaderMap aHttpHeaders,
+                            @Nullable final Ebms3UserMessage aUserMessage,
                             @Nullable final Ebms3SignalMessage aSignalMessage,
                             @Nullable final Node aPayloadNode,
                             @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
@@ -517,13 +520,14 @@ public final class AS4Handler implements AutoCloseable
         // Main processing
         AS4MessageProcessorResult aResult;
         if (bIsUserMessage)
-          aResult = aProcessor.processAS4UserMessage (aUserMessage,
+          aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
+                                                      aUserMessage,
                                                       aPMode,
                                                       aPayloadNode,
                                                       aDecryptedAttachments,
                                                       aState);
         else
-          aResult = aProcessor.processAS4SignalMessage (aSignalMessage, aPMode, aState);
+          aResult = aProcessor.processAS4SignalMessage (aHttpHeaders, aSignalMessage, aPMode, aState);
 
         // Result returned?
         if (aResult == null)
@@ -651,11 +655,13 @@ public final class AS4Handler implements AutoCloseable
   }
 
   @Nullable
-  private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final Document aSOAPDocument,
+  private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+                                                  @Nonnull final Document aSOAPDocument,
                                                   @Nonnull final ESOAPVersion eSOAPVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                                                       MessagingException
   {
+    ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
     ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
@@ -858,7 +864,8 @@ public final class AS4Handler implements AutoCloseable
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
         // Might add to m_aPullReturnUserMsg
-        _invokeSPIs (aEbmsUserMessage,
+        _invokeSPIs (aHttpHeaders,
+                     aEbmsUserMessage,
                      aEbmsSignalMessage,
                      aPayloadNode,
                      aDecryptedAttachments,
@@ -889,7 +896,8 @@ public final class AS4Handler implements AutoCloseable
           IAS4ResponseFactory aAsyncResponseFactory;
 
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
-          _invokeSPIs (aFinalUserMessage,
+          _invokeSPIs (aHttpHeaders,
+                       aFinalUserMessage,
                        aFinalSignalMessage,
                        aFinalPayloadNode,
                        aFinalDecryptedAttachments,
@@ -1412,6 +1420,7 @@ public final class AS4Handler implements AutoCloseable
     AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
 
     final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
+    final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
 
     // Determine content type
     final String sContentType = aHttpServletRequest.getContentType ();
@@ -1525,7 +1534,10 @@ public final class AS4Handler implements AutoCloseable
     }
 
     // SOAP document and SOAP version are determined
-    final IAS4ResponseFactory aResponder = _handleSOAPMessage (aSOAPDocument, eSOAPVersion, aIncomingAttachments);
+    final IAS4ResponseFactory aResponder = _handleSOAPMessage (aHttpHeaders,
+                                                               aSOAPDocument,
+                                                               eSOAPVersion,
+                                                               aIncomingAttachments);
     if (aResponder != null)
     {
       // Response present -> send back

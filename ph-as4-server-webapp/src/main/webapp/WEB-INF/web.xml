@@ -25,9 +25,6 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-  <listener>
-    <listener-class>com.helger.as4.server.servlet.AS4WebAppListener</listener-class>
-  </listener>
   <servlet>
     <servlet-name>AS4Servlet</servlet-name>
     <servlet-class>com.helger.as4.servlet.AS4Servlet</servlet-class>

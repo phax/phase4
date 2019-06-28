@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
+import javax.servlet.annotation.WebListener;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -41,6 +42,7 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
 import com.helger.xservlet.requesttrack.RequestTracker;
 
+@WebListener
 public final class AS4WebAppListener extends WebAppListener
 {
   @Override
@@ -87,6 +89,8 @@ public final class AS4WebAppListener extends WebAppListener
       RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
     HttpDebugger.setEnabled (false);
+
+    // Show registered servlets
   }
 
   @Override

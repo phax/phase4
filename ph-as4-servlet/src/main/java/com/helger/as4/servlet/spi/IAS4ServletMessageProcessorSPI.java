@@ -28,6 +28,7 @@ import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.HttpHeaderMap;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate
@@ -40,6 +41,8 @@ public interface IAS4ServletMessageProcessorSPI
   /**
    * Process incoming AS4 user message
    *
+   * @param aHttpHeaders
+   *        The original HTTP headers. Never <code>null</code>.
    * @param aUserMessage
    *        The received user message. May not be <code>null</code>.
    * @param aPMode
@@ -59,7 +62,8 @@ public interface IAS4ServletMessageProcessorSPI
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4UserMessage (@Nonnull Ebms3UserMessage aUserMessage,
+  AS4MessageProcessorResult processAS4UserMessage (@Nonnull HttpHeaderMap aHttpHeaders,
+                                                   @Nonnull Ebms3UserMessage aUserMessage,
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
@@ -71,6 +75,8 @@ public interface IAS4ServletMessageProcessorSPI
    * not be added to a SignalMessage Because the will be ignored in the MSH -
    * Processing.
    *
+   * @param aHttpHeaders
+   *        The original HTTP headers. Never <code>null</code>.
    * @param aSignalMessage
    *        The received signal message. May not be <code>null</code>.
    * @param aPMode
@@ -82,7 +88,8 @@ public interface IAS4ServletMessageProcessorSPI
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull Ebms3SignalMessage aSignalMessage,
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull HttpHeaderMap aHttpHeaders,
+                                                           @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
                                                            @Nonnull IAS4MessageState aState);
 }
