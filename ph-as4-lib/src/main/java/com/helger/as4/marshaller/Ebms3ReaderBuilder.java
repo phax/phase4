@@ -42,18 +42,18 @@ public class Ebms3ReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE, 
   @Nonnull
   public static Ebms3ReaderBuilder <Ebms3Messaging> ebms3Messaging ()
   {
-    return new Ebms3ReaderBuilder<> (EEbms3DocumentType.MESSAGING, Ebms3Messaging.class);
+    return new Ebms3ReaderBuilder <> (EEbms3DocumentType.MESSAGING, Ebms3Messaging.class);
   }
 
   @Nonnull
   public static Ebms3ReaderBuilder <Soap11Envelope> soap11 ()
   {
-    return new Ebms3ReaderBuilder<> (EEbms3DocumentType.SOAP_11, Soap11Envelope.class);
+    return new Ebms3ReaderBuilder <> (EEbms3DocumentType.SOAP_11, Soap11Envelope.class);
   }
 
   @Nonnull
   public static Ebms3ReaderBuilder <Soap12Envelope> soap12 ()
   {
-    return new Ebms3ReaderBuilder<> (EEbms3DocumentType.SOAP_12, Soap12Envelope.class);
+    return new Ebms3ReaderBuilder <> (EEbms3DocumentType.SOAP_12, Soap12Envelope.class);
   }
 }

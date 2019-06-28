@@ -92,10 +92,10 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   public void setUpCEF ()
   {
     m_aESENSTwoWayPMode = CEFPMode.createCEFPModeTwoWay (AS4TestConstants.CEF_INITIATOR_ID,
-                                                             AS4TestConstants.CEF_RESPONDER_ID,
-                                                             AS4TestConstants.DEFAULT_SERVER_ADDRESS,
-                                                             IPModeIDProvider.DEFAULT_DYNAMIC,
-                                                             true);
+                                                         AS4TestConstants.CEF_RESPONDER_ID,
+                                                         AS4TestConstants.DEFAULT_SERVER_ADDRESS,
+                                                         IPModeIDProvider.DEFAULT_DYNAMIC,
+                                                         true);
 
     m_eSOAPVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));

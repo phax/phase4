@@ -34,10 +34,10 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   public PMode processAS4UserMessage (@Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     final PMode aPMode = CEFPMode.createCEFPMode ("pullinitiator",
-                                                      "pullresponder",
-                                                      AS4ServerConfiguration.getServerAddress (),
-                                                      (i, r) -> "PullPMode",
-                                                      false);
+                                                  "pullresponder",
+                                                  AS4ServerConfiguration.getServerAddress (),
+                                                  (i, r) -> "PullPMode",
+                                                  false);
     if (aSignalMessage.getPullRequest () != null)
     {
       if (!aSignalMessage.getAny ().isEmpty ())

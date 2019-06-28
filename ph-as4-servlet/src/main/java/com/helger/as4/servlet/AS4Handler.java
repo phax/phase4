@@ -476,8 +476,8 @@ public final class AS4Handler implements AutoCloseable
    * @param aDecryptedAttachments
    *        Original attachments from source message. May be <code>null</code>.
    * @param aErrorMessages
-   *        The list of error messages to be filled if something goes wrong. Never
-   *        <code>null</code>.
+   *        The list of error messages to be filled if something goes wrong.
+   *        Never <code>null</code>.
    * @param aResponseAttachments
    *        The list of attachments to be added to the response. Never
    *        <code>null</code>.
@@ -1030,8 +1030,8 @@ public final class AS4Handler implements AutoCloseable
 
   /**
    * @param aSOAPDocument
-   *        document which should be used as source for the receipt to convert it
-   *        to non-repudiation information. Can be <code>null</code>.
+   *        document which should be used as source for the receipt to convert
+   *        it to non-repudiation information. Can be <code>null</code>.
    * @param eSOAPVersion
    *        SOAPVersion which should be used
    * @param aEffectiveLeg
@@ -1142,8 +1142,8 @@ public final class AS4Handler implements AutoCloseable
    * @param aResponseAttachments
    *        attachments if any that should be added
    * @param aLeg
-   *        the leg that should be used, to determine what if any security should
-   *        be used
+   *        the leg that should be used, to determine what if any security
+   *        should be used
    * @param aDoc
    *        the message that should be sent
    * @param sMessagingID
@@ -1181,8 +1181,8 @@ public final class AS4Handler implements AutoCloseable
   }
 
   /**
-   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message will
-   * be signed, else the message will be returned as it is.
+   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
+   * will be signed, else the message will be returned as it is.
    *
    * @param aResponseAttachments
    *        attachment that are added
@@ -1267,9 +1267,9 @@ public final class AS4Handler implements AutoCloseable
 
   /**
    * EBMS core specification 4.2 details these default values. In eSENS they get
-   * used to implement a ping service, we took this over even outside of eSENS. If
-   * you use these default values you can try to "ping" the server, the method
-   * just checks if the pmode got these exact values set. If true, no SPI
+   * used to implement a ping service, we took this over even outside of eSENS.
+   * If you use these default values you can try to "ping" the server, the
+   * method just checks if the pmode got these exact values set. If true, no SPI
    * processing is done.
    *
    * @param aPMode

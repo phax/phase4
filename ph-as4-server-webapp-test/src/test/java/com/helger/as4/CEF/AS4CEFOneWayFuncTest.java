@@ -74,15 +74,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User message to
-   * the RMSH with parameter MESSAGEPROPERTIES containing: A property with
-   * attributes "name" and "type" present. A property with only attribute "name"
-   * present.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
+   * message to the RMSH with parameter MESSAGEPROPERTIES containing: A property
+   * with attributes "name" and "type" present. A property with only attribute
+   * "name" present.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with status
-   * code 2XX.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with
+   * status code 2XX.
    *
    * @throws Exception
    *         In case of error
@@ -147,9 +147,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile: One-Way/Push MEP. SMSH sends an AS4 message (User Message with
-   * payload) to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile: One-Way/Push MEP. SMSH sends an AS4 message (User Message
+   * with payload) to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends a non-repudiation receipt to the SMSH.
@@ -185,8 +185,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a Message with metadata
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a Message with metadata
    * information and XML payload to the SMSH.<br>
    * <br>
    * Predicate: <br>
@@ -217,8 +217,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a Message with metadata
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a Message with metadata
    * information and payload to the SMSH.<br>
    * <br>
    * Predicate: <br>
@@ -247,10 +247,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with
-   * payload (ex: xml document) and metadata information including a property
-   * element with name "MimeType" and value ("application/xml").<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
+   * with payload (ex: xml document) and metadata information including a
+   * property element with name "MimeType" and value ("application/xml").<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "MimeType" present and
@@ -277,9 +277,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). The SMSH is simulated to send an AS4 message
-   * without property "MimeType" present to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). The SMSH is simulated to send an AS4
+   * message without property "MimeType" present to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends a synchronous ebMS error response.
@@ -307,10 +307,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with xml
-   * (UTF-16) payload and metadata information including payload characterset
-   * info.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
+   * with xml (UTF-16) payload and metadata information including payload
+   * characterset info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -351,10 +351,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a message to the SMSH with xml
-   * (UTF-8) payload and metadata information including payload characterset
-   * info.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
+   * with xml (UTF-8) payload and metadata information including payload
+   * characterset info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -394,13 +394,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   }
 
   /**
-   * Note: Not testable (might become valid after the requirements EBXMLMSG-87 and
-   * EBXMLMSG-88 are validated). <= thats what is standing in the document<br>
+   * Note: Not testable (might become valid after the requirements EBXMLMSG-87
+   * and EBXMLMSG-88 are validated). <= thats what is standing in the
+   * document<br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 message with
-   * property element "CharacterSet" set to value not conform to section 4.3.3 of
-   * [XML10] (example: "!utf*"). The SMSH sends the AS4 message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 message
+   * with property element "CharacterSet" set to value not conform to section
+   * 4.3.3 of [XML10] (example: "!utf*"). The SMSH sends the AS4 message to the
+   * RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH returns a synchronous ebMS error message.
@@ -413,10 +415,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User Message
-   * with compressed but damaged payloads. The SMSH sends the AS4 User Message to
-   * the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
+   * Message with compressed but damaged payloads. The SMSH sends the AS4 User
+   * Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back a synchronous error response with error code "Code =
@@ -469,9 +471,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a compressed
-   * payload to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a
+   * compressed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH delivers the message with decompressed payload to the consumer.
@@ -497,9 +499,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a several
-   * compressed payloads (XML and non XML) to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User Message with a
+   * several compressed payloads (XML and non XML) to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH delivers the message with decompressed payloads to the consumer.
@@ -561,8 +563,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA13<br>
-   * Simulated SMSH sends a signed AS4 User Message with a signed then compressed
-   * payload to the RMSH.<br>
+   * Simulated SMSH sends a signed AS4 User Message with a signed then
+   * compressed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The SMSH receives a WS-Security SOAP Fault.
@@ -597,8 +599,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA14.<br>
-   * The SMSH is simulated to send a compressed then encrypted AS4 message to the
-   * RMSH.<br>
+   * The SMSH is simulated to send a compressed then encrypted AS4 message to
+   * the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back an AS4 non-repudiation receipt.
@@ -630,8 +632,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Prerequisite:<br>
    * eSENS_TA14.<br>
-   * Simulated SMSH sends a signed AS4 User Message with an encrypted first, then
-   * compressed payload to the RMSH.<br>
+   * Simulated SMSH sends a signed AS4 User Message with an encrypted first,
+   * then compressed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The SMSH receives a WS-Security SOAP Fault.
@@ -660,7 +662,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
@@ -673,9 +675,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). The SMSH sends an AS4 message with a compressed
-   * then encrypted and signed payload to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). The SMSH sends an AS4 message with a
+   * compressed then encrypted and signed payload to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back an AS4 non-repudiation receipt.
@@ -728,8 +730,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH sends an AS4 User message to the RMSH. <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH sends an AS4 User message to the
+   * RMSH. <br>
    * <br>
    * Predicate: <br>
    * In the message sender|receiver elements reference the MSHs and not the
@@ -755,10 +758,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * Note: Only when using SBDH<br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits two payloads, first being an
-   * SBDH document, second being an actual payload (non-XML payload). SMSH sends
-   * an AS4 User Message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits two payloads, first
+   * being an SBDH document, second being an actual payload (non-XML payload).
+   * SMSH sends an AS4 User Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * Message has two additional MIME parts. The first mime part is the SBDH
@@ -795,15 +798,15 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User message to
-   * the RMSH with parameter PARTPROPERTIES containing: A property with attributes
-   * "name" and "type" present. A property with only attribute "name" present.
-   * <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 User
+   * message to the RMSH with parameter PARTPROPERTIES containing: A property
+   * with attributes "name" and "type" present. A property with only attribute
+   * "name" present. <br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with status
-   * code 2XX.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with
+   * status code 2XX.
    */
   @Test
   public void AS4_TA29 ()

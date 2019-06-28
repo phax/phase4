@@ -269,20 +269,21 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         // Get responder address from properties file
         final String sResponderAddress = AS4ServerConfiguration.getServerAddress ();
 
-        aPMode = AS4ServerSettings.getPModeResolver ().getPModeOfID (sPModeID,
-                                                                     aCollaborationInfo.getService ().getValue (),
-                                                                     aCollaborationInfo.getAction (),
-                                                                     sInitiatorID,
-                                                                     sResponderID,
-                                                                     sResponderAddress);
+        aPMode = AS4ServerSettings.getPModeResolver ()
+                                  .getPModeOfID (sPModeID,
+                                                 aCollaborationInfo.getService ().getValue (),
+                                                 aCollaborationInfo.getAction (),
+                                                 sInitiatorID,
+                                                 sResponderID,
+                                                 sResponderAddress);
 
         // Should be screened by the xsd conversion already
         if (aPMode == null)
         {
           LOGGER.warn ("Failed to resolve PMode '" +
-                          sPModeID +
-                          "' using resolver " +
-                          AS4ServerSettings.getPModeResolver ());
+                       sPModeID +
+                       "' using resolver " +
+                       AS4ServerSettings.getPModeResolver ());
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -334,8 +335,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         if (aEffectiveMPC == null)
         {
           LOGGER.warn ("Error processing the usermessage, effective usermessage MPC ID '" +
-                          sEffectiveMPCID +
-                          "' is unknown!");
+                       sEffectiveMPCID +
+                       "' is unknown!");
 
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -372,11 +373,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         if (aAttachments.size () > aEbms3PayloadInfo.getPartInfoCount ())
         {
           LOGGER.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
-                          aEbms3PayloadInfo.getPartInfoCount () +
-                          "'" +
-                          " but was '" +
-                          aAttachments.size () +
-                          "'");
+                       aEbms3PayloadInfo.getPartInfoCount () +
+                       "'" +
+                       " but was '" +
+                       aAttachments.size () +
+                       "'");
 
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -425,8 +426,8 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
                   if (eCompressionMode == null)
                   {
                     LOGGER.warn ("Error processing the UserMessage, CompressionType " +
-                                    aEbms3Property.getValue () +
-                                    " is not supported. ");
+                                 aEbms3Property.getValue () +
+                                 " is not supported. ");
 
                     aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                     return ESuccess.FAILURE;
@@ -459,11 +460,11 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         if (nSpecifiedAttachments != aAttachments.size ())
         {
           LOGGER.warn ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected '" +
-                          aEbms3PayloadInfo.getPartInfoCount () +
-                          "'" +
-                          " but was '" +
-                          aAttachments.size () +
-                          "'");
+                       aEbms3PayloadInfo.getPartInfoCount () +
+                       "'" +
+                       " but was '" +
+                       aAttachments.size () +
+                       "'");
 
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;

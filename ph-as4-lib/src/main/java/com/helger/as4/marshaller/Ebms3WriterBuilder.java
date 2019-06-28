@@ -44,24 +44,24 @@ public class Ebms3WriterBuilder <JAXBTYPE> extends JAXBWriterBuilder <JAXBTYPE, 
   @Nonnull
   public static Ebms3WriterBuilder <Ebms3Messaging> ebms3Messaging ()
   {
-    return new Ebms3WriterBuilder<> (EEbms3DocumentType.MESSAGING);
+    return new Ebms3WriterBuilder <> (EEbms3DocumentType.MESSAGING);
   }
 
   @Nonnull
   public static Ebms3WriterBuilder <NonRepudiationInformation> nonRepudiationInformation ()
   {
-    return new Ebms3WriterBuilder<> (EEbms3DocumentType.NON_REPUDIATION_INFORMATION);
+    return new Ebms3WriterBuilder <> (EEbms3DocumentType.NON_REPUDIATION_INFORMATION);
   }
 
   @Nonnull
   public static Ebms3WriterBuilder <Soap11Envelope> soap11 ()
   {
-    return new Ebms3WriterBuilder<> (EEbms3DocumentType.SOAP_11);
+    return new Ebms3WriterBuilder <> (EEbms3DocumentType.SOAP_11);
   }
 
   @Nonnull
   public static Ebms3WriterBuilder <Soap12Envelope> soap12 ()
   {
-    return new Ebms3WriterBuilder<> (EEbms3DocumentType.SOAP_12);
+    return new Ebms3WriterBuilder <> (EEbms3DocumentType.SOAP_12);
   }
 }

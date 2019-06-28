@@ -74,12 +74,12 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
   public void createTwoWayPMode ()
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
-                                                      AS4TestConstants.TEST_RESPONDER,
-                                                      AS4ServerConfiguration.getSettings ()
-                                                                            .getAsString ("server.address",
-                                                                                          AS4TestConstants.DEFAULT_SERVER_ADDRESS),
-                                                      (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
-                                                      false);
+                                                  AS4TestConstants.TEST_RESPONDER,
+                                                  AS4ServerConfiguration.getSettings ()
+                                                                        .getAsString ("server.address",
+                                                                                      AS4TestConstants.DEFAULT_SERVER_ADDRESS),
+                                                  (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
+                                                  false);
     // Setting second leg to the same as first
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 

@@ -85,12 +85,13 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile: One-Way/Push MEP. SMSH sends an AS4 User message to the RMSH. <br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile: One-Way/Push MEP. SMSH sends an AS4 User message to the
+   * RMSH. <br>
    * <br>
    * Predicate:<br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with status
-   * code 2XX (for more details on http response codes please refer to
+   * The RMSH returns a non-repudiation receipt within a HTTP response with
+   * status code 2XX (for more details on http response codes please refer to
    * https://issues.oasis-open.org/browse/EBXMLMSG-57?jql=project%20%3D%20EBXMLMSG).
    *
    * @throws Exception
@@ -113,15 +114,15 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile: One-Way/Push MEP. SMSH and RMSH exchange several AS4 User
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile: One-Way/Push MEP. SMSH and RMSH exchange several AS4 User
    * Messages.<br>
    * <br>
    * Predicate: <br>
    * Each exchanged AS4 message contains single ORIGIN and DESTINATION elements.
    * <br>
-   * Goal: "Both UserMessage/PartyInfo/From and UserMessage/PartyInfo/To must not
-   * include more than one PartyId element"
+   * Goal: "Both UserMessage/PartyInfo/From and UserMessage/PartyInfo/To must
+   * not include more than one PartyId element"
    *
    * @throws Exception
    *         In case of error
@@ -167,16 +168,16 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile. (One-Way/Push MEP) SMSH is simulated to produce uncompressed
-   * payloads. The SMSH sends the AS4 message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile. (One-Way/Push MEP) SMSH is simulated to produce
+   * uncompressed payloads. The SMSH sends the AS4 message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH returns a non-repudiation receipt and delivers the message to the
    * consumer. <br>
    * <br>
-   * k Goal: Do not throw an error if a uncompressed payload gets sent, also check
-   * if compressed payloads are acceptable aswell.
+   * k Goal: Do not throw an error if a uncompressed payload gets sent, also
+   * check if compressed payloads are acceptable aswell.
    *
    * @throws Exception
    *         In case of error
@@ -205,19 +206,19 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile. (One-Way/Push MEP)Producer submits a message with metadata
-   * information and an XML payload to the SMSH. SMSH generates an AS4 message to
-   * send to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile. (One-Way/Push MEP)Producer submits a message with metadata
+   * information and an XML payload to the SMSH. SMSH generates an AS4 message
+   * to send to the RMSH.<br>
    * <br>
    * Predicate: <br>
-   * In the AS4 message created by the SMSH, the compressed payload is carried in
-   * a separate MIME part and the soap body is empty. <br>
+   * In the AS4 message created by the SMSH, the compressed payload is carried
+   * in a separate MIME part and the soap body is empty. <br>
    * <br>
-   * Goal:"Due to the mandatory use of the AS4 compression feature in this profile
-   * (see section 2.2.3.3), XML payloads MAY be converted to binary data, which is
-   * carried in separate MIME parts and not in the SOAP Body. Compliant AS4
-   * message always have an empty SOAP Body. "
+   * Goal:"Due to the mandatory use of the AS4 compression feature in this
+   * profile (see section 2.2.3.3), XML payloads MAY be converted to binary
+   * data, which is carried in separate MIME parts and not in the SOAP Body.
+   * Compliant AS4 message always have an empty SOAP Body. "
    *
    * @throws Exception
    *         In case of error
@@ -246,11 +247,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile. (One-Way/Push MEP) Producer submits a message to the SMSH with
-   * metadata information, an XML payload (leading business document) and other
-   * payloads (XML and non XML). SMSH generates an AS4 message to send to the
-   * RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile. (One-Way/Push MEP) Producer submits a message to the SMSH
+   * with metadata information, an XML payload (leading business document) and
+   * other payloads (XML and non XML). SMSH generates an AS4 message to send to
+   * the RMSH.<br>
    * <br>
    * Predicate: <br>
    * In the AS4 message created by the SMSH, the compressed payloads are carried
@@ -341,10 +342,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   /**
    * NOTE: Not testable => CEF document<br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile. (One-Way/Push MEP) SMSH is simulated to send an AS4 message to the
-   * RMSH with non XML payloads and without a leading business document payload.
-   * The SMSH sends the AS4 User Message to the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile. (One-Way/Push MEP) SMSH is simulated to send an AS4 message
+   * to the RMSH with non XML payloads and without a leading business document
+   * payload. The SMSH sends the AS4 User Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back a synchronous error response.
@@ -358,9 +359,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). SMSH is simulated to send an AS4 user message
-   * with a payload hyperlink reference.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). SMSH is simulated to send an AS4 user
+   * message with a payload hyperlink reference.<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back a synchronous ebMS error message.
@@ -431,10 +432,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Simulate the RMSH to not send receipts (can be
-   * done by intercepting the receipts). SMSH tries to send an AS4 User Message to
-   * the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Simulate the RMSH to not send receipts
+   * (can be done by intercepting the receipts). SMSH tries to send an AS4 User
+   * Message to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * The SMSH retries to send the AS4 User Message (at least once).
@@ -473,11 +474,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Simulate the RMSH to not send receipts. SMSH
-   * tries to send an AS4 User Message to the RMSH. Before a TIME_OUT is reached
-   * network connection is restored (RMSH is able to send a non-repudiation
-   * receipt).<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Simulate the RMSH to not send receipts.
+   * SMSH tries to send an AS4 User Message to the RMSH. Before a TIME_OUT is
+   * reached network connection is restored (RMSH is able to send a
+   * non-repudiation receipt).<br>
    * <br>
    * Predicate: <br>
    * The RMSH sends back an AS4 non-repudiation receipt to the SMSH and delivers
@@ -549,8 +550,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * completion) <br>
    * <br>
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile.<br>
    * <br>
    * Predicate: <br>
    * PMode parameter " PMode[1].ErrorHandling.Report.SenderErrors" is not set.
@@ -564,16 +565,17 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a message with metadata
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a message with metadata
    * information and a payload to the SMSH. SMSH sends an AS4 signed message to
    * the RMSH.<br>
    * <br>
    * Predicate: <br>
-   * In the AS4 Message generated by the SMSH: - Signature Hash function parameter
-   * is set to http://www.w3.org/2001/04/xmlenc#sha256 - Signature Algorithm
-   * parameter is set to http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 -
-   * Signature Certificate used is the certificate of the SMSH.
+   * In the AS4 Message generated by the SMSH: - Signature Hash function
+   * parameter is set to http://www.w3.org/2001/04/xmlenc#sha256 - Signature
+   * Algorithm parameter is set to
+   * http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 - Signature Certificate
+   * used is the certificate of the SMSH.
    *
    * @throws Exception
    *         In case of error
@@ -598,10 +600,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile (One-Way/Push MEP). Producer submits a message with metadata
-   * information and a payload to the SMSH. SMSH sends an AS4 encrypted message to
-   * the RMSH.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile (One-Way/Push MEP). Producer submits a message with metadata
+   * information and a payload to the SMSH. SMSH sends an AS4 encrypted message
+   * to the RMSH.<br>
    * <br>
    * Predicate: <br>
    * In the AS4 Message generated by the SMSH: - Encryption Algorithm is set to
@@ -643,8 +645,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * The message received by the RMSH contains 2 property elements in the
    * MessageProperties node with attributes name and type. One has name =
    * "OriginalSender" and value producerID and the other has name =
-   * "finalRecipient" and value consumerID (producerID and consumerID are provided
-   * by the original message submitted by the producer).
+   * "finalRecipient" and value consumerID (producerID and consumerID are
+   * provided by the original message submitted by the producer).
    *
    * @throws Exception
    *         In case of error
@@ -728,9 +730,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile: One-Way/Push MEP. Producer submits a "ping" message with metadata
-   * information to the SMSH (to "ping" consumer).<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile: One-Way/Push MEP. Producer submits a "ping" message with
+   * metadata information to the SMSH (to "ping" consumer).<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with values (and sends it to the RMSH):
@@ -761,14 +763,14 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
   /**
    * Prerequisite:<br>
-   * SMSH and RMSH are configured to exchange AS4 messages according to the e-SENS
-   * profile: One-Way/Push MEP. SMSH sends an AS4 User Message including a
-   * TRACKINGIDENTIFIER property set by the producer.<br>
+   * SMSH and RMSH are configured to exchange AS4 messages according to the
+   * e-SENS profile: One-Way/Push MEP. SMSH sends an AS4 User Message including
+   * a TRACKINGIDENTIFIER property set by the producer.<br>
    * <br>
    * Predicate: <br>
-   * The RMSH returns a non-repudiation receipt within a HTTP response with status
-   * code 2XX and the received AS4 message contains the TRACKINGIDENTIFIER
-   * property.
+   * The RMSH returns a non-repudiation receipt within a HTTP response with
+   * status code 2XX and the received AS4 message contains the
+   * TRACKINGIDENTIFIER property.
    *
    * @throws Exception
    *         In case of error

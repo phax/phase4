@@ -40,6 +40,6 @@ public class XMLDSigReaderBuilder <JAXBTYPE> extends JAXBReaderBuilder <JAXBTYPE
   @Nonnull
   public static XMLDSigReaderBuilder <ReferenceType> dsigReference ()
   {
-    return new XMLDSigReaderBuilder<> (EXMLDSigDocumentType.REFERENCE, ReferenceType.class);
+    return new XMLDSigReaderBuilder <> (EXMLDSigDocumentType.REFERENCE, ReferenceType.class);
   }
 }

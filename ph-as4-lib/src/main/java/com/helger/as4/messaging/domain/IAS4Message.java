@@ -47,8 +47,8 @@ public interface IAS4Message extends Serializable
   EAS4MessageType getMessageType ();
 
   /**
-   * @return The ID of the "Messaging" element for referencing in signing. Should
-   *         not be <code>null</code>.
+   * @return The ID of the "Messaging" element for referencing in signing.
+   *         Should not be <code>null</code>.
    */
   @Nonnull
   @Nonempty
@@ -76,11 +76,12 @@ public interface IAS4Message extends Serializable
   }
 
   /**
-   * Create a SOAP document from this message with the specified optional payload.
-   * Attachments are not handled by this method.
+   * Create a SOAP document from this message with the specified optional
+   * payload. Attachments are not handled by this method.
    *
    * @param aPayload
-   *        The payload to be added into the SOAP body. May be <code>null</code>.
+   *        The payload to be added into the SOAP body. May be
+   *        <code>null</code>.
    * @return The created DOM document.
    */
   @Nonnull

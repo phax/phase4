@@ -49,8 +49,8 @@ public class AS4Profile implements IAS4Profile
    * @param sDisplayName
    *        Profile display name. May neither be <code>null</code> nor empty.
    * @param aProfileValidatorProvider
-   *        Profile validator supplier. May not be <code>null</code>. The supplier
-   *        may supply <code>null</code> values.
+   *        Profile validator supplier. May not be <code>null</code>. The
+   *        supplier may supply <code>null</code> values.
    * @param aDefaultPModeProvider
    *        Default PMode supplier. May not be <code>null</code>.
    * @param aPModeIDProvider
