@@ -37,13 +37,13 @@ import com.helger.servlet.response.UnifiedResponse;
  *
  * @author Philip Helger
  */
-public class AS4Response extends UnifiedResponse
+public class AS4UnifiedResponse extends UnifiedResponse
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Response.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4UnifiedResponse.class);
 
-  public AS4Response (@Nonnull final EHttpVersion eHTTPVersion,
-                      @Nonnull final EHttpMethod eHTTPMethod,
-                      @Nonnull final HttpServletRequest aHttpRequest)
+  public AS4UnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
+                             @Nonnull final EHttpMethod eHTTPMethod,
+                             @Nonnull final HttpServletRequest aHttpRequest)
   {
     super (eHTTPVersion, eHTTPMethod, aHttpRequest);
     // Never cache the responses on client side

@@ -126,6 +126,10 @@ public class WSS4JAttachment extends Attachment
     return ret;
   }
 
+  /**
+   * @deprecated Do not use this, because it can be opened only once. Use
+   *             {@link #setSourceStreamProvider(IHasInputStream)} instead.
+   */
   @Override
   @Deprecated
   public void setSourceStream (final InputStream sourceStream)

@@ -267,6 +267,32 @@ public final class MessageHelperMethods
     return aEbms3CollaborationInfo;
   }
 
+  @Nullable
+  public static Ebms3PartInfo createEbms3PartInfo (@Nullable final WSS4JAttachment aAttachment)
+  {
+    if (aAttachment == null)
+      return null;
+
+    final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
+    if (aAttachment.hasCharset ())
+    {
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
+    }
+    if (aAttachment.hasCompressionMode ())
+    {
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_COMPRESSION_TYPE,
+                                                             aAttachment.getCompressionMode ().getMimeTypeAsString ()));
+    }
+
+    final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
+    aEbms3PartInfo.setHref (PREFIX_CID + aAttachment.getId ());
+    aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
+    return aEbms3PartInfo;
+  }
+
   /**
    * Add payload info if attachments are present.
    *
@@ -289,27 +315,7 @@ public final class MessageHelperMethods
 
     if (aAttachments != null)
       for (final WSS4JAttachment aAttachment : aAttachments)
-      {
-        final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-        aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
-                                                               aAttachment.getUncompressedMimeType ()));
-        if (aAttachment.hasCharset ())
-        {
-          aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
-                                                                 aAttachment.getCharset ().name ()));
-        }
-        if (aAttachment.hasCompressionMode ())
-        {
-          aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_COMPRESSION_TYPE,
-                                                                 aAttachment.getCompressionMode ()
-                                                                            .getMimeTypeAsString ()));
-        }
-
-        final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
-        aEbms3PartInfo.setHref (PREFIX_CID + aAttachment.getId ());
-        aEbms3PartInfo.setPartProperties (aEbms3PartProperties);
-        aEbms3PayloadInfo.addPartInfo (aEbms3PartInfo);
-      }
+        aEbms3PayloadInfo.addPartInfo (createEbms3PartInfo (aAttachment));
 
     if (aEbms3PayloadInfo.getPartInfoCount () == 0)
     {

@@ -128,16 +128,18 @@ import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
- * Process incoming AS4 transmissions.
+ * Process incoming AS4 transmissions. The method
+ * {@link #handleRequest(IRequestWebScopeWithoutResponse, AS4UnifiedResponse)}
+ * is the entry point for the complex processing.
  *
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4Handler implements AutoCloseable
+public class AS4Handler implements AutoCloseable
 {
   private static interface IAS4ResponseFactory
   {
-    void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4Response aHttpResponse);
+    void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4UnifiedResponse aHttpResponse);
 
     @Nonnull
     HttpEntity getHttpEntity (@Nonnull ESOAPVersion eSOAPVersion);
@@ -152,7 +154,8 @@ public final class AS4Handler implements AutoCloseable
       m_aDoc = aDoc;
     }
 
-    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
+    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion,
+                                 @Nonnull final AS4UnifiedResponse aHttpResponse)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharset ())
@@ -189,7 +192,8 @@ public final class AS4Handler implements AutoCloseable
         m_aMimeMsg.removeHeader (aHeader.getName ());
     }
 
-    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4Response aHttpResponse)
+    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion,
+                                 @Nonnull final AS4UnifiedResponse aHttpResponse)
     {
       aHttpResponse.addCustomResponseHeaders (m_aHeaders);
       aHttpResponse.setContent (HasInputStream.multiple ( () -> {
@@ -221,9 +225,6 @@ public final class AS4Handler implements AutoCloseable
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
-  public AS4Handler ()
-  {}
-
   /**
    * @return <code>true</code> if internal debugging is enabled,
    *         <code>false</code> otherwise.
@@ -243,6 +244,9 @@ public final class AS4Handler implements AutoCloseable
   {
     s_aDebug.set (bDebug);
   }
+
+  public AS4Handler ()
+  {}
 
   public void close ()
   {
@@ -1412,10 +1416,10 @@ public final class AS4Handler implements AutoCloseable
   }
 
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final AS4Response aHttpResponse) throws BadRequestException,
-                                                                       IOException,
-                                                                       MessagingException,
-                                                                       WSSecurityException
+                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws BadRequestException,
+                                                                              IOException,
+                                                                              MessagingException,
+                                                                              WSSecurityException
   {
     AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
 

@@ -28,6 +28,8 @@ public final class RunInJettyAS4
 
   public static void main (final String... args) throws Exception
   {
-    new JettyStarter (RunInJettyAS4.class).run ();
+    new JettyStarter (RunInJettyAS4.class).setSessionCookieName ("AS4_SESSION")
+                                          .setContainerIncludeJarPattern (".*/classes/.*")
+                                          .run ();
   }
 }

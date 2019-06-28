@@ -38,7 +38,7 @@ import com.helger.xservlet.AbstractXServlet;
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4Servlet extends AbstractXServlet
+public class AS4Servlet extends AbstractXServlet
 {
   public AS4Servlet ()
   {

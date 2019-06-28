@@ -16,7 +16,10 @@
  */
 package com.helger.as4.servlet;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,46 +32,61 @@ import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
 
 /**
- * AS4 receiving servlet.<br>
- * Use a configuration like the following in your <code>WEB-INF/web.xm</code>
- * file:
+ * Main handler for the {@link AS4Servlet}
  *
- * <pre>
-&lt;servlet&gt;
-  &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;
-  &lt;servlet-class&gt;com.helger.as4.servlet.AS4Servlet&lt;/servlet-class&gt;
-&lt;/servlet&gt;
-&lt;servlet-mapping&gt;
-  &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;
-  &lt;url-pattern&gt;/as4&lt;/url-pattern&gt;
-&lt;/servlet-mapping&gt;
- * </pre>
- *
- * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4XServletHandler implements IXServletSimpleHandler
+public class AS4XServletHandler implements IXServletSimpleHandler
 {
+  public static interface IHandlerCustomizer extends Serializable
+  {
+    void customize (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
+                    @Nonnull AS4UnifiedResponse aUnifiedResponse,
+                    @Nonnull AS4Handler aHandler);
+
+  }
+
+  private IHandlerCustomizer m_aHandlerCustomizer;
+
   public AS4XServletHandler ()
   {}
 
+  @Nullable
+  public final IHandlerCustomizer getHandlerCustomizer ()
+  {
+    return m_aHandlerCustomizer;
+  }
+
+  @Nonnull
+  public final AS4XServletHandler setHandlerCustomizer (@Nullable final IHandlerCustomizer aHandlerCustomizer)
+  {
+    m_aHandlerCustomizer = aHandlerCustomizer;
+    return this;
+  }
+
   @Nonnull
   @Override
-  public AS4Response createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
-                                            @Nonnull final EHttpMethod eHTTPMethod,
-                                            @Nonnull final HttpServletRequest aHttpRequest,
-                                            @Nonnull final IRequestWebScope aRequestScope)
+  public AS4UnifiedResponse createUnifiedResponse (@Nonnull final EHttpVersion eHTTPVersion,
+                                                   @Nonnull final EHttpMethod eHTTPMethod,
+                                                   @Nonnull final HttpServletRequest aHttpRequest,
+                                                   @Nonnull final IRequestWebScope aRequestScope)
   {
-    return new AS4Response (eHTTPVersion, eHTTPMethod, aHttpRequest);
+    return new AS4UnifiedResponse (eHTTPVersion, eHTTPMethod, aHttpRequest);
   }
 
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
-    final AS4Response aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
+    // Created above in #createUnifiedResponse
+    final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     try (final AS4Handler aHandler = new AS4Handler ())
     {
+      // Customize before handling
+      if (m_aHandlerCustomizer != null)
+        m_aHandlerCustomizer.customize (aRequestScope, aHttpResponse, aHandler);
+
+      // Main handling
       aHandler.handleRequest (aRequestScope, aHttpResponse);
     }
     catch (final BadRequestException ex)
