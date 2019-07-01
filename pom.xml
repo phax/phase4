@@ -68,7 +68,7 @@
 
   <properties>
     <wss4j.version>2.2.3</wss4j.version>
-    <log4j.version>2.11.2</log4j.version>
+    <log4j.version>2.12.0</log4j.version>
   </properties>
   
   <dependencyManagement>
