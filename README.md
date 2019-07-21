@@ -108,8 +108,8 @@ The properties have the following meaning
 
 ## Building from source
 
-After initial checkout, it is necessary to run `mvn gnerate-sources` once on the `as4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.  
-    
+After initial checkout, it is necessary to run `mvn process-sources` once on the `as4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
+
 ## Known limitations
 
 Per now the following known limitations exist:
