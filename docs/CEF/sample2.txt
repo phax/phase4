@@ -1,0 +1,199 @@
+--uuid:b717ad5e-01c6-4be0-bd8f-606814289245
+    Content-Type: application/soap+xml; charset=utf-8
+    Content-Transfer-Encoding: binary
+    Content-ID:
+<root.message@cxf.apache.org>
+
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+<env:Header xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <ns2:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+                xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:xmime="http://www.w3.org/2005/05/xmlmime" env:mustUnderstand="true"
+                wsu:Id="_4793e6a4-a0bc-45e1-a650-c5e8037ea13a">
+    <ns2:UserMessage>
+      <ns2:MessageInfo>
+        <ns2:Timestamp>2015-11-11T10:05:04.502Z</ns2:Timestamp>
+        <ns2:MessageId>as4message@corner2</ns2:MessageId>
+      </ns2:MessageInfo>
+      <ns2:PartyInfo>
+        <ns2:From>
+          <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">holodeck-c2</ns2:PartyId>
+          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Role>
+        </ns2:From>
+        <ns2:To>
+          <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">holodeck-c3</ns2:PartyId>
+          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Role>
+        </ns2:To>
+      </ns2:PartyInfo>
+      <ns2:CollaborationInfo>
+        <ns2:Service>SRV_SIMPLE_TWOWAY</ns2:Service>
+        <ns2:Action>ACT_SIMPLE_TWOWAY</ns2:Action>
+        <ns2:ConversationId>1</ns2:ConversationId>
+      </ns2:CollaborationInfo>
+      <ns2:MessageProperties>
+        <ns2:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns2:Property>
+        <ns2:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns2:Property>
+      </ns2:MessageProperties>
+      <ns2:PayloadInfo>
+        <ns2:PartInfo href="custompayload@minder">
+          <ns2:Description>a message that was submitted from domibus backend</ns2:Description>
+          <ns2:PartProperties>
+            <ns2:Property name="MimeType">application/octet-stream</ns2:Property>
+            <ns2:Property name="CompressionType">application/gzip</ns2:Property>
+          </ns2:PartProperties>
+        </ns2:PartInfo>
+        <ns2:PartInfo href="xmlpayload@minder">
+          <ns2:Description>a message that was submitted from domibus backend</ns2:Description>
+          <ns2:PartProperties>
+            <ns2:Property name="MimeType">application/xml</ns2:Property>
+            <ns2:Property name="CompressionType">application/gzip</ns2:Property>
+            <ns2:Property name="CharacterSet">utf-8</ns2:Property>
+          </ns2:PartProperties>
+        </ns2:PartInfo>
+      </ns2:PayloadInfo>
+    </ns2:UserMessage>
+  </ns2:Messaging>
+  <wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+                 xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                 soap:mustUnderstand="true">
+    <xenc:EncryptedKey xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="EK-52da6ed0-442e-467f-abf0-eaf092a9b15c">
+      <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <wsse:SecurityTokenReference>
+          <wsse:KeyIdentifier
+              EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
+              ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509SubjectKeyIdentifier">
+            tmYPAx5FkAX40lS3rlibmI/JGtY=
+          </wsse:KeyIdentifier>
+        </wsse:SecurityTokenReference>
+      </ds:KeyInfo>
+      <xenc:CipherData>
+        <xenc:CipherValue>
+          lAoON+RGVJG9yHAHiqOI7/AKDtQVg5FbJ4nUTFmrveRqaJTcRFveuellIYgDHwHWZhQTaDQ0+trgDtTcDSPbRlSU7nkH0krIr3w2H7Dc87jfwnR+C2cRjiAO2O9HP1Lw4pzNxH2LhcBL0Ox32UwUExXnrIM+sODv4FTKtynZBrVCoYw7lr9Y5k1e1a4uu3EbxNQDMomsAeMjCgzxeBEfQZAYzltzcSAIFaqtfjPh3qaUhfXbZjW0BvgbYpLtb/+lPKdlLz5y8mNH61pKYh6+FyeKZvvGRh/IwD94xfxSPNrQuAZ1xtVzfLkBqruouIE7Wqh3n83e2FJQnIpAwCXfLw==
+        </xenc:CipherValue>
+      </xenc:CipherData>
+      <xenc:ReferenceList>
+        <xenc:DataReference URI="#ED-4fe7d7a5-e836-49af-b11c-ac586d1de303"/>
+        <xenc:DataReference URI="#ED-d70a3472-59d8-47b5-8b81-0d972fb8f5bd"/>
+      </xenc:ReferenceList>
+    </xenc:EncryptedKey>
+    <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="ED-4fe7d7a5-e836-49af-b11c-ac586d1de303"
+                        MimeType="application/gzip"
+                        Type="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Complete">
+      <xenc:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/>
+      <xenc:CipherData>
+        <xenc:CipherReference URI="cid:custompayload@minder">
+          <xenc:Transforms>
+            <ds:Transform xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                          Algorithm="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Ciphertext-Transform"/>
+          </xenc:Transforms>
+        </xenc:CipherReference>
+      </xenc:CipherData>
+    </xenc:EncryptedData>
+    <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Id="ED-d70a3472-59d8-47b5-8b81-0d972fb8f5bd"
+                        MimeType="application/gzip"
+                        Type="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Complete">
+      <xenc:EncryptionMethod Algorithm="http://www.w3.org/2009/xmlenc11#aes128-gcm"/>
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <wsse:SecurityTokenReference
+            xmlns:wsse11="http://docs.oasis-open.org/wss/oasis-wss-wssecurity-secext-1.1.xsd"
+            wsse11:TokenType="http://docs.oasis-open.org/wss/oasis-wss-soap-message-security-1.1#EncryptedKey">
+          <wsse:Reference URI="#EK-52da6ed0-442e-467f-abf0-eaf092a9b15c"/>
+        </wsse:SecurityTokenReference>
+      </ds:KeyInfo>
+      <xenc:CipherData>
+        <xenc:CipherReference URI="cid:xmlpayload@minder">
+          <xenc:Transforms>
+            <ds:Transform xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                          Algorithm="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Ciphertext-Transform"/>
+          </xenc:Transforms>
+        </xenc:CipherReference>
+      </xenc:CipherData>
+    </xenc:EncryptedData>
+    <wsse:BinarySecurityToken
+        EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"
+        ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"
+        wsu:Id="X509-d973d0f3-fc35-498c-ac4d-60bfb684235e">
+      MIIDgTCCAmmgAwIBAgIEAJh6WjANBgkqhkiG9w0BAQsFADBxMQswCQYDVQQGEwJFVTESMBAGA1UECBMJZG9taWJ1c0RlMRIwEAYDVQQHEwlkb21pYnVzRGUxEjAQBgNVBAoTCWRvbWlidXNEZTESMBAGA1UECxMJZG9taWJ1c0RlMRIwEAYDVQQDEwlkb21pYnVzRGUwHhcNMTUwODEwMDgzMjAwWhcNMTYwODA5MDgzMjAwWjBxMQswCQYDVQQGEwJFVTESMBAGA1UECBMJZG9taWJ1c0RlMRIwEAYDVQQHEwlkb21pYnVzRGUxEjAQBgNVBAoTCWRvbWlidXNEZTESMBAGA1UECxMJZG9taWJ1c0RlMRIwEAYDVQQDEwlkb21pYnVzRGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCJY/bSFNiRxqC9/v+vksxrpxa2z+iW101zNg618dk31D3iJhRNi1oLJo1lUj1chn0Pibb2A+jO8+lxPw4ZRKHwJ0qYkK3TrT+i7wBFwXle/qG01/qXBPwAaY3TT5i39EmnekW/TCTQWWyJLO0KM5Yb7FbPzt9Ncoch6k1WdcdXxGiKbWyXhv+XRzhX9RIQsYfYs0m34eFxY976m8NMXyEt2QAz9WbTzlHlbazlzcgRMyq0lP7AsVPyNBdKFqFBAJfsrBYVeuoUCt8h0Nt8GLj20t7LEttUXP27H8AaNrEAkUtXF6Sywbb/HU+Ra1C/RUe9Jn7Iec9rVEbB/3Bc0QkxAgMBAAGjITAfMB0GA1UdDgQWBBS5lK8UuUSF1szzkyveXhcD8P7GYzANBgkqhkiG9w0BAQsFAAOCAQEAJQAkuEn068cciY/mv7IgUBhG6RIdizclgTmxEmg3SjBM8SDTOmWwHtwr7lqe/Ry4kq59bhHhTVYMbAcRHXxqn1oaIDynPap7VZHDJkw95URZ1mXcTDze39WHbfmmKl6wXTp1fNvNtU+4PTbnQmhdtBCxtMpAzZscJcQRpYzl/IHZwzFaUCFRbK+/+tTPljxlCpY3ZM5kGxSn3LJpjJP3lRfJk4LyPwb1+sqHSplrZ3n7D+dkRuU5k4yjLiojsiVq6kKAj3w/33MGT9LXj2P97nhaOE1aCHN51sNq1E5wTX9XKXdOIBsQjY9QOHE6vlU5gcjVIvqK76Z+icQRaXsiew==
+    </wsse:BinarySecurityToken>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SIG-ca2d90df-a2ab-41e2-826a-6c9b9dc842ea">
+      <ds:SignedInfo>
+        <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+          <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="soap"/>
+        </ds:CanonicalizationMethod>
+        <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+        <ds:Reference URI="#_603c382f-1a47-4e3c-96e6-911762fbc0fa">
+          <ds:Transforms>
+            <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+              <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList=""/>
+            </ds:Transform>
+          </ds:Transforms>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+          <ds:DigestValue>2PHqRnQFS/lxGePyohNz+mzBbHmChSNDXzErhB0Q0Vc=</ds:DigestValue>
+        </ds:Reference>
+        <ds:Reference URI="#_4793e6a4-a0bc-45e1-a650-c5e8037ea13a">
+          <ds:Transforms>
+            <ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#">
+              <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#"
+                                      PrefixList="soap"/>
+            </ds:Transform>
+          </ds:Transforms>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+          <ds:DigestValue>dobvVJxxGIa3qrd/lsAWGry319iMYz4SB0Oc4EFq4S0=</ds:DigestValue>
+        </ds:Reference>
+        <ds:Reference URI="cid:custompayload@minder">
+          <ds:Transforms>
+            <ds:Transform
+                Algorithm="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Content-Signature-Transform"/>
+          </ds:Transforms>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+          <ds:DigestValue>r7CBJbov5qfQij53dkc1t13rbaTa3dKkqkCR5ankrf0=</ds:DigestValue>
+        </ds:Reference>
+        <ds:Reference URI="cid:xmlpayload@minder">
+          <ds:Transforms>
+            <ds:Transform
+                Algorithm="http://docs.oasis-open.org/wss/oasis-wss-SwAProfile-1.1#Attachment-Content-Signature-Transform"/>
+          </ds:Transforms>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+          <ds:DigestValue>yqDt8JU9CgV+e+tbfUO3wVj/I811CUMDveI8LpSJ14o=</ds:DigestValue>
+        </ds:Reference>
+      </ds:SignedInfo>
+      <ds:SignatureValue>
+        UfSWsTgGFIoCSOf04MGzZSMiJvIP4YmuLSrV54XJBe7zzI2gFA+GyY5ebmLdDODL42rNZhmiu07A//8ac2KzmWD21C/KdcPmOcXW43wy7RN3JZo9HrOWa1tBUT+9dgGfEBhpEaxdVUArXiDUNP0s58MJO+igrzJZo5xJ0g8/2+8RRHKLUVKhRRUV9JOovlzdXvH7r6orMnyAnsXr4fBS55S6z621C2zO0ty7GevyLR14Ii9VK03Hf6f4E9xh7V17FgILCTJJG7aLwOlFDJ0FUSRlzpgzdtOe2nvf+h66HWbXxjNe1XYKV0fLwan1c5F4gqMKMPHPDslFPbfevDpfcg==
+      </ds:SignatureValue>
+      <ds:KeyInfo Id="KI-8f7f6c25-ff21-44d5-a46d-3fd9b8d382cc">
+        <wsse:SecurityTokenReference wsu:Id="STR-60f0a3e6-abcc-470b-9e8d-5582c3bc7904">
+          <wsse:Reference URI="#X509-d973d0f3-fc35-498c-ac4d-60bfb684235e"
+                          ValueType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3"/>
+        </wsse:SecurityTokenReference>
+      </ds:KeyInfo>
+    </ds:Signature>
+  </wsse:Security>
+</env:Header>
+<soap:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+           wsu:Id="_603c382f-1a47-4e3c-96e6-911762fbc0fa"/>
+</soap:Envelope>
+    --uuid:b717ad5e-01c6-4be0-bd8f-606814289245
+    Content-Type: application/octet-stream
+    Content-Transfer-Encoding: binary
+    Content-Disposition: attachment; filename="test-1.bin"
+    Content-ID: <custompayload@minder>
+
+    7?U  ?????hl?
+    "??2X????=%D??M??l??*?yn&?
+    ??Bry?+
+    ??W??9JB?f??d??$?@)t)?g)?G?ID??aK4???N??p????~??I?S:Ocl%A?|3#?y8%?  ??
+    ????N]?j6I"? X?
+    --uuid:b717ad5e-01c6-4be0-bd8f-606814289245
+    Content-Type: application/octet-stream
+    Content-Transfer-Encoding: binary
+    Content-Disposition: attachment; filename="test-1.xml"
+    Content-ID: <xmlpayload@minder>
+
+    ??q/?  ?
+    ?M??|?F-R1LxA3#}HPeJ???e?
+    G?=H?M?To??,0???o*-?F????-Q??c?z???
+    I?\8FU?a;?????x^??"?A??eF??v??|?wu?R??=??
+    
+    --uuid:b717ad5e-01c6-4be0-bd8f-606814289245--

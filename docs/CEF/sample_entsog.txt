@@ -1,0 +1,117 @@
+------=_Part_1717_975796272.1542101028884
+Content-Type: application/soap+xml; charset=utf-8
+
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"><env:Header><ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" soapenv:mustUnderstand="true">
+    <ns2:UserMessage>
+        <ns2:MessageInfo>
+            <ns2:Timestamp>2018-11-13T09:23:48.880Z</ns2:Timestamp>
+            <ns2:MessageId>cb114d74-5f5d-47cd-acf1-9cdc017ab669@mindertestbed.org</ns2:MessageId>
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+            <ns2:From>
+                <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">minder</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+            </ns2:From>
+            <ns2:To>
+                <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">flame-c2</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+            </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+            <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
+            <ns2:Action>Submit</ns2:Action>
+            <ns2:ConversationId>1</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+            <ns2:Property name="FromPartyIdType">http://www.entsoe.eu/eic-codes/eic-party-codes-x</ns2:Property>
+            <ns2:Property name="ToPartyIdType">http://www.entsoe.eu/eic-codes/eic-party-codes-x</ns2:Property>
+            <ns2:Property name="MessageId">6da59f71-1ebb-4d47-a03b-3a9646fa016a@mindertestbed.org</ns2:Property>
+<ns2:Property name="ConversationId">1</ns2:Property>
+<ns2:Property name="Service">SRV_ENTSOG</ns2:Property>
+<ns2:Property name="Action">ACT_ENTSOG</ns2:Property>
+<ns2:Property name="ToPartyId">22X-EU-B-P0Q0R-S</ns2:Property>
+<ns2:Property name="ToPartyRole">ZSO</ns2:Property>
+<ns2:Property name="FromPartyId">22X-EU-A-X0A0Y-Z</ns2:Property>
+<ns2:Property name="FromPartyRole">ZSH</ns2:Property>
+<ns2:Property name="originalSender">C1</ns2:Property>
+<ns2:Property name="finalRecipient">C4</ns2:Property>
+        </ns2:MessageProperties>
+        <ns2:PayloadInfo>
+            <ns2:PartInfo href="cid:EDIG@S">
+<ns2:PartProperties><ns2:Property name="MimeType">application/xml</ns2:Property>
+</ns2:PartProperties>
+</ns2:PartInfo>
+
+        </ns2:PayloadInfo>
+    </ns2:UserMessage>
+</ns2:Messaging></env:Header><env:Body/></env:Envelope>
+------=_Part_1717_975796272.1542101028884
+Content-Type: application/xml
+Content-ID: <EDIG@S>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Nomination_Document release="1"
+	xmlns="urn:easeegas.eu:edigas:nominationandmatching:nominationdocument:5:1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<identification>NOMINTSDT123456</identification>
+	<version>3</version>
+	<type>01G</type>
+	<creationDateTime>2013-10-11T11:22:26Z</creationDateTime>
+	<validityPeriod>2013-10-13T04:00Z/2013-10-14T04:00Z</validityPeriod>
+	<contractReference>STAIZTSHIPPERACCOUNT</contractReference>
+	<issuer_MarketParticipant.identification codingScheme="305"
+		>22XTEST-BUS-SHID</issuer_MarketParticipant.identification>
+	<issuer_MarketParticipant.marketRole.code>ZSH</issuer_MarketParticipant.marketRole.code>
+	<recipient_MarketParticipant.identification codingScheme="305"
+		>22X-BE-A-A0A0A-Y</recipient_MarketParticipant.identification>
+	<recipient_MarketParticipant.marketRole.code>ZSO</recipient_MarketParticipant.marketRole.code>
+	<ConnectionPoint>
+		<identification codingScheme="305">21Z0000000000074</identification>
+		<measureUnit.code>KW1</measureUnit.code>
+		<NominationType>
+			<type>A01</type>
+			<Account>
+				<internalAccount codingScheme="ZSO">EEXXX</internalAccount>
+				<externalAccount codingScheme="ZSO">GCXXX</externalAccount>
+				<externalAccountTso codingScheme="305">22X-NO-A-A0A0A-2</externalAccountTso>
+				<Period>
+					<timeInterval>2013-10-13T04:00Z/2013-10-14T03:00Z</timeInterval>
+					<direction.code>Z02</direction.code>
+					<quantity.amount>8528168</quantity.amount>
+					<priority_Status.code>31G</priority_Status.code>
+				</Period>
+				<Period>
+					<timeInterval>2013-10-14T03:00Z/2013-10-14T04:00Z</timeInterval>
+					<direction.code>Z02</direction.code>
+					<quantity.amount>8528176</quantity.amount>
+					<priority_Status.code>38G</priority_Status.code>
+				</Period>
+			</Account>
+		</NominationType>
+		<NominationType>
+			<type>A02</type>
+			<Account>
+				<internalAccount codingScheme="ZSO">EEXXX</internalAccount>
+				<externalAccount codingScheme="ZSO">GCYYY</externalAccount>
+				<externalAccountTso codingScheme="305">22X-NO-A-A0A0A-2</externalAccountTso>
+				<Period>
+					<timeInterval>2013-10-13T04:00Z/2013-10-14T04:00Z</timeInterval>
+					<direction.code>Z02</direction.code>
+					<quantity.amount>10000</quantity.amount>
+				</Period>
+			</Account>
+			<Account>
+				<internalAccount codingScheme="ZSO">FLXXX</internalAccount>
+				<externalAccount codingScheme="ZSO">GCXXX</externalAccount>
+				<externalAccountTso codingScheme="305">22X-NO-A-A0A0A-2</externalAccountTso>
+				<Period>
+					<timeInterval>2013-10-13T04:00Z/2013-10-14T04:00Z</timeInterval>
+					<direction.code>Z03</direction.code>
+					<quantity.amount>500</quantity.amount>
+				</Period>
+			</Account>
+		</NominationType>
+	</ConnectionPoint>
+</Nomination_Document>
+
+------=_Part_1717_975796272.1542101028884--

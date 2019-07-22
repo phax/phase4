@@ -1,0 +1,33 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+  <env:Header>
+    <ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                   xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" soapenv:mustUnderstand="true">
+      <ns2:UserMessage>
+        <ns2:MessageInfo>
+          <ns2:Timestamp>2015-11-07T19:44:17.090Z</ns2:Timestamp>
+          <ns2:MessageId>notification@corner2</ns2:MessageId>
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+          <ns2:From>
+            <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">holodeck-c2</ns2:PartyId>
+            <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+          </ns2:From>
+          <ns2:To>
+            <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">minder</ns2:PartyId>
+            <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+          </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+          <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
+          <ns2:Action>Notify</ns2:Action>
+          <ns2:ConversationId>1</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+          <ns2:Property name="SignalType">Receipt</ns2:Property>
+          <ns2:Property name="RefToMessageId">as4message@corner2</ns2:Property>
+        </ns2:MessageProperties>
+      </ns2:UserMessage>
+    </ns2:Messaging>
+  </env:Header>
+  <env:Body/>
+</env:Envelope>
