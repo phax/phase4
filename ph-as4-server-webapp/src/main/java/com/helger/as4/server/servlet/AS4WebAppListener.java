@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.as4.server.servlet.cef.CCEFCT;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.debug.GlobalDebug;
@@ -126,8 +125,6 @@ public final class AS4WebAppListener extends WebAppListener
   {
     AS4ServerInitializer.initAS4Server ();
     DropFolderUserMessage.init ();
-
-    CCEFCT.registerPModes ();
   }
 
   @Override
