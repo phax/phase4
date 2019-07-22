@@ -29,6 +29,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -486,5 +487,24 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eSOAPVersion = eSOAPVersion;
+  }
+
+  public final void setCryptoValuesFromPMode (@Nullable final PModeLeg aLeg)
+  {
+    if (aLeg != null)
+    {
+      if (aLeg.getSecurity () != null)
+      {
+        setCryptoAlgorithmSign (aLeg.getSecurity ().getX509SignatureAlgorithm ());
+        setCryptoAlgorithmSignDigest (aLeg.getSecurity ().getX509SignatureHashFunction ());
+        setCryptoAlgorithmCrypt (aLeg.getSecurity ().getX509EncryptionAlgorithm ());
+      }
+      else
+      {
+        setCryptoAlgorithmSign (null);
+        setCryptoAlgorithmSignDigest (null);
+        setCryptoAlgorithmCrypt (null);
+      }
+    }
   }
 }

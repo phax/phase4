@@ -18,6 +18,7 @@ package com.helger.as4.messaging.crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -43,7 +44,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 
 /**
  * Message singing helper.
- * 
+ *
  * @author Philip Helger
  */
 public final class SignedMessageCreator
@@ -65,8 +66,8 @@ public final class SignedMessageCreator
    *        The ID of the "Messaging" element to sign.
    * @param aAttachments
    *        Optional list of attachments
-   * @param aResMgr
-   *        Resource manager to be used.
+   * @param aResHelper
+   *        Resource helper to be used.
    * @param bMustUnderstand
    *        Must understand?
    * @param eCryptoAlgorithmSign
@@ -83,7 +84,7 @@ public final class SignedMessageCreator
                                               @Nonnull final ESOAPVersion eSOAPVersion,
                                               @Nonnull @Nonempty final String sMessagingID,
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                              @Nonnull final AS4ResourceHelper aResMgr,
+                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                               final boolean bMustUnderstand,
                                               @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
                                               @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
@@ -92,7 +93,7 @@ public final class SignedMessageCreator
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (eCryptoAlgorithmSign, "CryptoAlgorithmSign");
     ValueEnforcer.notNull (eCryptoAlgorithmSignDigest, "CryptoAlgorithmSignDigest");
 
@@ -123,7 +124,7 @@ public final class SignedMessageCreator
       aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
       final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
-                                                                                                            aResMgr);
+                                                                                                            aResHelper);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 

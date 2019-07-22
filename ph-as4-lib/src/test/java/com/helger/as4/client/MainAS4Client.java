@@ -84,7 +84,7 @@ public final class MainAS4Client
    */
   public static void main (final String [] args)
   {
-    try (final AS4ResourceHelper aResMgr = new AS4ResourceHelper ())
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       String sURL = "http://127.0.0.1:8080/as4";
       if (false)
@@ -137,7 +137,7 @@ public final class MainAS4Client
           final Document aDoc = MockClientMessages.testSignedUserMessage (eSOAPVersion,
                                                                           aPayload,
                                                                           aAttachments,
-                                                                          aResMgr);
+                                                                          aResHelper);
           aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
         }
         // BodyPayload ENCRYPTED
@@ -162,7 +162,7 @@ public final class MainAS4Client
               aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile ("attachment/test.xml.gz"),
                                                                               CMimeType.APPLICATION_GZIP,
                                                                               null,
-                                                                              aResMgr));
+                                                                              aResHelper));
               final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
                                                                                            null,
                                                                                            aAttachments);
@@ -172,7 +172,7 @@ public final class MainAS4Client
                                                                                                                              eSOAPVersion,
                                                                                                                              aMsg.getMessagingID (),
                                                                                                                              aAttachments,
-                                                                                                                             aResMgr,
+                                                                                                                             aResHelper,
                                                                                                                              false,
                                                                                                                              ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                                                                              ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
@@ -188,7 +188,7 @@ public final class MainAS4Client
                 Document aDoc = MockClientMessages.testSignedUserMessage (eSOAPVersion,
                                                                           aPayload,
                                                                           aAttachments,
-                                                                          aResMgr);
+                                                                          aResHelper);
                 aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
                                                                  eSOAPVersion,
                                                                  aDoc,

@@ -18,6 +18,7 @@ package com.helger.as4.messaging.crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
@@ -58,8 +59,9 @@ public final class EncryptionCreator
                                                  @Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
-                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws Exception
+                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException
   {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
@@ -86,12 +88,15 @@ public final class EncryptionCreator
                                                 @Nonnull final Document aDoc,
                                                 final boolean bMustUnderstand,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4ResourceHelper aResMgr,
+                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException,
                                                                                                  MessagingException
   {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -108,7 +113,7 @@ public final class EncryptionCreator
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
     if (CollectionHelper.isNotEmpty (aAttachments))
     {
-      aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResMgr);
+      aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 

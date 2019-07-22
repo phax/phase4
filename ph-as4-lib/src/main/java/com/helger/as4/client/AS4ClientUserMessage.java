@@ -159,52 +159,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       throw new IllegalStateException ("Mandatory property finalRecipient is missing");
   }
 
-  private void _setValuesWithPMode ()
-  {
-    if (m_aPMode != null)
-    {
-      PModeLeg aEffectiveLeg = m_aPMode.getLeg1 ();
-      if (!m_bUseLeg1)
-        aEffectiveLeg = m_aPMode.getLeg2 ();
-
-      if (aEffectiveLeg.hasBusinessInfo ())
-      {
-        m_sAction = aEffectiveLeg.getBusinessInfo ().getAction ();
-        m_sServiceValue = aEffectiveLeg.getBusinessInfo ().getService ();
-      }
-      else
-      {
-        m_sAction = null;
-        m_sServiceValue = null;
-      }
-      m_sAgreementRefValue = m_aPMode.getAgreement ();
-      if (m_aPMode.hasInitiator ())
-      {
-        m_sFromRole = m_aPMode.getInitiator ().getRole ();
-        m_sFromPartyID = m_aPMode.getInitiator ().getID ();
-      }
-      else
-      {
-        m_sFromRole = null;
-        m_sFromPartyID = null;
-      }
-      if (m_aPMode.hasResponder ())
-      {
-        m_sToRole = m_aPMode.getResponder ().getRole ();
-        m_sToPartyID = m_aPMode.getResponder ().getID ();
-      }
-      else
-      {
-        m_sToRole = null;
-        m_sToPartyID = null;
-      }
-
-      setCryptoAlgorithmSign (aEffectiveLeg.getSecurity ().getX509SignatureAlgorithm ());
-      setCryptoAlgorithmSignDigest (aEffectiveLeg.getSecurity ().getX509SignatureHashFunction ());
-      setCryptoAlgorithmCrypt (aEffectiveLeg.getSecurity ().getX509EncryptionAlgorithm ());
-    }
-  }
-
   /**
    * Build the AS4 message to be sent. It uses all the attributes of this class
    * to build the final message. Compression, signing and encryption happens in
@@ -633,18 +587,60 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     return m_aPMode;
   }
 
+  protected void setValuesFromPMode (@Nonnull final IPMode aPMode, @Nonnull final PModeLeg aEffectiveLeg)
+  {
+    if (aEffectiveLeg.hasBusinessInfo ())
+    {
+      setAction (aEffectiveLeg.getBusinessInfo ().getAction ());
+      setServiceValue (aEffectiveLeg.getBusinessInfo ().getService ());
+    }
+    else
+    {
+      setAction (null);
+      setServiceValue (null);
+    }
+    setAgreementRefValue (aPMode.getAgreement ());
+    if (aPMode.hasInitiator ())
+    {
+      setFromRole (aPMode.getInitiator ().getRole ());
+      setFromPartyID (aPMode.getInitiator ().getID ());
+    }
+    else
+    {
+      setFromRole (null);
+      setFromPartyID (null);
+    }
+    if (aPMode.hasResponder ())
+    {
+      setToRole (aPMode.getResponder ().getRole ());
+      setToPartyID (aPMode.getResponder ().getID ());
+    }
+    else
+    {
+      setToRole (null);
+      setToPartyID (null);
+    }
+
+    setCryptoValuesFromPMode (aEffectiveLeg);
+  }
+
   /**
    * This method should be used if you do not want to set each parameter and
    * have a PMode ready that you wish to use. Some parameters still must be set
    * with the remaining setters.
    *
-   * @param aPmode
+   * @param aPMode
    *        that should be used
    */
-  public final void setPMode (@Nullable final IPMode aPmode)
+  public final void setPMode (@Nullable final IPMode aPMode)
   {
-    m_aPMode = aPmode;
+    m_aPMode = aPMode;
     // if pmode is set use attribute from pmode
-    _setValuesWithPMode ();
+    if (aPMode != null)
+    {
+      final PModeLeg aEffectiveLeg = m_bUseLeg1 ? aPMode.getLeg1 () : aPMode.getLeg2 ();
+      if (aEffectiveLeg != null)
+        setValuesFromPMode (aPMode, aEffectiveLeg);
+    }
   }
 }

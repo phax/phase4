@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.DOMException;
@@ -67,7 +68,7 @@ final class MockClientMessages
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
@@ -75,7 +76,7 @@ final class MockClientMessages
                                                                           eSOAPVersion,
                                                                           aMsg.getMessagingID (),
                                                                           aAttachments,
-                                                                          aResMgr,
+                                                                          aResHelper,
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -84,7 +85,7 @@ final class MockClientMessages
 
   public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                           @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                           @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
@@ -94,7 +95,7 @@ final class MockClientMessages
                                                                           eSOAPVersion,
                                                                           aErrorMsg.getMessagingID (),
                                                                           aAttachments,
-                                                                          aResMgr,
+                                                                          aResHelper,
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
@@ -104,10 +105,10 @@ final class MockClientMessages
   public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                              @Nullable final Node aPayload,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException,
-                                                                                        DOMException
+                                             @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
+                                                                                                        DOMException
   {
-    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResMgr);
+    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResHelper);
 
     final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (eSOAPVersion,
                                                                     MessageHelperMethods.createRandomMessageID (),
@@ -122,7 +123,7 @@ final class MockClientMessages
                                                                           eSOAPVersion,
                                                                           aReceiptMsg.getMessagingID (),
                                                                           aAttachments,
-                                                                          aResMgr,
+                                                                          aResHelper,
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
