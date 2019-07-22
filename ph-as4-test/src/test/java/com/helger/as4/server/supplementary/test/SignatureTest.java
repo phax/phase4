@@ -21,7 +21,6 @@ import static org.junit.Assert.assertSame;
 
 import javax.annotation.Nullable;
 
-import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
@@ -33,9 +32,9 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -60,28 +59,27 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final AS4CryptoFactory aAS4CryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
-    final Crypto aCrypto = aAS4CryptoFactory.getCrypto ();
-    final CryptoProperties aCryptoProperties = aAS4CryptoFactory.getCryptoProperties ();
+    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
 
     final WSSecSignature aBuilder = new WSSecSignature (secHeader);
-    aBuilder.setUserInfo (aCryptoProperties.getKeyAlias (), aCryptoProperties.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
     aBuilder.setDigestAlgo (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
-    final Document signedDoc = aBuilder.build (aCrypto);
+    final Document signedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
     WSHandlerResult aResults;
     {
       final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
-      aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCrypto);
+      aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCryptoFactory.getCrypto ());
     }
 
     final WSSecurityEngineResult actionResult = aResults.getActionResults ()

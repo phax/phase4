@@ -36,14 +36,13 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.model.pmode.PModeManager;
@@ -177,7 +176,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       aPModeMgr.createOrUpdatePMode (aPMode);
 
       final AS4UserMessage aMsg = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage).setMustUnderstand (true);
-      final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+      final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                             aMsg.getAsSOAPDocument (m_aPayload),
                                                                             m_eSOAPVersion,
                                                                             aMsg.getMessagingID (),
@@ -371,7 +370,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                 null,
                                                 null,
                                                 x -> aMsgID.set (x));
-      final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+      final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                             aDoc,
                                                                             m_eSOAPVersion,
                                                                             aMsgID.get (),

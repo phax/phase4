@@ -18,6 +18,7 @@ package com.helger.as4.servlet.soap;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -26,24 +27,30 @@ import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.crypto.CryptoProperties;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
+import com.helger.as4.crypto.AS4CryptoProperties;
+import com.helger.commons.ValueEnforcer;
 
 final class KeyStoreCallbackHandler implements CallbackHandler
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+  private final AS4CryptoProperties m_aCryptoProperties;
+
+  public KeyStoreCallbackHandler (@Nonnull final AS4CryptoProperties aCryptoProperties)
+  {
+    ValueEnforcer.notNull (aCryptoProperties, "CryptoProperties");
+    m_aCryptoProperties = aCryptoProperties;
+  }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
   {
-    final CryptoProperties aCP = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
     for (final Callback aCallback : aCallbacks)
     {
       if (aCallback instanceof WSPasswordCallback)
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
-        if (aCP.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
+        if (m_aCryptoProperties.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
         {
-          aPasswordCallback.setPassword (aCP.getKeyPassword ());
+          aPasswordCallback.setPassword (m_aCryptoProperties.getKeyPassword ());
           LOGGER.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
         }
         else

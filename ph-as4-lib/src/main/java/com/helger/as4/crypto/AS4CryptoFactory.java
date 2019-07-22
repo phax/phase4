@@ -27,12 +27,13 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.dom.engine.WSSConfig;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
 
 @Immutable
-public final class AS4CryptoFactory implements Serializable
+public class AS4CryptoFactory implements Serializable
 {
   static
   {
@@ -46,23 +47,23 @@ public final class AS4CryptoFactory implements Serializable
    */
   public static final AS4CryptoFactory DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
 
-  private final CryptoProperties m_aCryptoProps;
+  private final AS4CryptoProperties m_aCryptoProps;
   private transient Crypto m_aCrypto;
 
   @Nonnull
-  private static CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)
+  private static AS4CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)
   {
-    CryptoProperties aCryptoProps;
+    AS4CryptoProperties aCryptoProps;
     if (StringHelper.hasNoText (sCryptoPropertiesPath))
     {
       // Uses crypto.properties => needs exact name crypto.properties
-      aCryptoProps = new CryptoProperties (new ClassPathResource ("private-crypto.properties"));
+      aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("private-crypto.properties"));
       if (!aCryptoProps.isRead ())
-        aCryptoProps = new CryptoProperties (new ClassPathResource ("crypto.properties"));
+        aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("crypto.properties"));
     }
     else
     {
-      aCryptoProps = new CryptoProperties (new ClassPathResource (sCryptoPropertiesPath));
+      aCryptoProps = new AS4CryptoProperties (new ClassPathResource (sCryptoPropertiesPath));
     }
     return aCryptoProps;
   }
@@ -78,7 +79,7 @@ public final class AS4CryptoFactory implements Serializable
    */
   public AS4CryptoFactory (@Nullable final String sCryptoPropertiesPath)
   {
-    m_aCryptoProps = _createPropsFromFile (sCryptoPropertiesPath);
+    this (_createPropsFromFile (sCryptoPropertiesPath));
     if (!m_aCryptoProps.isRead ())
       throw new InitializationException ("Failed to locate crypto properties in '" + sCryptoPropertiesPath + "'");
   }
@@ -93,7 +94,20 @@ public final class AS4CryptoFactory implements Serializable
    */
   public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
   {
-    m_aCryptoProps = new CryptoProperties (aProps);
+    this (new AS4CryptoProperties (aProps));
+  }
+
+  /**
+   * This constructor takes the crypto properties directly. See the
+   * {@link com.helger.as4.client.AbstractAS4Client} for a usage example.
+   *
+   * @param aCryptoProps
+   *        The properties to be used. May not be <code>null</code>.
+   */
+  public AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
+  {
+    ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
+    m_aCryptoProps = aCryptoProps;
   }
 
   /**
@@ -101,9 +115,23 @@ public final class AS4CryptoFactory implements Serializable
    *         <code>null</code>.
    */
   @Nonnull
-  public CryptoProperties getCryptoProperties ()
+  public final AS4CryptoProperties getCryptoProperties ()
   {
     return m_aCryptoProps;
+  }
+
+  @Nonnull
+  public static Crypto createCrypto (@Nonnull final AS4CryptoProperties aCryptoProps)
+  {
+    ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
+    try
+    {
+      return CryptoFactory.getInstance (aCryptoProps.getAsProperties ());
+    }
+    catch (final Exception ex)
+    {
+      throw new InitializationException ("Failed to init crypto properties!", ex);
+    }
   }
 
   /**
@@ -113,21 +141,11 @@ public final class AS4CryptoFactory implements Serializable
    * @return A {@link Crypto} instance and never <code>null</code>.
    */
   @Nonnull
-  public Crypto getCrypto ()
+  public final Crypto getCrypto ()
   {
     Crypto ret = m_aCrypto;
     if (ret == null)
-    {
-      try
-      {
-        ret = CryptoFactory.getInstance (m_aCryptoProps.getAsProperties ());
-      }
-      catch (final Exception ex)
-      {
-        throw new InitializationException ("Failed to init crypto properties!", ex);
-      }
-      m_aCrypto = ret;
-    }
+      ret = m_aCrypto = createCrypto (m_aCryptoProps);
     return ret;
   }
 }

@@ -41,15 +41,16 @@ import org.w3c.dom.Element;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
@@ -71,6 +72,14 @@ import com.helger.xml.XMLHelper;
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
+
+  private final AS4CryptoFactory m_aCryptoFactory;
+
+  public SOAPHeaderElementProcessorWSS4J (@Nonnull final AS4CryptoFactory aCryptoFactory)
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
+    m_aCryptoFactory = aCryptoFactory;
+  }
 
   @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
@@ -188,7 +197,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       try
       {
         // Convert to WSS4J attachments
-        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler ();
+        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory.getCryptoProperties ());
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                               aState.getResourceMgr ());
 
@@ -197,8 +206,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-        aRequestData.setSigVerCrypto (AS4ServerSettings.getAS4CryptoFactory ().getCrypto ());
-        aRequestData.setDecCrypto (AS4ServerSettings.getAS4CryptoFactory ().getCrypto ());
+        aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
+        aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
         aRequestData.setWssConfig (WSSConfig.getNewInstance ());
 
         // Upon success, the SOAP document contains the decrypted content

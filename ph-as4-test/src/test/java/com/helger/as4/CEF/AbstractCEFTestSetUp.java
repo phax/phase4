@@ -27,12 +27,11 @@ import org.w3c.dom.Node;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.profile.cef.CEFPMode;
@@ -78,7 +77,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                             @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                           aMsg.getAsSOAPDocument (aPayload),
                                                                           eSOAPVersion,
                                                                           aMsg.getMessagingID (),

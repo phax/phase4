@@ -24,8 +24,11 @@ import javax.servlet.ServletContext;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -103,6 +106,7 @@ public final class AS4WebAppListener extends WebAppListener
   @Override
   protected void initManagers ()
   {
-    AS4ServerInitializer.initAS4Server ();
+    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+      AS4ServerInitializer.initAS4Server (aCryptoFactory);
   }
 }

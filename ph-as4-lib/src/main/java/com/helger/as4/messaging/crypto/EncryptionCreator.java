@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.messaging.encrypt;
+package com.helger.as4.messaging.crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +32,6 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -46,30 +45,24 @@ import com.helger.mail.cte.EContentTransferEncoding;
 
 /**
  * Encryption helper
- * 
+ *
  * @author Philip Helger
  */
-public class EncryptionCreator
+public final class EncryptionCreator
 {
-  private final AS4CryptoFactory m_aCryptoFactory;
-
-  public EncryptionCreator (@Nonnull final AS4CryptoFactory aCryptoFactory)
-  {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    m_aCryptoFactory = aCryptoFactory;
-  }
+  private EncryptionCreator ()
+  {}
 
   @Nonnull
-  public Document encryptSoapBodyPayload (@Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nonnull final Document aDoc,
-                                          final boolean bMustUnderstand,
-                                          @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws Exception
+  public static Document encryptSoapBodyPayload (@Nonnull final AS4CryptoFactory aCryptoFactory,
+                                                 @Nonnull final ESOAPVersion eSOAPVersion,
+                                                 @Nonnull final Document aDoc,
+                                                 final boolean bMustUnderstand,
+                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws Exception
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
-
-    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -77,28 +70,28 @@ public class EncryptionCreator
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
-    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
                                            .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
-    return aBuilder.build (m_aCryptoFactory.getCrypto ());
+    return aBuilder.build (aCryptoFactory.getCrypto ());
   }
 
   @Nonnull
-  public MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                         @Nonnull final Document aDoc,
-                                         final boolean bMustUnderstand,
-                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                         @Nonnull final AS4ResourceManager aResMgr,
-                                         @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException,
-                                                                                          MessagingException
+  public static MimeMessage encryptMimeMessage (@Nonnull final AS4CryptoFactory aCryptoFactory,
+                                                @Nonnull final ESOAPVersion eSOAPVersion,
+                                                @Nonnull final Document aDoc,
+                                                final boolean bMustUnderstand,
+                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                @Nonnull final AS4ResourceManager aResMgr,
+                                                @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException,
+                                                                                                 MessagingException
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
-
-    final CryptoProperties aCryptoProps = m_aCryptoFactory.getCryptoProperties ();
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -107,7 +100,8 @@ public class EncryptionCreator
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
     // "cid:Attachments" is a predefined constant
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
@@ -124,7 +118,7 @@ public class EncryptionCreator
       aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (m_aCryptoFactory.getCrypto ());
+    final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!

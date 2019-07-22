@@ -33,13 +33,12 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
@@ -118,10 +117,11 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments)
                                 .getAsSOAPDocument (aPayload);
-    aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
-                                                                                             aDoc,
-                                                                                             false,
-                                                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+                                                     m_eSOAPVersion,
+                                                     aDoc,
+                                                     false,
+                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
@@ -135,10 +135,11 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (m_eSOAPVersion,
-                                                                                             aDoc,
-                                                                                             false,
-                                                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+                                                     m_eSOAPVersion,
+                                                     aDoc,
+                                                     false,
+                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 

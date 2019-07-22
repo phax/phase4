@@ -56,14 +56,14 @@ import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.EAS4MessageType;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEPBinding;
 import com.helger.as4.model.MEPHelper;
@@ -222,9 +222,9 @@ public class AS4Handler implements AutoCloseable
 
   private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
 
-  private final AS4ResourceManager m_aResMgr = new AS4ResourceManager ();
+  private final AS4ResourceManager m_aResMgr;
+  private final AS4CryptoFactory m_aCryptoFactory;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
-  private final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
@@ -249,8 +249,13 @@ public class AS4Handler implements AutoCloseable
     s_aDebug.set (bDebug);
   }
 
-  public AS4Handler ()
-  {}
+  public AS4Handler (@Nonnull final AS4ResourceManager aResMgr, @Nonnull final AS4CryptoFactory aCryptoFactory)
+  {
+    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    m_aResMgr = aResMgr;
+    m_aCryptoFactory = aCryptoFactory;
+  }
 
   public void close ()
   {
@@ -1278,13 +1283,13 @@ public class AS4Handler implements AutoCloseable
     MimeMessage aMimeMsg = null;
     if (aLeg.getSecurity () != null && aLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
     {
-      final EncryptionCreator aEncryptCreator = new EncryptionCreator (m_aCryptoFactory);
-      aMimeMsg = aEncryptCreator.encryptMimeMessage (aLeg.getProtocol ().getSOAPVersion (),
-                                                     aResponseDoc,
-                                                     true,
-                                                     aResponseAttachments,
-                                                     m_aResMgr,
-                                                     aLeg.getSecurity ().getX509EncryptionAlgorithm ());
+      aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+                                                       aLeg.getProtocol ().getSOAPVersion (),
+                                                       aResponseDoc,
+                                                       true,
+                                                       aResponseAttachments,
+                                                       m_aResMgr,
+                                                       aLeg.getSecurity ().getX509EncryptionAlgorithm ());
 
     }
     else

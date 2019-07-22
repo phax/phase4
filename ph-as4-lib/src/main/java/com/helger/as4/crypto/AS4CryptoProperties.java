@@ -39,7 +39,7 @@ import com.helger.security.keystore.EKeyStoreType;
  * @author Philip Helger
  */
 @Immutable
-public class CryptoProperties implements Serializable
+public class AS4CryptoProperties implements Serializable
 {
   public static final String KEYSTORE_TYPE = "org.apache.wss4j.crypto.merlin.keystore.type";
   public static final String KEYSTORE_FILE = "org.apache.wss4j.crypto.merlin.keystore.file";
@@ -49,14 +49,14 @@ public class CryptoProperties implements Serializable
 
   private NonBlockingProperties m_aProps;
 
-  public CryptoProperties (@Nullable final Map <String, String> aProps)
+  public AS4CryptoProperties (@Nullable final Map <String, String> aProps)
   {
     m_aProps = new NonBlockingProperties ();
     if (aProps != null)
       m_aProps.putAll (aProps);
   }
 
-  public CryptoProperties (@Nonnull final IReadableResource aRes)
+  public AS4CryptoProperties (@Nonnull final IReadableResource aRes)
   {
     ValueEnforcer.notNull (aRes, "Resource");
     if (aRes.exists ())

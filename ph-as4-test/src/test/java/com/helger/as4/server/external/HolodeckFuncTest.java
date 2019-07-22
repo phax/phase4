@@ -28,15 +28,14 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.CEF.AbstractCEFTestSetUp;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.util.AS4ResourceManager;
@@ -116,7 +115,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                   .setMustUnderstand (true);
 
     // Sign payload document
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                           aUserMsg.getAsSOAPDocument (),
                                                                           m_eSOAPVersion,
                                                                           aUserMsg.getMessagingID (),

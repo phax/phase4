@@ -34,11 +34,11 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.util.AS4ResourceManager;
@@ -108,6 +108,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     m_aResMgr = aResMgr;
   }
 
+  @Nonnull
+  public final AS4ResourceManager getResourceMgr ()
+  {
+    return m_aResMgr;
+  }
+
   public final void setPModeID (@Nullable final String sPModeID)
   {
     // Just set a constant PMode factory
@@ -118,12 +124,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   {
     ValueEnforcer.notNull (aPModeIDFactory, "PModeIDFactory");
     m_aPModeIDFactory = aPModeIDFactory;
-  }
-
-  @Nonnull
-  public final AS4ResourceManager getResourceMgr ()
-  {
-    return m_aResMgr;
   }
 
   private void _checkMandatoryAttributes ()
@@ -297,24 +297,25 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       // 2b. encrypt
       if (bEncrypt)
       {
-        final EncryptionCreator aEncCreator = new EncryptionCreator (aCryptoFactory);
         // MustUnderstand always set to true
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
-          aMimeMsg = aEncCreator.encryptMimeMessage (getSOAPVersion (),
-                                                     aDoc,
-                                                     bMustUnderstand,
-                                                     m_aAttachments,
-                                                     m_aResMgr,
-                                                     getCryptoAlgorithmCrypt ());
+          aMimeMsg = EncryptionCreator.encryptMimeMessage (aCryptoFactory,
+                                                           getSOAPVersion (),
+                                                           aDoc,
+                                                           bMustUnderstand,
+                                                           m_aAttachments,
+                                                           m_aResMgr,
+                                                           getCryptoAlgorithmCrypt ());
         }
         else
         {
-          aDoc = aEncCreator.encryptSoapBodyPayload (getSOAPVersion (),
-                                                     aDoc,
-                                                     bMustUnderstand,
-                                                     getCryptoAlgorithmCrypt ());
+          aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
+                                                           getSOAPVersion (),
+                                                           aDoc,
+                                                           bMustUnderstand,
+                                                           getCryptoAlgorithmCrypt ());
         }
       }
     }

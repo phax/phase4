@@ -41,19 +41,18 @@ import org.w3c.dom.NodeList;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.mime.SoapMimeMultipart;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -167,7 +166,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final Document aDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                     aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
                                                                     aMsg.getMessagingID (),
@@ -203,15 +202,16 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                               MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                                                          null,
-                                                                                                                                                          aAttachments)
-                                                                                                                           .getAsSOAPDocument (),
-                                                                                                               true,
-                                                                                                               aAttachments,
-                                                                                                               s_aResMgr,
-                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+                                                                       m_eSOAPVersion,
+                                                                       MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                  null,
+                                                                                                                  aAttachments)
+                                                                                   .getAsSOAPDocument (),
+                                                                       true,
+                                                                       aAttachments,
+                                                                       s_aResMgr,
+                                                                       ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment

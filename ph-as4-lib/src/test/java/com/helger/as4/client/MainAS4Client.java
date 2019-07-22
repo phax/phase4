@@ -44,11 +44,11 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -116,6 +116,7 @@ public final class MainAS4Client
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
       final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
+      final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body
@@ -147,10 +148,11 @@ public final class MainAS4Client
                                                                                          aPayload,
                                                                                          aAttachments);
             Document aDoc = aMsg.getAsSOAPDocument (aPayload);
-            aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (eSOAPVersion,
-                                                                                                     aDoc,
-                                                                                                     false,
-                                                                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+            aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
+                                                             eSOAPVersion,
+                                                             aDoc,
+                                                             false,
+                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
             aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
           }
@@ -165,7 +167,7 @@ public final class MainAS4Client
                                                                                            null,
                                                                                            aAttachments);
               final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
-                                                                                   SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                                   SignedMessageCreator.createSignedMessage (aCryptoFactory,
                                                                                                                              aMsg.getAsSOAPDocument (null),
                                                                                                                              eSOAPVersion,
                                                                                                                              aMsg.getMessagingID (),
@@ -187,10 +189,11 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResMgr);
-                aDoc = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptSoapBodyPayload (eSOAPVersion,
-                                                                                                         aDoc,
-                                                                                                         false,
-                                                                                                         ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
+                                                                 eSOAPVersion,
+                                                                 aDoc,
+                                                                 false,
+                                                                 ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
                 aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
               }
               else

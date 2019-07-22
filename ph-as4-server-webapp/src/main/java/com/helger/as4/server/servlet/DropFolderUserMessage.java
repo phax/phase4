@@ -38,7 +38,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.as4.CAS4;
 import com.helger.as4.client.AS4ClientUserMessage;
 import com.helger.as4.client.AbstractAS4Client.SentMessage;
-import com.helger.as4.crypto.CryptoProperties;
+import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -94,7 +94,8 @@ public final class DropFolderUserMessage
     throw new IllegalStateException ("Failed to get CN from '" + sPrincipal + "'");
   }
 
-  private static void _send (final Path aSendFile, final Path aIncomingDir)
+  private static void _send (@Nonnull final AS4CryptoProperties aCP,
+                             final Path aSendFile, final Path aIncomingDir)
   {
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
@@ -128,7 +129,6 @@ public final class DropFolderUserMessage
         }
         else
         {
-          final CryptoProperties aCP = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
           final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStoreType (),
                                                                aCP.getKeyStorePath (),
                                                                aCP.getKeyStorePassword ())
@@ -228,7 +228,8 @@ public final class DropFolderUserMessage
       throw new IllegalStateException ("Already inited!");
 
     final ISettings aSettings = AS4ServerConfiguration.getSettings ();
-    final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
+    final AS4CryptoProperties aCryptoProps = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
+       final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
     final Path aIncomingDir = Paths.get (aSettings.getAsString ("server.directory.incoming", "in"));
 
     try
@@ -247,7 +248,7 @@ public final class DropFolderUserMessage
             aCurFile.getFileName () != null &&
             aCurFile.getFileName ().toString ().endsWith (".xml"))
         {
-          _send (aCurFile, aIncomingDir);
+          _send (aCryptoProps, aCurFile, aIncomingDir);
         }
       };
       s_aWatch = WatchDir.createAsyncRunningWatchDir (aOutgoingDir, false, aCB);
@@ -261,7 +262,7 @@ public final class DropFolderUserMessage
                                                                                   .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
-          _send (aCur, aIncomingDir);
+          _send (aCryptoProps, aCur, aIncomingDir);
       }
     }
     catch (final IOException ex)

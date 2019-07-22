@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.as4.messaging.sign;
+package com.helger.as4.messaging.crypto;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.CryptoProperties;
+import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -100,7 +100,7 @@ public final class SignedMessageCreator
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
 
-    final CryptoProperties aCryptoProps = aCryptoFactory.getCryptoProperties ();
+    final AS4CryptoProperties aCryptoProps = aCryptoFactory.getCryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());

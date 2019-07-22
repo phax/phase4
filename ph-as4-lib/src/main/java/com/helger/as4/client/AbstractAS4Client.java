@@ -23,6 +23,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -178,11 +179,11 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
     final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
     aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.file", getKeyStoreResource ().getPath ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.type", getKeyStoreType ().getID ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.password", getKeyStorePassword ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.alias", getKeyStoreAlias ());
-    aCryptoProps.put ("org.apache.wss4j.crypto.merlin.keystore.private.password", getKeyStoreKeyPassword ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_TYPE, getKeyStoreType ().getID ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_FILE, getKeyStoreResource ().getPath ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_PASSWORD, getKeyStorePassword ());
+    aCryptoProps.put (AS4CryptoProperties.KEY_ALIAS, getKeyStoreAlias ());
+    aCryptoProps.put (AS4CryptoProperties.KEY_PASSWORD, getKeyStoreKeyPassword ());
     return new AS4CryptoFactory (aCryptoProps);
   }
 

@@ -16,9 +16,11 @@
  */
 package com.helger.as4.servlet;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import javax.xml.namespace.QName;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -50,17 +52,21 @@ public final class AS4ServerInitializer
   /**
    * Call this method in your AS4 server to initialize everything that is
    * necessary to use the {@link AS4Servlet}.
+   *
+   * @param aCryptoFactory
+   *        Crypto factory to use. May not be <code>null</code>.
    */
-  public static void initAS4Server ()
+  public static void initAS4Server (@Nonnull final AS4CryptoFactory aCryptoFactory)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
     if (!aReg.containsHeaderElementProcessor (QNAME_MESSAGING))
       aReg.registerHeaderElementProcessor (QNAME_MESSAGING, new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+
     // WSS4J must be after Ebms3Messaging handler!
     if (!aReg.containsHeaderElementProcessor (QNAME_SECURITY))
-      aReg.registerHeaderElementProcessor (QNAME_SECURITY, new SOAPHeaderElementProcessorWSS4J ());
+      aReg.registerHeaderElementProcessor (QNAME_SECURITY, new SOAPHeaderElementProcessorWSS4J (aCryptoFactory));
 
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();

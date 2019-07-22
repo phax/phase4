@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.helger.as4.AS4TestConstants;
+import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -53,6 +54,7 @@ import com.helger.as4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.as4.server.AbstractClientSetUp;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
@@ -70,6 +72,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 
   protected static AS4ResourceManager s_aResMgr;
 
+  protected final AS4CryptoFactory m_aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
   private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 

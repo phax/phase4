@@ -23,6 +23,9 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.util.AS4ResourceManager;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
@@ -46,10 +49,14 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                     @Nonnull AS4Handler aHandler);
   }
 
+  private final AS4CryptoFactory m_aCryptoFactory;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
-  public AS4XServletHandler ()
-  {}
+  public AS4XServletHandler (@Nonnull final AS4CryptoFactory aCryptoFactory)
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    m_aCryptoFactory = aCryptoFactory;
+  }
 
   @Nullable
   public final IHandlerCustomizer getHandlerCustomizer ()
@@ -80,7 +87,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
-    try (final AS4Handler aHandler = new AS4Handler ())
+    try (final AS4Handler aHandler = new AS4Handler (new AS4ResourceManager (), m_aCryptoFactory))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)

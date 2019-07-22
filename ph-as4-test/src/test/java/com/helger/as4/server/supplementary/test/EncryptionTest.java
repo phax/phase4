@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import javax.annotation.Nullable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -30,8 +29,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
@@ -43,16 +42,8 @@ public final class EncryptionTest
 {
   private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
 
-  private final Crypto m_aCrypto;
-  private final AS4CryptoFactory m_aAS4CryptoFactory;
-  private final CryptoProperties m_aCryptoProperties;
-
-  public EncryptionTest () throws Exception
-  {
-    m_aAS4CryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
-    m_aCrypto = m_aAS4CryptoFactory.getCrypto ();
-    m_aCryptoProperties = m_aAS4CryptoFactory.getCryptoProperties ();
-  }
+  public EncryptionTest ()
+  {}
 
   @Nullable
   private static Document _getSoapEnvelope11 ()
@@ -71,6 +62,8 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
+    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
@@ -79,7 +72,8 @@ public final class EncryptionTest
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
 
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
@@ -88,7 +82,7 @@ public final class EncryptionTest
     aBuilder.getParts ().add (encP);
 
     LOGGER.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = aBuilder.build (m_aCrypto);
+    final Document encryptedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
     LOGGER.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
@@ -98,16 +92,19 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
+    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
     secHeader.insertSecurityHeader ();
 
     final WSSecEncrypt builder = new WSSecEncrypt (secHeader);
     // builder.setUserInfo ("wss40");
-    builder.setUserInfo (m_aCryptoProperties.getKeyAlias (), m_aCryptoProperties.getKeyPassword ());
+    builder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                         aCryptoFactory.getCryptoProperties ().getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
-    final Document encryptedDoc = builder.build (m_aCrypto);
+    final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto ());
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     // System.out.println (outputString);

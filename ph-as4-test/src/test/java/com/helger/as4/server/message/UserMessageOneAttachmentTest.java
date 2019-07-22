@@ -32,15 +32,14 @@ import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.encrypt.EncryptionCreator;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.messaging.sign.SignedMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceManager;
@@ -99,7 +98,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                         SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+                                                                         SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                                                                    aMsg.getAsSOAPDocument (),
                                                                                                                    m_eSOAPVersion,
                                                                                                                    aMsg.getMessagingID (),
@@ -128,12 +127,13 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                     aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                               aMsg.getAsSOAPDocument (),
-                                                                                                               false,
-                                                                                                               aAttachments,
-                                                                                                               s_aResMgr,
-                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+                                                                       m_eSOAPVersion,
+                                                                       aMsg.getAsSOAPDocument (),
+                                                                       false,
+                                                                       aAttachments,
+                                                                       s_aResMgr,
+                                                                       ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -150,7 +150,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                     aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
                                                                           aMsg.getAsSOAPDocument (),
                                                                           m_eSOAPVersion,
                                                                           aMsg.getMessagingID (),
@@ -160,12 +160,13 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMimeMsg = new EncryptionCreator (AS4CryptoFactory.DEFAULT_INSTANCE).encryptMimeMessage (m_eSOAPVersion,
-                                                                                                               aSignedDoc,
-                                                                                                               false,
-                                                                                                               aAttachments,
-                                                                                                               s_aResMgr,
-                                                                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+                                                                       m_eSOAPVersion,
+                                                                       aSignedDoc,
+                                                                       false,
+                                                                       aAttachments,
+                                                                       s_aResMgr,
+                                                                       ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
