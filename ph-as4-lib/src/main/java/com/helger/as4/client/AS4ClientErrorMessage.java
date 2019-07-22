@@ -17,6 +17,7 @@
 package com.helger.as4.client;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -29,6 +30,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 
@@ -44,19 +46,19 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   public AS4ClientErrorMessage ()
   {}
 
-  public void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)
+  public final void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)
   {
     ValueEnforcer.notNull (aError, "Error");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    addErrorMessage (aError.getAsEbms3Error (aLocale, getRefToMessageID ()));
+    m_aErrorMessages.add (aError.getAsEbms3Error (aLocale, getRefToMessageID ()));
   }
 
-  public void addErrorMessage (@Nonnull final Ebms3Error aError)
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsList <Ebms3Error> errorMessages ()
   {
-    ValueEnforcer.notNull (aError, "Error");
-
-    m_aErrorMessages.add (aError);
+    return m_aErrorMessages;
   }
 
   private void _checkMandatoryAttributes ()
@@ -66,6 +68,8 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 
     if (m_aErrorMessages.isEmpty ())
       throw new IllegalStateException ("No Errors specified!");
+    if (m_aErrorMessages.containsAny (Objects::isNull))
+      throw new IllegalStateException ("Errors may not contain null elements.");
 
     if (!hasRefToMessageID ())
       throw new IllegalStateException ("No reference to a message set.");
