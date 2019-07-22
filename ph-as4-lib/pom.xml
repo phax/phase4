@@ -30,6 +30,7 @@
   <description>AS4 common library</description>
   <url>https://github.com/phax/ph-as4/ph-as4-lib</url>
   <inceptionYear>2015</inceptionYear>
+  
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -37,6 +38,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
@@ -136,6 +138,7 @@
       </exclusions>
     </dependency>
   </dependencies>
+  
   <build>
     <plugins>
       <plugin>
@@ -198,6 +201,7 @@ osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.profile.IAS4Prof
             <arg>-Xph-list-extension</arg>
             <arg>-Xph-csu</arg>
             <arg>-Xph-cloneable2</arg>
+            <arg>-Xph-value-extender</arg>
           </args>
           <episodes>
             <episode>
