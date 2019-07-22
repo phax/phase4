@@ -1,4 +1,4 @@
-# ph-as4
+# phase4 - AS4 client and server
 
 A library to send and receive AS4 messages. 
 Licensed under the Apache 2 License!
@@ -7,9 +7,9 @@ It consists of the following sub-projects:
   * **ph-as4-lib** - basic data structures for AS4 handling
   * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
   * **ph-as4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
+  * **ph-as4-test** - integration test project (since 0.9.0)
   * **ph-as4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
-  * **ph-as4-server-webapp-test** - Standalone AS4 server for internal **testing** purposes only (since 0.7.0)
-
+ 
 ## News and noteworthy
 
 * v0.9.0 - work in progress
@@ -18,6 +18,7 @@ It consists of the following sub-projects:
     * Updated to peppol-commons 7.0.0
     * The submodule `ph-as4-esens` was renamed to `ph-as4-profile-cef`
     * The AS4 message handler now have a chance to access the received HTTP headers
+    * Renamed `ph-as4-server-webapp-test` to `ph-as4-test`
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
