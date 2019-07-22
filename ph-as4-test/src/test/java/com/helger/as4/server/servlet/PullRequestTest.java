@@ -34,7 +34,7 @@ import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.server.spi.MockMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -59,7 +59,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                                      m_eSOAPVersion,
                                                      aPullReqMsg.getMessagingID (),
                                                      null,
-                                                     new AS4ResourceManager (),
+                                                     new AS4ResourceHelper (),
                                                      bMustUnderstand,
                                                      ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                      ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);

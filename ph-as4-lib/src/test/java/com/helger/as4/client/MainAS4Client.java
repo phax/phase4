@@ -50,7 +50,7 @@ import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -84,7 +84,7 @@ public final class MainAS4Client
    */
   public static void main (final String [] args)
   {
-    try (final AS4ResourceManager aResMgr = new AS4ResourceManager ())
+    try (final AS4ResourceHelper aResMgr = new AS4ResourceHelper ())
     {
       String sURL = "http://127.0.0.1:8080/as4";
       if (false)

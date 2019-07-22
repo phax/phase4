@@ -31,7 +31,7 @@ import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.collection.attr.IAttributeContainer;
@@ -64,7 +64,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    *         <code>null</code>.
    */
   @Nonnull
-  AS4ResourceManager getResourceMgr ();
+  AS4ResourceHelper getResourceMgr ();
 
   /**
    * @return The parent of the usermessage/signal message for further

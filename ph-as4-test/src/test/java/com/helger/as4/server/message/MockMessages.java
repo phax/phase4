@@ -41,7 +41,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.spi.MockMessageProcessorCheckingStreamsSPI;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -67,7 +67,7 @@ public final class MockMessages
   public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
+                                                @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
@@ -84,7 +84,7 @@ public final class MockMessages
 
   public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                           @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
+                                           @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));

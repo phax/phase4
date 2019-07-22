@@ -54,7 +54,7 @@ import com.helger.as4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.as4.server.AbstractClientSetUp;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.stream.StreamHelper;
@@ -69,7 +69,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   public static final String SETTINGS_SERVER_PROXY_ADDRESS = "server.proxy.address";
   public static final String SETTINGS_SERVER_PROXY_PORT = "server.proxy.port";
 
-  protected static AS4ResourceManager s_aResMgr;
+  protected static AS4ResourceHelper s_aResMgr;
 
   protected final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
   private CloseableHttpClient m_aHttpClient;

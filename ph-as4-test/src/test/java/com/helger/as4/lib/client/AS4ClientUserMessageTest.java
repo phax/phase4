@@ -42,7 +42,7 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.security.keystore.EKeyStoreType;
@@ -60,7 +60,7 @@ public final class AS4ClientUserMessageTest
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
-  private static AS4ResourceManager s_aResMgr;
+  private static AS4ResourceHelper s_aResMgr;
   private static final String SERVER_URL = "http://127.0.0.1:8080/as4";
 
   @BeforeClass

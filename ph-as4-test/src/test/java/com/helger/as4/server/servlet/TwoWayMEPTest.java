@@ -44,7 +44,7 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -138,7 +138,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,

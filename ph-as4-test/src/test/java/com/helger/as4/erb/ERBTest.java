@@ -29,7 +29,7 @@ import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.server.message.MockMessages;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -41,7 +41,7 @@ public final class ERBTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final ESOAPVersion eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
-    final Document aDoc = MockMessages.testSignedUserMessage (eSOAPVersion, aPayload, null, new AS4ResourceManager ());
+    final Document aDoc = MockMessages.testSignedUserMessage (eSOAPVersion, aPayload, null, new AS4ResourceHelper ());
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion);
 

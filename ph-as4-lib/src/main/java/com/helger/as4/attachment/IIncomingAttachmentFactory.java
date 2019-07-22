@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 
 /**
  * Factory interface for {@link WSS4JAttachment} objects for handling incoming
@@ -39,7 +39,7 @@ public interface IIncomingAttachmentFactory extends Serializable
    *
    * @param aBodyPart
    *        The attachment body part
-   * @param aResMgr
+   * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The internal attachment representation. Never <code>null</code>.
    * @throws IOException
@@ -49,7 +49,7 @@ public interface IIncomingAttachmentFactory extends Serializable
    */
   @Nonnull
   WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart,
-                                    @Nonnull AS4ResourceManager aResMgr) throws IOException, MessagingException;
+                                    @Nonnull AS4ResourceHelper aResHelper) throws IOException, MessagingException;
 
   @Nonnull
   static IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;

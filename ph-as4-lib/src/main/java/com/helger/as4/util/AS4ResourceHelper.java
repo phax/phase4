@@ -43,16 +43,16 @@ import com.helger.commons.io.stream.StreamHelper;
  *
  * @author Philip Helger
  */
-public class AS4ResourceManager implements Closeable
+public class AS4ResourceHelper implements Closeable
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceHelper.class);
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
   private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList <> ();
 
-  public AS4ResourceManager ()
+  public AS4ResourceHelper ()
   {}
 
   /**
@@ -70,7 +70,7 @@ public class AS4ResourceManager implements Closeable
       throw new IllegalStateException ("ResourceManager is already closing/closed!");
 
     // Create
-    final File ret = File.createTempFile ("as4-res-", ".tmp");
+    final File ret = File.createTempFile ("phase4-res-", ".tmp");
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
     return ret;
@@ -101,7 +101,7 @@ public class AS4ResourceManager implements Closeable
     ValueEnforcer.notNull (aCloseable, "Closeable");
 
     if (m_aInClose.get ())
-      throw new IllegalStateException ("ResourceManager is already closing/closed!");
+      throw new IllegalStateException ("AS4ResourceHelper is already closing/closed!");
 
     m_aCloseables.add (aCloseable);
   }
@@ -144,7 +144,7 @@ public class AS4ResourceManager implements Closeable
     });
     if (aFiles.isNotEmpty ())
     {
-      LOGGER.info ("Deleting " + aFiles.size () + " temporary files");
+      LOGGER.info ("Deleting " + aFiles.size () + " temporary phase4 files");
       for (final File aFile : aFiles)
       {
         if (LOGGER.isDebugEnabled ())

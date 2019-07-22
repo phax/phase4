@@ -33,7 +33,7 @@ import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.AttributeContainerAny;
@@ -70,9 +70,9 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResMgr;
 
-  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4ResourceManager aResMgr)
+  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4ResourceHelper aResMgr)
   {
     m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
@@ -92,7 +92,7 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
   }
 
   @Nonnull
-  public final AS4ResourceManager getResourceMgr ()
+  public final AS4ResourceHelper getResourceMgr ()
   {
     return m_aResMgr;
   }

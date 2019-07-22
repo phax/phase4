@@ -34,14 +34,14 @@ import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.MockMessages;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class AS4ClientReceiptMessageTest
 {
-  private static AS4ResourceManager s_aResMgr;
+  private static AS4ResourceHelper s_aResMgr;
 
   @BeforeClass
   public static void startServer () throws Exception

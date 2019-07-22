@@ -25,7 +25,7 @@ import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.StringHelper;
@@ -37,22 +37,22 @@ import com.helger.commons.string.StringHelper;
  */
 public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 {
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResMgr;
   private String m_sMPC;
 
   public AS4ClientPullRequestMessage ()
   {
-    this (new AS4ResourceManager ());
+    this (new AS4ResourceHelper ());
   }
 
-  public AS4ClientPullRequestMessage (@Nonnull final AS4ResourceManager aResMgr)
+  public AS4ClientPullRequestMessage (@Nonnull final AS4ResourceHelper aResMgr)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
   }
 
   @Nonnull
-  public AS4ResourceManager getAS4ResourceManager ()
+  public AS4ResourceHelper getAS4ResourceManager ()
   {
     return m_aResMgr;
   }

@@ -54,7 +54,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.messaging.mime.SoapMimeMultipart;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -159,7 +159,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   {
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
@@ -196,7 +196,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
@@ -272,7 +272,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageWithAttachmentPartInfoOnly () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
@@ -303,7 +303,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
                                           .getAsSOAPDocument ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
 
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
@@ -321,7 +321,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   public void testUserMessageWithMoreAttachmentsThenPartInfo () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_XML_GZ),
                                                                     CMimeType.APPLICATION_GZIP,
                                                                     null,
@@ -329,13 +329,13 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
 
     final Document aSoapDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
                                           .getAsSOAPDocument ();
-    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    final AS4ResourceHelper aResMgr1 = s_aResMgr;
 
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
-    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    final AS4ResourceHelper aResMgr2 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG2_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,

@@ -30,7 +30,7 @@ import org.apache.wss4j.common.ext.AttachmentResultCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -53,17 +53,17 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachmentCallbackHandler.class);
 
   private final ICommonsOrderedMap <String, WSS4JAttachment> m_aAttachmentMap = new CommonsLinkedHashMap <> ();
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
 
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aAttachments,
-                                         @Nonnull final AS4ResourceManager aResMgr)
+                                         @Nonnull final AS4ResourceHelper aResHelper)
   {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
 
     if (aAttachments != null)
       for (final WSS4JAttachment aAttachment : aAttachments)
         m_aAttachmentMap.put (aAttachment.getId (), aAttachment);
-    m_aResMgr = aResMgr;
+    m_aResHelper = aResHelper;
   }
 
   /**
@@ -71,9 +71,9 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
    *         <code>null</code>.
    */
   @Nonnull
-  public final AS4ResourceManager getResourceMgr ()
+  public final AS4ResourceHelper getResourceHelper ()
   {
-    return m_aResMgr;
+    return m_aResHelper;
   }
 
   /**
@@ -124,7 +124,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
             LOGGER.debug ("Resulting attachment ID '" + sAttachmentID + "'");
 
           // Convert
-          final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResMgr, aResponseAttachment.getMimeType ());
+          final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResHelper,
+                                                                       aResponseAttachment.getMimeType ());
           aRealAttachment.setId (sAttachmentID);
           aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
           // Use supplier to ensure stream is opened only when needed

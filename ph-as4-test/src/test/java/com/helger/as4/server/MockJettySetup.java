@@ -24,7 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;
@@ -40,7 +40,7 @@ public final class MockJettySetup extends AbstractClientSetUp
   public static final String SETTINGS_SERVER_ADDRESS = "server.address";
 
   private static JettyRunner s_aJetty;
-  private static AS4ResourceManager s_aResMgr;
+  private static AS4ResourceHelper s_aResMgr;
 
   private MockJettySetup ()
   {}
@@ -76,7 +76,7 @@ public final class MockJettySetup extends AbstractClientSetUp
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
     }
     RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
-    s_aResMgr = new AS4ResourceManager ();
+    s_aResMgr = new AS4ResourceHelper ();
   }
 
   @AfterClass
@@ -100,7 +100,7 @@ public final class MockJettySetup extends AbstractClientSetUp
   }
 
   @Nonnull
-  public static AS4ResourceManager getResourceManagerInstance ()
+  public static AS4ResourceHelper getResourceManagerInstance ()
   {
     return s_aResMgr;
   }

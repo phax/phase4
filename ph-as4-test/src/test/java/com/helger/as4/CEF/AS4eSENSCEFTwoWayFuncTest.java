@@ -30,7 +30,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.ThreadHelper;
@@ -55,7 +55,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   @Test
   public void eSENS_TA02_PushPush () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceManager ());
+    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
 
@@ -98,7 +98,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                      testSignedUserMessage (m_eSOAPVersion,
                                                                                             m_aPayload,
                                                                                             aAttachments,
-                                                                                            new AS4ResourceManager ()),
+                                                                                            new AS4ResourceHelper ()),
                                                                      aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);

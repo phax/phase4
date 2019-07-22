@@ -83,7 +83,7 @@ import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4.util.AS4XMLHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3Error;
@@ -221,7 +221,7 @@ public class AS4Handler implements AutoCloseable
 
   private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
 
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResMgr;
   private final AS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
@@ -254,7 +254,7 @@ public class AS4Handler implements AutoCloseable
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aIAF, "IAF");
     // Create dynamically here, to avoid leaving too many streams open
-    m_aResMgr = new AS4ResourceManager ();
+    m_aResMgr = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
     m_aIAF = aIAF;
   }

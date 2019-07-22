@@ -39,7 +39,7 @@ import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
 import com.helger.as4.CAS4;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -67,16 +67,16 @@ import com.helger.mail.datasource.InputStreamProviderDataSource;
  */
 public class WSS4JAttachment extends Attachment
 {
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
   private IHasInputStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
   private EAS4CompressionMode m_eCM;
   private Charset m_aCharset;
   private String m_sUncompressedMimeType;
 
-  public WSS4JAttachment (@Nonnull final AS4ResourceManager aResMgr, @Nullable final String sMimeType)
+  public WSS4JAttachment (@Nonnull final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
   {
-    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+    m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     overwriteMimeType (sMimeType);
   }
 
@@ -125,7 +125,7 @@ public class WSS4JAttachment extends Attachment
     final InputStream ret = m_aISP.getInputStream ();
     if (ret == null)
       throw new IllegalStateException ("Got no InputStream from " + m_aISP);
-    m_aResMgr.addCloseable (ret);
+    m_aResHelper.addCloseable (ret);
     return ret;
   }
 
@@ -248,7 +248,7 @@ public class WSS4JAttachment extends Attachment
     return new ToStringGenerator (this).append ("ID", getId ())
                                        .append ("MimeType", getMimeType ())
                                        .append ("Headers", getHeaders ())
-                                       .append ("ResourceManager", m_aResMgr)
+                                       .append ("ResourceManager", m_aResHelper)
                                        .append ("ISP", m_aISP)
                                        .append ("CTE", m_eCTE)
                                        .append ("CM", m_eCM)
@@ -277,7 +277,7 @@ public class WSS4JAttachment extends Attachment
    *        Original mime type of the file.
    * @param eCompressionMode
    *        Optional compression mode to use. May be <code>null</code>.
-   * @param aResMgr
+   * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The newly created attachment instance. Never <code>null</code>.
    * @throws IOException
@@ -287,12 +287,12 @@ public class WSS4JAttachment extends Attachment
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
+                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcFile, "File");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
-    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
+    final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     _addOutgoingHeaders (ret, FilenameHelper.getWithoutPath (aSrcFile));
 
     // If the attachment has an compressionMode do it directly, so that
@@ -303,7 +303,7 @@ public class WSS4JAttachment extends Attachment
       ret.setCompressionMode (eCompressionMode);
 
       // Create temporary file with compressed content
-      aRealFile = aResMgr.createTempFile ();
+      aRealFile = aResHelper.createTempFile ();
       try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
       {
         StreamHelper.copyInputStreamToOutputStream (FileHelper.getBufferedInputStream (aSrcFile), aOS);
@@ -332,7 +332,7 @@ public class WSS4JAttachment extends Attachment
    *        Original mime type of the file.
    * @param eCompressionMode
    *        Optional compression mode to use. May be <code>null</code>.
-   * @param aResMgr
+   * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The newly created attachment instance. Never <code>null</code>.
    * @throws IOException
@@ -343,13 +343,13 @@ public class WSS4JAttachment extends Attachment
                                                               @Nonnull @Nonempty final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull final AS4ResourceManager aResMgr) throws IOException
+                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcData, "Data");
     ValueEnforcer.notEmpty (sFilename, "Filename");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
-    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aMimeType.getAsString ());
+    final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     _addOutgoingHeaders (ret, sFilename);
 
     // If the attachment has an compressionMode do it directly, so that
@@ -359,7 +359,7 @@ public class WSS4JAttachment extends Attachment
       ret.setCompressionMode (eCompressionMode);
 
       // Create temporary file with compressed content
-      final File aRealFile = aResMgr.createTempFile ();
+      final File aRealFile = aResHelper.createTempFile ();
       try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
       {
         aOS.write (aSrcData);
@@ -381,13 +381,13 @@ public class WSS4JAttachment extends Attachment
 
   @Nonnull
   public static WSS4JAttachment createIncomingFileAttachment (@Nonnull final MimeBodyPart aBodyPart,
-                                                              @Nonnull final AS4ResourceManager aResMgr) throws MessagingException,
-                                                                                                         IOException
+                                                              @Nonnull final AS4ResourceHelper aResHelper) throws MessagingException,
+                                                                                                           IOException
   {
     ValueEnforcer.notNull (aBodyPart, "BodyPart");
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
 
-    final WSS4JAttachment ret = new WSS4JAttachment (aResMgr, aBodyPart.getContentType ());
+    final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aBodyPart.getContentType ());
 
     {
       // Reference in header is: <ID>
@@ -416,7 +416,7 @@ public class WSS4JAttachment extends Attachment
     else
     {
       // Write to temp file
-      final File aTempFile = aResMgr.createTempFile ();
+      final File aTempFile = aResHelper.createTempFile ();
       try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
       {
         aBodyPart.getDataHandler ().writeTo (aOS);

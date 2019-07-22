@@ -42,7 +42,7 @@ import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -103,7 +103,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                            @Nonnull final AS4ResourceManager aResMgr) throws WSSecurityException
+                                            @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,

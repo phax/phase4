@@ -41,7 +41,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -67,7 +67,7 @@ import com.helger.xml.serialize.write.XMLWriter;
 @NotThreadSafe
 public class AS4ClientUserMessage extends AbstractAS4Client
 {
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResMgr;
 
   private Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
@@ -99,17 +99,17 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   public AS4ClientUserMessage ()
   {
-    this (new AS4ResourceManager ());
+    this (new AS4ResourceHelper ());
   }
 
-  public AS4ClientUserMessage (@Nonnull final AS4ResourceManager aResMgr)
+  public AS4ClientUserMessage (@Nonnull final AS4ResourceHelper aResMgr)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
   }
 
   @Nonnull
-  public final AS4ResourceManager getResourceMgr ()
+  public final AS4ResourceHelper getResourceMgr ()
   {
     return m_aResMgr;
   }

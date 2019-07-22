@@ -38,7 +38,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
@@ -120,7 +120,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                           m_eSOAPVersion,
                                                                           aUserMsg.getMessagingID (),
                                                                           aAttachments,
-                                                                          new AS4ResourceManager (),
+                                                                          new AS4ResourceHelper (),
                                                                           false,
                                                                           ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                           ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);

@@ -36,7 +36,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -86,7 +86,7 @@ public final class EncryptionCreator
                                                 @Nonnull final Document aDoc,
                                                 final boolean bMustUnderstand,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4ResourceManager aResMgr,
+                                                @Nonnull final AS4ResourceHelper aResMgr,
                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo) throws WSSecurityException,
                                                                                                  MessagingException
   {

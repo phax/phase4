@@ -25,7 +25,7 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 
@@ -36,7 +36,7 @@ import com.helger.commons.ValueEnforcer;
  */
 public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 {
-  private final AS4ResourceManager m_aResMgr;
+  private final AS4ResourceHelper m_aResMgr;
   private boolean m_bNonRepudiation = false;
   private Node m_aSOAPDocument;
   private Ebms3UserMessage m_aEbms3UserMessage;
@@ -44,17 +44,17 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 
   public AS4ClientReceiptMessage ()
   {
-    this (new AS4ResourceManager ());
+    this (new AS4ResourceHelper ());
   }
 
-  public AS4ClientReceiptMessage (@Nonnull final AS4ResourceManager aResMgr)
+  public AS4ClientReceiptMessage (@Nonnull final AS4ResourceHelper aResMgr)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     m_aResMgr = aResMgr;
   }
 
   @Nonnull
-  public AS4ResourceManager getAS4ResourceManager ()
+  public AS4ResourceHelper getAS4ResourceManager ()
   {
     return m_aResMgr;
   }

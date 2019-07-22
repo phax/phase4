@@ -43,7 +43,7 @@ import com.helger.as4.messaging.crypto.SignedMessageCreator;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceManager;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -78,17 +78,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   public void testUserMessageManyAttachmentsMimeSuccess () throws IOException, MessagingException
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
-    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    final AS4ResourceHelper aResMgr1 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
-    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    final AS4ResourceHelper aResMgr2 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
@@ -109,17 +109,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   public void testUserMessageManyAttachmentsSignedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
-    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    final AS4ResourceHelper aResMgr1 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
-    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    final AS4ResourceHelper aResMgr2 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
@@ -148,17 +148,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   public void testUserMessageManyAttachmentsEncryptedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
-    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    final AS4ResourceHelper aResMgr1 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
-    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    final AS4ResourceHelper aResMgr2 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
@@ -184,17 +184,17 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   public void testUserMessageManyAttachmentsSignedEncryptedMimeSuccess () throws WSSecurityException, Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceManager aResMgr = s_aResMgr;
+    final AS4ResourceHelper aResMgr = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
                                                                     aResMgr));
-    final AS4ResourceManager aResMgr1 = s_aResMgr;
+    final AS4ResourceHelper aResMgr1 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG),
                                                                     CMimeType.IMAGE_JPG,
                                                                     null,
                                                                     aResMgr1));
-    final AS4ResourceManager aResMgr2 = s_aResMgr;
+    final AS4ResourceHelper aResMgr2 = s_aResMgr;
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML2_XML),
                                                                     CMimeType.APPLICATION_XML,
                                                                     null,
