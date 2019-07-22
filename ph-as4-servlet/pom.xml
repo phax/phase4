@@ -30,6 +30,7 @@
   <description>AS4 servlet library</description>
   <url>https://github.com/phax/ph-as4/ph-as4-servlet</url>
   <inceptionYear>2015</inceptionYear>
+
   <licenses>
     <license>
       <name>Apache 2</name>
@@ -37,6 +38,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
@@ -54,11 +56,13 @@
       <groupId>org.slf4j</groupId>
       <artifactId>jul-to-slf4j</artifactId>
     </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -70,8 +74,19 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/NOTICE</exclude>
+            <exclude>**/LICENSE</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>

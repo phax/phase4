@@ -124,6 +124,7 @@
         <targetPath>${project.build.directory}/test-classes</targetPath>
       </resource>
     </resources>
+
     <plugins>
       <plugin>
         <groupId>com.mycila</groupId>

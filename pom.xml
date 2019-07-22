@@ -218,7 +218,8 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>docs/*</exclude>
+            <exclude>docs/**/*</exclude>
+            <exclude>**/*.txt</exclude>
           </excludes>
         </configuration>
       </plugin>
