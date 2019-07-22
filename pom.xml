@@ -183,11 +183,6 @@
         <artifactId>ph-as4-server-webapp</artifactId>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.helger</groupId>
-        <artifactId>ph-as4-server-webapp-test</artifactId>
-        <version>${project.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -195,8 +190,8 @@
     <module>ph-as4-lib</module>
     <module>ph-as4-profile-cef</module>
     <module>ph-as4-servlet</module>
+    <module>ph-as4-test</module>
     <module>ph-as4-server-webapp</module>
-    <module>ph-as4-server-webapp-test</module>
   </modules>
   
   <dependencies>
