@@ -38,12 +38,12 @@ import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
+  @FunctionalInterface
   public static interface IHandlerCustomizer extends Serializable
   {
     void customize (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
                     @Nonnull AS4UnifiedResponse aUnifiedResponse,
                     @Nonnull AS4Handler aHandler);
-
   }
 
   private IHandlerCustomizer m_aHandlerCustomizer;

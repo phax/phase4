@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  *
  * @author Philip Helger
  */
-public final class AS4WorkerPool extends AbstractGlobalSingleton
+public class AS4WorkerPool extends AbstractGlobalSingleton
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4WorkerPool.class);
 
@@ -48,7 +49,12 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
   @UsedViaReflection
   public AS4WorkerPool ()
   {
-    m_aES = Executors.newFixedThreadPool (Runtime.getRuntime ().availableProcessors () * 2,
+    this (Runtime.getRuntime ().availableProcessors () * 2);
+  }
+
+  protected AS4WorkerPool (@Nonnegative final int nThreadPoolSize)
+  {
+    m_aES = Executors.newFixedThreadPool (nThreadPoolSize,
                                           new BasicThreadFactory.Builder ().setDaemon (true)
                                                                            .setNamingPattern ("as4-worker-%d")
                                                                            .build ());
@@ -69,16 +75,16 @@ public final class AS4WorkerPool extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public CompletableFuture <Void> run (@Nonnull final IThrowingRunnable <? extends Throwable> aRunnable)
+  public CompletableFuture <Void> run (@Nonnull final IThrowingRunnable <? extends Exception> aRunnable)
   {
     return CompletableFuture.runAsync ( () -> {
       try
       {
         aRunnable.run ();
       }
-      catch (final Throwable t)
+      catch (final Exception ex)
       {
-        LOGGER.error ("Error running AS4 runner " + aRunnable, t);
+        LOGGER.error ("Error running AS4 runner " + aRunnable, ex);
       }
     }, m_aES);
   }
