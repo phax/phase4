@@ -30,6 +30,7 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceHelper;
 
 public final class AS4PullRequestTest
 {
@@ -75,11 +76,14 @@ public final class AS4PullRequestTest
   @Test
   public void buildMessageMandatoryCheckFailure () throws Exception
   {
-    final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage ();
-    _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
-    _ensureInvalidState (aClient);
-    aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
-    _ensureValidState (aClient);
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+    {
+      final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (aResHelper);
+      _ensureInvalidState (aClient);
+      aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+      _ensureInvalidState (aClient);
+      aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
+      _ensureValidState (aClient);
+    }
   }
 }

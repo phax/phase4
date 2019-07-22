@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
 
@@ -67,7 +68,7 @@ import com.helger.xml.serialize.write.XMLWriter;
 @NotThreadSafe
 public class AS4ClientUserMessage extends AbstractAS4Client
 {
-  private final AS4ResourceHelper m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
 
   private Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
@@ -97,21 +98,16 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                                             "-" +
                                                                             x.getToPartyID ();
 
-  public AS4ClientUserMessage ()
+  public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    this (new AS4ResourceHelper ());
-  }
-
-  public AS4ClientUserMessage (@Nonnull final AS4ResourceHelper aResMgr)
-  {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
-    m_aResMgr = aResMgr;
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_aResHelper = aResHelper;
   }
 
   @Nonnull
-  public final AS4ResourceHelper getResourceMgr ()
+  public final AS4ResourceHelper getResourceHelper ()
   {
-    return m_aResMgr;
+    return m_aResHelper;
   }
 
   public final void setPModeID (@Nullable final String sPModeID)
@@ -284,7 +280,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                                               getSOAPVersion (),
                                                                               aUserMsg.getMessagingID (),
                                                                               m_aAttachments,
-                                                                              m_aResMgr,
+                                                                              m_aResHelper,
                                                                               bMustUnderstand,
                                                                               getCryptoAlgorithmSign (),
                                                                               getCryptoAlgorithmSignDigest ());
@@ -306,7 +302,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                            aDoc,
                                                            bMustUnderstand,
                                                            m_aAttachments,
-                                                           m_aResMgr,
+                                                           m_aResHelper,
                                                            getCryptoAlgorithmCrypt ());
         }
         else
@@ -401,7 +397,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
                                                                         aMimeType,
                                                                         eAS4CompressionMode,
-                                                                        m_aResMgr));
+                                                                        m_aResHelper));
   }
 
   /**

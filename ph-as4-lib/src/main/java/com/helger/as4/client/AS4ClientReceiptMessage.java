@@ -17,6 +17,7 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,27 +37,22 @@ import com.helger.commons.ValueEnforcer;
  */
 public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 {
-  private final AS4ResourceHelper m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
   private boolean m_bNonRepudiation = false;
   private Node m_aSOAPDocument;
   private Ebms3UserMessage m_aEbms3UserMessage;
   private boolean m_bReceiptShouldBeSigned = false;
 
-  public AS4ClientReceiptMessage ()
+  public AS4ClientReceiptMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    this (new AS4ResourceHelper ());
-  }
-
-  public AS4ClientReceiptMessage (@Nonnull final AS4ResourceHelper aResMgr)
-  {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
-    m_aResMgr = aResMgr;
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_aResHelper = aResHelper;
   }
 
   @Nonnull
-  public AS4ResourceHelper getAS4ResourceManager ()
+  public AS4ResourceHelper getAS4ResourceHelper ()
   {
-    return m_aResMgr;
+    return m_aResHelper;
   }
 
   private void _checkMandatoryAttributes ()
@@ -101,7 +97,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
                                                        getSOAPVersion (),
                                                        aReceiptMsg.getMessagingID (),
                                                        null,
-                                                       m_aResMgr,
+                                                       m_aResHelper,
                                                        bMustUnderstand,
                                                        getCryptoAlgorithmSign (),
                                                        getCryptoAlgorithmSignDigest ());

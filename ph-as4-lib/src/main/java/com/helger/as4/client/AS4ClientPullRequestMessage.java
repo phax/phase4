@@ -17,6 +17,8 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.w3c.dom.Document;
 
@@ -37,24 +39,19 @@ import com.helger.commons.string.StringHelper;
  */
 public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 {
-  private final AS4ResourceHelper m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
   private String m_sMPC;
 
-  public AS4ClientPullRequestMessage ()
+  public AS4ClientPullRequestMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    this (new AS4ResourceHelper ());
-  }
-
-  public AS4ClientPullRequestMessage (@Nonnull final AS4ResourceHelper aResMgr)
-  {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
-    m_aResMgr = aResMgr;
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_aResHelper = aResHelper;
   }
 
   @Nonnull
-  public AS4ResourceHelper getAS4ResourceManager ()
+  public final AS4ResourceHelper getAS4ResourceHelper ()
   {
-    return m_aResMgr;
+    return m_aResHelper;
   }
 
   private void _checkMandatoryAttributes ()
@@ -92,7 +89,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
                                                        getSOAPVersion (),
                                                        aPullRequest.getMessagingID (),
                                                        null,
-                                                       m_aResMgr,
+                                                       m_aResHelper,
                                                        bMustUnderstand,
                                                        getCryptoAlgorithmSign (),
                                                        getCryptoAlgorithmSignDigest ());
@@ -102,14 +99,14 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
-  public String getMPC ()
+  @Nullable
+  public final String getMPC ()
   {
     return m_sMPC;
   }
 
-  public void setMPC (final String sMPC)
+  public final void setMPC (@Nullable final String sMPC)
   {
     m_sMPC = sMPC;
   }
-
 }

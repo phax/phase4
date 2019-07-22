@@ -221,7 +221,7 @@ public class AS4Handler implements AutoCloseable
 
   private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
 
-  private final AS4ResourceHelper m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
   private final AS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
@@ -254,14 +254,14 @@ public class AS4Handler implements AutoCloseable
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aIAF, "IAF");
     // Create dynamically here, to avoid leaving too many streams open
-    m_aResMgr = new AS4ResourceHelper ();
+    m_aResHelper = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
     m_aIAF = aIAF;
   }
 
   public void close ()
   {
-    m_aResMgr.close ();
+    m_aResHelper.close ();
   }
 
   @Nonnull
@@ -713,7 +713,7 @@ public class AS4Handler implements AutoCloseable
     IAS4MessageState aState;
     {
       // This is where all data from the SOAP headers is stored to
-      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResMgr);
+      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResHelper);
 
       // Handle all headers - the only place where the AS4MessageState values
       _processSOAPHeaderElements (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aStateImpl, aErrorMessages);
@@ -1254,7 +1254,7 @@ public class AS4Handler implements AutoCloseable
                                                        eSOAPVersion,
                                                        sMessagingID,
                                                        aResponseAttachments,
-                                                       m_aResMgr,
+                                                       m_aResHelper,
                                                        bMustUnderstand,
                                                        aSecurity.getX509SignatureAlgorithm (),
                                                        aSecurity.getX509SignatureHashFunction ());
@@ -1290,7 +1290,7 @@ public class AS4Handler implements AutoCloseable
                                                        aResponseDoc,
                                                        true,
                                                        aResponseAttachments,
-                                                       m_aResMgr,
+                                                       m_aResHelper,
                                                        aLeg.getSecurity ().getX509EncryptionAlgorithm ());
 
     }
@@ -1517,7 +1517,7 @@ public class AS4Handler implements AutoCloseable
         else
         {
           // MIME Attachment (index is gt 0)
-          final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResMgr);
+          final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
           aIncomingAttachments.add (aAttachment);
         }
         nIndex++;

@@ -44,6 +44,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -98,7 +99,7 @@ public final class DropFolderUserMessage
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
     LOGGER.info ("Trying to send " + aSendFile.toString ());
-    try
+    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       // Read generic SBD
       final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ()
@@ -138,7 +139,7 @@ public final class DropFolderUserMessage
                                                                   .getKeyEntry ();
           final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
 
-          final AS4ClientUserMessage aClient = new AS4ClientUserMessage ();
+          final AS4ClientUserMessage aClient = new AS4ClientUserMessage (aResHelper);
           aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
 
           // Keystore data
