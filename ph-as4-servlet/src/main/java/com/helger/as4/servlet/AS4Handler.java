@@ -75,7 +75,6 @@ import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.as4.profile.IAS4ProfileValidator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.mgr.AS4ServletMessageProcessorManager;
 import com.helger.as4.servlet.soap.AS4SingleSOAPHeader;
 import com.helger.as4.servlet.soap.ISOAPHeaderElementProcessor;
@@ -224,6 +223,7 @@ public class AS4Handler implements AutoCloseable
 
   private final AS4ResourceManager m_aResMgr;
   private final AS4CryptoFactory m_aCryptoFactory;
+  private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
 
   /** By default get all message processors from the global SPI registry */
@@ -249,12 +249,16 @@ public class AS4Handler implements AutoCloseable
     s_aDebug.set (bDebug);
   }
 
-  public AS4Handler (@Nonnull final AS4ResourceManager aResMgr, @Nonnull final AS4CryptoFactory aCryptoFactory)
+  public AS4Handler (@Nonnull final AS4ResourceManager aResMgr,
+                     @Nonnull final AS4CryptoFactory aCryptoFactory,
+                     @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aResMgr, "ResMgr");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aIAF, "IAF");
     m_aResMgr = aResMgr;
     m_aCryptoFactory = aCryptoFactory;
+    m_aIAF = aIAF;
   }
 
   public void close ()
@@ -1487,7 +1491,6 @@ public class AS4Handler implements AutoCloseable
       final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
                                                           sBoundary.getBytes (StandardCharsets.ISO_8859_1),
                                                           (MultipartProgressNotifier) null);
-      final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
 
       int nIndex = 0;
       while (true)
@@ -1516,7 +1519,7 @@ public class AS4Handler implements AutoCloseable
         else
         {
           // MIME Attachment (index is gt 0)
-          final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, m_aResMgr);
+          final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResMgr);
           aIncomingAttachments.add (aAttachment);
         }
         nIndex++;

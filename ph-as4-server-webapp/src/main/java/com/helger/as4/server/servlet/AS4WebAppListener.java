@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.model.pmode.resolve.IPModeResolver;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
@@ -125,9 +126,10 @@ public final class AS4WebAppListener extends WebAppListener
   @Override
   protected void initManagers ()
   {
+    final IPModeResolver aPModeResolver = AS4ServerSettings.getPModeResolver ();
     final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
-    AS4ServerInitializer.initAS4Server (aCryptoFactory);
-    DropFolderUserMessage.init ();
+    AS4ServerInitializer.initAS4Server (aPModeResolver, aCryptoFactory);
+    DropFolderUserMessage.init (aCryptoFactory.getCryptoProperties ());
   }
 
   @Override

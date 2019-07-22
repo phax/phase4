@@ -43,7 +43,6 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
@@ -94,8 +93,7 @@ public final class DropFolderUserMessage
     throw new IllegalStateException ("Failed to get CN from '" + sPrincipal + "'");
   }
 
-  private static void _send (@Nonnull final AS4CryptoProperties aCP,
-                             final Path aSendFile, final Path aIncomingDir)
+  private static void _send (@Nonnull final AS4CryptoProperties aCP, final Path aSendFile, final Path aIncomingDir)
   {
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
@@ -222,14 +220,13 @@ public final class DropFolderUserMessage
     }
   }
 
-  public static void init ()
+  public static void init (@Nonnull final AS4CryptoProperties aCryptoProps)
   {
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");
 
     final ISettings aSettings = AS4ServerConfiguration.getSettings ();
-    final AS4CryptoProperties aCryptoProps = AS4ServerSettings.getAS4CryptoFactory ().getCryptoProperties ();
-       final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
+    final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
     final Path aIncomingDir = Paths.get (aSettings.getAsString ("server.directory.incoming", "in"));
 
     try

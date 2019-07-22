@@ -37,9 +37,9 @@ import com.helger.as4.model.mpc.IMPC;
 import com.helger.as4.model.mpc.MPCManager;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
+import com.helger.as4.model.pmode.resolve.IPModeResolver;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.servlet.mgr.AS4ServletPullRequestProcessorManager;
 import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
@@ -53,6 +53,7 @@ import com.helger.as4lib.ebms3header.Ebms3PullRequest;
 import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -74,6 +75,14 @@ import com.helger.xml.XMLHelper;
 public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
+
+  private final IPModeResolver m_aPModeResolver;
+
+  public SOAPHeaderElementProcessorExtractEbms3Messaging (@Nonnull final IPModeResolver aPModeResolver)
+  {
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
+    m_aPModeResolver = aPModeResolver;
+  }
 
   /**
    * Checks if Leg1 should be used or not.
@@ -269,21 +278,17 @@ public final class SOAPHeaderElementProcessorExtractEbms3Messaging implements IS
         // Get responder address from properties file
         final String sResponderAddress = AS4ServerConfiguration.getServerAddress ();
 
-        aPMode = AS4ServerSettings.getPModeResolver ()
-                                  .getPModeOfID (sPModeID,
-                                                 aCollaborationInfo.getService ().getValue (),
-                                                 aCollaborationInfo.getAction (),
-                                                 sInitiatorID,
-                                                 sResponderID,
-                                                 sResponderAddress);
+        aPMode = m_aPModeResolver.getPModeOfID (sPModeID,
+                                                aCollaborationInfo.getService ().getValue (),
+                                                aCollaborationInfo.getAction (),
+                                                sInitiatorID,
+                                                sResponderID,
+                                                sResponderAddress);
 
         // Should be screened by the xsd conversion already
         if (aPMode == null)
         {
-          LOGGER.warn ("Failed to resolve PMode '" +
-                       sPModeID +
-                       "' using resolver " +
-                       AS4ServerSettings.getPModeResolver ());
+          LOGGER.warn ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
 
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;

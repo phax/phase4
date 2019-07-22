@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.mgr.MetaAS4Manager;
+import com.helger.as4.model.pmode.resolve.IPModeResolver;
 import com.helger.as4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
@@ -53,16 +54,20 @@ public final class AS4ServerInitializer
    * Call this method in your AS4 server to initialize everything that is
    * necessary to use the {@link AS4Servlet}.
    *
+   * @param aPModeResolver
+   *        PMode resolver. May not be <code>null</code>.
    * @param aCryptoFactory
    *        Crypto factory to use. May not be <code>null</code>.
    */
-  public static void initAS4Server (@Nonnull final AS4CryptoFactory aCryptoFactory)
+  public static void initAS4Server (@Nonnull final IPModeResolver aPModeResolver,
+                                    @Nonnull final AS4CryptoFactory aCryptoFactory)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
     if (!aReg.containsHeaderElementProcessor (QNAME_MESSAGING))
-      aReg.registerHeaderElementProcessor (QNAME_MESSAGING, new SOAPHeaderElementProcessorExtractEbms3Messaging ());
+      aReg.registerHeaderElementProcessor (QNAME_MESSAGING,
+                                           new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver));
 
     // WSS4J must be after Ebms3Messaging handler!
     if (!aReg.containsHeaderElementProcessor (QNAME_SECURITY))

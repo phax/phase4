@@ -16,8 +16,10 @@
  */
 package com.helger.as4.servlet;
 
+import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.servlet.mgr.AS4ServerSettings;
+import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -46,7 +48,9 @@ public class AS4Servlet extends AbstractXServlet
   {
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
+    final AS4ResourceManager aResMgr = new AS4ResourceManager ();
     final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
-    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler (aCryptoFactory));
+    final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
+    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler (aResMgr, aCryptoFactory, aIAF));
   }
 }
