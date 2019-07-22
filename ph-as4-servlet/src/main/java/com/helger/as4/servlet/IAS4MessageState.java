@@ -37,6 +37,7 @@ import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.string.StringHelper;
 
 /**
  * Read-only AS4 message state.
@@ -172,6 +173,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   IMPC getMPC ();
 
+  default boolean hasMPC ()
+  {
+    return getMPC () != null;
+  }
+
   /**
    * @return true if a payload in the soap body is present, else false
    */
@@ -184,12 +190,22 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   String getInitiatorID ();
 
+  default boolean hasInitiatorID ()
+  {
+    return StringHelper.hasText (getInitiatorID ());
+  }
+
   /**
    * @return responder set in the usermessage if the incoming message is a
    *         usermessage
    */
   @Nullable
   String getResponderID ();
+
+  default boolean hasResponderID ()
+  {
+    return StringHelper.hasText (getResponderID ());
+  }
 
   /**
    * @return The first provided certificate in the incoming message. May be
@@ -198,6 +214,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    */
   @Nullable
   X509Certificate getUsedCertificate ();
+
+  default boolean hasUsedCertificate ()
+  {
+    return getUsedCertificate () != null;
+  }
 
   /**
    * @return The effective leg to use. May be leg 1 or leg 2 of the PMode.
