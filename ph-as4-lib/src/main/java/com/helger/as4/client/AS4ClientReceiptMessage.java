@@ -72,7 +72,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage () throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -104,7 +104,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     }
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   /**

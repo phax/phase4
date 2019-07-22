@@ -52,12 +52,12 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  */
 public abstract class AbstractAS4Client extends BasicHttpPoster
 {
-  public static final class BuiltMessage
+  public static final class AS4BuiltMessage
   {
     private final String m_sMessageID;
     private final HttpEntity m_aHttpEntity;
 
-    public BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpEntity aHttpEntity)
+    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpEntity aHttpEntity)
     {
       m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
       m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -85,12 +85,12 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     }
   }
 
-  public static final class SentMessage <T>
+  public static final class AS4SentMessage <T>
   {
     private final String m_sMessageID;
     private final T m_aResponse;
 
-    public SentMessage (@Nonnull @Nonempty final String sMessageID, @Nullable final T aResponse)
+    public AS4SentMessage (@Nonnull @Nonempty final String sMessageID, @Nullable final T aResponse)
     {
       m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
       m_aResponse = aResponse;
@@ -131,6 +131,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   private String m_sKeyStorePassword;
   private String m_sKeyStoreAlias;
   private String m_sKeyStoreKeyPassword;
+  private AS4CryptoFactory m_aCryptoFactory;
 
   // Signing additional attributes
   private ECryptoAlgorithmSign m_eCryptoAlgorithmSign;
@@ -158,24 +159,31 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   private void _checkKeyStoreAttributes ()
   {
-    if (m_aKeyStoreType == null)
-      throw new IllegalStateException ("KeyStore type is not configured.");
-    if (m_aKeyStoreRes == null)
-      throw new IllegalStateException ("KeyStore resources is not configured.");
-    if (!m_aKeyStoreRes.exists ())
-      throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
-    if (m_sKeyStorePassword == null)
-      throw new IllegalStateException ("KeyStore password is not configured.");
-    if (StringHelper.hasNoText (m_sKeyStoreAlias))
-      throw new IllegalStateException ("KeyStore alias is not configured.");
-    if (m_sKeyStoreKeyPassword == null)
-      throw new IllegalStateException ("Key password is not configured.");
+    if (m_aCryptoFactory == null)
+    {
+      if (m_aKeyStoreType == null)
+        throw new IllegalStateException ("KeyStore type is not configured.");
+      if (m_aKeyStoreRes == null)
+        throw new IllegalStateException ("KeyStore resources is not configured.");
+      if (!m_aKeyStoreRes.exists ())
+        throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
+      if (m_sKeyStorePassword == null)
+        throw new IllegalStateException ("KeyStore password is not configured.");
+      if (StringHelper.hasNoText (m_sKeyStoreAlias))
+        throw new IllegalStateException ("KeyStore alias is not configured.");
+      if (m_sKeyStoreKeyPassword == null)
+        throw new IllegalStateException ("Key password is not configured.");
+    }
   }
 
   @Nonnull
   protected AS4CryptoFactory internalCreateCryptoFactory ()
   {
     _checkKeyStoreAttributes ();
+
+    // Shortcut?
+    if (m_aCryptoFactory != null)
+      return m_aCryptoFactory;
 
     final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
     aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
@@ -189,15 +197,15 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   @OverrideOnDemand
   @Nonnull
-  public abstract BuiltMessage buildMessage () throws Exception;
+  public abstract AS4BuiltMessage buildMessage () throws Exception;
 
   @Nonnull
-  public <T> SentMessage <T> sendMessage (@Nonnull final String sURL,
-                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+  public <T> AS4SentMessage <T> sendMessage (@Nonnull final String sURL,
+                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
   {
-    final BuiltMessage aBuiltMsg = buildMessage ();
+    final AS4BuiltMessage aBuiltMsg = buildMessage ();
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
-    return new SentMessage <> (aBuiltMsg.getMessageID (), aResponse);
+    return new AS4SentMessage <> (aBuiltMsg.getMessageID (), aResponse);
   }
 
   @Nullable
@@ -232,6 +240,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
     m_aKeyStoreType = aKeyStoreType;
+    m_aCryptoFactory = null;
   }
 
   /**
@@ -253,6 +262,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   public final void setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
   {
     m_aKeyStoreRes = aKeyStoreRes;
+    m_aCryptoFactory = null;
   }
 
   /**
@@ -274,6 +284,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   public final void setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
     m_sKeyStorePassword = sKeyStorePassword;
+    m_aCryptoFactory = null;
   }
 
   /**
@@ -295,6 +306,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   public final void setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
   {
     m_sKeyStoreAlias = sKeyStoreAlias;
+    m_aCryptoFactory = null;
   }
 
   /**
@@ -317,6 +329,17 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   public final void setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
   {
     m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
+    m_aCryptoFactory = null;
+  }
+
+  public final AS4CryptoFactory getAS4CryptoFactory ()
+  {
+    return m_aCryptoFactory;
+  }
+
+  public final void setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
+  {
+    m_aCryptoFactory = aCryptoFactory;
   }
 
   /**

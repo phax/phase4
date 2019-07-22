@@ -216,11 +216,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   @Override
   @Nonnull
-  public BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage () throws Exception
   {
-    // if pmode is set use attribute from pmode
-    _setValuesWithPMode ();
-
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
     // check mandatory attributes
@@ -325,11 +322,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
     if (aMimeMsg != null)
     {
-      return new BuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
+      return new AS4BuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
     }
 
     // Wrap SOAP XML
-    return new BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   @Nullable
@@ -637,7 +634,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   /**
    * This method should be used if you do not want to set each parameter and
-   * have a PMOde ready that you wish to use. Some parameters still must be set
+   * have a PMode ready that you wish to use. Some parameters still must be set
    * with the remaining setters.
    *
    * @param aPmode
@@ -646,5 +643,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
   public final void setPMode (@Nullable final IPMode aPmode)
   {
     m_aPMode = aPmode;
+    // if pmode is set use attribute from pmode
+    _setValuesWithPMode ();
   }
 }
