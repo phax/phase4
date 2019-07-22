@@ -20,6 +20,8 @@ It consists of the following sub-projects:
     * The AS4 message handler now have a chance to access the received HTTP headers
     * Renamed `ph-as4-server-webapp-test` to `ph-as4-test`
     * Improved Crypto stuff configurability
+    * Renamed `AS4ResourceManager` to `AS4ResourceHelper`
+    * Renamed `AS4Handler` to `AS4RequestHandler`
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26

@@ -128,14 +128,15 @@ import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
- * Process incoming AS4 transmissions. The method
+ * Process incoming AS4 transmissions. This class is instantiated per request.
+ * The method
  * {@link #handleRequest(IRequestWebScopeWithoutResponse, AS4UnifiedResponse)}
  * is the entry point for the complex processing.
  *
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public class AS4Handler implements AutoCloseable
+public class AS4RequestHandler implements AutoCloseable
 {
   private static interface IAS4ResponseFactory
   {
@@ -216,7 +217,7 @@ public class AS4Handler implements AutoCloseable
     }
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Handler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
   private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
@@ -249,7 +250,8 @@ public class AS4Handler implements AutoCloseable
     s_aDebug.set (bDebug);
   }
 
-  public AS4Handler (@Nonnull final AS4CryptoFactory aCryptoFactory, @Nonnull final IIncomingAttachmentFactory aIAF)
+  public AS4RequestHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
+                            @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aIAF, "IAF");
@@ -271,7 +273,7 @@ public class AS4Handler implements AutoCloseable
   }
 
   @Nonnull
-  public final AS4Handler setLocale (@Nonnull final Locale aLocale)
+  public final AS4RequestHandler setLocale (@Nonnull final Locale aLocale)
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     m_aLocale = aLocale;
@@ -285,7 +287,7 @@ public class AS4Handler implements AutoCloseable
   }
 
   @Nonnull
-  public final AS4Handler setProcessorSupplier (@Nonnull final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
+  public final AS4RequestHandler setProcessorSupplier (@Nonnull final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
   {
     ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
     m_aProcessorSupplier = aProcessorSupplier;

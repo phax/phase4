@@ -46,7 +46,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     void customize (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
                     @Nonnull AS4UnifiedResponse aUnifiedResponse,
-                    @Nonnull AS4Handler aHandler);
+                    @Nonnull AS4RequestHandler aHandler);
   }
 
   private final AS4CryptoFactory m_aCryptoFactory;
@@ -91,7 +91,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
-    try (final AS4Handler aHandler = new AS4Handler (m_aCryptoFactory, m_aIAF))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory, m_aIAF))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)
