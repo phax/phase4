@@ -83,7 +83,7 @@ public final class AS4ClientErrorMessageTest
     _ensureInvalidState (aClient);
     aClient.addErrorMessage (EEbmsError.EBMS_INVALID_HEADER, Locale.US);
     _ensureInvalidState (aClient);
-    aClient.setRefToMessageId ("referencefortestingpurpose");
+    aClient.setRefToMessageID ("referencefortestingpurpose");
     _ensureValidState (aClient);
   }
 }

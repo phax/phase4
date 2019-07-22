@@ -16,8 +16,11 @@
  */
 package com.helger.as4.client;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.mail.MessagingException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -119,7 +122,8 @@ public class BasicHttpPoster
   @Nullable
   public <T> T sendGenericMessage (@Nonnull final String sURL,
                                    @Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
+                                                                                                  IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");

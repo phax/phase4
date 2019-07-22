@@ -19,7 +19,6 @@ package com.helger.as4.client;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
 
@@ -32,7 +31,6 @@ import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.string.StringHelper;
 
 /**
  * AS4 client for {@link AS4ErrorMessage} objects.
@@ -42,7 +40,6 @@ import com.helger.commons.string.StringHelper;
 public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
-  private String m_sRefToMessageId;
 
   public AS4ClientErrorMessage ()
   {}
@@ -52,7 +49,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     ValueEnforcer.notNull (aError, "Error");
     ValueEnforcer.notNull (aLocale, "Locale");
 
-    addErrorMessage (aError.getAsEbms3Error (aLocale, getRefToMessageId ()));
+    addErrorMessage (aError.getAsEbms3Error (aLocale, getRefToMessageID ()));
   }
 
   public void addErrorMessage (@Nonnull final Ebms3Error aError)
@@ -60,17 +57,6 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     ValueEnforcer.notNull (aError, "Error");
 
     m_aErrorMessages.add (aError);
-  }
-
-  @Nullable
-  public String getRefToMessageId ()
-  {
-    return m_sRefToMessageId;
-  }
-
-  public void setRefToMessageId (@Nullable final String sRefToMessageId)
-  {
-    m_sRefToMessageId = sRefToMessageId;
   }
 
   private void _checkMandatoryAttributes ()
@@ -81,7 +67,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     if (m_aErrorMessages.isEmpty ())
       throw new IllegalStateException ("No Errors specified!");
 
-    if (StringHelper.hasNoText (m_sRefToMessageId))
+    if (!hasRefToMessageID ())
       throw new IllegalStateException ("No reference to a message set.");
   }
 
@@ -94,7 +80,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
     final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            m_sRefToMessageId);
+                                                                                            getRefToMessageID ());
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSOAPVersion (), aEbms3MessageInfo, m_aErrorMessages);
 

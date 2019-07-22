@@ -230,7 +230,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                            getRefToMessageID ());
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
                                                                                             m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,

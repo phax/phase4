@@ -61,7 +61,7 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   }
 
   @Nonnull
-  public LocalDateTime getDateTime ()
+  public final LocalDateTime getDateTime ()
   {
     return m_aDT;
   }
@@ -72,26 +72,26 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
    */
   @Nonnull
   @Nonempty
-  public String getID ()
+  public final String getID ()
   {
     return getMessageID ();
   }
 
   @Nonnull
   @Nonempty
-  public String getMessageID ()
+  public final String getMessageID ()
   {
     return m_sMessageID;
   }
 
   @Nullable
-  public String getProfileID ()
+  public final String getProfileID ()
   {
     return m_sProfileID;
   }
 
   @Nullable
-  public String getPModeID ()
+  public final String getPModeID ()
   {
     return m_sPModeID;
   }

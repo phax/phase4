@@ -141,6 +141,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
+  private String m_sRefToMessageID;
 
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
@@ -417,6 +418,18 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   /**
+   * Set a constant message ID
+   *
+   * @param sMessageID
+   *        Message to be used. May neither be <code>null</code> nor empty.
+   */
+  public final void setMessageID (@Nonnull @Nonempty final String sMessageID)
+  {
+    ValueEnforcer.notEmpty (sMessageID, "MessageID");
+    setMessageIDFactory ( () -> sMessageID);
+  }
+
+  /**
    * Set the factory that creates message IDs. By default a random UUID is used.
    *
    * @param aMessageIDFactory
@@ -436,6 +449,22 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     if (StringHelper.hasNoText (ret))
       throw new IllegalStateException ("An empty MessageID was generated!");
     return ret;
+  }
+
+  @Nullable
+  public final String getRefToMessageID ()
+  {
+    return m_sRefToMessageID;
+  }
+
+  public final boolean hasRefToMessageID ()
+  {
+    return StringHelper.hasText (m_sRefToMessageID);
+  }
+
+  public final void setRefToMessageID (@Nullable final String sRefToMessageID)
+  {
+    m_sRefToMessageID = sRefToMessageID;
   }
 
   /**
