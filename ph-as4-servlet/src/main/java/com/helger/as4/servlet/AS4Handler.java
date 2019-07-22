@@ -249,14 +249,12 @@ public class AS4Handler implements AutoCloseable
     s_aDebug.set (bDebug);
   }
 
-  public AS4Handler (@Nonnull final AS4ResourceManager aResMgr,
-                     @Nonnull final AS4CryptoFactory aCryptoFactory,
-                     @Nonnull final IIncomingAttachmentFactory aIAF)
+  public AS4Handler (@Nonnull final AS4CryptoFactory aCryptoFactory, @Nonnull final IIncomingAttachmentFactory aIAF)
   {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aIAF, "IAF");
-    m_aResMgr = aResMgr;
+    // Create dynamically here, to avoid leaving too many streams open
+    m_aResMgr = new AS4ResourceManager ();
     m_aCryptoFactory = aCryptoFactory;
     m_aIAF = aIAF;
   }

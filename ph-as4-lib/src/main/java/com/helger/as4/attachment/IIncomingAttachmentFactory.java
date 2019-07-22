@@ -36,7 +36,7 @@ public interface IIncomingAttachmentFactory extends Serializable
 {
   /**
    * Create an attachment if the source message is a MIME message
-   * 
+   *
    * @param aBodyPart
    *        The attachment body part
    * @param aResMgr
@@ -50,4 +50,7 @@ public interface IIncomingAttachmentFactory extends Serializable
   @Nonnull
   WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart,
                                     @Nonnull AS4ResourceManager aResMgr) throws IOException, MessagingException;
+
+  @Nonnull
+  static IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
 }

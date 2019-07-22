@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
@@ -50,19 +49,15 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                     @Nonnull AS4Handler aHandler);
   }
 
-  private final AS4ResourceManager m_aResMgr;
   private final AS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
-  public AS4XServletHandler (@Nonnull final AS4ResourceManager aResMgr,
-                             @Nonnull final AS4CryptoFactory aCryptoFactory,
+  public AS4XServletHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
-    ValueEnforcer.notNull (aResMgr, "ResMgr");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aIAF, "IAF");
-    m_aResMgr = aResMgr;
     m_aCryptoFactory = aCryptoFactory;
     m_aIAF = aIAF;
   }
@@ -96,7 +91,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
-    try (final AS4Handler aHandler = new AS4Handler (m_aResMgr, m_aCryptoFactory, m_aIAF))
+    try (final AS4Handler aHandler = new AS4Handler (m_aCryptoFactory, m_aIAF))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)

@@ -104,7 +104,7 @@ public class AS4CryptoFactory implements Serializable
    * @param aCryptoProps
    *        The properties to be used. May not be <code>null</code>.
    */
-  public AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
+  protected AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
   {
     ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
     m_aCryptoProps = aCryptoProps;
