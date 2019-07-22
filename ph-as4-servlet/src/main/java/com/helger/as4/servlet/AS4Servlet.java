@@ -49,7 +49,7 @@ public class AS4Servlet extends AbstractXServlet
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
     final AS4ResourceManager aResMgr = new AS4ResourceManager ();
-    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
     final IIncomingAttachmentFactory aIAF = AS4ServerSettings.getIncomingAttachmentFactory ();
     handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler (aResMgr, aCryptoFactory, aIAF));
   }

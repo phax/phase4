@@ -54,7 +54,6 @@ import com.helger.as4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.as4.server.AbstractClientSetUp;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.as4.util.AS4ResourceManager;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
@@ -72,7 +71,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
 
   protected static AS4ResourceManager s_aResMgr;
 
-  protected final AS4CryptoFactory m_aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+  protected final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
   private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 

@@ -34,7 +34,6 @@ import org.w3c.dom.Document;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -59,7 +58,7 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

@@ -35,6 +35,8 @@ import com.helger.commons.string.StringHelper;
  */
 public class DefaultPModeResolver implements IPModeResolver
 {
+  public static final IPModeResolver DEFAULT_PMODE_RESOLVER = new DefaultPModeResolver (false);
+
   private final boolean m_bUseDefaultAsFallback;
 
   public DefaultPModeResolver (final boolean bUseDefaultAsFallback)

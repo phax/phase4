@@ -25,10 +25,10 @@ import javax.servlet.ServletContext;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.as4.model.pmode.resolve.IPModeResolver;
 import com.helger.as4.servlet.AS4ServerInitializer;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.mgr.AS4ServerSettings;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -106,8 +106,8 @@ public final class AS4WebAppListener extends WebAppListener
   @Override
   protected void initManagers ()
   {
-    final IPModeResolver aPModeResolver = AS4ServerSettings.getPModeResolver ();
-    final AS4CryptoFactory aCryptoFactory = AS4ServerSettings.getAS4CryptoFactory ();
+    final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
     AS4ServerInitializer.initAS4Server (aPModeResolver, aCryptoFactory);
   }
 }
