@@ -551,16 +551,20 @@ public class AS4RequestHandler implements AutoCloseable
             LOGGER.info ("Invoking AS4 message processor " + aProcessor);
 
           // Main processing
-          AS4MessageProcessorResult aResult;
+          final AS4MessageProcessorResult aResult;
           if (bIsUserMessage)
+          {
             aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
                                                         aUserMessage,
                                                         aPMode,
                                                         aPayloadNode,
                                                         aDecryptedAttachments,
                                                         aState);
+          }
           else
+          {
             aResult = aProcessor.processAS4SignalMessage (aHttpHeaders, aSignalMessage, aPMode, aState);
+          }
 
           // Result returned?
           if (aResult == null)
@@ -594,7 +598,7 @@ public class AS4RequestHandler implements AutoCloseable
                                          " on '" +
                                          sMessageID +
                                          "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
-                LOGGER.warn (sErrorMsg);
+                LOGGER.error (sErrorMsg);
                 aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
                                                                                         sMessageID,
                                                                                         sErrorMsg));
@@ -669,19 +673,19 @@ public class AS4RequestHandler implements AutoCloseable
           if (isDebug ())
             LOGGER.info ("Successfully invoked AS4 message processor " + aProcessor);
         }
-        catch (final Throwable t)
+        catch (final Exception ex)
         {
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          if (t.getCause () instanceof ZipException)
+          if (ex.getCause () instanceof ZipException)
           {
             aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
             return;
           }
 
           // Re-throw
-          if (t instanceof RuntimeException)
-            throw (RuntimeException) t;
-          throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, t);
+          if (ex instanceof RuntimeException)
+            throw (RuntimeException) ex;
+          throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, ex);
         }
 
     // Remember success
@@ -718,6 +722,7 @@ public class AS4RequestHandler implements AutoCloseable
       final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResHelper);
 
       // Handle all headers - the only place where the AS4MessageState values
+      // are written
       _processSOAPHeaderElements (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aStateImpl, aErrorMessages);
 
       aState = aStateImpl;

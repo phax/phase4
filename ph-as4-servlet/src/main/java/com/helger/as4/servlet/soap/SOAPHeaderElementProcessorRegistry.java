@@ -88,6 +88,6 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
   @ReturnsMutableCopy
   public ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> getAllElementProcessors ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.getClone ());
+    return m_aRWLock.readLocked (m_aMap::getClone);
   }
 }
