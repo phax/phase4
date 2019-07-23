@@ -88,20 +88,26 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   public static final class AS4SentMessage <T>
   {
-    private final String m_sMessageID;
+    private final AS4BuiltMessage m_aBuiltMsg;
     private final T m_aResponse;
 
-    public AS4SentMessage (@Nonnull @Nonempty final String sMessageID, @Nullable final T aResponse)
+    public AS4SentMessage (@Nonnull final AS4BuiltMessage aBuiltMsg, @Nullable final T aResponse)
     {
-      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
+      m_aBuiltMsg = ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
       m_aResponse = aResponse;
+    }
+
+    @Nonnull
+    public AS4BuiltMessage getBuiltMessage ()
+    {
+      return m_aBuiltMsg;
     }
 
     @Nonnull
     @Nonempty
     public String getMessageID ()
     {
-      return m_sMessageID;
+      return m_aBuiltMsg.getMessageID ();
     }
 
     @Nullable
@@ -118,7 +124,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     @Override
     public String toString ()
     {
-      return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
+      return new ToStringGenerator (this).append ("MessageID", getMessageID ())
                                          .append ("Response", m_aResponse)
                                          .getToString ();
     }
@@ -132,6 +138,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   private String m_sKeyStorePassword;
   private String m_sKeyStoreAlias;
   private String m_sKeyStoreKeyPassword;
+  // Alternative
   private AS4CryptoFactory m_aCryptoFactory;
 
   // Signing additional attributes
@@ -207,7 +214,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     final AS4BuiltMessage aBuiltMsg = buildMessage ();
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
-    return new AS4SentMessage <> (aBuiltMsg.getMessageID (), aResponse);
+    return new AS4SentMessage <> (aBuiltMsg, aResponse);
   }
 
   @Nullable
