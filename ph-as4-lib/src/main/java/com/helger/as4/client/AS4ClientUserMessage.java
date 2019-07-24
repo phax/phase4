@@ -347,6 +347,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                              @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
+                                                                        null,
                                                                         aMimeType,
                                                                         eAS4CompressionMode,
                                                                         m_aResHelper));

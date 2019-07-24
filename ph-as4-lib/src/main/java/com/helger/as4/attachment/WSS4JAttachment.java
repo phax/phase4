@@ -30,6 +30,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -74,7 +75,7 @@ public class WSS4JAttachment extends Attachment
   private Charset m_aCharset;
   private String m_sUncompressedMimeType;
 
-  public WSS4JAttachment (@Nonnull final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
+  public WSS4JAttachment (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
   {
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     overwriteMimeType (sMimeType);
@@ -216,6 +217,7 @@ public class WSS4JAttachment extends Attachment
     return this;
   }
 
+  @Nonnull
   private DataSource _getAsDataSource ()
   {
     final InputStreamProviderDataSource aDS = new InputStreamProviderDataSource (m_aISP, getId (), getMimeType ());
@@ -258,7 +260,9 @@ public class WSS4JAttachment extends Attachment
 
   private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nonnull final String sFilename)
   {
-    aAttachment.setUniqueID ();
+    // Ensure an ID is present
+    if (StringHelper.hasNoText (aAttachment.getId ()))
+      aAttachment.setUniqueID ();
 
     // Set after ID and MimeType!
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
@@ -266,6 +270,15 @@ public class WSS4JAttachment extends Attachment
                            "attachment; filename=\"" + sFilename + "\"");
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + ">");
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, aAttachment.getMimeType ());
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+  {
+    return createOutgoingFileAttachment (aSrcFile, null, aMimeType, eCompressionMode, aResHelper);
   }
 
   /**
@@ -285,6 +298,7 @@ public class WSS4JAttachment extends Attachment
    */
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+                                                              @Nullable final String sContentID,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
@@ -293,6 +307,7 @@ public class WSS4JAttachment extends Attachment
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
+    ret.setId (sContentID);
     _addOutgoingHeaders (ret, FilenameHelper.getWithoutPath (aSrcFile));
 
     // If the attachment has an compressionMode do it directly, so that
@@ -325,11 +340,13 @@ public class WSS4JAttachment extends Attachment
    * Constructor. Performs compression internally.
    *
    * @param aSrcData
-   *        Source in-memory data, uncompressed, unencrypted file.
+   *        Source in-memory data, uncompressed, unencrypted.
+   * @param sContentID
+   *        Optional content ID or <code>null</code> to create a random one.
    * @param sFilename
-   *        Filename of the attachment
+   *        Filename of the attachment. May not be <code>null</code>.
    * @param aMimeType
-   *        Original mime type of the file.
+   *        Original mime type of the file. May not be <code>null</code>.
    * @param eCompressionMode
    *        Optional compression mode to use. May be <code>null</code>.
    * @param aResHelper
@@ -340,6 +357,7 @@ public class WSS4JAttachment extends Attachment
    */
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final byte [] aSrcData,
+                                                              @Nullable final String sContentID,
                                                               @Nonnull @Nonempty final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
@@ -350,6 +368,7 @@ public class WSS4JAttachment extends Attachment
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
+    ret.setId (sContentID);
     _addOutgoingHeaders (ret, sFilename);
 
     // If the attachment has an compressionMode do it directly, so that
