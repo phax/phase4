@@ -29,10 +29,10 @@ import javax.annotation.Nonnull;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
-import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
+import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -201,18 +201,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                               aState.getResourceMgr ());
 
-        // Configure RequestData needed for the check / decrpyt process!
+        // Configure RequestData needed for the check / decrypt process!
         final RequestData aRequestData = new RequestData ();
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
         aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
         aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
-        aRequestData.setWssConfig (WSSConfig.getNewInstance ());
+        aRequestData.setWssConfig (m_aCryptoFactory.createWSSConfig ());
 
         // Upon success, the SOAP document contains the decrypted content
         // afterwards!
-        aResults = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData).getResults ();
+        final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
+        aResults = aHdlRes.getResults ();
 
         // Collect all unique used certificates
         final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
@@ -233,8 +234,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                 aState.setSoapDecrypted (true);
                 break;
             }
-
         }
+
         if (aCertSet.size () > 1)
         {
           if (GlobalDebug.isDebugMode ())

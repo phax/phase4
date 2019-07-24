@@ -55,6 +55,7 @@ public final class CAS4
   public static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
   public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
 
+  // Must start with a letter and must be a valid XML ID and token
   public static final String LIB_NAME = "phase4";
 
   // Constant Names

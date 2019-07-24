@@ -19,8 +19,8 @@ package com.helger.as4.messaging.domain;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -70,7 +70,6 @@ public final class MessageHelperMethods
   public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = "cid:";
-  private static final Random RND = new Random ();
 
   private MessageHelperMethods ()
   {}
@@ -79,7 +78,7 @@ public final class MessageHelperMethods
   @Nonempty
   public static String createRandomConversationID ()
   {
-    return CAS4.LIB_NAME + "@Conv" + RND.nextLong ();
+    return CAS4.LIB_NAME + "@Conv" + ThreadLocalRandom.current ().nextLong ();
   }
 
   @Nonnull
@@ -96,7 +95,21 @@ public final class MessageHelperMethods
     // Assign a random ID for signing
     // Data type is "xs:ID", derived from "xs:NCName"
     // --> cannot start with a number
-    return CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ();
+    return CAS4.LIB_NAME + "-msg-" + UUID.randomUUID ().toString ();
+  }
+
+  @Nonnull
+  @Nonempty
+  public static String createRandomAttachmentID ()
+  {
+    return CAS4.LIB_NAME + "-att-" + UUID.randomUUID ().toString ();
+  }
+
+  @Nonnull
+  @Nonempty
+  public static String createRandomWSUID ()
+  {
+    return CAS4.LIB_NAME + "-wsu-" + UUID.randomUUID ().toString ();
   }
 
   /**

@@ -25,8 +25,10 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
+import org.apache.wss4j.dom.WsuIdAllocator;
 import org.apache.wss4j.dom.engine.WSSConfig;
 
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -146,6 +148,25 @@ public class AS4CryptoFactory implements Serializable
     Crypto ret = m_aCrypto;
     if (ret == null)
       ret = m_aCrypto = createCrypto (m_aCryptoProps);
+    return ret;
+  }
+
+  @Nonnull
+  public WSSConfig createWSSConfig ()
+  {
+    final WSSConfig ret = WSSConfig.getNewInstance ();
+    ret.setIdAllocator (new WsuIdAllocator ()
+    {
+      public String createId (@Nullable final String sPrefix, final Object o)
+      {
+        return createSecureId (sPrefix, o);
+      }
+
+      public String createSecureId (final String sPrefix, final Object o)
+      {
+        return StringHelper.getConcatenatedOnDemand (sPrefix, "-", MessageHelperMethods.createRandomWSUID ());
+      }
+    });
     return ret;
   }
 }

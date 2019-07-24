@@ -24,7 +24,6 @@ import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
-import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -39,7 +38,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.wss4j.common.ext.Attachment;
 import org.apache.wss4j.common.util.AttachmentUtils;
 
-import com.helger.as4.CAS4;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
@@ -86,7 +85,7 @@ public class WSS4JAttachment extends Attachment
    */
   public void setUniqueID ()
   {
-    setId (CAS4.LIB_NAME + "-" + UUID.randomUUID ().toString ());
+    setId (MessageHelperMethods.createRandomAttachmentID ());
   }
 
   @Override
