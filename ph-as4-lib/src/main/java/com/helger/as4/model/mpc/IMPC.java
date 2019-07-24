@@ -20,7 +20,7 @@ import com.helger.tenancy.IBusinessObject;
 
 /**
  * MPC - Message Partition Channel
- * 
+ *
  * @author Philip Helger
  */
 public interface IMPC extends IBusinessObject
