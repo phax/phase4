@@ -55,11 +55,15 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,
                                                 aDefaultPModeProvider,
-                                                aPModeIDProvider));
-    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID_NEW,
+                                                aPModeIDProvider,
+                                                true));
+    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID_NEW,
                                                 AS4_PROFILE_NAME_NEW,
                                                 aProfileValidatorProvider,
                                                 aDefaultPModeProvider,
-                                                aPModeIDProvider));
+                                                aPModeIDProvider,
+                                                false);
+    aRegistrar.registerProfile (aProfile);
+    aRegistrar.setDefaultProfile (aProfile);
   }
 }

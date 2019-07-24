@@ -59,4 +59,6 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
 
   @Nonnull
   IPModeIDProvider getPModeIDProvider ();
+
+  boolean isDeprecated ();
 }

@@ -69,7 +69,7 @@ public final class AS4ClientUserMessageTest
     AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MetaAS4Manager.getProfileMgr ().setDefaultProfile (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_NEW);
+    MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID_NEW);
     MockPModeGenerator.ensureMockPModesArePresent ();
   }
 

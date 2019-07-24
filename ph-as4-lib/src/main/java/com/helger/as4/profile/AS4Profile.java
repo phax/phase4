@@ -40,6 +40,7 @@ public class AS4Profile implements IAS4Profile
   private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
   private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
+  private final boolean m_bDeprecated;
 
   /**
    * Constructor
@@ -60,13 +61,15 @@ public class AS4Profile implements IAS4Profile
                      @Nonnull @Nonempty final String sDisplayName,
                      @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
                      @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
-                     @Nonnull final IPModeIDProvider aPModeIDProvider)
+                     @Nonnull final IPModeIDProvider aPModeIDProvider,
+                     final boolean bDeprecated)
   {
     m_sID = ValueEnforcer.notEmpty (sID, "ID");
     m_sDisplayName = ValueEnforcer.notEmpty (sDisplayName, "DisplayName");
     m_aProfileValidatorProvider = ValueEnforcer.notNull (aProfileValidatorProvider, "ProfileValidatorProvider");
     m_aDefaultPModeProvider = ValueEnforcer.notNull (aDefaultPModeProvider, "aDefaultPModeProvider");
     m_aPModeIDProvider = ValueEnforcer.notNull (aPModeIDProvider, "PModeIDProvider");
+    m_bDeprecated = bDeprecated;
   }
 
   @Nonnull
@@ -103,6 +106,11 @@ public class AS4Profile implements IAS4Profile
     return m_aPModeIDProvider;
   }
 
+  public boolean isDeprecated ()
+  {
+    return m_bDeprecated;
+  }
+
   @Override
   public String toString ()
   {
@@ -111,6 +119,7 @@ public class AS4Profile implements IAS4Profile
                                        .append ("ProfileValidatorProvider", m_aProfileValidatorProvider)
                                        .append ("DefaultPModeProvider", m_aDefaultPModeProvider)
                                        .append ("PModeIDProvider", m_aPModeIDProvider)
+                                       .append ("Deprecated", m_bDeprecated)
                                        .getToString ();
   }
 }

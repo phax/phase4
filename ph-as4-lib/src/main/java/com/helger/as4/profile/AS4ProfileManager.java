@@ -81,8 +81,12 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       if (m_aMap.containsKey (sID))
         throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
       m_aMap.put (sID, aAS4Profile);
+
+      // Make the first the default as fallback
+      if (m_aMap.size () == 1)
+        m_aDefaultProfile = aAS4Profile;
     });
-    LOGGER.info ("Registered AS4 profile '" + sID + "'");
+    LOGGER.info ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
   }
 
   @Nonnull
@@ -116,11 +120,23 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
    *         profile otherwise.
    */
   @Nullable
-  public IAS4Profile setDefaultProfile (@Nullable final String sDefaultProfileID)
+  public IAS4Profile setDefaultProfileID (@Nullable final String sDefaultProfileID)
   {
     final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
-    m_aRWLock.writeLocked ( () -> m_aDefaultProfile = aDefault);
+    setDefaultProfile (aDefault);
     return aDefault;
+  }
+
+  public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)
+  {
+    m_aRWLock.writeLocked ( () -> m_aDefaultProfile = aAS4Profile);
+    if (aAS4Profile == null)
+      LOGGER.info ("Removed the default AS4 profile");
+    else
+      LOGGER.info ("Set the default AS4 profile to '" +
+                   aAS4Profile.getID () +
+                   "'" +
+                   (aAS4Profile.isDeprecated () ? " which is deprecated" : ""));
   }
 
   /**
@@ -137,14 +153,15 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       IAS4Profile ret = m_aDefaultProfile;
       if (ret == null)
       {
-        if (m_aMap.size () == 1)
+        final int nCount = m_aMap.size ();
+        if (nCount == 1)
           ret = m_aMap.getFirstValue ();
         else
-          if (m_aMap.isEmpty ())
+        {
+          if (nCount == 0)
             throw new IllegalStateException ("No AS4 profile is present, so no default profile can be determined!");
-          else
-            throw new IllegalStateException (m_aMap.size () +
-                                             " AS4 profiles are present, but none is declared default!");
+          throw new IllegalStateException (nCount + " AS4 profiles are present, but none is declared default!");
+        }
       }
       return ret;
     });
