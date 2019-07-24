@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -56,7 +57,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   private final AS4ResourceHelper m_aResHelper;
 
   public WSS4JAttachmentCallbackHandler (@Nullable final Iterable <? extends WSS4JAttachment> aAttachments,
-                                         @Nonnull final AS4ResourceHelper aResHelper)
+                                         @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (aResHelper, "ResHelper");
 

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,9 @@ public class AS4ResourceHelper implements Closeable
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
+  @GuardedBy ("m_aRWLock")
   private final ICommonsList <File> m_aTempFiles = new CommonsArrayList <> ();
+  @GuardedBy ("m_aRWLock")
   private final ICommonsList <Closeable> m_aCloseables = new CommonsArrayList <> ();
 
   public AS4ResourceHelper ()
