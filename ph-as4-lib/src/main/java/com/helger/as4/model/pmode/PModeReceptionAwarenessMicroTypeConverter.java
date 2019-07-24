@@ -27,14 +27,14 @@ import com.helger.xml.microdom.MicroQName;
 
 /**
  * XML converter for objects of class {@link PModeReceptionAwareness}.
- * 
+ *
  * @author Philip Helger
  */
 public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeReceptionAwareness>
 {
   private static final IMicroQName ATTR_RECEPTION_AWARENESS = new MicroQName ("ReceptionAwareness");
   private static final IMicroQName ATTR_RETRY = new MicroQName ("Retry");
-  private static final IMicroQName ATTR_MAX_RETRIES = new MicroQName ("MayRetries");
+  private static final IMicroQName ATTR_MAX_RETRIES = new MicroQName ("MaxRetries");
   private static final IMicroQName ATTR_RETRY_INTERVAL_MS = new MicroQName ("RetryIntervalMS");
   private static final IMicroQName ATTR_DUPLICATE_DETECTION = new MicroQName ("DuplicateDetection");
 
@@ -64,8 +64,10 @@ public class PModeReceptionAwarenessMicroTypeConverter extends AbstractPModeMicr
                                           PModeReceptionAwareness.DEFAULT_RETRY);
     final int nMaxRetries = aElement.getAttributeValueAsInt (ATTR_MAX_RETRIES,
                                                              PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
+    // Was a typo
     final int nRetryIntervalMS = aElement.getAttributeValueAsInt (ATTR_RETRY_INTERVAL_MS,
-                                                                  PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS);
+                                                                  aElement.getAttributeValueAsInt ("MayRetries",
+                                                                                                   PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS));
     final ETriState eDuplicateDetection = getTriState (aElement.getAttributeValue (ATTR_DUPLICATE_DETECTION),
                                                        PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
     return new PModeReceptionAwareness (eReceptionAwareness,
