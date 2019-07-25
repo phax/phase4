@@ -69,14 +69,10 @@ public final class AS4Encryptor
     aBuilder.setDigestAlgorithm (WSS4JConstants.SHA256);
     aBuilder.setEncryptSymmKey (true);
     aBuilder.setUseThisCert (aCryptoFactory.getCertificate ());
-    if (true)
-    {
-      aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    }
-    else
-    {
-      aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    }
+    // As the receiver MAY not have pre-configured the signing leaf certificate,
+    // a BinarySecurityToken token reference MUST be used to reference the
+    // signing certificate.
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     return aBuilder;
   }
 
