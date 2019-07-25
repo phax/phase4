@@ -17,6 +17,8 @@
 package com.helger.as4.crypto;
 
 import java.io.Serializable;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -33,6 +35,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.security.keystore.KeyStoreHelper;
 
 @Immutable
 public class AS4CryptoFactory implements Serializable
@@ -50,7 +53,10 @@ public class AS4CryptoFactory implements Serializable
   public static final AS4CryptoFactory DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
 
   private final AS4CryptoProperties m_aCryptoProps;
+  // Lazy initialized
   private transient Crypto m_aCrypto;
+  private transient KeyStore m_aKeyStore;
+  private transient KeyStore.PrivateKeyEntry m_aPK;
 
   @Nonnull
   private static AS4CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)
@@ -149,6 +155,46 @@ public class AS4CryptoFactory implements Serializable
     if (ret == null)
       ret = m_aCrypto = createCrypto (m_aCryptoProps);
     return ret;
+  }
+
+  @Nullable
+  public final KeyStore getKeyStore ()
+  {
+    KeyStore ret = m_aKeyStore;
+    if (ret == null)
+    {
+      ret = m_aKeyStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getKeyStoreType (),
+                                                       m_aCryptoProps.getKeyStorePath (),
+                                                       m_aCryptoProps.getKeyStorePassword ())
+                                        .getKeyStore ();
+    }
+    return ret;
+  }
+
+  @Nullable
+  public final KeyStore.PrivateKeyEntry getPrivateKeyEntry ()
+  {
+    KeyStore.PrivateKeyEntry ret = m_aPK;
+    if (ret == null)
+    {
+      final KeyStore aKeyStore = getKeyStore ();
+      if (aKeyStore != null)
+      {
+        ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
+                                                     m_aCryptoProps.getKeyStorePath (),
+                                                     m_aCryptoProps.getKeyAlias (),
+                                                     m_aCryptoProps.getKeyPassword ().toCharArray ())
+                                    .getKeyEntry ();
+      }
+    }
+    return ret;
+  }
+
+  @Nullable
+  public final X509Certificate getCertificate ()
+  {
+    final KeyStore.PrivateKeyEntry aPK = getPrivateKeyEntry ();
+    return aPK == null ? null : (X509Certificate) aPK.getCertificate ();
   }
 
   @Nonnull

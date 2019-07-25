@@ -56,6 +56,31 @@ public final class AS4Encryptor
   {}
 
   @Nonnull
+  private static WSSecEncrypt _createEncrypt (@Nonnull final AS4CryptoFactory aCryptoFactory,
+                                              @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo,
+                                              @Nonnull final WSSecHeader aSecHeader)
+  {
+    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
+    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
+    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
+    aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
+    aBuilder.setMGFAlgorithm (WSS4JConstants.MGF_SHA256);
+    aBuilder.setDigestAlgorithm (WSS4JConstants.SHA256);
+    aBuilder.setEncryptSymmKey (true);
+    aBuilder.setUseThisCert (aCryptoFactory.getCertificate ());
+    if (true)
+    {
+      aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
+    }
+    else
+    {
+      aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    }
+    return aBuilder;
+  }
+
+  @Nonnull
   public static Document encryptSoapBodyPayload (@Nonnull final AS4CryptoFactory aCryptoFactory,
                                                  @Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Document aDoc,
@@ -70,11 +95,8 @@ public final class AS4Encryptor
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
-    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
-    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
-                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
+    final WSSecEncrypt aBuilder = _createEncrypt (aCryptoFactory, eCryptAlgo, aSecHeader);
+
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
                                            .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
@@ -102,13 +124,8 @@ public final class AS4Encryptor
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
-    final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
-    aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
-    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
-    aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
-                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
-    aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
+    final WSSecEncrypt aBuilder = _createEncrypt (aCryptoFactory, eCryptAlgo, aSecHeader);
+
     // "cid:Attachments" is a predefined constant
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
