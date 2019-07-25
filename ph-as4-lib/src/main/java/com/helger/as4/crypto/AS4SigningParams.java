@@ -16,6 +16,7 @@ import com.helger.commons.string.ToStringGenerator;
  * AS4 signing parameters
  *
  * @author Philip Helger
+ * @since 0.9.0
  */
 @NotThreadSafe
 public class AS4SigningParams implements Serializable, ICloneable <AS4SigningParams>
@@ -25,6 +26,11 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
 
   public AS4SigningParams ()
   {}
+
+  public boolean isSigningEnabled ()
+  {
+    return m_eAlgorithmSign != null && m_eAlgorithmSignDigest != null;
+  }
 
   /**
    * @return The signing algorithm to use. May be <code>null</code>.
@@ -76,9 +82,20 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
     return this;
   }
 
-  public boolean isSigningEnabled ()
+  @Nonnull
+  public final AS4SigningParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
-    return m_eAlgorithmSign != null && m_eAlgorithmSignDigest != null;
+    if (aSecurity == null)
+    {
+      setAlgorithmSign (null);
+      setAlgorithmSignDigest (null);
+    }
+    else
+    {
+      setAlgorithmSign (aSecurity.getX509SignatureAlgorithm ());
+      setAlgorithmSignDigest (aSecurity.getX509SignatureHashFunction ());
+    }
+    return this;
   }
 
   @Nonnull
@@ -102,15 +119,5 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   {
     return new AS4SigningParams ().setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)
                                   .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
-  }
-
-  @Nonnull
-  @ReturnsMutableObject
-  public static AS4SigningParams createFromPMode (@Nullable final PModeLegSecurity aSecurity)
-  {
-    if (aSecurity == null)
-      return new AS4SigningParams ();
-    return new AS4SigningParams ().setAlgorithmSign (aSecurity.getX509SignatureAlgorithm ())
-                                  .setAlgorithmSignDigest (aSecurity.getX509SignatureHashFunction ());
   }
 }

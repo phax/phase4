@@ -128,6 +128,8 @@ public final class AS4ClientUserMessageTest
     aClient.setKeyStoreType (EKeyStoreType.JKS);
     aClient.setKeyStoreAlias ("ph-as4");
     aClient.setKeyStoreKeyPassword ("test");
+
+    aClient.cryptParams ().setAlias ("ph-as4");
     return aClient;
   }
 
@@ -206,7 +208,6 @@ public final class AS4ClientUserMessageTest
     _ensureInvalidState (aClient);
     aClient.setKeyStoreKeyPassword ("test");
     _ensureValidState (aClient);
-
   }
 
   @Test
@@ -246,7 +247,7 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -267,7 +268,7 @@ public final class AS4ClientUserMessageTest
            .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -303,7 +304,7 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     LOGGER.info (MicroWriter.getNodeAsString (aDoc));
@@ -325,7 +326,7 @@ public final class AS4ClientUserMessageTest
            .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -369,7 +370,7 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -395,7 +396,7 @@ public final class AS4ClientUserMessageTest
            .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -424,7 +425,7 @@ public final class AS4ClientUserMessageTest
            .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -453,7 +454,7 @@ public final class AS4ClientUserMessageTest
            .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
-    aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aClient.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

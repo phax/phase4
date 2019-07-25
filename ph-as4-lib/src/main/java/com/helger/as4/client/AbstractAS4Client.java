@@ -22,10 +22,10 @@ import javax.annotation.Nullable;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 
+import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
@@ -150,8 +150,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   // Alternative
   private AS4CryptoFactory m_aCryptoFactory;
   private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
-  // Encryption attribute
-  private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
+  private final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
 
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
@@ -347,6 +346,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_aCryptoFactory = null;
   }
 
+  @Nullable
   public final AS4CryptoFactory getAS4CryptoFactory ()
   {
     return m_aCryptoFactory;
@@ -358,7 +358,8 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   /**
-   * @return The signing algorithm to use. May be <code>null</code>.
+   * @return The signing algorithm to use. Never <code>null</code>.
+   * @since 0.9.0
    */
   @Nonnull
   @ReturnsMutableObject
@@ -368,24 +369,15 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   }
 
   /**
-   * @return The encryption algorithm to use. May be <code>null</code>.
+   * @return The encrypt and decrypt parameters to use. Never null
+   *         <code>null</code>.
+   * @since 0.9.0
    */
-  @Nullable
-  public final ECryptoAlgorithmCrypt getCryptoAlgorithmCrypt ()
+  @Nonnull
+  @ReturnsMutableObject
+  public final AS4CryptParams cryptParams ()
   {
-    return m_eCryptoAlgorithmCrypt;
-  }
-
-  /**
-   * A encryption algorithm can be set. <br>
-   * MANDATORY if you want to use encryption.
-   *
-   * @param eCryptoAlgorithmCrypt
-   *        the encryption algorithm that should be set
-   */
-  public final void setCryptoAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eCryptoAlgorithmCrypt)
-  {
-    m_eCryptoAlgorithmCrypt = eCryptoAlgorithmCrypt;
+    return m_aCryptParams;
   }
 
   /**
@@ -472,17 +464,8 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     if (aLeg != null)
     {
-      if (aLeg.hasSecurity ())
-      {
-        signingParams ().setAlgorithmSign (aLeg.getSecurity ().getX509SignatureAlgorithm ())
-                        .setAlgorithmSignDigest (aLeg.getSecurity ().getX509SignatureHashFunction ());
-        setCryptoAlgorithmCrypt (aLeg.getSecurity ().getX509EncryptionAlgorithm ());
-      }
-      else
-      {
-        signingParams ().setAlgorithmSign (null).setAlgorithmSignDigest (null);
-        setCryptoAlgorithmCrypt (null);
-      }
+      signingParams ().setFromPMode (aLeg.getSecurity ());
+      cryptParams ().setFromPMode (aLeg.getSecurity ());
     }
   }
 }

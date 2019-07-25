@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 
 import com.helger.as4.AS4TestConstants;
+import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -72,7 +73,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   protected static AS4ResourceHelper s_aResMgr;
 
   protected final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
-  protected final String m_sEncryptionAlias = "ph-as4";
+  protected final AS4CryptParams m_aCryptParams = AS4CryptParams.createDefault ().setAlias ("ph-as4");
   private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 

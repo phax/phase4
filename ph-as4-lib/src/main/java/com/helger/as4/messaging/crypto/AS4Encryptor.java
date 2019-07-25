@@ -33,8 +33,8 @@ import org.w3c.dom.Document;
 
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
@@ -57,22 +57,30 @@ public final class AS4Encryptor
 
   @Nonnull
   private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader,
-                                              @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo,
-                                              @Nonnull final String sAlias)
+                                              @Nonnull final AS4CryptParams aCryptParams)
   {
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
-    aBuilder.setSymmetricEncAlgorithm (eCryptAlgo.getAlgorithmURI ());
-    // No PW needed here, because we encrypt with the public key
-    aBuilder.setUserInfo (sAlias);
+    // As the receiver MAY not have pre-configured the signing leaf certificate,
+    // a BinarySecurityToken token reference MUST be used to reference the
+    // signing certificate.
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setSymmetricEncAlgorithm (aCryptParams.getAlgorithmCrypt ().getAlgorithmURI ());
     aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
     aBuilder.setMGFAlgorithm (WSS4JConstants.MGF_SHA256);
     aBuilder.setDigestAlgorithm (WSS4JConstants.SHA256);
     // Encrypted key must be contained
     aBuilder.setEncryptSymmKey (true);
-    // As the receiver MAY not have pre-configured the signing leaf certificate,
-    // a BinarySecurityToken token reference MUST be used to reference the
-    // signing certificate.
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    if (aCryptParams.hasCertificate ())
+    {
+      // Certificate was provided externally
+      aBuilder.setUseThisCert (aCryptParams.getCertificate ());
+    }
+    else
+      if (aCryptParams.hasAlias ())
+      {
+        // No PW needed here, because we encrypt with the public key
+        aBuilder.setUserInfo (aCryptParams.getAlias ());
+      }
     return aBuilder;
   }
 
@@ -81,19 +89,17 @@ public final class AS4Encryptor
                                                  @Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
-                                                 @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo,
-                                                 @Nonnull final String sAlias) throws WSSecurityException
+                                                 @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
-    ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
-    ValueEnforcer.notNull (sAlias, "Alias");
+    ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
-    final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, eCryptAlgo, sAlias);
+    final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, aCryptParams);
 
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
@@ -104,27 +110,25 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  public static MimeMessage encryptMimeMessage (@Nonnull final AS4CryptoFactory aCryptoFactory,
-                                                @Nonnull final ESOAPVersion eSOAPVersion,
+  public static MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                 @Nonnull final Document aDoc,
-                                                final boolean bMustUnderstand,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                @Nonnull final AS4CryptoFactory aCryptoFactory,
+                                                final boolean bMustUnderstand,
                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                @Nonnull final ECryptoAlgorithmCrypt eCryptAlgo,
-                                                @Nonnull final String sAlias) throws WSSecurityException,
-                                                                              MessagingException
+                                                @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                            MessagingException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
-    ValueEnforcer.notNull (eCryptAlgo, "CryptAlgo");
-    ValueEnforcer.notNull (sAlias, "Alias");
+    ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
-    final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, eCryptAlgo, sAlias);
+    final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, aCryptParams);
 
     // "cid:Attachments" is a predefined constant
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));

@@ -42,7 +42,6 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
@@ -200,17 +199,16 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
                                                                     null,
                                                                     aResMgr));
 
-    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                                  m_eSOAPVersion,
+    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                   MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                              null,
                                                                                                              aAttachments)
                                                                               .getAsSOAPDocument (),
-                                                                  true,
                                                                   aAttachments,
+                                                                  m_aCryptoFactory,
+                                                                  true,
                                                                   s_aResMgr,
-                                                                  ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                                  m_sEncryptionAlias);
+                                                                  m_aCryptParams);
 
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment

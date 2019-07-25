@@ -145,8 +145,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     aResMgr));
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
-                                              null,
-                                              null,
+                                              (String) null,
+                                              // Alias for encryption
+                                              "ph-as4",
                                               _defaultProperties (),
                                               aAttachments,
                                               null,

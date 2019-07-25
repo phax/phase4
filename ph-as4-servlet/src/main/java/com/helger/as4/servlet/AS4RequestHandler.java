@@ -50,6 +50,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.client.BasicHttpPoster;
+import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.error.EEbmsError;
@@ -960,15 +961,19 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage or receipt
+            final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
             final String sEncryptionAlias = aFinalUserMessage.getPartyInfo ()
                                                              .getTo ()
                                                              .getPartyIdAtIndex (0)
                                                              .getValue ();
-            aAsyncResponseFactory = _createResponseUserMessage (aResponseAttachments,
-                                                                aEffectiveLeg,
+            final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
+                                                                     .setAlias (sEncryptionAlias);
+            aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSOAPVersion (),
+                                                                aResponseAttachments,
                                                                 aResponseUserMsg.getAsSOAPDocument (),
                                                                 aResponseUserMsg.getMessagingID (),
-                                                                sEncryptionAlias);
+                                                                aSigningParams,
+                                                                aCryptParams);
           }
           else
           {
@@ -1069,15 +1074,19 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
+              final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ());
               final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
                                                               .getTo ()
                                                               .getPartyIdAtIndex (0)
                                                               .getValue ();
-              return _createResponseUserMessage (aResponseAttachments,
-                                                 aLeg2,
+              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
+                                                                       .setAlias (sEncryptionAlias);
+              return _createResponseUserMessage (aLeg2.getProtocol ().getSOAPVersion (),
+                                                 aResponseAttachments,
                                                  aResponseUserMsg.getAsSOAPDocument (),
                                                  aResponseUserMsg.getMessagingID (),
-                                                 sEncryptionAlias);
+                                                 aSigningParams,
+                                                 aCryptParams);
             }
           }
         }
@@ -1117,7 +1126,7 @@ public class AS4RequestHandler implements AutoCloseable
 
     // We've got our response
     Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-    final AS4SigningParams aSigningParams = AS4SigningParams.createFromPMode (aEffectiveLeg.getSecurity ());
+    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
     aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
                                           aSigningParams,
                                           aResponseDoc,
@@ -1208,30 +1217,28 @@ public class AS4RequestHandler implements AutoCloseable
    *        the message that should be sent
    * @param sMessagingID
    *        ID of the "Messaging" element
-   * @param sEncryptToAlias
-   *        The alias into the keystore that should be used for encryption
+   * @param aSigningParams
+   *        Signing parameters
+   * @param aCryptParams
+   *        Encryption parameters
    * @throws WSSecurityException
    *         on error
    * @throws MessagingException
    *         on error
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                          @Nonnull final PModeLeg aLeg,
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
+                                                          @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                           @Nonnull final Document aDoc,
                                                           @Nonnull @Nonempty final String sMessagingID,
-                                                          @Nonnull @Nonempty final String sEncryptToAlias) throws WSSecurityException,
-                                                                                                           MessagingException
+                                                          @Nonnull final AS4SigningParams aSigningParams,
+                                                          @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                                      MessagingException
   {
     final Document aResponseDoc;
-    if (aLeg.hasSecurity ())
+    if (aSigningParams.isSigningEnabled ())
     {
-      final AS4SigningParams aSigningParams = AS4SigningParams.createFromPMode (aLeg.getSecurity ());
-      aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
-                                            aSigningParams,
-                                            aDoc,
-                                            aLeg.getProtocol ().getSOAPVersion (),
-                                            sMessagingID);
+      aResponseDoc = _signResponseIfNeeded (aResponseAttachments, aSigningParams, aDoc, eSoapVersion, sMessagingID);
     }
     else
     {
@@ -1250,8 +1257,8 @@ public class AS4RequestHandler implements AutoCloseable
       // Create (maybe encrypted) MIME message
       final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResponseDoc,
                                                                     aResponseAttachments,
-                                                                    aLeg,
-                                                                    sEncryptToAlias);
+                                                                    eSoapVersion,
+                                                                    aCryptParams);
       ret = new AS4ResponseFactoryMIME (aMimeMsg);
     }
     return ret;
@@ -1323,27 +1330,25 @@ public class AS4RequestHandler implements AutoCloseable
   @Nonnull
   private MimeMessage _generateMimeMessageForResponse (@Nonnull final Document aResponseDoc,
                                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                       @Nonnull final PModeLeg aLeg,
-                                                       @Nonnull final String sEncryptToAlias) throws WSSecurityException,
-                                                                                              MessagingException
+                                                       @Nonnull final ESOAPVersion eSoapVersion,
+                                                       @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
+                                                                                                  MessagingException
   {
     final MimeMessage aMimeMsg;
-    if (aLeg.hasSecurity () && aLeg.getSecurity ().hasX509EncryptionAlgorithm ())
+    if (aCryptParms.isCryptEnabled ())
     {
-      aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                  aLeg.getProtocol ().getSOAPVersion (),
+      final boolean bMustUnderstand = true;
+      aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
                                                   aResponseDoc,
-                                                  true,
                                                   aResponseAttachments,
+                                                  m_aCryptoFactory,
+                                                  bMustUnderstand,
                                                   m_aResHelper,
-                                                  aLeg.getSecurity ().getX509EncryptionAlgorithm (),
-                                                  sEncryptToAlias);
+                                                  aCryptParms);
     }
     else
     {
-      aMimeMsg = MimeMessageCreator.generateMimeMessage (aLeg.getProtocol ().getSOAPVersion (),
-                                                         aResponseDoc,
-                                                         aResponseAttachments);
+      aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
     }
     if (aMimeMsg == null)
       throw new IllegalStateException ("Failed to create MimeMessage!");

@@ -178,7 +178,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     _checkMandatoryAttributes ();
 
     final boolean bSign = signingParams ().isSigningEnabled ();
-    final boolean bEncrypt = getCryptoAlgorithmCrypt () != null;
+    final boolean bEncrypt = cryptParams ().isCryptEnabled ();
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
     // Create a new message ID for each build!
@@ -248,13 +248,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
-          aMimeMsg = AS4Encryptor.encryptMimeMessage (aCryptoFactory,
-                                                      getSOAPVersion (),
+          aMimeMsg = AS4Encryptor.encryptMimeMessage (getSOAPVersion (),
                                                       aDoc,
-                                                      bMustUnderstand,
                                                       m_aAttachments,
+                                                      aCryptoFactory,
+                                                      bMustUnderstand,
                                                       m_aResHelper,
-                                                      getCryptoAlgorithmCrypt ());
+                                                      cryptParams ().getClone ());
         }
         else
         {
@@ -262,7 +262,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                       getSOAPVersion (),
                                                       aDoc,
                                                       bMustUnderstand,
-                                                      getCryptoAlgorithmCrypt ());
+                                                      cryptParams ().getClone ());
         }
       }
     }

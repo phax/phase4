@@ -618,12 +618,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void eSENS_TA14 () throws Exception
   {
     Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
-    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                m_eSOAPVersion,
-                                                aDoc,
-                                                true,
-                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                m_sEncryptionAlias);
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSOAPVersion, aDoc, true, m_aCryptParams);
 
     final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be

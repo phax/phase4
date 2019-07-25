@@ -36,9 +36,9 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
@@ -107,7 +107,6 @@ public final class MainAS4Client
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
       final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
       final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
-      final String sEncryptionAlias = "receiver-alias";
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body
@@ -143,8 +142,7 @@ public final class MainAS4Client
                                                         eSOAPVersion,
                                                         aDoc,
                                                         false,
-                                                        ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                        sEncryptionAlias);
+                                                        AS4CryptParams.createDefault ().setAlias ("dummy"));
 
             aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
           }
@@ -184,8 +182,7 @@ public final class MainAS4Client
                                                             eSOAPVersion,
                                                             aDoc,
                                                             false,
-                                                            ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                            sEncryptionAlias);
+                                                            AS4CryptParams.createDefault ().setAlias ("dummy"));
                 aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
               }
               else

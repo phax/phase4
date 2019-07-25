@@ -33,7 +33,6 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -117,12 +116,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments)
                                 .getAsSOAPDocument (aPayload);
-    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                m_eSOAPVersion,
-                                                aDoc,
-                                                false,
-                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                m_sEncryptionAlias);
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSOAPVersion, aDoc, false, m_aCryptParams);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
@@ -136,12 +130,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                m_eSOAPVersion,
-                                                aDoc,
-                                                false,
-                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                m_sEncryptionAlias);
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSOAPVersion, aDoc, false, m_aCryptParams);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 

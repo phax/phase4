@@ -33,7 +33,6 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
@@ -119,14 +118,13 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
                                       .getAsSOAPDocument ();
 
-    final MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                              m_eSOAPVersion,
+    final MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                               aDoc,
-                                                              false,
                                                               aAttachments,
+                                                              m_aCryptoFactory,
+                                                              false,
                                                               s_aResMgr,
-                                                              ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                              m_sEncryptionAlias);
+                                                              m_aCryptParams);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -149,14 +147,13 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          false,
                                                          AS4SigningParams.createDefault ());
 
-    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                                  m_eSOAPVersion,
+    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                   aDoc,
-                                                                  false,
                                                                   aAttachments,
+                                                                  m_aCryptoFactory,
+                                                                  false,
                                                                   s_aResMgr,
-                                                                  ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
-                                                                  m_sEncryptionAlias);
+                                                                  m_aCryptParams);
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
 
