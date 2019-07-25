@@ -34,6 +34,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
+import com.helger.commons.lang.StackTraceHelper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
@@ -143,20 +144,29 @@ public class BasicHttpPoster
         m_aHttpCustomizer.accept (aPost);
 
       // Debug sending
-      AS4HttpDebug.debug ( () -> {
-        final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL);
-        try
-        {
-          ret.append ("\n");
-          for (final Header aHeader : aPost.getAllHeaders ())
-            ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
-          ret.append (CHttp.EOL);
-          ret.append (EntityUtils.toString (aHttpEntity));
-        }
-        catch (final Exception ex)
-        { /* ignore */ }
-        return ret.toString ();
-      });
+      {
+        AS4HttpDebug.debug ( () -> {
+          final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL);
+          try
+          {
+            ret.append ("\n");
+            for (final Header aHeader : aPost.getAllHeaders ())
+              ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
+            ret.append (CHttp.EOL);
+            if (aHttpEntity.isRepeatable ())
+              ret.append (EntityUtils.toString (aHttpEntity));
+            else
+              ret.append ("## The payload is marked as 'not repeatable' and is the therefore not printed here");
+          }
+          catch (final Exception ex)
+          {
+            ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ())
+               .append (CHttp.EOL);
+            ret.append ("## ").append (StackTraceHelper.getStackAsString (ex));
+          }
+          return ret.toString ();
+        });
+      }
 
       return aClient.execute (aPost, aResponseHandler);
     }

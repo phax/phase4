@@ -28,6 +28,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
+import com.helger.as4.http.HttpMimeMessageEntity;
+import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
@@ -58,7 +60,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     private final String m_sMessageID;
     private final HttpEntity m_aHttpEntity;
 
-    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpEntity aHttpEntity)
+    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpXMLEntity aHttpEntity)
+    {
+      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
+      m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
+    }
+
+    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID,
+                            @Nonnull final HttpMimeMessageEntity aHttpEntity)
     {
       m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
       m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
