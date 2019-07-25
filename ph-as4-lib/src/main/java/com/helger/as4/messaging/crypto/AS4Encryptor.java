@@ -67,6 +67,7 @@ public final class AS4Encryptor
     aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
     aBuilder.setMGFAlgorithm (WSS4JConstants.MGF_SHA256);
     aBuilder.setDigestAlgorithm (WSS4JConstants.SHA256);
+    // Encrypted key must be contained
     aBuilder.setEncryptSymmKey (true);
     aBuilder.setUseThisCert (aCryptoFactory.getCertificate ());
     // As the receiver MAY not have pre-configured the signing leaf certificate,

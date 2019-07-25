@@ -77,7 +77,8 @@ import io.netty.handler.codec.http.HttpResponse;
 
 public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
+  // For Lambdas
+  static final Logger LOGGER = LoggerFactory.getLogger (AS4eSENSCEFOneWayFuncTest.class);
 
   public AS4eSENSCEFOneWayFuncTest ()
   {}
@@ -617,10 +618,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                     m_eSOAPVersion,
-                                                     aDoc,
-                                                     true,
-                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                m_eSOAPVersion,
+                                                aDoc,
+                                                true,
+                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
 
     final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be
@@ -810,14 +811,14 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                          aDoc.getAsSOAPDocument (m_aPayload),
-                                                                          m_eSOAPVersion,
-                                                                          aDoc.getMessagingID (),
-                                                                          null,
-                                                                          new AS4ResourceHelper (),
-                                                                          false,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aDoc.getAsSOAPDocument (m_aPayload),
+                                                               m_eSOAPVersion,
+                                                               aDoc.getMessagingID (),
+                                                               null,
+                                                               new AS4ResourceHelper (),
+                                                               false,
+                                                               ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
+                                                               ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
