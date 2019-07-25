@@ -48,8 +48,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -616,7 +616,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void eSENS_TA14 () throws Exception
   {
     Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
-    aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                      m_eSOAPVersion,
                                                      aDoc,
                                                      true,
@@ -809,7 +809,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                        m_eSOAPVersion)
                                               .setMustUnderstand (true);
 
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                           aDoc.getAsSOAPDocument (m_aPayload),
                                                                           m_eSOAPVersion,
                                                                           aDoc.getMessagingID (),

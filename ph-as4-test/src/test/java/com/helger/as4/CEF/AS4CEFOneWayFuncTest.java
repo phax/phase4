@@ -46,8 +46,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -125,7 +125,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                        m_eSOAPVersion)
                                               .setMustUnderstand (true);
 
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                           aMsg.getAsSOAPDocument (m_aPayload),
                                                                           m_eSOAPVersion,
                                                                           aMsg.getMessagingID (),
@@ -617,7 +617,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
                                                                        m_eSOAPVersion,
                                                                        aMsg.getAsSOAPDocument (),
                                                                        false,
@@ -645,7 +645,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void AS4_TA20 () throws Exception
   {
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, m_aPayload, null);
-    final Document aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+    final Document aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                                     m_eSOAPVersion,
                                                                     aMsg.getAsSOAPDocument (m_aPayload),
                                                                     true,
@@ -696,7 +696,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final Document aDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                     aMsg.getAsSOAPDocument (null),
                                                                     m_eSOAPVersion,
                                                                     aMsg.getMessagingID (),
@@ -706,7 +706,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
                                                                        m_eSOAPVersion,
                                                                        aDoc,
                                                                        false,

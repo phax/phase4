@@ -32,7 +32,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -113,7 +113,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
                                                   .setMustUnderstand (true);
 
     // Sign payload document
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                           aUserMsg.getAsSOAPDocument (),
                                                                           m_eSOAPVersion,
                                                                           aUserMsg.getMessagingID (),

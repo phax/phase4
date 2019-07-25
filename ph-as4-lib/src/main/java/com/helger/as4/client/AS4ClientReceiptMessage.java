@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
@@ -92,7 +92,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
-      aDoc = SignedMessageCreator.createSignedMessage (aCryptoFactory,
+      aDoc = AS4Signer.createSignedMessage (aCryptoFactory,
                                                        aDoc,
                                                        getSOAPVersion (),
                                                        aReceiptMsg.getMessagingID (),

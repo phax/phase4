@@ -33,7 +33,7 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -70,7 +70,7 @@ public final class MockMessages
                                                 @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aMsg.getAsSOAPDocument (aPayload),
                                                                           eSOAPVersion,
                                                                           aMsg.getMessagingID (),
@@ -89,7 +89,7 @@ public final class MockMessages
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aEbms3ErrorList).setMustUnderstand (true);
-    final Document aSignedDoc = SignedMessageCreator.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                           aErrorMsg.getAsSOAPDocument (),
                                                                           eSOAPVersion,
                                                                           aErrorMsg.getMessagingID (),

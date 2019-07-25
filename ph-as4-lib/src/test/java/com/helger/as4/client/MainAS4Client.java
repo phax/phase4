@@ -44,8 +44,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
@@ -148,7 +148,7 @@ public final class MainAS4Client
                                                                                          aPayload,
                                                                                          aAttachments);
             Document aDoc = aMsg.getAsSOAPDocument (aPayload);
-            aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
+            aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                              eSOAPVersion,
                                                              aDoc,
                                                              false,
@@ -167,7 +167,7 @@ public final class MainAS4Client
                                                                                            null,
                                                                                            aAttachments);
               final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
-                                                                                   SignedMessageCreator.createSignedMessage (aCryptoFactory,
+                                                                                   AS4Signer.createSignedMessage (aCryptoFactory,
                                                                                                                              aMsg.getAsSOAPDocument (null),
                                                                                                                              eSOAPVersion,
                                                                                                                              aMsg.getMessagingID (),
@@ -189,7 +189,7 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResHelper);
-                aDoc = EncryptionCreator.encryptSoapBodyPayload (aCryptoFactory,
+                aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                                  eSOAPVersion,
                                                                  aDoc,
                                                                  false,

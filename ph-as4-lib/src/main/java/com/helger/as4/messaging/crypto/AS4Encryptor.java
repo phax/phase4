@@ -23,6 +23,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.wss4j.common.WSEncryptionPart;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -49,9 +50,9 @@ import com.helger.mail.cte.EContentTransferEncoding;
  *
  * @author Philip Helger
  */
-public final class EncryptionCreator
+public final class AS4Encryptor
 {
-  private EncryptionCreator ()
+  private AS4Encryptor ()
   {}
 
   @Nonnull
@@ -107,6 +108,7 @@ public final class EncryptionCreator
     aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
                           aCryptoFactory.getCryptoProperties ().getKeyPassword ());
+    aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
     // "cid:Attachments" is a predefined constant
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 

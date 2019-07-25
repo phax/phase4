@@ -47,9 +47,9 @@ import com.helger.commons.collection.impl.ICommonsList;
  *
  * @author Philip Helger
  */
-public final class SignedMessageCreator
+public final class AS4Signer
 {
-  private SignedMessageCreator ()
+  private AS4Signer ()
   {}
 
   /**

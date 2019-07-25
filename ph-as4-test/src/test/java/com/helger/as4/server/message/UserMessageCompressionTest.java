@@ -37,8 +37,8 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
@@ -95,7 +95,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final Document aDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                     aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
                                                                     aMsg.getMessagingID (),
@@ -121,7 +121,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
                                       .getAsSOAPDocument ();
 
-    final MimeMessage aMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+    final MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
                                                                    m_eSOAPVersion,
                                                                    aDoc,
                                                                    false,
@@ -141,7 +141,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     s_aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final Document aDoc = SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+    final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                     aMsg.getAsSOAPDocument (),
                                                                     m_eSOAPVersion,
                                                                     aMsg.getMessagingID (),
@@ -151,7 +151,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
                                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
-    final MimeMessage aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
                                                                        m_eSOAPVersion,
                                                                        aDoc,
                                                                        false,

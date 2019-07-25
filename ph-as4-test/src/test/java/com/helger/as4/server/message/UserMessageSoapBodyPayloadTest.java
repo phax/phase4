@@ -38,7 +38,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
@@ -117,7 +117,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments)
                                 .getAsSOAPDocument (aPayload);
-    aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                      m_eSOAPVersion,
                                                      aDoc,
                                                      false,
@@ -135,7 +135,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
-    aDoc = EncryptionCreator.encryptSoapBodyPayload (m_aCryptoFactory,
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                      m_eSOAPVersion,
                                                      aDoc,
                                                      false,

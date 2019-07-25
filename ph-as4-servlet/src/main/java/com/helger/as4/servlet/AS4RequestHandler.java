@@ -56,8 +56,8 @@ import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.EncryptionCreator;
-import com.helger.as4.messaging.crypto.SignedMessageCreator;
+import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
@@ -1256,7 +1256,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
     {
       final boolean bMustUnderstand = true;
-      return SignedMessageCreator.createSignedMessage (m_aCryptoFactory,
+      return AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                        aDocToBeSigned,
                                                        eSOAPVersion,
                                                        sMessagingID,
@@ -1292,7 +1292,7 @@ public class AS4RequestHandler implements AutoCloseable
     MimeMessage aMimeMsg = null;
     if (aLeg.getSecurity () != null && aLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
     {
-      aMimeMsg = EncryptionCreator.encryptMimeMessage (m_aCryptoFactory,
+      aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
                                                        aLeg.getProtocol ().getSOAPVersion (),
                                                        aResponseDoc,
                                                        true,
