@@ -81,6 +81,16 @@ public class WSS4JAttachment extends Attachment
   }
 
   /**
+   * @return The resource helper provided in the constructor. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  public final AS4ResourceHelper getResHelper ()
+  {
+    return m_aResHelper;
+  }
+
+  /**
    * Create a random UUID based ID and call {@link #setId(String)}
    */
   public void setUniqueID ()
@@ -118,14 +128,31 @@ public class WSS4JAttachment extends Attachment
   }
 
   @Override
+  @Nonnull
   public InputStream getSourceStream ()
   {
+    return getSourceStream (m_aResHelper);
+  }
+
+  /**
+   * Get the source stream of the attachment using the provided resource helper.
+   * This can be helpful, if the source helper is already out of scope.
+   *
+   * @param aResourceHelper
+   *        The resource helper to use. May not be <code>null</code>.
+   * @return A non-<code>null</code> InputStream on the source.
+   */
+  @Nonnull
+  public InputStream getSourceStream (@Nonnull final AS4ResourceHelper aResourceHelper)
+  {
+    ValueEnforcer.notNull (aResourceHelper, "ResourceHelper");
+
     // This will e.g. throw an UncheckedIOException if compression is enabled,
     // but the transmitted document is not compressed
     final InputStream ret = m_aISP.getInputStream ();
     if (ret == null)
       throw new IllegalStateException ("Got no InputStream from " + m_aISP);
-    m_aResHelper.addCloseable (ret);
+    aResourceHelper.addCloseable (ret);
     return ret;
   }
 
