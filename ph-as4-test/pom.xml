@@ -139,9 +139,9 @@
             <exclude>**/*.cer</exclude>
             <exclude>**/*.mime</exclude>
             <exclude>**/*.mmd</exclude>
-            <exclude>as4-data/*</exclude>
-            <exclude>as4-test-data/*</exclude>
-            <exclude>as4-test-data-9090/*</exclude>
+            <exclude>as4-data/**</exclude>
+            <exclude>as4-test-data/**</exclude>
+            <exclude>as4-test-data-9090/**</exclude>
           </excludes>
         </configuration>
       </plugin>
