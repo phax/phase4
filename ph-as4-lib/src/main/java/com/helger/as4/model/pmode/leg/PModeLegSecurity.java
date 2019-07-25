@@ -35,6 +35,7 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -224,6 +225,11 @@ public class PModeLegSecurity implements Serializable
     return m_eWSSVersion;
   }
 
+  public boolean hasWSSVersion ()
+  {
+    return m_eWSSVersion != null;
+  }
+
   @Nullable
   public String getWSSVersionAsString ()
   {
@@ -277,6 +283,11 @@ public class PModeLegSecurity implements Serializable
     return m_sX509SignatureCertificate;
   }
 
+  public boolean hasX509SignatureCertificate ()
+  {
+    return StringHelper.hasText (m_sX509SignatureCertificate);
+  }
+
   @Nonnull
   public final EChange setX509SignatureCertificate (@Nullable final String sX509SignatureCertificate)
   {
@@ -290,6 +301,11 @@ public class PModeLegSecurity implements Serializable
   public ECryptoAlgorithmSignDigest getX509SignatureHashFunction ()
   {
     return m_eX509SignatureHashFunction;
+  }
+
+  public boolean hasX509SignatureHashFunction ()
+  {
+    return m_eX509SignatureHashFunction != null;
   }
 
   @Nullable
@@ -311,6 +327,11 @@ public class PModeLegSecurity implements Serializable
   public ECryptoAlgorithmSign getX509SignatureAlgorithm ()
   {
     return m_eX509SignatureAlgorithm;
+  }
+
+  public boolean hasX509SignatureAlgorithm ()
+  {
+    return m_eX509SignatureAlgorithm != null;
   }
 
   @Nullable
@@ -366,6 +387,11 @@ public class PModeLegSecurity implements Serializable
     return m_sX509EncryptionCertificate;
   }
 
+  public boolean hasX509EncryptionCertificate ()
+  {
+    return StringHelper.hasText (m_sX509EncryptionCertificate);
+  }
+
   @Nonnull
   public final EChange setX509EncryptionCertificate (@Nullable final String sX509EncryptionCertificate)
   {
@@ -379,6 +405,11 @@ public class PModeLegSecurity implements Serializable
   public ECryptoAlgorithmCrypt getX509EncryptionAlgorithm ()
   {
     return m_eX509EncryptionAlgorithm;
+  }
+
+  public boolean hasX509EncryptionAlgorithm ()
+  {
+    return m_eX509EncryptionAlgorithm != null;
   }
 
   @Nullable
@@ -396,15 +427,15 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean hasX509EncryptionMinimumStrength ()
-  {
-    return m_aX509EncryptionMinimumStrength != null;
-  }
-
   @Nullable
   public Integer getX509EncryptionMinimumStrength ()
   {
     return m_aX509EncryptionMinimumStrength;
+  }
+
+  public boolean hasX509EncryptionMinimumStrength ()
+  {
+    return m_aX509EncryptionMinimumStrength != null;
   }
 
   @Nonnull
@@ -422,6 +453,11 @@ public class PModeLegSecurity implements Serializable
     return m_sUsernameTokenUsername;
   }
 
+  public boolean hasUsernameTokenUsername ()
+  {
+    return StringHelper.hasText (m_sUsernameTokenUsername);
+  }
+
   @Nonnull
   public final EChange setUsernameTokenUsername (@Nullable final String sUsernameTokenUsername)
   {
@@ -435,6 +471,11 @@ public class PModeLegSecurity implements Serializable
   public String getUsernameTokenPassword ()
   {
     return m_sUsernameTokenPassword;
+  }
+
+  public boolean hasUsernameTokenPassword ()
+  {
+    return StringHelper.hasText (m_sUsernameTokenPassword);
   }
 
   @Nonnull

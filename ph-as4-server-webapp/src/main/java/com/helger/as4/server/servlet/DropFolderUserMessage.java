@@ -152,8 +152,8 @@ public final class DropFolderUserMessage
           aClient.setKeyStoreAlias (aCP.getKeyAlias ());
           aClient.setKeyStoreKeyPassword (aCP.getKeyPassword ());
 
-          aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
-          aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
+          aClient.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
+          aClient.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
 
           // XXX
           // to send the message too
@@ -174,7 +174,7 @@ public final class DropFolderUserMessage
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
           final AS4SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                             new ResponseHandlerByteArray ());
+                                                                                new ResponseHandlerByteArray ());
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aResponseEntity.getMessageID () +
                        "' for '" +

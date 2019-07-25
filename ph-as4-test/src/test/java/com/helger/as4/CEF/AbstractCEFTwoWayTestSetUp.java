@@ -30,8 +30,7 @@ import org.w3c.dom.Node;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
@@ -107,14 +106,13 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                          aMsg.getAsSOAPDocument (aPayload),
-                                                                          eSOAPVersion,
-                                                                          aMsg.getMessagingID (),
-                                                                          aAttachments,
-                                                                          aResMgr,
-                                                                          true,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aMsg.getAsSOAPDocument (aPayload),
+                                                               eSOAPVersion,
+                                                               aMsg.getMessagingID (),
+                                                               aAttachments,
+                                                               aResMgr,
+                                                               true,
+                                                               AS4SigningParams.createDefault ());
     return aSignedDoc;
   }
 

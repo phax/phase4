@@ -85,22 +85,19 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 
     Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 
-    final boolean bSign = getCryptoAlgorithmSign () != null && getCryptoAlgorithmSignDigest () != null;
-
-    if (m_bReceiptShouldBeSigned && bSign)
+    if (m_bReceiptShouldBeSigned && signingParams ().isSigningEnabled ())
     {
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
       aDoc = AS4Signer.createSignedMessage (aCryptoFactory,
-                                                       aDoc,
-                                                       getSOAPVersion (),
-                                                       aReceiptMsg.getMessagingID (),
-                                                       null,
-                                                       m_aResHelper,
-                                                       bMustUnderstand,
-                                                       getCryptoAlgorithmSign (),
-                                                       getCryptoAlgorithmSignDigest ());
+                                            aDoc,
+                                            getSOAPVersion (),
+                                            aReceiptMsg.getMessagingID (),
+                                            null,
+                                            m_aResHelper,
+                                            bMustUnderstand,
+                                            signingParams ().getClone ());
     }
 
     // Wrap SOAP XML

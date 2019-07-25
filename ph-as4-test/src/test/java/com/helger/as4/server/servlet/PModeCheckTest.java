@@ -36,8 +36,7 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
@@ -177,14 +176,13 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
       final AS4UserMessage aMsg = AS4UserMessage.create (m_eSOAPVersion, m_aEbms3UserMessage).setMustUnderstand (true);
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                            aMsg.getAsSOAPDocument (m_aPayload),
-                                                                            m_eSOAPVersion,
-                                                                            aMsg.getMessagingID (),
-                                                                            null,
-                                                                            s_aResMgr,
-                                                                            false,
-                                                                            ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                            ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                                 aMsg.getAsSOAPDocument (m_aPayload),
+                                                                 m_eSOAPVersion,
+                                                                 aMsg.getMessagingID (),
+                                                                 null,
+                                                                 s_aResMgr,
+                                                                 false,
+                                                                 AS4SigningParams.createDefault ());
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion),
                         false,
@@ -371,14 +369,13 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                 null,
                                                 x -> aMsgID.set (x));
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                            aDoc,
-                                                                            m_eSOAPVersion,
-                                                                            aMsgID.get (),
-                                                                            null,
-                                                                            s_aResMgr,
-                                                                            false,
-                                                                            ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                            ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                                 aDoc,
+                                                                 m_eSOAPVersion,
+                                                                 aMsgID.get (),
+                                                                 null,
+                                                                 s_aResMgr,
+                                                                 false,
+                                                                 AS4SigningParams.createDefault ());
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion),
                         false,

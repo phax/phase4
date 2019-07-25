@@ -78,22 +78,19 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 
     Document aDoc = aPullRequest.getAsSOAPDocument ();
 
-    final boolean bSign = getCryptoAlgorithmSign () != null && getCryptoAlgorithmSignDigest () != null;
-
-    if (bSign)
+    if (signingParams ().isSigningEnabled ())
     {
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
       aDoc = AS4Signer.createSignedMessage (aCryptoFactory,
-                                                       aDoc,
-                                                       getSOAPVersion (),
-                                                       aPullRequest.getMessagingID (),
-                                                       null,
-                                                       m_aResHelper,
-                                                       bMustUnderstand,
-                                                       getCryptoAlgorithmSign (),
-                                                       getCryptoAlgorithmSignDigest ());
+                                            aDoc,
+                                            getSOAPVersion (),
+                                            aPullRequest.getMessagingID (),
+                                            null,
+                                            m_aResHelper,
+                                            bMustUnderstand,
+                                            signingParams ().getClone ());
     }
 
     // Wrap SOAP XML

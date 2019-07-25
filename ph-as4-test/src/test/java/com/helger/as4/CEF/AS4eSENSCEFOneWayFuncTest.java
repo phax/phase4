@@ -42,6 +42,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
@@ -621,7 +622,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                 m_eSOAPVersion,
                                                 aDoc,
                                                 true,
-                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                m_sEncryptionAlias);
 
     final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be
@@ -817,8 +819,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                null,
                                                                new AS4ResourceHelper (),
                                                                false,
-                                                               ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                               ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               AS4SigningParams.createDefault ());
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),

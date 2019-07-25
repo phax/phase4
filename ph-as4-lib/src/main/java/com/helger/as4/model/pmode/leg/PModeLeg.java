@@ -62,6 +62,11 @@ public class PModeLeg implements Serializable
     return m_aProtocol;
   }
 
+  public boolean hasProtocol ()
+  {
+    return m_aProtocol != null;
+  }
+
   @Nonnull
   public final EChange setProtocol (@Nullable final PModeLegProtocol aProtocol)
   {
@@ -97,6 +102,11 @@ public class PModeLeg implements Serializable
     return m_aErrorHandling;
   }
 
+  public boolean hasErrorHandling ()
+  {
+    return m_aErrorHandling != null;
+  }
+
   @Nonnull
   public final EChange setErrorHandling (@Nullable final PModeLegErrorHandling aErrorHandling)
   {
@@ -112,6 +122,11 @@ public class PModeLeg implements Serializable
     return m_aReliability;
   }
 
+  public boolean hasReliability ()
+  {
+    return m_aReliability != null;
+  }
+
   @Nonnull
   public final EChange setReliability (@Nullable final PModeLegReliability aReliability)
   {
@@ -125,6 +140,11 @@ public class PModeLeg implements Serializable
   public PModeLegSecurity getSecurity ()
   {
     return m_aSecurity;
+  }
+
+  public boolean hasSecurity ()
+  {
+    return m_aSecurity != null;
   }
 
   @Nonnull

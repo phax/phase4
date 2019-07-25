@@ -72,6 +72,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   protected static AS4ResourceHelper s_aResMgr;
 
   protected final AS4CryptoFactory m_aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+  protected final String m_sEncryptionAlias = "ph-as4";
   private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;
 

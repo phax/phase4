@@ -20,8 +20,6 @@ import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.mail.internet.MimeMessage;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,9 +37,8 @@ import org.xml.sax.SAXException;
 
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
@@ -55,7 +52,6 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
-import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -94,15 +90,9 @@ public final class MainAS4Client
       if (false)
         sURL = "http://localhost:8080/msh/";
 
-      SSLContext aSSLContext = null;
-      if (sURL.startsWith ("https"))
-      {
-        aSSLContext = SSLContext.getInstance ("TLS");
-        aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-      }
-
       final HttpClientFactory aHCF = new HttpClientFactory ();
-      aHCF.setSSLContext (aSSLContext);
+      if (sURL.startsWith ("https"))
+        aHCF.setSSLContextTrustAll ();
       if (true)
       {
         aHCF.setProxy (new HttpHost ("172.30.9.6", 8080));
@@ -117,6 +107,7 @@ public final class MainAS4Client
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
       final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
       final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+      final String sEncryptionAlias = "receiver-alias";
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body
@@ -149,10 +140,11 @@ public final class MainAS4Client
                                                                                          aAttachments);
             Document aDoc = aMsg.getAsSOAPDocument (aPayload);
             aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                             eSOAPVersion,
-                                                             aDoc,
-                                                             false,
-                                                             ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                        eSOAPVersion,
+                                                        aDoc,
+                                                        false,
+                                                        ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                        sEncryptionAlias);
 
             aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
           }
@@ -168,14 +160,13 @@ public final class MainAS4Client
                                                                                            aAttachments);
               final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
                                                                                    AS4Signer.createSignedMessage (aCryptoFactory,
-                                                                                                                             aMsg.getAsSOAPDocument (null),
-                                                                                                                             eSOAPVersion,
-                                                                                                                             aMsg.getMessagingID (),
-                                                                                                                             aAttachments,
-                                                                                                                             aResHelper,
-                                                                                                                             false,
-                                                                                                                             ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                                                                             ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT),
+                                                                                                                  aMsg.getAsSOAPDocument (null),
+                                                                                                                  eSOAPVersion,
+                                                                                                                  aMsg.getMessagingID (),
+                                                                                                                  aAttachments,
+                                                                                                                  aResHelper,
+                                                                                                                  false,
+                                                                                                                  AS4SigningParams.createDefault ()),
                                                                                    aAttachments);
 
               // Move all global mime headers to the POST request
@@ -190,10 +181,11 @@ public final class MainAS4Client
                                                                           aAttachments,
                                                                           aResHelper);
                 aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                                 eSOAPVersion,
-                                                                 aDoc,
-                                                                 false,
-                                                                 ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                            eSOAPVersion,
+                                                            aDoc,
+                                                            false,
+                                                            ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                            sEncryptionAlias);
                 aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
               }
               else

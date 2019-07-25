@@ -190,8 +190,9 @@ public final class AS4ClientUserMessageTest
 
     // Set sign attributes, to get to the check, the check only gets called if
     // sign or encrypt needs to be done for the usermessage
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // No Keystore attributes set
     _ensureInvalidState (aClient);
@@ -227,8 +228,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -260,8 +262,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -281,8 +284,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -316,8 +320,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -341,8 +346,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     final IMicroDocument aDoc = aClient.sendMessageAndGetMicroDocument (SERVER_URL);
     assertTrue (MicroWriter.getNodeAsString (aDoc).contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -384,8 +390,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -412,8 +419,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
@@ -440,8 +448,9 @@ public final class AS4ClientUserMessageTest
     _setKeyStoreTestData (aClient);
 
     // Sign specific
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
 
     // Encrypt specific
     aClient.setCryptoAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);

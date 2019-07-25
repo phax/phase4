@@ -177,7 +177,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     // check mandatory attributes
     _checkMandatoryAttributes ();
 
-    final boolean bSign = getCryptoAlgorithmSign () != null && getCryptoAlgorithmSignDigest () != null;
+    final boolean bSign = signingParams ().isSigningEnabled ();
     final boolean bEncrypt = getCryptoAlgorithmCrypt () != null;
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
@@ -228,14 +228,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       {
         final boolean bMustUnderstand = true;
         final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
-                                                                              aDoc,
-                                                                              getSOAPVersion (),
-                                                                              aUserMsg.getMessagingID (),
-                                                                              m_aAttachments,
-                                                                              m_aResHelper,
-                                                                              bMustUnderstand,
-                                                                              getCryptoAlgorithmSign (),
-                                                                              getCryptoAlgorithmSignDigest ());
+                                                                   aDoc,
+                                                                   getSOAPVersion (),
+                                                                   aUserMsg.getMessagingID (),
+                                                                   m_aAttachments,
+                                                                   m_aResHelper,
+                                                                   bMustUnderstand,
+                                                                   signingParams ().getClone ());
         aDoc = aSignedDoc;
 
         AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
@@ -250,20 +249,20 @@ public class AS4ClientUserMessage extends AbstractAS4Client
         if (bAttachmentsPresent)
         {
           aMimeMsg = AS4Encryptor.encryptMimeMessage (aCryptoFactory,
-                                                           getSOAPVersion (),
-                                                           aDoc,
-                                                           bMustUnderstand,
-                                                           m_aAttachments,
-                                                           m_aResHelper,
-                                                           getCryptoAlgorithmCrypt ());
+                                                      getSOAPVersion (),
+                                                      aDoc,
+                                                      bMustUnderstand,
+                                                      m_aAttachments,
+                                                      m_aResHelper,
+                                                      getCryptoAlgorithmCrypt ());
         }
         else
         {
           aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                           getSOAPVersion (),
-                                                           aDoc,
-                                                           bMustUnderstand,
-                                                           getCryptoAlgorithmCrypt ());
+                                                      getSOAPVersion (),
+                                                      aDoc,
+                                                      bMustUnderstand,
+                                                      getCryptoAlgorithmCrypt ());
         }
       }
     }

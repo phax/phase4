@@ -23,8 +23,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
@@ -55,14 +54,13 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 
     final boolean bMustUnderstand = true;
     aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                     aDoc,
-                                                     m_eSOAPVersion,
-                                                     aPullReqMsg.getMessagingID (),
-                                                     null,
-                                                     new AS4ResourceHelper (),
-                                                     bMustUnderstand,
-                                                     ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                     ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                          aDoc,
+                                          m_eSOAPVersion,
+                                          aPullReqMsg.getMessagingID (),
+                                          null,
+                                          new AS4ResourceHelper (),
+                                          bMustUnderstand,
+                                          AS4SigningParams.createDefault ());
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
     final String sResponse = sendPlainMessage (aEntity, true, null);

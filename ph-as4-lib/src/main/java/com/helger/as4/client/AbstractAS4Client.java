@@ -24,9 +24,8 @@ import org.apache.http.client.ResponseHandler;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4CryptoProperties;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
@@ -36,6 +35,7 @@ import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.OverrideOnDemand;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.functional.ISupplier;
@@ -149,10 +149,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   private String m_sKeyStoreKeyPassword;
   // Alternative
   private AS4CryptoFactory m_aCryptoFactory;
-
-  // Signing additional attributes
-  private ECryptoAlgorithmSign m_eCryptoAlgorithmSign;
-  private ECryptoAlgorithmSignDigest m_eCryptoAlgorithmSignDigest;
+  private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   // Encryption attribute
   private ECryptoAlgorithmCrypt m_eCryptoAlgorithmCrypt;
 
@@ -363,45 +360,11 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   /**
    * @return The signing algorithm to use. May be <code>null</code>.
    */
-  @Nullable
-  public final ECryptoAlgorithmSign getCryptoAlgorithmSign ()
+  @Nonnull
+  @ReturnsMutableObject
+  public final AS4SigningParams signingParams ()
   {
-    return m_eCryptoAlgorithmSign;
-  }
-
-  /**
-   * A signing algorithm can be set. <br>
-   * MANDATORY if you want to use sign.<br>
-   * Also @see {@link #setCryptoAlgorithmSignDigest(ECryptoAlgorithmSignDigest)}
-   *
-   * @param eCryptoAlgorithmSign
-   *        the signing algorithm that should be set
-   */
-  public final void setCryptoAlgorithmSign (@Nullable final ECryptoAlgorithmSign eCryptoAlgorithmSign)
-  {
-    m_eCryptoAlgorithmSign = eCryptoAlgorithmSign;
-  }
-
-  /**
-   * @return The signing digest algorithm to use. May be <code>null</code>.
-   */
-  @Nullable
-  public final ECryptoAlgorithmSignDigest getCryptoAlgorithmSignDigest ()
-  {
-    return m_eCryptoAlgorithmSignDigest;
-  }
-
-  /**
-   * A signing digest algorithm can be set. <br>
-   * MANDATORY if you want to use sign.<br>
-   * Also @see {@link #setCryptoAlgorithmSign(ECryptoAlgorithmSign)}
-   *
-   * @param eCryptoAlgorithmSignDigest
-   *        the signing digest algorithm that should be set
-   */
-  public final void setCryptoAlgorithmSignDigest (@Nullable final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest)
-  {
-    m_eCryptoAlgorithmSignDigest = eCryptoAlgorithmSignDigest;
+    return m_aSigningParams;
   }
 
   /**
@@ -509,16 +472,15 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     if (aLeg != null)
     {
-      if (aLeg.getSecurity () != null)
+      if (aLeg.hasSecurity ())
       {
-        setCryptoAlgorithmSign (aLeg.getSecurity ().getX509SignatureAlgorithm ());
-        setCryptoAlgorithmSignDigest (aLeg.getSecurity ().getX509SignatureHashFunction ());
+        signingParams ().setAlgorithmSign (aLeg.getSecurity ().getX509SignatureAlgorithm ())
+                        .setAlgorithmSignDigest (aLeg.getSecurity ().getX509SignatureHashFunction ());
         setCryptoAlgorithmCrypt (aLeg.getSecurity ().getX509EncryptionAlgorithm ());
       }
       else
       {
-        setCryptoAlgorithmSign (null);
-        setCryptoAlgorithmSignDigest (null);
+        signingParams ().setAlgorithmSign (null).setAlgorithmSignDigest (null);
         setCryptoAlgorithmCrypt (null);
       }
     }

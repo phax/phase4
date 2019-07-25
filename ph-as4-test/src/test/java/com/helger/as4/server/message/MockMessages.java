@@ -30,8 +30,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
@@ -71,14 +70,13 @@ public final class MockMessages
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                          aMsg.getAsSOAPDocument (aPayload),
-                                                                          eSOAPVersion,
-                                                                          aMsg.getMessagingID (),
-                                                                          aAttachments,
-                                                                          aResMgr,
-                                                                          false,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aMsg.getAsSOAPDocument (aPayload),
+                                                               eSOAPVersion,
+                                                               aMsg.getMessagingID (),
+                                                               aAttachments,
+                                                               aResMgr,
+                                                               false,
+                                                               AS4SigningParams.createDefault ());
     return aSignedDoc;
   }
 
@@ -90,14 +88,13 @@ public final class MockMessages
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aEbms3ErrorList).setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
-                                                                          aErrorMsg.getAsSOAPDocument (),
-                                                                          eSOAPVersion,
-                                                                          aErrorMsg.getMessagingID (),
-                                                                          aAttachments,
-                                                                          aResMgr,
-                                                                          false,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aErrorMsg.getAsSOAPDocument (),
+                                                               eSOAPVersion,
+                                                               aErrorMsg.getMessagingID (),
+                                                               aAttachments,
+                                                               aResMgr,
+                                                               false,
+                                                               AS4SigningParams.createDefault ());
     return aSignedDoc;
   }
 

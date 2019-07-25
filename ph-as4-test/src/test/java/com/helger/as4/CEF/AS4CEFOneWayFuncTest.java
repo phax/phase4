@@ -40,9 +40,8 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
@@ -126,14 +125,13 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                          aMsg.getAsSOAPDocument (m_aPayload),
-                                                                          m_eSOAPVersion,
-                                                                          aMsg.getMessagingID (),
-                                                                          null,
-                                                                          new AS4ResourceHelper (),
-                                                                          false,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aMsg.getAsSOAPDocument (m_aPayload),
+                                                               m_eSOAPVersion,
+                                                               aMsg.getMessagingID (),
+                                                               null,
+                                                               new AS4ResourceHelper (),
+                                                               false,
+                                                               AS4SigningParams.createDefault ());
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
@@ -618,12 +616,13 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                                       m_eSOAPVersion,
-                                                                       aMsg.getAsSOAPDocument (),
-                                                                       false,
-                                                                       aAttachments,
-                                                                       s_aResMgr,
-                                                                       ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                                  m_eSOAPVersion,
+                                                                  aMsg.getAsSOAPDocument (),
+                                                                  false,
+                                                                  aAttachments,
+                                                                  s_aResMgr,
+                                                                  ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                                  m_sEncryptionAlias);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -646,10 +645,11 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, m_aPayload, null);
     final Document aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                                    m_eSOAPVersion,
-                                                                    aMsg.getAsSOAPDocument (m_aPayload),
-                                                                    true,
-                                                                    ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                               m_eSOAPVersion,
+                                                               aMsg.getAsSOAPDocument (m_aPayload),
+                                                               true,
+                                                               ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                               m_sEncryptionAlias);
 
     final NodeList nList = aDoc.getElementsByTagName ("S12:Body");
 
@@ -697,22 +697,22 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                    aMsg.getAsSOAPDocument (null),
-                                                                    m_eSOAPVersion,
-                                                                    aMsg.getMessagingID (),
-                                                                    aAttachments,
-                                                                    s_aResMgr,
-                                                                    false,
-                                                                    ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                    ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                         aMsg.getAsSOAPDocument (null),
+                                                         m_eSOAPVersion,
+                                                         aMsg.getMessagingID (),
+                                                         aAttachments,
+                                                         s_aResMgr,
+                                                         false,
+                                                         AS4SigningParams.createDefault ());
 
     final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                                       m_eSOAPVersion,
-                                                                       aDoc,
-                                                                       false,
-                                                                       aAttachments,
-                                                                       s_aResMgr,
-                                                                       ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                                  m_eSOAPVersion,
+                                                                  aDoc,
+                                                                  false,
+                                                                  aAttachments,
+                                                                  s_aResMgr,
+                                                                  ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                                  m_sEncryptionAlias);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

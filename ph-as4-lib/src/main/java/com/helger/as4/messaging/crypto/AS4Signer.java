@@ -32,8 +32,7 @@ import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4CryptoProperties;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceHelper;
@@ -70,10 +69,8 @@ public final class AS4Signer
    *        Resource helper to be used.
    * @param bMustUnderstand
    *        Must understand?
-   * @param eCryptoAlgorithmSign
-   *        Signing algorithm
-   * @param eCryptoAlgorithmSignDigest
-   *        Signing digest algorithm
+   * @param aSigningParams
+   *        Signing parameters. May not be <code>null</code>.
    * @return The created signed SOAP document
    * @throws WSSecurityException
    *         If an error occurs during signing
@@ -86,16 +83,14 @@ public final class AS4Signer
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                               final boolean bMustUnderstand,
-                                              @Nonnull final ECryptoAlgorithmSign eCryptoAlgorithmSign,
-                                              @Nonnull final ECryptoAlgorithmSignDigest eCryptoAlgorithmSignDigest) throws WSSecurityException
+                                              @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
-    ValueEnforcer.notNull (eCryptoAlgorithmSign, "CryptoAlgorithmSign");
-    ValueEnforcer.notNull (eCryptoAlgorithmSignDigest, "CryptoAlgorithmSignDigest");
+    ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
@@ -106,9 +101,9 @@ public final class AS4Signer
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setSignatureAlgorithm (eCryptoAlgorithmSign.getAlgorithmURI ());
+    aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (eCryptoAlgorithmSignDigest.getAlgorithmURI ());
+    aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
 
     // Sign the messaging element itself
     aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));

@@ -69,9 +69,11 @@ public class AS4WorkerPool extends AbstractGlobalSingleton
   @Override
   protected void onDestroy (@Nonnull final IScope aScopeInDestruction) throws Exception
   {
-    LOGGER.info ("Global AS4 worker queue about to be closed");
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("AS4 worker pool about to be closed");
     ExecutorServiceHelper.shutdownAndWaitUntilAllTasksAreFinished (m_aES);
-    LOGGER.info ("Global AS4 worker queue closed!");
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("AS4 worker pool was closed!");
   }
 
   @Nonnull

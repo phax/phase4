@@ -116,8 +116,9 @@ public final class AS4ClientReceiptMessageTest
     aClient.setKeyStoreAlias ("ph-as4");
     aClient.setKeyStoreKeyPassword ("test");
 
-    aClient.setCryptoAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT);
-    aClient.setCryptoAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+    aClient.signingParams ()
+           .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)
+           .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
 
     _ensureValidState (aClient);
   }

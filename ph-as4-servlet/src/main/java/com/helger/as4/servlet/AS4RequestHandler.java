@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +51,7 @@ import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.client.BasicHttpPoster;
 import com.helger.as4.crypto.AS4CryptoFactory;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -71,7 +71,6 @@ import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
-import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.as4.profile.IAS4ProfileValidator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -152,6 +151,7 @@ public class AS4RequestHandler implements AutoCloseable
 
     public AS4ResponseFactoryXML (@Nonnull final Document aDoc)
     {
+      ValueEnforcer.notNull (aDoc, "Doc");
       m_aDoc = aDoc;
     }
 
@@ -177,19 +177,21 @@ public class AS4RequestHandler implements AutoCloseable
 
     public AS4ResponseFactoryMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
+      ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
       m_aMimeMsg = aMimeMsg;
+
+      final ICommonsList <Header> aMimeHeaders = CollectionHelper.newList (m_aMimeMsg.getAllHeaders ());
+
       // Move all mime headers to the HTTP request
-      final Enumeration <Header> aEnum = m_aMimeMsg.getAllHeaders ();
-      while (aEnum.hasMoreElements ())
+      for (final Header aHeader : aMimeHeaders)
       {
-        final Header aHeader = aEnum.nextElement ();
         // Make a single-line HTTP header value!
         m_aHeaders.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
       }
 
       // Remove all headers from MIME message
       // Do it after the copy loop, in case a header has more than one value!
-      for (final Header aHeader : CollectionHelper.newList (m_aMimeMsg.getAllHeaders ()))
+      for (final Header aHeader : aMimeHeaders)
         m_aMimeMsg.removeHeader (aHeader.getName ());
     }
 
@@ -853,7 +855,7 @@ public class AS4RequestHandler implements AutoCloseable
         // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory
         if (aEbmsUserMessage.getMessageProperties () == null)
-          throw new BadRequestException ("No Message Properties present but OriginalSender and finalRecipient have to be present");
+          throw new BadRequestException ("No Message Properties present but originalSender and finalRecipient have to be present");
 
         final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
         if (aProps.isEmpty ())
@@ -930,9 +932,10 @@ public class AS4RequestHandler implements AutoCloseable
         final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
 
         AS4WorkerPool.getInstance ().run ( () -> {
+          // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
-          IAS4ResponseFactory aAsyncResponseFactory;
+          final IAS4ResponseFactory aAsyncResponseFactory;
 
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
           _invokeSPIs (aHttpHeaders,
@@ -957,11 +960,15 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage or receipt
+            final String sEncryptionAlias = aFinalUserMessage.getPartyInfo ()
+                                                             .getTo ()
+                                                             .getPartyIdAtIndex (0)
+                                                             .getValue ();
             aAsyncResponseFactory = _createResponseUserMessage (aResponseAttachments,
                                                                 aEffectiveLeg,
                                                                 aResponseUserMsg.getAsSOAPDocument (),
-                                                                aResponseUserMsg.getMessagingID ());
-
+                                                                aResponseUserMsg.getMessagingID (),
+                                                                sEncryptionAlias);
           }
           else
           {
@@ -1023,8 +1030,8 @@ public class AS4RequestHandler implements AutoCloseable
             // way, we need to check if the current application is currently in
             // the pull phase
             if (aPMode.getMEPBinding ().equals (EMEPBinding.PULL) ||
-                aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg () ||
-                aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ())
+                (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
+                (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
               return new AS4ResponseFactoryXML (new AS4UserMessage (eSOAPVersion,
                                                                     aSPIResult.getPullReturnUserMsg ()).getAsSOAPDocument ());
@@ -1062,10 +1069,15 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
+              final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
+                                                              .getTo ()
+                                                              .getPartyIdAtIndex (0)
+                                                              .getValue ();
               return _createResponseUserMessage (aResponseAttachments,
                                                  aLeg2,
                                                  aResponseUserMsg.getAsSOAPDocument (),
-                                                 aResponseUserMsg.getMessagingID ());
+                                                 aResponseUserMsg.getMessagingID (),
+                                                 sEncryptionAlias);
             }
           }
         }
@@ -1105,8 +1117,9 @@ public class AS4RequestHandler implements AutoCloseable
 
     // We've got our response
     Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+    final AS4SigningParams aSigningParams = AS4SigningParams.createFromPMode (aEffectiveLeg.getSecurity ());
     aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
-                                          aEffectiveLeg.getSecurity (),
+                                          aSigningParams,
                                           aResponseDoc,
                                           aEffectiveLeg.getProtocol ().getSOAPVersion (),
                                           aReceiptMessage.getMessagingID ());
@@ -1195,36 +1208,53 @@ public class AS4RequestHandler implements AutoCloseable
    *        the message that should be sent
    * @param sMessagingID
    *        ID of the "Messaging" element
+   * @param sEncryptToAlias
+   *        The alias into the keystore that should be used for encryption
    * @throws WSSecurityException
+   *         on error
    * @throws MessagingException
+   *         on error
    */
   @Nonnull
   private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                           @Nonnull final PModeLeg aLeg,
                                                           @Nonnull final Document aDoc,
-                                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException,
-                                                                                                        MessagingException
+                                                          @Nonnull @Nonempty final String sMessagingID,
+                                                          @Nonnull @Nonempty final String sEncryptToAlias) throws WSSecurityException,
+                                                                                                           MessagingException
   {
-    Document aResponseDoc;
-    if (aLeg.getSecurity () != null)
+    final Document aResponseDoc;
+    if (aLeg.hasSecurity ())
     {
+      final AS4SigningParams aSigningParams = AS4SigningParams.createFromPMode (aLeg.getSecurity ());
       aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
-                                            aLeg.getSecurity (),
+                                            aSigningParams,
                                             aDoc,
                                             aLeg.getProtocol ().getSOAPVersion (),
                                             sMessagingID);
     }
     else
     {
-      // No sign
+      // No signing
       aResponseDoc = aDoc;
     }
 
+    final IAS4ResponseFactory ret;
     if (aResponseAttachments.isEmpty ())
-      return new AS4ResponseFactoryXML (aResponseDoc);
-
-    final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResponseAttachments, aLeg, aResponseDoc);
-    return new AS4ResponseFactoryMIME (aMimeMsg);
+    {
+      // FIXME encryption of SOAP body is missing here
+      ret = new AS4ResponseFactoryXML (aResponseDoc);
+    }
+    else
+    {
+      // Create (maybe encrypted) MIME message
+      final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResponseDoc,
+                                                                    aResponseAttachments,
+                                                                    aLeg,
+                                                                    sEncryptToAlias);
+      ret = new AS4ResponseFactoryMIME (aMimeMsg);
+    }
+    return ret;
   }
 
   /**
@@ -1233,9 +1263,8 @@ public class AS4RequestHandler implements AutoCloseable
    *
    * @param aResponseAttachments
    *        attachment that are added
-   * @param aSecurity
-   *        the Security part of the PMode, needed to determine if and how the
-   *        message should be signed
+   * @param aSigningParams
+   *        Signing parameters
    * @param aDocToBeSigned
    *        the message that should be signed
    * @param eSOAPVersion
@@ -1248,58 +1277,67 @@ public class AS4RequestHandler implements AutoCloseable
    *         if something in the signing process goes wrong from WSS4j
    */
   private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                          @Nonnull final PModeLegSecurity aSecurity,
+                                          @Nonnull final AS4SigningParams aSigningParams,
                                           @Nonnull final Document aDocToBeSigned,
                                           @Nonnull final ESOAPVersion eSOAPVersion,
                                           @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
   {
-    if (aSecurity.getX509SignatureAlgorithm () != null && aSecurity.getX509SignatureHashFunction () != null)
+    final Document ret;
+    if (aSigningParams.isSigningEnabled ())
     {
+      // Sign
       final boolean bMustUnderstand = true;
-      return AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                       aDocToBeSigned,
-                                                       eSOAPVersion,
-                                                       sMessagingID,
-                                                       aResponseAttachments,
-                                                       m_aResHelper,
-                                                       bMustUnderstand,
-                                                       aSecurity.getX509SignatureAlgorithm (),
-                                                       aSecurity.getX509SignatureHashFunction ());
+      ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                           aDocToBeSigned,
+                                           eSOAPVersion,
+                                           sMessagingID,
+                                           aResponseAttachments,
+                                           m_aResHelper,
+                                           bMustUnderstand,
+                                           aSigningParams.getClone ());
     }
-    return aDocToBeSigned;
+    else
+    {
+      // Unchanged
+      ret = aDocToBeSigned;
+    }
+    return ret;
   }
 
   /**
    * Returns the MimeMessage with encrypted attachment or without depending on
    * what is configured in the PMode within Leg2.
    *
+   * @param aResponseDoc
+   *        the document that contains the user message
    * @param aResponseAttachments
    *        The Attachments that should be encrypted
    * @param aLeg
-   *        Leg2 to get necessary information, EncryptionAlgorithm, SOAPVersion
-   * @param aResponseDoc
-   *        the document that contains the user message
+   *        Leg to get necessary information, EncryptionAlgorithm, SOAPVersion
+   * @param sEncryptToAlias
+   *        The alias into the keystore that should be used for encryption
    * @return a MimeMessage to be sent
    * @throws MessagingException
    * @throws WSSecurityException
    */
   @Nonnull
-  private MimeMessage _generateMimeMessageForResponse (@Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+  private MimeMessage _generateMimeMessageForResponse (@Nonnull final Document aResponseDoc,
+                                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                        @Nonnull final PModeLeg aLeg,
-                                                       @Nonnull final Document aResponseDoc) throws WSSecurityException,
-                                                                                             MessagingException
+                                                       @Nonnull final String sEncryptToAlias) throws WSSecurityException,
+                                                                                              MessagingException
   {
-    MimeMessage aMimeMsg = null;
-    if (aLeg.getSecurity () != null && aLeg.getSecurity ().getX509EncryptionAlgorithm () != null)
+    final MimeMessage aMimeMsg;
+    if (aLeg.hasSecurity () && aLeg.getSecurity ().hasX509EncryptionAlgorithm ())
     {
       aMimeMsg = AS4Encryptor.encryptMimeMessage (m_aCryptoFactory,
-                                                       aLeg.getProtocol ().getSOAPVersion (),
-                                                       aResponseDoc,
-                                                       true,
-                                                       aResponseAttachments,
-                                                       m_aResHelper,
-                                                       aLeg.getSecurity ().getX509EncryptionAlgorithm ());
-
+                                                  aLeg.getProtocol ().getSOAPVersion (),
+                                                  aResponseDoc,
+                                                  true,
+                                                  aResponseAttachments,
+                                                  m_aResHelper,
+                                                  aLeg.getSecurity ().getX509EncryptionAlgorithm (),
+                                                  sEncryptToAlias);
     }
     else
     {
@@ -1308,7 +1346,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                          aResponseAttachments);
     }
     if (aMimeMsg == null)
-      throw new IllegalStateException ("No MimeMessage created!");
+      throw new IllegalStateException ("Failed to create MimeMessage!");
     return aMimeMsg;
   }
 
@@ -1349,7 +1387,7 @@ public class AS4RequestHandler implements AutoCloseable
    */
   private static boolean _isSendNonRepudiationInformation (@Nonnull final PModeLeg aLeg)
   {
-    if (aLeg.getSecurity () != null)
+    if (aLeg.hasSecurity ())
       if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
         return aLeg.getSecurity ().isSendReceiptNonRepudiation ();
     // Default behavior
@@ -1366,7 +1404,7 @@ public class AS4RequestHandler implements AutoCloseable
   private static boolean _isSendErrorAsResponse (@Nullable final PModeLeg aLeg)
   {
     if (aLeg != null)
-      if (aLeg.getErrorHandling () != null)
+      if (aLeg.hasErrorHandling ())
         if (aLeg.getErrorHandling ().isReportAsResponseDefined ())
         {
           // Note: this is enabled in Default PMode
@@ -1386,7 +1424,7 @@ public class AS4RequestHandler implements AutoCloseable
   private static boolean _isSendReceiptAsResponse (@Nonnull final PModeLeg aLeg)
   {
     if (aLeg != null)
-      if (aLeg.getSecurity () != null)
+      if (aLeg.hasSecurity ())
       {
         // Note: this is enabled in Default PMode
         return EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
@@ -1485,9 +1523,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       final String sBoundary = aContentType.getParameterValueWithName ("boundary");
       if (StringHelper.hasNoText (sBoundary))
-      {
-        throw new BadRequestException ("Content-Type '" + sContentType + "' misses boundary parameter");
-      }
+        throw new BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
 
       if (isDebug ())
         LOGGER.info ("MIME Boundary = " + sBoundary);

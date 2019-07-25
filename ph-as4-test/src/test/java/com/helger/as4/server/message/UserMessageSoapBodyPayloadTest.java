@@ -118,10 +118,11 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, aPayload, aAttachments)
                                 .getAsSOAPDocument (aPayload);
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                     m_eSOAPVersion,
-                                                     aDoc,
-                                                     false,
-                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                m_eSOAPVersion,
+                                                aDoc,
+                                                false,
+                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                m_sEncryptionAlias);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 
@@ -136,10 +137,11 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testSignedUserMessage (m_eSOAPVersion, aPayload, aAttachments, s_aResMgr);
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
-                                                     m_eSOAPVersion,
-                                                     aDoc,
-                                                     false,
-                                                     ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT);
+                                                m_eSOAPVersion,
+                                                aDoc,
+                                                false,
+                                                ECryptoAlgorithmCrypt.ENCRPYTION_ALGORITHM_DEFAULT,
+                                                m_sEncryptionAlias);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
 

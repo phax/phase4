@@ -28,8 +28,7 @@ import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CAS4;
 import com.helger.as4.CEF.AbstractCEFTestSetUp;
 import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
@@ -116,14 +115,13 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                          aUserMsg.getAsSOAPDocument (),
-                                                                          m_eSOAPVersion,
-                                                                          aUserMsg.getMessagingID (),
-                                                                          aAttachments,
-                                                                          new AS4ResourceHelper (),
-                                                                          false,
-                                                                          ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT,
-                                                                          ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                                               aUserMsg.getAsSOAPDocument (),
+                                                               m_eSOAPVersion,
+                                                               aUserMsg.getMessagingID (),
+                                                               aAttachments,
+                                                               new AS4ResourceHelper (),
+                                                               false,
+                                                               AS4SigningParams.createDefault ());
 
     final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSignedDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
