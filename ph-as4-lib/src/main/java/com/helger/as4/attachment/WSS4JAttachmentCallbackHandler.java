@@ -136,7 +136,8 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         }
         else
         {
-          throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback");
+          throw new UnsupportedCallbackException (aCallback,
+                                                  "Unrecognized Callback of class " + aCallback.getClass ().getName ());
         }
     }
   }
