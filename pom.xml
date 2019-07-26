@@ -67,6 +67,7 @@
   </developers>
 
   <properties>
+    <xmlsec.version>2.1.4</xmlsec.version>
     <wss4j.version>2.2.3</wss4j.version>
     <log4j.version>2.12.0</log4j.version>
   </properties>
@@ -130,6 +131,11 @@
         <scope>import</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.apache.santuario</groupId>
+        <artifactId>xmlsec</artifactId>
+        <version>${xmlsec.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.wss4j</groupId>
         <artifactId>wss4j-ws-security-dom</artifactId>
