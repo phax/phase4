@@ -27,6 +27,7 @@ import javax.annotation.concurrent.GuardedBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.as4.CAS4;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -134,7 +135,9 @@ public class AS4ResourceHelper implements Closeable
     });
     if (aCloseables.isNotEmpty ())
     {
-      LOGGER.info ("Closing " + aCloseables.size () + " stream handles");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Closing " + aCloseables.size () + " " + CAS4.LIB_NAME + " stream handles");
+
       for (final Closeable aCloseable : aCloseables)
         StreamHelper.close (aCloseable);
     }
@@ -147,14 +150,22 @@ public class AS4ResourceHelper implements Closeable
     });
     if (aFiles.isNotEmpty ())
     {
-      LOGGER.info ("Deleting " + aFiles.size () + " temporary phase4 files");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Deleting " + aFiles.size () + " temporary " + CAS4.LIB_NAME + " files");
+
       for (final File aFile : aFiles)
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Deleting temporary file " + aFile.getAbsolutePath ());
+          LOGGER.debug ("Deleting temporary file '" + aFile.getAbsolutePath () + "'");
+
         final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
         if (aError.isFailure ())
-          LOGGER.warn ("  Failed to delete " + aFile.getAbsolutePath () + ": " + aError.toString ());
+          LOGGER.warn ("  Failed to delete temporary " +
+                       CAS4.LIB_NAME +
+                       " file " +
+                       aFile.getAbsolutePath () +
+                       ": " +
+                       aError.toString ());
       }
     }
   }
