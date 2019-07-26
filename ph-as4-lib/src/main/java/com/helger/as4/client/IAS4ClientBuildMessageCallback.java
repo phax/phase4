@@ -17,6 +17,9 @@ import com.helger.as4.messaging.domain.AbstractAS4Message;
 public interface IAS4ClientBuildMessageCallback extends Serializable
 {
   /**
+   * Called for the created domain object. That usually also contains the
+   * underlying Ebms 3 data model. This method is called for all types.
+   *
    * @param aMsg
    *        The created message
    */
@@ -24,6 +27,9 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
   {}
 
   /**
+   * Called for the unsigned and unencrypted SOAP document. This method is
+   * called for all types.
+   *
    * @param aDoc
    *        The created SOAP document
    */
@@ -31,6 +37,9 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
   {}
 
   /**
+   * Called for the signed SOAP document. Not all client messages support
+   * signing.
+   *
    * @param aDoc
    *        The signed SOAP document
    */
