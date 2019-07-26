@@ -16,6 +16,8 @@
  */
 package com.helger.as4.client;
 
+import java.util.function.Consumer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -26,6 +28,7 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
+import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -63,7 +66,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -75,6 +78,9 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
                                                                              aEbms3MessageInfo,
                                                                              m_sMPC,
                                                                              getAllAny ());
+
+    if (aMsgConsumer != null)
+      aMsgConsumer.accept (aPullRequest);
 
     Document aDoc = aPullRequest.getAsSOAPDocument ();
 

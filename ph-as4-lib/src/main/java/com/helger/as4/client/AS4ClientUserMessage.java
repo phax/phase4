@@ -18,6 +18,7 @@ package com.helger.as4.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +39,7 @@ import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
+import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
@@ -170,7 +172,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    */
   @Override
   @Nonnull
-  public AS4BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
   {
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
@@ -208,6 +210,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                            aEbms3MessageProperties,
                                                            getSOAPVersion ())
                                                   .setMustUnderstand (true);
+
+    if (aMsgConsumer != null)
+      aMsgConsumer.accept (aUserMsg);
+
     Document aDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
 
     // 1. compress

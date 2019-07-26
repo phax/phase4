@@ -16,6 +16,8 @@
  */
 package com.helger.as4.client;
 
+import java.util.function.Consumer;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,6 +31,7 @@ import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
@@ -211,13 +214,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
 
   @OverrideOnDemand
   @Nonnull
-  public abstract AS4BuiltMessage buildMessage () throws Exception;
+  public abstract AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception;
 
   @Nonnull
   public <T> AS4SentMessage <T> sendMessage (@Nonnull final String sURL,
-                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                             @Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
   {
-    final AS4BuiltMessage aBuiltMsg = buildMessage ();
+    final AS4BuiltMessage aBuiltMsg = buildMessage (aMsgConsumer);
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
     return new AS4SentMessage <> (aBuiltMsg, aResponse);
   }
@@ -225,7 +229,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ()).getResponse ();
+    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
