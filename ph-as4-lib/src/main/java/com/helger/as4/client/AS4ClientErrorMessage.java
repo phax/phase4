@@ -18,7 +18,6 @@ package com.helger.as4.client;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +27,6 @@ import org.w3c.dom.Document;
 import com.helger.as4.error.IEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
-import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -79,7 +77,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -91,10 +89,13 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSOAPVersion (), aEbms3MessageInfo, m_aErrorMessages);
 
-    if (aMsgConsumer != null)
-      aMsgConsumer.accept (aErrorMsg);
+    if (aCallback != null)
+      aCallback.onAS4Message (aErrorMsg);
 
     final Document aDoc = aErrorMsg.getAsSOAPDocument ();
+
+    if (aCallback != null)
+      aCallback.onSOAPDocument (aDoc);
 
     // Wrap SOAP XML
     return new AS4BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));

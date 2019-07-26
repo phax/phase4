@@ -16,8 +16,6 @@
  */
 package com.helger.as4.client;
 
-import java.util.function.Consumer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -28,7 +26,6 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4PullRequestMessage;
-import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
@@ -66,7 +63,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -79,24 +76,33 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
                                                                              m_sMPC,
                                                                              getAllAny ());
 
-    if (aMsgConsumer != null)
-      aMsgConsumer.accept (aPullRequest);
+    if (aCallback != null)
+      aCallback.onAS4Message (aPullRequest);
 
-    Document aDoc = aPullRequest.getAsSOAPDocument ();
+    final Document aPureDoc = aPullRequest.getAsSOAPDocument ();
 
+    if (aCallback != null)
+      aCallback.onSOAPDocument (aPureDoc);
+
+    Document aDoc = aPureDoc;
     if (signingParams ().isSigningEnabled ())
     {
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
-      aDoc = AS4Signer.createSignedMessage (aCryptoFactory,
-                                            aDoc,
-                                            getSOAPVersion (),
-                                            aPullRequest.getMessagingID (),
-                                            null,
-                                            m_aResHelper,
-                                            bMustUnderstand,
-                                            signingParams ().getClone ());
+      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
+                                                                 aDoc,
+                                                                 getSOAPVersion (),
+                                                                 aPullRequest.getMessagingID (),
+                                                                 null,
+                                                                 m_aResHelper,
+                                                                 bMustUnderstand,
+                                                                 signingParams ().getClone ());
+
+      if (aCallback != null)
+        aCallback.onSignedSOAPDocument (aSignedDoc);
+
+      aDoc = aSignedDoc;
     }
 
     // Wrap SOAP XML

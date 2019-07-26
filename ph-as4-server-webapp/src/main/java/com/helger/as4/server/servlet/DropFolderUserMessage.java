@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.naming.InvalidNameException;
@@ -39,10 +38,10 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import com.helger.as4.CAS4;
 import com.helger.as4.client.AS4ClientUserMessage;
 import com.helger.as4.client.AbstractAS4Client.AS4SentMessage;
+import com.helger.as4.client.IAS4ClientBuildMessageCallback;
 import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
 import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
@@ -175,10 +174,10 @@ public final class DropFolderUserMessage
                           MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aSBDH.getReceiverValue ()));
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
-          final Consumer <? super AbstractAS4Message <?>> aMsgConsumer = null;
+          final IAS4ClientBuildMessageCallback aCallback = null;
           final AS4SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                 new ResponseHandlerByteArray (),
-                                                                                aMsgConsumer);
+                                                                                aCallback);
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aResponseEntity.getMessageID () +
                        "' for '" +

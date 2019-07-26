@@ -16,8 +16,6 @@
  */
 package com.helger.as4.client;
 
-import java.util.function.Consumer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +29,6 @@ import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.domain.AbstractAS4Message;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
@@ -212,16 +209,27 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     return new AS4CryptoFactory (aCryptoProps);
   }
 
+  /**
+   * Build the AS4 message to be sent. It uses all the attributes of this class
+   * to build the final message. Compression, signing and encryption happens in
+   * this methods.
+   *
+   * @param aCallback
+   *        Optional callback for in-between states. May be <code>null</code>.
+   * @return The HTTP entity to be sent. Never <code>null</code>.
+   * @throws Exception
+   *         in case something goes wrong
+   */
   @OverrideOnDemand
   @Nonnull
-  public abstract AS4BuiltMessage buildMessage (@Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception;
+  public abstract AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
   @Nonnull
   public <T> AS4SentMessage <T> sendMessage (@Nonnull final String sURL,
                                              @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                             @Nullable final Consumer <? super AbstractAS4Message <?>> aMsgConsumer) throws Exception
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
-    final AS4BuiltMessage aBuiltMsg = buildMessage (aMsgConsumer);
+    final AS4BuiltMessage aBuiltMsg = buildMessage (aCallback);
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
     return new AS4SentMessage <> (aBuiltMsg, aResponse);
   }
