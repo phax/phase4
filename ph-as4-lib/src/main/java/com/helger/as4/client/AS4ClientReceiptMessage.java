@@ -68,7 +68,6 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
 
     if (!m_bNonRepudiation && m_aEbms3UserMessage == null)
       throw new IllegalStateException ("Ebms3UserMessage has to be set, if the SOAPDocument is not signed.");
-
   }
 
   @Override
