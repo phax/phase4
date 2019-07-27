@@ -17,6 +17,7 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
 import org.w3c.dom.Document;
@@ -104,7 +105,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
   }
 
   /**
-   * Default value is false.
+   * Default value is <code>false</code>
    *
    * @return if nonrepudiation is used or not
    */
@@ -118,6 +119,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
     m_bNonRepudiation = bNonRepudiation;
   }
 
+  @Nullable
   public Node getSOAPDocument ()
   {
     return m_aSOAPDocument;
@@ -130,11 +132,12 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
    * @param aSOAPDocument
    *        Signed UserMessage
    */
-  public void setSOAPDocument (final Node aSOAPDocument)
+  public void setSOAPDocument (@Nullable final Node aSOAPDocument)
   {
     m_aSOAPDocument = aSOAPDocument;
   }
 
+  @Nullable
   public Ebms3UserMessage getEbms3UserMessage ()
   {
     return m_aEbms3UserMessage;
@@ -147,7 +150,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage
    * @param aEbms3UserMessage
    *        UserMessage which this receipt should be the response for
    */
-  public void setEbms3UserMessage (final Ebms3UserMessage aEbms3UserMessage)
+  public void setEbms3UserMessage (@Nullable final Ebms3UserMessage aEbms3UserMessage)
   {
     m_aEbms3UserMessage = aEbms3UserMessage;
   }
