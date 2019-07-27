@@ -137,7 +137,7 @@ public final class AS4ClientUserMessageTest
   {
     try
     {
-      aClient.buildMessage ();
+      aClient.buildMessage (null);
       fail ();
     }
     catch (final IllegalStateException ex)
@@ -150,7 +150,7 @@ public final class AS4ClientUserMessageTest
   {
     try
     {
-      aClient.buildMessage ();
+      aClient.buildMessage (null);
     }
     catch (final IllegalStateException ex)
     {
@@ -467,6 +467,6 @@ public final class AS4ClientUserMessageTest
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
     aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
 
-    assertTrue (EntityUtils.toString (aClient.buildMessage ().getHttpEntity ()).contains (sMessageIDPrefix));
+    assertTrue (EntityUtils.toString (aClient.buildMessage (null).getHttpEntity ()).contains (sMessageIDPrefix));
   }
 }

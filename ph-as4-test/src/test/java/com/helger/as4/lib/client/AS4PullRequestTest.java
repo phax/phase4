@@ -52,7 +52,7 @@ public final class AS4PullRequestTest
   {
     try
     {
-      aClient.buildMessage ();
+      aClient.buildMessage (null);
       fail ();
     }
     catch (final IllegalStateException ex)
@@ -65,7 +65,7 @@ public final class AS4PullRequestTest
   {
     try
     {
-      aClient.buildMessage ();
+      aClient.buildMessage (null);
     }
     catch (final IllegalStateException ex)
     {

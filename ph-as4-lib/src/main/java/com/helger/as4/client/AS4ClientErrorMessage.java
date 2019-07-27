@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
 
@@ -76,7 +77,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -88,7 +89,13 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSOAPVersion (), aEbms3MessageInfo, m_aErrorMessages);
 
+    if (aCallback != null)
+      aCallback.onAS4Message (aErrorMsg);
+
     final Document aDoc = aErrorMsg.getAsSOAPDocument ();
+
+    if (aCallback != null)
+      aCallback.onSOAPDocument (aDoc);
 
     // Wrap SOAP XML
     return new AS4BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));

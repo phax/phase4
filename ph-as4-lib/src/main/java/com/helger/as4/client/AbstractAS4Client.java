@@ -209,15 +209,27 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     return new AS4CryptoFactory (aCryptoProps);
   }
 
+  /**
+   * Build the AS4 message to be sent. It uses all the attributes of this class
+   * to build the final message. Compression, signing and encryption happens in
+   * this methods.
+   *
+   * @param aCallback
+   *        Optional callback for in-between states. May be <code>null</code>.
+   * @return The HTTP entity to be sent. Never <code>null</code>.
+   * @throws Exception
+   *         in case something goes wrong
+   */
   @OverrideOnDemand
   @Nonnull
-  public abstract AS4BuiltMessage buildMessage () throws Exception;
+  public abstract AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
   @Nonnull
   public <T> AS4SentMessage <T> sendMessage (@Nonnull final String sURL,
-                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws Exception
+                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
-    final AS4BuiltMessage aBuiltMsg = buildMessage ();
+    final AS4BuiltMessage aBuiltMsg = buildMessage (aCallback);
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
     return new AS4SentMessage <> (aBuiltMsg, aResponse);
   }
@@ -225,7 +237,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom ()).getResponse ();
+    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;

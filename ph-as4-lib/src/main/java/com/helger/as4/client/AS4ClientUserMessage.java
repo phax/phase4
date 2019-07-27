@@ -159,18 +159,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       throw new IllegalStateException ("Mandatory property finalRecipient is missing");
   }
 
-  /**
-   * Build the AS4 message to be sent. It uses all the attributes of this class
-   * to build the final message. Compression, signing and encryption happens in
-   * this methods.
-   *
-   * @return The HTTP entity to be sent. Never <code>null</code>.
-   * @throws Exception
-   *         in case something goes wrong
-   */
   @Override
   @Nonnull
-  public AS4BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
@@ -208,16 +199,23 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                            aEbms3MessageProperties,
                                                            getSOAPVersion ())
                                                   .setMustUnderstand (true);
-    Document aDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
+
+    if (aCallback != null)
+      aCallback.onAS4Message (aUserMsg);
+
+    final Document aPureDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
+
+    if (aCallback != null)
+      aCallback.onSOAPDocument (aPureDoc);
 
     // 1. compress
     // Is done when the attachments are added
 
     // 2. sign and/or encrpyt
+    Document aDoc = aPureDoc;
     MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
     {
-      final Document aPureDoc = aDoc;
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
                                  XMLWriter.getNodeAsString (aPureDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
@@ -237,6 +235,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                                    signingParams ().getClone ());
         aDoc = aSignedDoc;
 
+        if (aCallback != null)
+          aCallback.onSignedSOAPDocument (aSignedDoc);
+
         AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
                                    XMLWriter.getNodeAsString (aSignedDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
       }
@@ -255,14 +256,22 @@ public class AS4ClientUserMessage extends AbstractAS4Client
                                                       bMustUnderstand,
                                                       m_aResHelper,
                                                       cryptParams ().getClone ());
+
+          if (aCallback != null)
+            aCallback.onEncryptedMimeMessage (aMimeMsg);
         }
         else
         {
-          aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                      getSOAPVersion (),
-                                                      aDoc,
-                                                      bMustUnderstand,
-                                                      cryptParams ().getClone ());
+          final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
+                                                                              getSOAPVersion (),
+                                                                              aDoc,
+                                                                              bMustUnderstand,
+                                                                              cryptParams ().getClone ());
+
+          if (aCallback != null)
+            aCallback.onEncryptedSOAPDocument (aDoc);
+
+          aDoc = aEncryptedDoc;
         }
       }
     }
@@ -276,6 +285,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
     if (aMimeMsg != null)
     {
+      // Wrap MIME message
       return new AS4BuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
     }
 

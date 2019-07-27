@@ -63,7 +63,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4BuiltMessage buildMessage () throws Exception
+  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
 
@@ -76,21 +76,33 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
                                                                              m_sMPC,
                                                                              getAllAny ());
 
-    Document aDoc = aPullRequest.getAsSOAPDocument ();
+    if (aCallback != null)
+      aCallback.onAS4Message (aPullRequest);
 
+    final Document aPureDoc = aPullRequest.getAsSOAPDocument ();
+
+    if (aCallback != null)
+      aCallback.onSOAPDocument (aPureDoc);
+
+    Document aDoc = aPureDoc;
     if (signingParams ().isSigningEnabled ())
     {
       final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
-      aDoc = AS4Signer.createSignedMessage (aCryptoFactory,
-                                            aDoc,
-                                            getSOAPVersion (),
-                                            aPullRequest.getMessagingID (),
-                                            null,
-                                            m_aResHelper,
-                                            bMustUnderstand,
-                                            signingParams ().getClone ());
+      final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
+                                                                 aDoc,
+                                                                 getSOAPVersion (),
+                                                                 aPullRequest.getMessagingID (),
+                                                                 null,
+                                                                 m_aResHelper,
+                                                                 bMustUnderstand,
+                                                                 signingParams ().getClone ());
+
+      if (aCallback != null)
+        aCallback.onSignedSOAPDocument (aSignedDoc);
+
+      aDoc = aSignedDoc;
     }
 
     // Wrap SOAP XML
