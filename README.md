@@ -13,7 +13,7 @@ It consists of the following sub-projects:
 ## News and noteworthy
 
 * v0.9.0 - work in progress
-    * Updated to WSS4J 2.2.3
+    * Updated to WSS4J 2.2.4
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
     * The submodule `ph-as4-esens` was renamed to `ph-as4-profile-cef`
