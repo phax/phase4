@@ -513,9 +513,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *         in case of error when building or sending the message
    */
   @Nonnull
-  public final <T> AS4ClientSentMessage <T> sendMessage (@Nonnull final String sURL,
-                                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                                         @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
+                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                                    @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
@@ -567,7 +567,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
+    final IMicroDocument ret = sendMessageWithRetries (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
