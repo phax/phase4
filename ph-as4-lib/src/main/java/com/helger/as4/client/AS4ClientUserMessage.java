@@ -168,7 +168,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
 
   @Override
   @Nonnull
-  public AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+  public AS4ClientBuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
@@ -293,11 +293,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (aMimeMsg != null)
     {
       // Wrap MIME message
-      return new AS4BuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
+      return new AS4ClientBuiltMessage (sMessageID, new HttpMimeMessageEntity (aMimeMsg));
     }
 
     // Wrap SOAP XML
-    return new AS4BuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
   }
 
   @Nullable
@@ -604,7 +604,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     return m_aPMode;
   }
 
-  protected void setValuesFromPMode (@Nonnull final IPMode aPMode, @Nonnull final PModeLeg aEffectiveLeg)
+  public final void setUserMessageValuesFromPMode (@Nonnull final IPMode aPMode, @Nonnull final PModeLeg aEffectiveLeg)
   {
     if (aEffectiveLeg.hasBusinessInfo ())
     {
@@ -638,7 +638,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
       setToPartyID (null);
     }
 
-    setCryptoValuesFromPMode (aEffectiveLeg);
+    setValuesFromPMode (aEffectiveLeg);
   }
 
   /**
@@ -647,17 +647,20 @@ public class AS4ClientUserMessage extends AbstractAS4Client
    * with the remaining setters.
    *
    * @param aPMode
-   *        that should be used
+   *        that should be used. May be <code>null</code>
+   * @param bSetValuesFromPMode
+   *        <code>true</code> to set all values in the client, that can be
+   *        derived from the PMode, <code>false</code> to not do it.
    */
-  public final void setPMode (@Nullable final IPMode aPMode)
+  public final void setPMode (@Nullable final IPMode aPMode, final boolean bSetValuesFromPMode)
   {
     m_aPMode = aPMode;
     // if pmode is set use attribute from pmode
-    if (aPMode != null)
+    if (aPMode != null && bSetValuesFromPMode)
     {
       final PModeLeg aEffectiveLeg = m_bUseLeg1 ? aPMode.getLeg1 () : aPMode.getLeg2 ();
       if (aEffectiveLeg != null)
-        setValuesFromPMode (aPMode, aEffectiveLeg);
+        setUserMessageValuesFromPMode (aPMode, aEffectiveLeg);
     }
   }
 }

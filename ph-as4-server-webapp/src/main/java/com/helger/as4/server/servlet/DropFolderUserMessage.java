@@ -37,7 +37,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.as4.CAS4;
 import com.helger.as4.client.AS4ClientUserMessage;
-import com.helger.as4.client.AbstractAS4Client.AS4SentMessage;
+import com.helger.as4.client.AS4ClientSentMessage;
 import com.helger.as4.client.IAS4ClientBuildMessageCallback;
 import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.ECryptoAlgorithmSign;
@@ -175,7 +175,7 @@ public final class DropFolderUserMessage
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
           final IAS4ClientBuildMessageCallback aCallback = null;
-          final AS4SentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
+          final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessage (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                 new ResponseHandlerByteArray (),
                                                                                 aCallback);
           LOGGER.info ("Successfully transmitted document with message ID '" +

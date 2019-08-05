@@ -61,7 +61,7 @@ public class BasicHttpPoster
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
-  private IConsumer <HttpPost> m_aHttpCustomizer;
+  private IConsumer <? super HttpPost> m_aHttpCustomizer;
 
   public BasicHttpPoster ()
   {}
@@ -88,7 +88,7 @@ public class BasicHttpPoster
    * @return this for chaining
    */
   @Nonnull
-  public BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
+  public final BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     m_aHttpClientFactory = aHttpClientFactory;
@@ -100,7 +100,7 @@ public class BasicHttpPoster
    * @since 0.8.3
    */
   @Nullable
-  public final IConsumer <HttpPost> getHttpCustomizer ()
+  public final IConsumer <? super HttpPost> getHttpCustomizer ()
   {
     return m_aHttpCustomizer;
   }
@@ -114,17 +114,17 @@ public class BasicHttpPoster
    * @since 0.8.3
    */
   @Nonnull
-  public BasicHttpPoster setHttpCustomizer (@Nullable final IConsumer <HttpPost> aHttpCustomizer)
+  public final BasicHttpPoster setHttpCustomizer (@Nullable final IConsumer <? super HttpPost> aHttpCustomizer)
   {
     m_aHttpCustomizer = aHttpCustomizer;
     return this;
   }
 
   @Nullable
-  public <T> T sendGenericMessage (@Nonnull final String sURL,
-                                   @Nonnull final HttpEntity aHttpEntity,
-                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
-                                                                                                  IOException
+  public final <T> T sendGenericMessage (@Nonnull final String sURL,
+                                         @Nonnull final HttpEntity aHttpEntity,
+                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
+                                                                                                        IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -146,17 +146,16 @@ public class BasicHttpPoster
       // Debug sending
       {
         AS4HttpDebug.debug ( () -> {
-          final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL);
+          final StringBuilder ret = new StringBuilder ("SEND-START to ").append (sURL).append ("\n");
           try
           {
-            ret.append ("\n");
             for (final Header aHeader : aPost.getAllHeaders ())
               ret.append (aHeader.getName ()).append (": ").append (aHeader.getValue ()).append (CHttp.EOL);
             ret.append (CHttp.EOL);
             if (aHttpEntity.isRepeatable ())
               ret.append (EntityUtils.toString (aHttpEntity));
             else
-              ret.append ("## The payload is marked as 'not repeatable' and is the therefore not printed here");
+              ret.append ("## The payload is marked as 'not repeatable' and is the therefore not printed in debugging");
           }
           catch (final Exception ex)
           {

@@ -19,7 +19,6 @@ package com.helger.as4.client;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 
 import com.helger.as4.crypto.AS4CryptParams;
@@ -27,8 +26,6 @@ import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.http.AS4HttpDebug;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
@@ -41,7 +38,6 @@ import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.string.ToStringGenerator;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
@@ -55,90 +51,6 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  */
 public abstract class AbstractAS4Client extends BasicHttpPoster
 {
-  public static final class AS4BuiltMessage
-  {
-    private final String m_sMessageID;
-    private final HttpEntity m_aHttpEntity;
-
-    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpXMLEntity aHttpEntity)
-    {
-      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
-      m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-    }
-
-    public AS4BuiltMessage (@Nonnull @Nonempty final String sMessageID,
-                            @Nonnull final HttpMimeMessageEntity aHttpEntity)
-    {
-      m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
-      m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
-    }
-
-    @Nonnull
-    @Nonempty
-    public String getMessageID ()
-    {
-      return m_sMessageID;
-    }
-
-    @Nonnull
-    public HttpEntity getHttpEntity ()
-    {
-      return m_aHttpEntity;
-    }
-
-    @Override
-    public String toString ()
-    {
-      return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
-                                         .append ("HttpEntity", m_aHttpEntity)
-                                         .getToString ();
-    }
-  }
-
-  public static final class AS4SentMessage <T>
-  {
-    private final AS4BuiltMessage m_aBuiltMsg;
-    private final T m_aResponse;
-
-    public AS4SentMessage (@Nonnull final AS4BuiltMessage aBuiltMsg, @Nullable final T aResponse)
-    {
-      m_aBuiltMsg = ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
-      m_aResponse = aResponse;
-    }
-
-    @Nonnull
-    public AS4BuiltMessage getBuiltMessage ()
-    {
-      return m_aBuiltMsg;
-    }
-
-    @Nonnull
-    @Nonempty
-    public String getMessageID ()
-    {
-      return m_aBuiltMsg.getMessageID ();
-    }
-
-    @Nullable
-    public T getResponse ()
-    {
-      return m_aResponse;
-    }
-
-    public boolean hasResponse ()
-    {
-      return m_aResponse != null;
-    }
-
-    @Override
-    public String toString ()
-    {
-      return new ToStringGenerator (this).append ("MessageID", getMessageID ())
-                                         .append ("Response", m_aResponse)
-                                         .getToString ();
-    }
-  }
-
   public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
 
   // KeyStore attributes
@@ -180,7 +92,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
       if (m_aKeyStoreRes == null)
         throw new IllegalStateException ("KeyStore resources is not configured.");
       if (!m_aKeyStoreRes.exists ())
-        throw new IllegalStateException ("KeyStore resources does not exist: " + m_aKeyStoreRes.getPath ());
+        throw new IllegalStateException ("KeyStore resource does not exist: " + m_aKeyStoreRes.getPath ());
       if (m_sKeyStorePassword == null)
         throw new IllegalStateException ("KeyStore password is not configured.");
       if (StringHelper.hasNoText (m_sKeyStoreAlias))
@@ -207,40 +119,6 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     aCryptoProps.put (AS4CryptoProperties.KEY_ALIAS, getKeyStoreAlias ());
     aCryptoProps.put (AS4CryptoProperties.KEY_PASSWORD, getKeyStoreKeyPassword ());
     return new AS4CryptoFactory (aCryptoProps);
-  }
-
-  /**
-   * Build the AS4 message to be sent. It uses all the attributes of this class
-   * to build the final message. Compression, signing and encryption happens in
-   * this methods.
-   *
-   * @param aCallback
-   *        Optional callback for in-between states. May be <code>null</code>.
-   * @return The HTTP entity to be sent. Never <code>null</code>.
-   * @throws Exception
-   *         in case something goes wrong
-   */
-  @OverrideOnDemand
-  @Nonnull
-  public abstract AS4BuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception;
-
-  @Nonnull
-  public <T> AS4SentMessage <T> sendMessage (@Nonnull final String sURL,
-                                             @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
-  {
-    final AS4BuiltMessage aBuiltMsg = buildMessage (aCallback);
-    final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
-    return new AS4SentMessage <> (aBuiltMsg, aResponse);
-  }
-
-  @Nullable
-  public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
-  {
-    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
-                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
-    return ret;
   }
 
   /**
@@ -431,7 +309,7 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   {
     final String ret = m_aMessageIDFactory.get ();
     if (StringHelper.hasNoText (ret))
-      throw new IllegalStateException ("An empty MessageID was generated!");
+      throw new IllegalStateException ("The contained MessageID factory created an empty MessageID!");
     return ret;
   }
 
@@ -472,12 +350,46 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     m_eSOAPVersion = eSOAPVersion;
   }
 
-  public final void setCryptoValuesFromPMode (@Nullable final PModeLeg aLeg)
+  public final void setValuesFromPMode (@Nullable final PModeLeg aLeg)
   {
     if (aLeg != null)
     {
       signingParams ().setFromPMode (aLeg.getSecurity ());
       cryptParams ().setFromPMode (aLeg.getSecurity ());
     }
+  }
+
+  /**
+   * Build the AS4 message to be sent. It uses all the attributes of this class
+   * to build the final message. Compression, signing and encryption happens in
+   * this methods.
+   *
+   * @param aCallback
+   *        Optional callback for in-between states. May be <code>null</code>.
+   * @return The HTTP entity to be sent. Never <code>null</code>.
+   * @throws Exception
+   *         in case something goes wrong
+   */
+  @OverrideOnDemand
+  @Nonnull
+  public abstract AS4ClientBuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception;
+
+  @Nonnull
+  public final <T> AS4ClientSentMessage <T> sendMessage (@Nonnull final String sURL,
+                                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                         @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+  {
+    final AS4ClientBuiltMessage aBuiltMsg = buildMessage (aCallback);
+    final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+    return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+  }
+
+  @Nullable
+  public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
+  {
+    final IMicroDocument ret = sendMessage (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
+                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    return ret;
   }
 }
