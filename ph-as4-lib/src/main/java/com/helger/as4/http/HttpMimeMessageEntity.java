@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -56,8 +57,17 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
 
   public boolean isRepeatable ()
   {
-    // Is it always repeatable? Depends on the underlying DataHandler
-    return true;
+    try
+    {
+      // Is it always repeatable? Depends on the underlying DataHandler
+      final DataSource aDS = m_aMsg.getDataHandler ().getDataSource ();
+      return aDS != null;
+    }
+    catch (final MessagingException ex)
+    {
+      // Assume no
+      return false;
+    }
   }
 
   public long getContentLength ()
