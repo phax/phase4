@@ -38,11 +38,11 @@ import com.helger.commons.string.ToStringGenerator;
  */
 public class HttpMimeMessageEntity extends AbstractHttpEntity
 {
-  private final MimeMessage m_aMsg;
+  private final MimeMessage m_aMimeMsg;
 
   public HttpMimeMessageEntity (@Nonnull final MimeMessage aMsg)
   {
-    m_aMsg = ValueEnforcer.notNull (aMsg, "Msg");
+    m_aMimeMsg = ValueEnforcer.notNull (aMsg, "Msg");
   }
 
   /**
@@ -50,9 +50,9 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
    *         <code>null</code>.
    */
   @Nonnull
-  public MimeMessage getMimeMessage ()
+  public final MimeMessage getMimeMessage ()
   {
-    return m_aMsg;
+    return m_aMimeMsg;
   }
 
   public boolean isRepeatable ()
@@ -60,7 +60,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
     try
     {
       // Is it always repeatable? Depends on the underlying DataHandler
-      final DataSource aDS = m_aMsg.getDataHandler ().getDataSource ();
+      final DataSource aDS = m_aMimeMsg.getDataHandler ().getDataSource ();
       return aDS != null;
     }
     catch (final MessagingException ex)
@@ -86,7 +86,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   {
     try
     {
-      return m_aMsg.getInputStream ();
+      return m_aMimeMsg.getInputStream ();
     }
     catch (final MessagingException ex)
     {
@@ -98,7 +98,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   {
     try
     {
-      m_aMsg.writeTo (aOS);
+      m_aMimeMsg.writeTo (aOS);
     }
     catch (final MessagingException ex)
     {
@@ -109,6 +109,6 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMsg).getToString ();
+    return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMimeMsg).getToString ();
   }
 }

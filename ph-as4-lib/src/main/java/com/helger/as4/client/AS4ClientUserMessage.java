@@ -72,8 +72,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessage.class);
 
-  private final AS4ResourceHelper m_aResHelper;
-
   private Node m_aPayload;
   private final ICommonsList <WSS4JAttachment> m_aAttachments = new CommonsArrayList <> ();
 
@@ -104,14 +102,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    ValueEnforcer.notNull (aResHelper, "ResHelper");
-    m_aResHelper = aResHelper;
-  }
-
-  @Nonnull
-  public final AS4ResourceHelper getAS4ResourceHelper ()
-  {
-    return m_aResHelper;
+    super (aResHelper);
   }
 
   @Nullable
@@ -165,7 +156,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                                         null,
                                                                         aMimeType,
                                                                         eAS4CompressionMode,
-                                                                        m_aResHelper));
+                                                                        getAS4ResourceHelper ()));
   }
 
   /**
@@ -626,7 +617,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                                    getSOAPVersion (),
                                                                    aUserMsg.getMessagingID (),
                                                                    m_aAttachments,
-                                                                   m_aResHelper,
+                                                                   getAS4ResourceHelper (),
                                                                    bMustUnderstand,
                                                                    signingParams ().getClone ());
         aDoc = aSignedDoc;
@@ -650,7 +641,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                       m_aAttachments,
                                                       aCryptoFactory,
                                                       bMustUnderstand,
-                                                      m_aResHelper,
+                                                      getAS4ResourceHelper (),
                                                       cryptParams ().getClone ());
 
           if (aCallback != null)

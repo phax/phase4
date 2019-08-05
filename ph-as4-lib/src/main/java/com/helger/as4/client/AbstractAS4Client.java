@@ -16,13 +16,17 @@
  */
 package com.helger.as4.client;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.entity.FileEntity;
 
 import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
@@ -34,6 +38,7 @@ import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -41,6 +46,7 @@ import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
+import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -51,7 +57,7 @@ import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
 /**
- * Abstract AS4 client based in HTTP client
+ * Abstract AS4 client based on HTTP client
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -75,6 +81,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return MessageHelperMethods::createRandomMessageID;
   }
 
+  private final AS4ResourceHelper m_aResHelper;
+
   // KeyStore attributes
   private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
   private IReadableResource m_aKeyStoreRes;
@@ -95,45 +103,20 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
   private long m_nRetryIntervalMS = DEFAULT_RETRY_INTERVAL_MS;
 
-  protected AbstractAS4Client ()
-  {}
-
-  private void _checkKeyStoreAttributes ()
+  protected AbstractAS4Client (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    if (m_aCryptoFactory == null)
-    {
-      if (m_aKeyStoreType == null)
-        throw new IllegalStateException ("KeyStore type is not configured.");
-      if (m_aKeyStoreRes == null)
-        throw new IllegalStateException ("KeyStore resources is not configured.");
-      if (!m_aKeyStoreRes.exists ())
-        throw new IllegalStateException ("KeyStore resource does not exist: " + m_aKeyStoreRes.getPath ());
-      if (m_sKeyStorePassword == null)
-        throw new IllegalStateException ("KeyStore password is not configured.");
-      if (StringHelper.hasNoText (m_sKeyStoreAlias))
-        throw new IllegalStateException ("KeyStore alias is not configured.");
-      if (m_sKeyStoreKeyPassword == null)
-        throw new IllegalStateException ("Key password is not configured.");
-    }
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_aResHelper = aResHelper;
   }
 
+  /**
+   * @return The resource helper provided in the constructor. Never
+   *         <code>null</code>.
+   */
   @Nonnull
-  protected AS4CryptoFactory internalCreateCryptoFactory ()
+  public final AS4ResourceHelper getAS4ResourceHelper ()
   {
-    _checkKeyStoreAttributes ();
-
-    // Shortcut?
-    if (m_aCryptoFactory != null)
-      return m_aCryptoFactory;
-
-    final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
-    aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_TYPE, getKeyStoreType ().getID ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_FILE, getKeyStoreResource ().getPath ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_PASSWORD, getKeyStorePassword ());
-    aCryptoProps.put (AS4CryptoProperties.KEY_ALIAS, getKeyStoreAlias ());
-    aCryptoProps.put (AS4CryptoProperties.KEY_PASSWORD, getKeyStoreKeyPassword ());
-    return new AS4CryptoFactory (aCryptoProps);
+    return m_aResHelper;
   }
 
   /**
@@ -451,6 +434,44 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return thisAsT ();
   }
 
+  private void _checkKeyStoreAttributes ()
+  {
+    if (m_aCryptoFactory == null)
+    {
+      if (m_aKeyStoreType == null)
+        throw new IllegalStateException ("KeyStore type is not configured.");
+      if (m_aKeyStoreRes == null)
+        throw new IllegalStateException ("KeyStore resources is not configured.");
+      if (!m_aKeyStoreRes.exists ())
+        throw new IllegalStateException ("KeyStore resource does not exist: " + m_aKeyStoreRes.getPath ());
+      if (m_sKeyStorePassword == null)
+        throw new IllegalStateException ("KeyStore password is not configured.");
+      if (StringHelper.hasNoText (m_sKeyStoreAlias))
+        throw new IllegalStateException ("KeyStore alias is not configured.");
+      if (m_sKeyStoreKeyPassword == null)
+        throw new IllegalStateException ("Key password is not configured.");
+    }
+  }
+
+  @Nonnull
+  protected AS4CryptoFactory internalCreateCryptoFactory ()
+  {
+    _checkKeyStoreAttributes ();
+
+    // Shortcut?
+    if (m_aCryptoFactory != null)
+      return m_aCryptoFactory;
+
+    final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
+    aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_TYPE, getKeyStoreType ().getID ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_FILE, getKeyStoreResource ().getPath ());
+    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_PASSWORD, getKeyStorePassword ());
+    aCryptoProps.put (AS4CryptoProperties.KEY_ALIAS, getKeyStoreAlias ());
+    aCryptoProps.put (AS4CryptoProperties.KEY_PASSWORD, getKeyStoreKeyPassword ());
+    return new AS4CryptoFactory (aCryptoProps);
+  }
+
   public final void setValuesFromPMode (@Nullable final IPMode aPMode, @Nullable final PModeLeg aLeg)
   {
     if (aPMode != null)
@@ -524,6 +545,20 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     if (m_nMaxRetries > 0)
     {
       // Send with retry
+
+      // First serialize the content once to a file, so that a repeatable entity
+      // can be created
+      final File aTempFile = m_aResHelper.createTempFile ();
+      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
+      {
+        aBuiltMsg.getHttpEntity ().writeTo (aOS);
+      }
+
+      // Than use the FileEntity as the basis
+      final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
+      aRepeatableEntity.setContentType (aBuiltMsg.getHttpEntity ().getContentType ());
+      aRepeatableEntity.setContentEncoding (aBuiltMsg.getHttpEntity ().getContentEncoding ());
+
       final int nMaxTries = 1 + m_nMaxRetries;
       for (int nTry = 0; nTry < nMaxTries; nTry++)
       {
@@ -536,7 +571,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         try
         {
           final T aResponse = sendGenericMessage (sURL,
-                                                  aBuiltMsg.getHttpEntity (),
+                                                  aRepeatableEntity,
                                                   aBuiltMsg.getCustomHeaders (),
                                                   aResponseHandler);
           return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);

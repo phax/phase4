@@ -19,6 +19,7 @@ package com.helger.as4.lib.client;
 import static org.junit.Assert.fail;
 
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,8 +40,14 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * Test class for class {@link AS4ClientReceiptMessage}
+ *
+ * @author Philip Helger
+ */
 public final class AS4ClientReceiptMessageTest
 {
+  @WillNotClose
   private static AS4ResourceHelper s_aResMgr;
 
   @BeforeClass

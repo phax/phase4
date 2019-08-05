@@ -19,6 +19,7 @@ package com.helger.as4.lib.client;
 import static org.junit.Assert.fail;
 
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -32,19 +33,29 @@ import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceHelper;
 
-public final class AS4PullRequestTest
+/**
+ * Test class for class {@link AS4ClientPullRequestMessage}
+ *
+ * @author Philip Helger
+ */
+public final class AS4ClientPullRequestMessageTest
 {
+  @WillNotClose
+  private static AS4ResourceHelper s_aResMgr;
+
   @BeforeClass
   public static void startServer () throws Exception
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
+    s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    s_aResMgr = null;
     MockJettySetup.shutDownServer ();
   }
 
@@ -76,14 +87,11 @@ public final class AS4PullRequestTest
   @Test
   public void buildMessageMandatoryCheckFailure () throws Exception
   {
-    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
-    {
-      final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (aResHelper);
-      _ensureInvalidState (aClient);
-      aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
-      _ensureInvalidState (aClient);
-      aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
-      _ensureValidState (aClient);
-    }
+    final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (s_aResMgr);
+    _ensureInvalidState (aClient);
+    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    _ensureInvalidState (aClient);
+    aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
+    _ensureValidState (aClient);
   }
 }

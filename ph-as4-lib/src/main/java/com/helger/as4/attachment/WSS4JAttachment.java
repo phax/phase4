@@ -327,7 +327,7 @@ public class WSS4JAttachment extends Attachment
                                                               @Nullable final String sContentID,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcFile, "File");
     ValueEnforcer.notNull (aMimeType, "MimeType");

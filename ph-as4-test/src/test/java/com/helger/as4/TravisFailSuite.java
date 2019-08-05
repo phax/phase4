@@ -49,7 +49,7 @@ import org.junit.runners.Suite.SuiteClasses;
                  com.helger.as4.CEF.AS4eSENSCEFOneWayFuncTest.class,
                  com.helger.as4.lib.client.AS4ClientUserMessageTest.class,
                  com.helger.as4.lib.client.AS4ClientReceiptMessageTest.class,
-                 com.helger.as4.lib.client.AS4PullRequestTest.class })
+                 com.helger.as4.lib.client.AS4ClientPullRequestMessageTest.class })
 public class TravisFailSuite
 {
 

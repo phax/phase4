@@ -17,7 +17,9 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -32,6 +34,11 @@ public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractA
                                                      AbstractAS4Client <IMPLTYPE>
 {
   private final ICommonsList <Object> m_aAny = new CommonsArrayList <> ();
+
+  public AbstractAS4ClientSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  {
+    super (aResHelper);
+  }
 
   @Nonnull
   @ReturnsMutableObject

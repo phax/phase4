@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.w3c.dom.Document;
 
@@ -28,6 +29,7 @@ import com.helger.as4.error.IEbmsError;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.domain.AS4ErrorMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
@@ -45,8 +47,10 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
 
-  public AS4ClientErrorMessage ()
-  {}
+  public AS4ClientErrorMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  {
+    super (aResHelper);
+  }
 
   public final void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)
   {

@@ -29,7 +29,6 @@ import com.helger.as4.messaging.domain.AS4PullRequestMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 
@@ -40,19 +39,11 @@ import com.helger.commons.string.StringHelper;
  */
 public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage <AS4ClientPullRequestMessage>
 {
-  private final AS4ResourceHelper m_aResHelper;
   private String m_sMPC;
 
   public AS4ClientPullRequestMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    ValueEnforcer.notNull (aResHelper, "ResHelper");
-    m_aResHelper = aResHelper;
-  }
-
-  @Nonnull
-  public final AS4ResourceHelper getAS4ResourceHelper ()
-  {
-    return m_aResHelper;
+    super (aResHelper);
   }
 
   @Nullable
@@ -109,7 +100,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
                                                                  getSOAPVersion (),
                                                                  aPullRequest.getMessagingID (),
                                                                  null,
-                                                                 m_aResHelper,
+                                                                 getAS4ResourceHelper (),
                                                                  bMustUnderstand,
                                                                  signingParams ().getClone ());
 

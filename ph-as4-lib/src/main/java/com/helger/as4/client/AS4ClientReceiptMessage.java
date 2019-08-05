@@ -29,7 +29,6 @@ import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 
 /**
@@ -39,7 +38,6 @@ import com.helger.commons.annotation.Nonempty;
  */
 public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4ClientReceiptMessage>
 {
-  private final AS4ResourceHelper m_aResHelper;
   private boolean m_bNonRepudiation = false;
   private Node m_aSOAPDocument;
   private Ebms3UserMessage m_aEbms3UserMessage;
@@ -47,14 +45,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
   public AS4ClientReceiptMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    ValueEnforcer.notNull (aResHelper, "ResHelper");
-    m_aResHelper = aResHelper;
-  }
-
-  @Nonnull
-  public final AS4ResourceHelper getAS4ResourceHelper ()
-  {
-    return m_aResHelper;
+    super (aResHelper);
   }
 
   /**
@@ -180,7 +171,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
                                                                  getSOAPVersion (),
                                                                  aReceiptMsg.getMessagingID (),
                                                                  null,
-                                                                 m_aResHelper,
+                                                                 getAS4ResourceHelper (),
                                                                  bMustUnderstand,
                                                                  signingParams ().getClone ());
 

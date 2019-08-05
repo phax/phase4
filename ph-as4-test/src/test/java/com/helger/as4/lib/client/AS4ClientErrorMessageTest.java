@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.WillNotClose;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -32,20 +33,31 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.soap.ESOAPVersion;
+import com.helger.as4.util.AS4ResourceHelper;
 
+/**
+ * Test class for class {@link AS4ClientErrorMessage}
+ *
+ * @author Philip Helger
+ */
 public final class AS4ClientErrorMessageTest
 {
+  @WillNotClose
+  private static AS4ResourceHelper s_aResMgr;
+
   @BeforeClass
   public static void startServer () throws Exception
   {
     AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
+    s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    s_aResMgr = null;
     MockJettySetup.shutDownServer ();
   }
 
@@ -77,7 +89,7 @@ public final class AS4ClientErrorMessageTest
   @Test
   public void buildMessageMandatoryCheckFailure () throws Exception
   {
-    final AS4ClientErrorMessage aClient = new AS4ClientErrorMessage ();
+    final AS4ClientErrorMessage aClient = new AS4ClientErrorMessage (s_aResMgr);
     _ensureInvalidState (aClient);
     aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);

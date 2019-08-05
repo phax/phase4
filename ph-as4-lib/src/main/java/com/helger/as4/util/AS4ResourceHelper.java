@@ -37,11 +37,11 @@ import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.stream.StreamHelper;
 
 /**
- * A central resource manager that keeps track of temporary files and other
- * closables that will be closed when this manager is closed. When calling
+ * A resource manager that keeps track of temporary files and other closables
+ * that will be closed when this manager is closed. When calling
  * {@link #createTempFile()} a new filename is created and added to the list.
- * When using {@link #addCloseable(Closeable)} it is added for postponed
- * closing.
+ * When using {@link #addCloseable(Closeable)} the Closable is added for
+ * postponed closing.
  *
  * @author Philip Helger
  */
@@ -124,48 +124,51 @@ public class AS4ResourceHelper implements Closeable
 
   public void close ()
   {
-    m_aInClose.set (true);
-
-    // Close all closeables before deleting files, because the closables might
-    // be the files to be deleted :)
-    final ICommonsList <Closeable> aCloseables = m_aRWLock.writeLocked ( () -> {
-      final ICommonsList <Closeable> ret = m_aCloseables.getClone ();
-      m_aCloseables.clear ();
-      return ret;
-    });
-    if (aCloseables.isNotEmpty ())
+    // Avoid taking new objects
+    // close only once
+    if (!m_aInClose.getAndSet (true))
     {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Closing " + aCloseables.size () + " " + CAS4.LIB_NAME + " stream handles");
-
-      for (final Closeable aCloseable : aCloseables)
-        StreamHelper.close (aCloseable);
-    }
-
-    // Get and delete all temp files
-    final ICommonsList <File> aFiles = m_aRWLock.writeLocked ( () -> {
-      final ICommonsList <File> ret = m_aTempFiles.getClone ();
-      m_aTempFiles.clear ();
-      return ret;
-    });
-    if (aFiles.isNotEmpty ())
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Deleting " + aFiles.size () + " temporary " + CAS4.LIB_NAME + " files");
-
-      for (final File aFile : aFiles)
+      // Close all closeables before deleting files, because the closables might
+      // be the files to be deleted :)
+      final ICommonsList <Closeable> aCloseables = m_aRWLock.writeLocked ( () -> {
+        final ICommonsList <Closeable> ret = m_aCloseables.getClone ();
+        m_aCloseables.clear ();
+        return ret;
+      });
+      if (aCloseables.isNotEmpty ())
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Deleting temporary file '" + aFile.getAbsolutePath () + "'");
+          LOGGER.debug ("Closing " + aCloseables.size () + " " + CAS4.LIB_NAME + " stream handles");
 
-        final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
-        if (aError.isFailure ())
-          LOGGER.warn ("  Failed to delete temporary " +
-                       CAS4.LIB_NAME +
-                       " file " +
-                       aFile.getAbsolutePath () +
-                       ": " +
-                       aError.toString ());
+        for (final Closeable aCloseable : aCloseables)
+          StreamHelper.close (aCloseable);
+      }
+
+      // Get and delete all temp files
+      final ICommonsList <File> aFiles = m_aRWLock.writeLocked ( () -> {
+        final ICommonsList <File> ret = m_aTempFiles.getClone ();
+        m_aTempFiles.clear ();
+        return ret;
+      });
+      if (aFiles.isNotEmpty ())
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Deleting " + aFiles.size () + " temporary " + CAS4.LIB_NAME + " files");
+
+        for (final File aFile : aFiles)
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Deleting temporary file '" + aFile.getAbsolutePath () + "'");
+
+          final FileIOError aError = AS4IOHelper.getFileOperationManager ().deleteFileIfExisting (aFile);
+          if (aError.isFailure ())
+            LOGGER.warn ("  Failed to delete temporary " +
+                         CAS4.LIB_NAME +
+                         " file " +
+                         aFile.getAbsolutePath () +
+                         ": " +
+                         aError.toString ());
+        }
       }
     }
   }
