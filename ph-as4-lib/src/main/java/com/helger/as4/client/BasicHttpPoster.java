@@ -32,6 +32,7 @@ import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.lang.StackTraceHelper;
@@ -47,8 +48,6 @@ import com.helger.httpclient.IHttpClientProvider;
  */
 public class BasicHttpPoster
 {
-  public static final int DEFAULT_RETRIES = 3;
-
   /**
    * @return The default {@link HttpClientFactory} to be used.
    * @since 0.8.3
@@ -56,7 +55,7 @@ public class BasicHttpPoster
   @Nonnull
   public static HttpClientFactory createDefaultHttpClientFactory ()
   {
-    return new HttpClientFactory ().setRetries (DEFAULT_RETRIES);
+    return new HttpClientFactory ();
   }
 
   // By default no special SSL context present
@@ -120,8 +119,30 @@ public class BasicHttpPoster
     return this;
   }
 
+  /**
+   * Send an arbitrary HTTP POST message to the provided URL, using the
+   * contained HttpClientFactory as well as the customizer. Additionally the AS4
+   * HTTP debugging is invoked in here.<br>
+   * This method does NOT retry
+   *
+   * @param <T>
+   *        Response data type
+   * @param sURL
+   *        The URL to send to. May neither be <code>null</code> nor empty.
+   * @param aHttpEntity
+   *        The HTTP entity to be send. May not be <code>null</code>.
+   * @param aResponseHandler
+   *        The Http response handler that should be used to convert the HTTP
+   *        response to a domain object.
+   * @return The HTTP response. May be <code>null</code>.
+   * @throws MessagingException
+   *         In case moving HTTP headers from the Mime part to the HTTP message
+   *         fails
+   * @throws IOException
+   *         In case of IO error
+   */
   @Nullable
-  public final <T> T sendGenericMessage (@Nonnull final String sURL,
+  public final <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
                                          @Nonnull final HttpEntity aHttpEntity,
                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
                                                                                                         IOException

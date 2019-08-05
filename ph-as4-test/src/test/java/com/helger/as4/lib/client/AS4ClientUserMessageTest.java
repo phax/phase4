@@ -137,7 +137,7 @@ public final class AS4ClientUserMessageTest
   {
     try
     {
-      aClient.buildMessage (null);
+      aClient.buildMessage ("bla", null);
       fail ();
     }
     catch (final IllegalStateException ex)
@@ -150,7 +150,7 @@ public final class AS4ClientUserMessageTest
   {
     try
     {
-      aClient.buildMessage (null);
+      aClient.buildMessage ("bla", null);
     }
     catch (final IllegalStateException ex)
     {
@@ -279,7 +279,8 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -298,7 +299,8 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -315,7 +317,8 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -337,11 +340,14 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
-                           CMimeType.IMAGE_JPG);
+                           CMimeType.IMAGE_JPG,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -360,11 +366,14 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
-                           CMimeType.IMAGE_JPG);
+                           CMimeType.IMAGE_JPG,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -381,11 +390,14 @@ public final class AS4ClientUserMessageTest
   {
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_SHORTXML2_XML).getAsFile (),
-                           CMimeType.APPLICATION_XML);
+                           CMimeType.APPLICATION_XML,
+                           (EAS4CompressionMode) null);
     aClient.addAttachment (new ClassPathResource (AS4TestConstants.ATTACHMENT_TEST_IMG_JPG).getAsFile (),
-                           CMimeType.IMAGE_JPG);
+                           CMimeType.IMAGE_JPG,
+                           (EAS4CompressionMode) null);
 
     // Keystore
     _setKeyStoreTestData (aClient);
@@ -466,7 +478,9 @@ public final class AS4ClientUserMessageTest
     final AS4ClientUserMessage aClient = _getMandatoryAttributesSuccessMessage ();
     final String sMessageIDPrefix = "ThisIsANewPrefixForTestingPurpose@";
     aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
+    final String sMessageID = aClient.createMessageID ();
 
-    assertTrue (EntityUtils.toString (aClient.buildMessage (null).getHttpEntity ()).contains (sMessageIDPrefix));
+    assertTrue (EntityUtils.toString (aClient.buildMessage (sMessageID, null).getHttpEntity ())
+                           .contains (sMessageIDPrefix));
   }
 }

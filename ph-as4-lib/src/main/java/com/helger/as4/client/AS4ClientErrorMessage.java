@@ -31,6 +31,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -40,7 +41,7 @@ import com.helger.commons.collection.impl.ICommonsList;
  *
  * @author Philip Helger
  */
-public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
+public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4ClientErrorMessage>
 {
   private final ICommonsList <Ebms3Error> m_aErrorMessages = new CommonsArrayList <> ();
 
@@ -77,12 +78,10 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4ClientBuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
-
-    // Create a new message ID for each build!
-    final String sMessageID = createMessageID ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID ());

@@ -63,7 +63,7 @@ public final class AS4ClientReceiptMessageTest
   {
     try
     {
-      aClient.buildMessage (null);
+      aClient.buildMessage ("bla", null);
       fail ();
     }
     catch (final IllegalStateException ex)
@@ -76,7 +76,7 @@ public final class AS4ClientReceiptMessageTest
   {
     try
     {
-      aClient.buildMessage (null);
+      aClient.buildMessage ("bla", null);
     }
     catch (final IllegalStateException ex)
     {

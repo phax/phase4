@@ -30,6 +30,7 @@ import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -37,7 +38,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
+public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage <AS4ClientPullRequestMessage>
 {
   private final AS4ResourceHelper m_aResHelper;
   private String m_sMPC;
@@ -54,6 +55,19 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
     return m_aResHelper;
   }
 
+  @Nullable
+  public final String getMPC ()
+  {
+    return m_sMPC;
+  }
+
+  @Nonnull
+  public final AS4ClientPullRequestMessage setMPC (@Nullable final String sMPC)
+  {
+    m_sMPC = sMPC;
+    return this;
+  }
+
   private void _checkMandatoryAttributes ()
   {
     if (getSOAPVersion () == null)
@@ -63,18 +77,18 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
   }
 
   @Override
-  public AS4ClientBuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+  public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
     _checkMandatoryAttributes ();
 
-    final String sMessageID = createMessageID ();
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID ());
 
     final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSOAPVersion (),
                                                                              aEbms3MessageInfo,
                                                                              m_sMPC,
-                                                                             getAllAny ());
+                                                                             any ().getClone ());
 
     if (aCallback != null)
       aCallback.onAS4Message (aPullRequest);
@@ -107,16 +121,5 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage
 
     // Wrap SOAP XML
     return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
-  }
-
-  @Nullable
-  public final String getMPC ()
-  {
-    return m_sMPC;
-  }
-
-  public final void setMPC (@Nullable final String sMPC)
-  {
-    m_sMPC = sMPC;
   }
 }

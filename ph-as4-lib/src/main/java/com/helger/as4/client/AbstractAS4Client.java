@@ -16,6 +16,7 @@
  */
 package com.helger.as4.client;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,17 +28,19 @@ import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.AS4SigningParams;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.model.pmode.IPMode;
+import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
@@ -48,10 +51,26 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * Abstract AS4 client based in HTTP client
  *
  * @author Philip Helger
+ * @param <IMPLTYPE>
+ *        Implementation type
  */
-public abstract class AbstractAS4Client extends BasicHttpPoster
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster
+                                        implements
+                                        IGenericImplTrait <IMPLTYPE>
 {
   public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
+  public static final int DEFAULT_MAX_RETRIES = 0;
+  public static final long DEFAULT_RETRY_INTERVAL_MS = 12_000;
+
+  /**
+   * @return The default message ID factory to be used.
+   * @since 0.8.3
+   */
+  @Nonnull
+  public static ISupplier <String> createDefaultMessageIDFactory ()
+  {
+    return MessageHelperMethods::createRandomMessageID;
+  }
 
   // KeyStore attributes
   private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
@@ -67,18 +86,11 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
-
   private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
 
-  /**
-   * @return The default message ID factory to be used.
-   * @since 0.8.3
-   */
-  @Nonnull
-  public static ISupplier <String> createDefaultMessageIDFactory ()
-  {
-    return MessageHelperMethods::createRandomMessageID;
-  }
+  // Retry handling
+  private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
+  private long m_nRetryIntervalMS = DEFAULT_RETRY_INTERVAL_MS;
 
   protected AbstractAS4Client ()
   {}
@@ -139,12 +151,15 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * @param aKeyStoreType
    *        keystore type that should be set, e.g. "jks". May not be
    *        <code>null</code>.
+   * @return this for chaining
    */
-  public final void setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
+  @Nonnull
+  public final IMPLTYPE setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
   {
     ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
     m_aKeyStoreType = aKeyStoreType;
     m_aCryptoFactory = null;
+    return thisAsT ();
   }
 
   /**
@@ -162,11 +177,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param aKeyStoreRes
    *        the keystore file that should be used
+   * @return this for chaining
    */
-  public final void setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
+  @Nonnull
+  public final IMPLTYPE setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
   {
     m_aKeyStoreRes = aKeyStoreRes;
     m_aCryptoFactory = null;
+    return thisAsT ();
   }
 
   /**
@@ -184,11 +202,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param sKeyStorePassword
    *        password that should be set
+   * @return this for chaining
    */
-  public final void setKeyStorePassword (@Nullable final String sKeyStorePassword)
+  @Nonnull
+  public final IMPLTYPE setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
     m_sKeyStorePassword = sKeyStorePassword;
     m_aCryptoFactory = null;
+    return thisAsT ();
   }
 
   /**
@@ -206,11 +227,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param sKeyStoreAlias
    *        alias that should be set
+   * @return this for chaining
    */
-  public final void setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
+  @Nonnull
+  public final IMPLTYPE setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
   {
     m_sKeyStoreAlias = sKeyStoreAlias;
     m_aCryptoFactory = null;
+    return thisAsT ();
   }
 
   /**
@@ -229,11 +253,14 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param sKeyStoreKeyPassword
    *        password that should be set
+   * @return this for chaining
    */
-  public final void setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
+  @Nonnull
+  public final IMPLTYPE setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
   {
     m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
     m_aCryptoFactory = null;
+    return thisAsT ();
   }
 
   @Nullable
@@ -242,9 +269,11 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     return m_aCryptoFactory;
   }
 
-  public final void setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
+  @Nonnull
+  public final IMPLTYPE setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
   {
     m_aCryptoFactory = aCryptoFactory;
+    return thisAsT ();
   }
 
   /**
@@ -284,11 +313,13 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param sMessageID
    *        Message to be used. May neither be <code>null</code> nor empty.
+   * @return this for chaining
    */
-  public final void setMessageID (@Nonnull @Nonempty final String sMessageID)
+  @Nonnull
+  public final IMPLTYPE setMessageID (@Nonnull @Nonempty final String sMessageID)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
-    setMessageIDFactory ( () -> sMessageID);
+    return setMessageIDFactory ( () -> sMessageID);
   }
 
   /**
@@ -296,16 +327,23 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param aMessageIDFactory
    *        Factory to be used. May not be <code>null</code>.
+   * @return this for chaining
    */
-  public final void setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
+  @Nonnull
+  public final IMPLTYPE setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
   {
     ValueEnforcer.notNull (aMessageIDFactory, "MessageIDFactory");
     m_aMessageIDFactory = aMessageIDFactory;
+    return thisAsT ();
   }
 
+  /**
+   * @return A new message ID created by the contained factory. Neither
+   *         <code>null</code> nor empty.
+   */
   @Nonnull
   @Nonempty
-  protected final String createMessageID ()
+  public final String createMessageID ()
   {
     final String ret = m_aMessageIDFactory.get ();
     if (StringHelper.hasNoText (ret))
@@ -324,9 +362,11 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
     return StringHelper.hasText (m_sRefToMessageID);
   }
 
-  public final void setRefToMessageID (@Nullable final String sRefToMessageID)
+  @Nonnull
+  public final IMPLTYPE setRefToMessageID (@Nullable final String sRefToMessageID)
   {
     m_sRefToMessageID = sRefToMessageID;
+    return thisAsT ();
   }
 
   /**
@@ -343,15 +383,87 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    *
    * @param eSOAPVersion
    *        SOAPVersion which should be set. MAy not be <code>null</code>.
+   * @return this for chaining
    */
-  public final void setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  @Nonnull
+  public final IMPLTYPE setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eSOAPVersion = eSOAPVersion;
+    return thisAsT ();
   }
 
-  public final void setValuesFromPMode (@Nullable final PModeLeg aLeg)
+  /**
+   * @return The maximum number of retries. Only values &gt; 0 imply a retry.
+   *         The default value is {@link #DEFAULT_MAX_RETRIES}.
+   * @since 0.9.0
+   */
+  @Nonnegative
+  public final int getMaxRetries ()
   {
+    return m_nMaxRetries;
+  }
+
+  /**
+   * Set the maximum number of retries to be used.
+   *
+   * @param nMaxRetries
+   *        Retry count. A value of <code>0</code> means "no retries". Must be
+   *        &ge; 0.
+   * @return this for chaining
+   * @since 0.9.0
+   */
+  @Nonnull
+  public final IMPLTYPE setMaxRetries (@Nonnegative final int nMaxRetries)
+  {
+    ValueEnforcer.isGE0 (nMaxRetries, "MaxRetries");
+    m_nMaxRetries = nMaxRetries;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The interval in milliseconds between retries. Must be &ge; 0. The
+   *         default value is {@link #DEFAULT_RETRY_INTERVAL_MS}.
+   * @since 0.9.0
+   */
+  @Nonnegative
+  public final long getRetryIntervalMS ()
+  {
+    return m_nRetryIntervalMS;
+  }
+
+  /**
+   * Set the interval in milliseconds between retries.
+   *
+   * @param nRetryIntervalMS
+   *        Retry interval in milliseconds. Must be &ge; 0.
+   * @return this for chaining
+   * @since 0.9.0
+   */
+  @Nonnull
+  public final IMPLTYPE setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
+  {
+    ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
+    m_nRetryIntervalMS = nRetryIntervalMS;
+    return thisAsT ();
+  }
+
+  public final void setValuesFromPMode (@Nullable final IPMode aPMode, @Nullable final PModeLeg aLeg)
+  {
+    if (aPMode != null)
+    {
+      final PModeReceptionAwareness aRA = aPMode.getReceptionAwareness ();
+      if (aRA != null && aRA.isRetryDefined ())
+      {
+        setMaxRetries (aRA.getMaxRetries ());
+        setRetryIntervalMS (aRA.getRetryIntervalMS ());
+      }
+      else
+      {
+        // 0 means "no retries"
+        setMaxRetries (0);
+      }
+    }
     if (aLeg != null)
     {
       signingParams ().setFromPMode (aLeg.getSecurity ());
@@ -364,22 +476,45 @@ public abstract class AbstractAS4Client extends BasicHttpPoster
    * to build the final message. Compression, signing and encryption happens in
    * this methods.
    *
+   * @param sMessageID
+   *        The message ID to be used. Neither <code>null</code> nor empty.
    * @param aCallback
    *        Optional callback for in-between states. May be <code>null</code>.
    * @return The HTTP entity to be sent. Never <code>null</code>.
    * @throws Exception
    *         in case something goes wrong
    */
-  @OverrideOnDemand
   @Nonnull
-  public abstract AS4ClientBuiltMessage buildMessage (@Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception;
+  public abstract AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty String sMessageID,
+                                                      @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
+  /**
+   * Send the AS4 client message created by
+   * {@link #buildMessage(IAS4ClientBuildMessageCallback)} to the provided URL.
+   * This methods does take retries into account.
+   *
+   * @param <T>
+   *        The response data type
+   * @param sURL
+   *        The URL to send the HTTP POST to
+   * @param aResponseHandler
+   *        The response handler that converts the HTTP response to a domain
+   *        object. May not be <code>null</code>.
+   * @param aCallback
+   *        The optional callback that is invoked during the creation of the
+   *        {@link AS4ClientBuiltMessage}. It can be used to access several
+   *        states of message creation. May be <code>null</code>.
+   * @return The sent message that contains
+   * @throws Exception
+   */
   @Nonnull
   public final <T> AS4ClientSentMessage <T> sendMessage (@Nonnull final String sURL,
                                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                          @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
   {
-    final AS4ClientBuiltMessage aBuiltMsg = buildMessage (aCallback);
+    // Create a new message ID for each build!
+    final String sMessageID = createMessageID ();
+    final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
     return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
   }
