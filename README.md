@@ -24,6 +24,7 @@ It consists of the following sub-projects:
     * Renamed `AS4Handler` to `AS4RequestHandler`
     * Reworked client API so that it can be used chainable
     * Added retry support to clients
+    * This version passes the CEF "AS4 Basic Connectivity Tests"
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
