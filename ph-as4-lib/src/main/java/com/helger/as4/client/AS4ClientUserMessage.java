@@ -25,6 +25,8 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -68,6 +70,8 @@ import com.helger.xml.serialize.write.XMLWriter;
 @NotThreadSafe
 public class AS4ClientUserMessage extends AbstractAS4Client
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessage.class);
+
   private final AS4ResourceHelper m_aResHelper;
 
   private Node m_aPayload;
@@ -172,7 +176,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     _checkMandatoryAttributes ();
 
     final boolean bSign = signingParams ().isSigningEnabled ();
-    final boolean bEncrypt = cryptParams ().isCryptEnabled ();
+    final boolean bEncrypt = cryptParams ().isCryptEnabled (LOGGER::warn);
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
     // Create a new message ID for each build!

@@ -18,13 +18,11 @@ package com.helger.as4.crypto;
 
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -42,8 +40,6 @@ import com.helger.commons.string.ToStringGenerator;
 @NotThreadSafe
 public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
-
   // The algorithm to use
   private ECryptoAlgorithmCrypt m_eAlgorithmCrypt;
   // The explicit certificate to use - has precedence over the alias
@@ -54,7 +50,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public AS4CryptParams ()
   {}
 
-  public boolean isCryptEnabled ()
+  public boolean isCryptEnabled (@Nullable final Consumer <String> aWarningConsumer)
   {
     if (m_eAlgorithmCrypt == null)
       return false;
@@ -62,7 +58,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     // One of certificate or alias must be present
     if (!hasCertificate () && !hasAlias ())
     {
-      LOGGER.warn ("Crypt parameters have an algorithm defined but neither an alias nor a certificate was provided. There encryption is not enabled.");
+      if (aWarningConsumer != null)
+        aWarningConsumer.accept ("Crypt parameters have an algorithm defined but neither an alias nor a certificate was provided. Therefore encryption is not enabled.");
       return false;
     }
 

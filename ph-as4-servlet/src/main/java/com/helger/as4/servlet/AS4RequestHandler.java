@@ -987,7 +987,7 @@ public class AS4RequestHandler implements AutoCloseable
           // where to send it back (must be determined by SPI!)
           final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
           if (StringHelper.hasNoText (sAsyncResponseURL))
-            throw new IllegalStateException ("No asynchronous response URL present!");
+            throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
 
           if (isDebug ())
             LOGGER.info ("Responding asynchronous to: " + sAsyncResponseURL);
@@ -1335,7 +1335,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                                   MessagingException
   {
     final MimeMessage aMimeMsg;
-    if (aCryptParms.isCryptEnabled ())
+    if (aCryptParms.isCryptEnabled (LOGGER::warn))
     {
       final boolean bMustUnderstand = true;
       aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
