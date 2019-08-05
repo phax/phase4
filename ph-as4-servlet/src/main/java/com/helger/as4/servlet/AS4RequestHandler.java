@@ -996,6 +996,7 @@ public class AS4RequestHandler implements AutoCloseable
           final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
                                                                       aAsyncResponseFactory.getHttpEntity (eSOAPVersion),
+                                                                      null,
                                                                       new ResponseHandlerXml ());
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse,

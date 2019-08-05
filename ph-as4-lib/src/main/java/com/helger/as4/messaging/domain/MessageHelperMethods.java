@@ -29,8 +29,6 @@ import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.http.HttpMessage;
-
 import com.helger.as4.CAS4;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4lib.ebms3header.Ebms3AgreementRef;
@@ -349,23 +347,23 @@ public final class MessageHelperMethods
     return aEbms3PayloadInfo;
   }
 
-  public static void moveMIMEHeadersToHTTPHeader (@Nonnull final MimeMessage aMimeMsg,
-                                                  @Nonnull final HttpMessage aHttpMsg) throws MessagingException
+  @Nonnull
+  @ReturnsMutableCopy
+  public static HttpHeaderMap getAndRemoveAllHeaders (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
   {
-    ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
-    ValueEnforcer.notNull (aHttpMsg, "HttpMsg");
+    final HttpHeaderMap ret = new HttpHeaderMap ();
 
-    // Move all mime headers to the HTTP request
     final Enumeration <Header> aEnum = aMimeMsg.getAllHeaders ();
     while (aEnum.hasMoreElements ())
     {
       final Header aHeader = aEnum.nextElement ();
 
       // Make a single-line HTTP header value!
-      aHttpMsg.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
+      ret.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
 
       // Remove from MIME message!
       aMimeMsg.removeHeader (aHeader.getName ());
     }
+    return ret;
   }
 }

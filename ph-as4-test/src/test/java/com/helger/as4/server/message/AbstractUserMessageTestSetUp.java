@@ -229,7 +229,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
                                     @Nullable final String sExpectedErrorCode) throws IOException, MessagingException
   {
     final HttpPost aPost = _createPost ();
-    MessageHelperMethods.moveMIMEHeadersToHTTPHeader (aHttpEntity.getMimeMessage (), aPost);
+    MessageHelperMethods.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ()).forEachSingleHeader (aPost::addHeader);
     return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
   }
 

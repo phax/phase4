@@ -494,7 +494,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   /**
    * Send the AS4 client message created by
    * {@link #buildMessage(IAS4ClientBuildMessageCallback)} to the provided URL.
-   * This methods does take retries into account.
+   * This methods does take retries into account. It synchronously handles the
+   * retries and only returns after the last retry.
    *
    * @param <T>
    *        The response data type
@@ -519,20 +520,30 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
+
     if (m_nMaxRetries > 0)
     {
       // Send with retry
       final int nMaxTries = 1 + m_nMaxRetries;
       for (int nTry = 0; nTry < nMaxTries; nTry++)
       {
+        if (nTry > 0)
+        {
+          final int nRetry = nTry;
+          AS4HttpDebug.debug ( () -> "Retry #" + nRetry + " for sending message");
+        }
+
         try
         {
-          final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+          final T aResponse = sendGenericMessage (sURL,
+                                                  aBuiltMsg.getHttpEntity (),
+                                                  aBuiltMsg.getCustomHeaders (),
+                                                  aResponseHandler);
           return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
         }
         catch (final IOException ex)
         {
-          // Last try?
+          // Last try? -> propagate exception
           if (nTry == nMaxTries - 1)
             throw ex;
 
@@ -545,7 +556,10 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     else
     {
       // Send without retry
-      final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+      final T aResponse = sendGenericMessage (sURL,
+                                              aBuiltMsg.getHttpEntity (),
+                                              aBuiltMsg.getCustomHeaders (),
+                                              aResponseHandler);
       return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
     }
   }

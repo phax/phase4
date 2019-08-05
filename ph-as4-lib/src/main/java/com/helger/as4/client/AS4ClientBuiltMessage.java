@@ -17,31 +17,44 @@
 package com.helger.as4.client;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.mail.MessagingException;
 
 import org.apache.http.HttpEntity;
 
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * The client HTTP message and some metadata
+ * 
+ * @author Philip Helger
+ */
 public final class AS4ClientBuiltMessage
 {
   private final String m_sMessageID;
   private final HttpEntity m_aHttpEntity;
+  private final HttpHeaderMap m_aCustomHeaders;
 
   public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID, @Nonnull final HttpXMLEntity aHttpEntity)
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
     m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
+    m_aCustomHeaders = null;
   }
 
   public AS4ClientBuiltMessage (@Nonnull @Nonempty final String sMessageID,
-                                @Nonnull final HttpMimeMessageEntity aHttpEntity)
+                                @Nonnull final HttpMimeMessageEntity aHttpEntity) throws MessagingException
   {
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");
     m_aHttpEntity = ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
+    m_aCustomHeaders = MessageHelperMethods.getAndRemoveAllHeaders (aHttpEntity.getMimeMessage ());
   }
 
   @Nonnull
@@ -57,11 +70,19 @@ public final class AS4ClientBuiltMessage
     return m_aHttpEntity;
   }
 
+  @Nullable
+  @ReturnsMutableCopy
+  public HttpHeaderMap getCustomHeaders ()
+  {
+    return m_aCustomHeaders == null ? null : m_aCustomHeaders.getClone ();
+  }
+
   @Override
   public String toString ()
   {
     return new ToStringGenerator (this).append ("MessageID", m_sMessageID)
                                        .append ("HttpEntity", m_aHttpEntity)
+                                       .appendIfNotNull ("CustomHeaders", m_aCustomHeaders)
                                        .getToString ();
   }
 }

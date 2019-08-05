@@ -29,12 +29,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
 
 import com.helger.as4.http.AS4HttpDebug;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
@@ -66,8 +65,7 @@ public class BasicHttpPoster
   {}
 
   /**
-   * @return The internal http client factory used in
-   *         {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
+   * @return The internal http client factory used for http sending.
    */
   @Nonnull
   public final HttpClientFactory getHttpClientFactory ()
@@ -79,8 +77,7 @@ public class BasicHttpPoster
    * Set the HTTP client provider to be used. This is e.g. necessary when a
    * custom SSL context or a proxy server is to be used. See
    * {@link #createDefaultHttpClientFactory()} as the default implementation of
-   * {@link IHttpClientProvider}. This factory is used in
-   * {@link #sendGenericMessage(String, HttpEntity, ResponseHandler)}.
+   * {@link IHttpClientProvider}. This factory is used for http sending.
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
@@ -131,6 +128,9 @@ public class BasicHttpPoster
    *        The URL to send to. May neither be <code>null</code> nor empty.
    * @param aHttpEntity
    *        The HTTP entity to be send. May not be <code>null</code>.
+   * @param aCustomHeaders
+   *        An optional http header map that should be applied. May be
+   *        <code>null</code>.
    * @param aResponseHandler
    *        The Http response handler that should be used to convert the HTTP
    *        response to a domain object.
@@ -144,6 +144,7 @@ public class BasicHttpPoster
   @Nullable
   public final <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
                                          @Nonnull final HttpEntity aHttpEntity,
+                                         @Nullable final HttpHeaderMap aCustomHeaders,
                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
                                                                                                         IOException
   {
@@ -153,11 +154,10 @@ public class BasicHttpPoster
     try (final HttpClientManager aClient = new HttpClientManager (m_aHttpClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
-      if (aHttpEntity instanceof HttpMimeMessageEntity)
-      {
-        MessageHelperMethods.moveMIMEHeadersToHTTPHeader (((HttpMimeMessageEntity) aHttpEntity).getMimeMessage (),
-                                                          aPost);
-      }
+
+      if (aCustomHeaders != null)
+        aCustomHeaders.forEachSingleHeader (aPost::addHeader);
+
       aPost.setEntity (aHttpEntity);
 
       // Invoke optional customizer
