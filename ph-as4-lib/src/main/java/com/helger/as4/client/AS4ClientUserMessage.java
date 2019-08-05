@@ -153,10 +153,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client
     if (StringHelper.hasNoText (m_sToPartyID))
       throw new IllegalStateException ("ToPartyID needs to be set");
 
-    if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.ORIGINAL_SENDER)))
-      throw new IllegalStateException ("Mandatory property originalSender is missing");
-    if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.FINAL_RECIPIENT)))
-      throw new IllegalStateException ("Mandatory property finalRecipient is missing");
+    if (false)
+    {
+      if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.ORIGINAL_SENDER)))
+        throw new IllegalStateException ("Mandatory property originalSender is missing");
+      if (m_aEbms3Properties.containsNone (x -> x.getName ().equals (CAS4.FINAL_RECIPIENT)))
+        throw new IllegalStateException ("Mandatory property finalRecipient is missing");
+    }
   }
 
   @Override
