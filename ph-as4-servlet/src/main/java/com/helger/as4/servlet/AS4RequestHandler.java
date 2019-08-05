@@ -29,7 +29,6 @@ import java.util.zip.ZipException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -174,26 +173,13 @@ public class AS4RequestHandler implements AutoCloseable
   private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
     private final MimeMessage m_aMimeMsg;
-    private final HttpHeaderMap m_aHeaders = new HttpHeaderMap ();
+    private final HttpHeaderMap m_aHeaders;
 
     public AS4ResponseFactoryMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
     {
       ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
       m_aMimeMsg = aMimeMsg;
-
-      final ICommonsList <Header> aMimeHeaders = CollectionHelper.newList (m_aMimeMsg.getAllHeaders ());
-
-      // Move all mime headers to the HTTP request
-      for (final Header aHeader : aMimeHeaders)
-      {
-        // Make a single-line HTTP header value!
-        m_aHeaders.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
-      }
-
-      // Remove all headers from MIME message
-      // Do it after the copy loop, in case a header has more than one value!
-      for (final Header aHeader : aMimeHeaders)
-        m_aMimeMsg.removeHeader (aHeader.getName ());
+      m_aHeaders = MessageHelperMethods.getAndRemoveAllHeaders (m_aMimeMsg);
     }
 
     public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion,

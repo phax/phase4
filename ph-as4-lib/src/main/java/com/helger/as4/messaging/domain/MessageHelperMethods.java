@@ -16,11 +16,11 @@
  */
 package com.helger.as4.messaging.domain;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,6 +48,7 @@ import com.helger.as4lib.ebms3header.Ebms3To;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -347,23 +348,31 @@ public final class MessageHelperMethods
     return aEbms3PayloadInfo;
   }
 
+  public static void forEachHeaderAndRemoveAfterwards (@Nonnull final MimeMessage aMimeMsg,
+                                                       @Nonnull final BiConsumer <String, String> aConsumer) throws MessagingException
+  {
+    // Create a copy
+    final ICommonsList <Header> aHeaders = CollectionHelper.newList (aMimeMsg.getAllHeaders ());
+
+    // First round
+    for (final Header aHeader : aHeaders)
+    {
+      // Make a single-line HTTP header value!
+      aConsumer.accept (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
+    }
+
+    // Remove all headers from MIME message
+    // Do it after the copy loop, in case a header has more than one value!
+    for (final Header aHeader : aHeaders)
+      aMimeMsg.removeHeader (aHeader.getName ());
+  }
+
   @Nonnull
   @ReturnsMutableCopy
   public static HttpHeaderMap getAndRemoveAllHeaders (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
   {
     final HttpHeaderMap ret = new HttpHeaderMap ();
-
-    final Enumeration <Header> aEnum = aMimeMsg.getAllHeaders ();
-    while (aEnum.hasMoreElements ())
-    {
-      final Header aHeader = aEnum.nextElement ();
-
-      // Make a single-line HTTP header value!
-      ret.addHeader (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
-
-      // Remove from MIME message!
-      aMimeMsg.removeHeader (aHeader.getName ());
-    }
+    forEachHeaderAndRemoveAfterwards (aMimeMsg, ret::addHeader);
     return ret;
   }
 }
