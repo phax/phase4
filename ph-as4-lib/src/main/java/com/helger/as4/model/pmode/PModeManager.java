@@ -16,8 +16,6 @@
  */
 package com.helger.as4.model.pmode;
 
-import java.util.function.Predicate;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -28,8 +26,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
@@ -91,15 +87,18 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     m_aRWLock.writeLock ().lock ();
     try
     {
-      aRealPMode.setInitiator (aPMode.getInitiator ());
-      aRealPMode.setResponder (aPMode.getResponder ());
-      aRealPMode.setAgreement (aPMode.getAgreement ());
-      aRealPMode.setMEP (aPMode.getMEP ());
-      aRealPMode.setMEPBinding (aPMode.getMEPBinding ());
-      aRealPMode.setLeg1 (aPMode.getLeg1 ());
-      aRealPMode.setLeg2 (aPMode.getLeg2 ());
-      aRealPMode.setPayloadService (aPMode.getPayloadService ());
-      aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ());
+      EChange eChange = EChange.UNCHANGED;
+      eChange = eChange.or (aRealPMode.setInitiator (aPMode.getInitiator ()));
+      eChange = eChange.or (aRealPMode.setResponder (aPMode.getResponder ()));
+      eChange = eChange.or (aRealPMode.setAgreement (aPMode.getAgreement ()));
+      eChange = eChange.or (aRealPMode.setMEP (aPMode.getMEP ()));
+      eChange = eChange.or (aRealPMode.setMEPBinding (aPMode.getMEPBinding ()));
+      eChange = eChange.or (aRealPMode.setLeg1 (aPMode.getLeg1 ()));
+      eChange = eChange.or (aRealPMode.setLeg2 (aPMode.getLeg2 ()));
+      eChange = eChange.or (aRealPMode.setPayloadService (aPMode.getPayloadService ()));
+      eChange = eChange.or (aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ()));
+      if (eChange.isUnchanged ())
+        return EChange.UNCHANGED;
 
       BusinessObjectHelper.setLastModificationNow (aRealPMode);
       internalUpdateItem (aRealPMode);
@@ -173,7 +172,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
                                                     @Nullable final String sInitiatorID,
                                                     @Nullable final String sResponderID)
   {
-    return p -> p.getID ().equals (sID) && p.hasInitiatorID (sInitiatorID) && p.hasResponderID (sResponderID);
+    return x -> x.getID ().equals (sID) && x.hasInitiatorID (sInitiatorID) && x.hasResponderID (sResponderID);
   }
 
   @Nullable
@@ -185,9 +184,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       {
         final PModeLegBusinessInformation aBI = aLeg.getBusinessInfo ();
         if (aBI != null)
-        {
           return EqualsHelper.equals (aBI.getService (), sService) && EqualsHelper.equals (aBI.getAction (), sAction);
-        }
       }
       return false;
     });
@@ -196,9 +193,7 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
   @Nonnull
   public IPMode createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
-    PMode ret = (PMode) findFirst (getPModeFilter (aPMode.getID (),
-                                                   aPMode.getInitiatorID (),
-                                                   aPMode.getResponderID ()));
+    IPMode ret = findFirst (getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ()));
     if (ret == null)
     {
       createPMode (aPMode);
@@ -209,20 +204,6 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       updatePMode (aPMode);
     }
     return ret;
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <IPMode> getAllPModes ()
-  {
-    return getAll ();
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  public ICommonsList <IPMode> getAllPModes (@Nonnull final Predicate <? super IPMode> aFilter)
-  {
-    return getAll (aFilter);
   }
 
   @Nullable
