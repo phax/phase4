@@ -16,6 +16,8 @@
  */
 package com.helger.as4.client;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +39,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.string.StringHelper;
@@ -506,6 +509,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        states of message creation. May be <code>null</code>.
    * @return The sent message that contains
    * @throws Exception
+   *         in case of error when building or sending the message
    */
   @Nonnull
   public final <T> AS4ClientSentMessage <T> sendMessage (@Nonnull final String sURL,
@@ -515,8 +519,35 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
-    final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
-    return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+    if (m_nMaxRetries > 0)
+    {
+      // Send with retry
+      final int nMaxTries = 1 + m_nMaxRetries;
+      for (int nTry = 0; nTry < nMaxTries; nTry++)
+      {
+        try
+        {
+          final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+          return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+        }
+        catch (final IOException ex)
+        {
+          // Last try?
+          if (nTry == nMaxTries - 1)
+            throw ex;
+
+          // Sleep and try again
+          ThreadHelper.sleep (m_nRetryIntervalMS);
+        }
+      }
+      throw new IllegalStateException ("Should never be reached (after " + nMaxTries + " max tries)!");
+    }
+    else
+    {
+      // Send without retry
+      final T aResponse = sendGenericMessage (sURL, aBuiltMsg.getHttpEntity (), aResponseHandler);
+      return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+    }
   }
 
   @Nullable
