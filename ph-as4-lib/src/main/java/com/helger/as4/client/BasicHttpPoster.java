@@ -35,6 +35,7 @@ import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.lang.StackTraceHelper;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
@@ -190,5 +191,14 @@ public class BasicHttpPoster
 
       return aClient.execute (aPost, aResponseHandler);
     }
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("HttpClientFactory", m_aHttpClientFactory)
+                                       .append ("HttpCustomizer", m_aHttpCustomizer)
+                                       .getToString ();
+
   }
 }
