@@ -447,16 +447,35 @@ public class WSS4JAttachment extends Attachment
     {
       // keep some small parts in memory
       final DataHandler aDH = aBodyPart.getDataHandler ();
-      ret.setSourceStreamProvider (HasInputStream.once ( () -> {
-        try
-        {
-          return aDH.getInputStream ();
-        }
-        catch (final IOException ex)
-        {
-          throw new UncheckedIOException (ex);
-        }
-      }));
+      final DataSource aDS = aDH.getDataSource ();
+      if (aDS != null)
+      {
+        // DataSource InputStreams can be retrieved over and over again
+        ret.setSourceStreamProvider (HasInputStream.multiple ( () -> {
+          try
+          {
+            return aDS.getInputStream ();
+          }
+          catch (final IOException ex)
+          {
+            throw new UncheckedIOException (ex);
+          }
+        }));
+      }
+      else
+      {
+        // Can only be read once
+        ret.setSourceStreamProvider (HasInputStream.once ( () -> {
+          try
+          {
+            return aDH.getInputStream ();
+          }
+          catch (final IOException ex)
+          {
+            throw new UncheckedIOException (ex);
+          }
+        }));
+      }
     }
     else
     {
