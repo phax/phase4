@@ -55,7 +55,6 @@ public final class AS4DumpManager
    * @param aIncomingDumper
    *        The new dumper. May be <code>null</code>.
    */
-  @Nullable
   public static void setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
     s_aRWLock.writeLocked ( () -> s_aIncomingDumper = aIncomingDumper);
@@ -76,7 +75,6 @@ public final class AS4DumpManager
    * @param aOutgoingDumper
    *        The new dumper. May be <code>null</code>.
    */
-  @Nullable
   public static void setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
     s_aRWLock.writeLocked ( () -> s_aOutgoingDumper = aOutgoingDumper);
