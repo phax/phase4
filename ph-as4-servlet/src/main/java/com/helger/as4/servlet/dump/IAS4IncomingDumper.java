@@ -10,12 +10,13 @@ import javax.servlet.http.HttpServletRequest;
  * Interface for dumping incoming requests
  *
  * @author Philip Helger
+ * @since 0.9.0
  */
 public interface IAS4IncomingDumper
 {
   /**
    * Called for new requests.
-   * 
+   *
    * @param aHttpServletRequest
    *        The current servlet request.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte

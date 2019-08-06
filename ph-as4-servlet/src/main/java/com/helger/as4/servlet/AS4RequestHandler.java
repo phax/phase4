@@ -1511,6 +1511,7 @@ public class AS4RequestHandler implements AutoCloseable
       public void close () throws IOException
       {
         // Flush and close output stream as well
+        StreamHelper.flush (aOS);
         StreamHelper.close (aOS);
         super.close ();
       }
