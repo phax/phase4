@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -29,7 +28,6 @@ import java.util.zip.ZipException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.WillClose;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -210,6 +208,55 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
+  private static final class SPIInvocationResult implements ISuccessIndicator
+  {
+    private boolean m_bSuccess = false;
+    private Ebms3UserMessage m_aPullReturnUserMsg;
+    private String m_sAsyncResponseURL;
+
+    public boolean isSuccess ()
+    {
+      return m_bSuccess;
+    }
+
+    void setSuccess (final boolean bSuccess)
+    {
+      m_bSuccess = bSuccess;
+    }
+
+    void setPullReturnUserMsg (@Nonnull final Ebms3UserMessage aPullReturnUserMsg)
+    {
+      m_aPullReturnUserMsg = aPullReturnUserMsg;
+    }
+
+    @Nullable
+    public Ebms3UserMessage getPullReturnUserMsg ()
+    {
+      return m_aPullReturnUserMsg;
+    }
+
+    public boolean hasPullReturnUserMsg ()
+    {
+      return m_aPullReturnUserMsg != null;
+    }
+
+    void setAsyncResponseURL (@Nonnull final String sAsyncResponseURL)
+    {
+      m_sAsyncResponseURL = sAsyncResponseURL;
+    }
+
+    @Nullable
+    public String getAsyncResponseURL ()
+    {
+      return m_sAsyncResponseURL;
+    }
+
+    public boolean hasAsyncResponseURL ()
+    {
+      return StringHelper.hasText (m_sAsyncResponseURL);
+    }
+  }
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
@@ -312,12 +359,13 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
-  private void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
-                                           @Nonnull final ESOAPVersion eSOAPVersion,
-                                           @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                           @Nonnull final AS4MessageState aState,
-                                           @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
+  private static void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
+                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                  @Nonnull final AS4MessageState aState,
+                                                  @Nonnull final Locale aLocale,
+                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
+    final ESOAPVersion eSOAPVersion = aState.getSOAPVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
@@ -365,7 +413,7 @@ public class AS4RequestHandler implements AutoCloseable
                                            aIncomingAttachments,
                                            aState,
                                            aErrorList,
-                                           m_aLocale)
+                                           aLocale)
                     .isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
@@ -387,11 +435,11 @@ public class AS4RequestHandler implements AutoCloseable
         {
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
           if (ePredefinedError != null)
-            aErrorMessages.add (ePredefinedError.getAsEbms3Error (m_aLocale, sRefToMessageID));
+            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale, sRefToMessageID));
           else
           {
             final Ebms3Error aEbms3Error = new Ebms3Error ();
-            aEbms3Error.setErrorDetail (aError.getErrorText (m_aLocale));
+            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
             aEbms3Error.setErrorCode (aError.getErrorID ());
             aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
             aEbms3Error.setOrigin (aError.getErrorFieldName ());
@@ -414,55 +462,6 @@ public class AS4RequestHandler implements AutoCloseable
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
           throw new BadRequestException ("Error processing required SOAP header element " +
                                          aHeader.getQName ().toString ());
-    }
-  }
-
-  private static final class SPIInvocationResult implements ISuccessIndicator
-  {
-    private boolean m_bSuccess = false;
-    private Ebms3UserMessage m_aPullReturnUserMsg;
-    private String m_sAsyncResponseURL;
-
-    public boolean isSuccess ()
-    {
-      return m_bSuccess;
-    }
-
-    void setSuccess (final boolean bSuccess)
-    {
-      m_bSuccess = bSuccess;
-    }
-
-    void setPullReturnUserMsg (@Nonnull final Ebms3UserMessage aPullReturnUserMsg)
-    {
-      m_aPullReturnUserMsg = aPullReturnUserMsg;
-    }
-
-    @Nullable
-    public Ebms3UserMessage getPullReturnUserMsg ()
-    {
-      return m_aPullReturnUserMsg;
-    }
-
-    public boolean hasPullReturnUserMsg ()
-    {
-      return m_aPullReturnUserMsg != null;
-    }
-
-    void setAsyncResponseURL (@Nonnull final String sAsyncResponseURL)
-    {
-      m_sAsyncResponseURL = sAsyncResponseURL;
-    }
-
-    @Nullable
-    public String getAsyncResponseURL ()
-    {
-      return m_sAsyncResponseURL;
-    }
-
-    public boolean hasAsyncResponseURL ()
-    {
-      return StringHelper.hasText (m_sAsyncResponseURL);
     }
   }
 
@@ -666,6 +665,373 @@ public class AS4RequestHandler implements AutoCloseable
     aSPIResult.setSuccess (true);
   }
 
+  /**
+   * Checks the mandatory properties OriginalSender and FinalRecipient if those
+   * two are set.
+   *
+   * @param aPropertyList
+   *        the property list that should be checked for the two specific ones
+   * @throws BadRequestException
+   *         on error
+   */
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws BadRequestException
+  {
+    String sOriginalSenderC1 = null;
+    String sFinalRecipientC4 = null;
+
+    for (final Ebms3Property sProperty : aPropertyList)
+    {
+      if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
+        sOriginalSenderC1 = sProperty.getValue ();
+      else
+        if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
+          sFinalRecipientC4 = sProperty.getValue ();
+    }
+
+    if (StringHelper.hasNoText (sOriginalSenderC1))
+      throw new BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
+    if (StringHelper.hasNoText (sFinalRecipientC4))
+      throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
+  }
+
+  /**
+   * EBMS core specification 4.2 details these default values. In eSENS they get
+   * used to implement a ping service, we took this over even outside of eSENS.
+   * If you use these default values you can try to "ping" the server, the
+   * method just checks if the pmode got these exact values set. If true, no SPI
+   * processing is done.
+   *
+   * @param aPMode
+   *        to check
+   * @return true if the default values to ping are not used else false
+   */
+  private static boolean _isPingMessage (@Nullable final IPMode aPMode)
+  {
+    if (aPMode != null)
+    {
+      // Leg 2 wouldn't make sense... Only leg 1 can be pinged
+      final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
+
+      if (aBInfo != null &&
+          CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
+          CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Takes an UserMessage and switches properties to reverse the direction. So
+   * previously it was C1 => C4, now its C4 => C1 Also adds attachments if there
+   * are some that should be added.
+   *
+   * @param eSOAPVersion
+   *        of the message
+   * @param aUserMessage
+   *        the message that should be reversed
+   * @param aResponseAttachments
+   *        attachment that should be added
+   * @return the reversed usermessage in document form
+   */
+  @Nonnull
+  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                            @Nonnull final Ebms3UserMessage aUserMessage,
+                                                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
+  {
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
+                                                                                            aUserMessage.getMessageInfo ()
+                                                                                                        .getMessageId ());
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false,
+                                                                                            aResponseAttachments);
+
+    // Invert from and to role from original user message
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
+
+    // Should be exactly the same as incoming message
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
+
+    // Need to switch C1 and C4 around from the original usermessage
+    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
+    {
+      Ebms3Property aFinalRecipient = null;
+      Ebms3Property aOriginalSender = null;
+      for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
+      {
+        if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
+        {
+          aOriginalSender = aProp;
+        }
+        else
+          if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
+          {
+            aFinalRecipient = aProp;
+          }
+      }
+
+      if (aOriginalSender == null)
+        throw new IllegalStateException ("Failed to determine new OriginalSender");
+      if (aFinalRecipient == null)
+        throw new IllegalStateException ("Failed to determine new FinalRecipient");
+
+      aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
+      aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
+
+      aEbms3MessageProperties.addProperty (aFinalRecipient);
+      aEbms3MessageProperties.addProperty (aOriginalSender);
+    }
+
+    final AS4UserMessage aResponseUserMessage = AS4UserMessage.create (aEbms3MessageInfo,
+                                                                       aEbms3PayloadInfo,
+                                                                       aEbms3CollaborationInfo,
+                                                                       aEbms3PartyInfo,
+                                                                       aEbms3MessageProperties,
+                                                                       eSOAPVersion);
+    return aResponseUserMessage;
+  }
+
+  /**
+   * Checks if in the given PMode isReportAsResponse is set.
+   *
+   * @param aLeg
+   *        The PMode leg to check. May be <code>null</code>.
+   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
+   */
+  private static boolean _isSendErrorAsResponse (@Nullable final PModeLeg aLeg)
+  {
+    if (aLeg != null)
+      if (aLeg.hasErrorHandling ())
+        if (aLeg.getErrorHandling ().isReportAsResponseDefined ())
+        {
+          // Note: this is enabled in Default PMode
+          return aLeg.getErrorHandling ().isReportAsResponse ();
+        }
+    // Default behavior
+    return true;
+  }
+
+  /**
+   * Checks if a ReceiptReplyPattern is set to Response or not.
+   *
+   * @param aPLeg
+   *        to PMode leg to use. May not be <code>null</code>.
+   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
+   */
+  private static boolean _isSendReceiptAsResponse (@Nonnull final PModeLeg aLeg)
+  {
+    if (aLeg != null)
+      if (aLeg.hasSecurity ())
+      {
+        // Note: this is enabled in Default PMode
+        return EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
+      }
+    // Default behaviour if the value is not set or no security is existing
+    return true;
+  }
+
+  /**
+   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
+   * will be signed, else the message will be returned as it is.
+   *
+   * @param aResponseAttachments
+   *        attachment that are added
+   * @param aSigningParams
+   *        Signing parameters
+   * @param aDocToBeSigned
+   *        the message that should be signed
+   * @param eSOAPVersion
+   *        SOAPVersion that is used
+   * @param sMessagingID
+   *        The messaging ID to be used for signing
+   * @return returns the signed response or just the input document if no
+   *         X509SignatureAlgorithm and no X509SignatureHashFunction was set.
+   * @throws WSSecurityException
+   *         if something in the signing process goes wrong from WSS4j
+   */
+  @Nonnull
+  private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                          @Nonnull final AS4SigningParams aSigningParams,
+                                          @Nonnull final Document aDocToBeSigned,
+                                          @Nonnull final ESOAPVersion eSOAPVersion,
+                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
+  {
+    final Document ret;
+    if (aSigningParams.isSigningEnabled ())
+    {
+      // Sign
+      final boolean bMustUnderstand = true;
+      ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                           aDocToBeSigned,
+                                           eSOAPVersion,
+                                           sMessagingID,
+                                           aResponseAttachments,
+                                           m_aResHelper,
+                                           bMustUnderstand,
+                                           aSigningParams.getClone ());
+    }
+    else
+    {
+      // No signing
+      ret = aDocToBeSigned;
+    }
+    return ret;
+  }
+
+  /**
+   * Checks if in the given PMode the isSendReceiptNonRepudiation is set or not.
+   *
+   * @param aLeg
+   *        The PMode leg to check. May not be <code>null</code>.
+   * @return Returns the value if set, else DEFAULT <code>false</code>.
+   */
+  private static boolean _isSendNonRepudiationInformation (@Nonnull final PModeLeg aLeg)
+  {
+    if (aLeg.hasSecurity ())
+      if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
+        return aLeg.getSecurity ().isSendReceiptNonRepudiation ();
+    // Default behavior
+    return false;
+  }
+
+  /**
+   * @param aSOAPDocument
+   *        document which should be used as source for the receipt to convert
+   *        it to non-repudiation information. Can be <code>null</code>.
+   * @param eSOAPVersion
+   *        SOAPVersion which should be used
+   * @param aEffectiveLeg
+   *        the leg that is used to determined, how the receipt should be build
+   * @param aUserMessage
+   *        used if no non-repudiation information is needed, prints the
+   *        usermessage in receipt. Can be <code>null</code>.
+   * @param aResponseAttachments
+   *        that should be sent back if needed. Can be <code>null</code>.
+   * @throws WSSecurityException
+   */
+  private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSOAPDocument,
+                                                             @Nonnull final ESOAPVersion eSOAPVersion,
+                                                             @Nonnull final PModeLeg aEffectiveLeg,
+                                                             @Nullable final Ebms3UserMessage aUserMessage,
+                                                             @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
+  {
+    final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSOAPVersion,
+                                                                        MessageHelperMethods.createRandomMessageID (),
+                                                                        aUserMessage,
+                                                                        aSOAPDocument,
+                                                                        _isSendNonRepudiationInformation (aEffectiveLeg))
+                                                               .setMustUnderstand (true);
+
+    // We've got our response
+    final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
+    final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
+                                                       aSigningParams,
+                                                       aResponseDoc,
+                                                       aEffectiveLeg.getProtocol ().getSOAPVersion (),
+                                                       aReceiptMessage.getMessagingID ());
+    return new AS4ResponseFactoryXML (aSignedDoc);
+  }
+
+  /**
+   * Returns the MimeMessage with encrypted attachment or without depending on
+   * what is configured in the PMode within Leg2.
+   *
+   * @param aResponseDoc
+   *        the document that contains the user message
+   * @param aResponseAttachments
+   *        The Attachments that should be encrypted
+   * @param aLeg
+   *        Leg to get necessary information, EncryptionAlgorithm, SOAPVersion
+   * @param sEncryptToAlias
+   *        The alias into the keystore that should be used for encryption
+   * @return a MimeMessage to be sent
+   * @throws MessagingException
+   * @throws WSSecurityException
+   */
+  @Nonnull
+  private MimeMessage _createMimeMessageForResponse (@Nonnull final Document aResponseDoc,
+                                                     @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                     @Nonnull final ESOAPVersion eSoapVersion,
+                                                     @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
+                                                                                                MessagingException
+  {
+    final MimeMessage aMimeMsg;
+    if (aCryptParms.isCryptEnabled (LOGGER::warn))
+    {
+      final boolean bMustUnderstand = true;
+      aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
+                                                  aResponseDoc,
+                                                  aResponseAttachments,
+                                                  m_aCryptoFactory,
+                                                  bMustUnderstand,
+                                                  m_aResHelper,
+                                                  aCryptParms);
+    }
+    else
+    {
+      aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
+    }
+    if (aMimeMsg == null)
+      throw new IllegalStateException ("Failed to create MimeMessage!");
+    return aMimeMsg;
+  }
+
+  /**
+   * With this method it is possible to send a usermessage back, the method will
+   * check if signing is needed and if the message needs to be a mime message.
+   *
+   * @param aResponseAttachments
+   *        attachments if any that should be added
+   * @param aLeg
+   *        the leg that should be used, to determine what if any security
+   *        should be used
+   * @param aSrcDoc
+   *        the message that should be sent
+   * @param sMessagingID
+   *        ID of the "Messaging" element
+   * @param aSigningParams
+   *        Signing parameters
+   * @param aCryptParams
+   *        Encryption parameters
+   * @throws WSSecurityException
+   *         on error
+   * @throws MessagingException
+   *         on error
+   */
+  @Nonnull
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
+                                                          @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                          @Nonnull final Document aSrcDoc,
+                                                          @Nonnull @Nonempty final String sMessagingID,
+                                                          @Nonnull final AS4SigningParams aSigningParams,
+                                                          @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                                      MessagingException
+  {
+    final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
+                                                       aSigningParams,
+                                                       aSrcDoc,
+                                                       eSoapVersion,
+                                                       sMessagingID);
+
+    final IAS4ResponseFactory ret;
+    if (aResponseAttachments.isEmpty ())
+    {
+      // FIXME encryption of SOAP body is missing here
+      ret = new AS4ResponseFactoryXML (aSignedDoc);
+    }
+    else
+    {
+      // Create (maybe encrypted) MIME message
+      final MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc,
+                                                                  aResponseAttachments,
+                                                                  eSoapVersion,
+                                                                  aCryptParams);
+      ret = new AS4ResponseFactoryMIME (aMimeMsg);
+    }
+    return ret;
+  }
+
   @Nullable
   private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                   @Nonnull final Document aSOAPDocument,
@@ -697,7 +1063,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Handle all headers - the only place where the AS4MessageState values
       // are written
-      _processSOAPHeaderElements (aSOAPDocument, eSOAPVersion, aIncomingAttachments, aStateImpl, aErrorMessages);
+      _processSOAPHeaderElements (aSOAPDocument, aIncomingAttachments, aStateImpl, m_aLocale, aErrorMessages);
 
       aState = aStateImpl;
     }
@@ -850,7 +1216,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
       else
       {
-        if (_isNotPingMessage (aPMode))
+        if (!_isPingMessage (aPMode))
         {
           // Invoke SPIs if
           // * Valid PMode
@@ -1021,11 +1387,11 @@ public class AS4RequestHandler implements AutoCloseable
 
               if (bSendReceiptAsResponse)
               {
-                return _createReceiptMessage (aSOAPDocument,
-                                              eSOAPVersion,
-                                              aEffectiveLeg,
-                                              aEbmsUserMessage,
-                                              aResponseAttachments);
+                return _createResponseReceiptMessage (aSOAPDocument,
+                                                      eSOAPVersion,
+                                                      aEffectiveLeg,
+                                                      aEbmsUserMessage,
+                                                      aResponseAttachments);
               }
               // else TODO
               LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
@@ -1066,377 +1432,6 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     return null;
-  }
-
-  /**
-   * @param aSOAPDocument
-   *        document which should be used as source for the receipt to convert
-   *        it to non-repudiation information. Can be <code>null</code>.
-   * @param eSOAPVersion
-   *        SOAPVersion which should be used
-   * @param aEffectiveLeg
-   *        the leg that is used to determined, how the receipt should be build
-   * @param aUserMessage
-   *        used if no non-repudiation information is needed, prints the
-   *        usermessage in receipt. Can be <code>null</code>.
-   * @param aResponseAttachments
-   *        that should be sent back if needed. Can be <code>null</code>.
-   * @throws WSSecurityException
-   */
-  private IAS4ResponseFactory _createReceiptMessage (@Nullable final Document aSOAPDocument,
-                                                     @Nonnull final ESOAPVersion eSOAPVersion,
-                                                     @Nonnull final PModeLeg aEffectiveLeg,
-                                                     @Nullable final Ebms3UserMessage aUserMessage,
-                                                     @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
-  {
-    final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSOAPVersion,
-                                                                        MessageHelperMethods.createRandomMessageID (),
-                                                                        aUserMessage,
-                                                                        aSOAPDocument,
-                                                                        _isSendNonRepudiationInformation (aEffectiveLeg))
-                                                               .setMustUnderstand (true);
-
-    // We've got our response
-    Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
-    final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
-    aResponseDoc = _signResponseIfNeeded (aResponseAttachments,
-                                          aSigningParams,
-                                          aResponseDoc,
-                                          aEffectiveLeg.getProtocol ().getSOAPVersion (),
-                                          aReceiptMessage.getMessagingID ());
-    return new AS4ResponseFactoryXML (aResponseDoc);
-  }
-
-  /**
-   * Takes an UserMessage and switches properties to reverse the direction. So
-   * previously it was C1 => C4, now its C4 => C1 Also adds attachments if there
-   * are some that should be added.
-   *
-   * @param eSOAPVersion
-   *        of the message
-   * @param aUserMessage
-   *        the message that should be reversed
-   * @param aResponseAttachments
-   *        attachment that should be added
-   * @return the reversed usermessage in document form
-   */
-  @Nonnull
-  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                            @Nonnull final Ebms3UserMessage aUserMessage,
-                                                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
-  {
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
-                                                                                            aUserMessage.getMessageInfo ()
-                                                                                                        .getMessageId ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false,
-                                                                                            aResponseAttachments);
-
-    // Invert from and to role from original user message
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
-
-    // Should be exactly the same as incoming message
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
-
-    // Need to switch C1 and C4 around from the original usermessage
-    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    {
-      Ebms3Property aFinalRecipient = null;
-      Ebms3Property aOriginalSender = null;
-      for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
-      {
-        if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
-        {
-          aOriginalSender = aProp;
-        }
-        else
-          if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
-          {
-            aFinalRecipient = aProp;
-          }
-      }
-
-      if (aOriginalSender == null)
-        throw new IllegalStateException ("Failed to determine new OriginalSender");
-      if (aFinalRecipient == null)
-        throw new IllegalStateException ("Failed to determine new FinalRecipient");
-
-      aFinalRecipient.setName (CAS4.ORIGINAL_SENDER);
-      aOriginalSender.setName (CAS4.FINAL_RECIPIENT);
-
-      aEbms3MessageProperties.addProperty (aFinalRecipient);
-      aEbms3MessageProperties.addProperty (aOriginalSender);
-    }
-
-    final AS4UserMessage aResponseUserMessage = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                       aEbms3PayloadInfo,
-                                                                       aEbms3CollaborationInfo,
-                                                                       aEbms3PartyInfo,
-                                                                       aEbms3MessageProperties,
-                                                                       eSOAPVersion);
-    return aResponseUserMessage;
-  }
-
-  /**
-   * With this method it is possible to send a usermessage back, the method will
-   * check if signing is needed and if the message needs to be a mime message.
-   *
-   * @param aResponseAttachments
-   *        attachments if any that should be added
-   * @param aLeg
-   *        the leg that should be used, to determine what if any security
-   *        should be used
-   * @param aDoc
-   *        the message that should be sent
-   * @param sMessagingID
-   *        ID of the "Messaging" element
-   * @param aSigningParams
-   *        Signing parameters
-   * @param aCryptParams
-   *        Encryption parameters
-   * @throws WSSecurityException
-   *         on error
-   * @throws MessagingException
-   *         on error
-   */
-  @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
-                                                          @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                          @Nonnull final Document aDoc,
-                                                          @Nonnull @Nonempty final String sMessagingID,
-                                                          @Nonnull final AS4SigningParams aSigningParams,
-                                                          @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                                      MessagingException
-  {
-    final Document aResponseDoc;
-    if (aSigningParams.isSigningEnabled ())
-    {
-      aResponseDoc = _signResponseIfNeeded (aResponseAttachments, aSigningParams, aDoc, eSoapVersion, sMessagingID);
-    }
-    else
-    {
-      // No signing
-      aResponseDoc = aDoc;
-    }
-
-    final IAS4ResponseFactory ret;
-    if (aResponseAttachments.isEmpty ())
-    {
-      // FIXME encryption of SOAP body is missing here
-      ret = new AS4ResponseFactoryXML (aResponseDoc);
-    }
-    else
-    {
-      // Create (maybe encrypted) MIME message
-      final MimeMessage aMimeMsg = _generateMimeMessageForResponse (aResponseDoc,
-                                                                    aResponseAttachments,
-                                                                    eSoapVersion,
-                                                                    aCryptParams);
-      ret = new AS4ResponseFactoryMIME (aMimeMsg);
-    }
-    return ret;
-  }
-
-  /**
-   * If the PModeLegSecurity has set a Sign and Digest Algorithm the message
-   * will be signed, else the message will be returned as it is.
-   *
-   * @param aResponseAttachments
-   *        attachment that are added
-   * @param aSigningParams
-   *        Signing parameters
-   * @param aDocToBeSigned
-   *        the message that should be signed
-   * @param eSOAPVersion
-   *        SOAPVersion that is used
-   * @param sMessagingID
-   *        The messaging ID to be used for signing
-   * @return returns the signed response or just the input document if no
-   *         X509SignatureAlgorithm and no X509SignatureHashFunction was set.
-   * @throws WSSecurityException
-   *         if something in the signing process goes wrong from WSS4j
-   */
-  private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                          @Nonnull final AS4SigningParams aSigningParams,
-                                          @Nonnull final Document aDocToBeSigned,
-                                          @Nonnull final ESOAPVersion eSOAPVersion,
-                                          @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
-  {
-    final Document ret;
-    if (aSigningParams.isSigningEnabled ())
-    {
-      // Sign
-      final boolean bMustUnderstand = true;
-      ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                           aDocToBeSigned,
-                                           eSOAPVersion,
-                                           sMessagingID,
-                                           aResponseAttachments,
-                                           m_aResHelper,
-                                           bMustUnderstand,
-                                           aSigningParams.getClone ());
-    }
-    else
-    {
-      // Unchanged
-      ret = aDocToBeSigned;
-    }
-    return ret;
-  }
-
-  /**
-   * Returns the MimeMessage with encrypted attachment or without depending on
-   * what is configured in the PMode within Leg2.
-   *
-   * @param aResponseDoc
-   *        the document that contains the user message
-   * @param aResponseAttachments
-   *        The Attachments that should be encrypted
-   * @param aLeg
-   *        Leg to get necessary information, EncryptionAlgorithm, SOAPVersion
-   * @param sEncryptToAlias
-   *        The alias into the keystore that should be used for encryption
-   * @return a MimeMessage to be sent
-   * @throws MessagingException
-   * @throws WSSecurityException
-   */
-  @Nonnull
-  private MimeMessage _generateMimeMessageForResponse (@Nonnull final Document aResponseDoc,
-                                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                       @Nonnull final ESOAPVersion eSoapVersion,
-                                                       @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
-                                                                                                  MessagingException
-  {
-    final MimeMessage aMimeMsg;
-    if (aCryptParms.isCryptEnabled (LOGGER::warn))
-    {
-      final boolean bMustUnderstand = true;
-      aMimeMsg = AS4Encryptor.encryptMimeMessage (eSoapVersion,
-                                                  aResponseDoc,
-                                                  aResponseAttachments,
-                                                  m_aCryptoFactory,
-                                                  bMustUnderstand,
-                                                  m_aResHelper,
-                                                  aCryptParms);
-    }
-    else
-    {
-      aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion, aResponseDoc, aResponseAttachments);
-    }
-    if (aMimeMsg == null)
-      throw new IllegalStateException ("Failed to create MimeMessage!");
-    return aMimeMsg;
-  }
-
-  /**
-   * EBMS core specification 4.2 details these default values. In eSENS they get
-   * used to implement a ping service, we took this over even outside of eSENS.
-   * If you use these default values you can try to "ping" the server, the
-   * method just checks if the pmode got these exact values set. If true, no SPI
-   * processing is done.
-   *
-   * @param aPMode
-   *        to check
-   * @return true if the default values to ping are not used else false
-   */
-  private static boolean _isNotPingMessage (@Nonnull final IPMode aPMode)
-  {
-    if (aPMode != null)
-    {
-      // Leg 2 wouldn't make sense... Only leg 1 can be pinged
-      final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
-
-      if (aBInfo != null &&
-          CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
-          CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
-      {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Checks if in the given PMode the isSendReceiptNonRepudiation is set or not.
-   *
-   * @param aLeg
-   *        The PMode leg to check. May not be <code>null</code>.
-   * @return Returns the value if set, else DEFAULT <code>false</code>.
-   */
-  private static boolean _isSendNonRepudiationInformation (@Nonnull final PModeLeg aLeg)
-  {
-    if (aLeg.hasSecurity ())
-      if (aLeg.getSecurity ().isSendReceiptNonRepudiationDefined ())
-        return aLeg.getSecurity ().isSendReceiptNonRepudiation ();
-    // Default behavior
-    return false;
-  }
-
-  /**
-   * Checks if in the given PMode isReportAsResponse is set.
-   *
-   * @param aLeg
-   *        The PMode leg to check. May be <code>null</code>.
-   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
-   */
-  private static boolean _isSendErrorAsResponse (@Nullable final PModeLeg aLeg)
-  {
-    if (aLeg != null)
-      if (aLeg.hasErrorHandling ())
-        if (aLeg.getErrorHandling ().isReportAsResponseDefined ())
-        {
-          // Note: this is enabled in Default PMode
-          return aLeg.getErrorHandling ().isReportAsResponse ();
-        }
-    // Default behavior
-    return true;
-  }
-
-  /**
-   * Checks if a ReceiptReplyPattern is set to Response or not.
-   *
-   * @param aPLeg
-   *        to PMode leg to use. May not be <code>null</code>.
-   * @return Returns the value if set, else DEFAULT <code>TRUE</code>.
-   */
-  private static boolean _isSendReceiptAsResponse (@Nonnull final PModeLeg aLeg)
-  {
-    if (aLeg != null)
-      if (aLeg.hasSecurity ())
-      {
-        // Note: this is enabled in Default PMode
-        return EPModeSendReceiptReplyPattern.RESPONSE.equals (aLeg.getSecurity ().getSendReceiptReplyPattern ());
-      }
-    // Default behaviour if the value is not set or no security is existing
-    return true;
-  }
-
-  /**
-   * Checks the mandatory properties OriginalSender and FinalRecipient if those
-   * two are set.
-   *
-   * @param aPropertyList
-   *        the property list that should be checked for the two specific ones
-   * @throws BadRequestException
-   *         on error
-   */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws BadRequestException
-  {
-    String sOriginalSenderC1 = null;
-    String sFinalRecipientC4 = null;
-
-    for (final Ebms3Property sProperty : aPropertyList)
-    {
-      if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
-        sOriginalSenderC1 = sProperty.getValue ();
-      else
-        if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
-          sFinalRecipientC4 = sProperty.getValue ();
-    }
-
-    if (StringHelper.hasNoText (sOriginalSenderC1))
-      throw new BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
-    if (StringHelper.hasNoText (sFinalRecipientC4))
-      throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
   /**
@@ -1497,19 +1492,6 @@ public class AS4RequestHandler implements AutoCloseable
         super.close ();
       }
     };
-  }
-
-  @Nonnull
-  private static Document _readXML (@Nonnull @WillClose final InputStream aRequestIS)
-  {
-    if (LOGGER.isDebugEnabled ())
-    {
-      final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
-      final Charset aCharset = Charset.defaultCharset ();
-      LOGGER.debug ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
-      return DOMReader.readXMLDOM (aBytes);
-    }
-    return DOMReader.readXMLDOM (aRequestIS);
   }
 
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
@@ -1582,7 +1564,7 @@ public class AS4RequestHandler implements AutoCloseable
             eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainPartMT.equals (x.getMimeType ()));
 
             // Read SOAP document
-            aSOAPDocument = _readXML (aBodyPart.getInputStream ());
+            aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
           }
           else
           {
@@ -1601,7 +1583,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSOAPDocument = _readXML (_getRequestIS (aHttpServletRequest));
+      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpServletRequest));
 
       if (aSOAPDocument != null)
       {
