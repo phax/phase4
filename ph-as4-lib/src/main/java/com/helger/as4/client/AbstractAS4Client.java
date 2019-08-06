@@ -640,14 +640,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
-          {
-            final int nRetry = nTry;
-            AS4HttpDebug.debug ( () -> "Retry #" + nRetry + " for sending message");
-          }
+            LOGGER.info ("Retry #" + nTry + " for sending message with ID '" + sMessageID + "'");
 
           try
           {
-            // Create a new one every time
+            // Create a new one every time (for new filename, new timestamp,
+            // etc.)
             final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
                                                                     aRepeatableEntity,
                                                                     sMessageID,
@@ -677,7 +675,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
             StreamHelper.close (aDumpOSHolder.get ());
           }
         }
-        throw new IllegalStateException ("Should never be reached (after " + nMaxTries + " max tries)!");
+        throw new IllegalStateException ("Should never be reached (after maximum of " + nMaxTries + " tries)!");
       }
       else
       {
