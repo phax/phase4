@@ -199,7 +199,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Convert to WSS4J attachments
         final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory.getCryptoProperties ());
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
-                                                                                                              aState.getResourceMgr ());
+                                                                                                              aState.getResourceHelper ());
 
         // Configure RequestData needed for the check / decrypt process!
         final RequestData aRequestData = new RequestData ();
@@ -257,7 +257,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           // Always copy to a temporary file, so that decrypted content can be
           // read more than once.
           // Not nice, but working :)
-          final File aTempFile = aState.getResourceMgr ().createTempFile ();
+          final File aTempFile = aState.getResourceHelper ().createTempFile ();
           StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getBufferedOutputStream (aTempFile));
           aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
         }

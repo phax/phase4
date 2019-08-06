@@ -23,6 +23,7 @@ import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.w3c.dom.Document;
@@ -70,13 +71,14 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
-  private final AS4ResourceHelper m_aResMgr;
+  private final AS4ResourceHelper m_aResHelper;
 
-  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final AS4ResourceHelper aResMgr)
+  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion,
+                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-    m_aResMgr = ValueEnforcer.notNull (aResMgr, "ResMgr");
+    m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
   }
 
   @Nonnull
@@ -92,9 +94,9 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
   }
 
   @Nonnull
-  public final AS4ResourceHelper getResourceMgr ()
+  public final AS4ResourceHelper getResourceHelper ()
   {
-    return m_aResMgr;
+    return m_aResHelper;
   }
 
   public void setMessaging (@Nullable final Ebms3Messaging aMessaging)

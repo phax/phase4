@@ -65,7 +65,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    *         <code>null</code>.
    */
   @Nonnull
-  AS4ResourceHelper getResourceMgr ();
+  AS4ResourceHelper getResourceHelper ();
 
   /**
    * @return The parent of the usermessage/signal message for further
