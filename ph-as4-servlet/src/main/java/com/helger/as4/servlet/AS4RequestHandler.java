@@ -25,11 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillClose;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -213,8 +213,6 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
   private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
-  private static final AtomicBoolean s_aDebug = new AtomicBoolean (false);
-
   private final AS4ResourceHelper m_aResHelper;
   private final AS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
@@ -222,26 +220,6 @@ public class AS4RequestHandler implements AutoCloseable
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
-
-  /**
-   * @return <code>true</code> if internal debugging is enabled,
-   *         <code>false</code> otherwise.
-   */
-  public static boolean isDebug ()
-  {
-    return s_aDebug.get ();
-  }
-
-  /**
-   * Enable or disable debug mode. By default it is disabled.
-   *
-   * @param bDebug
-   *        <code>true</code> to enable it, <code>false</code> to disable it.
-   */
-  public static void setDebug (final boolean bDebug)
-  {
-    s_aDebug.set (bDebug);
-  }
 
   public AS4RequestHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
                             @Nonnull final IIncomingAttachmentFactory aIAF)
@@ -368,14 +346,14 @@ public class AS4RequestHandler implements AutoCloseable
       if (aHeader == null)
       {
         // no header element for current processor
-        if (isDebug ())
-          LOGGER.info ("Message contains no SOAP header element with QName " + aQName.toString ());
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Message contains no SOAP header element with QName " + aQName.toString ());
         continue;
       }
 
       final ISOAPHeaderElementProcessor aProcessor = aEntry.getValue ();
-      if (isDebug ())
-        LOGGER.info ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
@@ -540,8 +518,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aProcessor != null)
         try
         {
-          if (isDebug ())
-            LOGGER.info ("Invoking AS4 message processor " + aProcessor);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Invoking AS4 message processor " + aProcessor);
 
           // Main processing
           final AS4MessageProcessorResult aResult;
@@ -663,8 +641,8 @@ public class AS4RequestHandler implements AutoCloseable
           // Add response attachments, payloads
           aResult.addAllAttachmentsTo (aResponseAttachments);
 
-          if (isDebug ())
-            LOGGER.info ("Successfully invoked AS4 message processor " + aProcessor);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Successfully invoked AS4 message processor " + aProcessor);
         }
         catch (final Exception ex)
         {
@@ -697,12 +675,12 @@ public class AS4RequestHandler implements AutoCloseable
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
 
-    if (isDebug ())
+    if (LOGGER.isDebugEnabled ())
     {
-      LOGGER.info ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
-      LOGGER.info (AS4XMLHelper.serializeXML (aSOAPDocument));
-      LOGGER.info ("Including the following " + aIncomingAttachments.size () + " attachments:");
-      LOGGER.info (aIncomingAttachments.toString ());
+      LOGGER.debug ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
+      LOGGER.debug (AS4XMLHelper.serializeXML (aSOAPDocument));
+      LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
+      LOGGER.debug (aIncomingAttachments.toString ());
     }
 
     // Collect all runtime errors
@@ -769,9 +747,9 @@ public class AS4RequestHandler implements AutoCloseable
       }
 
       // XXX debugging
-      if (isDebug () && aEbmsReceipt != null)
+      if (LOGGER.isDebugEnabled () && aEbmsReceipt != null)
       {
-        LOGGER.info ("RECEIPT INCOMING");
+        LOGGER.debug ("RECEIPT INCOMING");
       }
 
       // Ensure the decrypted attachments are used
@@ -909,8 +887,8 @@ public class AS4RequestHandler implements AutoCloseable
         if (aSPIResult.isFailure ())
           LOGGER.warn ("Error invoking synchronous SPIs");
         else
-          if (isDebug ())
-            LOGGER.info ("Successfully invoked synchronous SPIs");
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Successfully invoked synchronous SPIs");
       }
       else
       {
@@ -979,8 +957,8 @@ public class AS4RequestHandler implements AutoCloseable
           if (StringHelper.hasNoText (sAsyncResponseURL))
             throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
 
-          if (isDebug ())
-            LOGGER.info ("Responding asynchronous to: " + sAsyncResponseURL);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
@@ -1519,13 +1497,13 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   @Nonnull
-  private static Document _readXML (@Nonnull final InputStream aRequestIS)
+  private static Document _readXML (@Nonnull @WillClose final InputStream aRequestIS)
   {
-    if (isDebug ())
+    if (LOGGER.isDebugEnabled ())
     {
       final byte [] aBytes = StreamHelper.getAllBytes (aRequestIS);
       final Charset aCharset = Charset.defaultCharset ();
-      LOGGER.info ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
+      LOGGER.debug ("GOT[" + aCharset.name () + "]:\n" + new String (aBytes, aCharset));
       return DOMReader.readXMLDOM (aBytes);
     }
     return DOMReader.readXMLDOM (aRequestIS);
@@ -1548,8 +1526,8 @@ public class AS4RequestHandler implements AutoCloseable
       throw new BadRequestException ("Content-Type header is missing");
 
     final MimeType aContentType = MimeTypeParser.parseMimeType (sContentType);
-    if (isDebug ())
-      LOGGER.info ("Received Content-Type: " + aContentType);
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Received Content-Type: " + aContentType);
     if (aContentType == null)
       throw new BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
 
@@ -1561,58 +1539,62 @@ public class AS4RequestHandler implements AutoCloseable
     if (aPlainContentType.equals (MT_MULTIPART_RELATED))
     {
       // MIME message
-      if (isDebug ())
-        LOGGER.info ("Received MIME message");
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Received MIME message");
 
       final String sBoundary = aContentType.getParameterValueWithName ("boundary");
       if (StringHelper.hasNoText (sBoundary))
         throw new BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
 
-      if (isDebug ())
-        LOGGER.info ("MIME Boundary = " + sBoundary);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("MIME Boundary = " + sBoundary);
 
-      // PARSING MIME Message via MultiPartStream
-      final MultipartStream aMulti = new MultipartStream (_getRequestIS (aHttpServletRequest),
-                                                          sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                          (MultipartProgressNotifier) null);
-
-      int nIndex = 0;
-      while (true)
+      // Ensure the stream gets closed correctly
+      try (final InputStream aRequestIS = _getRequestIS (aHttpServletRequest))
       {
-        final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-        if (!bHasNextPart)
-          break;
+        // PARSING MIME Message via MultiPartStream
+        final MultipartStream aMulti = new MultipartStream (aRequestIS,
+                                                            sBoundary.getBytes (StandardCharsets.ISO_8859_1),
+                                                            (MultipartProgressNotifier) null);
 
-        if (isDebug ())
-          LOGGER.info ("Found MIME part " + nIndex);
-        final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
-
-        final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
-        if (nIndex == 0)
+        int nIndex = 0;
+        while (true)
         {
-          // First MIME part -> SOAP document
-          final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
-                                                       .getCopyWithoutParameters ();
+          final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
+          if (!bHasNextPart)
+            break;
 
-          // Determine SOAP version from MIME part content type
-          eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainPartMT.equals (x.getMimeType ()));
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Found MIME part " + nIndex);
+          final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
 
-          // Read SOAP document
-          aSOAPDocument = _readXML (aBodyPart.getInputStream ());
+          final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
+          if (nIndex == 0)
+          {
+            // First MIME part -> SOAP document
+            final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
+                                                         .getCopyWithoutParameters ();
+
+            // Determine SOAP version from MIME part content type
+            eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainPartMT.equals (x.getMimeType ()));
+
+            // Read SOAP document
+            aSOAPDocument = _readXML (aBodyPart.getInputStream ());
+          }
+          else
+          {
+            // MIME Attachment (index is gt 0)
+            final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
+            aIncomingAttachments.add (aAttachment);
+          }
+          nIndex++;
         }
-        else
-        {
-          // MIME Attachment (index is gt 0)
-          final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
-          aIncomingAttachments.add (aAttachment);
-        }
-        nIndex++;
       }
     }
     else
     {
-      if (isDebug ())
-        LOGGER.info ("Received plain message with Content-Type " + aContentType.getAsString ());
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Received plain message with Content-Type " + aContentType.getAsString ());
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
