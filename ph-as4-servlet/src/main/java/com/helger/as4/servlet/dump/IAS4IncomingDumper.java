@@ -1,5 +1,6 @@
 package com.helger.as4.servlet.dump;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.annotation.Nonnull;
@@ -21,7 +22,9 @@ public interface IAS4IncomingDumper
    *        The current servlet request.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte
    *         read from the source stream is written to that output stream.
+   * @throws IOException
+   *         in case of an error
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull HttpServletRequest aHttpServletRequest);
+  OutputStream onNewRequest (@Nonnull HttpServletRequest aHttpServletRequest) throws IOException;
 }
