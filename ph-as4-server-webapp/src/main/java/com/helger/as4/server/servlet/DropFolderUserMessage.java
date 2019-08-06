@@ -176,8 +176,8 @@ public final class DropFolderUserMessage
 
           final IAS4ClientBuildMessageCallback aCallback = null;
           final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
-                                                                                new ResponseHandlerByteArray (),
-                                                                                aCallback);
+                                                                                                 new ResponseHandlerByteArray (),
+                                                                                                 aCallback);
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aResponseEntity.getMessageID () +
                        "' for '" +
