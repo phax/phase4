@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
@@ -71,6 +72,9 @@ import com.helger.xml.XMLHelper;
  */
 public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProcessor
 {
+  /** The QName for which this processor should be invoked */
+  public static final QName QNAME_SECURITY = new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+                                                        "Security");
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
   private final AS4CryptoFactory m_aCryptoFactory;
@@ -126,11 +130,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignAlgo == null)
         {
-          LOGGER.info ("Error processing the Security Header, your signing algorithm '" +
-                       sAlgorithm +
-                       "' is incorrect. Expected one of the following '" +
-                       Arrays.asList (ECryptoAlgorithmSign.values ()) +
-                       "' algorithms");
+          LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
+                        sAlgorithm +
+                        "' is incorrect. Expected one of the following '" +
+                        Arrays.asList (ECryptoAlgorithmSign.values ()) +
+                        "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
@@ -148,9 +152,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (eSignDigestAlgo == null)
         {
-          LOGGER.info ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
-                       Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
-                       "' algorithms");
+          LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +
+                        Arrays.toString (ECryptoAlgorithmSignDigest.values ()) +
+                        "' algorithms");
 
           aErrorList.add (EEbmsError.EBMS_FAILED_AUTHENTICATION.getAsError (aLocale));
 
@@ -177,11 +181,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                            .getHref ();
           if (!sHref.contains (sAttachmentId))
           {
-            LOGGER.info ("Error processing the Attachments, the attachment '" +
-                         sHref +
-                         "' is not valid with what is specified in the usermessage ('" +
-                         sAttachmentId +
-                         "')");
+            LOGGER.error ("Error processing the Attachments, the attachment '" +
+                          sHref +
+                          "' is not valid with what is specified in the usermessage ('" +
+                          sAttachmentId +
+                          "')");
 
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
 
@@ -268,7 +272,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       catch (final IOException | WSSecurityException ex)
       {
         // Decryption or Signature check failed
-        LOGGER.info ("Error processing the WSSSecurity Header", ex);
+        LOGGER.error ("Error processing the WSSSecurity Header", ex);
 
         // TODO we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing

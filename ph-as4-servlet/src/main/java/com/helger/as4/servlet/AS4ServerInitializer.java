@@ -18,7 +18,6 @@ package com.helger.as4.servlet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
-import javax.xml.namespace.QName;
 
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.mgr.MetaAS4Manager;
@@ -42,11 +41,6 @@ import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
 @Immutable
 public final class AS4ServerInitializer
 {
-  private static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
-                                                          "Messaging");
-  private static final QName QNAME_SECURITY = new QName ("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
-                                                         "Security");
-
   private AS4ServerInitializer ()
   {}
 
@@ -65,13 +59,14 @@ public final class AS4ServerInitializer
     // Register all SOAP header element processors
     // Registration order matches execution order!
     final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
-    if (!aReg.containsHeaderElementProcessor (QNAME_MESSAGING))
-      aReg.registerHeaderElementProcessor (QNAME_MESSAGING,
+    if (!aReg.containsHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
+      aReg.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
                                            new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver));
 
     // WSS4J must be after Ebms3Messaging handler!
-    if (!aReg.containsHeaderElementProcessor (QNAME_SECURITY))
-      aReg.registerHeaderElementProcessor (QNAME_SECURITY, new SOAPHeaderElementProcessorWSS4J (aCryptoFactory));
+    if (!aReg.containsHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY))
+      aReg.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
+                                           new SOAPHeaderElementProcessorWSS4J (aCryptoFactory));
 
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
