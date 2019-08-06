@@ -33,6 +33,7 @@ import com.helger.as4.model.pmode.PModeParty;
 import com.helger.as4.model.pmode.PModePayloadService;
 import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
+import com.helger.as4.model.pmode.leg.PModeAddressList;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
@@ -61,13 +62,28 @@ public final class CEFPMode
   @Nonnull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+    final String sService = null;
+    final String sAction = CAS4.DEFAULT_ACTION_URL;
+    final Long nPayloadProfileMaxKB = null;
+    final String sMPCID = CAS4.DEFAULT_MPC_ID;
+    return new PModeLegBusinessInformation (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
   @Nonnull
   public static PModeLegErrorHandling generatePModeLegErrorHandling ()
   {
-    return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.UNDEFINED, ETriState.TRUE);
+    final PModeAddressList aReportSenderErrorsTo = null;
+    final PModeAddressList aReportReceiverErrorsTo = null;
+    final ETriState eReportAsResponse = ETriState.TRUE;
+    final ETriState eReportProcessErrorNotifyConsumer = ETriState.TRUE;
+    final ETriState eReportProcessErrorNotifyProducer = ETriState.UNDEFINED;
+    final ETriState eReportDeliveryFailuresNotifyProducer = ETriState.TRUE;
+    return new PModeLegErrorHandling (aReportSenderErrorsTo,
+                                      aReportReceiverErrorsTo,
+                                      eReportAsResponse,
+                                      eReportProcessErrorNotifyConsumer,
+                                      eReportProcessErrorNotifyProducer,
+                                      eReportDeliveryFailuresNotifyProducer);
   }
 
   @Nonnull
