@@ -17,7 +17,6 @@
 package com.helger.as4.messaging.mime;
 
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import javax.activation.CommandInfo;
 import javax.activation.CommandMap;
@@ -38,7 +37,6 @@ import com.helger.as4.util.AS4XMLHelper;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttpHeader;
-import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.mail.cte.EContentTransferEncoding;
 
 public final class MimeMessageCreator
@@ -117,17 +115,6 @@ public final class MimeMessageCreator
     final MimeMessage aMsg = new MimeMessage ((Session) null);
     aMsg.setContent (aMimeMultipart);
     aMsg.saveChanges ();
-
-    if (false)
-      try (final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ())
-      {
-        aMsg.writeTo (aBAOS);
-        final String s = aBAOS.getAsString (StandardCharsets.UTF_8);
-        if (s.length () > 0)
-          System.out.println (s);
-      }
-      catch (final Throwable t)
-      {}
 
     return aMsg;
   }

@@ -256,7 +256,19 @@ public class WSS4JAttachment extends Attachment
 
     final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
 
-    aMimeBodyPart.setHeader (CHttpHeader.CONTENT_ID, getId ());
+    {
+      // According to
+      // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
+      // chapter 5.2 the CID must be enclosed in angle brackets
+      String sContentID = getId ();
+      if (StringHelper.hasText (sContentID))
+      {
+        if (sContentID.charAt (0) != '<')
+          sContentID = '<' + sContentID + '>';
+        aMimeBodyPart.setHeader (CHttpHeader.CONTENT_ID, sContentID);
+      }
+    }
+
     // !IMPORTANT! DO NOT CHANGE the order of the adding a DH and then the last
     // headers
     // On some tests the datahandler did reset content-type and transfer
@@ -294,7 +306,7 @@ public class WSS4JAttachment extends Attachment
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
                            "attachment; filename=\"" + sFilename + "\"");
-    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + ">");
+    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + '>');
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, aAttachment.getMimeType ());
   }
 
@@ -435,7 +447,7 @@ public class WSS4JAttachment extends Attachment
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aBodyPart.getContentType ());
 
     {
-      // Reference in header is: <ID>
+      // Reference in Content-ID header is: "<ID>"
       // See
       // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
       // chapter 5.2
@@ -498,7 +510,7 @@ public class WSS4JAttachment extends Attachment
 
     // These headers are mandatory and overwrite headers from the MIME body part
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + ">");
+    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + '>');
     ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
 
     return ret;
