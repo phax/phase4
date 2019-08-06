@@ -60,6 +60,7 @@ import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.IKeyStoreType;
@@ -552,24 +553,27 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   @Nonnull
-  private HttpEntity _createDumpingEntity (@Nonnull final HttpEntity aSrcEntity,
+  private HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aDumper,
+                                           @Nonnull final HttpEntity aSrcEntity,
                                            @Nonnull @Nonempty final String sMessageID,
-                                           @Nullable final HttpHeaderMap aCustomHeaders) throws IOException
+                                           @Nullable final HttpHeaderMap aCustomHeaders,
+                                           @Nonnegative final int nTry,
+                                           @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
-    final IAS4OutgoingDumper aDumper = AS4DumpManager.getOutgoingDumper ();
     if (aDumper == null)
     {
-      // No dumper present
+      // No dumper
       return aSrcEntity;
     }
 
-    final OutputStream aDumpOS = aDumper.onNewRequest (sMessageID, aCustomHeaders);
+    final OutputStream aDumpOS = aDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
     if (aDumpOS == null)
     {
       // No dumping needed
       return aSrcEntity;
     }
 
+    aDumpOSHolder.set (aDumpOS);
     return new HttpEntityWrapper (aSrcEntity)
     {
       @Override
@@ -581,20 +585,11 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       @Override
       public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
       {
-        try
-        {
-          final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
-          // write to both stream
-          super.writeTo (aMultiOS);
-          // Flush both, but do not close both
-          aMultiOS.flush ();
-        }
-        finally
-        {
-          // Close only the dumping OS here - the HTTP OS is closed by the
-          // caller
-          StreamHelper.close (aDumpOS);
-        }
+        final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
+        // write to both stream
+        super.writeTo (aMultiOS);
+        // Flush both, but do not close both
+        aMultiOS.flush ();
       }
     };
   }
@@ -628,51 +623,92 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
+    final HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
 
-    if (m_nMaxRetries > 0)
+    final IAS4OutgoingDumper aDumper = AS4DumpManager.getOutgoingDumper ();
+    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+    try
     {
-      // Send with retry
-
-      // Ensure a repeatable entity is provided
-      final HttpEntity aRepeatableEntity = _createRepeatableEntity (aBuiltMsg.getHttpEntity ());
-
-      final HttpEntity aEntity = _createDumpingEntity (aRepeatableEntity, sMessageID, aBuiltMsg.getCustomHeaders ());
-
-      final int nMaxTries = 1 + m_nMaxRetries;
-      for (int nTry = 0; nTry < nMaxTries; nTry++)
+      if (m_nMaxRetries > 0)
       {
-        if (nTry > 0)
+        // Send with retry
+
+        // Ensure a repeatable entity is provided
+        final HttpEntity aRepeatableEntity = _createRepeatableEntity (aBuiltEntity);
+
+        final int nMaxTries = 1 + m_nMaxRetries;
+        for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
-          final int nRetry = nTry;
-          AS4HttpDebug.debug ( () -> "Retry #" + nRetry + " for sending message");
+          if (nTry > 0)
+          {
+            final int nRetry = nTry;
+            AS4HttpDebug.debug ( () -> "Retry #" + nRetry + " for sending message");
+          }
+
+          try
+          {
+            // Create a new one every time
+            final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
+                                                                    aRepeatableEntity,
+                                                                    sMessageID,
+                                                                    aBuiltMsg.getCustomHeaders (),
+                                                                    nTry,
+                                                                    aDumpOSHolder);
+
+            // Dump only for the first try - the remaining tries
+            final T aResponse = sendGenericMessage (sURL,
+                                                    aDumpingEntity,
+                                                    aBuiltMsg.getCustomHeaders (),
+                                                    aResponseHandler);
+            return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+          }
+          catch (final IOException ex)
+          {
+            // Last try? -> propagate exception
+            if (nTry == nMaxTries - 1)
+              throw ex;
+
+            // Sleep and try again afterwards
+            ThreadHelper.sleep (m_nRetryIntervalMS);
+          }
+          finally
+          {
+            // Close the dump output stream (if any)
+            StreamHelper.close (aDumpOSHolder.get ());
+          }
         }
+        throw new IllegalStateException ("Should never be reached (after " + nMaxTries + " max tries)!");
+      }
+      else
+      {
+        final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
+                                                                aBuiltEntity,
+                                                                sMessageID,
+                                                                aBuiltMsg.getCustomHeaders (),
+                                                                0,
+                                                                aDumpOSHolder);
 
         try
         {
-          final T aResponse = sendGenericMessage (sURL, aEntity, aBuiltMsg.getCustomHeaders (), aResponseHandler);
+          // Send without retry
+          final T aResponse = sendGenericMessage (sURL,
+                                                  aDumpingEntity,
+                                                  aBuiltMsg.getCustomHeaders (),
+                                                  aResponseHandler);
           return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
         }
-        catch (final IOException ex)
+        finally
         {
-          // Last try? -> propagate exception
-          if (nTry == nMaxTries - 1)
-            throw ex;
-
-          // Sleep and try again
-          ThreadHelper.sleep (m_nRetryIntervalMS);
+          // Close the dump output stream (if any)
+          StreamHelper.close (aDumpOSHolder.get ());
         }
       }
-      throw new IllegalStateException ("Should never be reached (after " + nMaxTries + " max tries)!");
     }
-    else
+    finally
     {
-      final HttpEntity aEntity = _createDumpingEntity (aBuiltMsg.getHttpEntity (),
-                                                       sMessageID,
-                                                       aBuiltMsg.getCustomHeaders ());
-
-      // Send without retry
-      final T aResponse = sendGenericMessage (sURL, aEntity, aBuiltMsg.getCustomHeaders (), aResponseHandler);
-      return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+      // Add the possibility to close open resources
+      if (aDumper != null)
+        aDumper.onEndRequest (sMessageID);
     }
   }
 

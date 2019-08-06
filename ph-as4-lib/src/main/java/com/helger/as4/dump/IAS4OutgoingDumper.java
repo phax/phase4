@@ -18,7 +18,9 @@ package com.helger.as4.dump;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +33,7 @@ import com.helger.commons.http.HttpHeaderMap;
  * @author Philip Helger
  * @since 0.9.0
  */
-public interface IAS4OutgoingDumper
+public interface IAS4OutgoingDumper extends Serializable
 {
   /**
    * Called for new requests.
@@ -41,12 +43,26 @@ public interface IAS4OutgoingDumper
    *        nor empty.
    * @param Custom
    *        headers to be added to the HTTP entity. May be <code>null</code>.
+   * @param nTry
+   *        The index of the try. The first try has always index 0, the first
+   *        retry has index 1, the second retry has index 2 etc. Always &ge; 0.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte
    *         written to the target stream is also written to that output stream.
    * @throws IOException
    *         in case of an error
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull @Nonempty String sMessageID,
-                             @Nullable HttpHeaderMap aCustomHeaders) throws IOException;
+  OutputStream onBeginRequest (@Nonnull @Nonempty String sMessageID,
+                               @Nullable HttpHeaderMap aCustomHeaders,
+                               @Nonnegative int nTry) throws IOException;
+
+  /**
+   * Called after the request is finished. Can e.g. be used to cleanup resources
+   * belonging to the message. This method may not throw an exception.
+   *
+   * @param sMessageID
+   *        The message ID for which something happens
+   */
+  default void onEndRequest (@Nonnull @Nonempty final String sMessageID)
+  {}
 }

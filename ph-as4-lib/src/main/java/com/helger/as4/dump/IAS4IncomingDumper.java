@@ -18,6 +18,7 @@ package com.helger.as4.dump;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Philip Helger
  * @since 0.9.0
  */
-public interface IAS4IncomingDumper
+public interface IAS4IncomingDumper extends Serializable
 {
   /**
    * Called for new requests.
