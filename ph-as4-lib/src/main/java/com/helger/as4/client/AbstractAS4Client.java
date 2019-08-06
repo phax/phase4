@@ -18,6 +18,7 @@ package com.helger.as4.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.annotation.Nonnegative;
@@ -25,13 +26,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.HttpEntityWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.as4.crypto.AS4SigningParams;
+import com.helger.as4.dump.AS4DumpManager;
+import com.helger.as4.dump.IAS4OutgoingDumper;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
 import com.helger.as4.model.pmode.IPMode;
@@ -39,6 +46,7 @@ import com.helger.as4.model.pmode.PModeReceptionAwareness;
 import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceHelper;
+import com.helger.as4.util.MultiOutputStream;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -46,8 +54,10 @@ import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
@@ -70,6 +80,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
   public static final int DEFAULT_MAX_RETRIES = 0;
   public static final long DEFAULT_RETRY_INTERVAL_MS = 12_000;
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Client.class);
 
   /**
    * @return The default message ID factory to be used.
@@ -512,6 +523,82 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public abstract AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty String sMessageID,
                                                       @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
+  @Nonnull
+  private HttpEntity _createRepeatableEntity (@Nonnull final HttpEntity aSrcEntity) throws IOException
+  {
+    if (aSrcEntity.isRepeatable ())
+      return aSrcEntity;
+
+    // First serialize the content once to a file, so that a repeatable entity
+    // can be created
+    final File aTempFile = m_aResHelper.createTempFile ();
+
+    LOGGER.info ("Converting " +
+                 aSrcEntity +
+                 " to a repeatable HTTP entity using file " +
+                 aTempFile.getAbsolutePath ());
+
+    try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
+    {
+      aSrcEntity.writeTo (aOS);
+    }
+
+    // Than use the FileEntity as the basis
+    final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
+    aRepeatableEntity.setContentType (aSrcEntity.getContentType ());
+    aRepeatableEntity.setContentEncoding (aSrcEntity.getContentEncoding ());
+    aRepeatableEntity.setChunked (aSrcEntity.isChunked ());
+    return aRepeatableEntity;
+  }
+
+  @Nonnull
+  private HttpEntity _createDumpingEntity (@Nonnull final HttpEntity aSrcEntity,
+                                           @Nonnull @Nonempty final String sMessageID,
+                                           @Nullable final HttpHeaderMap aCustomHeaders) throws IOException
+  {
+    final IAS4OutgoingDumper aDumper = AS4DumpManager.getOutgoingDumper ();
+    if (aDumper == null)
+    {
+      // No dumper present
+      return aSrcEntity;
+    }
+
+    final OutputStream aDumpOS = aDumper.onNewRequest (sMessageID, aCustomHeaders);
+    if (aDumpOS == null)
+    {
+      // No dumping needed
+      return aSrcEntity;
+    }
+
+    return new HttpEntityWrapper (aSrcEntity)
+    {
+      @Override
+      public InputStream getContent () throws IOException
+      {
+        throw new UnsupportedOperationException ();
+      }
+
+      @Override
+      public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
+      {
+        try
+        {
+          final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
+          // write to both stream
+          super.writeTo (aMultiOS);
+          // Flush both, but do not close both
+          aMultiOS.flush ();
+        }
+        finally
+        {
+          // Close only the dumping OS here - the HTTP OS is closed by the
+          // caller
+          StreamHelper.close (aDumpOS);
+        }
+      }
+    };
+  }
+
   /**
    * Send the AS4 client message created by
    * {@link #buildMessage(IAS4ClientBuildMessageCallback)} to the provided URL.
@@ -546,18 +633,10 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     {
       // Send with retry
 
-      // First serialize the content once to a file, so that a repeatable entity
-      // can be created
-      final File aTempFile = m_aResHelper.createTempFile ();
-      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
-      {
-        aBuiltMsg.getHttpEntity ().writeTo (aOS);
-      }
+      // Ensure a repeatable entity is provided
+      final HttpEntity aRepeatableEntity = _createRepeatableEntity (aBuiltMsg.getHttpEntity ());
 
-      // Than use the FileEntity as the basis
-      final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
-      aRepeatableEntity.setContentType (aBuiltMsg.getHttpEntity ().getContentType ());
-      aRepeatableEntity.setContentEncoding (aBuiltMsg.getHttpEntity ().getContentEncoding ());
+      final HttpEntity aEntity = _createDumpingEntity (aRepeatableEntity, sMessageID, aBuiltMsg.getCustomHeaders ());
 
       final int nMaxTries = 1 + m_nMaxRetries;
       for (int nTry = 0; nTry < nMaxTries; nTry++)
@@ -570,10 +649,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
         try
         {
-          final T aResponse = sendGenericMessage (sURL,
-                                                  aRepeatableEntity,
-                                                  aBuiltMsg.getCustomHeaders (),
-                                                  aResponseHandler);
+          final T aResponse = sendGenericMessage (sURL, aEntity, aBuiltMsg.getCustomHeaders (), aResponseHandler);
           return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
         }
         catch (final IOException ex)
@@ -590,11 +666,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     }
     else
     {
+      final HttpEntity aEntity = _createDumpingEntity (aBuiltMsg.getHttpEntity (),
+                                                       sMessageID,
+                                                       aBuiltMsg.getCustomHeaders ());
+
       // Send without retry
-      final T aResponse = sendGenericMessage (sURL,
-                                              aBuiltMsg.getHttpEntity (),
-                                              aBuiltMsg.getCustomHeaders (),
-                                              aResponseHandler);
+      final T aResponse = sendGenericMessage (sURL, aEntity, aBuiltMsg.getCustomHeaders (), aResponseHandler);
       return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
     }
   }

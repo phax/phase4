@@ -53,6 +53,8 @@ import com.helger.as4.client.BasicHttpPoster;
 import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.crypto.AS4SigningParams;
+import com.helger.as4.dump.AS4DumpManager;
+import com.helger.as4.dump.IAS4IncomingDumper;
 import com.helger.as4.error.EEbmsError;
 import com.helger.as4.http.AS4HttpDebug;
 import com.helger.as4.http.HttpMimeMessageEntity;
@@ -74,8 +76,6 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.as4.profile.IAS4ProfileValidator;
-import com.helger.as4.servlet.dump.AS4DumpManager;
-import com.helger.as4.servlet.dump.IAS4IncomingDumper;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServletMessageProcessorManager;
 import com.helger.as4.servlet.soap.AS4SingleSOAPHeader;
@@ -278,7 +278,10 @@ public class AS4RequestHandler implements AutoCloseable
         aIncomingAttachment.setSourceStreamProvider (new HasInputStream ( () -> {
           try
           {
-            return eCompressionMode.getDecompressStream (aOldISP.getInputStream ());
+            final InputStream aSrcIS = aOldISP.getInputStream ();
+            if (aSrcIS == null)
+              throw new IllegalStateException ("Failed to create InputStream from " + aOldISP);
+            return eCompressionMode.getDecompressStream (aSrcIS);
           }
           catch (final IOException ex)
           {

@@ -26,7 +26,7 @@ import com.helger.as4.util.AS4XMLHelper;
 
 /**
  * Special HttpClient HTTP POST entity that contains a DOM Node as a serialized
- * String.
+ * String. This entity is repeatable.
  *
  * @author Philip Helger
  */

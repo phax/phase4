@@ -37,6 +37,7 @@ import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.NonBlockingStringWriter;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
+import com.helger.xml.serialize.write.EXMLSerializeXMLDeclaration;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
@@ -52,6 +53,7 @@ public final class AS4XMLHelper
   {
     XWS.setNamespaceContext (new Ebms3NamespaceHandler ());
     XWS.setIndent (EXMLSerializeIndent.NONE);
+    XWS.setSerializeXMLDeclaration (EXMLSerializeXMLDeclaration.EMIT_NO_STANDALONE);
   }
 
   private AS4XMLHelper ()

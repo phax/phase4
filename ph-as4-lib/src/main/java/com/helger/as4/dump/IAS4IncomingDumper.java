@@ -1,4 +1,4 @@
-package com.helger.as4.servlet.dump;
+package com.helger.as4.dump;
 
 import java.io.IOException;
 import java.io.OutputStream;
