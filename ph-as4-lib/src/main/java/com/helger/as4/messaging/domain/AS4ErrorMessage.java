@@ -17,6 +17,7 @@
 package com.helger.as4.messaging.domain;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4lib.ebms3header.Ebms3Error;
@@ -62,9 +63,11 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 
   @Nonnull
   public static AS4ErrorMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+                                        @Nullable final String sRefToMessageID,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
-    return create (eSOAPVersion, MessageHelperMethods.createEbms3MessageInfo (), aErrorMessages);
+    final Ebms3MessageInfo aMessageInfo = MessageHelperMethods.createEbms3MessageInfo (sRefToMessageID);
+    return create (eSOAPVersion, aMessageInfo, aErrorMessages);
   }
 
   @Nonnull

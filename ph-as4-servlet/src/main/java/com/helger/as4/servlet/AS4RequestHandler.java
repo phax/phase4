@@ -1071,15 +1071,15 @@ public class AS4RequestHandler implements AutoCloseable
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     final boolean bIsEffectiveLeg1 = aState.getEffectivePModeLegNumber () == 1;
-    Ebms3UserMessage aEbmsUserMessage = null;
-    Ebms3SignalMessage aEbmsSignalMessage = null;
-    Ebms3Error aEbmsError = null;
+    final Ebms3UserMessage aEbmsUserMessage;
+    final Ebms3SignalMessage aEbmsSignalMessage;
+    final Ebms3Error aEbmsError;
     Node aPayloadNode = null;
-    ICommonsList <WSS4JAttachment> aDecryptedAttachments = null;
+    final ICommonsList <WSS4JAttachment> aDecryptedAttachments;
     // Storing for two-way response messages
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
     boolean bCanInvokeSPIs = false;
-    String sMessageID = null;
+    final String sMessageID;
     String sProfileID = null;
 
     if (aErrorMessages.isEmpty ())
@@ -1094,7 +1094,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                      .getSignalMessageAtIndex (0)
                                                                              : null;
       aEbmsError = aEbmsSignalMessage != null &&
-                   !aEbmsSignalMessage.getError ().isEmpty () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+                   aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
 
       final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
                                                                            : null;
@@ -1228,6 +1228,14 @@ public class AS4RequestHandler implements AutoCloseable
         }
       }
     }
+    else
+    {
+      aEbmsUserMessage = null;
+      aEbmsSignalMessage = null;
+      aEbmsError = null;
+      aDecryptedAttachments = null;
+      sMessageID = null;
+    }
 
     final SPIInvocationResult aSPIResult = new SPIInvocationResult ();
     if (bCanInvokeSPIs)
@@ -1317,7 +1325,9 @@ public class AS4RequestHandler implements AutoCloseable
             // SPI processing failed
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
-            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aLocalErrorMessages);
+            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSOAPVersion,
+                                                                              sMessageID,
+                                                                              aLocalErrorMessages);
             aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
           }
 
@@ -1353,7 +1363,7 @@ public class AS4RequestHandler implements AutoCloseable
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aErrorMessages);
+          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, sMessageID, aErrorMessages);
           return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
         }
         LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");

@@ -86,7 +86,8 @@ public final class MockMessages
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, aEbms3ErrorList).setMustUnderstand (true);
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
+                                                     .setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
                                                                aErrorMsg.getAsSOAPDocument (),
                                                                eSOAPVersion,
