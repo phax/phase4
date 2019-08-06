@@ -596,9 +596,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * Send the AS4 client message created by
-   * {@link #buildMessage(IAS4ClientBuildMessageCallback)} to the provided URL.
-   * This methods does take retries into account. It synchronously handles the
-   * retries and only returns after the last retry.
+   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
+   * provided URL. This methods does take retries into account. It synchronously
+   * handles the retries and only returns after the last retry.
    *
    * @param <T>
    *        The response data type
