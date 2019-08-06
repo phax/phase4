@@ -53,6 +53,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.url.EURLProtocol;
 import com.helger.datetime.util.PDTXMLConverter;
 
 /**
@@ -68,7 +69,7 @@ public final class MessageHelperMethods
   public static final String PART_PROPERTY_MIME_TYPE = "MimeType";
   public static final String PART_PROPERTY_CHARACTER_SET = "CharacterSet";
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
-  public static final String PREFIX_CID = "cid:";
+  public static final String PREFIX_CID = EURLProtocol.CID.getProtocol ();
 
   private MessageHelperMethods ()
   {}

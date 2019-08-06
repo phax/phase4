@@ -16,6 +16,7 @@ It consists of the following sub-projects:
     * Updated to WSS4J 2.2.4
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
+    * Updated to ph-commons 9.3.5
     * The submodule `ph-as4-esens` was renamed to `ph-as4-profile-cef`
     * The AS4 message handler now have a chance to access the received HTTP headers
     * Renamed `ph-as4-server-webapp-test` to `ph-as4-test`
