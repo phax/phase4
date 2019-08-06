@@ -17,4 +17,24 @@
     limitations under the License.
 
 -->
-<S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope"><S12:Header><eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink"><eb:SignalMessage><eb:MessageInfo><eb:Timestamp>2017-06-13T11:39:52.967</eb:Timestamp><eb:MessageId>ph-as4@e348b6f9-bea5-422b-972a-90</eb:MessageId></eb:MessageInfo><eb:Error category="Content" errorCode="EBMS:0001" refToMessageInError="" severity="failure" shortDescription="ValueNotRecognized"><eb:ErrorDetail>Although the message document is well formed and schema valid, some element/attribute contains a value that could not be recognized and therefore could not be used by the MSH.</eb:ErrorDetail></eb:Error></eb:SignalMessage></eb:Messaging></S12:Header><S12:Body/></S12:Envelope>
+<S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
+  <S12:Header>
+    <eb:Messaging xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+      xmlns:eb="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+      xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <eb:SignalMessage>
+        <eb:MessageInfo>
+          <eb:Timestamp>2017-06-13T11:39:52.967</eb:Timestamp>
+          <eb:MessageId>ph-as4@e348b6f9-bea5-422b-972a-90</eb:MessageId>
+        </eb:MessageInfo>
+        <eb:Error category="Content" errorCode="EBMS:0001" refToMessageInError="" severity="failure"
+          shortDescription="ValueNotRecognized">
+          <eb:ErrorDetail>Although the message document is well formed and schema valid, some element/attribute contains
+            a value that could not be recognized and therefore could not be used by the MSH.</eb:ErrorDetail>
+        </eb:Error>
+      </eb:SignalMessage>
+    </eb:Messaging>
+  </S12:Header>
+  <S12:Body />
+</S12:Envelope>

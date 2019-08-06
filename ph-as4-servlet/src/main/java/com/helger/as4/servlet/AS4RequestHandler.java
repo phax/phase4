@@ -510,7 +510,6 @@ public class AS4RequestHandler implements AutoCloseable
                            "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aUserMessage != null;
-
     final String sMessageID = bIsUserMessage ? aUserMessage.getMessageInfo ().getMessageId ()
                                              : aSignalMessage.getMessageInfo ().getMessageId ();
 
@@ -1074,12 +1073,11 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3UserMessage aEbmsUserMessage;
     final Ebms3SignalMessage aEbmsSignalMessage;
     final Ebms3Error aEbmsError;
-    Node aPayloadNode = null;
+    final Node aPayloadNode;
     final ICommonsList <WSS4JAttachment> aDecryptedAttachments;
     // Storing for two-way response messages
     final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
     boolean bCanInvokeSPIs = false;
-    final String sMessageID;
     String sProfileID = null;
 
     if (aErrorMessages.isEmpty ())
@@ -1125,6 +1123,7 @@ public class AS4RequestHandler implements AutoCloseable
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                 : aState.getOriginalAttachments ();
 
+      final String sMessageID;
       if (aEbmsUserMessage != null)
       {
         // User message requires PMode
@@ -1233,8 +1232,8 @@ public class AS4RequestHandler implements AutoCloseable
       aEbmsUserMessage = null;
       aEbmsSignalMessage = null;
       aEbmsError = null;
+      aPayloadNode = null;
       aDecryptedAttachments = null;
-      sMessageID = null;
     }
 
     final SPIInvocationResult aSPIResult = new SPIInvocationResult ();
@@ -1326,7 +1325,7 @@ public class AS4RequestHandler implements AutoCloseable
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSOAPVersion,
-                                                                              sMessageID,
+                                                                              aState.getRefToMessageID (),
                                                                               aLocalErrorMessages);
             aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
           }
@@ -1363,7 +1362,9 @@ public class AS4RequestHandler implements AutoCloseable
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, sMessageID, aErrorMessages);
+          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion,
+                                                                    aState.getRefToMessageID (),
+                                                                    aErrorMessages);
           return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
         }
         LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
