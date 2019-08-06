@@ -672,6 +672,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
           finally
           {
             // Close the dump output stream (if any)
+            StreamHelper.flush (aDumpOSHolder.get ());
             StreamHelper.close (aDumpOSHolder.get ());
           }
         }
@@ -698,6 +699,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         finally
         {
           // Close the dump output stream (if any)
+          StreamHelper.flush (aDumpOSHolder.get ());
           StreamHelper.close (aDumpOSHolder.get ());
         }
       }
