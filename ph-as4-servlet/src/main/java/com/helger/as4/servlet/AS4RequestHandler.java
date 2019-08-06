@@ -18,6 +18,7 @@ package com.helger.as4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -73,6 +74,8 @@ import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.as4.profile.IAS4Profile;
 import com.helger.as4.profile.IAS4ProfileValidator;
+import com.helger.as4.servlet.dump.AS4DumpManager;
+import com.helger.as4.servlet.dump.IAS4IncomingDumper;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.mgr.AS4ServletMessageProcessorManager;
 import com.helger.as4.servlet.soap.AS4SingleSOAPHeader;
@@ -110,6 +113,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.io.stream.WrappedInputStream;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeType;
@@ -1464,7 +1468,53 @@ public class AS4RequestHandler implements AutoCloseable
   private static InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
   {
     final InputStream aIS = aHttpServletRequest.getInputStream ();
-    return aIS;
+    final IAS4IncomingDumper aDumper = AS4DumpManager.getIncomingDumper ();
+    if (aDumper == null)
+    {
+      // No wrapping needed
+      return aIS;
+    }
+
+    // Dump worthy?
+    final OutputStream aOS = aDumper.onNewRequest (aHttpServletRequest);
+    if (aOS == null)
+    {
+      // No wrapping needed
+      return aIS;
+    }
+
+    return new WrappedInputStream (aIS)
+    {
+      @Override
+      public int read () throws IOException
+      {
+        final int ret = super.read ();
+        if (ret != -1)
+        {
+          aOS.write (ret & 0xff);
+        }
+        return ret;
+      }
+
+      @Override
+      public int read (final byte [] b, final int nOffset, final int nLength) throws IOException
+      {
+        final int ret = super.read (b, nOffset, nLength);
+        if (ret != -1)
+        {
+          aOS.write (b, nOffset, ret);
+        }
+        return ret;
+      }
+
+      @Override
+      public void close () throws IOException
+      {
+        // Flush and close output stream as well
+        StreamHelper.close (aOS);
+        super.close ();
+      }
+    };
   }
 
   @Nonnull
