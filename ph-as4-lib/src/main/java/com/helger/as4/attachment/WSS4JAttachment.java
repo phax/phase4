@@ -242,9 +242,9 @@ public class WSS4JAttachment extends Attachment
   }
 
   @Nonnull
-  public final WSS4JAttachment setCharset (@Nonnull final Charset aCharset)
+  public final WSS4JAttachment setCharset (@Nullable final Charset aCharset)
   {
-    m_aCharset = ValueEnforcer.notNull (aCharset, "Charset");
+    m_aCharset = aCharset;
     return this;
   }
 
