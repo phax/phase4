@@ -481,16 +481,16 @@ public class AS4RequestHandler implements AutoCloseable
    *        May be <code>null</code>.
    * @param aDecryptedAttachments
    *        Original attachments from source message. May be <code>null</code>.
+   * @param aPMode
+   *        PMode to be used - may be <code>null</code> for Receipt messages.
+   * @param aState
+   *        The current state. Never <code>null</<code></code>.
    * @param aErrorMessages
    *        The list of error messages to be filled if something goes wrong.
    *        Never <code>null</code>.
    * @param aResponseAttachments
    *        The list of attachments to be added to the response. Never
    *        <code>null</code>.
-   * @param aPMode
-   *        PMode to be used - may be <code>null</code> for Receipt messages.
-   * @param aState
-   *        The current state. Never <code>null</<code></code>.
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
@@ -499,10 +499,10 @@ public class AS4RequestHandler implements AutoCloseable
                             @Nullable final Ebms3SignalMessage aSignalMessage,
                             @Nullable final Node aPayloadNode,
                             @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
-                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                             @Nullable final IPMode aPMode,
                             @Nonnull final IAS4MessageState aState,
+                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
+                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                             @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
@@ -1255,10 +1255,10 @@ public class AS4RequestHandler implements AutoCloseable
                      aEbmsSignalMessage,
                      aPayloadNode,
                      aDecryptedAttachments,
-                     aErrorMessages,
-                     aResponseAttachments,
                      aPMode,
                      aState,
+                     aErrorMessages,
+                     aResponseAttachments,
                      aSPIResult);
         if (aSPIResult.isFailure ())
           LOGGER.warn ("Error invoking synchronous SPIs");
@@ -1288,10 +1288,10 @@ public class AS4RequestHandler implements AutoCloseable
                        aFinalSignalMessage,
                        aFinalPayloadNode,
                        aFinalDecryptedAttachments,
-                       aLocalErrorMessages,
-                       aLocalResponseAttachments,
                        aPMode,
                        aState,
+                       aLocalErrorMessages,
+                       aLocalResponseAttachments,
                        aAsyncSPIResult);
           if (aAsyncSPIResult.isSuccess ())
           {
