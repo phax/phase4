@@ -533,6 +533,7 @@ public class AS4RequestHandler implements AutoCloseable
 
           // Main processing
           final AS4MessageProcessorResult aResult;
+          final ICommonsList <Ebms3Error> aProcessingErrorMessages = new CommonsArrayList <> ();
           if (bIsUserMessage)
           {
             aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
@@ -540,16 +541,28 @@ public class AS4RequestHandler implements AutoCloseable
                                                         aPMode,
                                                         aPayloadNode,
                                                         aDecryptedAttachments,
-                                                        aState);
+                                                        aState,
+                                                        aProcessingErrorMessages);
           }
           else
           {
-            aResult = aProcessor.processAS4SignalMessage (aHttpHeaders, aSignalMessage, aPMode, aState);
+            aResult = aProcessor.processAS4SignalMessage (aHttpHeaders,
+                                                          aSignalMessage,
+                                                          aPMode,
+                                                          aState,
+                                                          aProcessingErrorMessages);
           }
 
           // Result returned?
           if (aResult == null)
             throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
+
+          if (aProcessingErrorMessages.isNotEmpty ())
+          {
+            aErrorMessages.addAll (aProcessingErrorMessages);
+            // Stop processing
+            return;
+          }
 
           if (aResult.isFailure ())
           {

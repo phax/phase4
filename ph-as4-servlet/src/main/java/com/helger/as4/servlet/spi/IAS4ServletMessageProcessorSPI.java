@@ -26,6 +26,7 @@ import org.w3c.dom.Node;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.servlet.IAS4MessageState;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
@@ -61,6 +62,9 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the incoming message. Never
    *        <code>null</code>.
+   * @param aProcessingErrorMessages
+   *        List for error messages that occur during processing. Never
+   *        <code>null</code>.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
@@ -69,7 +73,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
                                                    @Nullable ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                   @Nonnull IAS4MessageState aState);
+                                                   @Nonnull IAS4MessageState aState,
+                                                   @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 
   /**
    * Process incoming AS4 signal message - pull-request and receipt.<br>
@@ -87,11 +92,15 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the incoming message. Never
    *        <code>null</code>.
+   * @param aProcessingErrorMessages
+   *        List for error messages that occur during processing. Never
+   *        <code>null</code>.
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
   AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull HttpHeaderMap aHttpHeaders,
                                                            @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
-                                                           @Nonnull IAS4MessageState aState);
+                                                           @Nonnull IAS4MessageState aState,
+                                                           @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
 }

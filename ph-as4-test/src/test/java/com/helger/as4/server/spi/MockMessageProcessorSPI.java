@@ -34,6 +34,7 @@ import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
 import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
 import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
@@ -66,7 +67,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4MessageState aState)
+                                                          @Nonnull final IAS4MessageState aState,
+                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
     {
@@ -82,7 +84,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4MessageState aState)
+                                                                  @Nonnull final IAS4MessageState aState,
+                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aSignalMessage.getReceipt () != null)
     {

@@ -29,6 +29,7 @@ import com.helger.as4.servlet.IAS4MessageState;
 import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.as4lib.ebms3header.Ebms3Error;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
@@ -51,7 +52,8 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
                                                           @Nullable final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                          @Nonnull final IAS4MessageState aState)
+                                                          @Nonnull final IAS4MessageState aState,
+                                                          @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     LOGGER.info ("Received AS4 user message");
 
@@ -62,7 +64,8 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
   public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
-                                                                  @Nonnull final IAS4MessageState aState)
+                                                                  @Nonnull final IAS4MessageState aState,
+                                                                  @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
     if (aSignalMessage.getReceipt () != null)
     {

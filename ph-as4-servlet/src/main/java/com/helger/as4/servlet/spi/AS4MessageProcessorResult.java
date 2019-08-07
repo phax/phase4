@@ -69,22 +69,22 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
     return m_sErrorMsg;
   }
 
-  public boolean hasAttachments ()
-  {
-    return CollectionHelper.isNotEmpty (m_aAttachments);
-  }
-
-  public void addAllAttachmentsTo (@Nonnull final Collection <WSS4JAttachment> aTarget)
-  {
-    if (m_aAttachments != null)
-      aTarget.addAll (m_aAttachments);
-  }
-
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <WSS4JAttachment> getAllAttachments ()
   {
     return new CommonsArrayList <> (m_aAttachments);
+  }
+
+  public boolean hasAttachments ()
+  {
+    return CollectionHelper.isNotEmpty (m_aAttachments);
+  }
+
+  public void addAllAttachmentsTo (@Nonnull final Collection <? super WSS4JAttachment> aTarget)
+  {
+    if (m_aAttachments != null)
+      aTarget.addAll (m_aAttachments);
   }
 
   @Nullable
