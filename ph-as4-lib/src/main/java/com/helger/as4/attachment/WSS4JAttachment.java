@@ -173,6 +173,11 @@ public class WSS4JAttachment extends Attachment
     return m_aISP;
   }
 
+  public boolean isRepeatable ()
+  {
+    return m_aISP != null && m_aISP.isReadMultiple ();
+  }
+
   public void setSourceStreamProvider (@Nonnull final IHasInputStream aISP)
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");

@@ -16,8 +16,6 @@
  */
 package com.helger.as4.server.external;
 
-import javax.mail.internet.MimeMessage;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -34,6 +32,7 @@ import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
@@ -123,7 +122,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                false,
                                                                AS4SigningParams.createDefault ());
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSignedDoc, aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSignedDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 }

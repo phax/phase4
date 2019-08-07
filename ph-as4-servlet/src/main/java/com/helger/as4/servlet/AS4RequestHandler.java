@@ -30,7 +30,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -64,6 +63,7 @@ import com.helger.as4.messaging.domain.AS4ReceiptMessage;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.EAS4MessageType;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.mgr.MetaAS4Manager;
 import com.helger.as4.model.EMEPBinding;
@@ -174,10 +174,10 @@ public class AS4RequestHandler implements AutoCloseable
 
   private static final class AS4ResponseFactoryMIME implements IAS4ResponseFactory
   {
-    private final MimeMessage m_aMimeMsg;
+    private final AS4MimeMessage m_aMimeMsg;
     private final HttpHeaderMap m_aHeaders;
 
-    public AS4ResponseFactoryMIME (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
+    public AS4ResponseFactoryMIME (@Nonnull final AS4MimeMessage aMimeMsg) throws MessagingException
     {
       ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
       m_aMimeMsg = aMimeMsg;
@@ -949,13 +949,13 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws WSSecurityException
    */
   @Nonnull
-  private MimeMessage _createMimeMessageForResponse (@Nonnull final Document aResponseDoc,
-                                                     @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                     @Nonnull final ESOAPVersion eSoapVersion,
-                                                     @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
-                                                                                                MessagingException
+  private AS4MimeMessage _createMimeMessageForResponse (@Nonnull final Document aResponseDoc,
+                                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                                        @Nonnull final ESOAPVersion eSoapVersion,
+                                                        @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
+                                                                                                   MessagingException
   {
-    final MimeMessage aMimeMsg;
+    final AS4MimeMessage aMimeMsg;
     if (aCryptParms.isCryptEnabled (LOGGER::warn))
     {
       final boolean bMustUnderstand = true;
@@ -1022,10 +1022,10 @@ public class AS4RequestHandler implements AutoCloseable
     else
     {
       // Create (maybe encrypted) MIME message
-      final MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc,
-                                                                  aResponseAttachments,
-                                                                  eSoapVersion,
-                                                                  aCryptParams);
+      final AS4MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc,
+                                                                     aResponseAttachments,
+                                                                     eSoapVersion,
+                                                                     aCryptParams);
       ret = new AS4ResponseFactoryMIME (aMimeMsg);
     }
     return ret;

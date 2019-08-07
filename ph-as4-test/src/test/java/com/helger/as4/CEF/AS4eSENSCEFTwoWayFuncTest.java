@@ -18,8 +18,6 @@ package com.helger.as4.CEF;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.mail.internet.MimeMessage;
-
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -29,6 +27,7 @@ import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -94,12 +93,12 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            aAttachments,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               aAttachments,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 

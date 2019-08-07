@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
@@ -36,6 +35,7 @@ import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.as4.crypto.AS4CryptParams;
 import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.soap.ESOAPVersion;
 import com.helger.as4.util.AS4ResourceHelper;
@@ -110,14 +110,14 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  public static MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                @Nonnull final Document aDoc,
-                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4CryptoFactory aCryptoFactory,
-                                                final boolean bMustUnderstand,
-                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                            MessagingException
+  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                   @Nonnull final Document aDoc,
+                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                   @Nonnull final AS4CryptoFactory aCryptoFactory,
+                                                   final boolean bMustUnderstand,
+                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                               MessagingException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");

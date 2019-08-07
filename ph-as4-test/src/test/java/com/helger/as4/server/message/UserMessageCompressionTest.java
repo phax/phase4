@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -38,6 +37,7 @@ import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
@@ -73,12 +73,12 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                         MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
-                                                                                                                    null,
-                                                                                                                    aAttachments)
-                                                                                     .getAsSOAPDocument (),
-                                                                         aAttachments);
+    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                            MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                                                                       null,
+                                                                                                                       aAttachments)
+                                                                                        .getAsSOAPDocument (),
+                                                                            aAttachments);
 
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
@@ -101,7 +101,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          s_aResMgr,
                                                          false,
                                                          AS4SigningParams.createDefault ());
-    final MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
 
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
@@ -118,13 +118,13 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
                                       .getAsSOAPDocument ();
 
-    final MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
-                                                              aDoc,
-                                                              aAttachments,
-                                                              m_aCryptoFactory,
-                                                              false,
-                                                              s_aResMgr,
-                                                              m_aCryptParams);
+    final AS4MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
+                                                                 aDoc,
+                                                                 aAttachments,
+                                                                 m_aCryptoFactory,
+                                                                 false,
+                                                                 s_aResMgr,
+                                                                 m_aCryptParams);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 
@@ -147,13 +147,13 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                          false,
                                                          AS4SigningParams.createDefault ());
 
-    final MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
-                                                                  aDoc,
-                                                                  aAttachments,
-                                                                  m_aCryptoFactory,
-                                                                  false,
-                                                                  s_aResMgr,
-                                                                  m_aCryptParams);
+    final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
+                                                                     aDoc,
+                                                                     aAttachments,
+                                                                     m_aCryptoFactory,
+                                                                     false,
+                                                                     s_aResMgr,
+                                                                     m_aCryptParams);
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
   }
 
@@ -162,7 +162,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   {
     try (final InputStream aIS = ClassPathResource.getInputStream ("testfiles/WrongCompression.mime"))
     {
-      final MimeMessage aMsg = new MimeMessage (null, aIS);
+      final AS4MimeMessage aMsg = new AS4MimeMessage (null, aIS);
 
       sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
     }

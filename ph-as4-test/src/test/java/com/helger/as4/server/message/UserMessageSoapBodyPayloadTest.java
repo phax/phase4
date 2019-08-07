@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.mail.internet.MimeMessage;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -38,6 +37,7 @@ import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.http.HttpMimeMessageEntity;
 import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.messaging.crypto.AS4Encryptor;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
 import com.helger.as4.soap.ESOAPVersion;
@@ -94,12 +94,12 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   public void testUserMessageSOAPBodyPayloadSignedMimeSuccess () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     MockMessages.testSignedUserMessage (m_eSOAPVersion,
-                                                                                                         aPayload,
-                                                                                                         null,
-                                                                                                         s_aResMgr),
-                                                                     null);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        MockMessages.testSignedUserMessage (m_eSOAPVersion,
+                                                                                                            aPayload,
+                                                                                                            null,
+                                                                                                            s_aResMgr),
+                                                                        null);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));

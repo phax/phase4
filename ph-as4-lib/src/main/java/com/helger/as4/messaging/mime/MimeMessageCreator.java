@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -85,9 +84,9 @@ public final class MimeMessageCreator
   {}
 
   @Nonnull
-  public static MimeMessage generateMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
-                                                 @Nonnull final Document aSOAPEnvelope,
-                                                 @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
+  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+                                                    @Nonnull final Document aSOAPEnvelope,
+                                                    @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     ValueEnforcer.notNull (aSOAPEnvelope, "SOAPEnvelope");
@@ -98,21 +97,25 @@ public final class MimeMessageCreator
     final String sContentType = eSOAPVersion.getMimeType (aCharset).getAsString ();
 
     {
-      // Message Itself
+      // Message Itself (repeatable)
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
       aMessagePart.setContent (new DOMSource (aSOAPEnvelope), sContentType);
       aMessagePart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
 
+    boolean bIsRepeatable = true;
     if (aEncryptedAttachments != null)
       for (final WSS4JAttachment aEncryptedAttachment : aEncryptedAttachments)
       {
         aEncryptedAttachment.addToMimeMultipart (aMimeMultipart);
+        if (!aEncryptedAttachment.isRepeatable ())
+          bIsRepeatable = false;
       }
 
     // Build main message
-    final MimeMessage aMsg = new MimeMessage ((Session) null);
+    final AS4MimeMessage aMsg = new AS4MimeMessage ((Session) null);
+    aMsg.setRepeatable (bIsRepeatable);
     aMsg.setContent (aMimeMultipart);
     aMsg.saveChanges ();
 

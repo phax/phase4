@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
-import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +40,7 @@ import com.helger.as4.messaging.crypto.AS4Encryptor;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.model.pmode.leg.PModeLeg;
@@ -600,7 +600,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
     // 2. sign and/or encrpyt
     Document aDoc = aPureDoc;
-    MimeMessage aMimeMsg = null;
+    AS4MimeMessage aMimeMsg = null;
     if (bSign || bEncrypt)
     {
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +

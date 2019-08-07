@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Nonnull;
 import javax.mail.Multipart;
-import javax.mail.internet.MimeMessage;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -53,6 +52,7 @@ import com.helger.as4.messaging.crypto.AS4Encryptor;
 import com.helger.as4.messaging.crypto.AS4Signer;
 import com.helger.as4.messaging.domain.AS4UserMessage;
 import com.helger.as4.messaging.domain.MessageHelperMethods;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.soap.ESOAPVersion;
@@ -101,12 +101,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA01 () throws Exception
   {
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            null,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     null);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               null,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        null);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -192,12 +192,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            aAttachments,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               aAttachments,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
@@ -233,12 +233,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            aAttachments,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               aAttachments,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
@@ -282,12 +282,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     aResMgr2));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            aAttachments,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               aAttachments,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        aAttachments);
 
     final Multipart aMultipart = (Multipart) aMsg.getContent ();
     // 3 attachments + 1 Main/Bodypart
@@ -327,12 +327,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     aResMgr2));
 
-    final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                     testSignedUserMessage (m_eSOAPVersion,
-                                                                                            m_aPayload,
-                                                                                            aAttachments,
-                                                                                            new AS4ResourceHelper ()),
-                                                                     aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                        testSignedUserMessage (m_eSOAPVersion,
+                                                                                               m_aPayload,
+                                                                                               aAttachments,
+                                                                                               new AS4ResourceHelper ()),
+                                                                        aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 
@@ -457,12 +457,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                       testSignedUserMessage (m_eSOAPVersion,
-                                                                                              m_aPayload,
-                                                                                              null,
-                                                                                              new AS4ResourceHelper ()),
-                                                                       null);
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                          testSignedUserMessage (m_eSOAPVersion,
+                                                                                                 m_aPayload,
+                                                                                                 null,
+                                                                                                 new AS4ResourceHelper ()),
+                                                                          null);
       sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
     }
     finally
@@ -530,12 +530,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                       testSignedUserMessage (m_eSOAPVersion,
-                                                                                              m_aPayload,
-                                                                                              null,
-                                                                                              new AS4ResourceHelper ()),
-                                                                       null);
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                          testSignedUserMessage (m_eSOAPVersion,
+                                                                                                 m_aPayload,
+                                                                                                 null,
+                                                                                                 new AS4ResourceHelper ()),
+                                                                          null);
       sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
     }
     finally
@@ -710,12 +710,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                       testSignedUserMessage (m_eSOAPVersion,
-                                                                                              m_aPayload,
-                                                                                              null,
-                                                                                              new AS4ResourceHelper ()),
-                                                                       null);
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
+                                                                          testSignedUserMessage (m_eSOAPVersion,
+                                                                                                 m_aPayload,
+                                                                                                 null,
+                                                                                                 new AS4ResourceHelper ()),
+                                                                          null);
       sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
     }
     finally

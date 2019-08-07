@@ -666,6 +666,14 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
             if (nTry == nMaxTries - 1)
               throw ex;
 
+            LOGGER.warn ("Error sending message: " +
+                         ex.getClass ().getSimpleName () +
+                         " - " +
+                         ex.getMessage () +
+                         " - waiting " +
+                         m_nRetryIntervalMS +
+                         " ms, than retrying");
+
             // Sleep and try again afterwards
             ThreadHelper.sleep (m_nRetryIntervalMS);
           }

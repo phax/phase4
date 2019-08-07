@@ -26,6 +26,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.http.entity.AbstractHttpEntity;
 
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.string.ToStringGenerator;
 
@@ -37,11 +38,11 @@ import com.helger.commons.string.ToStringGenerator;
  */
 public class HttpMimeMessageEntity extends AbstractHttpEntity
 {
-  private final MimeMessage m_aMimeMsg;
+  private final AS4MimeMessage m_aMsg;
 
-  public HttpMimeMessageEntity (@Nonnull final MimeMessage aMsg)
+  public HttpMimeMessageEntity (@Nonnull final AS4MimeMessage aMsg)
   {
-    m_aMimeMsg = ValueEnforcer.notNull (aMsg, "Msg");
+    m_aMsg = ValueEnforcer.notNull (aMsg, "Msg");
   }
 
   /**
@@ -51,13 +52,12 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   @Nonnull
   public final MimeMessage getMimeMessage ()
   {
-    return m_aMimeMsg;
+    return m_aMsg;
   }
 
   public boolean isRepeatable ()
   {
-    // Assume no, because there is no consistent way to determine this
-    return false;
+    return m_aMsg.isRepeatable ();
   }
 
   public long getContentLength ()
@@ -76,7 +76,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   {
     try
     {
-      return m_aMimeMsg.getInputStream ();
+      return m_aMsg.getInputStream ();
     }
     catch (final MessagingException ex)
     {
@@ -88,7 +88,7 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   {
     try
     {
-      m_aMimeMsg.writeTo (aOS);
+      m_aMsg.writeTo (aOS);
     }
     catch (final MessagingException ex)
     {
@@ -99,6 +99,6 @@ public class HttpMimeMessageEntity extends AbstractHttpEntity
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMimeMsg).getToString ();
+    return ToStringGenerator.getDerived (super.toString ()).append ("MimeMsg", m_aMsg).getToString ();
   }
 }

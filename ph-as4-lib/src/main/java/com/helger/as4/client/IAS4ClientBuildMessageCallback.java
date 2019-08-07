@@ -19,11 +19,11 @@ package com.helger.as4.client;
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
-import javax.mail.internet.MimeMessage;
 
 import org.w3c.dom.Document;
 
 import com.helger.as4.messaging.domain.AbstractAS4Message;
+import com.helger.as4.messaging.mime.AS4MimeMessage;
 
 /**
  * Callback interface for AS4 client message creation.
@@ -79,6 +79,6 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
    * @param aMimeMsg
    *        The encrypted MIME message
    */
-  default void onEncryptedMimeMessage (@Nonnull final MimeMessage aMimeMsg)
+  default void onEncryptedMimeMessage (@Nonnull final AS4MimeMessage aMimeMsg)
   {}
 }
