@@ -110,7 +110,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
 
         final ICommonsList <Attachment> aAttachments = _getAttachmentsToAdd (sAttachmentID);
         if (aAttachments.isEmpty ())
-          throw new IllegalStateException ("No attachments present");
+          throw new IllegalStateException ("No attachments present for ID '" + sAttachmentID + "'");
 
         aAttachmentRequestCallback.setAttachments (aAttachments);
       }
@@ -118,21 +118,26 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         if (aCallback instanceof AttachmentResultCallback)
         {
           final AttachmentResultCallback aAttachmentResultCallback = (AttachmentResultCallback) aCallback;
-          final Attachment aResponseAttachment = aAttachmentResultCallback.getAttachment ();
+          final Attachment aResultAttachment = aAttachmentResultCallback.getAttachment ();
 
           final String sAttachmentID = aAttachmentResultCallback.getAttachmentId ();
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Resulting attachment ID '" + sAttachmentID + "'");
 
-          // Convert
-          final WSS4JAttachment aRealAttachment = new WSS4JAttachment (m_aResHelper,
-                                                                       aResponseAttachment.getMimeType ());
-          aRealAttachment.setId (sAttachmentID);
-          aRealAttachment.addHeaders (aResponseAttachment.getHeaders ());
-          // Use supplier to ensure stream is opened only when needed
-          aRealAttachment.setSourceStreamProvider (HasInputStream.once (aResponseAttachment::getSourceStream));
+          final WSS4JAttachment aSrcAttachment = m_aAttachmentMap.get (sAttachmentID);
+          if (aSrcAttachment == null)
+            throw new IllegalStateException ("Failed to resolve source attachment with ID '" + sAttachmentID + "'");
 
-          m_aAttachmentMap.put (sAttachmentID, aRealAttachment);
+          // Convert
+          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper,
+                                                                                     aResultAttachment.getMimeType ());
+          aEffectiveDecryptedAttachment.setId (sAttachmentID);
+          aEffectiveDecryptedAttachment.addHeaders (aResultAttachment.getHeaders ());
+          aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharset ());
+          // Use supplier to ensure stream is opened only when needed
+          aEffectiveDecryptedAttachment.setSourceStreamProvider (HasInputStream.once (aResultAttachment::getSourceStream));
+
+          m_aAttachmentMap.put (sAttachmentID, aEffectiveDecryptedAttachment);
         }
         else
         {

@@ -35,7 +35,6 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class ERBTest extends AbstractUserMessageTestSetUp
 {
-
   @Test
   public void duplicateSignedMessage () throws Exception
   {
@@ -51,5 +50,4 @@ public final class ERBTest extends AbstractUserMessageTestSetUp
 
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
-
 }

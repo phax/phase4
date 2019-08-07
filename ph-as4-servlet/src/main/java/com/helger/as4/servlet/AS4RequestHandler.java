@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -100,6 +101,7 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.charset.CharsetHelper;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -347,12 +349,40 @@ public class AS4RequestHandler implements AutoCloseable
         if (aPart != null)
         {
           // Find MimeType property
-          final Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
-                                                                      x -> x.getName ()
-                                                                            .equals (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
+          Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
+                                                                x -> x.getName ()
+                                                                      .equals (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
           if (aProperty != null)
           {
-            aIncomingAttachment.overwriteMimeType (aProperty.getValue ());
+            final String sMimeType = aProperty.getValue ();
+            if (MimeTypeParser.safeParseMimeType (sMimeType) == null)
+              LOGGER.warn ("Value '" +
+                           sMimeType +
+                           "' of property '" +
+                           MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
+                           "' is not a valid MIME type");
+            aIncomingAttachment.overwriteMimeType (sMimeType);
+          }
+
+          // Find CharacterSet property
+          aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
+                                                  x -> x.getName ()
+                                                        .equals (MessageHelperMethods.PART_PROPERTY_CHARACTER_SET));
+          if (aProperty != null)
+          {
+            final String sCharsetName = aProperty.getValue ();
+            if (StringHelper.hasText (sCharsetName))
+            {
+              final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sCharsetName);
+              if (aCharset == null)
+                LOGGER.warn ("Value '" +
+                             sCharsetName +
+                             "' of property '" +
+                             MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
+                             "+' is not supported");
+              else
+                aIncomingAttachment.setCharset (aCharset);
+            }
           }
         }
       }
