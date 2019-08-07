@@ -19,12 +19,10 @@ package com.helger.as4.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.ZipException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,6 +41,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.as4.CAS4;
+import com.helger.as4.attachment.AS4DecompressException;
 import com.helger.as4.attachment.EAS4CompressionMode;
 import com.helger.as4.attachment.IIncomingAttachmentFactory;
 import com.helger.as4.attachment.WSS4JAttachment;
@@ -334,7 +333,7 @@ public class AS4RequestHandler implements AutoCloseable
           {
             // This is e.g. invoked, if the GZIP decompression failed because of
             // invalid payload
-            throw new UncheckedIOException (ex);
+            throw new AS4DecompressException (ex);
           }
         }, aOldISP.isReadMultiple ()));
 
@@ -667,14 +666,14 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Successfully invoked AS4 message processor " + aProcessor);
         }
-        catch (final Exception ex)
+        catch (final AS4DecompressException ex)
         {
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          if (ex.getCause () instanceof ZipException)
-          {
-            aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
-            return;
-          }
+          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
+          return;
+        }
+        catch (final Exception ex)
+        {
 
           // Re-throw
           if (ex instanceof RuntimeException)
