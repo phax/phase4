@@ -16,6 +16,7 @@
  */
 package com.helger.as4.server.spi;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.annotation.Nonnull;
@@ -89,14 +90,13 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
           LOGGER.info ("    Attachment Content Type: " + x.getMimeType ());
           if (x.getMimeType ().startsWith ("text") || x.getMimeType ().endsWith ("/xml"))
           {
-            try
+            try (final InputStream aIS = x.getSourceStream ())
             {
-              final InputStream aIS = x.getSourceStream ();
               LOGGER.info ("    Attachment Stream Class: " + aIS.getClass ().getName ());
               final String sContent = StreamHelper.getAllBytesAsString (x.getSourceStream (), x.getCharset ());
               LOGGER.info ("    Attachment Content: " + sContent.length () + " chars");
             }
-            catch (final IllegalStateException ex)
+            catch (final IllegalStateException | IOException ex)
             {
               LOGGER.warn ("    Attachment Content: CANNOT BE READ", ex);
             }

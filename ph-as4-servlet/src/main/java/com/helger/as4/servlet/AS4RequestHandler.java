@@ -332,6 +332,8 @@ public class AS4RequestHandler implements AutoCloseable
           }
           catch (final IOException ex)
           {
+            // This is e.g. invoked, if the GZIP decompression failed because of
+            // invalid payload
             throw new UncheckedIOException (ex);
           }
         }, aOldISP.isReadMultiple ()));
