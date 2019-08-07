@@ -18,7 +18,6 @@ package com.helger.as4.servlet.soap;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
@@ -195,9 +194,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       }
 
       // Signing Verification and Decryption
-      final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
-      List <WSSecurityEngineResult> aResults = null;
-
       try
       {
         // Convert to WSS4J attachments
@@ -216,8 +212,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         // Upon success, the SOAP document contains the decrypted content
         // afterwards!
+        final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
         final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-        aResults = aHdlRes.getResults ();
+        final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
 
         // Collect all unique used certificates
         final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
@@ -256,13 +253,12 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
         for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
         {
-          final InputStream aIS = aResponseAttachment.getSourceStream ();
-
           // Always copy to a temporary file, so that decrypted content can be
-          // read more than once.
+          // read more than once. By default the stream can only be read once
           // Not nice, but working :)
           final File aTempFile = aState.getResourceHelper ().createTempFile ();
-          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aIS, FileHelper.getBufferedOutputStream (aTempFile));
+          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aResponseAttachment.getSourceStream (),
+                                                                FileHelper.getBufferedOutputStream (aTempFile));
           aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
         }
 
@@ -281,6 +277,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         return ESuccess.FAILURE;
       }
     }
+
     return ESuccess.SUCCESS;
   }
 }
