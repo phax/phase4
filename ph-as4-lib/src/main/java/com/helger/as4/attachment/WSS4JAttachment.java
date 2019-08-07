@@ -233,7 +233,13 @@ public class WSS4JAttachment extends Attachment
   @Nonnull
   public final Charset getCharset ()
   {
-    return m_aCharset == null ? StandardCharsets.ISO_8859_1 : m_aCharset;
+    return getCharsetOrDefault (StandardCharsets.ISO_8859_1);
+  }
+
+  @Nullable
+  public final Charset getCharsetOrDefault (@Nullable final Charset aDefault)
+  {
+    return m_aCharset != null ? m_aCharset : aDefault;
   }
 
   public final boolean hasCharset ()
