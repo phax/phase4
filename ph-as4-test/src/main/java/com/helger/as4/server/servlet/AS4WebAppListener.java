@@ -39,6 +39,11 @@ import com.helger.xservlet.requesttrack.RequestTracker;
 
 public final class AS4WebAppListener extends WebAppListener
 {
+  public AS4WebAppListener ()
+  {
+    setHandleStatisticsOnEnd (false);
+  }
+
   @Override
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
