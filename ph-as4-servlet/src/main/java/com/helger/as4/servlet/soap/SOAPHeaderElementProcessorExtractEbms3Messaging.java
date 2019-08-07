@@ -465,11 +465,17 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                       {
                         final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sPropertyValue);
                         if (aCharset == null)
-                          LOGGER.warn ("Value '" +
-                                       sPropertyValue +
-                                       "' of property '" +
-                                       MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
-                                       "+' is not supported");
+                        {
+                          LOGGER.error ("Value '" +
+                                        sPropertyValue +
+                                        "' of property '" +
+                                        MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
+                                        "' of attachment '" +
+                                        sAttachmentID +
+                                        "' is not supported");
+                          aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+                          return ESuccess.FAILURE;
+                        }
                         else
                           if (aIncomingAttachment != null)
                             aIncomingAttachment.setCharset (aCharset);
