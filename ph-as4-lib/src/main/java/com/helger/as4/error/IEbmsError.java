@@ -100,22 +100,23 @@ public interface IEbmsError extends Serializable
   @Nonnull
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
-                                      @Nullable final String sErrorText)
+                                      @Nullable final String sErrorDescription)
   {
-    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null, sErrorText);
+    return getAsEbms3Error (aContentLocale, sRefToMessageInError, (String) null, sErrorDescription);
   }
 
   @Nonnull
   default Ebms3Error getAsEbms3Error (@Nonnull final Locale aContentLocale,
                                       @Nullable final String sRefToMessageInError,
                                       @Nullable final String sOrigin,
-                                      @Nullable final String sErrorText)
+                                      @Nullable final String sErrorDescription)
   {
     return getAsEbms3Error (aContentLocale,
                             sRefToMessageInError,
                             sOrigin,
-                            sErrorText == null ? null : MessageHelperMethods.createEbms3Description (aContentLocale,
-                                                                                                     sErrorText));
+                            sErrorDescription == null ? null
+                                                      : MessageHelperMethods.createEbms3Description (aContentLocale,
+                                                                                                     sErrorDescription));
   }
 
   @Nonnull
@@ -132,8 +133,7 @@ public interface IEbmsError extends Serializable
     aEbms3Error.setErrorDetail (getErrorDetail ().getDisplayText (aContentLocale));
     aEbms3Error.setErrorCode (getErrorCode ());
     aEbms3Error.setSeverity (getSeverity ().getSeverity ());
-    if (aEbmsDescription != null)
-      aEbms3Error.setShortDescription (getShortDescription ());
+    aEbms3Error.setShortDescription (getShortDescription ());
     aEbms3Error.setCategory (getCategory ().getDisplayName ());
     aEbms3Error.setRefToMessageInError (sRefToMessageInError);
     aEbms3Error.setOrigin (sOrigin);
