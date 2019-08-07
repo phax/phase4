@@ -506,10 +506,10 @@ public class WSS4JAttachment extends Attachment
     }
 
     // Convert all headers to attributes
-    final Enumeration <?> aEnum = aBodyPart.getAllHeaders ();
+    final Enumeration <Header> aEnum = aBodyPart.getAllHeaders ();
     while (aEnum.hasMoreElements ())
     {
-      final Header aHeader = (Header) aEnum.nextElement ();
+      final Header aHeader = aEnum.nextElement ();
       ret.addHeader (aHeader.getName (), aHeader.getValue ());
     }
 
