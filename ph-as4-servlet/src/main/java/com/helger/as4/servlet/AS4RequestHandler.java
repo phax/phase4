@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -101,7 +100,6 @@ import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.charset.CharsetHelper;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -343,15 +341,15 @@ public class AS4RequestHandler implements AutoCloseable
         // an attachment, it would throw a NullPointerException since a payload
         // does not have anything written in its partinfo therefore also now
         // href
-        final Ebms3PartInfo aPart = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
-                                                                x -> x.getHref () != null &&
-                                                                     x.getHref ().contains (sAttachmentContentID));
-        if (aPart != null)
+        final Ebms3PartInfo aPartInfo = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
+                                                                    x -> x.getHref () != null &&
+                                                                         x.getHref ().contains (sAttachmentContentID));
+        if (aPartInfo != null && aPartInfo.getPartProperties () != null)
         {
           // Find MimeType property
-          Ebms3Property aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
-                                                                x -> x.getName ()
-                                                                      .equals (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
+          final Ebms3Property aProperty = CollectionHelper.findFirst (aPartInfo.getPartProperties ().getProperty (),
+                                                                      x -> x.getName ()
+                                                                            .equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
           if (aProperty != null)
           {
             final String sMimeType = aProperty.getValue ();
@@ -362,27 +360,6 @@ public class AS4RequestHandler implements AutoCloseable
                            MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
                            "' is not a valid MIME type");
             aIncomingAttachment.overwriteMimeType (sMimeType);
-          }
-
-          // Find CharacterSet property
-          aProperty = CollectionHelper.findFirst (aPart.getPartProperties ().getProperty (),
-                                                  x -> x.getName ()
-                                                        .equals (MessageHelperMethods.PART_PROPERTY_CHARACTER_SET));
-          if (aProperty != null)
-          {
-            final String sCharsetName = aProperty.getValue ();
-            if (StringHelper.hasText (sCharsetName))
-            {
-              final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sCharsetName);
-              if (aCharset == null)
-                LOGGER.warn ("Value '" +
-                             sCharsetName +
-                             "' of property '" +
-                             MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
-                             "+' is not supported");
-              else
-                aIncomingAttachment.setCharset (aCharset);
-            }
           }
         }
       }
@@ -1592,26 +1569,31 @@ public class AS4RequestHandler implements AutoCloseable
 
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Found MIME part " + nIndex);
-          final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ();
 
-          final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
-          if (nIndex == 0)
+          try (final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ())
           {
-            // First MIME part -> SOAP document
-            final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
-                                                         .getCopyWithoutParameters ();
+            // Read headers AND content
+            final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
 
-            // Determine SOAP version from MIME part content type
-            eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> aPlainPartMT.equals (x.getMimeType ()));
+            if (nIndex == 0)
+            {
+              // First MIME part -> SOAP document
+              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
+                                                           .getCopyWithoutParameters ();
 
-            // Read SOAP document
-            aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
-          }
-          else
-          {
-            // MIME Attachment (index is gt 0)
-            final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
-            aIncomingAttachments.add (aAttachment);
+              // Determine SOAP version from MIME part content type
+              eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
+                                                    x -> aPlainPartMT.equals (x.getMimeType ()));
+
+              // Read SOAP document
+              aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
+            }
+            else
+            {
+              // MIME Attachment (index is gt 0)
+              final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
+              aIncomingAttachments.add (aAttachment);
+            }
           }
           nIndex++;
         }

@@ -16,6 +16,7 @@
  */
 package com.helger.as4.servlet.soap;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,6 +56,7 @@ import com.helger.as4lib.ebms3header.Ebms3Receipt;
 import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.charset.CharsetHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -392,10 +394,10 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
         int nSpecifiedAttachments = 0;
 
-        for (final Ebms3PartInfo aPart : aEbms3PayloadInfo.getPartInfo ())
+        for (final Ebms3PartInfo aPartInfo : aEbms3PayloadInfo.getPartInfo ())
         {
           // If href is null or empty there has to be a SOAP Payload
-          if (StringHelper.hasNoText (aPart.getHref ()))
+          if (StringHelper.hasNoText (aPartInfo.getHref ()))
           {
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!bHasSoapBodyPayload)
@@ -413,48 +415,77 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             // the real amount in the mime message
             nSpecifiedAttachments++;
 
+            final String sAttachmentID = StringHelper.trimStart (aPartInfo.getHref (), MessageHelperMethods.PREFIX_CID);
+            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> x.getId ().equals (sAttachmentID));
+            if (aIncomingAttachment == null)
+              LOGGER.warn ("Failed to resolve MIME attachment '" +
+                           sAttachmentID +
+                           "' in list of " +
+                           aAttachments.getAllMapped (WSS4JAttachment::getId));
+
             boolean bMimeTypePresent = false;
             boolean bCompressionTypePresent = false;
 
-            if (aPart.getPartProperties () != null)
-            {
-              for (final Ebms3Property aEbms3Property : aPart.getPartProperties ().getProperty ())
+            if (aPartInfo.getPartProperties () != null)
+              for (final Ebms3Property aEbms3Property : aPartInfo.getPartProperties ().getProperty ())
               {
-                if (aEbms3Property.getName ().equalsIgnoreCase ("mimetype"))
+                final String sPropertyName = aEbms3Property.getName ();
+                final String sPropertyValue = aEbms3Property.getValue ();
+
+                if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE))
                 {
-                  bMimeTypePresent = true;
+                  bMimeTypePresent = StringHelper.hasText (sPropertyValue);
                 }
                 else
-                  if (aEbms3Property.getName ().equalsIgnoreCase ("compressiontype"))
+                  if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_COMPRESSION_TYPE))
                   {
                     // Only needed check here since AS4 does not support another
                     // CompressionType
                     // http://wiki.ds.unipi.gr/display/ESENS/PR+-+AS4
-                    final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (aEbms3Property.getValue ());
+                    final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromMimeTypeStringOrNull (sPropertyValue);
                     if (eCompressionMode == null)
                     {
                       LOGGER.error ("Error processing the UserMessage, CompressionType '" +
-                                    aEbms3Property.getValue () +
-                                    "' is not supported. ");
+                                    sPropertyValue +
+                                    "' of attachment '" +
+                                    sAttachmentID +
+                                    "' is not supported.");
 
                       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                       return ESuccess.FAILURE;
                     }
 
-                    final String sAttachmentID = StringHelper.trimStart (aPart.getHref (),
-                                                                         MessageHelperMethods.PREFIX_CID);
                     aCompressionAttachmentIDs.put (sAttachmentID, eCompressionMode);
                     bCompressionTypePresent = true;
                   }
+                  else
+                    if (sPropertyName.equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_CHARACTER_SET))
+                    {
+                      if (StringHelper.hasText (sPropertyValue))
+                      {
+                        final Charset aCharset = CharsetHelper.getCharsetFromNameOrNull (sPropertyValue);
+                        if (aCharset == null)
+                          LOGGER.warn ("Value '" +
+                                       sPropertyValue +
+                                       "' of property '" +
+                                       MessageHelperMethods.PART_PROPERTY_CHARACTER_SET +
+                                       "+' is not supported");
+                        else
+                          if (aIncomingAttachment != null)
+                            aIncomingAttachment.setCharset (aCharset);
+                      }
+                    }
+                // else we don't care about the property
               }
-            }
 
             // if a compressiontype is present there has to be a mimetype
             // present, to specify what mimetype the attachment was before it
             // got compressed
             if (bCompressionTypePresent && !bMimeTypePresent)
             {
-              LOGGER.error ("Error processing the UserMessage, MimeType for a compressed message not present.");
+              LOGGER.error ("Error processing the UserMessage, MimeType for a compressed attachment ('" +
+                            sAttachmentID +
+                            "') is not present.");
 
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
               return ESuccess.FAILURE;
