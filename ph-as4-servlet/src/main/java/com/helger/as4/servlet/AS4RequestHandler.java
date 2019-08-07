@@ -553,6 +553,9 @@ public class AS4RequestHandler implements AutoCloseable
 
           if (aProcessingErrorMessages.isNotEmpty ())
           {
+            if (!aResult.isFailure ())
+              LOGGER.warn ("Processing errors are present, but success was returned");
+
             aErrorMessages.addAll (aProcessingErrorMessages);
             // Stop processing
             return;
