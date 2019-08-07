@@ -18,6 +18,7 @@ package com.helger.as4.servlet;
 
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
@@ -66,6 +67,12 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    */
   @Nonnull
   AS4ResourceHelper getResourceHelper ();
+
+  /**
+   * @return The request locale to use. Never <code>null</code>.
+   */
+  @Nonnull
+  Locale getLocale ();
 
   /**
    * @return The parent of the usermessage/signal message for further

@@ -370,7 +370,6 @@ public class AS4RequestHandler implements AutoCloseable
   private static void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
-                                                  @Nonnull final Locale aLocale,
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
   {
     final ESOAPVersion eSOAPVersion = aState.getSOAPVersion ();
@@ -416,12 +415,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
-      if (aProcessor.processHeaderElement (aSOAPDocument,
-                                           aHeader.getNode (),
-                                           aIncomingAttachments,
-                                           aState,
-                                           aErrorList,
-                                           aLocale)
+      if (aProcessor.processHeaderElement (aSOAPDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
                     .isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
@@ -439,6 +433,7 @@ public class AS4RequestHandler implements AutoCloseable
                      aErrorList);
 
         final String sRefToMessageID = aState.getRefToMessageID ();
+        final Locale aLocale = aState.getLocale ();
         for (final IError aError : aErrorList)
         {
           final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
@@ -1079,11 +1074,11 @@ public class AS4RequestHandler implements AutoCloseable
     IAS4MessageState aState;
     {
       // This is where all data from the SOAP headers is stored to
-      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResHelper);
+      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResHelper, m_aLocale);
 
       // Handle all headers - the only place where the AS4MessageState values
       // are written
-      _processSOAPHeaderElements (aSOAPDocument, aIncomingAttachments, aStateImpl, m_aLocale, aErrorMessages);
+      _processSOAPHeaderElements (aSOAPDocument, aIncomingAttachments, aStateImpl, aErrorMessages);
 
       aState = aStateImpl;
     }

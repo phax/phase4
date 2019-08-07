@@ -89,8 +89,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final ErrorList aErrorList,
-                                        @Nonnull final Locale aLocale)
+                                        @Nonnull final ErrorList aErrorList)
   {
     final IPMode aPMode = aState.getPMode ();
 
@@ -100,8 +99,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
-    PModeLeg aPModeLeg = aPMode.getLeg1 ();
+    final Locale aLocale = aState.getLocale ();
     final Ebms3Messaging aMessage = aState.getMessaging ();
+    PModeLeg aPModeLeg = aPMode.getLeg1 ();
     Ebms3UserMessage aUserMessage = null;
     if (aMessage != null && aMessage.hasUserMessageEntries ())
     {

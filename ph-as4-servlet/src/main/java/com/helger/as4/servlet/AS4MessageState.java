@@ -18,6 +18,7 @@ package com.helger.as4.servlet;
 
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnegative;
@@ -72,13 +73,16 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
   private final AS4ResourceHelper m_aResHelper;
+  private final Locale m_aLocale;
 
   public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion,
-                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+                          @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                          @Nonnull final Locale aLocale)
   {
     m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_aLocale = ValueEnforcer.notNull (aLocale, "Locale");
   }
 
   @Nonnull
@@ -97,6 +101,12 @@ public class AS4MessageState extends AttributeContainerAny <String> implements I
   public final AS4ResourceHelper getResourceHelper ()
   {
     return m_aResHelper;
+  }
+
+  @Nonnull
+  public final Locale getLocale ()
+  {
+    return m_aLocale;
   }
 
   public void setMessaging (@Nullable final Ebms3Messaging aMessaging)

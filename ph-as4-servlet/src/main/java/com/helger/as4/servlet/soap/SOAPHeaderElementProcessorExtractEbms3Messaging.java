@@ -192,8 +192,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                         @Nonnull final Element aElement,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
                                         @Nonnull final AS4MessageState aState,
-                                        @Nonnull final ErrorList aErrorList,
-                                        @Nonnull final Locale aLocale)
+                                        @Nonnull final ErrorList aErrorList)
   {
     final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     IPMode aPMode = null;
@@ -201,6 +200,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     IMPC aEffectiveMPC = null;
     String sInitiatorID = null;
     String sResponderID = null;
+    final Locale aLocale = aState.getLocale ();
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
