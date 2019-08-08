@@ -663,6 +663,24 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
+  public void disableSigning ()
+  {
+    setX509SignElement (null);
+    setX509SignAttachment (null);
+    setX509SignatureCertificate (null);
+    setX509SignatureHashFunction (null);
+    setX509SignatureAlgorithm (null);
+  }
+
+  public void disableEncryption ()
+  {
+    setX509EncryptionEncryptElement (null);
+    setX509EncryptionEncryptAttachment (null);
+    setX509EncryptionCertificate (null);
+    setX509EncryptionAlgorithm (null);
+    setX509EncryptionMinimumStrength (null);
+  }
+
   @Override
   public boolean equals (final Object o)
   {
