@@ -29,7 +29,7 @@ import com.helger.xservlet.AbstractXServlet;
  * <pre>
 &lt;servlet&gt;
   &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;
-  &lt;servlet-class&gt;com.helger.as4.servlet.AS4Servlet&lt;/servlet-class&gt;
+  &lt;servlet-class&gt;com.helger.phase4.servlet.AS4Servlet&lt;/servlet-class&gt;
 &lt;/servlet&gt;
 &lt;servlet-mapping&gt;
   &lt;servlet-name&gt;AS4Servlet&lt;/servlet-name&gt;

@@ -47,7 +47,7 @@ public final class AS4ServerConfiguration
   public static final long DEFAULT_RESET_MINUTES = 10;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerConfiguration.class);
-  private static final Settings SETTINGS = new Settings ("as4-server");
+  private static final Settings SETTINGS = new Settings ("phase4-server");
   private static boolean s_bUnitTestMode = false;
 
   public static void reinit (final boolean bForUnitTest)
@@ -56,23 +56,26 @@ public final class AS4ServerConfiguration
     final ConfigFileBuilder aBuilder = new ConfigFileBuilder ();
     if (bForUnitTest)
     {
-      aBuilder.addPathFromEnvVar ("AS4_SERVER_TEST_CONFIG")
-              .addPathFromSystemProperty ("as4.server.test.configfile")
-              .addPath ("private-test-as4.properties")
-              .addPath ("test-as4.properties");
+      aBuilder.addPathFromEnvVar ("PHASE4_SERVER_TEST_CONFIG")
+              .addPathFromSystemProperty ("phase4.server.test.configfile")
+              .addPath ("private-test-phase4.properties")
+              .addPath ("test-phase4.properties");
     }
     else
     {
-      aBuilder.addPathFromEnvVar ("AS4_SERVER_CONFIG")
+      aBuilder.addPathFromEnvVar ("PHASE4_SERVER_CONFIG")
+              .addPathFromSystemProperty ("phase4.server.configfile")
               .addPathFromSystemProperty ("as4.server.configfile")
+              .addPath ("private-phase4.properties")
+              .addPath ("phase4.properties")
               .addPath ("private-as4.properties")
               .addPath ("as4.properties");
     }
     final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
-      throw new InitializationException ("Failed to read AS4 server configuration file!");
+      throw new InitializationException ("Failed to read phase4 server configuration file!");
 
-    LOGGER.info ("Successfully read AS4 configuration file from " + aCF.getReadResource ().getPath ());
+    LOGGER.info ("Successfully read phase4 configuration file from " + aCF.getReadResource ().getPath ());
     SETTINGS.setAll (aCF.getSettings ());
   }
 
