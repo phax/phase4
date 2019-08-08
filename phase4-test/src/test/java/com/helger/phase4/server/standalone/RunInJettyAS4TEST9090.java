@@ -35,7 +35,7 @@ public final class RunInJettyAS4TEST9090
 
   public static void startNinetyServer () throws Exception
   {
-    SystemProperties.setPropertyValue ("as4.server.configfile",
+    SystemProperties.setPropertyValue ("phase4.server.configfile",
                                        new ClassPathResource ("test-phase4-9090.properties").getAsFile ()
                                                                                             .getAbsolutePath ());
     final JettyRunner aJetty = new JettyRunner ();
