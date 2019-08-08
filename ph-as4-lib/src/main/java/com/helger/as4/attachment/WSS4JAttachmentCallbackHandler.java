@@ -133,7 +133,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
                                                                                      aResultAttachment.getMimeType ());
           aEffectiveDecryptedAttachment.setId (sAttachmentID);
           aEffectiveDecryptedAttachment.addHeaders (aResultAttachment.getHeaders ());
-          aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharset ());
+          aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharsetOrDefault (null));
           // Use supplier to ensure stream is opened only when needed
           aEffectiveDecryptedAttachment.setSourceStreamProvider (HasInputStream.once (aResultAttachment::getSourceStream));
 
