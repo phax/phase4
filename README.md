@@ -15,6 +15,7 @@ It consists of the following sub-projects:
 * v0.9.0 - work in progress
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
+    * The package names changes from `com.helger.as4.*` to `com.helger.phase4.*`
     * Updated to WSS4J 2.2.4
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
