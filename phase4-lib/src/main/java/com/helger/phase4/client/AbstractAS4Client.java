@@ -640,7 +640,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
-            LOGGER.info ("Retry #" + nTry + " for sending message with ID '" + sMessageID + "'");
+            LOGGER.info ("Retry #" + nTry + "/" + nMaxTries + " for sending message with ID '" + sMessageID + "'");
 
           try
           {
