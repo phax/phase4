@@ -76,7 +76,7 @@ public final class CEFPMode
     final PModeAddressList aReportReceiverErrorsTo = null;
     final ETriState eReportAsResponse = ETriState.TRUE;
     final ETriState eReportProcessErrorNotifyConsumer = ETriState.TRUE;
-    final ETriState eReportProcessErrorNotifyProducer = ETriState.UNDEFINED;
+    final ETriState eReportProcessErrorNotifyProducer = ETriState.TRUE;
     final ETriState eReportDeliveryFailuresNotifyProducer = ETriState.TRUE;
     return new PModeLegErrorHandling (aReportSenderErrorsTo,
                                       aReportReceiverErrorsTo,
