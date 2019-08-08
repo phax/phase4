@@ -112,6 +112,21 @@ public final class CEFPMode
                          generatePModeLegSecurity ());
   }
 
+  @Nonnull
+  public static PModeReceptionAwareness generatePModeReceptionAwareness ()
+  {
+    final ETriState eReceptionAwareness = ETriState.TRUE;
+    final ETriState eRetry = ETriState.TRUE;
+    final int nMaxRetries = 1;
+    final int nRetryIntervalMS = 10_000;
+    final ETriState eDuplicateDetection = ETriState.TRUE;
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
+  }
+
   /**
    * One-Way Version of the CEF pmode uses one-way push
    *
@@ -147,8 +162,9 @@ public final class CEFPMode
                                     generatePModeLeg (sResponderAddress),
                                     (PModeLeg) null,
                                     (PModePayloadService) null,
-                                    PModeReceptionAwareness.createDefault ());
+                                    generatePModeReceptionAwareness ());
     // Leg 2 stays null, because we only use one-way
+    // By default no compression active
 
     if (bPersist)
     {

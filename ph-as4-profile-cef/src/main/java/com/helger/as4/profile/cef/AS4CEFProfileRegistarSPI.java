@@ -35,10 +35,6 @@ import com.helger.commons.functional.ISupplier;
 @IsSPIImplementation
 public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  @Deprecated
-  public static final String AS4_PROFILE_ID = "esens";
-  @Deprecated
-  public static final String AS4_PROFILE_NAME = "e-SENS";
   public static final String AS4_PROFILE_ID_NEW = "cef";
   public static final String AS4_PROFILE_NAME_NEW = "CEF";
 
@@ -51,12 +47,6 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
                                                                                                  a,
                                                                                                  aPModeIDProvider,
                                                                                                  true);
-    aRegistrar.registerProfile (new AS4Profile (AS4_PROFILE_ID,
-                                                AS4_PROFILE_NAME,
-                                                aProfileValidatorProvider,
-                                                aDefaultPModeProvider,
-                                                aPModeIDProvider,
-                                                true));
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID_NEW,
                                                 AS4_PROFILE_NAME_NEW,
                                                 aProfileValidatorProvider,
