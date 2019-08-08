@@ -1,5 +1,7 @@
 # phase4 - AS4 client and server
 
+![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-152-100.png)
+
 A library to send and receive AS4 messages. 
 Licensed under the Apache 2 License!
 
