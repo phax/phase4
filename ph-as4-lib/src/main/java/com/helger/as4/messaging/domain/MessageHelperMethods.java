@@ -85,7 +85,7 @@ public final class MessageHelperMethods
   @Nonempty
   public static String createRandomMessageID ()
   {
-    return CAS4.LIB_NAME + "@" + UUID.randomUUID ().toString ();
+    return UUID.randomUUID ().toString () + "@" + CAS4.LIB_NAME;
   }
 
   @Nonnull
