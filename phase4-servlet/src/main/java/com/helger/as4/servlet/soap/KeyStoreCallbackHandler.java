@@ -27,8 +27,8 @@ import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.as4.crypto.AS4CryptoProperties;
 import com.helger.commons.ValueEnforcer;
+import com.helger.phase4.crypto.AS4CryptoProperties;
 
 final class KeyStoreCallbackHandler implements CallbackHandler
 {

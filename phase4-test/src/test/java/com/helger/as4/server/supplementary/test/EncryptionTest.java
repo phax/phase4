@@ -28,10 +28,10 @@ import org.apache.wss4j.dom.message.WSSecHeader;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**

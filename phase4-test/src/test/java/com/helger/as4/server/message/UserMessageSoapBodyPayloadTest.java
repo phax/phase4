@@ -31,20 +31,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.AS4Encryptor;
-import com.helger.as4.messaging.mime.AS4MimeMessage;
-import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.external.IHolodeckTests;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
+import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.http.HttpMimeMessageEntity;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.crypto.AS4Encryptor;
+import com.helger.phase4.messaging.mime.AS4MimeMessage;
+import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)

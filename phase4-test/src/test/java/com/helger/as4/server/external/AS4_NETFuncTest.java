@@ -23,30 +23,30 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.CAS4;
 import com.helger.as4.CEF.AbstractCEFTestSetUp;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.http.AS4HttpDebug;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.messaging.crypto.AS4Signer;
-import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.messaging.mime.AS4MimeMessage;
-import com.helger.as4.messaging.mime.MimeMessageCreator;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.util.AS4ResourceHelper;
-import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
-import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
-import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
-import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
+import com.helger.phase4.ebms3header.Ebms3MessageInfo;
+import com.helger.phase4.ebms3header.Ebms3MessageProperties;
+import com.helger.phase4.ebms3header.Ebms3PartyInfo;
+import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
+import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.http.AS4HttpDebug;
+import com.helger.phase4.http.HttpMimeMessageEntity;
+import com.helger.phase4.messaging.crypto.AS4Signer;
+import com.helger.phase4.messaging.domain.AS4UserMessage;
+import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.messaging.mime.AS4MimeMessage;
+import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.util.AS4ResourceHelper;
 
 @Ignore ("Working! Requires external proxy and PEPPOL pilot certificate!")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp

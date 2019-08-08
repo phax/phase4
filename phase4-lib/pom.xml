@@ -153,8 +153,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Automatic-Module-Name>com.helger.as4</Automatic-Module-Name>
-            <Export-Package>com.helger.as4.*</Export-Package>
+            <Automatic-Module-Name>com.helger.phase4</Automatic-Module-Name>
+            <Export-Package>com.helger.phase4.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
@@ -238,7 +238,7 @@ osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.profile.IAS4Prof
             <configuration>
               <target>
                 <delete dir="${basedir}/target/generated-sources/xjc/com/helger/xsds/" />
-                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/as4lib/xlink/" />
+                <delete dir="${basedir}/target/generated-sources/xjc/com/helger/phase4/xlink/" />
               </target>
             </configuration>
           </execution>

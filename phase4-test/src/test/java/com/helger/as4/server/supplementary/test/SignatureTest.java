@@ -31,10 +31,10 @@ import org.apache.wss4j.dom.str.STRParser.REFERENCE_TYPE;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
+import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**

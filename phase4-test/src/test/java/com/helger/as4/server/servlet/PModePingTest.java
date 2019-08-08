@@ -19,8 +19,8 @@ package com.helger.as4.server.servlet;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.soap.ESOAPVersion;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.soap.ESOAPVersion;
 
 public final class PModePingTest extends AbstractUserMessageTestSetUpExt
 {

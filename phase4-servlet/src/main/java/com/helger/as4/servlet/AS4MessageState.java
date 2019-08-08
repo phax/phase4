@@ -29,19 +29,19 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.w3c.dom.Document;
 
-import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.model.mpc.IMPC;
-import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.leg.PModeLeg;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
-import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.AttributeContainerAny;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.datetime.PDTFactory;
+import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.model.mpc.IMPC;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
  * This class keeps track of the status of an incoming message. It is basically

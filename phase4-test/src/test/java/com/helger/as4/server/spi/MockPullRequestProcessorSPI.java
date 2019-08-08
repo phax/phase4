@@ -20,13 +20,13 @@ import javax.annotation.Nonnull;
 
 import org.w3c.dom.Element;
 
-import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.PMode;
 import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
-import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.pmode.PMode;
 
 @IsSPIImplementation
 public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProcessorSPI

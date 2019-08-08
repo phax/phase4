@@ -28,7 +28,7 @@
   </globalBindings>
   <bindings schemaLocation="../resources/schemas/ebms-header-3_0-200704.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.ebms3header" />
+      <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>
         <typeName prefix="Ebms3"/>
       </nameXmlTransform>
@@ -44,7 +44,7 @@
   </bindings>
   <bindings schemaLocation="../resources/schemas/soap11.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.soap11" />
+      <package name="com.helger.phase4.soap11" />
       <nameXmlTransform>
         <typeName prefix="Soap11"/>
       </nameXmlTransform>
@@ -52,7 +52,7 @@
   </bindings>
   <bindings schemaLocation="../resources/schemas/soap12.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.soap12" />
+      <package name="com.helger.phase4.soap12" />
       <nameXmlTransform>
         <typeName prefix="Soap12"/>
       </nameXmlTransform>
@@ -60,7 +60,7 @@
   </bindings>
   <bindings schemaLocation="../resources/schemas/xlink.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.xlink" />
+      <package name="com.helger.phase4.xlink" />
       <nameXmlTransform>
         <typeName prefix="XLink"/>
       </nameXmlTransform>
@@ -68,7 +68,7 @@
   </bindings>
   <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd" node="/xs:schema">
     <schemaBindings>
-      <package name="com.helger.as4lib.ebms3header" />
+      <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>
         <typeName prefix="EbbpSig"/>
       </nameXmlTransform>

@@ -23,20 +23,20 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.crypto.AS4SigningParams;
-import com.helger.as4.error.EEbmsError;
-import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.crypto.AS4Signer;
-import com.helger.as4.messaging.domain.AS4PullRequestMessage;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.mpc.MPC;
 import com.helger.as4.server.spi.MockMessageProcessorSPI;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.crypto.AS4Signer;
+import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
+import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.mpc.MPC;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt

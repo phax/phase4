@@ -21,11 +21,11 @@ import javax.annotation.Nonnull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.as4.attachment.WSS4JAttachment;
 import com.helger.as4.servlet.AS4MessageState;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.state.ESuccess;
+import com.helger.phase4.attachment.WSS4JAttachment;
 
 /**
  * Base interface for SOAP header processors that are invoked for incoming

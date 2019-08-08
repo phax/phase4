@@ -19,14 +19,14 @@ package com.helger.as4.servlet;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.pmode.resolve.IPModeResolver;
 import com.helger.as4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.as4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 
 /**
  * This class contains the init method for the AS4Server. Registering alle

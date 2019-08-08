@@ -26,20 +26,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.CAS4;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.messaging.domain.AS4UserMessage;
-import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4lib.ebms3header.Ebms3CollaborationInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.as4lib.ebms3header.Ebms3MessageProperties;
-import com.helger.as4lib.ebms3header.Ebms3PartyInfo;
-import com.helger.as4lib.ebms3header.Ebms3PayloadInfo;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
+import com.helger.phase4.ebms3header.Ebms3MessageInfo;
+import com.helger.phase4.ebms3header.Ebms3MessageProperties;
+import com.helger.phase4.ebms3header.Ebms3PartyInfo;
+import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
+import com.helger.phase4.messaging.domain.AS4UserMessage;
+import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**

@@ -24,13 +24,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.error.EEbmsError;
-import com.helger.as4.http.HttpXMLEntity;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.server.message.MockMessages;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class ERBTest extends AbstractUserMessageTestSetUp

@@ -16,9 +16,9 @@
  */
 package com.helger.as4.servlet;
 
-import com.helger.as4.attachment.IIncomingAttachmentFactory;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.commons.http.EHttpMethod;
+import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.xservlet.AbstractXServlet;
 
 /**

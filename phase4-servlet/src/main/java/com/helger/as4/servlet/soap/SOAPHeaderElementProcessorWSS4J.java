@@ -38,18 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.as4.CAS4;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.as4.crypto.AS4CryptoFactory;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.error.EEbmsError;
-import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.leg.PModeLeg;
 import com.helger.as4.servlet.AS4MessageState;
-import com.helger.as4lib.ebms3header.Ebms3Messaging;
-import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -61,6 +50,17 @@ import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
+import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.xml.XMLHelper;
 
 /**

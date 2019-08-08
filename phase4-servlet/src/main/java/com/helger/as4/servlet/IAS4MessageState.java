@@ -26,19 +26,19 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
 
-import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.model.mpc.IMPC;
-import com.helger.as4.model.pmode.IPMode;
-import com.helger.as4.model.pmode.leg.PModeLeg;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
-import com.helger.as4lib.ebms3header.Ebms3MessageInfo;
-import com.helger.as4lib.ebms3header.Ebms3Messaging;
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3MessageInfo;
+import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.model.mpc.IMPC;
+import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
  * Read-only AS4 message state.

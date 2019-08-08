@@ -19,10 +19,10 @@ package com.helger.as4.server.servlet;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import com.helger.as4.error.EEbmsError;
-import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.soap.ESOAPVersion;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt

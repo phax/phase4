@@ -23,12 +23,12 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.helger.as4.attachment.IIncomingAttachmentFactory;
-import com.helger.as4.crypto.AS4CryptoFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
+import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;

@@ -18,10 +18,10 @@ package com.helger.as4;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.messaging.domain.MessageHelperMethods;
-import com.helger.as4lib.ebms3header.Ebms3Property;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.messaging.domain.MessageHelperMethods;
 
 public final class AS4TestConstants
 {

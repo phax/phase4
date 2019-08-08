@@ -18,9 +18,9 @@ package com.helger.as4.servlet.spi;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.model.pmode.PMode;
-import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
 import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.model.pmode.PMode;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately

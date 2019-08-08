@@ -23,15 +23,15 @@ import javax.annotation.Nullable;
 
 import org.w3c.dom.Node;
 
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.model.pmode.IPMode;
 import com.helger.as4.servlet.IAS4MessageState;
-import com.helger.as4lib.ebms3header.Ebms3Error;
-import com.helger.as4lib.ebms3header.Ebms3SignalMessage;
-import com.helger.as4lib.ebms3header.Ebms3UserMessage;
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.ebms3header.Ebms3Error;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.model.pmode.IPMode;
 
 /**
  * Implement this SPI interface to handle incoming messages appropriate

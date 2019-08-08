@@ -27,13 +27,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.helger.as4.client.AS4ClientErrorMessage;
-import com.helger.as4.error.EEbmsError;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
+import com.helger.phase4.client.AS4ClientErrorMessage;
+import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
  * Test class for class {@link AS4ClientErrorMessage}

@@ -27,16 +27,16 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.client.AS4ClientReceiptMessage;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.MockMessages;
 import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.phase4.client.AS4ClientReceiptMessage;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
+import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.serialize.read.DOMReader;
 

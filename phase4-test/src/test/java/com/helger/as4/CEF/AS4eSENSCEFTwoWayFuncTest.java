@@ -23,18 +23,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.attachment.EAS4CompressionMode;
-import com.helger.as4.attachment.WSS4JAttachment;
-import com.helger.as4.http.HttpMimeMessageEntity;
-import com.helger.as4.http.HttpXMLEntity;
-import com.helger.as4.messaging.mime.AS4MimeMessage;
-import com.helger.as4.messaging.mime.MimeMessageCreator;
-import com.helger.as4.util.AS4ResourceHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
+import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.http.HttpMimeMessageEntity;
+import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.mime.AS4MimeMessage;
+import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.util.AS4ResourceHelper;
 
 public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {

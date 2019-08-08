@@ -18,28 +18,28 @@ package com.helger.as4.server;
 
 import javax.annotation.Nonnull;
 
-import com.helger.as4.CAS4;
-import com.helger.as4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.as4.crypto.ECryptoAlgorithmSign;
-import com.helger.as4.crypto.ECryptoAlgorithmSignDigest;
-import com.helger.as4.mgr.MetaAS4Manager;
-import com.helger.as4.model.EMEP;
-import com.helger.as4.model.EMEPBinding;
-import com.helger.as4.model.pmode.DefaultPMode;
-import com.helger.as4.model.pmode.IPModeIDProvider;
-import com.helger.as4.model.pmode.PMode;
-import com.helger.as4.model.pmode.PModeManager;
-import com.helger.as4.model.pmode.PModeParty;
-import com.helger.as4.model.pmode.leg.EPModeSendReceiptReplyPattern;
-import com.helger.as4.model.pmode.leg.PModeLeg;
-import com.helger.as4.model.pmode.leg.PModeLegBusinessInformation;
-import com.helger.as4.model.pmode.leg.PModeLegErrorHandling;
-import com.helger.as4.model.pmode.leg.PModeLegProtocol;
-import com.helger.as4.model.pmode.leg.PModeLegReliability;
-import com.helger.as4.model.pmode.leg.PModeLegSecurity;
-import com.helger.as4.soap.ESOAPVersion;
-import com.helger.as4.wss.EWSSVersion;
 import com.helger.commons.state.ETriState;
+import com.helger.phase4.CAS4;
+import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase4.crypto.ECryptoAlgorithmSign;
+import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.EMEP;
+import com.helger.phase4.model.EMEPBinding;
+import com.helger.phase4.model.pmode.DefaultPMode;
+import com.helger.phase4.model.pmode.IPModeIDProvider;
+import com.helger.phase4.model.pmode.PMode;
+import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.model.pmode.PModeParty;
+import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
+import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
+import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
+import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
+import com.helger.phase4.model.pmode.leg.PModeLegReliability;
+import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
+import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.wss.EWSSVersion;
 
 public final class MockPModeGenerator
 {
