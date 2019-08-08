@@ -25,6 +25,7 @@ import com.helger.as4.model.pmode.PMode;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.functional.ISupplier;
+import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -109,6 +110,23 @@ public class AS4Profile implements IAS4Profile
   public boolean isDeprecated ()
   {
     return m_bDeprecated;
+  }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    if (o == this)
+      return true;
+    if (o == null || !getClass ().equals (o.getClass ()))
+      return false;
+    final AS4Profile rhs = (AS4Profile) o;
+    return m_sID.equals (rhs.m_sID);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    return new HashCodeGenerator (this).append (m_sID).getHashCode ();
   }
 
   @Override

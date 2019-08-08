@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import com.helger.as4.model.pmode.IPModeIDProvider;
 import com.helger.as4.model.pmode.PMode;
+import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.name.IHasDisplayName;
@@ -33,6 +34,7 @@ import com.helger.commons.name.IHasDisplayName;
  *
  * @author Philip Helger
  */
+@MustImplementEqualsAndHashcode
 public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializable
 {
   /**

@@ -33,7 +33,9 @@ import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
+import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
@@ -72,23 +74,6 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     _registerAll ();
   }
 
-  public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
-  {
-    ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
-
-    final String sID = aAS4Profile.getID ();
-    m_aRWLock.writeLocked ( () -> {
-      if (m_aMap.containsKey (sID))
-        throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
-      m_aMap.put (sID, aAS4Profile);
-
-      // Make the first the default as fallback
-      if (m_aMap.size () == 1)
-        m_aDefaultProfile = aAS4Profile;
-    });
-    LOGGER.info ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
-  }
-
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <IAS4Profile> getAllProfiles ()
@@ -111,32 +96,50 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
   }
 
-  /**
-   * Set the default profile to be used.
-   *
-   * @param sDefaultProfileID
-   *        The ID of the default profile. May be <code>null</code>.
-   * @return <code>null</code> if no such profile is registered, the resolve
-   *         profile otherwise.
-   */
-  @Nullable
-  public IAS4Profile setDefaultProfileID (@Nullable final String sDefaultProfileID)
+  public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
   {
-    final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
-    setDefaultProfile (aDefault);
-    return aDefault;
+    ValueEnforcer.notNull (aAS4Profile, "AS4Profile");
+
+    final String sID = aAS4Profile.getID ();
+    m_aRWLock.writeLocked ( () -> {
+      if (m_aMap.containsKey (sID))
+        throw new IllegalStateException ("An AS4 profile with ID '" + sID + "' is already registered!");
+      m_aMap.put (sID, aAS4Profile);
+
+      // Make the first the default as fallback
+      if (m_aMap.size () == 1)
+        m_aDefaultProfile = aAS4Profile;
+    });
+    LOGGER.info ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
   }
 
-  public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)
+  /**
+   * @return <code>true</code> if an explicit default profile is present,
+   *         <code>false</code> if not.
+   */
+  public boolean hasDefaultProfile ()
   {
-    m_aRWLock.writeLocked ( () -> m_aDefaultProfile = aAS4Profile);
-    if (aAS4Profile == null)
-      LOGGER.info ("Removed the default AS4 profile");
-    else
-      LOGGER.info ("Set the default AS4 profile to '" +
-                   aAS4Profile.getID () +
-                   "'" +
-                   (aAS4Profile.isDeprecated () ? " which is deprecated" : ""));
+    return m_aRWLock.readLocked ( () -> m_aDefaultProfile != null);
+  }
+
+  /**
+   * @return The default profile. If none is set, and exactly one profile is
+   *         present, it is used. <code>null</code> if no default is present and
+   *         more than one profile is registered
+   */
+  @Nullable
+  public IAS4Profile getDefaultProfileOrNull ()
+  {
+    return m_aRWLock.readLocked ( () -> {
+      IAS4Profile ret = m_aDefaultProfile;
+      if (ret == null)
+      {
+        final int nCount = m_aMap.size ();
+        if (nCount == 1)
+          ret = m_aMap.getFirstValue ();
+      }
+      return ret;
+    });
   }
 
   /**
@@ -165,6 +168,41 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       }
       return ret;
     });
+  }
+
+  /**
+   * Set the default profile to be used.
+   *
+   * @param sDefaultProfileID
+   *        The ID of the default profile. May be <code>null</code>.
+   * @return <code>null</code> if no such profile is registered, the resolve
+   *         profile otherwise.
+   */
+  @Nullable
+  public IAS4Profile setDefaultProfileID (@Nullable final String sDefaultProfileID)
+  {
+    final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
+    setDefaultProfile (aDefault);
+    return aDefault;
+  }
+
+  public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)
+  {
+    final EChange eChanged = m_aRWLock.writeLocked ( () -> {
+      if (EqualsHelper.equals (aAS4Profile, m_aDefaultProfile))
+        return EChange.UNCHANGED;
+      m_aDefaultProfile = aAS4Profile;
+      return EChange.CHANGED;
+    });
+
+    if (eChanged.isChanged ())
+      if (aAS4Profile == null)
+        LOGGER.info ("Removed the default AS4 profile");
+      else
+        LOGGER.info ("Set the default AS4 profile to '" +
+                     aAS4Profile.getID () +
+                     "'" +
+                     (aAS4Profile.isDeprecated () ? " which is deprecated" : ""));
   }
 
   @Override

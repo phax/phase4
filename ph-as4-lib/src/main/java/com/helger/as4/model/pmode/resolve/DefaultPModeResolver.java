@@ -32,6 +32,7 @@ import com.helger.commons.string.StringHelper;
  * no ID is provided the default pmode is used.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 public class DefaultPModeResolver implements IPModeResolver
 {
@@ -74,7 +75,7 @@ public class DefaultPModeResolver implements IPModeResolver
       return ret;
 
     // Use default pmode based on profile
-    final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
+    final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfileOrNull ();
     if (aProfile != null)
       return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
 
