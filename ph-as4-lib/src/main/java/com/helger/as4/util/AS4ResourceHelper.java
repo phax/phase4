@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
 import org.slf4j.Logger;
@@ -48,6 +49,36 @@ import com.helger.commons.io.stream.StreamHelper;
 public class AS4ResourceHelper implements Closeable
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ResourceHelper.class);
+  private static File s_aTempDir;
+
+  /**
+   * @return The temp file directory to use, or <code>null</code> for the system
+   *         default.
+   */
+  @Nullable
+  public static File getTempDir ()
+  {
+    return s_aTempDir;
+  }
+
+  /**
+   * Set a temporary directory to use.
+   *
+   * @param aTempDir
+   *        The directory to use. It must be an existing directory. May be
+   *        <code>null</code> to use the system default.
+   * @throws IllegalArgumentException
+   *         If the directory does not exist
+   */
+  public static void setTempDir (@Nullable final File aTempDir)
+  {
+    if (aTempDir != null)
+      if (!aTempDir.isDirectory ())
+        throw new IllegalArgumentException ("Temporary directory '" +
+                                            aTempDir.getAbsolutePath () +
+                                            "' is not a directory");
+    s_aTempDir = aTempDir;
+  }
 
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
   private final AtomicBoolean m_aInClose = new AtomicBoolean (false);
@@ -74,7 +105,7 @@ public class AS4ResourceHelper implements Closeable
       throw new IllegalStateException ("ResourceManager is already closing/closed!");
 
     // Create
-    final File ret = File.createTempFile ("phase4-res-", ".tmp");
+    final File ret = File.createTempFile ("phase4-res-", ".tmp", s_aTempDir);
     // And remember
     m_aRWLock.writeLocked ( () -> m_aTempFiles.add (ret));
     return ret;
