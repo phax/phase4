@@ -28,7 +28,7 @@
   <packaging>war</packaging>
   <name>phase4-test</name>
   <description>AS4 server - Test only web application</description>
-  <url>https://github.com/phax/ph-as4/phase4-test</url>
+  <url>https://github.com/phax/phase4/phase4-test</url>
   <inceptionYear>2015</inceptionYear>
   
   <licenses>
