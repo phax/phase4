@@ -10,30 +10,31 @@ import javax.mail.internet.MimeMessage;
 
 import com.helger.commons.string.ToStringGenerator;
 
+/**
+ * Special wrapper around a {@link MimeMessage} with an indicator if the message
+ * can be written more than once.
+ * 
+ * @author Philip Helger
+ */
 public class AS4MimeMessage extends MimeMessage
 {
-  private boolean m_bIsRepeatable = false;
+  private final boolean m_bIsRepeatable;
 
-  public AS4MimeMessage (@Nullable final Session aSession)
+  public AS4MimeMessage (@Nullable final Session aSession, final boolean bIsRepeatable)
   {
     super (aSession);
+    m_bIsRepeatable = bIsRepeatable;
   }
 
   public AS4MimeMessage (@Nullable final Session aSession, @Nonnull final InputStream aIS) throws MessagingException
   {
     super (aSession, aIS);
+    m_bIsRepeatable = false;
   }
 
-  public boolean isRepeatable ()
+  public final boolean isRepeatable ()
   {
     return m_bIsRepeatable;
-  }
-
-  @Nonnull
-  public AS4MimeMessage setRepeatable (final boolean bIsRepeatable)
-  {
-    m_bIsRepeatable = bIsRepeatable;
-    return this;
   }
 
   @Override

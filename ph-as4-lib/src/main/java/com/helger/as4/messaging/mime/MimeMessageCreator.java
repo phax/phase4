@@ -114,8 +114,7 @@ public final class MimeMessageCreator
       }
 
     // Build main message
-    final AS4MimeMessage aMsg = new AS4MimeMessage ((Session) null);
-    aMsg.setRepeatable (bIsRepeatable);
+    final AS4MimeMessage aMsg = new AS4MimeMessage ((Session) null, bIsRepeatable);
     aMsg.setContent (aMimeMultipart);
     aMsg.saveChanges ();
 
