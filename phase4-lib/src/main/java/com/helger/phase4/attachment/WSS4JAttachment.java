@@ -335,6 +335,9 @@ public class WSS4JAttachment extends Attachment
    *
    * @param aSrcFile
    *        Source, uncompressed, unencrypted file.
+   * @param sContentID
+   *        Content-ID of the attachment. If <code>null</code> a random ID is
+   *        created.
    * @param aMimeType
    *        Original mime type of the file.
    * @param eCompressionMode

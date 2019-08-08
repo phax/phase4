@@ -57,6 +57,9 @@ public class AS4Profile implements IAS4Profile
    *        Default PMode supplier. May not be <code>null</code>.
    * @param aPModeIDProvider
    *        PMode ID provider. May not be <code>null</code>.
+   * @param bDeprecated
+   *        <code>true</code> if the profile is deprecated, <code>false</code>
+   *        if not.
    */
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,

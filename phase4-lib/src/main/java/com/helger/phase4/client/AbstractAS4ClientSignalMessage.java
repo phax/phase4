@@ -28,6 +28,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * Abstract AS4 client for signal messages with arbitrary content.
  *
  * @author Philip Helger
+ * @param <IMPLTYPE>
+ *        Implementation type
  */
 public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractAS4ClientSignalMessage <IMPLTYPE>>
                                                      extends

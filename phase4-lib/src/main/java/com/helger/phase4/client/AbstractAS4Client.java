@@ -686,7 +686,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         }
         throw new IllegalStateException ("Should never be reached (after maximum of " + nMaxTries + " tries)!");
       }
-      else
+      // else non retry
       {
         final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
                                                                 aBuiltEntity,

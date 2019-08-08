@@ -41,8 +41,9 @@ public interface IAS4OutgoingDumper extends Serializable
    * @param sMessageID
    *        The message ID of the outgoing message. Neither <code>null</code>
    *        nor empty.
-   * @param Custom
-   *        headers to be added to the HTTP entity. May be <code>null</code>.
+   * @param aCustomHeaders
+   *        Custom headers to be added to the HTTP entity. May be
+   *        <code>null</code>.
    * @param nTry
    *        The index of the try. The first try has always index 0, the first
    *        retry has index 1, the second retry has index 2 etc. Always &ge; 0.
