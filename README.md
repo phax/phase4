@@ -13,6 +13,7 @@ It consists of the following sub-projects:
 ## News and noteworthy
 
 * v0.9.0 - work in progress
+    * The GitHub repository was officially renamed to **phase4**
     * Updated to WSS4J 2.2.4
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
@@ -28,6 +29,7 @@ It consists of the following sub-projects:
     * Added possibility to dump incoming and outgoing requests using `AS4DumpManager`
     * This version passes the CEF "AS4 Basic Connectivity Tests"
     * This version passes the CEF "AS4 Common Profile Test Assertions"
+    * This version passes the CEF "AS4 Four Corner Profile Enhancement Test Assertions" 
 * v0.8.2 - 2019-02-27
     * Adoptions for integration into TOOP
 * v0.8.1 - 2018-11-26
