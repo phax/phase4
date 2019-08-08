@@ -18,7 +18,7 @@ package com.helger.as4.server;
 
 import org.junit.Before;
 
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.settings.Settings;
 
 /**

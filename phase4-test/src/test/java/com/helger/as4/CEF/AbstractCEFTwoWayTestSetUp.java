@@ -28,7 +28,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.server.MockPModeGenerator;
 import com.helger.as4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
@@ -48,6 +47,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.model.pmode.PMode;
+import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.core.servlet.WebAppListener;

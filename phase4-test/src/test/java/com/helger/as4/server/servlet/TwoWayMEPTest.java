@@ -24,8 +24,6 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.profile.cef.CEFPMode;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
@@ -48,6 +46,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.profile.cef.CEFPMode;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;

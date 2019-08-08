@@ -28,8 +28,8 @@
   <version>0.9.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
-  <description>Base POM to build the ph-as4 projects</description>
-  <url>https://github.com/phax/ph-as4</url>
+  <description>Base POM to build the phase4 projects</description>
+  <url>https://github.com/phax/phase4</url>
   <inceptionYear>2015</inceptionYear>
  
   <licenses>
@@ -41,9 +41,9 @@
   </licenses>
   
   <scm>
-    <connection>scm:git:git@github.com:phax/ph-as4.git</connection>
-    <developerConnection>scm:git:git@github.com:phax/ph-as4.git</developerConnection>
-    <url>http://github.com/phax/ph-as4</url>
+    <connection>scm:git:git@github.com:phax/phase4.git</connection>
+    <developerConnection>scm:git:git@github.com:phax/phase4.git</developerConnection>
+    <url>http://github.com/phax/phase4</url>
     <tag>HEAD</tag>
   </scm>
 

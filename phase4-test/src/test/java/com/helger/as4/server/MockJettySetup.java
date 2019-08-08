@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.photon.jetty.JettyRunner;

@@ -24,10 +24,10 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.server.message.MockMessages;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 

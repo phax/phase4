@@ -28,7 +28,7 @@
   <packaging>bundle</packaging>
   <name>phase4-profile-cef</name>
   <description>CEF AS4 profile</description>
-  <url>https://github.com/phax/ph-as4/phase4-profile-cef</url>
+  <url>https://github.com/phax/phase4/phase4-profile-cef</url>
   <inceptionYear>2016</inceptionYear>
 
   <licenses>
@@ -71,11 +71,11 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Automatic-Module-Name>com.helger.as4.esens</Automatic-Module-Name>
-            <Export-Package>com.helger.as4.esens.*</Export-Package>
+            <Automatic-Module-Name>com.helger.phase4.profile.cef</Automatic-Module-Name>
+            <Export-Package>com.helger.phase4.profile.cef.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
-            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.as4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
+            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
           </instructions>
         </configuration>
       </plugin>

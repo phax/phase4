@@ -29,9 +29,9 @@ import org.junit.Test;
 
 import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.MockPModeGenerator;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.client.AS4ClientErrorMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 

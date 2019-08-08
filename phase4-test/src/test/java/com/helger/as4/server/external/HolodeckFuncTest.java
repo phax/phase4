@@ -25,7 +25,6 @@ import org.w3c.dom.Document;
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.CEF.AbstractCEFTestSetUp;
 import com.helger.as4.server.MockJettySetup;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -46,6 +45,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 @Ignore ("Axis2 bug in Holodeck! Requires external proxy and PEPPOL pilot certificate!")

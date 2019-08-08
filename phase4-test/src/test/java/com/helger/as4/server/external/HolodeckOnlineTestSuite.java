@@ -27,7 +27,7 @@ import com.helger.as4.server.MockJettySetup;
 import com.helger.as4.server.message.ReceiptMessageTest;
 import com.helger.as4.server.message.UserMessageOneAttachmentTest;
 import com.helger.as4.server.message.UserMessageSoapBodyPayloadTest;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)

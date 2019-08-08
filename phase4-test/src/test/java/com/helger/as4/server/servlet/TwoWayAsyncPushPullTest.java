@@ -27,9 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import com.helger.as4.AS4TestConstants;
-import com.helger.as4.profile.cef.CEFPMode;
 import com.helger.as4.server.standalone.RunInJettyAS4TEST9090;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.ThreadHelper;
@@ -46,6 +44,8 @@ import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.profile.cef.CEFPMode;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;

@@ -31,7 +31,7 @@ import com.helger.as4.server.message.UserMessageSoapBodyPayloadTest;
 import com.helger.as4.server.servlet.PModeCheckTest;
 import com.helger.as4.server.supplementary.test.EncryptionTest;
 import com.helger.as4.server.supplementary.test.SignatureTest;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 @RunWith (Suite.class)
 @SuiteClasses ({ SPITest.class,

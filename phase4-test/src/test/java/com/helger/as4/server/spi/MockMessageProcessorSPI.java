@@ -23,11 +23,6 @@ import org.w3c.dom.Node;
 
 import com.helger.as4.AS4TestConstants;
 import com.helger.as4.server.MockPModeGenerator;
-import com.helger.as4.servlet.IAS4MessageState;
-import com.helger.as4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.as4.servlet.spi.AS4MessageProcessorResult;
-import com.helger.as4.servlet.spi.AS4SignalMessageProcessorResult;
-import com.helger.as4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -47,6 +42,11 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.servlet.IAS4MessageState;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
+import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
+import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**

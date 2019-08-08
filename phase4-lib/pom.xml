@@ -28,7 +28,7 @@
   <packaging>bundle</packaging>
   <name>phase4-lib</name>
   <description>AS4 common library</description>
-  <url>https://github.com/phax/ph-as4/phase4-lib</url>
+  <url>https://github.com/phax/phase4/phase4-lib</url>
   <inceptionYear>2015</inceptionYear>
   
   <licenses>
@@ -158,7 +158,7 @@
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.as4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI</Provide-Capability>
           </instructions>
         </configuration>

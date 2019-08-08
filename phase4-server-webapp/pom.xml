@@ -28,7 +28,7 @@
   <packaging>war</packaging>
   <name>phase4-server-webapp</name>
   <description>Standalone AS4 demo server</description>
-  <url>https://github.com/phax/ph-as4/phase4-server-webapp</url>
+  <url>https://github.com/phax/phase4/phase4-server-webapp</url>
   <inceptionYear>2015</inceptionYear>
   
   <licenses>

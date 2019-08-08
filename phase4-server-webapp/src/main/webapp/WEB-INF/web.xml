@@ -27,7 +27,7 @@
   </welcome-file-list>
   <servlet>
     <servlet-name>AS4Servlet</servlet-name>
-    <servlet-class>com.helger.as4.servlet.AS4Servlet</servlet-class>
+    <servlet-class>com.helger.phase4.servlet.AS4Servlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>AS4Servlet</servlet-name>
