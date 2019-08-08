@@ -94,7 +94,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                                                               COLLABORATION_INFO_ACTION,
                                                                                                               AS4TestConstants.TEST_CONVERSATION_ID);
     final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
-                                                                                      "ph-as4-sender",
+                                                                                      "phase4-sender",
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       TO_PARTY_ID);
 

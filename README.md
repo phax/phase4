@@ -19,9 +19,9 @@ It consists of the following sub-projects:
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
     * Updated to ph-commons 9.3.5
-    * The submodule `ph-as4-esens` was renamed to `ph-as4-profile-cef`
+    * The submodule `ph-as4-esens` was renamed to `phase4-profile-cef`
     * The AS4 message handler now have a chance to access the received HTTP headers
-    * Renamed `ph-as4-server-webapp-test` to `ph-as4-test`
+    * Renamed `ph-as4-server-webapp-test` to `phase4-test`
     * Improved Crypto stuff configurability
     * Renamed `AS4ResourceManager` to `AS4ResourceHelper`
     * Renamed `AS4Handler` to `AS4RequestHandler`
