@@ -1088,7 +1088,6 @@ public class AS4RequestHandler implements AutoCloseable
 
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-    final boolean bIsEffectiveLeg1 = aState.getEffectivePModeLegNumber () == 1;
     final Ebms3UserMessage aEbmsUserMessage;
     final Ebms3SignalMessage aEbmsSignalMessage;
     final Ebms3Error aEbmsError;
@@ -1262,7 +1261,7 @@ public class AS4RequestHandler implements AutoCloseable
       if (aPMode == null ||
           aPMode.getMEPBinding ().isSynchronous () ||
           aPMode.getMEPBinding ().isAsynchronousInitiator () ||
-          !bIsEffectiveLeg1)
+          aState.getEffectivePModeLegNumber () != 1)
       {
         // Call synchronous
 
