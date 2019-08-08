@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="90mm"
+   height="60mm"
+   viewBox="0 0 318.89753 212.59822"
+   id="svg4240"
+   version="1.1"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="phase4-logo.svg"
+   inkscape:export-filename="C:\dev\git\phase4\docs\logo\phase4-logo-761-500.png"
+   inkscape:export-xdpi="232.95235"
+   inkscape:export-ydpi="232.95235">
+  <defs
+     id="defs4242">
+    <linearGradient
+       inkscape:collect="always"
+       id="a1">
+      <stop
+         style="stop-color:#889ec3;stop-opacity:1;"
+         offset="0"
+         id="stop4889" />
+      <stop
+         style="stop-color:#7083a2;stop-opacity:1"
+         offset="1"
+         id="stop4891" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#a1"
+       id="linearGradient4893"
+       x1="385.79453"
+       y1="998.07666"
+       x2="385.79453"
+       y2="1025.616"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-214.88005,19.019494)" />
+    <linearGradient
+       inkscape:collect="always"
+       id="a2">
+      <stop
+         style="stop-color:#2f63a2;stop-opacity:1;"
+         offset="0"
+         id="stop4949" />
+      <stop
+         style="stop-color:#275389;stop-opacity:1"
+         offset="1"
+         id="stop4951" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#a2"
+       id="linearGradient4894"
+       x1="152.93735"
+       y1="1003.0767"
+       x2="152.93735"
+       y2="1025.9731"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.99734598,0,0,1,-25.150456,-77.627356)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.7897686"
+     inkscape:cx="142.22937"
+     inkscape:cy="139.95125"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="2560"
+     inkscape:window-height="1346"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:object-paths="true" />
+  <metadata
+     id="metadata4245">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-839.76388)">
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:url(#linearGradient4894);fill-opacity:1;stroke:none;stroke-width:0.99867213"
+       d="m 14.941517,852.12627 v 96.64647 h 39.537366 165.736697 39.53737 v -0.1094 L 210.7252,900.39581 259.75295,852.12627 H 220.21558 54.478883 Z"
+       id="rect3398" />
+    <text
+       id="text4800"
+       y="917.0166"
+       x="33.940434"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-size:65.94639587px;line-height:1.25"
+         y="917.0166"
+         x="33.940434"
+         id="tspan4802"
+         sodipodi:role="line">phoss</tspan></text>
+    <path
+       sodipodi:nodetypes="cccccc"
+       inkscape:connector-curvature="0"
+       id="path4221"
+       d="m 14.941515,948.77274 c 0,32.0167 0,64.50936 0,96.52596 81.799697,0 163.034595,0 244.744845,0 16.38672,-16.0892 32.77344,-32.1785 49.16016,-48.26766 -16.37369,-16.1135 -32.85152,-32.1834 -49.16016,-48.3242 z"
+       style="fill:url(#linearGradient4893);fill-opacity:1;stroke:none" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="33.940434"
+       y="1013.5699"
+       id="text4796"><tspan
+         style="font-size:65.94639587px;line-height:1.25"
+         sodipodi:role="line"
+         id="tspan4798"
+         x="33.940434"
+         y="1013.5699">phase4</tspan></text>
+  </g>
+</svg>
