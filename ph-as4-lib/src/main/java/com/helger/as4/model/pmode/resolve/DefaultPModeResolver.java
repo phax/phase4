@@ -73,9 +73,7 @@ public class DefaultPModeResolver implements IPModeResolver
     if (ret != null)
       return ret;
 
-    // Use default pmode
-    // 1. Based on profile
-    // 2. Default default
+    // Use default pmode based on profile
     final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getDefaultProfile ();
     if (aProfile != null)
       return aProfile.createPModeTemplate (sInitiatorID, sResponderID, sAddress);
@@ -86,6 +84,7 @@ public class DefaultPModeResolver implements IPModeResolver
       return null;
     }
 
+    // 2. Default default PMode
     return DefaultPMode.getOrCreateDefaultPMode (sInitiatorID, sResponderID, sAddress, true);
   }
 }
