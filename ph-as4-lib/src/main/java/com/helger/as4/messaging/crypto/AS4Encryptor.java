@@ -22,7 +22,6 @@ import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.WSEncryptionPart;
-import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -65,9 +64,9 @@ public final class AS4Encryptor
     // signing certificate.
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSymmetricEncAlgorithm (aCryptParams.getAlgorithmCrypt ().getAlgorithmURI ());
-    aBuilder.setKeyEncAlgo (WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11);
-    aBuilder.setMGFAlgorithm (WSS4JConstants.MGF_SHA256);
-    aBuilder.setDigestAlgorithm (WSS4JConstants.SHA256);
+    aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ());
+    aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());
+    aBuilder.setDigestAlgorithm (aCryptParams.getDigestAlgorithm ());
     // Encrypted key must be contained
     aBuilder.setEncryptSymmKey (true);
     if (aCryptParams.hasCertificate ())

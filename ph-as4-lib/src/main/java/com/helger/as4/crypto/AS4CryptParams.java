@@ -24,7 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.apache.wss4j.common.WSS4JConstants;
+
 import com.helger.as4.model.pmode.leg.PModeLegSecurity;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.lang.ICloneable;
@@ -40,8 +43,18 @@ import com.helger.commons.string.ToStringGenerator;
 @NotThreadSafe
 public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 {
+  public static final String DEFAULT_KEY_ENC_ALGORITHM = WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11;
+  public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
+  public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
+
   // The algorithm to use
   private ECryptoAlgorithmCrypt m_eAlgorithmCrypt;
+  // The key encryption algorithm
+  private String m_sKeyEncAlgorithm = DEFAULT_KEY_ENC_ALGORITHM;
+  // The MGF algorithm to use with the RSA-OAEP key transport algorithm
+  private String m_sMGFAlgorithm = DEFAULT_MGF_ALGORITHM;
+  // The digest algorithm to use with the RSA-OAEP key transport algorithm
+  private String m_sDigestAlgorithm = DEFAULT_DIGEST_ALGORITHM;
   // The explicit certificate to use - has precedence over the alias
   private X509Certificate m_aCert;
   // The alias into the WSS4J crypto config
@@ -87,6 +100,56 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public final AS4CryptParams setAlgorithmCrypt (@Nullable final ECryptoAlgorithmCrypt eAlgorithmCrypt)
   {
     m_eAlgorithmCrypt = eAlgorithmCrypt;
+    return this;
+  }
+
+  @Nonnull
+  @Nonempty
+  public final String getKeyEncAlgorithm ()
+  {
+    return m_sKeyEncAlgorithm;
+  }
+
+  @Nonnull
+  public final AS4CryptParams setKeyEncAlgorithm (@Nonnull @Nonempty final String sKeyEncAlgorithm)
+  {
+    m_sKeyEncAlgorithm = sKeyEncAlgorithm;
+    return this;
+  }
+
+  /**
+   * @return the MGF algorithm to use with the RSA-OAEP key transport algorithm.
+   *         The default is {@link #DEFAULT_MGF_ALGORITHM}
+   */
+  @Nonnull
+  @Nonempty
+  public final String getMGFAlgorithm ()
+  {
+    return m_sMGFAlgorithm;
+  }
+
+  @Nonnull
+  public final AS4CryptParams setMGFAlgorithm (@Nonnull @Nonempty final String sMGFAlgorithm)
+  {
+    m_sMGFAlgorithm = sMGFAlgorithm;
+    return this;
+  }
+
+  /**
+   * @return the digest algorithm to use with the RSA-OAEP key transport
+   *         algorithm. The default is {@link #DEFAULT_DIGEST_ALGORITHM}
+   */
+  @Nonnull
+  @Nonempty
+  public final String getDigestAlgorithm ()
+  {
+    return m_sDigestAlgorithm;
+  }
+
+  @Nonnull
+  public final AS4CryptParams setDigestAlgorithm (@Nonnull @Nonempty final String sDigestAlgorithm)
+  {
+    m_sDigestAlgorithm = sDigestAlgorithm;
     return this;
   }
 
@@ -144,13 +207,21 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   @ReturnsMutableCopy
   public AS4CryptParams getClone ()
   {
-    return new AS4CryptParams ().setAlgorithmCrypt (m_eAlgorithmCrypt).setCertificate (m_aCert).setAlias (m_sAlias);
+    return new AS4CryptParams ().setAlgorithmCrypt (m_eAlgorithmCrypt)
+                                .setKeyEncAlgorithm (m_sKeyEncAlgorithm)
+                                .setMGFAlgorithm (m_sMGFAlgorithm)
+                                .setDigestAlgorithm (m_sDigestAlgorithm)
+                                .setCertificate (m_aCert)
+                                .setAlias (m_sAlias);
   }
 
   @Override
   public String toString ()
   {
     return new ToStringGenerator (null).append ("AlgorithmCrypt", m_eAlgorithmCrypt)
+                                       .append ("KeyEncAlgorithm", m_sKeyEncAlgorithm)
+                                       .append ("MGFAlgorithm", m_sMGFAlgorithm)
+                                       .append ("DigestAlgorithm", m_sDigestAlgorithm)
                                        .append ("Certificate", m_aCert)
                                        .append ("Alias", m_sAlias)
                                        .getToString ();
