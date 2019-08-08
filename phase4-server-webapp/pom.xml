@@ -21,14 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.helger</groupId>
-    <artifactId>ph-as4-parent-pom</artifactId>
+    <artifactId>phase4-parent-pom</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  <artifactId>ph-as4-test</artifactId>
+  <artifactId>phase4-server-webapp</artifactId>
   <packaging>war</packaging>
-  <name>ph-as4-test</name>
-  <description>AS4 server - Test only web application</description>
-  <url>https://github.com/phax/ph-as4/ph-as4-test</url>
+  <name>phase4-server-webapp</name>
+  <description>Standalone AS4 demo server</description>
+  <url>https://github.com/phax/ph-as4/phase4-server-webapp</url>
   <inceptionYear>2015</inceptionYear>
   
   <licenses>
@@ -48,15 +48,15 @@
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-as4-lib</artifactId>
+      <artifactId>phase4-lib</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-as4-profile-cef</artifactId>
+      <artifactId>phase4-profile-cef</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-as4-servlet</artifactId>
+      <artifactId>phase4-servlet</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>
@@ -65,6 +65,14 @@
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-oton-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>peppol-sbdh</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>peppol-smp-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -99,16 +107,6 @@
       <artifactId>ph-oton-jetty</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.littleshoot</groupId>
-      <artifactId>littleproxy</artifactId>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>peppol-smp-client</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -126,6 +124,7 @@
         <targetPath>${project.build.directory}/test-classes</targetPath>
       </resource>
     </resources>
+
     <plugins>
       <plugin>
         <groupId>com.mycila</groupId>
@@ -139,9 +138,7 @@
             <exclude>**/*.cer</exclude>
             <exclude>**/*.mime</exclude>
             <exclude>**/*.mmd</exclude>
-            <exclude>as4-data/**</exclude>
-            <exclude>as4-test-data/**</exclude>
-            <exclude>as4-test-data-9090/**</exclude>
+            <exclude>as4-data/*</exclude>
           </excludes>
         </configuration>
       </plugin>

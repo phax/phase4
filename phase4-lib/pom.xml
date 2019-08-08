@@ -21,14 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.helger</groupId>
-    <artifactId>ph-as4-parent-pom</artifactId>
+    <artifactId>phase4-parent-pom</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  <artifactId>ph-as4-lib</artifactId>
+  <artifactId>phase4-lib</artifactId>
   <packaging>bundle</packaging>
-  <name>ph-as4-lib</name>
+  <name>phase4-lib</name>
   <description>AS4 common library</description>
-  <url>https://github.com/phax/ph-as4/ph-as4-lib</url>
+  <url>https://github.com/phax/ph-as4/phase4-lib</url>
   <inceptionYear>2015</inceptionYear>
   
   <licenses>

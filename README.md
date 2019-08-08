@@ -4,16 +4,17 @@ A library to send and receive AS4 messages.
 Licensed under the Apache 2 License!
 
 It consists of the following sub-projects:
-  * **ph-as4-lib** - basic data structures for AS4 handling
-  * **ph-as4-esens** - AS4 profile for eSENS as well as the PMode and the respective validation
-  * **ph-as4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
-  * **ph-as4-test** - integration test project (since 0.9.0)
-  * **ph-as4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
+  * **phase4-lib** - basic data structures for AS4 handling
+  * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
+  * **phase4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
+  * **phase4-test** - integration test project (since 0.9.0)
+  * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
  
 ## News and noteworthy
 
 * v0.9.0 - work in progress
     * The GitHub repository was officially renamed to **phase4**
+    * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
     * Updated to WSS4J 2.2.4
     * Updated to ph-oton 8.2.0
     * Updated to peppol-commons 7.0.0
@@ -120,7 +121,7 @@ The properties have the following meaning
 
 ## Building from source
 
-After initial checkout, it is necessary to run `mvn process-sources` once on the `as4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
+After initial checkout, it is necessary to run `mvn process-sources` once on the `phase4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
 
 ## Known limitations
 
@@ -130,7 +131,7 @@ Per now the following known limitations exist:
 ## Differences to Holodeck
 
   * This is a library and not a product
-  * ph-as4 is licensed under the business friendly Apache 2 license and not under GPL/LGPL
+  * phase4 is licensed under the business friendly Apache 2 license and not under GPL/LGPL
   * This library only takes care about the effective receiving of documents, but does not provide a storage for them. You need to implement your own incoming document handler!
   * ph-as4 does not use an existing WS-Stack like Axis or Apache CXF but instead operates directly on a Servlet layer for retrieval and using Apache HttpClient for sending
 

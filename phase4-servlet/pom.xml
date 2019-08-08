@@ -21,14 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.helger</groupId>
-    <artifactId>ph-as4-parent-pom</artifactId>
+    <artifactId>phase4-parent-pom</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  <artifactId>ph-as4-servlet</artifactId>
+  <artifactId>phase4-servlet</artifactId>
   <packaging>bundle</packaging>
-  <name>ph-as4-servlet</name>
+  <name>phase4-servlet</name>
   <description>AS4 servlet library</description>
-  <url>https://github.com/phax/ph-as4/ph-as4-servlet</url>
+  <url>https://github.com/phax/ph-as4/phase4-servlet</url>
   <inceptionYear>2015</inceptionYear>
 
   <licenses>
@@ -42,7 +42,7 @@
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-as4-lib</artifactId>
+      <artifactId>phase4-lib</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger</groupId>

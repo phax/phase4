@@ -21,14 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.helger</groupId>
-    <artifactId>ph-as4-parent-pom</artifactId>
+    <artifactId>phase4-parent-pom</artifactId>
     <version>0.9.0-SNAPSHOT</version>
   </parent>
-  <artifactId>ph-as4-profile-cef</artifactId>
+  <artifactId>phase4-profile-cef</artifactId>
   <packaging>bundle</packaging>
-  <name>ph-as4-profile-cef</name>
+  <name>phase4-profile-cef</name>
   <description>CEF AS4 profile</description>
-  <url>https://github.com/phax/ph-as4/ph-as4-profile-cef</url>
+  <url>https://github.com/phax/ph-as4/phase4-profile-cef</url>
   <inceptionYear>2016</inceptionYear>
 
   <licenses>
@@ -42,7 +42,7 @@
   <dependencies>
     <dependency>
       <groupId>com.helger</groupId>
-      <artifactId>ph-as4-lib</artifactId>
+      <artifactId>phase4-lib</artifactId>
     </dependency>
 
     <dependency>
