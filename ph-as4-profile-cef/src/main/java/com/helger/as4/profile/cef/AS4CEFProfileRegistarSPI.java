@@ -35,23 +35,23 @@ import com.helger.commons.functional.ISupplier;
 @IsSPIImplementation
 public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-  public static final String AS4_PROFILE_ID_NEW = "cef";
-  public static final String AS4_PROFILE_NAME_NEW = "CEF";
+  public static final String AS4_PROFILE_ID = "cef";
+  public static final String AS4_PROFILE_NAME = "CEF";
+  public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final IPModeIDProvider aPModeIDProvider = IPModeIDProvider.DEFAULT_DYNAMIC;
     final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = () -> new CEFCompatibilityValidator ();
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> CEFPMode.createCEFPMode (i,
                                                                                                  r,
                                                                                                  a,
-                                                                                                 aPModeIDProvider,
+                                                                                                 PMODE_ID_PROVIDER,
                                                                                                  true);
-    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID_NEW,
-                                                AS4_PROFILE_NAME_NEW,
+    final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
+                                                AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,
                                                 aDefaultPModeProvider,
-                                                aPModeIDProvider,
+                                                PMODE_ID_PROVIDER,
                                                 false);
     aRegistrar.registerProfile (aProfile);
     aRegistrar.setDefaultProfile (aProfile);
