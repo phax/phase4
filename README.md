@@ -6,13 +6,13 @@ Licensed under the Apache 2 License!
 It consists of the following sub-projects:
   * **phase4-lib** - basic data structures for AS4 handling
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
-  * **phase4-servlet** - AS4 servlet for integration into existing (since 0.6.0)
-  * **phase4-test** - integration test project (since 0.9.0)
-  * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes (since 0.7.0)
+  * **phase4-servlet** - AS4 servlet for integration into existing
+  * **phase4-test** - integration test project
+  * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
  
 ## News and noteworthy
 
-* v0.9.0 - work in progress
+* v0.9.0 - 2019-08-08
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
     * The package names changes from `com.helger.as4.*` to `com.helger.phase4.*`
