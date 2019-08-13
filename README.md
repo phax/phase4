@@ -11,6 +11,8 @@ It consists of the following sub-projects:
   * **phase4-servlet** - AS4 servlet for integration into existing
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
+  
+This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
  
 ## News and noteworthy
 
