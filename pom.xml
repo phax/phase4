@@ -69,7 +69,7 @@
   <properties>
     <xmlsec.version>2.1.4</xmlsec.version>
     <wss4j.version>2.2.4</wss4j.version>
-    <log4j.version>2.12.0</log4j.version>
+    <log4j.version>2.12.1</log4j.version>
   </properties>
   
   <dependencyManagement>
