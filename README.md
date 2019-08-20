@@ -16,6 +16,8 @@ This solution is CEF compliant. See the test report at https://ec.europa.eu/cefd
  
 ## News and noteworthy
 
+* v0.9.1 - work in progress
+    * Ignored WSS4J dependency "ehcache" to create smaller deployments 
 * v0.9.0 - 2019-08-08
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`

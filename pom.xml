@@ -206,12 +206,12 @@
       <artifactId>wss4j-ws-security-dom</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>javax.xml.stream</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.geronimo.javamail</groupId>
           <artifactId>geronimo-javamail_1.4_mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.sf.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
