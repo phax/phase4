@@ -46,13 +46,13 @@ import com.helger.phase4.wss.EWSSVersion;
 
 /**
  * PMode creation code.
- * 
+ *
  * @author Philip Helger
  */
 @Immutable
 public final class CEFPMode
 {
-  private static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
+  public static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
 
   private CEFPMode ()
   {}

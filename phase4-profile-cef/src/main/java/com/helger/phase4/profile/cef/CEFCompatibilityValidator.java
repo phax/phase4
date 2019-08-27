@@ -113,7 +113,9 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
-  private void _checkIfLegIsValid (final IPMode aPMode, final ErrorList aErrorList, @Nonnull final PModeLeg aPModeLeg)
+  private void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
+                                   @Nonnull final ErrorList aErrorList,
+                                   @Nonnull final PModeLeg aPModeLeg)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
