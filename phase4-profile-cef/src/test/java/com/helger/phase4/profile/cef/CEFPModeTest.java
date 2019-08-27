@@ -20,9 +20,13 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import com.helger.phase4.model.pmode.IPModeIDProvider;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
+/**
+ * Test class for class {@link CEFPMode}.
+ * 
+ * @author Philip Helger
+ */
 public final class CEFPModeTest
 {
   @ClassRule
