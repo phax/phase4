@@ -228,6 +228,17 @@ public final class MessageHelperMethods
                                                      @Nonnull @Nonempty final String sToRole,
                                                      @Nonnull @Nonempty final String sToPartyID)
   {
+    return createEbms3PartyInfo (sFromRole, null, sFromPartyID, sToRole, null, sToPartyID);
+  }
+
+  @Nonnull
+  public static Ebms3PartyInfo createEbms3PartyInfo (@Nonnull @Nonempty final String sFromRole,
+                                                     @Nullable final String sFromPartyIDType,
+                                                     @Nonnull @Nonempty final String sFromPartyID,
+                                                     @Nonnull @Nonempty final String sToRole,
+                                                     @Nullable final String sToPartyIDType,
+                                                     @Nonnull @Nonempty final String sToPartyID)
+  {
     ValueEnforcer.notEmpty (sFromRole, "FromRole");
     ValueEnforcer.notEmpty (sFromPartyID, "FromPartyID");
     ValueEnforcer.notEmpty (sToRole, "ToRole");
@@ -238,13 +249,13 @@ public final class MessageHelperMethods
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
     aEbms3From.setRole (sFromRole);
-    aEbms3From.addPartyId (createEbms3PartyId (sFromPartyID));
+    aEbms3From.addPartyId (createEbms3PartyId (sFromPartyIDType, sFromPartyID));
     aEbms3PartyInfo.setFrom (aEbms3From);
 
     // To => Receiver
     final Ebms3To aEbms3To = new Ebms3To ();
     aEbms3To.setRole (sToRole);
-    aEbms3To.addPartyId (createEbms3PartyId (sToPartyID));
+    aEbms3To.addPartyId (createEbms3PartyId (sToPartyIDType, sToPartyID));
     aEbms3PartyInfo.setTo (aEbms3To);
 
     return aEbms3PartyInfo;

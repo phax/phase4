@@ -89,10 +89,12 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   private String m_sAgreementRefValue;
 
   private String m_sFromRole = CAS4.DEFAULT_ROLE;
-  private String m_sFromPartyID;
+  private String m_sFromPartyIDType;
+  private String m_sFromPartyIDValue;
 
   private String m_sToRole = CAS4.DEFAULT_ROLE;
-  private String m_sToPartyID;
+  private String m_sToPartyIDType;
+  private String m_sToPartyIDValue;
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
@@ -335,9 +337,30 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   @Nullable
+  public final String getFromPartyIDType ()
+  {
+    return m_sFromPartyIDType;
+  }
+
+  /**
+   * The PartyID is an ID that identifies the C2 over which the message gets
+   * sent.
+   *
+   * @param sFromPartyIDType
+   *        the partyID type that should be set
+   * @return this for chaining
+   */
+  @Nonnull
+  public final AS4ClientUserMessage setFromPartyIDType (@Nullable final String sFromPartyIDType)
+  {
+    m_sFromPartyIDType = sFromPartyIDType;
+    return this;
+  }
+
+  @Nullable
   public final String getFromPartyID ()
   {
-    return m_sFromPartyID;
+    return m_sFromPartyIDValue;
   }
 
   /**
@@ -354,7 +377,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Nonnull
   public final AS4ClientUserMessage setFromPartyID (@Nullable final String sFromPartyID)
   {
-    m_sFromPartyID = sFromPartyID;
+    m_sFromPartyIDValue = sFromPartyID;
     return this;
   }
 
@@ -378,9 +401,29 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   @Nullable
+  public final String getToPartyIDType ()
+  {
+    return m_sToPartyIDType;
+  }
+
+  /**
+   * * @see #setFromPartyIDType(String)
+   *
+   * @param sToPartyIDType
+   *        the PartyID type that should be set
+   * @return this for chaining
+   */
+  @Nonnull
+  public final AS4ClientUserMessage setToPartyIDType (@Nullable final String sToPartyIDType)
+  {
+    m_sToPartyIDType = sToPartyIDType;
+    return this;
+  }
+
+  @Nullable
   public final String getToPartyID ()
   {
-    return m_sToPartyID;
+    return m_sToPartyIDValue;
   }
 
   /**
@@ -393,7 +436,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Nonnull
   public final AS4ClientUserMessage setToPartyID (@Nullable final String sToPartyID)
   {
-    m_sToPartyID = sToPartyID;
+    m_sToPartyIDValue = sToPartyID;
     return this;
   }
 
@@ -443,21 +486,25 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     if (aPMode.hasInitiator ())
     {
       setFromRole (aPMode.getInitiator ().getRole ());
-      setFromPartyID (aPMode.getInitiator ().getID ());
+      setFromPartyIDType (aPMode.getInitiator ().getIDType ());
+      setFromPartyID (aPMode.getInitiator ().getIDValue ());
     }
     else
     {
       setFromRole (null);
+      setFromPartyIDType (null);
       setFromPartyID (null);
     }
     if (aPMode.hasResponder ())
     {
       setToRole (aPMode.getResponder ().getRole ());
-      setToPartyID (aPMode.getResponder ().getID ());
+      setToPartyIDType (aPMode.getResponder ().getIDType ());
+      setToPartyID (aPMode.getResponder ().getIDValue ());
     }
     else
     {
       setToRole (null);
+      setToPartyIDType (null);
       setToPartyID (null);
     }
 
@@ -530,13 +577,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     if (StringHelper.hasNoText (m_sFromRole))
       throw new IllegalStateException ("FromRole needs to be set");
 
-    if (StringHelper.hasNoText (m_sFromPartyID))
+    if (StringHelper.hasNoText (m_sFromPartyIDValue))
       throw new IllegalStateException ("FromPartyID needs to be set");
 
     if (StringHelper.hasNoText (m_sToRole))
       throw new IllegalStateException ("ToRole needs to be set");
 
-    if (StringHelper.hasNoText (m_sToPartyID))
+    if (StringHelper.hasNoText (m_sToPartyIDValue))
       throw new IllegalStateException ("ToPartyID needs to be set");
 
     if (false)
@@ -573,9 +620,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                                                                               m_sAction,
                                                                                                               m_sConversationID);
     final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (m_sFromRole,
-                                                                                      m_sFromPartyID,
+                                                                                      m_sFromPartyIDType,
+                                                                                      m_sFromPartyIDValue,
                                                                                       m_sToRole,
-                                                                                      m_sToPartyID);
+                                                                                      m_sToPartyIDType,
+                                                                                      m_sToPartyIDValue);
 
     final Ebms3MessageProperties aEbms3MessageProperties = MessageHelperMethods.createEbms3MessageProperties (m_aEbms3Properties);
 
