@@ -8,6 +8,7 @@ Licensed under the Apache 2 License!
 It consists of the following sub-projects:
   * **phase4-lib** - basic data structures for AS4 handling
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
+  * **phase4-profile-peppol** - AS4 profile for PEPPOL as well as the PMode and the respective validation (since v0.9.1)
   * **phase4-servlet** - AS4 servlet for integration into existing
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
@@ -17,7 +18,8 @@ This solution is CEF compliant. See the test report at https://ec.europa.eu/cefd
 ## News and noteworthy
 
 * v0.9.1 - work in progress
-    * Ignored WSS4J dependency "ehcache" to create smaller deployments 
+    * Ignored WSS4J dependency "ehcache" to create smaller deployments
+    * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile 
 * v0.9.0 - 2019-08-08
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
