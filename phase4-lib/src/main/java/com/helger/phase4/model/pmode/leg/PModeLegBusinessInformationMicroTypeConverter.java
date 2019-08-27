@@ -34,6 +34,7 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
                                                            AbstractPModeMicroTypeConverter <PModeLegBusinessInformation>
 {
   private static final IMicroQName ATTR_SERVICE = new MicroQName ("Service");
+  private static final IMicroQName ATTR_SERVICE_TYPE = new MicroQName ("ServiceType");
   private static final IMicroQName ATTR_ACTION = new MicroQName ("Action");
   private static final String ELEMENT_PROPERTIES = "Properties";
   private static final String ELEMENT_PAYLOAD_PROFILE = "PayloadProfile";
@@ -46,6 +47,7 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_SERVICE, aValue.getService ());
+    ret.setAttribute (ATTR_SERVICE_TYPE, aValue.getServiceType ());
     ret.setAttribute (ATTR_ACTION, aValue.getAction ());
     aValue.properties ()
           .forEachValue (x -> ret.appendChild (MicroTypeConverter.convertToMicroElement (x,
@@ -64,6 +66,7 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
   public PModeLegBusinessInformation convertToNative (final IMicroElement aElement)
   {
     final String sService = aElement.getAttributeValue (ATTR_SERVICE);
+    final String sServiceType = aElement.getAttributeValue (ATTR_SERVICE_TYPE);
     final String sAction = aElement.getAttributeValue (ATTR_ACTION);
 
     final ICommonsOrderedMap <String, PModeProperty> aProperties = new CommonsLinkedHashMap <> ();
@@ -86,6 +89,7 @@ public class PModeLegBusinessInformationMicroTypeConverter extends
     final String sMPCID = aElement.getAttributeValue (ATTR_MPCID);
 
     return new PModeLegBusinessInformation (sService,
+                                            sServiceType,
                                             sAction,
                                             aProperties,
                                             aPayloadProfiles,

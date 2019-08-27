@@ -20,7 +20,8 @@ This solution is CEF compliant. See the test report at https://ec.europa.eu/cefd
 * v0.9.1 - work in progress
     * Ignored WSS4J dependency "ehcache" to create smaller deployments
     * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
-    * From Party ID type and To Party ID type can now be set in the client 
+    * From Party ID type and To Party ID type can now be set in the client
+    * The service type can now be set in a PMode
 * v0.9.0 - 2019-08-08
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`

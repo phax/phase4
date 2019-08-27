@@ -48,7 +48,13 @@ public class PModeLegBusinessInformation implements Serializable
    * Its content should map to the element
    * <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Service</code>.
    */
-  private String m_sService;
+  private String m_sServiceValue;
+
+  /**
+   * <code>type</code> attribute of
+   * <code>eb:Messaging/eb:UserMessage/eb:CollaborationInfo/eb:Service</code>.
+   */
+  private String m_sServiceType;
 
   /**
    * Name of the action the User message is intended to invoke. Its content
@@ -81,22 +87,24 @@ public class PModeLegBusinessInformation implements Serializable
    */
   private String m_sMPCID;
 
-  public PModeLegBusinessInformation (@Nullable final String sService,
+  public PModeLegBusinessInformation (@Nullable final String sServiceValue,
                                       @Nullable final String sAction,
                                       @Nullable final Long nPayloadProfileMaxKB,
                                       @Nullable final String sMPCID)
   {
-    this (sService, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
+    this (sServiceValue, null, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
-  public PModeLegBusinessInformation (@Nullable final String sService,
+  public PModeLegBusinessInformation (@Nullable final String sServiceValue,
+                                      @Nullable final String sServiceType,
                                       @Nullable final String sAction,
                                       @Nullable final ICommonsOrderedMap <String, PModeProperty> aProperties,
                                       @Nullable final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles,
                                       @Nullable final Long nPayloadProfileMaxKB,
                                       @Nullable final String sMPCID)
   {
-    setService (sService);
+    setService (sServiceValue);
+    setServiceType (sServiceType);
     setAction (sAction);
     if (aProperties != null)
       m_aProperties.putAll (aProperties);
@@ -109,20 +117,40 @@ public class PModeLegBusinessInformation implements Serializable
   @Nullable
   public final String getService ()
   {
-    return m_sService;
+    return m_sServiceValue;
   }
 
   public final boolean hasService ()
   {
-    return StringHelper.hasText (m_sService);
+    return StringHelper.hasText (m_sServiceValue);
   }
 
   @Nonnull
   public final EChange setService (@Nullable final String sService)
   {
-    if (EqualsHelper.equals (sService, m_sService))
+    if (EqualsHelper.equals (sService, m_sServiceValue))
       return EChange.UNCHANGED;
-    m_sService = sService;
+    m_sServiceValue = sService;
+    return EChange.CHANGED;
+  }
+
+  @Nullable
+  public final String getServiceType ()
+  {
+    return m_sServiceType;
+  }
+
+  public final boolean hasServiceType ()
+  {
+    return StringHelper.hasText (m_sServiceType);
+  }
+
+  @Nonnull
+  public final EChange setServiceType (@Nullable final String sServiceType)
+  {
+    if (EqualsHelper.equals (sServiceType, m_sServiceType))
+      return EChange.UNCHANGED;
+    m_sServiceType = sServiceType;
     return EChange.CHANGED;
   }
 
@@ -226,7 +254,8 @@ public class PModeLegBusinessInformation implements Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegBusinessInformation rhs = (PModeLegBusinessInformation) o;
-    return EqualsHelper.equals (m_sService, rhs.m_sService) &&
+    return EqualsHelper.equals (m_sServiceValue, rhs.m_sServiceValue) &&
+           EqualsHelper.equals (m_sServiceType, rhs.m_sServiceType) &&
            EqualsHelper.equals (m_sAction, rhs.m_sAction) &&
            m_aProperties.equals (rhs.m_aProperties) &&
            m_aPayloadProfiles.equals (rhs.m_aPayloadProfiles) &&
@@ -237,7 +266,8 @@ public class PModeLegBusinessInformation implements Serializable
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sService)
+    return new HashCodeGenerator (this).append (m_sServiceValue)
+                                       .append (m_sServiceType)
                                        .append (m_sAction)
                                        .append (m_aProperties)
                                        .append (m_aPayloadProfiles)
@@ -249,7 +279,8 @@ public class PModeLegBusinessInformation implements Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).appendIfNotNull ("Service", m_sService)
+    return new ToStringGenerator (this).appendIfNotNull ("Service", m_sServiceValue)
+                                       .appendIfNotNull ("ServiceType", m_sServiceType)
                                        .appendIfNotNull ("Action", m_sAction)
                                        .appendIf ("Properties", m_aProperties, ICommonsMap::isNotEmpty)
                                        .appendIf ("PayloadProfiles", m_aPayloadProfiles, ICommonsMap::isNotEmpty)

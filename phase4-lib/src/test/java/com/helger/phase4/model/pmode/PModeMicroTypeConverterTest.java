@@ -122,6 +122,7 @@ public final class PModeMicroTypeConverterTest
   private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation ("service",
+                                            "stype",
                                             "action1",
                                             _generatePModeProperties (),
                                             _generatePModePayloadProfile (),
