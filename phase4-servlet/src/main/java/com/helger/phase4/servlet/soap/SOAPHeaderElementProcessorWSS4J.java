@@ -239,10 +239,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         if (aCertSet.size () > 1)
         {
+          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
           if (GlobalDebug.isDebugMode ())
-            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message: " + aCertSet);
-          else
-            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message!");
+            LOGGER.warn ("Debug mode details: " + aCertSet);
         }
 
         // Remember in State
