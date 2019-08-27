@@ -476,11 +476,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     {
       setAction (aEffectiveLeg.getBusinessInfo ().getAction ());
       setServiceValue (aEffectiveLeg.getBusinessInfo ().getService ());
+      setServiceType (aEffectiveLeg.getBusinessInfo ().getServiceType ());
     }
     else
     {
       setAction (null);
       setServiceValue (null);
+      setServiceType (null);
     }
     setAgreementRefValue (aPMode.getAgreement ());
     if (aPMode.hasInitiator ())
