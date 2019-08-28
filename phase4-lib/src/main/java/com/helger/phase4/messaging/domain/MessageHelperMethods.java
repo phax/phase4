@@ -361,7 +361,8 @@ public final class MessageHelperMethods
   }
 
   public static void forEachHeaderAndRemoveAfterwards (@Nonnull final MimeMessage aMimeMsg,
-                                                       @Nonnull final BiConsumer <String, String> aConsumer) throws MessagingException
+                                                       @Nonnull final BiConsumer <String, String> aConsumer,
+                                                       final boolean bUnifyValues) throws MessagingException
   {
     // Create a copy
     final ICommonsList <Header> aHeaders = CollectionHelper.newList (aMimeMsg.getAllHeaders ());
@@ -370,7 +371,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), HttpHeaderMap.getUnifiedValue (aHeader.getValue ()));
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message
@@ -384,7 +386,8 @@ public final class MessageHelperMethods
   public static HttpHeaderMap getAndRemoveAllHeaders (@Nonnull final MimeMessage aMimeMsg) throws MessagingException
   {
     final HttpHeaderMap ret = new HttpHeaderMap ();
-    forEachHeaderAndRemoveAfterwards (aMimeMsg, ret::addHeader);
+    // Unification happens on the result header map
+    forEachHeaderAndRemoveAfterwards (aMimeMsg, ret::addHeader, false);
     return ret;
   }
 }

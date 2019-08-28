@@ -57,10 +57,10 @@ import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.io.stream.WrappedInputStream;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
+import com.helger.http.AcceptMimeTypeHandler;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
@@ -1539,7 +1539,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (StringHelper.hasNoText (sContentType))
       throw new BadRequestException ("Content-Type header is missing");
 
-    final MimeType aContentType = MimeTypeParser.parseMimeType (sContentType);
+    final IMimeType aContentType = AcceptMimeTypeHandler.safeParseMimeType (sContentType);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type: " + aContentType);
     if (aContentType == null)

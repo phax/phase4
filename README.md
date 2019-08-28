@@ -22,6 +22,8 @@ This solution is CEF compliant. See the test report at https://ec.europa.eu/cefd
     * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
     * From Party ID type and To Party ID type can now be set in the client
     * The service type can now be set in a PMode
+    * Requires ph-commons 9.3.6
+    * Requires ph-web 9.1.3
 * v0.9.0 - 2019-08-08
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`

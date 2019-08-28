@@ -168,7 +168,7 @@ public final class MainAS4Client
                                                                                       aAttachments);
 
               // Move all global mime headers to the POST request
-              MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader);
+              MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aMimeMsg, aPost::addHeader, true);
               aPost.setEntity (new HttpMimeMessageEntity (aMimeMsg));
             }
             else

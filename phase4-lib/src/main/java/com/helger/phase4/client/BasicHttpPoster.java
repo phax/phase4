@@ -157,7 +157,7 @@ public class BasicHttpPoster
       final HttpPost aPost = new HttpPost (sURL);
 
       if (aCustomHeaders != null)
-        aCustomHeaders.forEachSingleHeader (aPost::addHeader);
+        aCustomHeaders.forEachSingleHeader (aPost::addHeader, true);
 
       aPost.setEntity (aHttpEntity);
 
