@@ -61,6 +61,7 @@ public class BasicHttpPoster
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
   private IConsumer <? super HttpPost> m_aHttpCustomizer;
+  private boolean m_bQuoteHttpHeaders = false;
 
   public BasicHttpPoster ()
   {}
@@ -118,6 +119,33 @@ public class BasicHttpPoster
   }
 
   /**
+   * @return <code>true</code> if HTTP header values should be quoted if they
+   *         contain forbidden characters, <code>false</code> if not.
+   * @since v0.9.1
+   */
+  public final boolean isQuoteHttpHeaders ()
+  {
+    return m_bQuoteHttpHeaders;
+  }
+
+  /**
+   * Enable or disable, if HTTP header values should be quoted or not. For
+   * compatibility it is recommended, to not quote the values.
+   *
+   * @param bQuoteHttpHeaders
+   *        <code>true</code> to quote them, <code>false</code> to not quote
+   *        them.
+   * @return this for chaining
+   * @since v0.9.1
+   */
+  @Nonnull
+  public final BasicHttpPoster setQuoteHttpHeaders (final boolean bQuoteHttpHeaders)
+  {
+    m_bQuoteHttpHeaders = bQuoteHttpHeaders;
+    return this;
+  }
+
+  /**
    * Send an arbitrary HTTP POST message to the provided URL, using the
    * contained HttpClientFactory as well as the customizer. Additionally the AS4
    * HTTP debugging is invoked in here.<br>
@@ -157,7 +185,14 @@ public class BasicHttpPoster
       final HttpPost aPost = new HttpPost (sURL);
 
       if (aCustomHeaders != null)
-        aCustomHeaders.forEachSingleHeader (aPost::addHeader, true);
+      {
+        // Manually quote
+        aCustomHeaders.forEachSingleHeader ( (n,
+                                              v) -> aPost.addHeader (n,
+                                                                     HttpHeaderMap.getUnifiedValue (v,
+                                                                                                    m_bQuoteHttpHeaders)),
+                                             false);
+      }
 
       aPost.setEntity (aHttpEntity);
 
