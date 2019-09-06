@@ -99,8 +99,8 @@ public final class AS4Signer
     final AS4CryptoProperties aCryptoProps = aCryptoFactory.getCryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
-    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
