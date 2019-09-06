@@ -14,17 +14,20 @@ It consists of the following sub-projects:
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
+
+This solution is PEPPOL compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/PEPPOL/TestBedReport-POP000306-20190906T103327.pdfßß
  
 ## News and noteworthy
 
-* v0.9.1 - work in progress
+* v0.9.1 - 2019-09-06 - PEPPOL conformant
     * Ignored WSS4J dependency "ehcache" to create smaller deployments
     * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
     * From Party ID type and To Party ID type can now be set in the client
     * The service type can now be set in a PMode
     * Requires ph-commons 9.3.6
     * Requires ph-web 9.1.3
-* v0.9.0 - 2019-08-08
+    * This is the first version passing the PEPPOL Testbed v1
+* v0.9.0 - 2019-08-08 - CEF conformant
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
     * The package names changes from `com.helger.as4.*` to `com.helger.phase4.*`
@@ -84,7 +87,7 @@ This solution is CEF compliant. See the test report at https://ec.europa.eu/cefd
 
 The configuration of ph-as4 is based on 2 different files:
   * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
-  * `as4.properties` - ph-as4-server specific configuration file
+  * `phase4.properties` - ph-as4-server specific configuration file (was called `as4.properties` before v0.9.0)
   
 ### crypto.properties
 
