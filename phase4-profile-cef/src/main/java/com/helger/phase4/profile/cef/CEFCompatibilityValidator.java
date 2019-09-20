@@ -126,11 +126,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (sAddressProtocol == null)
-      {
-        aErrorList.add (_createError ("PMode Leg 1 is missing AddressProtocol"));
-      }
-      else
+      if (sAddressProtocol != null)
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
           // Always okay
