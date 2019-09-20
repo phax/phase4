@@ -119,6 +119,7 @@ public final class PeppolCompatibilityValidatorTest
   }
 
   @Test
+  @Ignore
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));

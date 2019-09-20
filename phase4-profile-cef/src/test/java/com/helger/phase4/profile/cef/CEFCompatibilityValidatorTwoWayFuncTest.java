@@ -54,7 +54,7 @@ import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
 /**
  * Test class for two-way pmode creation.
- * 
+ *
  * @author Philip Helger
  */
 public final class CEFCompatibilityValidatorTwoWayFuncTest
@@ -125,6 +125,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   }
 
   @Test
+  @Ignore
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));

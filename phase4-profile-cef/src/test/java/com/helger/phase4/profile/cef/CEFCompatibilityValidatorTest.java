@@ -48,8 +48,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-import com.helger.phase4.profile.cef.CEFCompatibilityValidator;
-import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
@@ -121,6 +119,7 @@ public final class CEFCompatibilityValidatorTest
   }
 
   @Test
+  @Ignore
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion (null), null, null, null, null));
