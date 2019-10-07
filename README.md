@@ -19,6 +19,8 @@ This solution is PEPPOL compliant. See the test report at https://github.com/pha
  
 ## News and noteworthy
 
+* v0.9.2 - 2019-10-07
+    * Fixed an invalid assumption in the PEPPOL PMode validator.
 * v0.9.1 - 2019-09-06 - PEPPOL conformant
     * Ignored WSS4J dependency "ehcache" to create smaller deployments
     * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
