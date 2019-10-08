@@ -70,7 +70,7 @@ public class WSS4JAttachment extends Attachment
   private final AS4ResourceHelper m_aResHelper;
   private IHasInputStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
-  private EAS4CompressionMode m_eCM;
+  private EAS4CompressionMode m_eCompressionMode;
   private Charset m_aCharset;
   private String m_sUncompressedMimeType;
 
@@ -206,23 +206,23 @@ public class WSS4JAttachment extends Attachment
   @Nullable
   public final EAS4CompressionMode getCompressionMode ()
   {
-    return m_eCM;
+    return m_eCompressionMode;
   }
 
   public final boolean hasCompressionMode ()
   {
-    return m_eCM != null;
+    return m_eCompressionMode != null;
   }
 
   @Nonnull
-  public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCM)
+  public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCompressionMode)
   {
-    ValueEnforcer.notNull (eCM, "CompressionMode");
-    m_eCM = eCM;
-    if (eCM != null)
+    ValueEnforcer.notNull (eCompressionMode, "CompressionMode");
+    m_eCompressionMode = eCompressionMode;
+    if (eCompressionMode != null)
     {
       // Main MIME type is now the compression type MIME type
-      super.setMimeType (eCM.getMimeType ().getAsString ());
+      super.setMimeType (eCompressionMode.getMimeType ().getAsString ());
     }
     else
     {
@@ -304,7 +304,7 @@ public class WSS4JAttachment extends Attachment
                                        .append ("ResourceManager", m_aResHelper)
                                        .append ("ISP", m_aISP)
                                        .append ("CTE", m_eCTE)
-                                       .append ("CM", m_eCM)
+                                       .append ("CM", m_eCompressionMode)
                                        .append ("Charset", m_aCharset)
                                        .getToString ();
   }

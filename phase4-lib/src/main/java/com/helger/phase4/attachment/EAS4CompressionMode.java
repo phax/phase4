@@ -77,12 +77,19 @@ public enum EAS4CompressionMode implements IHasID <String>
     return m_sID;
   }
 
+  /**
+   * @return The MIME type of the compression mode. Never <code>null</code>.
+   */
   @Nonnull
   public IMimeType getMimeType ()
   {
     return m_aMimeType;
   }
 
+  /**
+   * @return The string representation of the MIME type of the compression mode.
+   *         Never <code>null</code>.
+   */
   @Nonnull
   @Nonempty
   public String getMimeTypeAsString ()
@@ -102,7 +109,7 @@ public enum EAS4CompressionMode implements IHasID <String>
 
   /**
    * Get an {@link InputStream} to decompress the provided {@link InputStream}.
-   * 
+   *
    * @param aIS
    *        The source {@link InputStream}. May not be <code>null</code>.
    * @return The decompressing {@link InputStream}
@@ -114,7 +121,7 @@ public enum EAS4CompressionMode implements IHasID <String>
 
   /**
    * Get an {@link OutputStream} to compress the provided {@link OutputStream}.
-   * 
+   *
    * @param aOS
    *        The source {@link OutputStream}. May not be <code>null</code>.
    * @return The compressing {@link OutputStream}
