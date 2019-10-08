@@ -115,6 +115,8 @@ public class WSS4JAttachment extends Attachment
   @Override
   public final void addHeader (final String sName, final String sValue)
   {
+    // This overrides an existing header and should therefore be called
+    // "setHeader", as in other places the headers is a Map<String,List<String>>
     super.addHeader (sName, sValue);
   }
 
