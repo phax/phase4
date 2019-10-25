@@ -63,9 +63,6 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactory;
-import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
-import com.helger.phase4.crypto.ECryptoAlgorithmSign;
-import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -291,6 +288,7 @@ public final class Phase4PeppolSender
       if (aEndpoint == null)
         throw new IllegalStateException ("Failed to resolve SMP endpoint");
 
+      // Start building AS4 User Message
       final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
       aUserMsg.setHttpClientFactory (aHttpClientFactory);
 
@@ -298,9 +296,6 @@ public final class Phase4PeppolSender
       aUserMsg.setQuoteHttpHeaders (false);
       aUserMsg.setSOAPVersion (ESOAPVersion.SOAP_12);
       aUserMsg.setAS4CryptoFactory (AS4CryptoFactory.DEFAULT_INSTANCE);
-      aUserMsg.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_256);
-      aUserMsg.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-      aUserMsg.cryptParams ().setAlgorithmCrypt (ECryptoAlgorithmCrypt.AES_128_GCM);
       aUserMsg.setPMode (aSrcPMode, true);
 
       // Certificate from SMP lookup
