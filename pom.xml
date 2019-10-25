@@ -126,7 +126,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>7.0.2</version>
+        <version>7.0.3-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -194,6 +194,11 @@
         <artifactId>phase4-server-webapp</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>phase4-peppol-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -204,6 +209,7 @@
     <module>phase4-servlet</module>
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
+    <module>phase4-peppol-client</module>
   </modules>
   
   <dependencies>

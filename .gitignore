@@ -17,3 +17,4 @@ target/
 .settings/ 
 .project 
 .classpath 
+as4-test-data/
