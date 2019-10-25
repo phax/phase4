@@ -16,13 +16,15 @@ It consists of the following sub-projects:
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
-This solution is PEPPOL compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/PEPPOL/TestBedReport-POP000306-20190906T103327.pdfßß
+This solution is PEPPOL compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/PEPPOL/TestBedReport-POP000306-20190906T103327.pdf
  
 ## News and noteworthy
 
+* v0.9.3 - work in progress
+    * Updated to peppol-commons 7.0.3
+    * Added new subproject `phase4-peppol-client` to easily send AS4 messages to PEPPOL
 * v0.9.2 - 2019-10-07
     * Fixed an invalid assumption in the PEPPOL PMode validator.
-    * Updated to peppol-commons 7.0.3
 * v0.9.1 - 2019-09-06 - PEPPOL conformant
     * Ignored WSS4J dependency "ehcache" to create smaller deployments
     * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
