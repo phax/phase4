@@ -24,6 +24,9 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.http.CHttp;
@@ -40,6 +43,8 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
  */
 public class AS4IncomingDumperFileBased implements IAS4IncomingDumper
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
+
   private final Supplier <File> m_aFileProvider;
 
   public AS4IncomingDumperFileBased ()
@@ -58,6 +63,7 @@ public class AS4IncomingDumperFileBased implements IAS4IncomingDumper
   public OutputStream onNewRequest (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
   {
     final File aResponseFile = m_aFileProvider.get ();
+    LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
     final OutputStream ret = FileHelper.getBufferedOutputStream (aResponseFile);
     // Add all incoming headers
     int nHeader = 0;
