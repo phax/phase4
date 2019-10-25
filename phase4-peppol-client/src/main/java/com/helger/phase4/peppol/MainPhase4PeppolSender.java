@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.callback.exception.IExceptionCallback;
+import com.helger.commons.callback.exception.LoggingExceptionCallback;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
@@ -51,6 +53,11 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * The main class that requires manual configuration before it can be run.
+ *
+ * @author Philip Helger
+ */
 public final class MainPhase4PeppolSender
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSender.class);
@@ -72,23 +79,37 @@ public final class MainPhase4PeppolSender
     try (final WebScoped w = new WebScoped ())
     {
       // Start configuring here
+      // Configuration of the HTTP parameters
       final HttpClientFactory aHCF = new Phase4HttpClientFactory ();
+      // Don't touch
       final IPMode aSrcPMode = Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null);
+      // The document type ID to be used
       final IDocumentTypeIdentifier aDocTypeID = Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1");
+      // The process ID to be used
       final IProcessIdentifier aProcID = Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0");
+      // The sending participant ID (your ID, constant)
       final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc");
+      // The receiving participant ID (the other ID)
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
+      // The "CN" part of your certificate (constant)
       final String sSenderPartyID = "POP000306";
+      // The AS4 conversation ID
       final String sConversationID = UUID.randomUUID ().toString ();
+      // The main payload to be send. The SBDH is created by this tool
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ();
+      // The MIME type to be used
       final IMimeType aMimeType = CMimeType.APPLICATION_XML;
+      // Use AS4 compression on the payload?
       final boolean bCompress = true;
+      // The SMP client to be used - differentiate between SMK and SML
       final SMPClientReadOnly aSMPClient = new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST);
+      // An optional consumer for the HTTP response received from the
+      // destination server
       final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer = aResponseEntity -> {
         if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
         {
@@ -105,7 +126,11 @@ public final class MainPhase4PeppolSender
             LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
         }
       };
+      // An optional consumer for the EBMS signal message - when set, will force
+      // the response to be parsed
       final Consumer <Ebms3SignalMessage> aSignalMsgConsumer = null;
+      // The exception callback to use
+      final IExceptionCallback <? super Exception> aExceptionCallback = new LoggingExceptionCallback ();
 
       // Start sending
       if (Phase4PeppolSender.sendAS4Message (aHCF,
@@ -121,10 +146,11 @@ public final class MainPhase4PeppolSender
                                              bCompress,
                                              aSMPClient,
                                              aResponseConsumer,
-                                             aSignalMsgConsumer)
+                                             aSignalMsgConsumer,
+                                             aExceptionCallback)
                             .isSuccess ())
       {
-        LOGGER.info ("Finished sending PEPPOL message via AS4");
+        LOGGER.info ("Successfully sent PEPPOL message via AS4");
       }
       else
       {

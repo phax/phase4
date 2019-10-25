@@ -112,7 +112,7 @@ The file is a classpath relative path like `keys/dummy-pw-test.jks`.
 
 PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
 
-### as4.properties
+### phase4.properties
 
 This AS4 server specific file contains the following properties:
 
@@ -128,7 +128,10 @@ server.datapath=/var/www/as4/data
 
 The file is searched in the locations specified as follows:
 * A path denoted by the environment variable `AS4_SERVER_CONFIG`
+* A path denoted by the system property `phase4.server.configfile`
 * A path denoted by the system property `as4.server.configfile`
+* A file named `private-phase4.properties` within your classpath
+* A file named `phase4.properties` within your classpath
 * A file named `private-as4.properties` within your classpath
 * A file named `as4.properties` within your classpath
 
@@ -140,6 +143,12 @@ The properties have the following meaning
 * **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
 * **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
 * **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
+
+## Subproject phase4-peppol-client
+
+The contained project contains a stub "main" class called `MainPhase4PeppolSender` - it contains all the parameters with some example values so that you can start easily. As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your PEPPOL certificate must be provided (the default configured name is `test-ap.p12`).
+
+When you are using this library embedded into your code, it is recommended to use class `Phase4PeppolSender` to do the heavy lifting. 
 
 ## Building from source
 

@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.callback.exception.IExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.datetime.PDTFactory;
@@ -82,7 +84,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
- * {@link #sendAS4Message(HttpClientFactory, IPMode, IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier, IParticipantIdentifier, String, String, Element, IMimeType, boolean, SMPClientReadOnly, Consumer, Consumer)}
+ * {@link #sendAS4Message(HttpClientFactory, IPMode, IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier, IParticipantIdentifier, String, String, Element, IMimeType, boolean, SMPClientReadOnly, Consumer, Consumer, IExceptionCallback)}
  * as the main method to trigger the sending, with all potential customization.
  *
  * @author Philip Helger
@@ -97,6 +99,51 @@ public final class Phase4PeppolSender
 
   private Phase4PeppolSender ()
   {}
+
+  @Nullable
+  public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nonnull final byte [] aBytes)
+  {
+    // Read response as XML
+    final Document aSoapDoc = DOMReader.readXMLDOM (aBytes);
+    if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
+      throw new IllegalStateException ("Failed to parse as XML");
+
+    // Check if it is SOAP
+    final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
+                                                                                      .getNamespaceURI ());
+    if (eSOAPVersion == null)
+      throw new IllegalStateException ("Failed to determine SOAP version");
+
+    // Find SOAP header
+    final Node aSOAPHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
+                                                                       eSOAPVersion.getNamespaceURI (),
+                                                                       eSOAPVersion.getHeaderElementName ());
+    if (aSOAPHeaderNode == null)
+      throw new IllegalStateException ("SOAP document is missing a Header element");
+
+    // Iterate all SOAP header elements
+    for (final Element aHeaderChild : new ChildElementIterator (aSOAPHeaderNode))
+    {
+      final QName aQName = XMLHelper.getQName (aHeaderChild);
+      if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
+      {
+        final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, Locale.US);
+        final ErrorList aErrorList = new ErrorList ();
+        new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
+                                                                                                   aHeaderChild,
+                                                                                                   new CommonsArrayList <> (),
+                                                                                                   aState,
+                                                                                                   aErrorList);
+        // Check if a signal message is contained
+        final Ebms3SignalMessage aSignalMessage = CollectionHelper.getAtIndex (aState.getMessaging ()
+                                                                                     .getSignalMessage (),
+                                                                               0);
+        return aSignalMessage;
+      }
+    }
+    return null;
+  }
 
   @Nonnull
   private static ESuccess _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
@@ -154,48 +201,11 @@ public final class Phase4PeppolSender
         // Try interpret result as SignalMessage
         if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
         {
-          // Read response as XML
-          final Document aSoapDoc = DOMReader.readXMLDOM (aResponseEntity.getResponse ());
-          if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
-            throw new IllegalStateException ("Failed to parse response as XML");
-
-          final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
-                                                                                            .getNamespaceURI ());
-          if (eSOAPVersion == null)
-            throw new IllegalStateException ("Failed to determine SOAP version");
-
-          {
-            // Find SOAP header
-            final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
-                                                                           eSOAPVersion.getNamespaceURI (),
-                                                                           eSOAPVersion.getHeaderElementName ());
-            if (aHeaderNode == null)
-              throw new IllegalStateException ("SOAP document is missing a Header element");
-
-            // Iterate all SOAP header elements
-            for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
-            {
-              final QName aQName = XMLHelper.getQName (aHeaderChild);
-              if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
-              {
-                final AS4MessageState aState = new AS4MessageState (eSOAPVersion,
-                                                                    aClient.getAS4ResourceHelper (),
-                                                                    Locale.US);
-                final ErrorList aErrorList = new ErrorList ();
-                new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
-                                                                                                           aHeaderChild,
-                                                                                                           new CommonsArrayList <> (),
-                                                                                                           aState,
-                                                                                                           aErrorList);
-                // Check if a signal message is contained
-                final Ebms3SignalMessage aSignalMessage = CollectionHelper.getAtIndex (aState.getMessaging ()
-                                                                                             .getSignalMessage (),
-                                                                                       0);
-                aSignalMsgConsumer.accept (aSignalMessage);
-                break;
-              }
-            }
-          }
+          // Read response as EBMS3 Signal Message
+          final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClient.getAS4ResourceHelper (),
+                                                                        aResponseEntity.getResponse ());
+          if (aSignalMessage != null)
+            aSignalMsgConsumer.accept (aSignalMessage);
         }
         else
           LOGGER.info ("ResponseEntity is empty");
@@ -246,7 +256,8 @@ public final class Phase4PeppolSender
                                          final boolean bCompressPayload,
                                          @Nonnull final SMPClientReadOnly aSMPClient,
                                          @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                         @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer)
+                                         @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
+                                         @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
@@ -259,6 +270,7 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
     ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
+    ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
 
     // Create deliver
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
@@ -347,7 +359,7 @@ public final class Phase4PeppolSender
     }
     catch (final Exception ex)
     {
-      LOGGER.error ("Error sending out AS4 message", ex);
+      aExceptionCallback.onException (ex);
       return ESuccess.FAILURE;
     }
   }
