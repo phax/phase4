@@ -27,9 +27,6 @@ import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
-import javax.naming.InvalidNameException;
-import javax.naming.ldap.LdapName;
-import javax.naming.ldap.Rdn;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +51,7 @@ import com.helger.peppol.smp.EndpointType;
 import com.helger.peppol.smpclient.SMPClient;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
+import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
@@ -85,15 +83,6 @@ public final class DropFolderUserMessage
 
   private DropFolderUserMessage ()
   {}
-
-  @Nonnull
-  private static String _getCN (final String sPrincipal) throws InvalidNameException
-  {
-    for (final Rdn aRdn : new LdapName (sPrincipal).getRdns ())
-      if (aRdn.getType ().equalsIgnoreCase ("CN"))
-        return (String) aRdn.getValue ();
-    throw new IllegalStateException ("Failed to get CN from '" + sPrincipal + "'");
-  }
 
   private static void _send (@Nonnull final AS4CryptoProperties aCP, final Path aSendFile, final Path aIncomingDir)
   {
@@ -165,10 +154,9 @@ public final class DropFolderUserMessage
           aClient.setAgreementRefValue ("xxx");
 
           aClient.setFromRole (CAS4.DEFAULT_ROLE);
-          aClient.setFromPartyID (_getCN (((X509Certificate) aOurCert.getCertificate ()).getSubjectX500Principal ()
-                                                                                        .getName ()));
+          aClient.setFromPartyID (PeppolCertificateHelper.getSubjectCN ((X509Certificate) aOurCert.getCertificate ()));
           aClient.setToRole (CAS4.DEFAULT_ROLE);
-          aClient.setToPartyID (_getCN (aTheirCert.getSubjectX500Principal ().getName ()));
+          aClient.setToPartyID (PeppolCertificateHelper.getSubjectCN (aTheirCert));
           aClient.ebms3Properties ()
                  .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSBDH.getSenderValue ()),
                           MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aSBDH.getReceiverValue ()));
