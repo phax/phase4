@@ -34,7 +34,10 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
  * Manages the AS4 server configuration file. The files are read in the
  * following order:
  * <ol>
+ * <li>System property <code>phase4.server.configfile</code></li>
  * <li>System property <code>as4.server.configfile</code></li>
+ * <li>private-phase4.properties</li>
+ * <li>phase4.properties</li>
  * <li>private-as4.properties</li>
  * <li>as4.properties</li>
  * </ol>
