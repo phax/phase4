@@ -100,7 +100,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               AS4TestConstants.TEST_ACTION,
                                                                                                               AS4TestConstants.TEST_CONVERSATION_ID);
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                       sSetPartyIDInitiator,
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       sSetPartyIDResponder);

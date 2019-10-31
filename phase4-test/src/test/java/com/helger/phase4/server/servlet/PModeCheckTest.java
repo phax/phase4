@@ -95,7 +95,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                                  AS4TestConstants.TEST_CONVERSATION_ID));
 
     // Default PartyInfo for testing
-    m_aEbms3UserMessage.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    m_aEbms3UserMessage.setPartyInfo (MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                  DEFAULT_PARTY_ID,
                                                                                  CAS4.DEFAULT_RESPONDER_URL,
                                                                                  DEFAULT_PARTY_ID));

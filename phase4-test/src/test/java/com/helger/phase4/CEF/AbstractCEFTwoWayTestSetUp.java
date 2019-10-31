@@ -134,7 +134,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                                                                  MockPModeGenerator.SOAP11_SERVICE,
                                                                                  AS4TestConstants.TEST_ACTION,
                                                                                  AS4TestConstants.TEST_CONVERSATION_ID);
-    aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                  AS4TestConstants.CEF_INITIATOR_ID,
                                                                  CAS4.DEFAULT_RESPONDER_URL,
                                                                  AS4TestConstants.CEF_RESPONDER_ID);

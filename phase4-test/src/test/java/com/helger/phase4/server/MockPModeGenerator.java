@@ -136,7 +136,7 @@ public final class MockPModeGenerator
       sPartyID = SOAP_12_PARTY_ID;
 
     if (bInitiator)
-      return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_SENDER_URL);
+      return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_INITIATOR_URL);
     return PModeParty.createSimple (sPartyID, CAS4.DEFAULT_RESPONDER_URL);
   }
 

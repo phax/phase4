@@ -147,7 +147,7 @@ final class MockClientMessages
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
                                                                                                               "4321");
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                       "1234",
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       "5678");
@@ -181,7 +181,7 @@ final class MockClientMessages
                                                                                                               "QuoteToCollect",
                                                                                                               "NewPurchaseOrder",
                                                                                                               "4321");
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                       "testt",
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       "testt");
