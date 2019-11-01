@@ -293,7 +293,8 @@ public final class Phase4PeppolSender
    *        The sending party ID (the CN part of the senders certificate
    *        subject). May not be <code>null</code>.
    * @param sConversationID
-   *        The AS4 conversation to be used. May not be <code>null</code>.
+   *        The AS4 conversation to be used. If none is provided, a random UUID
+   *        is used. May be <code>null</code>.
    * @param sSBDHInstanceIdentifier
    *        The optional SBDH instance identifier. If none is provided, a random
    *        UUID is used. May be <code>null</code>.
@@ -333,7 +334,7 @@ public final class Phase4PeppolSender
                                          @Nonnull final IParticipantIdentifier aSenderID,
                                          @Nonnull final IParticipantIdentifier aReceiverID,
                                          @Nonnull @Nonempty final String sSenderPartyID,
-                                         @Nonnull final String sConversationID,
+                                         @Nullable final String sConversationID,
                                          @Nullable final String sSBDHInstanceIdentifier,
                                          @Nonnull final Element aPayloadElement,
                                          @Nonnull final IMimeType aPayloadMimeType,
@@ -351,7 +352,6 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aSenderID, "SenderID");
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
     ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
-    ValueEnforcer.notNull (sConversationID, "ConversationID");
     ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
     ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
@@ -404,7 +404,8 @@ public final class Phase4PeppolSender
       aUserMsg.setServiceType (aProcID.getScheme ());
       aUserMsg.setServiceValue (aProcID.getValue ());
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
-      aUserMsg.setConversationID (sConversationID);
+      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID
+                                                                         : UUID.randomUUID ().toString ());
 
       // Backend or gateway?
       aUserMsg.setFromPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
