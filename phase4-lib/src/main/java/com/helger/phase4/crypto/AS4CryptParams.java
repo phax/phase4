@@ -17,6 +17,8 @@
 package com.helger.phase4.crypto;
 
 import java.io.Serializable;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.function.Consumer;
 
@@ -25,6 +27,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.common.WSS4JConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -46,6 +50,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public static final String DEFAULT_KEY_ENC_ALGORITHM = WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11;
   public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
   public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
 
   // The algorithm to use
   private ECryptoAlgorithmCrypt m_eAlgorithmCrypt;
@@ -168,6 +174,21 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   public final AS4CryptParams setCertificate (@Nullable final X509Certificate aCert)
   {
     m_aCert = aCert;
+    if (aCert != null)
+    {
+      try
+      {
+        aCert.checkValidity ();
+      }
+      catch (final CertificateExpiredException ex)
+      {
+        LOGGER.warn ("The provided certificate is already expired. Please use a different one.");
+      }
+      catch (final CertificateNotYetValidException ex)
+      {
+        LOGGER.warn ("The provided certificate is not yet valid. Please use a different one.");
+      }
+    }
     return this;
   }
 
