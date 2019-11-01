@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.peppol;
 
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.UUID;
@@ -42,6 +44,7 @@ import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
@@ -81,8 +84,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * This class contains all the specifics to send AS4 messages to PEPPOL. See
- * {@link #sendAS4Message(HttpClientFactory, IPMode, IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier, IParticipantIdentifier, String, String, Element, IMimeType, boolean, SMPClientReadOnly, Consumer, Consumer, IExceptionCallback)}
- * as the main method to trigger the sending, with all potential customization.
+ * <code>sendAS4Message</code> as the main method to trigger the sending, with
+ * all potential customization.
  *
  * @author Philip Helger
  */
@@ -96,6 +99,34 @@ public final class Phase4PeppolSender
 
   private Phase4PeppolSender ()
   {}
+
+  /**
+   * Check if the provided certificate is a valid Peppol SMP certificate.
+   *
+   * @param aCert
+   *        The certificate to be checked. May be <code>null</code>.
+   * @return <code>true</code> if the certificate is not <code>null</code>, if
+   *         it is valid per now and if the certificate is issued by the Peppol
+   *         SMP CA.
+   */
+  public static boolean isValidPeppolSMPCertificate (@Nullable final X509Certificate aCert)
+  {
+    if (aCert == null)
+      return false;
+
+    // Check date valid
+    try
+    {
+      aCert.checkValidity ();
+    }
+    catch (CertificateExpiredException | CertificateNotYetValidException ex)
+    {
+      return false;
+    }
+
+    // TODO Check issuer
+    return true;
+  }
 
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -222,6 +253,7 @@ public final class Phase4PeppolSender
                                                      @Nonnull final IProcessIdentifier aProcID,
                                                      @Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nullable final String sInstanceIdentifier,
                                                      @Nonnull final Element aBusinessMsg)
   {
     final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
@@ -232,13 +264,67 @@ public final class Phase4PeppolSender
     aData.setDocumentIdentification (aBusinessMsg.getNamespaceURI (),
                                      "2.1",
                                      aBusinessMsg.getLocalName (),
-                                     UUID.randomUUID ().toString (),
+                                     StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier
+                                                                                : UUID.randomUUID ().toString (),
                                      PDTFactory.getCurrentLocalDateTime ());
     aData.setBusinessMessage (aBusinessMsg);
     final StandardBusinessDocument aSBD = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
     return aSBD;
   }
 
+  /**
+   * Send an AS4 message
+   *
+   * @param aHttpClientFactory
+   *        The HTTP client factory to be used. May not be <code>null</code>.
+   * @param aSrcPMode
+   *        The source PMode to be used. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        The Peppol Document type ID to be used. May not be <code>null</code>
+   * @param aProcID
+   *        The Peppol process ID to be used. May not be <code>null</code>.
+   * @param aSenderID
+   *        The Peppol sending participant ID to be used. May not be
+   *        <code>null</code>.
+   * @param aReceiverID
+   *        The Peppol receiving participant ID to send to. May not be
+   *        <code>null</code>.
+   * @param sSenderPartyID
+   *        The sending party ID (the CN part of the senders certificate
+   *        subject). May not be <code>null</code>.
+   * @param sConversationID
+   *        The AS4 conversation to be used. May not be <code>null</code>.
+   * @param sSBDHInstanceIdentifier
+   *        The optional SBDH instance identifier. If none is provided, a random
+   *        UUID is used. May be <code>null</code>.
+   * @param aPayloadElement
+   *        The Peppol XML payload to be send. May not be <code>null</code>.
+   * @param aPayloadMimeType
+   *        The MIME type of the payload. Usually "application/xml". May not be
+   *        <code>null</code>.
+   * @param bCompressPayload
+   *        <code>true</code> to use AS4 compression on the payload,
+   *        <code>false</code> to not compress it.
+   * @param aSMPClient
+   *        The SMP client to be used. Needs to be passed in to handle proxy
+   *        settings etc. May not be <code>null</code>.
+   * @param aOnInvalidCertificateConsumer
+   *        An optional consumer that is only invoked, if the received SMP
+   *        certificate cannot be used for the transmission. May be
+   *        <code>null</code>.
+   * @param aResponseConsumer
+   *        An optional consumer for the AS4 message that was sent. May be
+   *        <code>null</code>.
+   * @param aSignalMsgConsumer
+   *        An optional consumer that will contain the parsed Ebms3 response
+   *        signal message. May be <code>null</code>.
+   * @param aExceptionCallback
+   *        The generic exception handler for all caught exceptions. May not be
+   *        <code>null</code>.
+   * @return {@link ESuccess#SUCCESS} if everything went well,
+   *         {@link ESuccess#FAILURE} in an exception was thrown, or sending
+   *         failed or the SMP certificate is invalid.
+   */
   @Nonnull
   public static ESuccess sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
                                          @Nonnull final IPMode aSrcPMode,
@@ -248,10 +334,12 @@ public final class Phase4PeppolSender
                                          @Nonnull final IParticipantIdentifier aReceiverID,
                                          @Nonnull @Nonempty final String sSenderPartyID,
                                          @Nonnull final String sConversationID,
+                                         @Nullable final String sSBDHInstanceIdentifier,
                                          @Nonnull final Element aPayloadElement,
                                          @Nonnull final IMimeType aPayloadMimeType,
                                          final boolean bCompressPayload,
                                          @Nonnull final SMPClientReadOnly aSMPClient,
+                                         @Nullable final Consumer <X509Certificate> aOnInvalidCertificateConsumer,
                                          @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
                                          @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
                                          @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
@@ -302,6 +390,13 @@ public final class Phase4PeppolSender
       final X509Certificate aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
+      if (!isValidPeppolSMPCertificate (aReceiverCert))
+      {
+        LOGGER.error ("The received SMP certificate is not valid and cannot be used for sending. Aborting.");
+        if (aOnInvalidCertificateConsumer != null)
+          aOnInvalidCertificateConsumer.accept (aReceiverCert);
+        return ESuccess.FAILURE;
+      }
       aUserMsg.cryptParams ().setCertificate (aReceiverCert);
 
       // Explicit parameters have precedence over PMode
@@ -330,7 +425,12 @@ public final class Phase4PeppolSender
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Start creating SBDH");
 
-        final StandardBusinessDocument aSBD = createSBDH (aDocTypeID, aProcID, aSenderID, aReceiverID, aPayloadElement);
+        final StandardBusinessDocument aSBD = createSBDH (aDocTypeID,
+                                                          aProcID,
+                                                          aSenderID,
+                                                          aReceiverID,
+                                                          sSBDHInstanceIdentifier,
+                                                          aPayloadElement);
         final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
         aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aSBDBytes,
                                                                               null,

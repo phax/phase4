@@ -17,6 +17,7 @@
 package com.helger.phase4.peppol;
 
 import java.io.File;
+import java.security.cert.X509Certificate;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -95,6 +96,9 @@ public final class MainPhase4PeppolSender
       final String sSenderPartyID = "POP000306";
       // The AS4 conversation ID
       final String sConversationID = UUID.randomUUID ().toString ();
+      // The SBDH instance identifier - null to create a random string
+      // internally
+      final String sSBDHInstanceIdentifier = null;
       // The main payload to be send. The SBDH is created by this tool
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
@@ -126,6 +130,7 @@ public final class MainPhase4PeppolSender
             LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
         }
       };
+      final Consumer <X509Certificate> aOnInvalidCertificateConsumer = null;
       // An optional consumer for the EBMS signal message - when set, will force
       // the response to be parsed
       final Consumer <Ebms3SignalMessage> aSignalMsgConsumer = null;
@@ -141,10 +146,12 @@ public final class MainPhase4PeppolSender
                                              aReceiverID,
                                              sSenderPartyID,
                                              sConversationID,
+                                             sSBDHInstanceIdentifier,
                                              aPayloadElement,
                                              aMimeType,
                                              bCompress,
                                              aSMPClient,
+                                             aOnInvalidCertificateConsumer,
                                              aResponseConsumer,
                                              aSignalMsgConsumer,
                                              aExceptionCallback)
