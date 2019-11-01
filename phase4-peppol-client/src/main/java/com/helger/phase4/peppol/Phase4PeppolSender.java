@@ -101,7 +101,7 @@ public final class Phase4PeppolSender
   {}
 
   /**
-   * Check if the provided certificate is a valid Peppol SMP certificate.
+   * Check if the provided certificate is a valid Peppol AP certificate.
    *
    * @param aCert
    *        The certificate to be checked. May be <code>null</code>.
@@ -109,7 +109,7 @@ public final class Phase4PeppolSender
    *         it is valid per now and if the certificate is issued by the Peppol
    *         SMP CA.
    */
-  public static boolean isValidPeppolSMPCertificate (@Nullable final X509Certificate aCert)
+  public static boolean isValidPeppolAPCertificate (@Nullable final X509Certificate aCert)
   {
     if (aCert == null)
       return false;
@@ -125,6 +125,8 @@ public final class Phase4PeppolSender
     }
 
     // TODO Check issuer
+
+    // TODO check CLR or OCSP
     return true;
   }
 
@@ -390,7 +392,7 @@ public final class Phase4PeppolSender
       final X509Certificate aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
-      if (!isValidPeppolSMPCertificate (aReceiverCert))
+      if (!isValidPeppolAPCertificate (aReceiverCert))
       {
         LOGGER.error ("The received SMP certificate is not valid and cannot be used for sending. Aborting.");
         if (aOnInvalidCertificateConsumer != null)
