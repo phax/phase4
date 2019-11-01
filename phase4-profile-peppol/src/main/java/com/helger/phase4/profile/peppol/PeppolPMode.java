@@ -163,7 +163,7 @@ public final class PeppolPMode
                                          @Nonnull final IPModeIDProvider aPModeIDProvider,
                                          final boolean bPersist)
   {
-    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
+    final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider,

@@ -93,7 +93,7 @@ public final class DefaultPMode
     // Add "default-" prefix to easily identify "default" PModes
     // Leg 2 stays null, because we only use one-way
     final PMode aDefaultPMode = new PMode ( (i, r) -> "default-" + IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (i, r),
-                                            PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL),
+                                            PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL),
                                             PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
                                             "urn:as4:agreement",
                                             EMEP.ONE_WAY,

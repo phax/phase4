@@ -155,7 +155,7 @@ public final class CEFPMode
                                       @Nonnull final IPModeIDProvider aPModeIDProvider,
                                       final boolean bPersist)
   {
-    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
+    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider,
@@ -202,7 +202,7 @@ public final class CEFPMode
                                             @Nonnull final IPModeIDProvider aPModeIDProvider,
                                             final boolean bPersist)
   {
-    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_SENDER_URL);
+    final PModeParty aInitiator = PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
     final PMode aPMode = new PMode (aPModeIDProvider,

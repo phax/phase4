@@ -104,7 +104,7 @@ public final class PModeMicroTypeConverterTest
   private PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
-      return new PModeParty ("initiator-type", "idvalue", CAS4.DEFAULT_SENDER_URL, "test", "testpw");
+      return new PModeParty ("initiator-type", "idvalue", CAS4.DEFAULT_INITIATOR_URL, "test", "testpw");
     return new PModeParty ("responder-type", "idvalue2", CAS4.DEFAULT_RESPONDER_URL, "test2", "test2pw");
   }
 

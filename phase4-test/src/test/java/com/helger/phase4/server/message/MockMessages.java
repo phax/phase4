@@ -136,7 +136,7 @@ public final class MockMessages
                                                                                    MockPModeGenerator.SOAP11_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
                                                                                    AS4TestConstants.TEST_CONVERSATION_ID);
-      aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+      aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                    SOAP_11_PARTY_ID,
                                                                    CAS4.DEFAULT_RESPONDER_URL,
                                                                    SOAP_11_PARTY_ID);
@@ -151,7 +151,7 @@ public final class MockMessages
                                                                                    AS4TestConstants.TEST_SERVICE,
                                                                                    AS4TestConstants.TEST_ACTION,
                                                                                    AS4TestConstants.TEST_CONVERSATION_ID);
-      aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+      aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                    SOAP_12_PARTY_ID,
                                                                    CAS4.DEFAULT_RESPONDER_URL,
                                                                    SOAP_12_PARTY_ID);
@@ -175,7 +175,7 @@ public final class MockMessages
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
 
-    final String sPModeID = CAS4.DEFAULT_SENDER_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
+    final String sPModeID = CAS4.DEFAULT_INITIATOR_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
@@ -187,7 +187,7 @@ public final class MockMessages
                                                                                                               AS4TestConstants.TEST_SERVICE,
                                                                                                               MockMessageProcessorCheckingStreamsSPI.ACTION_FAILURE,
                                                                                                               AS4TestConstants.TEST_CONVERSATION_ID);
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                       "testt",
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       "testt");

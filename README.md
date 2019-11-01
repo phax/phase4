@@ -23,6 +23,7 @@ This solution is PEPPOL compliant. See the test report at https://github.com/pha
 * v0.9.3 - work in progress
     * Updated to peppol-commons 7.0.3
     * Added new subproject `phase4-peppol-client` to easily send AS4 messages to PEPPOL
+    * Fixed default initiator URL (see [issue #18](https://github.com/phax/phase4/issues/18))
 * v0.9.2 - 2019-10-07
     * Fixed an invalid assumption in the PEPPOL PMode validator.
 * v0.9.1 - 2019-09-06 - PEPPOL conformant

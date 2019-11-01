@@ -131,7 +131,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     // From => Sender
     final Ebms3From aEbms3From = new Ebms3From ();
-    aEbms3From.setRole (CAS4.DEFAULT_SENDER_URL);
+    aEbms3From.setRole (CAS4.DEFAULT_INITIATOR_URL);
     aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (SOAP_12_PARTY_ID));
     aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (SOAP_12_PARTY_ID));
     aEbms3PartyInfo.setFrom (aEbms3From);
@@ -173,7 +173,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
                                                                                  AS4TestConstants.TEST_ACTION,
                                                                                  AS4TestConstants.TEST_CONVERSATION_ID);
 
-    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_SENDER_URL,
+    final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3PartyInfo (CAS4.DEFAULT_INITIATOR_URL,
                                                                                       SOAP_12_PARTY_ID,
                                                                                       CAS4.DEFAULT_RESPONDER_URL,
                                                                                       SOAP_12_PARTY_ID);
