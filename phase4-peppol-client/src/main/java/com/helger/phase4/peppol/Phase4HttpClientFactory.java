@@ -24,6 +24,11 @@ import org.apache.http.client.config.RequestConfig;
 
 import com.helger.httpclient.HttpClientFactory;
 
+/**
+ * Special {@link HttpClientFactory} with better defaults for Peppol.
+ * 
+ * @author Philip Helger
+ */
 public class Phase4HttpClientFactory extends HttpClientFactory
 {
   public Phase4HttpClientFactory () throws GeneralSecurityException
