@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.security.auth.x500.X500Principal;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.exception.IExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.IMimeType;
@@ -55,6 +57,7 @@ import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.PeppolCertificateHelper;
+import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -97,6 +100,19 @@ public final class Phase4PeppolSender
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
 
+  /** Sorted list with all issuers we're accepting. Never empty. */
+  private static final ICommonsList <X500Principal> PEPPOL_AP_CAS = new CommonsArrayList <> ();
+
+  static
+  {
+    // PKI v2
+    PEPPOL_AP_CAS.add (PeppolKeyStoreHelper.Config2010.CERTIFICATE_PILOT_AP.getSubjectX500Principal ());
+    PEPPOL_AP_CAS.add (PeppolKeyStoreHelper.Config2010.CERTIFICATE_PRODUCTION_AP.getSubjectX500Principal ());
+    // PKI v3
+    PEPPOL_AP_CAS.add (PeppolKeyStoreHelper.Config2018.CERTIFICATE_PILOT_AP.getSubjectX500Principal ());
+    PEPPOL_AP_CAS.add (PeppolKeyStoreHelper.Config2018.CERTIFICATE_PRODUCTION_AP.getSubjectX500Principal ());
+  }
+
   private Phase4PeppolSender ()
   {}
 
@@ -124,7 +140,12 @@ public final class Phase4PeppolSender
       return false;
     }
 
-    // TODO Check issuer
+    final X500Principal aIssuer = aCert.getIssuerX500Principal ();
+    if (!PEPPOL_AP_CAS.contains (aIssuer))
+    {
+      // Not a PEPPOL AP certificate
+      return false;
+    }
 
     // TODO check CLR or OCSP
     return true;
