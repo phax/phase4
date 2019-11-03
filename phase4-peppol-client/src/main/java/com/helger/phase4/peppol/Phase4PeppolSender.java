@@ -424,6 +424,11 @@ public final class Phase4PeppolSender
 
       // Explicit parameters have precedence over PMode
       aUserMsg.setAgreementRefValue (PeppolPMode.DEFAULT_AGREEMENT_ID);
+      // The eb3:AgreementRef element also includes an optional attribute pmode
+      // which can be used to include the PMode.ID. This attribute MUST NOT be
+      // used as Access Points may use just one generic P-Mode for receiving
+      // messages.
+      aUserMsg.setPModeIDFactory (x -> null);
       aUserMsg.setServiceType (aProcID.getScheme ());
       aUserMsg.setServiceValue (aProcID.getValue ());
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
