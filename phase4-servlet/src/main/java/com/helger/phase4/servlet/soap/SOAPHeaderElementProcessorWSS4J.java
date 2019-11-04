@@ -171,23 +171,50 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Check if Attachment IDs are the same
         for (int i = 0; i < aAttachments.size (); i++)
         {
-          String sAttachmentId = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
-          sAttachmentId = sAttachmentId.substring ("<attachment=".length (), sAttachmentId.length () - 1);
+          String sAttachmentID = aAttachments.get (i).getHeaders ().get (AttachmentUtils.MIME_HEADER_CONTENT_ID);
+          if (StringHelper.hasNoText (sAttachmentID))
+          {
+            LOGGER.error ("The provided attachment ID in the 'Content-ID' header may not be empty.");
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+          if (!sAttachmentID.startsWith (WSS4JAttachment.CONTENT_ID_PREFIX))
+          {
+            LOGGER.error ("The provided attachment ID '" +
+                          sAttachmentID +
+                          "' in the 'Content-ID' header does not start with the required prefix '" +
+                          WSS4JAttachment.CONTENT_ID_PREFIX +
+                          "'");
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+          if (!sAttachmentID.endsWith (WSS4JAttachment.CONTENT_ID_SUFFIX))
+          {
+            LOGGER.error ("The provided attachment ID '" +
+                          sAttachmentID +
+                          "' in the 'Content-ID' header does not end with the required suffix '" +
+                          WSS4JAttachment.CONTENT_ID_SUFFIX +
+                          "'");
+            aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
+            return ESuccess.FAILURE;
+          }
+          // Strip prefix and suffix
+          sAttachmentID = sAttachmentID.substring (WSS4JAttachment.CONTENT_ID_PREFIX.length (),
+                                                   sAttachmentID.length () -
+                                                                                                WSS4JAttachment.CONTENT_ID_SUFFIX.length ());
 
           // Add +1 because the payload has index 0
           final String sHref = aUserMessage.getPayloadInfo ()
                                            .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
                                            .getHref ();
-          if (!sHref.contains (sAttachmentId))
+          if (!sHref.contains (sAttachmentID))
           {
-            LOGGER.error ("Error processing the Attachments, the attachment '" +
+            LOGGER.error ("The usermessage part information '" +
                           sHref +
-                          "' is not valid with what is specified in the usermessage ('" +
-                          sAttachmentId +
-                          "')");
-
+                          "' does not reference the respective attachment ID '" +
+                          sAttachmentID +
+                          "'");
             aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
-
             return ESuccess.FAILURE;
           }
         }
