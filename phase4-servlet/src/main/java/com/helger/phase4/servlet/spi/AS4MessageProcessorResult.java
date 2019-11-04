@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
@@ -40,6 +41,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
  *
  * @author Philip Helger
  */
+@Immutable
 public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
 {
   private final ESuccess m_eSuccess;
@@ -118,13 +120,16 @@ public class AS4MessageProcessorResult implements ISuccessIndicator, Serializabl
   public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                          @Nullable final String sAsyncResponseURL)
   {
-    return new AS4MessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, sAsyncResponseURL);
+    return new AS4MessageProcessorResult (ESuccess.SUCCESS, (String) null, aAttachments, sAsyncResponseURL);
   }
 
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, null, null);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE,
+                                          sErrorMsg,
+                                          (ICommonsList <WSS4JAttachment>) null,
+                                          (String) null);
   }
 }

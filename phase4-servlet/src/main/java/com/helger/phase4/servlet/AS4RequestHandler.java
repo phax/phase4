@@ -1298,7 +1298,6 @@ public class AS4RequestHandler implements AutoCloseable
           // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
-          final IAS4ResponseFactory aAsyncResponseFactory;
 
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
           _invokeSPIs (aHttpHeaders,
@@ -1311,6 +1310,8 @@ public class AS4RequestHandler implements AutoCloseable
                        aLocalErrorMessages,
                        aLocalResponseAttachments,
                        aAsyncSPIResult);
+
+          final IAS4ResponseFactory aAsyncResponseFactory;
           if (aAsyncSPIResult.isSuccess ())
           {
             // SPI processing succeeded
