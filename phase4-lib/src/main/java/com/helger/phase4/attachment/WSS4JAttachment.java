@@ -38,7 +38,8 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.wss4j.common.ext.Attachment;
-import org.apache.wss4j.common.util.AttachmentUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
@@ -69,6 +70,12 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @NotThreadSafe
 public class WSS4JAttachment extends Attachment
 {
+  public static final String CONTENT_DESCRIPTION_ATTACHMENT = "Attachment";
+  public static final String CONTENT_ID_PREFIX = "<attachment=";
+  public static final String CONTENT_ID_SUFFIX = ">";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (WSS4JAttachment.class);
+
   private final AS4ResourceHelper m_aResHelper;
   private IHasInputStream m_aISP;
   private EContentTransferEncoding m_eCTE = EContentTransferEncoding.BINARY;
@@ -111,7 +118,7 @@ public class WSS4JAttachment extends Attachment
   {
     super.setMimeType (sMimeType);
     m_sUncompressedMimeType = sMimeType;
-    addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, sMimeType);
+    addHeader (CHttpHeader.CONTENT_TYPE, sMimeType);
   }
 
   @Override
@@ -271,6 +278,16 @@ public class WSS4JAttachment extends Attachment
 
     final MimeBodyPart aMimeBodyPart = new MimeBodyPart ();
 
+    // Add custom headers before the special ones
+    for (final Map.Entry <String, String> aEntry : getHeaders ().entrySet ())
+    {
+      final String sName = aEntry.getKey ();
+      if (!sName.equals (CHttpHeader.CONTENT_ID) &&
+          !sName.equals (CHttpHeader.CONTENT_TRANSFER_ENCODING) &&
+          !sName.equals (CHttpHeader.CONTENT_TYPE))
+        aMimeBodyPart.setHeader (sName, aEntry.getValue ());
+    }
+
     {
       // According to
       // http://docs.oasis-open.org/wss-m/wss/v1.1.1/os/wss-SwAProfile-v1.1.1-os.html
@@ -283,10 +300,6 @@ public class WSS4JAttachment extends Attachment
         aMimeBodyPart.setHeader (CHttpHeader.CONTENT_ID, sContentID);
       }
     }
-
-    // Add custom headers before the special ones
-    for (final Map.Entry <String, String> aEntry : getHeaders ().entrySet ())
-      aMimeBodyPart.setHeader (aEntry.getKey (), aEntry.getValue ());
 
     // !IMPORTANT! DO NOT CHANGE the order of the adding a DH and then the last
     // headers
@@ -322,12 +335,17 @@ public class WSS4JAttachment extends Attachment
       aAttachment.setUniqueID ();
 
     // Set after ID and MimeType!
-    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
+    aAttachment.addHeader (CHttpHeader.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION_ATTACHMENT);
     if (StringHelper.hasText (sFilename))
-      aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
-                             "attachment; filename=\"" + sFilename + "\"");
-    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + '>');
-    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, aAttachment.getMimeType ());
+    {
+      if (sFilename.indexOf ('"') >= 0)
+        LOGGER.warn ("The filename '" +
+                     sFilename +
+                     "' contains a double quote which will most likely break the Content-Disposition");
+      aAttachment.addHeader (CHttpHeader.CONTENT_DISPOSITION, "attachment; filename=\"" + sFilename + "\"");
+    }
+    aAttachment.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + aAttachment.getId () + CONTENT_ID_SUFFIX);
+    aAttachment.addHeader (CHttpHeader.CONTENT_TYPE, aAttachment.getMimeType ());
   }
 
   @Nonnull
@@ -556,9 +574,9 @@ public class WSS4JAttachment extends Attachment
     }
 
     // These headers are mandatory and overwrite headers from the MIME body part
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + ret.getId () + '>');
-    ret.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, ret.getMimeType ());
+    ret.addHeader (CHttpHeader.CONTENT_DESCRIPTION, CONTENT_DESCRIPTION_ATTACHMENT);
+    ret.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + ret.getId () + CONTENT_ID_SUFFIX);
+    ret.addHeader (CHttpHeader.CONTENT_TYPE, ret.getMimeType ());
 
     return ret;
   }
