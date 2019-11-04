@@ -57,7 +57,7 @@ public class ExampleReceiveMessageProcessorSPI implements IAS4ServletMessageProc
   {
     LOGGER.info ("Received AS4 user message");
 
-    return AS4MessageProcessorResult.createSuccess (aIncomingAttachments, null);
+    return AS4MessageProcessorResult.createSuccess ();
   }
 
   @Nonnull

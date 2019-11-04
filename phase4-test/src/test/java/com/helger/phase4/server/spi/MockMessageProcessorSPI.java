@@ -70,6 +70,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
                                                           @Nonnull final IAS4MessageState aState,
                                                           @Nonnull final ICommonsList <Ebms3Error> aProcessingErrorMessages)
   {
+    // Passing the incoming attachments as response attachments is ONLY
+    // contained for testing and SHOULD NOT be copy pasted
     if (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PUSH))
     {
       return AS4MessageProcessorResult.createSuccess (aIncomingAttachments,
