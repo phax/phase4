@@ -542,6 +542,7 @@ public class WSS4JAttachment extends Attachment
       else
       {
         // Can only be read once
+        LOGGER.warn ("Having a DataHandler that can be read only once: " + aDH);
         ret.setSourceStreamProvider (HasInputStream.once ( () -> {
           try
           {
@@ -565,7 +566,7 @@ public class WSS4JAttachment extends Attachment
       ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
     }
 
-    // Convert all headers to attributes
+    // Read all MIME part headers
     final Enumeration <Header> aEnum = aBodyPart.getAllHeaders ();
     while (aEnum.hasMoreElements ())
     {
