@@ -24,12 +24,14 @@ import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.mail.Header;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
@@ -40,7 +42,6 @@ import org.apache.wss4j.common.util.AttachmentUtils;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
@@ -65,6 +66,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @author bayerlma
  * @author Philip Helger
  */
+@NotThreadSafe
 public class WSS4JAttachment extends Attachment
 {
   private final AS4ResourceHelper m_aResHelper;
@@ -282,6 +284,10 @@ public class WSS4JAttachment extends Attachment
       }
     }
 
+    // Add custom headers before the special ones
+    for (final Map.Entry <String, String> aEntry : getHeaders ().entrySet ())
+      aMimeBodyPart.setHeader (aEntry.getKey (), aEntry.getValue ());
+
     // !IMPORTANT! DO NOT CHANGE the order of the adding a DH and then the last
     // headers
     // On some tests the datahandler did reset content-type and transfer
@@ -309,7 +315,7 @@ public class WSS4JAttachment extends Attachment
                                        .getToString ();
   }
 
-  private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nonnull final String sFilename)
+  private static void _addOutgoingHeaders (@Nonnull final WSS4JAttachment aAttachment, @Nullable final String sFilename)
   {
     // Ensure an ID is present
     if (StringHelper.hasNoText (aAttachment.getId ()))
@@ -317,8 +323,9 @@ public class WSS4JAttachment extends Attachment
 
     // Set after ID and MimeType!
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DESCRIPTION, "Attachment");
-    aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
-                           "attachment; filename=\"" + sFilename + "\"");
+    if (StringHelper.hasText (sFilename))
+      aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_DISPOSITION,
+                             "attachment; filename=\"" + sFilename + "\"");
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_ID, "<attachment=" + aAttachment.getId () + '>');
     aAttachment.addHeader (AttachmentUtils.MIME_HEADER_CONTENT_TYPE, aAttachment.getMimeType ());
   }
@@ -329,17 +336,32 @@ public class WSS4JAttachment extends Attachment
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
-    return createOutgoingFileAttachment (aSrcFile, null, aMimeType, eCompressionMode, aResHelper);
+    final String sContentID = null;
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aResHelper);
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+                                                              @Nullable final String sContentID,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+  {
+    final String sFilename = FilenameHelper.getWithoutPath (aSrcFile);
+    return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aResHelper);
   }
 
   /**
-   * Constructor. Performs compression internally.
+   * Quasi constructor. Performs compression internally if necessary.
    *
    * @param aSrcFile
    *        Source, uncompressed, unencrypted file.
    * @param sContentID
    *        Content-ID of the attachment. If <code>null</code> a random ID is
    *        created.
+   * @param sFilename
+   *        Filename of the attachment. May be <code>null</code> in which case
+   *        no `Content-Disposition` header is created.
    * @param aMimeType
    *        Original mime type of the file.
    * @param eCompressionMode
@@ -353,6 +375,7 @@ public class WSS4JAttachment extends Attachment
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nullable final String sContentID,
+                                                              @Nullable final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
@@ -362,7 +385,7 @@ public class WSS4JAttachment extends Attachment
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     ret.setId (sContentID);
-    _addOutgoingHeaders (ret, FilenameHelper.getWithoutPath (aSrcFile));
+    _addOutgoingHeaders (ret, sFilename);
 
     // If the attachment has an compressionMode do it directly, so that
     // encryption later on works on the compressed content
@@ -371,7 +394,8 @@ public class WSS4JAttachment extends Attachment
     {
       ret.setCompressionMode (eCompressionMode);
 
-      // Create temporary file with compressed content
+      // Create temporary file with compressed content to avoid that the
+      // original is compressed more than once
       aRealFile = aResHelper.createTempFile ();
       try (final OutputStream aOS = eCompressionMode.getCompressStream (FileHelper.getBufferedOutputStream (aRealFile)))
       {
@@ -391,14 +415,14 @@ public class WSS4JAttachment extends Attachment
   }
 
   /**
-   * Constructor. Performs compression internally.
+   * Quasi constructor. Performs compression internally.
    *
    * @param aSrcData
    *        Source in-memory data, uncompressed, unencrypted.
    * @param sContentID
    *        Optional content ID or <code>null</code> to create a random one.
-   * @param sFilename
-   *        Filename of the attachment. May not be <code>null</code>.
+   *        Filename of the attachment. May be <code>null</code> in which case
+   *        no `Content-Disposition` header is created.
    * @param aMimeType
    *        Original mime type of the file. May not be <code>null</code>.
    * @param eCompressionMode
@@ -412,13 +436,12 @@ public class WSS4JAttachment extends Attachment
   @Nonnull
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final byte [] aSrcData,
                                                               @Nullable final String sContentID,
-                                                              @Nonnull @Nonempty final String sFilename,
+                                                              @Nullable final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcData, "Data");
-    ValueEnforcer.notEmpty (sFilename, "Filename");
     ValueEnforcer.notNull (aMimeType, "MimeType");
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
@@ -447,6 +470,14 @@ public class WSS4JAttachment extends Attachment
     return ret;
   }
 
+  /**
+   * Check if an incoming attachment can be kept in memory, or if a temporary
+   * file is needed.
+   *
+   * @param nBytes
+   *        File size.
+   * @return <code>true</code> if the size is &le; than 64 Kilobytes
+   */
   public static boolean canBeKeptInMemory (final long nBytes)
   {
     return nBytes <= 64 * CGlobal.BYTES_PER_KILOBYTE;
