@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.concurrent.BasicThreadFactory;
@@ -52,12 +53,18 @@ public class AS4WorkerPool extends AbstractGlobalSingleton
     this (Runtime.getRuntime ().availableProcessors () * 2);
   }
 
-  protected AS4WorkerPool (@Nonnegative final int nThreadPoolSize)
+  public AS4WorkerPool (@Nonnegative final int nThreadPoolSize)
   {
-    m_aES = Executors.newFixedThreadPool (nThreadPoolSize,
-                                          new BasicThreadFactory.Builder ().setDaemon (true)
-                                                                           .setNamingPattern ("as4-worker-%d")
-                                                                           .build ());
+    this (Executors.newFixedThreadPool (nThreadPoolSize,
+                                        new BasicThreadFactory.Builder ().setDaemon (true)
+                                                                         .setNamingPattern ("as4-worker-%d")
+                                                                         .build ()));
+  }
+
+  public AS4WorkerPool (@Nonnull final ExecutorService aES)
+  {
+    ValueEnforcer.notNull (aES, "ExecutorService");
+    m_aES = aES;
   }
 
   @Nonnull
