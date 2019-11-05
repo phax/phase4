@@ -19,7 +19,6 @@ package com.helger.phase4.servlet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -32,6 +31,7 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.concurrent.BasicThreadFactory;
 import com.helger.commons.concurrent.ExecutorServiceHelper;
+import com.helger.commons.functional.IThrowingSupplier;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
@@ -99,7 +99,7 @@ public class AS4WorkerPool extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public <T> CompletableFuture <T> supply (@Nonnull final Supplier <T> aSupplier)
+  public <T> CompletableFuture <T> supply (@Nonnull final IThrowingSupplier <T, ? extends Exception> aSupplier)
   {
     return CompletableFuture.supplyAsync ( () -> {
       try
