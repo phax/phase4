@@ -25,7 +25,7 @@
     <version>1.10.9</version>
   </parent>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>0.9.3</version>
+  <version>0.9.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -44,7 +44,7 @@
     <connection>scm:git:git@github.com:phax/phase4.git</connection>
     <developerConnection>scm:git:git@github.com:phax/phase4.git</developerConnection>
     <url>http://github.com/phax/phase4</url>
-    <tag>phase4-parent-pom-0.9.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <organization>
