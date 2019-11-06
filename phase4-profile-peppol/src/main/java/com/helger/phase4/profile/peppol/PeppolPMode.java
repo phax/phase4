@@ -68,11 +68,14 @@ public final class PeppolPMode
   @Nonnull
   public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
   {
+    // Process ID
     final String sService = null;
-    final String sAction = CAS4.DEFAULT_ACTION_URL;
+    final String sServiceType = null;
+    // Document type ID
+    final String sAction = null;
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
-    return new PModeLegBusinessInformation (sService, sAction, nPayloadProfileMaxKB, sMPCID);
+    return new PModeLegBusinessInformation (sService, sServiceType, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 
   @Nonnull

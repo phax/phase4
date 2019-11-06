@@ -99,12 +99,12 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.model.AS4Helper;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.MEPHelper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
@@ -713,34 +713,6 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * EBMS core specification 4.2 details these default values. In eSENS they get
-   * used to implement a ping service, we took this over even outside of eSENS.
-   * If you use these default values you can try to "ping" the server, the
-   * method just checks if the pmode got these exact values set. If true, no SPI
-   * processing is done.
-   *
-   * @param aPMode
-   *        to check
-   * @return true if the default values to ping are not used else false
-   */
-  private static boolean _isPingMessage (@Nullable final IPMode aPMode)
-  {
-    if (aPMode != null)
-    {
-      // Leg 2 wouldn't make sense... Only leg 1 can be pinged
-      final PModeLegBusinessInformation aBInfo = aPMode.getLeg1 ().getBusinessInfo ();
-
-      if (aBInfo != null &&
-          CAS4.DEFAULT_ACTION_URL.equals (aBInfo.getAction ()) &&
-          CAS4.DEFAULT_SERVICE_URL.equals (aBInfo.getService ()))
-      {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Takes an UserMessage and switches properties to reverse the direction. So
    * previously it was C1 => C4, now its C4 => C1 Also adds attachments if there
    * are some that should be added.
@@ -1233,7 +1205,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
       else
       {
-        if (!_isPingMessage (aPMode))
+        if (!AS4Helper.isPingMessage (aPMode))
         {
           // Invoke SPIs if
           // * Valid PMode
