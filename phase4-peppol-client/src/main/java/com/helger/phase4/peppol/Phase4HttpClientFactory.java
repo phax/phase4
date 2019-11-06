@@ -19,21 +19,29 @@ package com.helger.phase4.peppol;
 import java.security.GeneralSecurityException;
 
 import javax.annotation.Nonnull;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 import org.apache.http.client.config.RequestConfig;
 
+import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 
 /**
  * Special {@link HttpClientFactory} with better defaults for Peppol.
- * 
+ *
  * @author Philip Helger
  */
 public class Phase4HttpClientFactory extends HttpClientFactory
 {
   public Phase4HttpClientFactory () throws GeneralSecurityException
   {
-    setSSLContextTrustAll ();
+    // Peppol requires TLS v1.2
+    final SSLContext aSSLContext = SSLContext.getInstance ("TLSv1.2");
+    // But we're basically trusting all hosts - the exact list is hard to
+    // determine
+    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
+    setSSLContext (aSSLContext);
   }
 
   @Override
