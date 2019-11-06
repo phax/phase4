@@ -19,6 +19,7 @@ package com.helger.phase4.peppol;
 import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -131,7 +132,7 @@ public final class MainPhase4PeppolSender
             LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
         }
       };
-      final Consumer <X509Certificate> aOnInvalidCertificateConsumer = null;
+      final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aOnInvalidCertificateConsumer = null;
       // An optional consumer for the EBMS signal message - when set, will force
       // the response to be parsed
       final Consumer <Ebms3SignalMessage> aSignalMsgConsumer = null;
