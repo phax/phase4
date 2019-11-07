@@ -16,22 +16,8 @@
  */
 package com.helger.phase4.peppol;
 
-import java.security.GeneralSecurityException;
-import java.security.Security;
-import java.security.cert.CertPathBuilder;
-import java.security.cert.CertPathValidator;
-import java.security.cert.CertStore;
-import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
-import java.security.cert.CollectionCertStoreParameters;
-import java.security.cert.PKIXBuilderParameters;
-import java.security.cert.PKIXCertPathBuilderResult;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.TrustAnchor;
-import java.security.cert.X509CertSelector;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -40,7 +26,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
-import javax.security.auth.x500.X500Principal;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -55,14 +40,11 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.exception.IExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.CommonsHashSet;
-import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.timing.StopWatch;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
@@ -70,10 +52,10 @@ import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.EndpointType;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
+import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.PeppolCertificateHelper;
-import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -116,120 +98,8 @@ public final class Phase4PeppolSender
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
 
-  /** Sorted list with all issuers we're accepting. Never empty. */
-  private static final ICommonsList <X509Certificate> PEPPOL_AP_CA_CERTS = new CommonsArrayList <> ();
-  private static final ICommonsList <X500Principal> PEPPOL_AP_CA_ISSUERS = new CommonsArrayList <> ();
-
-  static
-  {
-    // PKI v3
-    PEPPOL_AP_CA_CERTS.add (PeppolKeyStoreHelper.Config2018.CERTIFICATE_PILOT_AP);
-    PEPPOL_AP_CA_CERTS.add (PeppolKeyStoreHelper.Config2018.CERTIFICATE_PRODUCTION_AP);
-    // PKI v2 after v3 because lower precedence
-    PEPPOL_AP_CA_CERTS.add (PeppolKeyStoreHelper.Config2010.CERTIFICATE_PILOT_AP);
-    PEPPOL_AP_CA_CERTS.add (PeppolKeyStoreHelper.Config2010.CERTIFICATE_PRODUCTION_AP);
-
-    // all issuers
-    PEPPOL_AP_CA_ISSUERS.addAllMapped (PEPPOL_AP_CA_CERTS, X509Certificate::getSubjectX500Principal);
-  }
-
   private Phase4PeppolSender ()
   {}
-
-  /**
-   * Check if the provided certificate is a valid Peppol AP certificate.
-   *
-   * @param aCert
-   *        The certificate to be checked. May be <code>null</code>.
-   * @param aCheckDT
-   *        The check date and time to use. May not be <code>null</code>.
-   * @return {@link EPeppolCertificateCheckResult} and never <code>null</code>.
-   */
-  @Nonnull
-  public static EPeppolCertificateCheckResult isValidPeppolAPCertificate (@Nullable final X509Certificate aCert,
-                                                                          @Nonnull final LocalDateTime aCheckDT)
-  {
-    if (aCert == null)
-      return EPeppolCertificateCheckResult.NO_CERTIFICATE_PROVIDED;
-
-    // Check date valid
-    final Date aCheckDate = PDTFactory.createDate (aCheckDT);
-    try
-    {
-      aCert.checkValidity (aCheckDate);
-    }
-    catch (final CertificateNotYetValidException ex)
-    {
-      return EPeppolCertificateCheckResult.NOT_YET_VALID;
-    }
-    catch (final CertificateExpiredException ex)
-    {
-      return EPeppolCertificateCheckResult.EXPIRED;
-    }
-
-    // Check if issuer is known
-    final X500Principal aIssuer = aCert.getIssuerX500Principal ();
-    if (!PEPPOL_AP_CA_ISSUERS.contains (aIssuer))
-    {
-      // Not a PEPPOL AP certificate
-      return EPeppolCertificateCheckResult.UNSUPPORTED_ISSUER;
-    }
-
-    // check OCSP and CLR
-    final StopWatch aSW = StopWatch.createdStarted ();
-    try
-    {
-      // Certificate -> trust anchors; name constraints MUST be null
-      final X509CertSelector aSelector = new X509CertSelector ();
-      aSelector.setCertificate (aCert);
-      final PKIXBuilderParameters aPKIXParams = new PKIXBuilderParameters (new CommonsHashSet <> (PEPPOL_AP_CA_CERTS,
-                                                                                                  x -> new TrustAnchor (x,
-                                                                                                                        null)),
-                                                                           aSelector);
-
-      aPKIXParams.setRevocationEnabled (true);
-
-      // Enable On-Line Certificate Status Protocol (OCSP) support
-      final boolean bEnableOCSP = true;
-      if (bEnableOCSP)
-      {
-        Security.setProperty ("ocsp.enable", "true");
-      }
-
-      // Check at what date?
-      aPKIXParams.setDate (aCheckDate);
-
-      // Specify a list of intermediate certificates ("Collection" is a key in
-      // the "SUN" security provider)
-      final CertStore aIntermediateCertStore = CertStore.getInstance ("Collection",
-                                                                      new CollectionCertStoreParameters (PEPPOL_AP_CA_CERTS));
-      aPKIXParams.addCertStore (aIntermediateCertStore);
-
-      // Throws an exception in case of an error
-      final CertPathBuilder aCPB = CertPathBuilder.getInstance ("PKIX");
-      final PKIXCertPathBuilderResult aBuilderResult = (PKIXCertPathBuilderResult) aCPB.build (aPKIXParams);
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("OCSP/CLR builder result = " + aBuilderResult);
-
-      final CertPathValidator aCPV = CertPathValidator.getInstance ("PKIX");
-      final PKIXCertPathValidatorResult aValidateResult = (PKIXCertPathValidatorResult) aCPV.validate (aBuilderResult.getCertPath (),
-                                                                                                       aPKIXParams);
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("OCSP/CLR validation result = " + aValidateResult);
-    }
-    catch (final GeneralSecurityException ex)
-    {
-      LOGGER.warn ("Failed to perform OCSP/CLR check", ex);
-      return EPeppolCertificateCheckResult.REVOKED;
-    }
-    finally
-    {
-      final long nMillis = aSW.stopAndGetMillis ();
-      if (nMillis > 100)
-        LOGGER.warn ("OCSP/CLR check took " + nMillis + " milliseconds which is too long");
-    }
-    return EPeppolCertificateCheckResult.VALID;
-  }
 
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -474,12 +344,20 @@ public final class Phase4PeppolSender
 
       final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
 
-      final EndpointType aEndpoint = aSMPClient.getEndpoint (aReceiverID,
-                                                             aDocTypeID,
-                                                             aProcID,
-                                                             ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
-      if (aEndpoint == null)
-        throw new IllegalStateException ("Failed to resolve SMP endpoint");
+      final EndpointType aEndpoint;
+      try
+      {
+        aEndpoint = aSMPClient.getEndpoint (aReceiverID,
+                                            aDocTypeID,
+                                            aProcID,
+                                            ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
+        if (aEndpoint == null)
+          throw new IllegalStateException ("Failed to resolve SMP endpoint");
+      }
+      catch (final SMPClientException ex)
+      {
+        throw new IllegalStateException ("Failed to resolve SMP endpoint", ex);
+      }
 
       // Start building AS4 User Message
       final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
@@ -496,7 +374,8 @@ public final class Phase4PeppolSender
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
 
-      final EPeppolCertificateCheckResult eCertCheckResult = isValidPeppolAPCertificate (aReceiverCert, aNow);
+      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
+                                                                                                              aNow);
       if (eCertCheckResult.isInvalid ())
       {
         LOGGER.error ("The received SMP certificate is not valid (at " +
