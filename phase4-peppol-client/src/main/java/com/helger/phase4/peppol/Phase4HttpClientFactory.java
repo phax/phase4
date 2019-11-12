@@ -23,9 +23,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.phase4.CAS4Version;
 
 /**
  * Special {@link HttpClientFactory} with better defaults for Peppol.
@@ -52,5 +54,13 @@ public class Phase4HttpClientFactory extends HttpClientFactory
     return super.createRequestConfigBuilder ().setConnectTimeout (5_000)
                                               .setSocketTimeout (100_000)
                                               .setConnectionRequestTimeout (100_000);
+  }
+
+  @Override
+  public HttpClientBuilder createHttpClientBuilder ()
+  {
+    final HttpClientBuilder ret = super.createHttpClientBuilder ();
+    ret.setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " github.com/phax/phase4");
+    return ret;
   }
 }
