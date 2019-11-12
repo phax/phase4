@@ -84,6 +84,7 @@ public final class PeppolCerticateChecker
     PEPPOL_AP_TRUST_ANCHORS = new CommonsHashSet <> (PEPPOL_AP_CA_CERTS, x -> new TrustAnchor (x, null));
   }
 
+  private static final AtomicBoolean OCSP_ENABLED = new AtomicBoolean (true);
   private static final AtomicBoolean CACHE_OCSP_RESULTS = new AtomicBoolean (true);
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
@@ -103,6 +104,16 @@ public final class PeppolCerticateChecker
 
   public PeppolCerticateChecker ()
   {}
+
+  public static boolean isOCSPEnabled ()
+  {
+    return OCSP_ENABLED.get ();
+  }
+
+  public static void setOCSPEnabled (final boolean bCheck)
+  {
+    OCSP_ENABLED.set (bCheck);
+  }
 
   public static boolean isCacheOCSPResults ()
   {
@@ -162,8 +173,15 @@ public final class PeppolCerticateChecker
       aPKIXParams.setRevocationEnabled (true);
 
       // Enable On-Line Certificate Status Protocol (OCSP) support
-      final boolean bEnableOCSP = true;
-      Security.setProperty ("ocsp.enable", Boolean.toString (bEnableOCSP));
+      final boolean bEnableOCSP = isOCSPEnabled ();
+      try
+      {
+        Security.setProperty ("ocsp.enable", Boolean.toString (bEnableOCSP));
+      }
+      catch (final SecurityException ex)
+      {
+        LOGGER.warn ("Failed to set Security property 'ocsp.enable' to " + bEnableOCSP);
+      }
 
       if (aCheckDT != null)
       {
