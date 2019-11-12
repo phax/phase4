@@ -93,7 +93,7 @@ public final class MainPhase4PeppolSender
       // The sending participant ID (your ID, constant)
       final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc");
       // The receiving participant ID (the other ID)
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
       // The "CN" part of your certificate (constant)
       final String sSenderPartyID = "POP000306";
       // The AS4 conversation ID
