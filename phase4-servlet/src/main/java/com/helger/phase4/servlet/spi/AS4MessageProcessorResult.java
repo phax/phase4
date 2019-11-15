@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.servlet.spi;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -42,7 +41,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
  * @author Philip Helger
  */
 @Immutable
-public class AS4MessageProcessorResult implements ISuccessIndicator, Serializable
+public class AS4MessageProcessorResult implements ISuccessIndicator
 {
   private final ESuccess m_eSuccess;
   private final String m_sErrorMsg;
