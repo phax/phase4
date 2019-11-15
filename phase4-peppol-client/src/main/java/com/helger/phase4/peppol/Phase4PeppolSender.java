@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.helger.bdve.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.exception.IExceptionCallback;
@@ -103,25 +104,25 @@ public final class Phase4PeppolSender
 
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                       @Nonnull final byte [] aBytes)
+                                                       @Nonnull final byte [] aBytes) throws Phase4PeppolException
   {
     // Read response as XML
     final Document aSoapDoc = DOMReader.readXMLDOM (aBytes);
     if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
-      throw new IllegalStateException ("Failed to parse as XML");
+      throw new Phase4PeppolException ("Failed to parse as XML");
 
     // Check if it is SOAP
     final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
                                                                                       .getNamespaceURI ());
     if (eSOAPVersion == null)
-      throw new IllegalStateException ("Failed to determine SOAP version");
+      throw new Phase4PeppolException ("Failed to determine SOAP version");
 
     // Find SOAP header
     final Node aSOAPHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
                                                                        eSOAPVersion.getNamespaceURI (),
                                                                        eSOAPVersion.getHeaderElementName ());
     if (aSOAPHeaderNode == null)
-      throw new IllegalStateException ("SOAP document is missing a Header element");
+      throw new Phase4PeppolException ("SOAP document is missing a Header element");
 
     // Iterate all SOAP header elements
     for (final Element aHeaderChild : new ChildElementIterator (aSOAPHeaderNode))
@@ -286,6 +287,15 @@ public final class Phase4PeppolSender
    *        An optional consumer that is only invoked, if the received SMP
    *        certificate cannot be used for the transmission. May be
    *        <code>null</code>.
+   * @param aVESID
+   *        The Validation Execution Set ID to be used for client side
+   *        XML/Schematron validation. If this parameter is <code>null</code>,
+   *        no validation is performed. This parameter is only effective in
+   *        combination with aValidationResultHandler.
+   * @param aValidationResultHandler
+   *        The result handler to be used for XML/Schematron validation. If this
+   *        parameter is <code>null</code>, no validation is performed. This
+   *        parameter is only effective in combination with aVESID.
    * @param aResponseConsumer
    *        An optional consumer for the AS4 message that was sent. May be
    *        <code>null</code>.
@@ -298,6 +308,8 @@ public final class Phase4PeppolSender
    * @return {@link ESuccess#SUCCESS} if everything went well,
    *         {@link ESuccess#FAILURE} in an exception was thrown, or sending
    *         failed or the SMP certificate is invalid.
+   * @throws Phase4PeppolException
+   *         if something goes wrong
    */
   @Nonnull
   public static ESuccess sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
@@ -314,9 +326,11 @@ public final class Phase4PeppolSender
                                          final boolean bCompressPayload,
                                          @Nonnull final SMPClientReadOnly aSMPClient,
                                          @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aOnInvalidCertificateConsumer,
+                                         @Nullable final VESID aVESID,
+                                         @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
                                          @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
                                          @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
-                                         @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
+                                         @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
@@ -330,8 +344,23 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
 
+    // Client side validation
+    if (aVESID != null)
+    {
+      if (aValidationResultHandler != null)
+        Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
+      else
+        LOGGER.warn ("A VES ID is present but no ValidationResultHandler - therefore no validation is performed");
+    }
+    else
+      if (aValidationResultHandler != null)
+        LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
+
+    // Temporary file manager
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
+      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+
       // Perform SMP lookup
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Start performing SMP lookup (" +
@@ -342,8 +371,7 @@ public final class Phase4PeppolSender
                       aProcID.getURIEncoded () +
                       ")");
 
-      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
-
+      // Perform SMP lookup
       final EndpointType aEndpoint;
       try
       {
@@ -352,11 +380,39 @@ public final class Phase4PeppolSender
                                             aProcID,
                                             ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
         if (aEndpoint == null)
-          throw new IllegalStateException ("Failed to resolve SMP endpoint");
+          throw new Phase4PeppolException ("Failed to resolve SMP endpoint");
       }
       catch (final SMPClientException ex)
       {
-        throw new IllegalStateException ("Failed to resolve SMP endpoint", ex);
+        throw new Phase4PeppolException ("Failed to resolve SMP endpoint", ex);
+      }
+
+      // Certificate from SMP lookup
+      final X509Certificate aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
+
+        final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
+                                                                                                                aNow);
+        if (eCertCheckResult.isInvalid ())
+        {
+          LOGGER.error ("The received SMP certificate is not valid (at " +
+                        aNow +
+                        ") and cannot be used for sending. Aborting. Reason: " +
+                        eCertCheckResult.getReason ());
+          if (aOnInvalidCertificateConsumer != null)
+            aOnInvalidCertificateConsumer.accept (aReceiverCert, eCertCheckResult);
+          return ESuccess.FAILURE;
+        }
+      }
+
+      // URL from SMP lookup
+      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
+      if (sDestURL == null)
+      {
+        LOGGER.error ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
+        return ESuccess.FAILURE;
       }
 
       // Start building AS4 User Message
@@ -369,23 +425,6 @@ public final class Phase4PeppolSender
       aUserMsg.setAS4CryptoFactory (AS4CryptoFactory.DEFAULT_INSTANCE);
       aUserMsg.setPMode (aSrcPMode, true);
 
-      // Certificate from SMP lookup
-      final X509Certificate aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
-
-      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                              aNow);
-      if (eCertCheckResult.isInvalid ())
-      {
-        LOGGER.error ("The received SMP certificate is not valid (at " +
-                      aNow +
-                      ") and cannot be used for sending. Aborting. Reason: " +
-                      eCertCheckResult.getReason ());
-        if (aOnInvalidCertificateConsumer != null)
-          aOnInvalidCertificateConsumer.accept (aReceiverCert, eCertCheckResult);
-        return ESuccess.FAILURE;
-      }
       aUserMsg.cryptParams ().setCertificate (aReceiverCert);
 
       // Explicit parameters have precedence over PMode
@@ -436,16 +475,13 @@ public final class Phase4PeppolSender
                                                                               aResHelper));
       }
 
-      // URL from SMP lookup
-      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
-      if (sDestURL == null)
-      {
-        LOGGER.error ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
-        return ESuccess.FAILURE;
-      }
-
       // Main sending
       return _sendHttp (aUserMsg, sDestURL, null, aResponseConsumer, aSignalMsgConsumer);
+    }
+    catch (final Phase4PeppolException ex)
+    {
+      // Re-throw
+      throw ex;
     }
     catch (final Exception ex)
     {

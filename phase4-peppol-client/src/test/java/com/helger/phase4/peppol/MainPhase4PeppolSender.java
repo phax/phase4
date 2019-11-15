@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.bdve.peppol.PeppolValidation390;
+import com.helger.bdve.result.ValidationResultList;
 import com.helger.commons.callback.exception.IExceptionCallback;
 import com.helger.commons.callback.exception.LoggingExceptionCallback;
 import com.helger.commons.debug.GlobalDebug;
@@ -83,7 +85,7 @@ public final class MainPhase4PeppolSender
     {
       // Start configuring here
       // Configuration of the HTTP parameters
-      final HttpClientFactory aHCF = new Phase4HttpClientFactory ();
+      final HttpClientFactory aHCF = new Phase4PeppolHttpClientFactory ();
       // Don't touch
       final IPMode aSrcPMode = Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null);
       // The document type ID to be used
@@ -154,6 +156,14 @@ public final class MainPhase4PeppolSender
                                              bCompress,
                                              aSMPClient,
                                              aOnInvalidCertificateConsumer,
+                                             PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
+                                             new IPhase4PeppolValidatonResultHandler ()
+                                             {
+                                               public void onValidationSuccess (final ValidationResultList aValidationResult) throws Phase4PeppolException
+                                               {
+                                                 LOGGER.info ("Successfully validated XML payload");
+                                               }
+                                             },
                                              aResponseConsumer,
                                              aSignalMsgConsumer,
                                              aExceptionCallback)

@@ -68,6 +68,10 @@
       <groupId>com.helger</groupId>
       <artifactId>peppol-smp-client</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-bdve-peppol</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -111,6 +115,7 @@
             <exclude>**/*.p12</exclude>
             <exclude>**/*.jks</exclude>
             <exclude>src/test/resources/examples/**</exclude>
+            <exclude>phase4-peppol-client/**</exclude>
           </excludes>
         </configuration>
       </plugin>

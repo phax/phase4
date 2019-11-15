@@ -21,7 +21,10 @@ This solution is PEPPOL compliant. See the test report at https://github.com/pha
 ## News and noteworthy
 
 * v0.9.4 - work in progress
+    * Updated to ph-commons 9.3.8
     * Added OCSP/CLR check for Peppol certificates
+    * Added support for validation of outgoing Peppol messages using the default Peppol Schematrons
+    * Extended the Peppol client API a bit for client side validation
 * v0.9.3 - 2019-11-05
     * Updated to peppol-commons 7.0.3
     * Added new subproject `phase4-peppol-client` to easily send AS4 messages to PEPPOL

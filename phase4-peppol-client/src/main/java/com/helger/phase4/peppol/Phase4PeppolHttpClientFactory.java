@@ -34,9 +34,9 @@ import com.helger.phase4.CAS4Version;
  *
  * @author Philip Helger
  */
-public class Phase4HttpClientFactory extends HttpClientFactory
+public class Phase4PeppolHttpClientFactory extends HttpClientFactory
 {
-  public Phase4HttpClientFactory () throws GeneralSecurityException
+  public Phase4PeppolHttpClientFactory () throws GeneralSecurityException
   {
     // Peppol requires TLS v1.2
     final SSLContext aSSLContext = SSLContext.getInstance ("TLSv1.2");
@@ -60,6 +60,7 @@ public class Phase4HttpClientFactory extends HttpClientFactory
   public HttpClientBuilder createHttpClientBuilder ()
   {
     final HttpClientBuilder ret = super.createHttpClientBuilder ();
+    // Set an explicit user agent
     ret.setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " github.com/phax/phase4");
     return ret;
   }
