@@ -92,7 +92,7 @@ public enum EEbmsError implements IEbmsError
                               EEbmsErrorCategory.PROCESSING),
   EBMS_FAILED_DECRYPTION ("EBMS:0102",
                           EEbmsErrorSeverity.FAILURE,
-                          "FailedDecyrption",
+                          "FailedDecryption",
                           EEbmsErrorText.FAILED_DECRYPTION,
                           EEbmsErrorCategory.PROCESSING),
   EBMS_POLICY_NONCOMPLIANCE ("EBMS:0103",
