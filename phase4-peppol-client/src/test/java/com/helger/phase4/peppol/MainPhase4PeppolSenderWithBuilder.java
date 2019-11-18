@@ -77,7 +77,8 @@ public final class MainPhase4PeppolSenderWithBuilder
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
+      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
+      aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018as4");
       final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer = aResponseEntity -> {
         if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
         {

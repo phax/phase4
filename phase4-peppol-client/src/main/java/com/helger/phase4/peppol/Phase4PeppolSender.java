@@ -293,10 +293,10 @@ public final class Phase4PeppolSender
    * @param aSMPClient
    *        The SMP client to be used. Needs to be passed in to handle proxy
    *        settings etc. May not be <code>null</code>.
-   * @param aOnInvalidCertificateConsumer
-   *        An optional consumer that is only invoked, if the received SMP
-   *        certificate cannot be used for the transmission. May be
-   *        <code>null</code>.
+   * @param aCertificateConsumer
+   *        An optional consumer that is invoked with the received SMP
+   *        certificate to be used for the transmission. The certification check
+   *        result must be considered when used. May be <code>null</code>.
    * @param aVESID
    *        The Validation Execution Set ID to be used for client side
    *        XML/Schematron validation. If this parameter is <code>null</code>,
@@ -336,7 +336,7 @@ public final class Phase4PeppolSender
                                          @Nonnull final IMimeType aPayloadMimeType,
                                          final boolean bCompressPayload,
                                          @Nonnull final SMPClientReadOnly aSMPClient,
-                                         @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aOnInvalidCertificateConsumer,
+                                         @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer,
                                          @Nullable final VESID aVESID,
                                          @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
                                          @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
@@ -407,14 +407,17 @@ public final class Phase4PeppolSender
 
         final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                                 aNow);
+
+        // Interested in the certificate?
+        if (aCertificateConsumer != null)
+          aCertificateConsumer.accept (aReceiverCert, eCertCheckResult);
+
         if (eCertCheckResult.isInvalid ())
         {
           LOGGER.error ("The received SMP certificate is not valid (at " +
                         aNow +
                         ") and cannot be used for sending. Aborting. Reason: " +
                         eCertCheckResult.getReason ());
-          if (aOnInvalidCertificateConsumer != null)
-            aOnInvalidCertificateConsumer.accept (aReceiverCert, eCertCheckResult);
           return ESuccess.FAILURE;
         }
       }
@@ -535,7 +538,7 @@ public final class Phase4PeppolSender
     private IMimeType m_aPayloadMimeType;
     private boolean m_bCompressPayload;
     private SMPClientReadOnly m_aSMPClient;
-    private BiConsumer <X509Certificate, EPeppolCertificateCheckResult> m_aOnInvalidCertificateConsumer;
+    private BiConsumer <X509Certificate, EPeppolCertificateCheckResult> m_aCertificateConsumer;
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
     private Consumer <AS4ClientSentMessage <byte []>> m_aResponseConsumer;
@@ -798,19 +801,19 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set an optional Consumer for error handling, if the retrieved certificate
-     * is not valid, expired, revoked etc.
+     * Set an optional Consumer for the retrieved certificate, independent of
+     * its usability.
      *
-     * @param aOnInvalidCertificateConsumer
+     * @param aCertificateConsumer
      *        The consumer to be used. The first parameter is the certificate
      *        itself and the second parameter is the internal check result. May
      *        be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public Builder setInvalidCertificateConsumer (@Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aOnInvalidCertificateConsumer)
+    public Builder setCertificateConsumer (@Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer)
     {
-      m_aOnInvalidCertificateConsumer = aOnInvalidCertificateConsumer;
+      m_aCertificateConsumer = aCertificateConsumer;
       return this;
     }
 
@@ -969,7 +972,7 @@ public final class Phase4PeppolSender
                              m_aPayloadMimeType,
                              m_bCompressPayload,
                              m_aSMPClient,
-                             m_aOnInvalidCertificateConsumer,
+                             m_aCertificateConsumer,
                              m_aVESID,
                              m_aValidationResultHandler,
                              m_aResponseConsumer,
