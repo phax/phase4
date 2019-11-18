@@ -95,7 +95,8 @@ public final class MainPhase4PeppolSender
       // The sending participant ID (your ID, constant)
       final IParticipantIdentifier aSenderID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc");
       // The receiving participant ID (the other ID)
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
+      IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
+      aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018as4");
       // The "CN" part of your certificate (constant)
       final String sSenderPartyID = "POP000306";
       // The AS4 conversation ID
@@ -103,6 +104,8 @@ public final class MainPhase4PeppolSender
       // The SBDH instance identifier - null to create a random string
       // internally
       final String sSBDHInstanceIdentifier = null;
+      // The SBDH document identification UBL version ID. Defaults to 2.1
+      final String sSBDHUBLVersionID = null;
       // The main payload to be send. The SBDH is created by this tool
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
@@ -151,6 +154,7 @@ public final class MainPhase4PeppolSender
                                              sSenderPartyID,
                                              sConversationID,
                                              sSBDHInstanceIdentifier,
+                                             sSBDHUBLVersionID,
                                              aPayloadElement,
                                              aMimeType,
                                              bCompress,

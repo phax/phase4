@@ -39,10 +39,12 @@ import com.helger.bdve.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.exception.IExceptionCallback;
+import com.helger.commons.callback.exception.LoggingExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
@@ -96,6 +98,7 @@ public final class Phase4PeppolSender
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
   public static final IPModeResolver PMODE_RESOLVER = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
+  public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = "2.1";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -157,7 +160,7 @@ public final class Phase4PeppolSender
     try
     {
       if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Sending AS4 to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
+        LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
 
       if (LOGGER.isDebugEnabled ())
       {
@@ -189,7 +192,7 @@ public final class Phase4PeppolSender
                                                                                              new ResponseHandlerByteArray (),
                                                                                              aCallback);
       if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Successfully transmitted document with message ID '" +
+        LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
                      aResponseEntity.getMessageID () +
                      "' to '" +
                      sURL +
@@ -210,44 +213,47 @@ public final class Phase4PeppolSender
             aSignalMsgConsumer.accept (aSignalMessage);
         }
         else
-          LOGGER.info ("ResponseEntity is empty");
+          LOGGER.info ("AS4 ResponseEntity is empty");
       }
 
       return ESuccess.SUCCESS;
     }
     catch (final Exception ex)
     {
-      LOGGER.error ("Internal error sending message to '" + sURL + "'", ex);
+      LOGGER.error ("Internal error sending AS4 message to '" + sURL + "'", ex);
       return ESuccess.FAILURE;
     }
   }
 
   @Nonnull
-  public static StandardBusinessDocument createSBDH (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                     @Nonnull final IProcessIdentifier aProcID,
-                                                     @Nonnull final IParticipantIdentifier aSenderID,
+  public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
+                                                     @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                     @Nonnull final IProcessIdentifier aProcID,
                                                      @Nullable final String sInstanceIdentifier,
-                                                     @Nonnull final Element aBusinessMsg)
+                                                     @Nullable final String sUBLVersion,
+                                                     @Nonnull final Element aPayloadElement)
   {
     final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
     aData.setSender (aSenderID.getScheme (), aSenderID.getValue ());
     aData.setReceiver (aReceiverID.getScheme (), aReceiverID.getValue ());
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
     aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
-    aData.setDocumentIdentification (aBusinessMsg.getNamespaceURI (),
-                                     "2.1",
-                                     aBusinessMsg.getLocalName (),
+    aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
+                                     StringHelper.hasText (sUBLVersion) ? sUBLVersion
+                                                                        : DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID,
+                                     aPayloadElement.getLocalName (),
                                      StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier
                                                                                 : UUID.randomUUID ().toString (),
                                      PDTFactory.getCurrentLocalDateTime ());
-    aData.setBusinessMessage (aBusinessMsg);
+    aData.setBusinessMessage (aPayloadElement);
     final StandardBusinessDocument aSBD = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
     return aSBD;
   }
 
   /**
-   * Send an AS4 message
+   * Send an AS4 message. It is highly recommend to use the {@link Builder}
+   * class, because it is very likely, that this API is NOT stable.
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
@@ -272,6 +278,10 @@ public final class Phase4PeppolSender
    * @param sSBDHInstanceIdentifier
    *        The optional SBDH instance identifier. If none is provided, a random
    *        UUID is used. May be <code>null</code>.
+   * @param sSBDHUBLVersionID
+   *        The UBL version ID for the SBDH document identification. If none is
+   *        provided, the default <code>2.1</code> will be used. May be
+   *        <code>null</code>.
    * @param aPayloadElement
    *        The Peppol XML payload to be send. May not be <code>null</code>.
    * @param aPayloadMimeType
@@ -321,6 +331,7 @@ public final class Phase4PeppolSender
                                          @Nonnull @Nonempty final String sSenderPartyID,
                                          @Nullable final String sConversationID,
                                          @Nullable final String sSBDHInstanceIdentifier,
+                                         @Nullable final String sSBDHUBLVersionID,
                                          @Nonnull final Element aPayloadElement,
                                          @Nonnull final IMimeType aPayloadMimeType,
                                          final boolean bCompressPayload,
@@ -340,6 +351,7 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
     ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
     ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
+    ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "PayloadElement.NamespaceURI");
     ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
@@ -457,13 +469,14 @@ public final class Phase4PeppolSender
       // Create SBDH and add as attachment
       {
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Start creating SBDH");
+          LOGGER.debug ("Start creating SBDH for AS4 message");
 
-        final StandardBusinessDocument aSBD = createSBDH (aDocTypeID,
-                                                          aProcID,
-                                                          aSenderID,
+        final StandardBusinessDocument aSBD = createSBDH (aSenderID,
                                                           aReceiverID,
+                                                          aDocTypeID,
+                                                          aProcID,
                                                           sSBDHInstanceIdentifier,
+                                                          sSBDHUBLVersionID,
                                                           aPayloadElement);
         final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
         aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aSBDBytes,
@@ -487,6 +500,481 @@ public final class Phase4PeppolSender
     {
       aExceptionCallback.onException (ex);
       return ESuccess.FAILURE;
+    }
+  }
+
+  /**
+   * @return Create a new Builder for AS4 messages. Never <code>null</code>.
+   * @since 0.9.4
+   */
+  @Nonnull
+  public static Builder builder ()
+  {
+    return new Builder ();
+  }
+
+  /**
+   * The builder class for sending AS4 messages using Peppol specifics.
+   *
+   * @author Philip Helger
+   * @since 0.9.4
+   */
+  public static class Builder
+  {
+    private HttpClientFactory m_aHttpClientFactory;
+    private IPMode m_aPMode;
+    private IDocumentTypeIdentifier m_aDocTypeID;
+    private IProcessIdentifier m_aProcessID;
+    private IParticipantIdentifier m_aSenderID;
+    private IParticipantIdentifier m_aReceiverID;
+    private String m_sSenderPartyID;
+    private String m_sConversationID;
+    private String m_sSBDHInstanceIdentifier;
+    private String m_sSBDHUBLVersion;
+    private Element m_aPayloadElement;
+    private IMimeType m_aPayloadMimeType;
+    private boolean m_bCompressPayload;
+    private SMPClientReadOnly m_aSMPClient;
+    private BiConsumer <X509Certificate, EPeppolCertificateCheckResult> m_aOnInvalidCertificateConsumer;
+    private VESID m_aVESID;
+    private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
+    private Consumer <AS4ClientSentMessage <byte []>> m_aResponseConsumer;
+    private Consumer <Ebms3SignalMessage> m_aSignalMsgConsumer;
+    private IExceptionCallback <? super Exception> m_aExceptionCallback;
+
+    /**
+     * Create a new builder, with the following fields already set:<br>
+     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setPMode(IPMode)}<br>
+     * {@link #setPayloadMimeType(IMimeType)}<br>
+     * {@link #setCompressPayload(boolean)}<br>
+     * {@link #setExceptionCallback(IExceptionCallback)}<br>
+     */
+    public Builder ()
+    {
+      // Set default values
+      try
+      {
+        setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
+        setPMode (Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null));
+        setPayloadMimeType (CMimeType.APPLICATION_XML);
+        setCompressPayload (true);
+        setExceptionCallback (new LoggingExceptionCallback ());
+      }
+      catch (final Exception ex)
+      {
+        throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
+      }
+    }
+
+    /**
+     * Set the HTTP client factory to be used. By default an instance of
+     * {@link Phase4PeppolHttpClientFactory} is used and there is no need to
+     * invoke this method.
+     *
+     * @param aHttpClientFactory
+     *        The new HTTP client factory to be used. May not be
+     *        <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
+    {
+      ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
+      m_aHttpClientFactory = aHttpClientFactory;
+      return this;
+    }
+
+    /**
+     * Set the PMode to be used. By default a generic PMode for Peppol purposes
+     * is used so there is no need to invoke this method.
+     *
+     * @param aPMode
+     *        The PMode to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setPMode (@Nonnull final IPMode aPMode)
+    {
+      ValueEnforcer.notNull (aPMode, "PMode");
+      m_aPMode = aPMode;
+      return this;
+    }
+
+    /**
+     * Set the document type ID to be send. The document type must be provided
+     * prior to sending.
+     *
+     * @param aDocTypeID
+     *        The document type ID to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    {
+      ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
+      m_aDocTypeID = aDocTypeID;
+      return this;
+    }
+
+    /**
+     * Set the process ID to be send. The process ID must be provided prior to
+     * sending.
+     *
+     * @param aProcessID
+     *        The process ID to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setProcessID (@Nonnull final IProcessIdentifier aProcessID)
+    {
+      ValueEnforcer.notNull (aProcessID, "ProcessID");
+      m_aProcessID = aProcessID;
+      return this;
+    }
+
+    /**
+     * Set the sender participant ID of the message. The participant ID must be
+     * provided prior to sending.
+     *
+     * @param aSenderID
+     *        The sender participant ID. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    {
+      ValueEnforcer.notNull (aSenderID, "SenderID");
+      m_aSenderID = aSenderID;
+      return this;
+    }
+
+    /**
+     * Set the receiver participant ID of the message. The participant ID must
+     * be provided prior to sending.
+     *
+     * @param aReceiverID
+     *        The receiver participant ID. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    {
+      ValueEnforcer.notNull (aReceiverID, "ReceiverID");
+      m_aReceiverID = aReceiverID;
+      return this;
+    }
+
+    /**
+     * Set the "sender party ID" which is the CN part of the PEPPOL AP
+     * certificate. An example value is e.g. "POP000123" but it MUST match the
+     * certificate you are using. This must be provided prior to sending.
+     *
+     * @param sSenderPartyID
+     *        The sender party ID. May neither be <code>null</code> nor empty.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    {
+      ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
+      m_sSenderPartyID = sSenderPartyID;
+      return this;
+    }
+
+    /**
+     * Set the optional AS4 conversation ID. If this field is not set, a random
+     * conversation ID is created.
+     *
+     * @param sConversationID
+     *        The optional AS4 conversation ID to be used. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setConversationID (@Nullable final String sConversationID)
+    {
+      m_sConversationID = sConversationID;
+      return this;
+    }
+
+    /**
+     * Set the SBDH instance identifier. If none is provided, a random ID is
+     * used. Usually this must NOT be set.
+     *
+     * @param sSBDHInstanceIdentifier
+     *        The SBDH instance identifier to be used. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSBDHInstanceIdentifier (@Nullable final String sSBDHInstanceIdentifier)
+    {
+      m_sSBDHInstanceIdentifier = sSBDHInstanceIdentifier;
+      return this;
+    }
+
+    /**
+     * Set the SBDH document identification UBL version. If none is provided,
+     * the constant "2.1" is used.
+     *
+     * @param sSBDHUBLVersion
+     *        The SBDH document identification UBL version to be used. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSBDHUBLVersion (@Nullable final String sSBDHUBLVersion)
+    {
+      m_sSBDHUBLVersion = sSBDHUBLVersion;
+      return this;
+    }
+
+    /**
+     * Set the payload element to be used, if it is available as a parsed DOM
+     * element.
+     *
+     * @param aPayload
+     *        The payload element to be used. They payload element MUST have a
+     *        namespace URI. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setPayload (@Nonnull final Element aPayload)
+    {
+      ValueEnforcer.notNull (aPayload, "Payload");
+      ValueEnforcer.notNull (aPayload.getNamespaceURI (), "Payload.NamespaceURI");
+      m_aPayloadElement = aPayload;
+      return this;
+    }
+
+    /**
+     * Set the MIME type of the payload. By default it is
+     * <code>application/xml</code> and MUST usually not be changed. This value
+     * is required for sending.
+     *
+     * @param aPayloadMimeType
+     *        The payload MIME type. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
+    {
+      ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
+      m_aPayloadMimeType = aPayloadMimeType;
+      return this;
+    }
+
+    /**
+     * Enable or disable the AS4 compression of the payload. By default
+     * compression is disabled.
+     *
+     * @param bCompressPayload
+     *        <code>true</code> to compress the payload, <code>false</code> to
+     *        not compress it.
+     * @return this for chaining.
+     */
+    @Nonnull
+    public Builder setCompressPayload (final boolean bCompressPayload)
+    {
+      m_bCompressPayload = bCompressPayload;
+      return this;
+    }
+
+    /**
+     * Set the SMP client to be used. This is the point where e.g. the
+     * differentiation between SMK and SML can be done. This must be set prior
+     * to sending.
+     *
+     * @param aSMPClient
+     *        The SMP client to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    {
+      ValueEnforcer.notNull (aSMPClient, "SMPClient");
+      m_aSMPClient = aSMPClient;
+      return this;
+    }
+
+    /**
+     * Set an optional Consumer for error handling, if the retrieved certificate
+     * is not valid, expired, revoked etc.
+     *
+     * @param aOnInvalidCertificateConsumer
+     *        The consumer to be used. The first parameter is the certificate
+     *        itself and the second parameter is the internal check result. May
+     *        be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setInvalidCertificateConsumer (@Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aOnInvalidCertificateConsumer)
+    {
+      m_aOnInvalidCertificateConsumer = aOnInvalidCertificateConsumer;
+      return this;
+    }
+
+    /**
+     * Set the client side validation to be used. If this method is not invoked,
+     * than it's the responsibility of the caller to validate the document prior
+     * to sending it. This method uses a default "do nothing validation result
+     * handler".
+     *
+     * @param aVESID
+     *        The Validation Execution Set ID as in
+     *        <code>PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3</code>. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @see #setValidationConfiguration(VESID,
+     *      IPhase4PeppolValidatonResultHandler)
+     */
+    @Nonnull
+    public Builder setValidationConfiguration (@Nullable final VESID aVESID)
+    {
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
+                                                                      : new IPhase4PeppolValidatonResultHandler ()
+                                                                      {};
+      return setValidationConfiguration (aVESID, aHdl);
+    }
+
+    /**
+     * Set the client side validation to be used. If this method is not invoked,
+     * than it's the responsibility of the caller to validate the document prior
+     * to sending it. If the validation should happen internally, both the VESID
+     * AND the result handler must be set.
+     *
+     * @param aVESID
+     *        The Validation Execution Set ID as in
+     *        <code>PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3</code>. May be
+     *        <code>null</code>.
+     * @param aValidationResultHandler
+     *        The validation result handler for positive and negative response
+     *        handling. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setValidationConfiguration (@Nullable final VESID aVESID,
+                                               @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler)
+    {
+      m_aVESID = aVESID;
+      m_aValidationResultHandler = aValidationResultHandler;
+      return this;
+    }
+
+    /**
+     * Set an optional handler for the synchronous result message received from
+     * the other side. This method is optional and must not be called prior to
+     * sending.
+     *
+     * @param aResponseConsumer
+     *        The optional response consumer. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setResponseConsumer (@Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer)
+    {
+      m_aResponseConsumer = aResponseConsumer;
+      return this;
+    }
+
+    /**
+     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
+     * the response is trying to be parsed as a Signal Message. This method is
+     * optional and must not be called prior to sending.
+     *
+     * @param aSignalMsgConsumer
+     *        The optional signal message consumer. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setSignalMsgConsumer (@Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer)
+    {
+      m_aSignalMsgConsumer = aSignalMsgConsumer;
+      return this;
+    }
+
+    /**
+     * Set the exception callback to be used in case something goes wrong. By
+     * default a logging exception handler is installed, so this method must not
+     * be called explicitly.
+     *
+     * @param aExceptionCallback
+     *        The exception callback to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setExceptionCallback (@Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
+    {
+      ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
+      m_aExceptionCallback = aExceptionCallback;
+      return this;
+    }
+
+    public boolean isEveryRequiredFieldSet ()
+    {
+      if (m_aHttpClientFactory == null)
+        return false;
+      if (m_aPMode == null)
+        return false;
+      if (m_aDocTypeID == null)
+        return false;
+      if (m_aProcessID == null)
+        return false;
+      if (m_aSenderID == null)
+        return false;
+      if (m_aReceiverID == null)
+        return false;
+      if (StringHelper.hasNoText (m_sSenderPartyID))
+        return false;
+      // m_sConversationID is optional
+      // m_sSBDHInstanceIdentifier is optional
+      if (m_aPayloadElement == null)
+        return false;
+      if (m_aPayloadMimeType == null)
+        return false;
+      // m_bCompressPayload cannot be null
+      if (m_aSMPClient == null)
+        return false;
+      // m_aOnInvalidCertificateConsumer may be null
+      // m_aVESID may be null
+      // m_aValidationResultHandler may be null
+      // m_aResponseConsumer may be null
+      // m_aSignalMsgConsumer may be null
+      if (m_aExceptionCallback == null)
+        return false;
+
+      // All valid
+      return true;
+    }
+
+    @Nonnull
+    public ESuccess sendMessage () throws Phase4PeppolException
+    {
+      if (!isEveryRequiredFieldSet ())
+      {
+        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
+        return ESuccess.FAILURE;
+      }
+      return sendAS4Message (m_aHttpClientFactory,
+                             m_aPMode,
+                             m_aDocTypeID,
+                             m_aProcessID,
+                             m_aSenderID,
+                             m_aReceiverID,
+                             m_sSenderPartyID,
+                             m_sConversationID,
+                             m_sSBDHInstanceIdentifier,
+                             m_sSBDHUBLVersion,
+                             m_aPayloadElement,
+                             m_aPayloadMimeType,
+                             m_bCompressPayload,
+                             m_aSMPClient,
+                             m_aOnInvalidCertificateConsumer,
+                             m_aVESID,
+                             m_aValidationResultHandler,
+                             m_aResponseConsumer,
+                             m_aSignalMsgConsumer,
+                             m_aExceptionCallback);
     }
   }
 }

@@ -27,6 +27,7 @@ This solution is PEPPOL compliant. See the test report at https://github.com/pha
     * Extended the Peppol client API a bit for client side validation (see [issue #19](https://github.com/phax/phase4/issues/19))
     * Outgoing messages now have the User-Agent HTTP header set (see [issue #20](https://github.com/phax/phase4/issues/20))
     * Fixed a typo in the short name of `EBMS_FAILED_DECRYPTION` (see [issue #21](https://github.com/phax/phase4/issues/21))
+    * Added a new `Builder` class for the Peppol AS4 client - use `Phase4PeppolSender.builder()` to get started
 * v0.9.3 - 2019-11-05
     * Updated to peppol-commons 7.0.3
     * Added new subproject `phase4-peppol-client` to easily send AS4 messages to PEPPOL
