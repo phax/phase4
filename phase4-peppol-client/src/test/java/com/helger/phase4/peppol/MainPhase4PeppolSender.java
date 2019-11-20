@@ -67,6 +67,7 @@ public final class MainPhase4PeppolSender
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSender.class);
 
+  @SuppressWarnings ("deprecation")
   public static void main (final String [] args)
   {
     // Provide context

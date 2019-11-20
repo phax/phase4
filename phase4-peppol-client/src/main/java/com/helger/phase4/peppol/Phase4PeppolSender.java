@@ -320,8 +320,11 @@ public final class Phase4PeppolSender
    *         failed or the SMP certificate is invalid.
    * @throws Phase4PeppolException
    *         if something goes wrong
+   * @deprecated Will be made "private" in the next release. Please use
+   *             {@link #builder()} instead.
    */
   @Nonnull
+  @Deprecated
   public static ESuccess sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
                                          @Nonnull final IPMode aSrcPMode,
                                          @Nonnull final IDocumentTypeIdentifier aDocTypeID,
@@ -517,7 +520,8 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * The builder class for sending AS4 messages using Peppol specifics.
+   * The builder class for sending AS4 messages using Peppol specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
    *
    * @author Philip Helger
    * @since 0.9.4
@@ -950,6 +954,18 @@ public final class Phase4PeppolSender
       return true;
     }
 
+    /**
+     * Synchronously send the AS4 message. Before sending,
+     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
+     * elements are set.
+     *
+     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
+     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
+     *         Never <code>null</code>.
+     * @throws Phase4PeppolException
+     *         In case of any error
+     * @see #isEveryRequiredFieldSet()
+     */
     @Nonnull
     public ESuccess sendMessage () throws Phase4PeppolException
     {
