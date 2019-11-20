@@ -320,31 +320,28 @@ public final class Phase4PeppolSender
    *         failed or the SMP certificate is invalid.
    * @throws Phase4PeppolException
    *         if something goes wrong
-   * @deprecated Will be made "private" in the next release. Please use
-   *             {@link #builder()} instead.
    */
   @Nonnull
-  @Deprecated
-  public static ESuccess sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
-                                         @Nonnull final IPMode aSrcPMode,
-                                         @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                         @Nonnull final IProcessIdentifier aProcID,
-                                         @Nonnull final IParticipantIdentifier aSenderID,
-                                         @Nonnull final IParticipantIdentifier aReceiverID,
-                                         @Nonnull @Nonempty final String sSenderPartyID,
-                                         @Nullable final String sConversationID,
-                                         @Nullable final String sSBDHInstanceIdentifier,
-                                         @Nullable final String sSBDHUBLVersionID,
-                                         @Nonnull final Element aPayloadElement,
-                                         @Nonnull final IMimeType aPayloadMimeType,
-                                         final boolean bCompressPayload,
-                                         @Nonnull final SMPClientReadOnly aSMPClient,
-                                         @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer,
-                                         @Nullable final VESID aVESID,
-                                         @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
-                                         @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                         @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
-                                         @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback) throws Phase4PeppolException
+  private static ESuccess _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
+                                           @Nonnull final IPMode aSrcPMode,
+                                           @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                           @Nonnull final IProcessIdentifier aProcID,
+                                           @Nonnull final IParticipantIdentifier aSenderID,
+                                           @Nonnull final IParticipantIdentifier aReceiverID,
+                                           @Nonnull @Nonempty final String sSenderPartyID,
+                                           @Nullable final String sConversationID,
+                                           @Nullable final String sSBDHInstanceIdentifier,
+                                           @Nullable final String sSBDHUBLVersionID,
+                                           @Nonnull final Element aPayloadElement,
+                                           @Nonnull final IMimeType aPayloadMimeType,
+                                           final boolean bCompressPayload,
+                                           @Nonnull final SMPClientReadOnly aSMPClient,
+                                           @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer,
+                                           @Nullable final VESID aVESID,
+                                           @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
+                                           @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
+                                           @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
+                                           @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
@@ -974,26 +971,26 @@ public final class Phase4PeppolSender
         LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
-      return sendAS4Message (m_aHttpClientFactory,
-                             m_aPMode,
-                             m_aDocTypeID,
-                             m_aProcessID,
-                             m_aSenderID,
-                             m_aReceiverID,
-                             m_sSenderPartyID,
-                             m_sConversationID,
-                             m_sSBDHInstanceIdentifier,
-                             m_sSBDHUBLVersion,
-                             m_aPayloadElement,
-                             m_aPayloadMimeType,
-                             m_bCompressPayload,
-                             m_aSMPClient,
-                             m_aCertificateConsumer,
-                             m_aVESID,
-                             m_aValidationResultHandler,
-                             m_aResponseConsumer,
-                             m_aSignalMsgConsumer,
-                             m_aExceptionCallback);
+      return _sendAS4Message (m_aHttpClientFactory,
+                              m_aPMode,
+                              m_aDocTypeID,
+                              m_aProcessID,
+                              m_aSenderID,
+                              m_aReceiverID,
+                              m_sSenderPartyID,
+                              m_sConversationID,
+                              m_sSBDHInstanceIdentifier,
+                              m_sSBDHUBLVersion,
+                              m_aPayloadElement,
+                              m_aPayloadMimeType,
+                              m_bCompressPayload,
+                              m_aSMPClient,
+                              m_aCertificateConsumer,
+                              m_aVESID,
+                              m_aValidationResultHandler,
+                              m_aResponseConsumer,
+                              m_aSignalMsgConsumer,
+                              m_aExceptionCallback);
     }
   }
 }

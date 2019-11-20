@@ -20,6 +20,8 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
  
 ## News and noteworthy
 
+* v0.9.5 - work in progress
+    * Made 
 * v0.9.4 - 2019-11-20
     * Updated to ph-commons 9.3.8
     * Added OCSP/CLR check for Peppol certificates
