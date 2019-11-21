@@ -103,8 +103,7 @@ Any voluntary help on this project is welcome.
 If you want to write documentation or test the solution - I'm glad for every help.
 Just write me an email - see pom.xml for my email address
 
- 
-## News and noteworthy
+# News and noteworthy
 
 * v0.9.5 - work in progress
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
