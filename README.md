@@ -17,11 +17,97 @@ It consists of the following sub-projects:
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
 This solution is Peppol compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/PEPPOL/TestBedReport-POP000306-20190906T103327.pdf
+    
+# Configuration
+
+The configuration of phase4 is based on 2 different files:
+  * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
+  * `phase4.properties` - ph-as4-server specific configuration file (was called `as4.properties` before v0.9.0)
+  
+### crypto.properties
+
+Use the following file as a template and fill in your key structure:
+
+```ini
+org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
+org.apache.wss4j.crypto.merlin.keystore.file=keys/dummy-pw-test.jks
+org.apache.wss4j.crypto.merlin.keystore.password=test
+org.apache.wss4j.crypto.merlin.keystore.type=jks
+org.apache.wss4j.crypto.merlin.keystore.alias=ph-as4
+org.apache.wss4j.crypto.merlin.keystore.private.password=test
+```
+
+The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
+
+PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
+
+### phase4.properties
+
+This AS4 server specific file contains the following properties:
+
+```ini
+#server.profile=
+server.debug=false
+server.production=false
+server.nostartupinfo=true
+server.datapath=/var/www/as4/data
+#server.incoming.duplicatedisposal.minutes=10
+#server.address=
+```
+
+The file is searched in the locations specified as follows:
+* A path denoted by the environment variable `AS4_SERVER_CONFIG`
+* A path denoted by the system property `phase4.server.configfile`
+* A path denoted by the system property `as4.server.configfile`
+* A file named `private-phase4.properties` within your classpath
+* A file named `phase4.properties` within your classpath
+* A file named `private-as4.properties` within your classpath
+* A file named `as4.properties` within your classpath
+
+The properties have the following meaning
+* **`server.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
+* **`server.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false`.
+* **`server.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false`.
+* **`server.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
+* **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
+* **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
+* **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
+
+# Peppol handling
+
+## Subproject phase4-peppol-client
+
+The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
+
+## Subproject phase4-peppol-servlet
+
+**The Peppol specific receiving part is work in progress and will be available soon**
+
+# Building from source
+
+Apache Maven needed 3.6 or later and Java JDK 8 or later is required.
+
+To build the whole package on the commandline use `mvn clean install`.
+
+If you are importing this into your IDE and you get build errors, it maybe necessary to run `mvn process-sources` once in the `phase4-lib` subproject. Afterwards the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
+
+# Known limitations
+
+Per now the following known limitations exist:
+* Multi-hop does not work
+* phase4 is not a standalone project but a library that you need to manually integrate into your system 
+
+# How to help
+
+Any voluntary help on this project is welcome.
+If you want to write documentation or test the solution - I'm glad for every help.
+Just write me an email - see pom.xml for my email address
+
  
 ## News and noteworthy
 
 * v0.9.5 - work in progress
-    * Made 
+    * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
 * v0.9.4 - 2019-11-20
     * Updated to ph-commons 9.3.8
     * Added OCSP/CLR check for Peppol certificates
@@ -99,87 +185,6 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
     * Supports compressed messages
     * Targets to be easily integrateable into existing solutions
     * Requires Java 8 for building and execution
-    
-## Configuration
-
-The configuration of ph-as4 is based on 2 different files:
-  * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
-  * `phase4.properties` - ph-as4-server specific configuration file (was called `as4.properties` before v0.9.0)
-  
-### crypto.properties
-
-Use the following file as a template and fill in your key structure:
-
-```ini
-org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
-org.apache.wss4j.crypto.merlin.keystore.file=keys/dummy-pw-test.jks
-org.apache.wss4j.crypto.merlin.keystore.password=test
-org.apache.wss4j.crypto.merlin.keystore.type=jks
-org.apache.wss4j.crypto.merlin.keystore.alias=ph-as4
-org.apache.wss4j.crypto.merlin.keystore.private.password=test
-```
-
-The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
-
-PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
-
-### phase4.properties
-
-This AS4 server specific file contains the following properties:
-
-```ini
-#server.profile=
-server.debug=false
-server.production=false
-server.nostartupinfo=true
-server.datapath=/var/www/as4/data
-#server.incoming.duplicatedisposal.minutes=10
-#server.address=
-```
-
-The file is searched in the locations specified as follows:
-* A path denoted by the environment variable `AS4_SERVER_CONFIG`
-* A path denoted by the system property `phase4.server.configfile`
-* A path denoted by the system property `as4.server.configfile`
-* A file named `private-phase4.properties` within your classpath
-* A file named `phase4.properties` within your classpath
-* A file named `private-as4.properties` within your classpath
-* A file named `as4.properties` within your classpath
-
-The properties have the following meaning
-* **`server.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
-* **`server.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false`.
-* **`server.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false`.
-* **`server.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
-* **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
-* **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
-* **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
-
-## Subproject phase4-peppol-client
-
-The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
-
-## Building from source
-
-After initial checkout, it is necessary to run `mvn process-sources` once on the `phase4-lib` subproject. Additionally the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
-
-## Known limitations
-
-Per now the following known limitations exist:
-  * Multi-hop does not work (and is imho not relevant for a usage in PEPPOL)
-
-## Differences to Holodeck
-
-  * This is a library and not a product
-  * phase4 is licensed under the business friendly Apache 2 license and not under GPL/LGPL
-  * This library only takes care about the effective receiving of documents, but does not provide a storage for them. You need to implement your own incoming document handler!
-  * ph-as4 does not use an existing WS-Stack like Axis or Apache CXF but instead operates directly on a Servlet layer for retrieval and using Apache HttpClient for sending
-
-## How to help
-
-Any voluntary help on this project is welcome.
-If you want to write documentation or test the solution - I'm glad for every help.
-Just write me an email - see pom.xml for my email address - or tweet me @philiphelger
 
 ---
 
