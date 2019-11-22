@@ -41,18 +41,52 @@ import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  @FunctionalInterface
   public static interface IHandlerCustomizer extends Serializable
   {
-    void customize (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
-                    @Nonnull AS4UnifiedResponse aUnifiedResponse,
-                    @Nonnull AS4RequestHandler aHandler);
+    /**
+     * Called before the message is handled. <br>
+     * Note: was called "customize" until v0.9.4
+     *
+     * @param aRequestScope
+     *        Request scope. Never <code>null</code>.
+     * @param aUnifiedResponse
+     *        The response to be filled. Never <code>null</code>.
+     * @param aHandler
+     *        The main handler doing the hard work. Never <code>null</code>.
+     */
+    void customizeBeforeHandling (@Nonnull IRequestWebScopeWithoutResponse aRequestScope,
+                                  @Nonnull AS4UnifiedResponse aUnifiedResponse,
+                                  @Nonnull AS4RequestHandler aHandler);
+
+    /**
+     * Called after the message was handled, and no exception was thrown.
+     *
+     * @param aRequestScope
+     *        Request scope. Never <code>null</code>.
+     * @param aUnifiedResponse
+     *        The response to be filled. Never <code>null</code>.
+     * @param aHandler
+     *        The main handler doing the hard work. Never <code>null</code>.
+     * @since 0.9.5
+     */
+    default void customizeAfterHandling (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                                         @Nonnull final AS4UnifiedResponse aUnifiedResponse,
+                                         @Nonnull final AS4RequestHandler aHandler)
+    {}
   }
 
   private final AS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
+  /**
+   * Constructor
+   *
+   * @param aCryptoFactory
+   *        Crypto factory. May not be <code>null</code>.
+   * @param aIAF
+   *        The attachment factory for incoming attachments.
+   */
   public AS4XServletHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
@@ -62,12 +96,22 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     m_aIAF = aIAF;
   }
 
+  /**
+   * @return The additional customizer. May be <code>null</code>.
+   */
   @Nullable
   public final IHandlerCustomizer getHandlerCustomizer ()
   {
     return m_aHandlerCustomizer;
   }
 
+  /**
+   * The customizer to be used.
+   *
+   * @param aHandlerCustomizer
+   *        The new customizer. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4XServletHandler setHandlerCustomizer (@Nullable final IHandlerCustomizer aHandlerCustomizer)
   {
@@ -95,10 +139,14 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)
-        m_aHandlerCustomizer.customize (aRequestScope, aHttpResponse, aHandler);
+        m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
 
       // Main handling
       aHandler.handleRequest (aRequestScope, aHttpResponse);
+
+      // Customize after handling
+      if (m_aHandlerCustomizer != null)
+        m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
     }
     catch (final BadRequestException ex)
     {
