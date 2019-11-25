@@ -58,6 +58,8 @@ import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
+import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.PeppolCerticateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;

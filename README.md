@@ -107,6 +107,7 @@ Just write me an email - see pom.xml for my email address
 
 * v0.9.5 - work in progress
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
+    * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there)
 * v0.9.4 - 2019-11-20
     * Updated to ph-commons 9.3.8
     * Added OCSP/CLR check for Peppol certificates
