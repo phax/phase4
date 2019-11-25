@@ -45,7 +45,7 @@ public interface IPhase4PeppolCertificateCheckResultHandler extends Serializable
    * @throws Phase4PeppolException
    *         Implementation dependent
    */
-  void onCertificateCheckResult (@Nonnull final X509Certificate aAPCertificate,
+  void onCertificateCheckResult (@Nonnull X509Certificate aAPCertificate,
                                  @Nonnull LocalDateTime aCheckDT,
                                  @Nonnull EPeppolCertificateCheckResult eCertCheckResult) throws Phase4PeppolException;
 }
