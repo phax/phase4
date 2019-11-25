@@ -20,7 +20,6 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -338,7 +337,7 @@ public final class Phase4PeppolSender
                                            @Nonnull final IMimeType aPayloadMimeType,
                                            final boolean bCompressPayload,
                                            @Nonnull final SMPClientReadOnly aSMPClient,
-                                           @Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer,
+                                           @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                            @Nullable final VESID aVESID,
                                            @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
                                            @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
@@ -412,11 +411,11 @@ public final class Phase4PeppolSender
 
         // Interested in the certificate?
         if (aCertificateConsumer != null)
-          aCertificateConsumer.accept (aReceiverCert, eCertCheckResult);
+          aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, eCertCheckResult);
 
         if (eCertCheckResult.isInvalid ())
         {
-          LOGGER.error ("The received SMP certificate is not valid (at " +
+          LOGGER.error ("The received AP certificate from the SMP is not valid (at " +
                         aNow +
                         ") and cannot be used for sending. Aborting. Reason: " +
                         eCertCheckResult.getReason ());
@@ -541,7 +540,7 @@ public final class Phase4PeppolSender
     private IMimeType m_aPayloadMimeType;
     private boolean m_bCompressPayload;
     private SMPClientReadOnly m_aSMPClient;
-    private BiConsumer <X509Certificate, EPeppolCertificateCheckResult> m_aCertificateConsumer;
+    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
     private Consumer <AS4ClientSentMessage <byte []>> m_aResponseConsumer;
@@ -814,7 +813,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setCertificateConsumer (@Nullable final BiConsumer <X509Certificate, EPeppolCertificateCheckResult> aCertificateConsumer)
+    public Builder setCertificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
       return this;
