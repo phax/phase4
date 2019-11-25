@@ -46,6 +46,7 @@ import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
+import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
@@ -407,7 +408,9 @@ public final class Phase4PeppolSender
           LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
 
         final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                                aNow);
+                                                                                                                aNow,
+                                                                                                                ETriState.UNDEFINED,
+                                                                                                                ETriState.UNDEFINED);
 
         // Interested in the certificate?
         if (aCertificateConsumer != null)
