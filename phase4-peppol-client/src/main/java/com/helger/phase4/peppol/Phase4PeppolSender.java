@@ -59,7 +59,7 @@ import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
-import com.helger.peppol.utils.PeppolCerticateChecker;
+import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -407,7 +407,7 @@ public final class Phase4PeppolSender
         if (LOGGER.isDebugEnabled ())
           LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
 
-        final EPeppolCertificateCheckResult eCertCheckResult = PeppolCerticateChecker.checkPeppolAPCertificate (aReceiverCert,
+        final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                                 aNow,
                                                                                                                 ETriState.UNDEFINED,
                                                                                                                 ETriState.UNDEFINED);
