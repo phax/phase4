@@ -50,6 +50,7 @@ import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
 import com.helger.peppol.smp.ESMPTransportProfile;
@@ -100,7 +101,7 @@ public final class Phase4PeppolSender
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
   public static final IPModeResolver PMODE_RESOLVER = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
-  public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = "2.1";
+  public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = CPeppolSBDH.TYPE_VERSION_21;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
 
@@ -408,9 +409,9 @@ public final class Phase4PeppolSender
           LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
 
         final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                                aNow,
-                                                                                                                ETriState.UNDEFINED,
-                                                                                                                ETriState.UNDEFINED);
+                                                                                                                  aNow,
+                                                                                                                  ETriState.UNDEFINED,
+                                                                                                                  ETriState.UNDEFINED);
 
         // Interested in the certificate?
         if (aCertificateConsumer != null)
