@@ -153,78 +153,67 @@ public final class Phase4PeppolSender
     return null;
   }
 
-  @Nonnull
-  private static ESuccess _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
-                                     @Nonnull final String sURL,
-                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
-                                     @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                     @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer)
+  private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
+                                 @Nonnull final String sURL,
+                                 @Nullable final IAS4ClientBuildMessageCallback aCallback,
+                                 @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
+                                 @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer) throws Exception
   {
-    try
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
+
+    if (LOGGER.isDebugEnabled ())
     {
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
-
-      if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("  ServiceType = '" + aClient.getServiceType () + "'");
+      LOGGER.debug ("  Service = '" + aClient.getServiceValue () + "'");
+      LOGGER.debug ("  Action = '" + aClient.getAction () + "'");
+      LOGGER.debug ("  ConversationId = '" + aClient.getConversationID () + "'");
+      LOGGER.debug ("  MessageProperties:");
+      for (final Ebms3Property p : aClient.ebms3Properties ())
+        LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
+      LOGGER.debug ("  Attachments (" + aClient.attachments ().size () + "):");
+      for (final WSS4JAttachment a : aClient.attachments ())
       {
-        LOGGER.debug ("  ServiceType = '" + aClient.getServiceType () + "'");
-        LOGGER.debug ("  Service = '" + aClient.getServiceValue () + "'");
-        LOGGER.debug ("  Action = '" + aClient.getAction () + "'");
-        LOGGER.debug ("  ConversationId = '" + aClient.getConversationID () + "'");
-        LOGGER.debug ("  MessageProperties:");
-        for (final Ebms3Property p : aClient.ebms3Properties ())
-          LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
-        LOGGER.debug ("  Attachments (" + aClient.attachments ().size () + "):");
-        for (final WSS4JAttachment a : aClient.attachments ())
-        {
-          LOGGER.debug ("    [" +
-                        a.getId () +
-                        "] with [" +
-                        a.getMimeType () +
-                        "] and [" +
-                        a.getCharsetOrDefault (null) +
-                        "] and [" +
-                        a.getCompressionMode () +
-                        "] and [" +
-                        a.getContentTransferEncoding () +
-                        "]");
-        }
+        LOGGER.debug ("    [" +
+                      a.getId () +
+                      "] with [" +
+                      a.getMimeType () +
+                      "] and [" +
+                      a.getCharsetOrDefault (null) +
+                      "] and [" +
+                      a.getCompressionMode () +
+                      "] and [" +
+                      a.getContentTransferEncoding () +
+                      "]");
       }
-
-      final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (sURL,
-                                                                                             new ResponseHandlerByteArray (),
-                                                                                             aCallback);
-      if (LOGGER.isInfoEnabled ())
-        LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
-                     aResponseEntity.getMessageID () +
-                     "' to '" +
-                     sURL +
-                     "'");
-
-      if (aResponseConsumer != null)
-        aResponseConsumer.accept (aResponseEntity);
-
-      if (aSignalMsgConsumer != null)
-      {
-        // Try interpret result as SignalMessage
-        if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
-        {
-          // Read response as EBMS3 Signal Message
-          final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClient.getAS4ResourceHelper (),
-                                                                        aResponseEntity.getResponse ());
-          if (aSignalMessage != null)
-            aSignalMsgConsumer.accept (aSignalMessage);
-        }
-        else
-          LOGGER.info ("AS4 ResponseEntity is empty");
-      }
-
-      return ESuccess.SUCCESS;
     }
-    catch (final Exception ex)
+
+    final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (sURL,
+                                                                                           new ResponseHandlerByteArray (),
+                                                                                           aCallback);
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
+                   aResponseEntity.getMessageID () +
+                   "' to '" +
+                   sURL +
+                   "'");
+
+    if (aResponseConsumer != null)
+      aResponseConsumer.accept (aResponseEntity);
+
+    if (aSignalMsgConsumer != null)
     {
-      LOGGER.error ("Internal error sending AS4 message to '" + sURL + "'", ex);
-      return ESuccess.FAILURE;
+      // Try interpret result as SignalMessage
+      if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+      {
+        // Read response as EBMS3 Signal Message
+        final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClient.getAS4ResourceHelper (),
+                                                                      aResponseEntity.getResponse ());
+        if (aSignalMessage != null)
+          aSignalMsgConsumer.accept (aSignalMessage);
+      }
+      else
+        LOGGER.info ("AS4 ResponseEntity is empty");
     }
   }
 
@@ -318,33 +307,28 @@ public final class Phase4PeppolSender
    * @param aExceptionCallback
    *        The generic exception handler for all caught exceptions. May not be
    *        <code>null</code>.
-   * @return {@link ESuccess#SUCCESS} if everything went well,
-   *         {@link ESuccess#FAILURE} in an exception was thrown, or sending
-   *         failed or the SMP certificate is invalid.
    * @throws Phase4PeppolException
    *         if something goes wrong
    */
-  @Nonnull
-  private static ESuccess _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
-                                           @Nonnull final IPMode aSrcPMode,
-                                           @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                           @Nonnull final IProcessIdentifier aProcID,
-                                           @Nonnull final IParticipantIdentifier aSenderID,
-                                           @Nonnull final IParticipantIdentifier aReceiverID,
-                                           @Nonnull @Nonempty final String sSenderPartyID,
-                                           @Nullable final String sConversationID,
-                                           @Nullable final String sSBDHInstanceIdentifier,
-                                           @Nullable final String sSBDHUBLVersionID,
-                                           @Nonnull final Element aPayloadElement,
-                                           @Nonnull final IMimeType aPayloadMimeType,
-                                           final boolean bCompressPayload,
-                                           @Nonnull final SMPClientReadOnly aSMPClient,
-                                           @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
-                                           @Nullable final VESID aVESID,
-                                           @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
-                                           @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                           @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer,
-                                           @Nonnull final IExceptionCallback <? super Exception> aExceptionCallback) throws Phase4PeppolException
+  private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
+                                       @Nonnull final IPMode aSrcPMode,
+                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                       @Nonnull final IProcessIdentifier aProcID,
+                                       @Nonnull final IParticipantIdentifier aSenderID,
+                                       @Nonnull final IParticipantIdentifier aReceiverID,
+                                       @Nonnull @Nonempty final String sSenderPartyID,
+                                       @Nullable final String sConversationID,
+                                       @Nullable final String sSBDHInstanceIdentifier,
+                                       @Nullable final String sSBDHUBLVersionID,
+                                       @Nonnull final Element aPayloadElement,
+                                       @Nonnull final IMimeType aPayloadMimeType,
+                                       final boolean bCompressPayload,
+                                       @Nonnull final SMPClientReadOnly aSMPClient,
+                                       @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
+                                       @Nullable final VESID aVESID,
+                                       @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
+                                       @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
+                                       @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
@@ -357,7 +341,6 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "PayloadElement.NamespaceURI");
     ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
-    ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
 
     // Client side validation
     if (aVESID != null)
@@ -419,21 +402,17 @@ public final class Phase4PeppolSender
 
         if (eCertCheckResult.isInvalid ())
         {
-          LOGGER.error ("The received AP certificate from the SMP is not valid (at " +
-                        aNow +
-                        ") and cannot be used for sending. Aborting. Reason: " +
-                        eCertCheckResult.getReason ());
-          return ESuccess.FAILURE;
+          throw new Phase4PeppolException ("The received AP certificate from the SMP is not valid (at " +
+                                           aNow +
+                                           ") and cannot be used for sending. Aborting. Reason: " +
+                                           eCertCheckResult.getReason ());
         }
       }
 
       // URL from SMP lookup
       final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
-      if (sDestURL == null)
-      {
-        LOGGER.error ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
-        return ESuccess.FAILURE;
-      }
+      if (StringHelper.hasNoText (sDestURL))
+        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
 
       // Start building AS4 User Message
       final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
@@ -497,7 +476,7 @@ public final class Phase4PeppolSender
       }
 
       // Main sending
-      return _sendHttp (aUserMsg, sDestURL, null, aResponseConsumer, aSignalMsgConsumer);
+      _sendHttp (aUserMsg, sDestURL, null, aResponseConsumer, aSignalMsgConsumer);
     }
     catch (final Phase4PeppolException ex)
     {
@@ -506,8 +485,8 @@ public final class Phase4PeppolSender
     }
     catch (final Exception ex)
     {
-      aExceptionCallback.onException (ex);
-      return ESuccess.FAILURE;
+      // wrap
+      throw new Phase4PeppolException ("Wrapped Phase4PeppolExceptioN", ex);
     }
   }
 
@@ -549,7 +528,6 @@ public final class Phase4PeppolSender
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
     private Consumer <AS4ClientSentMessage <byte []>> m_aResponseConsumer;
     private Consumer <Ebms3SignalMessage> m_aSignalMsgConsumer;
-    private IExceptionCallback <? super Exception> m_aExceptionCallback;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -910,12 +888,12 @@ public final class Phase4PeppolSender
      * @param aExceptionCallback
      *        The exception callback to be used. May not be <code>null</code>.
      * @return this for chaining
+     * @deprecated in 0.9.5 - has no effect anymore
      */
+    @Deprecated
     @Nonnull
     public Builder setExceptionCallback (@Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
     {
-      ValueEnforcer.notNull (aExceptionCallback, "ExceptionCallback");
-      m_aExceptionCallback = aExceptionCallback;
       return this;
     }
 
@@ -949,8 +927,6 @@ public final class Phase4PeppolSender
       // m_aValidationResultHandler may be null
       // m_aResponseConsumer may be null
       // m_aSignalMsgConsumer may be null
-      if (m_aExceptionCallback == null)
-        return false;
 
       // All valid
       return true;
@@ -976,26 +952,26 @@ public final class Phase4PeppolSender
         LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
-      return _sendAS4Message (m_aHttpClientFactory,
-                              m_aPMode,
-                              m_aDocTypeID,
-                              m_aProcessID,
-                              m_aSenderID,
-                              m_aReceiverID,
-                              m_sSenderPartyID,
-                              m_sConversationID,
-                              m_sSBDHInstanceIdentifier,
-                              m_sSBDHUBLVersion,
-                              m_aPayloadElement,
-                              m_aPayloadMimeType,
-                              m_bCompressPayload,
-                              m_aSMPClient,
-                              m_aCertificateConsumer,
-                              m_aVESID,
-                              m_aValidationResultHandler,
-                              m_aResponseConsumer,
-                              m_aSignalMsgConsumer,
-                              m_aExceptionCallback);
+      _sendAS4Message (m_aHttpClientFactory,
+                       m_aPMode,
+                       m_aDocTypeID,
+                       m_aProcessID,
+                       m_aSenderID,
+                       m_aReceiverID,
+                       m_sSenderPartyID,
+                       m_sConversationID,
+                       m_sSBDHInstanceIdentifier,
+                       m_sSBDHUBLVersion,
+                       m_aPayloadElement,
+                       m_aPayloadMimeType,
+                       m_bCompressPayload,
+                       m_aSMPClient,
+                       m_aCertificateConsumer,
+                       m_aVESID,
+                       m_aValidationResultHandler,
+                       m_aResponseConsumer,
+                       m_aSignalMsgConsumer);
+      return ESuccess.SUCCESS;
     }
   }
 }
