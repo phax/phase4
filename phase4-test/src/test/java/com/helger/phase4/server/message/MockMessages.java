@@ -69,7 +69,7 @@ public final class MockMessages
                                                 @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aMsg.getAsSOAPDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
@@ -88,7 +88,7 @@ public final class MockMessages
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aErrorMsg.getAsSOAPDocument (),
                                                                eSOAPVersion,
                                                                aErrorMsg.getMessagingID (),

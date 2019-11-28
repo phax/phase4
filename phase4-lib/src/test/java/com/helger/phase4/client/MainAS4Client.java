@@ -106,7 +106,7 @@ public final class MainAS4Client
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
       final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
-      final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+      final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
       // Body

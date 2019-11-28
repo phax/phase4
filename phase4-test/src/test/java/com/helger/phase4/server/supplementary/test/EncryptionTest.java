@@ -61,7 +61,7 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
@@ -91,7 +91,7 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

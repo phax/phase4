@@ -248,6 +248,8 @@ public final class Phase4PeppolSender
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
+   * @param aCryptoFactory
+   *        The crypto factory to be used. May not be <code>null</code>.
    * @param aSrcPMode
    *        The source PMode to be used. May not be <code>null</code>.
    * @param aDocTypeID
@@ -310,6 +312,7 @@ public final class Phase4PeppolSender
    *         if something goes wrong
    */
   private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
+                                       @Nonnull final AS4CryptoFactory aCryptoFactory,
                                        @Nonnull final IPMode aSrcPMode,
                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                        @Nonnull final IProcessIdentifier aProcID,
@@ -330,6 +333,7 @@ public final class Phase4PeppolSender
                                        @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcID, "ProcID");
@@ -420,7 +424,8 @@ public final class Phase4PeppolSender
       // Otherwise Oxalis dies
       aUserMsg.setQuoteHttpHeaders (false);
       aUserMsg.setSOAPVersion (ESOAPVersion.SOAP_12);
-      aUserMsg.setAS4CryptoFactory (AS4CryptoFactory.DEFAULT_INSTANCE);
+      // Set the keystore/truststore parameters
+      aUserMsg.setAS4CryptoFactory (aCryptoFactory);
       aUserMsg.setPMode (aSrcPMode, true);
 
       aUserMsg.cryptParams ().setCertificate (aReceiverCert);
@@ -509,6 +514,7 @@ public final class Phase4PeppolSender
   public static class Builder
   {
     private HttpClientFactory m_aHttpClientFactory;
+    private AS4CryptoFactory m_aCryptoFactory;
     private IPMode m_aPMode;
     private IDocumentTypeIdentifier m_aDocTypeID;
     private IProcessIdentifier m_aProcessID;
@@ -568,6 +574,22 @@ public final class Phase4PeppolSender
     {
       ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
       m_aHttpClientFactory = aHttpClientFactory;
+      return this;
+    }
+
+    /**
+     * Set the crypto factory to be used. The default crypto factory uses the
+     * properties from the file "crypto.properties".
+     *
+     * @param aCryptoFactory
+     *        The crypto factory to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
+    {
+      ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+      m_aCryptoFactory = aCryptoFactory;
       return this;
     }
 
@@ -952,6 +974,7 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
       }
       _sendAS4Message (m_aHttpClientFactory,
+                       m_aCryptoFactory,
                        m_aPMode,
                        m_aDocTypeID,
                        m_aProcessID,

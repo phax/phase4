@@ -70,7 +70,7 @@ final class MockClientMessages
                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aMsg.getAsSOAPDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
@@ -89,7 +89,7 @@ final class MockClientMessages
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aErrorMsg.getAsSOAPDocument (),
                                                                eSOAPVersion,
                                                                aErrorMsg.getMessagingID (),
@@ -116,7 +116,7 @@ final class MockClientMessages
                                                            .setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSOAPDocument ();
 
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.DEFAULT_INSTANCE,
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aDoc,
                                                                eSOAPVersion,
                                                                aReceiptMsg.getMessagingID (),

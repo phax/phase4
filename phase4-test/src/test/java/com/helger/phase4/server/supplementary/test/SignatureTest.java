@@ -58,7 +58,7 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

@@ -127,7 +127,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected void initManagers ()
   {
     final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.DEFAULT_INSTANCE;
+    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
     AS4ServerInitializer.initAS4Server (aPModeResolver, aCryptoFactory);
     DropFolderUserMessage.init (aCryptoFactory.getCryptoProperties ());
   }

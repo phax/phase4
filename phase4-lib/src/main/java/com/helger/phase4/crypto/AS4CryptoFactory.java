@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,6 +30,8 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.dom.WsuIdAllocator;
 import org.apache.wss4j.dom.engine.WSSConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
@@ -37,6 +40,14 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.security.keystore.KeyStoreHelper;
 
+/**
+ * The phase4 crypto settings. By default the properties are read from the files
+ * "private-crypto.properties" or "crypto.properties". Alternatively the
+ * properties can be provided in the code. See {@link AS4CryptoProperties} for
+ * the list of supported property names.
+ *
+ * @author Philip Helger
+ */
 @Immutable
 public class AS4CryptoFactory implements Serializable
 {
@@ -46,11 +57,41 @@ public class AS4CryptoFactory implements Serializable
     WSSConfig.init ();
   }
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactory.class);
+  private static final AtomicBoolean DEFAULT_INSTANCE_INITED = new AtomicBoolean (false);
+  private static AS4CryptoFactory _DEFAULT_INSTANCE = null;
+
+  /**
+   * @return The default instance
+   */
+  @Nullable
+  public static AS4CryptoFactory getDefaultInstance ()
+  {
+    AS4CryptoFactory ret = _DEFAULT_INSTANCE;
+    if (DEFAULT_INSTANCE_INITED.compareAndSet (false, true))
+    {
+      try
+      {
+        ret = _DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
+      }
+      catch (final InitializationException ex)
+      {
+        // ret stays null
+        LOGGER.warn ("Failed to init default crypto factory: " + ex.getMessage ());
+      }
+    }
+    return ret;
+  }
+
   /**
    * Default {@link AS4CryptoFactory} using file 'private-crypto.properties' or
    * 'crypto.properties'
+   *
+   * @deprecated Use {@link #getDefaultInstance()} instead
    */
-  public static final AS4CryptoFactory DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
+  @Deprecated
+  @Nullable
+  public static final AS4CryptoFactory DEFAULT_INSTANCE = getDefaultInstance ();
 
   private final AS4CryptoProperties m_aCryptoProps;
   // Lazy initialized
@@ -59,7 +100,7 @@ public class AS4CryptoFactory implements Serializable
   private transient KeyStore.PrivateKeyEntry m_aPK;
 
   @Nonnull
-  private static AS4CryptoProperties _createPropsFromFile (@Nullable final String sCryptoPropertiesPath)
+  public static AS4CryptoProperties readCryptoPropertiesFromFile (@Nullable final String sCryptoPropertiesPath)
   {
     AS4CryptoProperties aCryptoProps;
     if (StringHelper.hasNoText (sCryptoPropertiesPath))
@@ -71,6 +112,7 @@ public class AS4CryptoFactory implements Serializable
     }
     else
     {
+      // Use provided filename
       aCryptoProps = new AS4CryptoProperties (new ClassPathResource (sCryptoPropertiesPath));
     }
     return aCryptoProps;
@@ -84,10 +126,12 @@ public class AS4CryptoFactory implements Serializable
    *        when this parameter is <code>null</code>, the default values will
    *        get used. Else it will try to invoke the given properties and read
    *        them throws an exception if it does not work.
+   * @throws InitializationException
+   *         If the file could not be loaded
    */
   public AS4CryptoFactory (@Nullable final String sCryptoPropertiesPath)
   {
-    this (_createPropsFromFile (sCryptoPropertiesPath));
+    this (readCryptoPropertiesFromFile (sCryptoPropertiesPath));
     if (!m_aCryptoProps.isRead ())
       throw new InitializationException ("Failed to locate crypto properties in '" + sCryptoPropertiesPath + "'");
   }

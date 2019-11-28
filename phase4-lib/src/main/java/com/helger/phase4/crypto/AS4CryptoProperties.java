@@ -41,14 +41,41 @@ import com.helger.security.keystore.EKeyStoreType;
 @Immutable
 public class AS4CryptoProperties implements Serializable
 {
+  /**
+   * The class implementing the CryptoProvider - default values is
+   * "org.apache.wss4j.common.crypto.Merlin"
+   */
+  public static final String CRYPTO_PROVIDER = "org.apache.wss4j.crypto.provider";
+  /** Keystore type: JKS or PKCS12 */
   public static final String KEYSTORE_TYPE = "org.apache.wss4j.crypto.merlin.keystore.type";
+  /** Keystore filename/path */
   public static final String KEYSTORE_FILE = "org.apache.wss4j.crypto.merlin.keystore.file";
+  /** Keystore password */
   public static final String KEYSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.keystore.password";
+  /** Keystore key alias */
   public static final String KEY_ALIAS = "org.apache.wss4j.crypto.merlin.keystore.alias";
+  /** Keystore key password */
   public static final String KEY_PASSWORD = "org.apache.wss4j.crypto.merlin.keystore.private.password";
+
+  /** Type boolean */
+  public static final String LOAD_CACERTS = "org.apache.wss4j.crypto.merlin.load.cacerts";
+  /** Truststore provider - must usually not be set */
+  public static final String TRUSTSTORE_PROVIDER = "org.apache.wss4j.crypto.merlin.truststore.provider";
+  /** Truststore type - JKS or PKCS12? */
+  public static final String TRUSTSTORE_TYPE = "org.apache.wss4j.crypto.merlin.truststore.type";
+  /** Truststore filename/path */
+  public static final String TRUSTSTORE_FILE = "org.apache.wss4j.crypto.merlin.truststore.file";
+  /** Truststore password */
+  public static final String TRUSTSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.truststore.password";
 
   private NonBlockingProperties m_aProps;
 
+  /**
+   * Constructor
+   *
+   * @param aProps
+   *        key value pair map. May be <code>null</code>.
+   */
   public AS4CryptoProperties (@Nullable final Map <String, String> aProps)
   {
     m_aProps = new NonBlockingProperties ();
@@ -56,6 +83,13 @@ public class AS4CryptoProperties implements Serializable
       m_aProps.putAll (aProps);
   }
 
+  /**
+   * Constructor reading the properties from a resource using the Properties
+   * file syntax
+   *
+   * @param aRes
+   *        The resource to read. May not be <code>null</code>.
+   */
   public AS4CryptoProperties (@Nonnull final IReadableResource aRes)
   {
     ValueEnforcer.notNull (aRes, "Resource");
@@ -74,11 +108,20 @@ public class AS4CryptoProperties implements Serializable
       }
   }
 
+  /**
+   * @return <code>true</code> if properties are available. This is always
+   *         <code>true</code> when a map was used to initialize it. Only if a
+   *         resource was used, this may become <code>false</code>.
+   */
   public boolean isRead ()
   {
     return m_aProps != null;
   }
 
+  /**
+   * @return A representation of the contained properties as {@link Properties}.
+   *         May be <code>null</code>.
+   */
   @Nullable
   public Properties getAsProperties ()
   {

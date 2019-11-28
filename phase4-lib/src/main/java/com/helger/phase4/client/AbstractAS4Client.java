@@ -134,7 +134,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   /**
    * @return The keystore type to use. Never <code>null</code>. Default is
    *         {@link #DEFAULT_KEYSTORE_TYPE}.
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IKeyStoreType getKeyStoreType ()
   {
@@ -150,7 +152,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        keystore type that should be set, e.g. "jks". May not be
    *        <code>null</code>.
    * @return this for chaining
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
   {
@@ -162,7 +166,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The keystore resource to use. May be <code>null</code>.
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nullable
   public final IReadableResource getKeyStoreResource ()
   {
@@ -176,7 +182,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aKeyStoreRes
    *        the keystore file that should be used
    * @return this for chaining
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
   {
@@ -187,7 +195,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The keystore password to use. May be <code>null</code>.
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nullable
   public final String getKeyStorePassword ()
   {
@@ -201,7 +211,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param sKeyStorePassword
    *        password that should be set
    * @return this for chaining
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
@@ -212,7 +224,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The keystore key alias to use. May be <code>null</code>.
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nullable
   public final String getKeyStoreAlias ()
   {
@@ -226,7 +240,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param sKeyStoreAlias
    *        alias that should be set
    * @return this for chaining
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
   {
@@ -237,8 +253,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The keystore key password to use. May be <code>null</code>.
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
-
+  @Deprecated
   @Nullable
   public final String getKeyStoreKeyPassword ()
   {
@@ -252,7 +269,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param sKeyStoreKeyPassword
    *        password that should be set
    * @return this for chaining
+   * @deprecated Use {@link AS4CryptoFactory} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
   {
@@ -261,16 +280,35 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return thisAsT ();
   }
 
+  /**
+   * @return The currently set crypto factory. <code>null</code> by default.
+   */
   @Nullable
   public final AS4CryptoFactory getAS4CryptoFactory ()
   {
     return m_aCryptoFactory;
   }
 
+  /**
+   * Set all the crypto properties at once.
+   *
+   * @param aCryptoFactory
+   *        The crypto factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
   {
     m_aCryptoFactory = aCryptoFactory;
+    if (aCryptoFactory != null)
+    {
+      // Explicitly null all keystore/truststore types
+      m_aKeyStoreType = null;
+      m_aKeyStoreRes = null;
+      m_sKeyStorePassword = null;
+      m_sKeyStoreAlias = null;
+      m_sKeyStoreKeyPassword = null;
+    }
     return thisAsT ();
   }
 
@@ -475,7 +513,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       return m_aCryptoFactory;
 
     final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
-    aCryptoProps.put ("org.apache.wss4j.crypto.provider", org.apache.wss4j.common.crypto.Merlin.class.getName ());
+    aCryptoProps.put (AS4CryptoProperties.CRYPTO_PROVIDER, org.apache.wss4j.common.crypto.Merlin.class.getName ());
     aCryptoProps.put (AS4CryptoProperties.KEYSTORE_TYPE, getKeyStoreType ().getID ());
     aCryptoProps.put (AS4CryptoProperties.KEYSTORE_FILE, getKeyStoreResource ().getPath ());
     aCryptoProps.put (AS4CryptoProperties.KEYSTORE_PASSWORD, getKeyStorePassword ());
