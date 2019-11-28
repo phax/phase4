@@ -107,6 +107,7 @@ Just write me an email - see pom.xml for my email address
 
 * v0.9.6 - work in progress
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
+    * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception 
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)

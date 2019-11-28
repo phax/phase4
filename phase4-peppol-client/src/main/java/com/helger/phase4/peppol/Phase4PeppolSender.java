@@ -20,7 +20,6 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -156,8 +155,8 @@ public final class Phase4PeppolSender
   private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
                                  @Nonnull final String sURL,
                                  @Nullable final IAS4ClientBuildMessageCallback aCallback,
-                                 @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                 @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer) throws Exception
+                                 @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
+                                 @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
@@ -199,7 +198,7 @@ public final class Phase4PeppolSender
                    "'");
 
     if (aResponseConsumer != null)
-      aResponseConsumer.accept (aResponseEntity);
+      aResponseConsumer.handleResponse (aResponseEntity);
 
     if (aSignalMsgConsumer != null)
     {
@@ -210,7 +209,7 @@ public final class Phase4PeppolSender
         final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClient.getAS4ResourceHelper (),
                                                                       aResponseEntity.getResponse ());
         if (aSignalMessage != null)
-          aSignalMsgConsumer.accept (aSignalMessage);
+          aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
       }
       else
         LOGGER.info ("AS4 ResponseEntity is empty");
@@ -327,8 +326,8 @@ public final class Phase4PeppolSender
                                        @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                        @Nullable final VESID aVESID,
                                        @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
-                                       @Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer,
-                                       @Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer) throws Phase4PeppolException
+                                       @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
+                                       @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
@@ -526,8 +525,8 @@ public final class Phase4PeppolSender
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
-    private Consumer <AS4ClientSentMessage <byte []>> m_aResponseConsumer;
-    private Consumer <Ebms3SignalMessage> m_aSignalMsgConsumer;
+    private IPhase4PeppolResponseConsumer m_aResponseConsumer;
+    private IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -858,7 +857,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setResponseConsumer (@Nullable final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer)
+    public Builder setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
     {
       m_aResponseConsumer = aResponseConsumer;
       return this;
@@ -874,7 +873,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setSignalMsgConsumer (@Nullable final Consumer <Ebms3SignalMessage> aSignalMsgConsumer)
+    public Builder setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
     {
       m_aSignalMsgConsumer = aSignalMsgConsumer;
       return this;

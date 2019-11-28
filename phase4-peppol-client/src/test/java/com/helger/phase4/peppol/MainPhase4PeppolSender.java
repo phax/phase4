@@ -17,7 +17,6 @@
 package com.helger.phase4.peppol;
 
 import java.io.File;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ import com.helger.datetime.util.PDTIOHelper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
@@ -79,7 +77,7 @@ public final class MainPhase4PeppolSender
       // Start configuring here
       IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
       aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018as4");
-      final Consumer <AS4ClientSentMessage <byte []>> aResponseConsumer = aResponseEntity -> {
+      final IPhase4PeppolResponseConsumer aResponseConsumer = aResponseEntity -> {
         if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
         {
           final String sMessageID = aResponseEntity.getMessageID ();
