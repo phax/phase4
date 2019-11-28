@@ -127,9 +127,9 @@ public final class AS4ClientUserMessageTest
   @Nonnull
   private static AS4ClientUserMessage _setKeyStoreTestData (@Nonnull final AS4ClientUserMessage aClient)
   {
-    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks")
+    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStoreType (EKeyStoreType.JKS)
+                                                              .setKeyStorePath ("keys/dummy-pw-test.jks")
                                                               .setKeyStorePassword ("test")
-                                                              .setKeyStoreType (EKeyStoreType.JKS)
                                                               .setKeyAlias ("ph-as4")
                                                               .setKeyPassword ("test");
     aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));

@@ -75,11 +75,13 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   private NonBlockingProperties m_aProps;
 
   /**
-   * Default constructor having no properties.
+   * Default constructor having only the crypto provider property set to
+   * default.
    */
   public AS4CryptoProperties ()
   {
     m_aProps = new NonBlockingProperties ();
+    setCryptoProviderDefault ();
   }
 
   /**
@@ -125,7 +127,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
    *         <code>true</code> when a map was used to initialize it. Only if a
    *         resource was used, this may become <code>false</code>.
    */
-  public boolean isRead ()
+  public final boolean isRead ()
   {
     return m_aProps != null;
   }
@@ -178,10 +180,16 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setCryptoProvider (@Nullable final String sCryptoProvider)
+  public final AS4CryptoProperties setCryptoProvider (@Nullable final String sCryptoProvider)
   {
     _setProperty (CRYPTO_PROVIDER, sCryptoProvider);
     return this;
+  }
+
+  @Nonnull
+  public final AS4CryptoProperties setCryptoProviderDefault ()
+  {
+    return setCryptoProvider (org.apache.wss4j.common.crypto.Merlin.class.getName ());
   }
 
   @Nullable
@@ -192,7 +200,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setKeyStoreType (@Nullable final EKeyStoreType eType)
+  public final AS4CryptoProperties setKeyStoreType (@Nullable final EKeyStoreType eType)
   {
     _setProperty (KEYSTORE_TYPE, eType == null ? null : eType.getID ());
     return this;
@@ -205,7 +213,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setKeyStorePath (@Nullable final String sKeyStorePath)
+  public final AS4CryptoProperties setKeyStorePath (@Nullable final String sKeyStorePath)
   {
     _setProperty (KEYSTORE_FILE, sKeyStorePath);
     return this;
@@ -218,7 +226,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setKeyStorePassword (@Nullable final String sKeyStorePassword)
+  public final AS4CryptoProperties setKeyStorePassword (@Nullable final String sKeyStorePassword)
   {
     _setProperty (KEYSTORE_PASSWORD, sKeyStorePassword);
     return this;
@@ -231,7 +239,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setKeyAlias (@Nullable final String sKeyAlias)
+  public final AS4CryptoProperties setKeyAlias (@Nullable final String sKeyAlias)
   {
     _setProperty (KEY_ALIAS, sKeyAlias);
     return this;
@@ -244,7 +252,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setKeyPassword (@Nullable final String sKeyPassword)
+  public final AS4CryptoProperties setKeyPassword (@Nullable final String sKeyPassword)
   {
     _setProperty (KEY_PASSWORD, sKeyPassword);
     return this;
@@ -258,7 +266,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setLoadCACerts (final boolean bLoadCACerts)
+  public final AS4CryptoProperties setLoadCACerts (final boolean bLoadCACerts)
   {
     _setProperty (LOAD_CACERTS, Boolean.toString (bLoadCACerts));
     return this;
@@ -271,7 +279,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setTrustStoreProvider (@Nullable final String sTrustStoreProvider)
+  public final AS4CryptoProperties setTrustStoreProvider (@Nullable final String sTrustStoreProvider)
   {
     _setProperty (TRUSTSTORE_PROVIDER, sTrustStoreProvider);
     return this;
@@ -285,7 +293,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setTrustStoreType (@Nullable final EKeyStoreType eType)
+  public final AS4CryptoProperties setTrustStoreType (@Nullable final EKeyStoreType eType)
   {
     _setProperty (TRUSTSTORE_TYPE, eType == null ? null : eType.getID ());
     return this;
@@ -298,7 +306,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setTrustStorePath (@Nullable final String sTrustStorePath)
+  public final AS4CryptoProperties setTrustStorePath (@Nullable final String sTrustStorePath)
   {
     _setProperty (TRUSTSTORE_FILE, sTrustStorePath);
     return this;
@@ -311,7 +319,7 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   }
 
   @Nonnull
-  public AS4CryptoProperties setTrustStorePassword (@Nullable final String sTrustStorePassword)
+  public final AS4CryptoProperties setTrustStorePassword (@Nullable final String sTrustStorePassword)
   {
     _setProperty (TRUSTSTORE_PASSWORD, sTrustStorePassword);
     return this;

@@ -37,7 +37,6 @@ import com.helger.bdve.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.callback.exception.IExceptionCallback;
-import com.helger.commons.callback.exception.LoggingExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.datetime.PDTFactory;
@@ -548,10 +547,10 @@ public final class Phase4PeppolSender
       try
       {
         setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
+        setCryptoFactory (AS4CryptoFactory.getDefaultInstance ());
         setPMode (Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null));
         setPayloadMimeType (CMimeType.APPLICATION_XML);
         setCompressPayload (true);
-        setExceptionCallback (new LoggingExceptionCallback ());
       }
       catch (final Exception ex)
       {

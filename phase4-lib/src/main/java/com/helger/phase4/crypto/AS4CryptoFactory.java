@@ -28,6 +28,7 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.WsuIdAllocator;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.slf4j.Logger;
@@ -88,7 +89,7 @@ public class AS4CryptoFactory implements Serializable
    * Default {@link AS4CryptoFactory} using file 'private-crypto.properties' or
    * 'crypto.properties'
    *
-   * @deprecated Use {@link #getDefaultInstance()} instead
+   * @deprecated since 0.9.6; use {@link #getDefaultInstance()} instead
    */
   @Deprecated
   @Nullable
@@ -195,7 +196,7 @@ public class AS4CryptoFactory implements Serializable
     {
       return CryptoFactory.getInstance (aCryptoProps.getAsProperties ());
     }
-    catch (final Exception ex)
+    catch (final WSSecurityException ex)
     {
       throw new InitializationException ("Failed to init crypto properties!", ex);
     }
