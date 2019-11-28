@@ -26,8 +26,10 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.lang.ICloneable;
 import com.helger.commons.lang.NonBlockingProperties;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringParser;
@@ -41,7 +43,7 @@ import com.helger.security.keystore.EKeyStoreType;
  * @author Philip Helger
  */
 @Immutable
-public class AS4CryptoProperties implements Serializable
+public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoProperties>
 {
   /**
    * The class name implementing the CryptoProvider - default value is
@@ -313,6 +315,13 @@ public class AS4CryptoProperties implements Serializable
   {
     _setProperty (TRUSTSTORE_PASSWORD, sTrustStorePassword);
     return this;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public AS4CryptoProperties getClone ()
+  {
+    return new AS4CryptoProperties (m_aProps);
   }
 
   @Override

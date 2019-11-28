@@ -96,7 +96,7 @@ public final class AS4Signer
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
 
-    final AS4CryptoProperties aCryptoProps = aCryptoFactory.getCryptoProperties ();
+    final AS4CryptoProperties aCryptoProps = aCryptoFactory.cryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);

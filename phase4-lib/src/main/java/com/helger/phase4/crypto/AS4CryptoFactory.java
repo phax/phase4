@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
@@ -154,12 +155,25 @@ public class AS4CryptoFactory implements Serializable
    * {@link com.helger.phase4.client.AbstractAS4Client} for a usage example.
    *
    * @param aCryptoProps
-   *        The properties to be used. May not be <code>null</code>.
+   *        The properties to be used. May not be <code>null</code>. Note: the
+   *        object is cloned internally to avoid outside modification.
    */
-  protected AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
+  public AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
   {
     ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
-    m_aCryptoProps = aCryptoProps;
+    m_aCryptoProps = aCryptoProps.getClone ();
+  }
+
+  /**
+   * @return The crypto properties as created in the constructor. Never
+   *         <code>null</code>.
+   * @deprecated Use {@link #cryptoProperties()} instead
+   */
+  @Deprecated
+  @Nonnull
+  public final AS4CryptoProperties getCryptoProperties ()
+  {
+    return cryptoProperties ();
   }
 
   /**
@@ -167,7 +181,8 @@ public class AS4CryptoFactory implements Serializable
    *         <code>null</code>.
    */
   @Nonnull
-  public final AS4CryptoProperties getCryptoProperties ()
+  @ReturnsMutableObject
+  public final AS4CryptoProperties cryptoProperties ()
   {
     return m_aCryptoProps;
   }

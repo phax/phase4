@@ -34,9 +34,6 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.io.resource.FileSystemResource;
-import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.io.watchdir.EWatchDirAction;
 import com.helger.commons.io.watchdir.IWatchDirCallback;
@@ -59,6 +56,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -133,14 +131,7 @@ public final class DropFolderUserMessage
           aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
 
           // Keystore data
-          IReadableResource aRes = new ClassPathResource (aCP.getKeyStorePath ());
-          if (!aRes.exists ())
-            aRes = new FileSystemResource (aCP.getKeyStorePath ());
-          aClient.setKeyStoreResource (aRes);
-          aClient.setKeyStorePassword (aCP.getKeyStorePassword ());
-          aClient.setKeyStoreType (aCP.getKeyStoreType ());
-          aClient.setKeyStoreAlias (aCP.getKeyAlias ());
-          aClient.setKeyStoreKeyPassword (aCP.getKeyPassword ());
+          aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
 
           aClient.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
           aClient.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);

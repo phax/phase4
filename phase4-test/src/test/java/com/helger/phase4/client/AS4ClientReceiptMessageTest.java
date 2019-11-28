@@ -28,7 +28,8 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.client.AS4ClientReceiptMessage;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.server.MockJettySetup;
@@ -117,11 +118,12 @@ public final class AS4ClientReceiptMessageTest
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 
-    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
-    aClient.setKeyStorePassword ("test");
-    aClient.setKeyStoreType (EKeyStoreType.JKS);
-    aClient.setKeyStoreAlias ("ph-as4");
-    aClient.setKeyStoreKeyPassword ("test");
+    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStoreType (EKeyStoreType.JKS)
+                                                              .setKeyStorePath ("keys/dummy-pw-test.jks")
+                                                              .setKeyStorePassword ("test")
+                                                              .setKeyAlias ("ph-as4")
+                                                              .setKeyPassword ("test");
+    aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
 
     aClient.signingParams ()
            .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)

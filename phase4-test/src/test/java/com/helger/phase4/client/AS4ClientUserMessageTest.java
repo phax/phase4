@@ -34,7 +34,8 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.client.AS4ClientUserMessage;
+import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -126,13 +127,13 @@ public final class AS4ClientUserMessageTest
   @Nonnull
   private static AS4ClientUserMessage _setKeyStoreTestData (@Nonnull final AS4ClientUserMessage aClient)
   {
-    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
-    aClient.setKeyStorePassword ("test");
-    aClient.setKeyStoreType (EKeyStoreType.JKS);
-    aClient.setKeyStoreAlias ("ph-as4");
-    aClient.setKeyStoreKeyPassword ("test");
-
-    aClient.cryptParams ().setAlias ("ph-as4");
+    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks")
+                                                              .setKeyStorePassword ("test")
+                                                              .setKeyStoreType (EKeyStoreType.JKS)
+                                                              .setKeyAlias ("ph-as4")
+                                                              .setKeyPassword ("test");
+    aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
+    aClient.cryptParams ().setAlias (aCP.getKeyAlias ());
     return aClient;
   }
 
@@ -201,15 +202,16 @@ public final class AS4ClientUserMessageTest
 
     // No Keystore attributes set
     _ensureInvalidState (aClient);
-    aClient.setKeyStoreResource (new ClassPathResource ("keys/dummy-pw-test.jks"));
+    final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks");
+    aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
     _ensureInvalidState (aClient);
-    aClient.setKeyStorePassword ("test");
+    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyStorePassword ("test");
     _ensureInvalidState (aClient);
-    aClient.setKeyStoreType (EKeyStoreType.JKS);
+    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyStoreType (EKeyStoreType.JKS);
     _ensureInvalidState (aClient);
-    aClient.setKeyStoreAlias ("ph-as4");
+    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyAlias ("ph-as4");
     _ensureInvalidState (aClient);
-    aClient.setKeyStoreKeyPassword ("test");
+    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyPassword ("test");
     _ensureValidState (aClient);
   }
 

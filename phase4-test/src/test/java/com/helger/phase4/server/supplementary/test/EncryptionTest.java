@@ -71,8 +71,8 @@ public final class EncryptionTest
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
-                          aCryptoFactory.getCryptoProperties ().getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.cryptoProperties ().getKeyAlias (),
+                          aCryptoFactory.cryptoProperties ().getKeyPassword ());
 
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
@@ -99,8 +99,8 @@ public final class EncryptionTest
 
     final WSSecEncrypt builder = new WSSecEncrypt (secHeader);
     // builder.setUserInfo ("wss40");
-    builder.setUserInfo (aCryptoFactory.getCryptoProperties ().getKeyAlias (),
-                         aCryptoFactory.getCryptoProperties ().getKeyPassword ());
+    builder.setUserInfo (aCryptoFactory.cryptoProperties ().getKeyAlias (),
+                         aCryptoFactory.cryptoProperties ().getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto ());
