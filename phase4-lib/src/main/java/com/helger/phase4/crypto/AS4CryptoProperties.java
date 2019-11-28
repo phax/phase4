@@ -29,6 +29,8 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.lang.NonBlockingProperties;
+import com.helger.commons.state.ETriState;
+import com.helger.commons.string.StringParser;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.security.keystore.EKeyStoreType;
 
@@ -42,7 +44,7 @@ import com.helger.security.keystore.EKeyStoreType;
 public class AS4CryptoProperties implements Serializable
 {
   /**
-   * The class implementing the CryptoProvider - default values is
+   * The class name implementing the CryptoProvider - default value is
    * "org.apache.wss4j.common.crypto.Merlin"
    */
   public static final String CRYPTO_PROVIDER = "org.apache.wss4j.crypto.provider";
@@ -69,6 +71,14 @@ public class AS4CryptoProperties implements Serializable
   public static final String TRUSTSTORE_PASSWORD = "org.apache.wss4j.crypto.merlin.truststore.password";
 
   private NonBlockingProperties m_aProps;
+
+  /**
+   * Default constructor having no properties.
+   */
+  public AS4CryptoProperties ()
+  {
+    m_aProps = new NonBlockingProperties ();
+  }
 
   /**
    * Constructor
@@ -136,9 +146,40 @@ public class AS4CryptoProperties implements Serializable
   @Nullable
   private String _getProperty (@Nonnull final String sName)
   {
-    if (m_aProps == null)
-      return null;
-    return m_aProps.getProperty (sName);
+    final NonBlockingProperties aProps = m_aProps;
+    return aProps == null ? null : aProps.getProperty (sName);
+  }
+
+  private void _setProperty (@Nonnull final String sName, @Nullable final String sValue)
+  {
+    ValueEnforcer.notNull (sName, "Name");
+    NonBlockingProperties aProps = m_aProps;
+    if (sValue == null)
+    {
+      // Remove property
+      if (aProps != null)
+        aProps.remove (sName);
+    }
+    else
+    {
+      // Set property
+      if (aProps == null)
+        aProps = m_aProps = new NonBlockingProperties ();
+      aProps.put (sName, sValue);
+    }
+  }
+
+  @Nullable
+  public String getCryptoProvider ()
+  {
+    return _getProperty (CRYPTO_PROVIDER);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setCryptoProvider (@Nullable final String sCryptoProvider)
+  {
+    _setProperty (CRYPTO_PROVIDER, sCryptoProvider);
+    return this;
   }
 
   @Nullable
@@ -148,10 +189,24 @@ public class AS4CryptoProperties implements Serializable
     return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
   }
 
+  @Nonnull
+  public AS4CryptoProperties setKeyStoreType (@Nullable final EKeyStoreType eType)
+  {
+    _setProperty (KEYSTORE_TYPE, eType == null ? null : eType.getID ());
+    return this;
+  }
+
   @Nullable
   public String getKeyStorePath ()
   {
     return _getProperty (KEYSTORE_FILE);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setKeyStorePath (@Nullable final String sKeyStorePath)
+  {
+    _setProperty (KEYSTORE_FILE, sKeyStorePath);
+    return this;
   }
 
   @Nullable
@@ -160,10 +215,24 @@ public class AS4CryptoProperties implements Serializable
     return _getProperty (KEYSTORE_PASSWORD);
   }
 
+  @Nonnull
+  public AS4CryptoProperties setKeyStorePassword (@Nullable final String sKeyStorePassword)
+  {
+    _setProperty (KEYSTORE_PASSWORD, sKeyStorePassword);
+    return this;
+  }
+
   @Nullable
   public String getKeyAlias ()
   {
     return _getProperty (KEY_ALIAS);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setKeyAlias (@Nullable final String sKeyAlias)
+  {
+    _setProperty (KEY_ALIAS, sKeyAlias);
+    return this;
   }
 
   @Nullable
@@ -172,9 +241,84 @@ public class AS4CryptoProperties implements Serializable
     return _getProperty (KEY_PASSWORD);
   }
 
+  @Nonnull
+  public AS4CryptoProperties setKeyPassword (@Nullable final String sKeyPassword)
+  {
+    _setProperty (KEY_PASSWORD, sKeyPassword);
+    return this;
+  }
+
+  @Nonnull
+  public ETriState getLoadCACerts ()
+  {
+    final String sProp = _getProperty (LOAD_CACERTS);
+    return sProp == null ? ETriState.UNDEFINED : ETriState.valueOf (StringParser.parseBool (sProp));
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setLoadCACerts (final boolean bLoadCACerts)
+  {
+    _setProperty (LOAD_CACERTS, Boolean.toString (bLoadCACerts));
+    return this;
+  }
+
+  @Nullable
+  public String getTrustStoreProvider ()
+  {
+    return _getProperty (TRUSTSTORE_PROVIDER);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setTrustStoreProvider (@Nullable final String sTrustStoreProvider)
+  {
+    _setProperty (TRUSTSTORE_PROVIDER, sTrustStoreProvider);
+    return this;
+  }
+
+  @Nullable
+  public EKeyStoreType getTrustStoreType ()
+  {
+    final String sProp = _getProperty (TRUSTSTORE_TYPE);
+    return EKeyStoreType.getFromIDCaseInsensitiveOrDefault (sProp, EKeyStoreType.JKS);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setTrustStoreType (@Nullable final EKeyStoreType eType)
+  {
+    _setProperty (TRUSTSTORE_TYPE, eType == null ? null : eType.getID ());
+    return this;
+  }
+
+  @Nullable
+  public String getTrustStorePath ()
+  {
+    return _getProperty (TRUSTSTORE_FILE);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setTrustStorePath (@Nullable final String sTrustStorePath)
+  {
+    _setProperty (TRUSTSTORE_FILE, sTrustStorePath);
+    return this;
+  }
+
+  @Nullable
+  public String getTrustStorePassword ()
+  {
+    return _getProperty (TRUSTSTORE_PASSWORD);
+  }
+
+  @Nonnull
+  public AS4CryptoProperties setTrustStorePassword (@Nullable final String sTrustStorePassword)
+  {
+    _setProperty (TRUSTSTORE_PASSWORD, sTrustStorePassword);
+    return this;
+  }
+
   @Override
   public String toString ()
   {
+    // May contain a password property
     return new ToStringGenerator (this).append ("Props", m_aProps).getToString ();
   }
 }
