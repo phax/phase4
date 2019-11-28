@@ -59,7 +59,7 @@ import com.helger.phase4.marshaller.Ebms3ReaderBuilder;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.IMPC;
-import com.helger.phase4.model.mpc.MPCManager;
+import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
@@ -149,7 +149,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    */
   @Nonnull
   private static ESuccess _checkMPCOfPMode (@Nonnull final PModeLeg aPModeLeg,
-                                            @Nonnull final MPCManager aMPCMgr,
+                                            @Nonnull final IMPCManager aMPCMgr,
                                             @Nonnull final Locale aLocale,
                                             @Nonnull final ErrorList aErrorList)
   {
@@ -194,7 +194,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
-    final MPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
+    final IMPCManager aMPCMgr = MetaAS4Manager.getMPCMgr ();
     IPMode aPMode = null;
     final ICommonsMap <String, EAS4CompressionMode> aCompressionAttachmentIDs = new CommonsHashMap <> ();
     IMPC aEffectiveMPC = null;

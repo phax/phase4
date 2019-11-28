@@ -25,6 +25,7 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPCManager;
 import com.helger.phase4.model.pmode.PModeManager;
 import com.helger.phase4.profile.AS4ProfileManager;
@@ -44,7 +45,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
-  private MPCManager m_aMPCMgr;
+  private IMPCManager m_aMPCMgr;
   private PModeManager m_aPModeMgr;
   private AS4ProfileManager m_aProfileMgr;
   private AS4DuplicateManager m_aIncomingDuplicateMgr;
@@ -92,7 +93,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public static MPCManager getMPCMgr ()
+  public static IMPCManager getMPCMgr ()
   {
     return getInstance ().m_aMPCMgr;
   }

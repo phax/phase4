@@ -22,7 +22,6 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
 import com.helger.dao.DAOException;
 import com.helger.phase4.CAS4;
 import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
@@ -35,7 +34,7 @@ import com.helger.photon.security.object.BusinessObjectHelper;
  * @author Philip Helger
  */
 @ThreadSafe
-public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
+public class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC> implements IMPCManager
 {
   public MPCManager (@Nullable final String sFilename) throws DAOException
   {
@@ -51,8 +50,7 @@ public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
     return EChange.CHANGED;
   }
 
-  @Nonnull
-  public IMPC createMPC (@Nonnull final MPC aMPC)
+  public void createMPC (@Nonnull final MPC aMPC)
   {
     ValueEnforcer.notNull (aMPC, "MPC");
 
@@ -60,7 +58,6 @@ public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
       internalCreateItem (aMPC);
     });
     AuditHelper.onAuditCreateSuccess (MPC.OT, aMPC.getID ());
-    return aMPC;
   }
 
   @Nonnull
@@ -151,11 +148,5 @@ public final class MPCManager extends AbstractPhotonMapBasedWALDAO <IMPC, MPC>
   public IMPC getMPCOfID (@Nullable final String sID)
   {
     return getOfID (sID);
-  }
-
-  @Nullable
-  public IMPC getMPCOrDefaultOfID (@Nullable final String sID)
-  {
-    return getMPCOfID (StringHelper.hasNoText (sID) ? CAS4.DEFAULT_MPC_ID : sID);
   }
 }
