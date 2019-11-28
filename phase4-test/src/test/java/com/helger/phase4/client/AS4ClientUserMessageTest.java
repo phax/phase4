@@ -137,26 +137,26 @@ public final class AS4ClientUserMessageTest
     return aClient;
   }
 
-  private static void _ensureInvalidState (@Nonnull final AS4ClientUserMessage aClient) throws Exception
+  private static void _ensureInvalidState (@Nonnull final AS4ClientUserMessage aClient)
   {
     try
     {
       aClient.buildMessage ("bla", null);
       fail ();
     }
-    catch (final IllegalStateException ex)
+    catch (final Exception ex)
     {
       // expected
     }
   }
 
-  private static void _ensureValidState (@Nonnull final AS4ClientUserMessage aClient) throws Exception
+  private static void _ensureValidState (@Nonnull final AS4ClientUserMessage aClient)
   {
     try
     {
       aClient.buildMessage ("bla", null);
     }
-    catch (final IllegalStateException ex)
+    catch (final Exception ex)
     {
       fail ();
     }
