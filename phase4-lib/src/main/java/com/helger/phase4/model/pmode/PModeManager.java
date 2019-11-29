@@ -24,14 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
-import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.dao.DAOException;
-import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
 import com.helger.photon.audit.AuditHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
@@ -42,7 +37,7 @@ import com.helger.photon.security.object.BusinessObjectHelper;
  * @author Philip Helger
  */
 @ThreadSafe
-public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
+public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> implements IPModeManager
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeManager.class);
 
@@ -51,21 +46,27 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     super (PMode.class, sFilename);
   }
 
-  @Nonnull
-  public IPMode createPMode (@Nonnull final PMode aPMode)
+  public void createPMode (@Nonnull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
 
     // If not valid throws IllegalStateException
-    validatePMode (aPMode);
+    try
+    {
+      validatePMode (aPMode);
+    }
+    catch (final PModeValidationException ex)
+    {
+      throw new IllegalArgumentException ("PMode is invalid", ex);
+    }
 
     m_aRWLock.writeLocked ( () -> {
       internalCreateItem (aPMode);
     });
     AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
-    LOGGER.info ("Created PMode with ID '" + aPMode.getID () + "'");
 
-    return aPMode;
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
   }
 
   @Nonnull
@@ -108,7 +109,9 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPMode.getID ());
-    LOGGER.info ("Updated PMode with ID '" + aPMode.getID () + "'");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Updated PMode with ID '" + aPMode.getID () + "'");
 
     return EChange.CHANGED;
   }
@@ -138,7 +141,9 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
       m_aRWLock.writeLock ().unlock ();
     }
     AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
-    LOGGER.info ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
 
     return EChange.CHANGED;
   }
@@ -167,70 +172,30 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     return EChange.CHANGED;
   }
 
-  @Nonnull
-  public static IPredicate <IPMode> getPModeFilter (@Nonnull final String sID,
-                                                    @Nullable final String sInitiatorID,
-                                                    @Nullable final String sResponderID)
-  {
-    return x -> x.getID ().equals (sID) && x.hasInitiatorID (sInitiatorID) && x.hasResponderID (sResponderID);
-  }
-
-  @Nullable
-  public IPMode getPModeOfServiceAndAction (@Nullable final String sService, @Nullable final String sAction)
-  {
-    return findFirst (x -> {
-      final PModeLeg aLeg = x.getLeg1 ();
-      if (aLeg != null)
-      {
-        final PModeLegBusinessInformation aBI = aLeg.getBusinessInfo ();
-        if (aBI != null)
-          return EqualsHelper.equals (aBI.getService (), sService) && EqualsHelper.equals (aBI.getAction (), sAction);
-      }
-      return false;
-    });
-  }
-
-  @Nonnull
-  public IPMode createOrUpdatePMode (@Nonnull final PMode aPMode)
-  {
-    IPMode ret = findFirst (getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ()));
-    if (ret == null)
-    {
-      createPMode (aPMode);
-      ret = aPMode;
-    }
-    else
-    {
-      updatePMode (aPMode);
-    }
-    return ret;
-  }
-
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sID)
   {
     return getOfID (sID);
   }
 
-  @Nonnull
-  public ESuccess validatePMode (@Nullable final IPMode aPMode) throws IllegalStateException
+  public void validatePMode (@Nullable final IPMode aPMode) throws PModeValidationException
   {
     ValueEnforcer.notNull (aPMode, "PMode");
 
     // Needs ID
     if (StringHelper.hasNoText (aPMode.getID ()))
-      throw new IllegalStateException ("No PMode ID present");
+      throw new PModeValidationException ("No PMode ID present");
 
     final PModeParty aInitiator = aPMode.getInitiator ();
     if (aInitiator != null)
     {
       // INITIATOR PARTY_ID
       if (StringHelper.hasNoText (aInitiator.getIDValue ()))
-        throw new IllegalStateException ("No PMode Initiator ID present");
+        throw new PModeValidationException ("No PMode Initiator ID present");
 
       // INITIATOR ROLE
       if (StringHelper.hasNoText (aInitiator.getRole ()))
-        throw new IllegalStateException ("No PMode Initiator Role present");
+        throw new PModeValidationException ("No PMode Initiator Role present");
     }
 
     final PModeParty aResponder = aPMode.getResponder ();
@@ -238,22 +203,14 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode>
     {
       // RESPONDER PARTY_ID
       if (StringHelper.hasNoText (aResponder.getIDValue ()))
-        throw new IllegalStateException ("No PMode Responder ID present");
+        throw new PModeValidationException ("No PMode Responder ID present");
 
       // RESPONDER ROLE
       if (StringHelper.hasNoText (aResponder.getRole ()))
-        throw new IllegalStateException ("No PMode Responder Role present");
+        throw new PModeValidationException ("No PMode Responder Role present");
     }
 
     if (aResponder == null && aInitiator == null)
-      throw new IllegalStateException ("PMode is missing Initiator and/or Responder");
-
-    return ESuccess.SUCCESS;
-  }
-
-  public void validateAllPModes () throws IllegalStateException
-  {
-    for (final IPMode aPMode : getAll ())
-      validatePMode (aPMode);
+      throw new PModeValidationException ("PMode is missing Initiator and/or Responder");
   }
 }

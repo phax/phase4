@@ -112,6 +112,8 @@ Just write me an email - see pom.xml for my email address
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception 
     * Added the possibility to configure the keystore without the need of having the `crypto.properties` file
     * Extracted interface `IMPCManager` from `MPCManager` and using it internally
+    * Extracted interface `IPModeManager` from `PModeManager` and using it internally
+    * The method `IPModeManager.validatePMode` now throws a checked `PModeValidationException` exception
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)

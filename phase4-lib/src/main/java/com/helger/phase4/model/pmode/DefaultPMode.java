@@ -105,7 +105,7 @@ public final class DefaultPMode
     if (bPersist)
     {
       // Create or update
-      final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+      final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
       aPModeMgr.createOrUpdatePMode (aDefaultPMode);
     }
     return aDefaultPMode;

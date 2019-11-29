@@ -38,7 +38,7 @@ public final class PModeManagerTest
   @Test
   public void testBasic ()
   {
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     assertNotNull (aPModeMgr);
   }
 }

@@ -38,6 +38,7 @@ import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModePayloadService;
+import com.helger.phase4.model.pmode.PModeValidationException;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
@@ -68,8 +69,16 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
 
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
-    MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
     assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
+
+    try
+    {
+      MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
+    }
+    catch (final PModeValidationException ex)
+    {
+      aErrorList.add (_createError (ex.getMessage ()));
+    }
 
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();

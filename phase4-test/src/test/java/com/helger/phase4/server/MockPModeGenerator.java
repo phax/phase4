@@ -28,8 +28,8 @@ import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.DefaultPMode;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
+import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.model.pmode.PMode;
-import com.helger.phase4.model.pmode.PModeManager;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -143,7 +143,7 @@ public final class MockPModeGenerator
   public static void ensureMockPModesArePresent ()
   {
     // Delete all in the correct order
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     for (final String sID : aPModeMgr.getAllIDs ())
       aPModeMgr.deletePMode (sID);
 

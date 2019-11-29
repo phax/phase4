@@ -24,7 +24,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.DefaultPMode;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.profile.IAS4Profile;
 
 /**
@@ -58,7 +58,7 @@ public class DefaultPModeResolver implements IPModeResolver
                               @Nonnull @Nonempty final String sResponderID,
                               @Nullable final String sAddress)
   {
-    final PModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
+    final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     IPMode ret = null;
     if (StringHelper.hasText (sPModeID))
     {
