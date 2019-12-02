@@ -657,13 +657,49 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
                                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+
+  {
+    return sendMessageWithRetries (sURL, aResponseHandler, aCallback, (IAS4OutgoingDumper) null);
+  }
+
+  /**
+   * Send the AS4 client message created by
+   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
+   * provided URL. This methods does take retries into account. It synchronously
+   * handles the retries and only returns after the last retry.
+   *
+   * @param <T>
+   *        The response data type
+   * @param sURL
+   *        The URL to send the HTTP POST to
+   * @param aResponseHandler
+   *        The response handler that converts the HTTP response to a domain
+   *        object. May not be <code>null</code>.
+   * @param aCallback
+   *        The optional callback that is invoked during the creation of the
+   *        {@link AS4ClientBuiltMessage}. It can be used to access several
+   *        states of message creation. May be <code>null</code>.
+   * @param aOutgoingDumper
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If
+   *        <code>null</code> the global outgoing dumper from
+   *        {@link AS4DumpManager} is used.
+   * @return The sent message that contains
+   * @throws Exception
+   *         in case of error when building or sending the message
+   * @since 0.9.6
+   */
+  @Nonnull
+  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
+                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                                    @Nullable final IAS4ClientBuildMessageCallback aCallback,
+                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
   {
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     final HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
 
-    final IAS4OutgoingDumper aDumper = AS4DumpManager.getOutgoingDumper ();
+    final IAS4OutgoingDumper aDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
     try
     {

@@ -1438,15 +1438,20 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * @param aHttpServletRequest
-   *        the current request
+   *        the current request. Never <code>null</code>.
+   * @param aIncomingDumper
+   *        The incoming AS4 dumper. May be <code>null</code>. If
+   *        <code>null</code> the global one from {@link AS4DumpManager} is
+   *        used.
    * @return the InputStream of the HttpServletRequest
    * @throws IOException
    */
   @Nonnull
-  private static InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
+  private static InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest,
+                                            @Nullable final IAS4IncomingDumper aIncomingDumper) throws IOException
   {
     final InputStream aIS = aHttpServletRequest.getInputStream ();
-    final IAS4IncomingDumper aDumper = AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
     if (aDumper == null)
     {
       // No wrapping needed
@@ -1537,7 +1542,7 @@ public class AS4RequestHandler implements AutoCloseable
         LOGGER.debug ("MIME Boundary = " + sBoundary);
 
       // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = _getRequestIS (aHttpServletRequest))
+      try (final InputStream aRequestIS = _getRequestIS (aHttpServletRequest, null))
       {
         // PARSING MIME Message via MultiPartStream
         final MultipartStream aMulti = new MultipartStream (aRequestIS,
@@ -1590,7 +1595,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpServletRequest));
+      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpServletRequest, null));
 
       if (aSOAPDocument != null)
       {
