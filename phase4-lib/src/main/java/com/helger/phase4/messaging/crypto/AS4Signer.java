@@ -92,11 +92,11 @@ public final class AS4Signer
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
+    final AS4CryptoProperties aCryptoProps = aCryptoFactory.cryptoProperties ();
+
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
-
-    final AS4CryptoProperties aCryptoProps = aCryptoFactory.cryptoProperties ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
