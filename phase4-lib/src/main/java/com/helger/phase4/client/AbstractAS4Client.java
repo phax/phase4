@@ -796,7 +796,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
-    final IMicroDocument ret = sendMessageWithRetries (sURL, new ResponseHandlerMicroDom (), null).getResponse ();
+    final IAS4ClientBuildMessageCallback aCallback = null;
+    final IAS4OutgoingDumper aDumper = null;
+    final IMicroDocument ret = sendMessageWithRetries (sURL,
+                                                       new ResponseHandlerMicroDom (),
+                                                       aCallback,
+                                                       aDumper).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;

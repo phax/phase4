@@ -71,6 +71,7 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -154,6 +155,7 @@ public final class Phase4PeppolSender
   private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
                                  @Nonnull final String sURL,
                                  @Nullable final IAS4ClientBuildMessageCallback aCallback,
+                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                  @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                  @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
@@ -188,7 +190,8 @@ public final class Phase4PeppolSender
 
     final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (sURL,
                                                                                            new ResponseHandlerByteArray (),
-                                                                                           aCallback);
+                                                                                           aCallback,
+                                                                                           aOutgoingDumper);
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
                    aResponseEntity.getMessageID () +
@@ -298,6 +301,9 @@ public final class Phase4PeppolSender
    *        The result handler to be used for XML/Schematron validation. If this
    *        parameter is <code>null</code>, no validation is performed. This
    *        parameter is only effective in combination with aVESID.
+   * @param aOutgoingDumper
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If
+   *        <code>null</code> the global outgoing dumper is used.
    * @param aResponseConsumer
    *        An optional consumer for the AS4 message that was sent. May be
    *        <code>null</code>.
@@ -328,6 +334,7 @@ public final class Phase4PeppolSender
                                        @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
                                        @Nullable final VESID aVESID,
                                        @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
+                                       @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                        @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
@@ -479,7 +486,8 @@ public final class Phase4PeppolSender
       }
 
       // Main sending
-      _sendHttp (aUserMsg, sDestURL, null, aResponseConsumer, aSignalMsgConsumer);
+      final IAS4ClientBuildMessageCallback aCallback = null;
+      _sendHttp (aUserMsg, sDestURL, aCallback, aOutgoingDumper, aResponseConsumer, aSignalMsgConsumer);
     }
     catch (final Phase4PeppolException ex)
     {
@@ -530,6 +538,7 @@ public final class Phase4PeppolSender
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
+    private IAS4OutgoingDumper m_aOutgoingDumper;
     private IPhase4PeppolResponseConsumer m_aResponseConsumer;
     private IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
 
@@ -869,6 +878,22 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set a specific outgoing dumper for this builder.
+     * 
+     * @param aOutgoingDumper
+     *        An outgoing dumper to be used. Maybe <code>null</code>. If
+     *        <code>null</code> the global outgoing dumper is used.
+     * @return this for chaining
+     * @since 0.9.6
+     */
+    @Nonnull
+    public Builder setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    {
+      m_aOutgoingDumper = aOutgoingDumper;
+      return this;
+    }
+
+    /**
      * Set an optional handler for the synchronous result message received from
      * the other side. This method is optional and must not be called prior to
      * sending.
@@ -990,6 +1015,7 @@ public final class Phase4PeppolSender
                        m_aCertificateConsumer,
                        m_aVESID,
                        m_aValidationResultHandler,
+                       m_aOutgoingDumper,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
       return ESuccess.SUCCESS;

@@ -114,6 +114,7 @@ Just write me an email - see pom.xml for my email address
     * Extracted interface `IMPCManager` from `MPCManager` and using it internally
     * Extracted interface `IPModeManager` from `PModeManager` and using it internally
     * The method `IPModeManager.validatePMode` now throws a checked `PModeValidationException` exception
+    * Added the possibility to customize the outgoing dumper in class `Phase4PeppolSender`
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)
