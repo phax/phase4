@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -23,6 +24,7 @@ import java.util.UUID;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.WillNotClose;
 import javax.xml.namespace.QName;
 
@@ -46,6 +48,7 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.CPeppolSBDH;
@@ -154,7 +157,7 @@ public final class Phase4PeppolSender
 
   private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
                                  @Nonnull final String sURL,
-                                 @Nullable final IAS4ClientBuildMessageCallback aCallback,
+                                 @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                  @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                  @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
@@ -190,7 +193,7 @@ public final class Phase4PeppolSender
 
     final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (sURL,
                                                                                            new ResponseHandlerByteArray (),
-                                                                                           aCallback,
+                                                                                           aBuildMessageCallback,
                                                                                            aOutgoingDumper);
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
@@ -245,112 +248,70 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * Send an AS4 message. It is highly recommend to use the {@link Builder}
-   * class, because it is very likely, that this API is NOT stable.
-   *
-   * @param aHttpClientFactory
-   *        The HTTP client factory to be used. May not be <code>null</code>.
-   * @param aCryptoFactory
-   *        The crypto factory to be used. May not be <code>null</code>.
-   * @param aSrcPMode
-   *        The source PMode to be used. May not be <code>null</code>.
    * @param aDocTypeID
-   *        The Peppol Document type ID to be used. May not be <code>null</code>
+   *        document type ID. May not be <code>null</code>.
    * @param aProcID
-   *        The Peppol process ID to be used. May not be <code>null</code>.
-   * @param aSenderID
-   *        The Peppol sending participant ID to be used. May not be
-   *        <code>null</code>.
+   *        Process ID. May not be <code>null</code>.
    * @param aReceiverID
-   *        The Peppol receiving participant ID to send to. May not be
-   *        <code>null</code>.
-   * @param sSenderPartyID
-   *        The sending party ID (the CN part of the senders certificate
-   *        subject). May not be <code>null</code>.
-   * @param sConversationID
-   *        The AS4 conversation to be used. If none is provided, a random UUID
-   *        is used. May be <code>null</code>.
-   * @param sSBDHInstanceIdentifier
-   *        The optional SBDH instance identifier. If none is provided, a random
-   *        UUID is used. May be <code>null</code>.
-   * @param sSBDHUBLVersionID
-   *        The UBL version ID for the SBDH document identification. If none is
-   *        provided, the default <code>2.1</code> will be used. May be
-   *        <code>null</code>.
-   * @param aPayloadElement
-   *        The Peppol XML payload to be send. May not be <code>null</code>.
-   * @param aPayloadMimeType
-   *        The MIME type of the payload. Usually "application/xml". May not be
-   *        <code>null</code>.
-   * @param bCompressPayload
-   *        <code>true</code> to use AS4 compression on the payload,
-   *        <code>false</code> to not compress it.
+   *        Participant ID of the receiver. May not be <code>null</code>.
    * @param aSMPClient
-   *        The SMP client to be used. Needs to be passed in to handle proxy
-   *        settings etc. May not be <code>null</code>.
-   * @param aCertificateConsumer
-   *        An optional consumer that is invoked with the received SMP
-   *        certificate to be used for the transmission. The certification check
-   *        result must be considered when used. May be <code>null</code>.
-   * @param aVESID
-   *        The Validation Execution Set ID to be used for client side
-   *        XML/Schematron validation. If this parameter is <code>null</code>,
-   *        no validation is performed. This parameter is only effective in
-   *        combination with aValidationResultHandler.
-   * @param aValidationResultHandler
-   *        The result handler to be used for XML/Schematron validation. If this
-   *        parameter is <code>null</code>, no validation is performed. This
-   *        parameter is only effective in combination with aVESID.
-   * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper is used.
-   * @param aResponseConsumer
-   *        An optional consumer for the AS4 message that was sent. May be
-   *        <code>null</code>.
-   * @param aSignalMsgConsumer
-   *        An optional consumer that will contain the parsed Ebms3 response
-   *        signal message. May be <code>null</code>.
-   * @param aExceptionCallback
-   *        The generic exception handler for all caught exceptions. May not be
-   *        <code>null</code>.
+   *        The SMP client to be used. May not be <code>null</code>.
+   * @return The non-<code>null</code> AS4 endpoint.
    * @throws Phase4PeppolException
-   *         if something goes wrong
+   *         In case the endpoint resolution failed.
    */
-  private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
-                                       @Nonnull final AS4CryptoFactory aCryptoFactory,
-                                       @Nonnull final IPMode aSrcPMode,
-                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                       @Nonnull final IProcessIdentifier aProcID,
-                                       @Nonnull final IParticipantIdentifier aSenderID,
-                                       @Nonnull final IParticipantIdentifier aReceiverID,
-                                       @Nonnull @Nonempty final String sSenderPartyID,
-                                       @Nullable final String sConversationID,
-                                       @Nullable final String sSBDHInstanceIdentifier,
-                                       @Nullable final String sSBDHUBLVersionID,
-                                       @Nonnull final Element aPayloadElement,
-                                       @Nonnull final IMimeType aPayloadMimeType,
-                                       final boolean bCompressPayload,
-                                       @Nonnull final SMPClientReadOnly aSMPClient,
-                                       @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer,
-                                       @Nullable final VESID aVESID,
-                                       @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler,
-                                       @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                       @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
-                                       @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
+  @Nonnull
+  private static EndpointType _performSMPLookup (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                                 @Nonnull final IProcessIdentifier aProcID,
+                                                 @Nonnull final IParticipantIdentifier aReceiverID,
+                                                 @Nonnull final SMPClientReadOnly aSMPClient) throws Phase4PeppolException
   {
-    ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcID, "ProcID");
-    ValueEnforcer.notNull (aSenderID, "SenderID");
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
-    ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
-    ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
-    ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "PayloadElement.NamespaceURI");
-    ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
-    ValueEnforcer.notNull (aSMPClient, "SMPClient");
 
+    // Perform SMP lookup
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Start performing SMP lookup (" +
+                    aReceiverID.getURIEncoded () +
+                    ", " +
+                    aDocTypeID.getURIEncoded () +
+                    ", " +
+                    aProcID.getURIEncoded () +
+                    ")");
+
+    // Perform SMP lookup
+    final EndpointType aEndpoint;
+    try
+    {
+      aEndpoint = aSMPClient.getEndpoint (aReceiverID,
+                                          aDocTypeID,
+                                          aProcID,
+                                          ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
+      if (aEndpoint == null)
+        throw new Phase4PeppolException ("Failed to resolve SMP endpoint");
+    }
+    catch (final SMPClientException ex)
+    {
+      throw new Phase4PeppolException ("Failed to resolve SMP endpoint", ex);
+    }
+    return aEndpoint;
+  }
+
+  /**
+   * @param aPayloadElement
+   *        The payload element to be validated. May not be <code>null</code>.
+   * @param aVESID
+   *        The VESID to validate against. May be <code>null</code>.
+   * @param aValidationResultHandler
+   *        The validation result handler to be used. May be <code>null</code>.
+   * @throws Phase4PeppolException
+   *         If the validation result handler decides to do so....
+   */
+  private static void _validatePayload (@Nonnull final Element aPayloadElement,
+                                        @Nullable final VESID aVESID,
+                                        @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
+  {
     // Client side validation
     if (aVESID != null)
     {
@@ -362,67 +323,191 @@ public final class Phase4PeppolSender
     else
       if (aValidationResultHandler != null)
         LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
+  }
+
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sSBDHInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a
+   *        random ID.
+   * @param sSBDHUBLVersionID
+   *        SBDH UBL version ID. May be <code>null</code> to use the default.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The byte array of the XML representation of the created SBDH. Never
+   *         <code>null</code>.
+   */
+  @Nonnull
+  private static byte [] _createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
+                                      @Nonnull final IParticipantIdentifier aReceiverID,
+                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                      @Nonnull final IProcessIdentifier aProcID,
+                                      @Nullable final String sSBDHInstanceIdentifier,
+                                      @Nullable final String sSBDHUBLVersionID,
+                                      @Nonnull final Element aPayloadElement)
+  {
+    ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
+    ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "PayloadElement.NamespaceURI");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Start creating SBDH for AS4 message");
+
+    final StandardBusinessDocument aSBD = createSBDH (aSenderID,
+                                                      aReceiverID,
+                                                      aDocTypeID,
+                                                      aProcID,
+                                                      sSBDHInstanceIdentifier,
+                                                      sSBDHUBLVersionID,
+                                                      aPayloadElement);
+    final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
+    return aSBDBytes;
+  }
+
+  /**
+   * Get the receiver certificate from the specified SMP endpoint.
+   *
+   * @param aEndpoint
+   *        The determined SMP endpoint. Never <code>null</code>.
+   * @param aCertificateConsumer
+   *        An optional consumer that is invoked with the received AP
+   *        certificate to be used for the transmission. The certification check
+   *        result must be considered when used. May be <code>null</code>.
+   * @return The extracted certificate and never <code>null</code>.
+   * @throws Phase4PeppolException
+   *         in case of error
+   */
+  @Nonnull
+  private static X509Certificate _getReceiverAPCert (final EndpointType aEndpoint,
+                                                     final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer) throws Phase4PeppolException
+  {
+    final X509Certificate aReceiverCert;
+    try
+    {
+      aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
+    }
+    catch (final CertificateException ex)
+    {
+      throw new Phase4PeppolException ("Failed to extract AP certificate from SMP endpoint", ex);
+    }
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
+
+      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
+                                                                                                                aNow,
+                                                                                                                ETriState.UNDEFINED,
+                                                                                                                ETriState.UNDEFINED);
+
+      // Interested in the certificate?
+      if (aCertificateConsumer != null)
+        aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, eCertCheckResult);
+
+      if (eCertCheckResult.isInvalid ())
+      {
+        throw new Phase4PeppolException ("The received AP certificate from the SMP is not valid (at " +
+                                         aNow +
+                                         ") and cannot be used for sending. Aborting. Reason: " +
+                                         eCertCheckResult.getReason ());
+      }
+    }
+    return aReceiverCert;
+  }
+
+  /**
+   * Send an AS4 message. It is highly recommend to use the {@link Builder}
+   * class, because it is very likely, that this API is NOT stable.
+   *
+   * @param aHttpClientFactory
+   *        The HTTP client factory to be used. May not be <code>null</code>.
+   * @param aCryptoFactory
+   *        The crypto factory to be used. May not be <code>null</code>.
+   * @param aSrcPMode
+   *        The source PMode to be used. May not be <code>null</code>.
+   * @param aSenderID
+   *        The Peppol sending participant ID to be used. May not be
+   *        <code>null</code>.
+   * @param aReceiverID
+   *        The Peppol receiving participant ID to send to. May not be
+   *        <code>null</code>.
+   * @param aDocTypeID
+   *        The Peppol Document type ID to be used. May not be <code>null</code>
+   * @param aProcessID
+   *        The Peppol process ID to be used. May not be <code>null</code>.
+   * @param sSenderPartyID
+   *        The sending party ID (the CN part of the senders certificate
+   *        subject). May not be <code>null</code>.
+   * @param sConversationID
+   *        The AS4 conversation to be used. If none is provided, a random UUID
+   *        is used. May be <code>null</code>.
+   * @param aEndpoint
+   *        The determined SMP endpoint. Never <code>null</code>.
+   * @param aCertificateConsumer
+   *        An optional consumer that is invoked with the received AP
+   *        certificate to be used for the transmission. The certification check
+   *        result must be considered when used. May be <code>null</code>.
+   * @param aPayloadSBDBytes
+   *        The Peppol SBDH payload to be send. May not be <code>null</code>.
+   * @param aPayloadMimeType
+   *        The MIME type of the payload. Usually "application/xml". May not be
+   *        <code>null</code>.
+   * @param bCompressPayload
+   *        <code>true</code> to use AS4 compression on the payload,
+   *        <code>false</code> to not compress it.
+   * @param aBuildMessageCallback
+   *        An internal callback to do something with the build Ebms message.
+   *        May be <code>null</code>.
+   * @param aOutgoingDumper
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If
+   *        <code>null</code> the global outgoing dumper is used.
+   * @param aResponseConsumer
+   *        An optional consumer for the AS4 message that was sent. May be
+   *        <code>null</code>.
+   * @param aSignalMsgConsumer
+   *        An optional consumer that will contain the parsed Ebms3 response
+   *        signal message. May be <code>null</code>.
+   * @throws Phase4PeppolException
+   *         if something goes wrong
+   */
+  private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
+                                       @Nonnull final AS4CryptoFactory aCryptoFactory,
+                                       @Nonnull final IPMode aSrcPMode,
+                                       @Nonnull final IParticipantIdentifier aSenderID,
+                                       @Nonnull final IParticipantIdentifier aReceiverID,
+                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
+                                       @Nonnull final IProcessIdentifier aProcessID,
+                                       @Nonnull @Nonempty final String sSenderPartyID,
+                                       @Nullable final String sConversationID,
+                                       @Nonnull final X509Certificate aReceiverCert,
+                                       @Nonnull @Nonempty final String sReceiverEndpointURL,
+                                       @Nonnull final byte [] aPayloadSBDBytes,
+                                       @Nonnull final IMimeType aPayloadMimeType,
+                                       final boolean bCompressPayload,
+                                       @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
+                                       @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                       @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
+                                       @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
+  {
+    ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
+    ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
+    ValueEnforcer.notNull (aProcessID, "ProcID");
+    ValueEnforcer.notNull (aSenderID, "SenderID");
+    ValueEnforcer.notNull (aReceiverID, "ReceiverID");
+    ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
+    ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
 
     // Temporary file manager
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
-      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
-
-      // Perform SMP lookup
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Start performing SMP lookup (" +
-                      aReceiverID.getURIEncoded () +
-                      ", " +
-                      aDocTypeID.getURIEncoded () +
-                      ", " +
-                      aProcID.getURIEncoded () +
-                      ")");
-
-      // Perform SMP lookup
-      final EndpointType aEndpoint;
-      try
-      {
-        aEndpoint = aSMPClient.getEndpoint (aReceiverID,
-                                            aDocTypeID,
-                                            aProcID,
-                                            ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
-        if (aEndpoint == null)
-          throw new Phase4PeppolException ("Failed to resolve SMP endpoint");
-      }
-      catch (final SMPClientException ex)
-      {
-        throw new Phase4PeppolException ("Failed to resolve SMP endpoint", ex);
-      }
-
-      // Certificate from SMP lookup
-      final X509Certificate aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
-      {
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
-
-        final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                                  aNow,
-                                                                                                                  ETriState.UNDEFINED,
-                                                                                                                  ETriState.UNDEFINED);
-
-        // Interested in the certificate?
-        if (aCertificateConsumer != null)
-          aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, eCertCheckResult);
-
-        if (eCertCheckResult.isInvalid ())
-        {
-          throw new Phase4PeppolException ("The received AP certificate from the SMP is not valid (at " +
-                                           aNow +
-                                           ") and cannot be used for sending. Aborting. Reason: " +
-                                           eCertCheckResult.getReason ());
-        }
-      }
-
-      // URL from SMP lookup
-      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
-      if (StringHelper.hasNoText (sDestURL))
-        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
-
       // Start building AS4 User Message
       final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
       aUserMsg.setHttpClientFactory (aHttpClientFactory);
@@ -434,6 +519,7 @@ public final class Phase4PeppolSender
       aUserMsg.setAS4CryptoFactory (aCryptoFactory);
       aUserMsg.setPMode (aSrcPMode, true);
 
+      // Set after PMode
       aUserMsg.cryptParams ().setCertificate (aReceiverCert);
 
       // Explicit parameters have precedence over PMode
@@ -443,8 +529,8 @@ public final class Phase4PeppolSender
       // used as Access Points may use just one generic P-Mode for receiving
       // messages.
       aUserMsg.setPModeIDFactory (x -> null);
-      aUserMsg.setServiceType (aProcID.getScheme ());
-      aUserMsg.setServiceValue (aProcID.getValue ());
+      aUserMsg.setServiceType (aProcessID.getScheme ());
+      aUserMsg.setServiceValue (aProcessID.getValue ());
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
       aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID
                                                                          : UUID.randomUUID ().toString ());
@@ -463,31 +549,22 @@ public final class Phase4PeppolSender
       // No payload - only one attachment
       aUserMsg.setPayload (null);
 
-      // Create SBDH and add as attachment
-      {
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Start creating SBDH for AS4 message");
-
-        final StandardBusinessDocument aSBD = createSBDH (aSenderID,
-                                                          aReceiverID,
-                                                          aDocTypeID,
-                                                          aProcID,
-                                                          sSBDHInstanceIdentifier,
-                                                          sSBDHUBLVersionID,
-                                                          aPayloadElement);
-        final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
-        aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aSBDBytes,
-                                                                              null,
-                                                                              "document.xml",
-                                                                              aPayloadMimeType,
-                                                                              bCompressPayload ? EAS4CompressionMode.GZIP
-                                                                                               : null,
-                                                                              aResHelper));
-      }
+      // Add SBDH as attachment only
+      aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aPayloadSBDBytes,
+                                                                            null,
+                                                                            "document.xml",
+                                                                            aPayloadMimeType,
+                                                                            bCompressPayload ? EAS4CompressionMode.GZIP
+                                                                                             : null,
+                                                                            aResHelper));
 
       // Main sending
-      final IAS4ClientBuildMessageCallback aCallback = null;
-      _sendHttp (aUserMsg, sDestURL, aCallback, aOutgoingDumper, aResponseConsumer, aSignalMsgConsumer);
+      _sendHttp (aUserMsg,
+                 sReceiverEndpointURL,
+                 aBuildMessageCallback,
+                 aOutgoingDumper,
+                 aResponseConsumer,
+                 aSignalMsgConsumer);
     }
     catch (final Phase4PeppolException ex)
     {
@@ -497,7 +574,7 @@ public final class Phase4PeppolSender
     catch (final Exception ex)
     {
       // wrap
-      throw new Phase4PeppolException ("Wrapped Phase4PeppolExceptioN", ex);
+      throw new Phase4PeppolException ("Wrapped Phase4PeppolException", ex);
     }
   }
 
@@ -512,45 +589,36 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * The builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.
+   * Abstract builder base class with the minimum requirements configuration
    *
    * @author Philip Helger
-   * @since 0.9.4
+   * @param <IMPLTYPE>
+   *        The implementation type
+   * @since 0.9.6
    */
-  public static class Builder
+  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> implements
+                                                   IGenericImplTrait <IMPLTYPE>
   {
-    private HttpClientFactory m_aHttpClientFactory;
-    private AS4CryptoFactory m_aCryptoFactory;
-    private IPMode m_aPMode;
-    private IDocumentTypeIdentifier m_aDocTypeID;
-    private IProcessIdentifier m_aProcessID;
-    private IParticipantIdentifier m_aSenderID;
-    private IParticipantIdentifier m_aReceiverID;
-    private String m_sSenderPartyID;
-    private String m_sConversationID;
-    private String m_sSBDHInstanceIdentifier;
-    private String m_sSBDHUBLVersion;
-    private Element m_aPayloadElement;
-    private IMimeType m_aPayloadMimeType;
-    private boolean m_bCompressPayload;
-    private SMPClientReadOnly m_aSMPClient;
-    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
-    private VESID m_aVESID;
-    private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
-    private IAS4OutgoingDumper m_aOutgoingDumper;
-    private IPhase4PeppolResponseConsumer m_aResponseConsumer;
-    private IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
+    protected HttpClientFactory m_aHttpClientFactory;
+    protected AS4CryptoFactory m_aCryptoFactory;
+    protected IPMode m_aPMode;
 
-    /**
-     * Create a new builder, with the following fields already set:<br>
-     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setPMode(IPMode)}<br>
-     * {@link #setPayloadMimeType(IMimeType)}<br>
-     * {@link #setCompressPayload(boolean)}<br>
-     * {@link #setExceptionCallback(IExceptionCallback)}<br>
-     */
-    public Builder ()
+    protected IParticipantIdentifier m_aSenderID;
+    protected IParticipantIdentifier m_aReceiverID;
+    protected IDocumentTypeIdentifier m_aDocTypeID;
+    protected IProcessIdentifier m_aProcessID;
+    protected String m_sSenderPartyID;
+    protected String m_sConversationID;
+
+    protected IMimeType m_aPayloadMimeType;
+    protected boolean m_bCompressPayload;
+
+    protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
+    protected IAS4OutgoingDumper m_aOutgoingDumper;
+    protected IPhase4PeppolResponseConsumer m_aResponseConsumer;
+    protected IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
+
+    protected AbstractBaseBuilder ()
     {
       // Set default values
       try
@@ -578,11 +646,11 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
+    public IMPLTYPE setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
     {
       ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
       m_aHttpClientFactory = aHttpClientFactory;
-      return this;
+      return thisAsT ();
     }
 
     /**
@@ -594,11 +662,11 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
+    public IMPLTYPE setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
     {
       ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
       m_aCryptoFactory = aCryptoFactory;
-      return this;
+      return thisAsT ();
     }
 
     /**
@@ -610,43 +678,11 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setPMode (@Nonnull final IPMode aPMode)
+    public IMPLTYPE setPMode (@Nonnull final IPMode aPMode)
     {
       ValueEnforcer.notNull (aPMode, "PMode");
       m_aPMode = aPMode;
-      return this;
-    }
-
-    /**
-     * Set the document type ID to be send. The document type must be provided
-     * prior to sending.
-     *
-     * @param aDocTypeID
-     *        The document type ID to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
-    {
-      ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
-      m_aDocTypeID = aDocTypeID;
-      return this;
-    }
-
-    /**
-     * Set the process ID to be send. The process ID must be provided prior to
-     * sending.
-     *
-     * @param aProcessID
-     *        The process ID to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setProcessID (@Nonnull final IProcessIdentifier aProcessID)
-    {
-      ValueEnforcer.notNull (aProcessID, "ProcessID");
-      m_aProcessID = aProcessID;
-      return this;
+      return thisAsT ();
     }
 
     /**
@@ -658,11 +694,11 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    public IMPLTYPE setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
       m_aSenderID = aSenderID;
-      return this;
+      return thisAsT ();
     }
 
     /**
@@ -674,11 +710,43 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    public IMPLTYPE setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
       m_aReceiverID = aReceiverID;
-      return this;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the document type ID to be send. The document type must be provided
+     * prior to sending.
+     *
+     * @param aDocTypeID
+     *        The document type ID to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public IMPLTYPE setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    {
+      ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
+      m_aDocTypeID = aDocTypeID;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the process ID to be send. The process ID must be provided prior to
+     * sending.
+     *
+     * @param aProcessID
+     *        The process ID to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public IMPLTYPE setProcessID (@Nonnull final IProcessIdentifier aProcessID)
+    {
+      ValueEnforcer.notNull (aProcessID, "ProcessID");
+      m_aProcessID = aProcessID;
+      return thisAsT ();
     }
 
     /**
@@ -691,11 +759,11 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    public IMPLTYPE setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
     {
       ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
       m_sSenderPartyID = sSenderPartyID;
-      return this;
+      return thisAsT ();
     }
 
     /**
@@ -708,10 +776,172 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setConversationID (@Nullable final String sConversationID)
+    public IMPLTYPE setConversationID (@Nullable final String sConversationID)
     {
       m_sConversationID = sConversationID;
-      return this;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the MIME type of the payload. By default it is
+     * <code>application/xml</code> and MUST usually not be changed. This value
+     * is required for sending.
+     *
+     * @param aPayloadMimeType
+     *        The payload MIME type. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public IMPLTYPE setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
+    {
+      ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
+      m_aPayloadMimeType = aPayloadMimeType;
+      return thisAsT ();
+    }
+
+    /**
+     * Enable or disable the AS4 compression of the payload. By default
+     * compression is disabled.
+     *
+     * @param bCompressPayload
+     *        <code>true</code> to compress the payload, <code>false</code> to
+     *        not compress it.
+     * @return this for chaining.
+     */
+    @Nonnull
+    public IMPLTYPE setCompressPayload (final boolean bCompressPayload)
+    {
+      m_bCompressPayload = bCompressPayload;
+      return thisAsT ();
+    }
+
+    /**
+     * Set a internal message callback. Usually this method is NOT needed. Use
+     * only when you know what you are doing.
+     *
+     * @param aBuildMessageCallback
+     *        An internal to be used for the created message. Maybe
+     *        <code>null</code>.
+     * @return this for chaining
+     * @since 0.9.6
+     */
+    @Nonnull
+    public IMPLTYPE setBuildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
+    {
+      m_aBuildMessageCallback = aBuildMessageCallback;
+      return thisAsT ();
+    }
+
+    /**
+     * Set a specific outgoing dumper for this builder.
+     *
+     * @param aOutgoingDumper
+     *        An outgoing dumper to be used. Maybe <code>null</code>. If
+     *        <code>null</code> the global outgoing dumper is used.
+     * @return this for chaining
+     * @since 0.9.6
+     */
+    @Nonnull
+    public IMPLTYPE setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    {
+      m_aOutgoingDumper = aOutgoingDumper;
+      return thisAsT ();
+    }
+
+    /**
+     * Set an optional handler for the synchronous result message received from
+     * the other side. This method is optional and must not be called prior to
+     * sending.
+     *
+     * @param aResponseConsumer
+     *        The optional response consumer. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public IMPLTYPE setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
+    {
+      m_aResponseConsumer = aResponseConsumer;
+      return thisAsT ();
+    }
+
+    /**
+     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
+     * the response is trying to be parsed as a Signal Message. This method is
+     * optional and must not be called prior to sending.
+     *
+     * @param aSignalMsgConsumer
+     *        The optional signal message consumer. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public IMPLTYPE setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
+    {
+      m_aSignalMsgConsumer = aSignalMsgConsumer;
+      return thisAsT ();
+    }
+
+    @OverridingMethodsMustInvokeSuper
+    public boolean isEveryRequiredFieldSet ()
+    {
+      if (m_aHttpClientFactory == null)
+        return false;
+      // m_aCryptoFactory may be null
+      if (m_aPMode == null)
+        return false;
+
+      if (m_aSenderID == null)
+        return false;
+      if (m_aReceiverID == null)
+        return false;
+      if (m_aDocTypeID == null)
+        return false;
+      if (m_aProcessID == null)
+        return false;
+      if (StringHelper.hasNoText (m_sSenderPartyID))
+        return false;
+      // m_sConversationID is optional
+
+      if (m_aPayloadMimeType == null)
+        return false;
+      // m_bCompressPayload cannot be null
+
+      // m_aBuildMessageCallback may be null
+      // m_aOutgoingDumper may be null
+      // m_aResponseConsumer may be null
+      // m_aSignalMsgConsumer may be null
+
+      return true;
+    }
+  }
+
+  /**
+   * The builder class for sending AS4 messages using Peppol specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
+   *
+   * @author Philip Helger
+   * @since 0.9.4
+   */
+  public static class Builder extends AbstractBaseBuilder <Builder>
+  {
+    private String m_sSBDHInstanceIdentifier;
+    private String m_sSBDHUBLVersion;
+    private VESID m_aVESID;
+    private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
+    private Element m_aPayloadElement;
+    private SMPClientReadOnly m_aSMPClient;
+    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+
+    /**
+     * Create a new builder, with the following fields already set:<br>
+     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setPMode(IPMode)}<br>
+     * {@link #setPayloadMimeType(IMimeType)}<br>
+     * {@link #setCompressPayload(boolean)}<br>
+     * {@link #setExceptionCallback(IExceptionCallback)}<br>
+     */
+    public Builder ()
+    {
+      super ();
     }
 
     /**
@@ -760,39 +990,6 @@ public final class Phase4PeppolSender
       ValueEnforcer.notNull (aPayload, "Payload");
       ValueEnforcer.notNull (aPayload.getNamespaceURI (), "Payload.NamespaceURI");
       m_aPayloadElement = aPayload;
-      return this;
-    }
-
-    /**
-     * Set the MIME type of the payload. By default it is
-     * <code>application/xml</code> and MUST usually not be changed. This value
-     * is required for sending.
-     *
-     * @param aPayloadMimeType
-     *        The payload MIME type. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
-    {
-      ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
-      m_aPayloadMimeType = aPayloadMimeType;
-      return this;
-    }
-
-    /**
-     * Enable or disable the AS4 compression of the payload. By default
-     * compression is disabled.
-     *
-     * @param bCompressPayload
-     *        <code>true</code> to compress the payload, <code>false</code> to
-     *        not compress it.
-     * @return this for chaining.
-     */
-    @Nonnull
-    public Builder setCompressPayload (final boolean bCompressPayload)
-    {
-      m_bCompressPayload = bCompressPayload;
       return this;
     }
 
@@ -878,54 +1075,6 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set a specific outgoing dumper for this builder.
-     * 
-     * @param aOutgoingDumper
-     *        An outgoing dumper to be used. Maybe <code>null</code>. If
-     *        <code>null</code> the global outgoing dumper is used.
-     * @return this for chaining
-     * @since 0.9.6
-     */
-    @Nonnull
-    public Builder setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
-    {
-      m_aOutgoingDumper = aOutgoingDumper;
-      return this;
-    }
-
-    /**
-     * Set an optional handler for the synchronous result message received from
-     * the other side. This method is optional and must not be called prior to
-     * sending.
-     *
-     * @param aResponseConsumer
-     *        The optional response consumer. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
-    {
-      m_aResponseConsumer = aResponseConsumer;
-      return this;
-    }
-
-    /**
-     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
-     * the response is trying to be parsed as a Signal Message. This method is
-     * optional and must not be called prior to sending.
-     *
-     * @param aSignalMsgConsumer
-     *        The optional signal message consumer. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
-    {
-      m_aSignalMsgConsumer = aSignalMsgConsumer;
-      return this;
-    }
-
-    /**
      * Set the exception callback to be used in case something goes wrong. By
      * default a logging exception handler is installed, so this method must not
      * be called explicitly.
@@ -933,7 +1082,7 @@ public final class Phase4PeppolSender
      * @param aExceptionCallback
      *        The exception callback to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @deprecated in 0.9.5 - has no effect anymore
+     * @deprecated in 0.9.5 - has no effect anymore. Just remove any invocation.
      */
     @Deprecated
     @Nonnull
@@ -942,36 +1091,21 @@ public final class Phase4PeppolSender
       return this;
     }
 
+    @Override
     public boolean isEveryRequiredFieldSet ()
     {
-      if (m_aHttpClientFactory == null)
+      if (!super.isEveryRequiredFieldSet ())
         return false;
-      if (m_aPMode == null)
-        return false;
-      if (m_aDocTypeID == null)
-        return false;
-      if (m_aProcessID == null)
-        return false;
-      if (m_aSenderID == null)
-        return false;
-      if (m_aReceiverID == null)
-        return false;
-      if (StringHelper.hasNoText (m_sSenderPartyID))
-        return false;
-      // m_sConversationID is optional
-      // m_sSBDHInstanceIdentifier is optional
+
+      // m_sSBDHInstanceIdentifier may be null
+      // m_sSBDHUBLVersion may be null
       if (m_aPayloadElement == null)
         return false;
-      if (m_aPayloadMimeType == null)
-        return false;
-      // m_bCompressPayload cannot be null
       if (m_aSMPClient == null)
         return false;
       // m_aOnInvalidCertificateConsumer may be null
       // m_aVESID may be null
       // m_aValidationResultHandler may be null
-      // m_aResponseConsumer may be null
-      // m_aSignalMsgConsumer may be null
 
       // All valid
       return true;
@@ -997,24 +1131,44 @@ public final class Phase4PeppolSender
         LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
+
+      // Optional payload validation
+      _validatePayload (m_aPayloadElement, m_aVESID, m_aValidationResultHandler);
+      // SMP lookup
+      final EndpointType aEndpoint = _performSMPLookup (m_aDocTypeID, m_aProcessID, m_aReceiverID, m_aSMPClient);
+
+      // Certificate from SMP lookup
+      final X509Certificate aReceiverCert = _getReceiverAPCert (aEndpoint, m_aCertificateConsumer);
+
+      // URL from SMP lookup
+      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
+      if (StringHelper.hasNoText (sDestURL))
+        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
+
+      // Created SBDH
+      final byte [] aSBDBytes = _createSBDH (m_aSenderID,
+                                             m_aReceiverID,
+                                             m_aDocTypeID,
+                                             m_aProcessID,
+                                             m_sSBDHInstanceIdentifier,
+                                             m_sSBDHUBLVersion,
+                                             m_aPayloadElement);
+
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
                        m_aPMode,
-                       m_aDocTypeID,
-                       m_aProcessID,
                        m_aSenderID,
                        m_aReceiverID,
+                       m_aDocTypeID,
+                       m_aProcessID,
                        m_sSenderPartyID,
                        m_sConversationID,
-                       m_sSBDHInstanceIdentifier,
-                       m_sSBDHUBLVersion,
-                       m_aPayloadElement,
+                       aReceiverCert,
+                       sDestURL,
+                       aSBDBytes,
                        m_aPayloadMimeType,
                        m_bCompressPayload,
-                       m_aSMPClient,
-                       m_aCertificateConsumer,
-                       m_aVESID,
-                       m_aValidationResultHandler,
+                       m_aBuildMessageCallback,
                        m_aOutgoingDumper,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
