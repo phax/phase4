@@ -618,6 +618,14 @@ public final class Phase4PeppolSender
     protected IPhase4PeppolResponseConsumer m_aResponseConsumer;
     protected IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
 
+    /**
+     * Create a new builder, with the following fields already set:<br>
+     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setPMode(IPMode)}<br>
+     * {@link #setPayloadMimeType(IMimeType)}<br>
+     * {@link #setCompressPayload(boolean)}<br>
+     * {@link #setExceptionCallback(IExceptionCallback)}<br>
+     */
     protected AbstractBaseBuilder ()
     {
       // Set default values
@@ -916,7 +924,9 @@ public final class Phase4PeppolSender
 
   /**
    * The builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.
+   * {@link #sendMessage()} to trigger the main transmission.<br>
+   * This builder class assumes, that only the payload (e.g. the Invoice) is
+   * present, and that both validation and SBDH creation happens inside.
    *
    * @author Philip Helger
    * @since 0.9.4
@@ -928,6 +938,7 @@ public final class Phase4PeppolSender
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
     private Element m_aPayloadElement;
+    private byte [] m_aPayloadBytes;
     private SMPClientReadOnly m_aSMPClient;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
 
@@ -940,9 +951,7 @@ public final class Phase4PeppolSender
      * {@link #setExceptionCallback(IExceptionCallback)}<br>
      */
     public Builder ()
-    {
-      super ();
-    }
+    {}
 
     /**
      * Set the SBDH instance identifier. If none is provided, a random ID is
@@ -977,19 +986,40 @@ public final class Phase4PeppolSender
 
     /**
      * Set the payload element to be used, if it is available as a parsed DOM
-     * element.
+     * element. If this method is called, it overwrites any other explicitly set
+     * payload.
      *
-     * @param aPayload
+     * @param aPayloadElement
      *        The payload element to be used. They payload element MUST have a
      *        namespace URI. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public Builder setPayload (@Nonnull final Element aPayload)
+    public Builder setPayload (@Nonnull final Element aPayloadElement)
     {
-      ValueEnforcer.notNull (aPayload, "Payload");
-      ValueEnforcer.notNull (aPayload.getNamespaceURI (), "Payload.NamespaceURI");
-      m_aPayloadElement = aPayload;
+      ValueEnforcer.notNull (aPayloadElement, "Payload");
+      ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "Payload.NamespaceURI");
+      m_aPayloadElement = aPayloadElement;
+      m_aPayloadBytes = null;
+      return this;
+    }
+
+    /**
+     * Set the payload to be used as a byte array. It will be parsed internally
+     * to a DOM element. If this method is called, it overwrites any other
+     * explicitly set payload.
+     *
+     * @param aPayloadBytes
+     *        The payload bytes to be used. May not be <code>null</code>.
+     * @return this for chaining
+     * @since 0.9.6
+     */
+    @Nonnull
+    public Builder setPayload (@Nonnull final byte [] aPayloadBytes)
+    {
+      ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
+      m_aPayloadBytes = aPayloadBytes;
+      m_aPayloadElement = null;
       return this;
     }
 
@@ -1099,7 +1129,7 @@ public final class Phase4PeppolSender
 
       // m_sSBDHInstanceIdentifier may be null
       // m_sSBDHUBLVersion may be null
-      if (m_aPayloadElement == null)
+      if (m_aPayloadElement == null && m_aPayloadBytes == null)
         return false;
       if (m_aSMPClient == null)
         return false;
@@ -1132,8 +1162,27 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
       }
 
+      // Ensure a DOM element is present
+      Element aPayloadElement = null;
+      if (m_aPayloadElement != null)
+        aPayloadElement = m_aPayloadElement;
+      else
+        if (m_aPayloadBytes != null)
+        {
+          // Parse it
+          final Document aDoc = DOMReader.readXMLDOM (m_aPayloadBytes);
+          if (aDoc == null)
+            throw new Phase4PeppolException ("Failed to parse payload bytes to a DOM node");
+          aPayloadElement = aDoc.getDocumentElement ();
+          if (aPayloadElement == null || aPayloadElement.getNamespaceURI () == null)
+            throw new Phase4PeppolException ("The parsed XML document must have a root element that has a namespace URI");
+        }
+        else
+          throw new IllegalStateException ("Unexpected - neither element nor bytes are present");
+
       // Optional payload validation
-      _validatePayload (m_aPayloadElement, m_aVESID, m_aValidationResultHandler);
+      _validatePayload (aPayloadElement, m_aVESID, m_aValidationResultHandler);
+
       // SMP lookup
       final EndpointType aEndpoint = _performSMPLookup (m_aDocTypeID, m_aProcessID, m_aReceiverID, m_aSMPClient);
 
@@ -1152,7 +1201,7 @@ public final class Phase4PeppolSender
                                              m_aProcessID,
                                              m_sSBDHInstanceIdentifier,
                                              m_sSBDHUBLVersion,
-                                             m_aPayloadElement);
+                                             aPayloadElement);
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,

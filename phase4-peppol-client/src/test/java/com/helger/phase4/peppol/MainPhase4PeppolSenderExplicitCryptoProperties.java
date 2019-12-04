@@ -20,11 +20,11 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation390;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -36,7 +36,6 @@ import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
-import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * The main class that requires manual configuration before it can be run. This
@@ -58,9 +57,8 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
 
     try (final WebScoped w = new WebScoped ())
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
-                                               .getDocumentElement ();
-      if (aPayloadElement == null)
+      final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
+      if (aPayloadBytes == null)
         throw new IllegalStateException ();
 
       // Manual information - don't use crypto.properties
@@ -82,7 +80,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
                             .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc"))
                             .setReceiverParticipantID (aReceiverID)
                             .setSenderPartyID ("POP000306")
-                            .setPayload (aPayloadElement)
+                            .setPayload (aPayloadBytes)
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
