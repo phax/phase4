@@ -257,14 +257,14 @@ public final class Phase4PeppolSender
    * @param aSMPClient
    *        The SMP client to be used. May not be <code>null</code>.
    * @return The non-<code>null</code> AS4 endpoint.
-   * @throws Phase4PeppolException
+   * @throws Phase4SMPPeppolException
    *         In case the endpoint resolution failed.
    */
   @Nonnull
   private static EndpointType _performSMPLookup (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                                  @Nonnull final IProcessIdentifier aProcID,
                                                  @Nonnull final IParticipantIdentifier aReceiverID,
-                                                 @Nonnull final SMPClientReadOnly aSMPClient) throws Phase4PeppolException
+                                                 @Nonnull final SMPClientReadOnly aSMPClient) throws Phase4PeppolSMPException
   {
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcID, "ProcID");
@@ -289,11 +289,11 @@ public final class Phase4PeppolSender
                                           aProcID,
                                           ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
       if (aEndpoint == null)
-        throw new Phase4PeppolException ("Failed to resolve SMP endpoint");
+        throw new Phase4PeppolSMPException ("Failed to resolve SMP endpoint");
     }
     catch (final SMPClientException ex)
     {
-      throw new Phase4PeppolException ("Failed to resolve SMP endpoint", ex);
+      throw new Phase4PeppolSMPException ("Failed to resolve SMP endpoint", ex);
     }
     return aEndpoint;
   }
