@@ -61,7 +61,8 @@ public final class MainPhase4PeppolSender
 
     final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
-    GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
+    if (false)
+      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
     // Dump (for debugging purpose only)
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
@@ -76,7 +77,8 @@ public final class MainPhase4PeppolSender
 
       // Start configuring here
       IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
-      aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018as4");
+      if (false)
+        aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0088:5050689000018as4");
       final IPhase4PeppolResponseConsumer aResponseConsumer = aResponseEntity -> {
         if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
         {

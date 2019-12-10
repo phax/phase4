@@ -53,7 +53,8 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
 
     final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
-    GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
+    if (false)
+      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
     try (final WebScoped w = new WebScoped ())
     {
