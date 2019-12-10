@@ -33,7 +33,7 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -105,7 +105,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager
-    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    final IAS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);

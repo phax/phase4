@@ -25,6 +25,7 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
@@ -48,8 +49,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
 
   private IMPCManager m_aMPCMgr;
   private IPModeManager m_aPModeMgr;
+  private IAS4DuplicateManager m_aIncomingDuplicateMgr;
   private AS4ProfileManager m_aProfileMgr;
-  private AS4DuplicateManager m_aIncomingDuplicateMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -67,8 +68,10 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       // MPC manager before PMode manager
       m_aMPCMgr = new MPCManager (MPC_XML);
       m_aPModeMgr = new PModeManager (PMODE_XML);
-      m_aProfileMgr = new AS4ProfileManager ();
       m_aIncomingDuplicateMgr = new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
+
+      // profile mgr is in-memory
+      m_aProfileMgr = new AS4ProfileManager ();
 
       _initCallbacks ();
 
@@ -106,14 +109,14 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public static AS4ProfileManager getProfileMgr ()
+  public static IAS4DuplicateManager getIncomingDuplicateMgr ()
   {
-    return getInstance ().m_aProfileMgr;
+    return getInstance ().m_aIncomingDuplicateMgr;
   }
 
   @Nonnull
-  public static AS4DuplicateManager getIncomingDuplicateMgr ()
+  public static AS4ProfileManager getProfileMgr ()
   {
-    return getInstance ().m_aIncomingDuplicateMgr;
+    return getInstance ().m_aProfileMgr;
   }
 }

@@ -34,25 +34,14 @@ import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
  *
  * @author Philip Helger
  */
-public final class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem>
+public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem> implements
+                                 IAS4DuplicateManager
 {
   public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
   {
     super (AS4DuplicateItem.class, sFilename);
   }
 
-  /**
-   * Check if the passed message ID was already handled.
-   *
-   * @param sMessageID
-   *        Message ID to check. May be <code>null</code>.
-   * @param sProfileID
-   *        Active AS4 profile ID. May be used to define the PMode further. May
-   *        be <code>null</code>.
-   * @param sPModeID
-   *        Active AS4 PMode ID. May be <code>null</code>.
-   * @return {@link EContinue#CONTINUE} to continue
-   */
   @Nonnull
   public EContinue registerAndCheck (@Nullable final String sMessageID,
                                      @Nullable final String sProfileID,
@@ -79,24 +68,12 @@ public final class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS
     return EContinue.CONTINUE;
   }
 
-  /**
-   * Remove all entries in the cache.
-   *
-   * @return {@link EChange}
-   */
   @Nonnull
   public EChange clearCache ()
   {
     return m_aRWLock.writeLocked ( () -> internalRemoveAllItemsNoCallback ());
   }
 
-  /**
-   * Delete all duplicate items that were created before the provided time.
-   *
-   * @param aRefDT
-   *        The reference date time to compare to. May not be <code>null</code>.
-   * @return A non-<code>null</code> list of all evicted message IDs.
-   */
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <String> evictAllItemsBefore (@Nonnull final LocalDateTime aRefDT)

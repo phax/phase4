@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
@@ -56,7 +56,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager
-    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    final IAS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
@@ -99,7 +99,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager
-    final AS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
+    final IAS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
