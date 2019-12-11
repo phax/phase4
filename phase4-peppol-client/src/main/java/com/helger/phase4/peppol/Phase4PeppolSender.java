@@ -38,7 +38,6 @@ import org.w3c.dom.Node;
 import com.helger.bdve.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.callback.exception.IExceptionCallback;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.datetime.PDTFactory;
@@ -579,13 +578,25 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @return Create a new Builder for AS4 messages. Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present and
+   *         the SBDH should be created internally. Never <code>null</code>.
    * @since 0.9.4
    */
   @Nonnull
   public static Builder builder ()
   {
     return new Builder ();
+  }
+
+  /**
+   * @return Create a new Builder for AS4 messages if the SBDH payload is
+   *         already present. Never <code>null</code>.
+   * @since 0.9.6
+   */
+  @Nonnull
+  public static SBDHBuilder sbdhBuilder ()
+  {
+    return new SBDHBuilder ();
   }
 
   /**
@@ -621,10 +632,9 @@ public final class Phase4PeppolSender
     /**
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setPMode(IPMode)}<br>
+     * {@link #setCryptoFactory(AS4CryptoFactory)} {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
-     * {@link #setExceptionCallback(IExceptionCallback)}<br>
      */
     protected AbstractBaseBuilder ()
     {
@@ -948,7 +958,6 @@ public final class Phase4PeppolSender
      * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
-     * {@link #setExceptionCallback(IExceptionCallback)}<br>
      */
     public Builder ()
     {}
@@ -1104,23 +1113,6 @@ public final class Phase4PeppolSender
       return this;
     }
 
-    /**
-     * Set the exception callback to be used in case something goes wrong. By
-     * default a logging exception handler is installed, so this method must not
-     * be called explicitly.
-     *
-     * @param aExceptionCallback
-     *        The exception callback to be used. May not be <code>null</code>.
-     * @return this for chaining
-     * @deprecated in 0.9.5 - has no effect anymore. Just remove any invocation.
-     */
-    @Deprecated
-    @Nonnull
-    public Builder setExceptionCallback (@Nonnull final IExceptionCallback <? super Exception> aExceptionCallback)
-    {
-      return this;
-    }
-
     @Override
     public boolean isEveryRequiredFieldSet ()
     {
@@ -1133,7 +1125,7 @@ public final class Phase4PeppolSender
         return false;
       if (m_aSMPClient == null)
         return false;
-      // m_aOnInvalidCertificateConsumer may be null
+      // m_aCertificateConsumer may be null
       // m_aVESID may be null
       // m_aValidationResultHandler may be null
 
@@ -1215,6 +1207,150 @@ public final class Phase4PeppolSender
                        aReceiverCert,
                        sDestURL,
                        aSBDBytes,
+                       m_aPayloadMimeType,
+                       m_bCompressPayload,
+                       m_aBuildMessageCallback,
+                       m_aOutgoingDumper,
+                       m_aResponseConsumer,
+                       m_aSignalMsgConsumer);
+      return ESuccess.SUCCESS;
+    }
+  }
+
+  /**
+   * A builder class for sending AS4 messages using Peppol specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.<br>
+   * This builder class assumes, that the SBDH was created outside, therefore no
+   * validation can occur.
+   *
+   * @author Philip Helger
+   * @since 0.9.6
+   */
+  public static class SBDHBuilder extends AbstractBaseBuilder <SBDHBuilder>
+  {
+    private byte [] m_aPayloadBytes;
+    private SMPClientReadOnly m_aSMPClient;
+    private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+
+    /**
+     * Create a new builder, with the following fields already set:<br>
+     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setPMode(IPMode)}<br>
+     * {@link #setPayloadMimeType(IMimeType)}<br>
+     * {@link #setCompressPayload(boolean)}<br>
+     */
+    public SBDHBuilder ()
+    {}
+
+    /**
+     * Set the payload to be used as a byte array.
+     *
+     * @param aSBDHBytes
+     *        The SBDH bytes to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public SBDHBuilder setPayload (@Nonnull final byte [] aSBDHBytes)
+    {
+      ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
+      m_aPayloadBytes = aSBDHBytes;
+      return this;
+    }
+
+    /**
+     * Set the SMP client to be used. This is the point where e.g. the
+     * differentiation between SMK and SML can be done. This must be set prior
+     * to sending.
+     *
+     * @param aSMPClient
+     *        The SMP client to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public SBDHBuilder setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    {
+      ValueEnforcer.notNull (aSMPClient, "SMPClient");
+      m_aSMPClient = aSMPClient;
+      return this;
+    }
+
+    /**
+     * Set an optional Consumer for the retrieved certificate, independent of
+     * its usability.
+     *
+     * @param aCertificateConsumer
+     *        The consumer to be used. The first parameter is the certificate
+     *        itself and the second parameter is the internal check result. May
+     *        be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public SBDHBuilder setCertificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
+    {
+      m_aCertificateConsumer = aCertificateConsumer;
+      return this;
+    }
+
+    @Override
+    public boolean isEveryRequiredFieldSet ()
+    {
+      if (!super.isEveryRequiredFieldSet ())
+        return false;
+
+      if (m_aPayloadBytes == null)
+        return false;
+      if (m_aSMPClient == null)
+        return false;
+      // m_aCertificateConsumer may be null
+
+      // All valid
+      return true;
+    }
+
+    /**
+     * Synchronously send the AS4 message. Before sending,
+     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
+     * elements are set.
+     *
+     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
+     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
+     *         Never <code>null</code>.
+     * @throws Phase4PeppolException
+     *         In case of any error
+     * @see #isEveryRequiredFieldSet()
+     */
+    @Nonnull
+    public ESuccess sendMessage () throws Phase4PeppolException
+    {
+      if (!isEveryRequiredFieldSet ())
+      {
+        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
+        return ESuccess.FAILURE;
+      }
+
+      // SMP lookup
+      final EndpointType aEndpoint = _performSMPLookup (m_aDocTypeID, m_aProcessID, m_aReceiverID, m_aSMPClient);
+
+      // Certificate from SMP lookup
+      final X509Certificate aReceiverCert = _getReceiverAPCert (aEndpoint, m_aCertificateConsumer);
+
+      // URL from SMP lookup
+      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
+      if (StringHelper.hasNoText (sDestURL))
+        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
+
+      _sendAS4Message (m_aHttpClientFactory,
+                       m_aCryptoFactory,
+                       m_aPMode,
+                       m_aSenderID,
+                       m_aReceiverID,
+                       m_aDocTypeID,
+                       m_aProcessID,
+                       m_sSenderPartyID,
+                       m_sConversationID,
+                       aReceiverCert,
+                       sDestURL,
+                       m_aPayloadBytes,
                        m_aPayloadMimeType,
                        m_bCompressPayload,
                        m_aBuildMessageCallback,
