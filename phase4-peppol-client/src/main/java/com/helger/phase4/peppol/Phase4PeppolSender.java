@@ -930,6 +930,21 @@ public final class Phase4PeppolSender
 
       return true;
     }
+
+    /**
+     * Synchronously send the AS4 message. Before sending,
+     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
+     * elements are set.
+     *
+     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
+     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
+     *         Never <code>null</code>.
+     * @throws Phase4PeppolException
+     *         In case of any error
+     * @see #isEveryRequiredFieldSet()
+     */
+    @Nonnull
+    public abstract ESuccess sendMessage () throws Phase4PeppolException;
   }
 
   /**
@@ -1133,18 +1148,7 @@ public final class Phase4PeppolSender
       return true;
     }
 
-    /**
-     * Synchronously send the AS4 message. Before sending,
-     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
-     * elements are set.
-     *
-     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
-     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
-     *         Never <code>null</code>.
-     * @throws Phase4PeppolException
-     *         In case of any error
-     * @see #isEveryRequiredFieldSet()
-     */
+    @Override
     @Nonnull
     public ESuccess sendMessage () throws Phase4PeppolException
     {
@@ -1307,18 +1311,7 @@ public final class Phase4PeppolSender
       return true;
     }
 
-    /**
-     * Synchronously send the AS4 message. Before sending,
-     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
-     * elements are set.
-     *
-     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
-     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
-     *         Never <code>null</code>.
-     * @throws Phase4PeppolException
-     *         In case of any error
-     * @see #isEveryRequiredFieldSet()
-     */
+    @Override
     @Nonnull
     public ESuccess sendMessage () throws Phase4PeppolException
     {
