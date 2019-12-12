@@ -1,6 +1,6 @@
 # phase4 - AS4 client and server
 
-![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-152-100.png)
+![Logo](https://github.com/phax/phase4/blob/master/docs/logo/phase4-logo-653-180.png)
 
 A library to send and receive AS4 messages. 
 Licensed under the Apache 2 License!
@@ -126,6 +126,7 @@ Just write me an email - see pom.xml for my email address
     * Added support for creating in-memory managers only, using the system property `phase4.manager.inmemory`
     * Parameter type of `IAS4IncomingDumper.onNewRequest` changed to `HttpHeaderMap`
     * Made `AS4RequestHandler` usage more flexible to not solely rely on the Servlet API
+    * New logo thanks for Maria Petritsopoulou - http://stirringpixels.com/
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)
