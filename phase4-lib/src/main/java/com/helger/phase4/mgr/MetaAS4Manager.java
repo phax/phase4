@@ -40,6 +40,8 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
+  /** The boolean System property to enable in-memory managers */
+  public static final String SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY = "phase4.manager.inmemory";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
@@ -61,7 +63,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {
     try
     {
-      final String sInMemory = SystemProperties.getPropertyValueOrNull ("phase4.manager.inmemory");
+      final String sInMemory = SystemProperties.getPropertyValueOrNull (SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY);
       final boolean bInMemory = StringParser.parseBool (sInMemory, false);
       final IManagerFactory aMgrFactory;
       if (bInMemory)
