@@ -112,7 +112,8 @@ Just write me an email - see pom.xml for my email address
 
 # News and noteworthy
 
-* v0.9.6 - work in progress
+* v0.9.7 - work in progress
+* v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception 
     * Added the possibility to configure the keystore without the need of having the `crypto.properties` file
