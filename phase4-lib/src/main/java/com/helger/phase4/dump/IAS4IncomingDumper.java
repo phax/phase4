@@ -22,7 +22,8 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
+
+import com.helger.commons.http.HttpHeaderMap;
 
 /**
  * Interface for dumping incoming requests
@@ -35,13 +36,15 @@ public interface IAS4IncomingDumper extends Serializable
   /**
    * Called for new requests.
    *
-   * @param aHttpServletRequest
-   *        The current servlet request.
+   * @param aHttpHeaderMap
+   *        The HTTP headers of the request. Never <code>null</code>.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte
    *         read from the source stream is written to that output stream.
    * @throws IOException
    *         in case of an error
+   * @since v0.9.6 the parameter changed from HttpServletRequest to
+   *        {@link HttpHeaderMap}
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull HttpServletRequest aHttpServletRequest) throws IOException;
+  OutputStream onNewRequest (@Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 }

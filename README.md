@@ -124,6 +124,8 @@ Just write me an email - see pom.xml for my email address
     * Extracted interface `IAS4DuplicateManager` from `AS4DuplicateManager` and using it internally
     * Added the possibility to send pre-build SBDH messages (see [issue #22](https://github.com/phax/phase4/issues/22))
     * Added support for creating in-memory managers only, using the system property `phase4.manager.inmemory`
+    * Parameter type of `IAS4IncomingDumper.onNewRequest` changed to `HttpHeaderMap`
+    * Made `AS4RequestHandler` usage more flexible to not solely rely on the Servlet API
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)

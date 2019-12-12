@@ -58,7 +58,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   protected PMode m_aESENSTwoWayPMode;
-  protected ESOAPVersion m_eSOAPVersion;
+  protected ESOAPVersion m_eSoapVersion;
   protected Node m_aPayload;
 
   protected AbstractCEFTwoWayTestSetUp ()
@@ -95,7 +95,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                                          IPModeIDProvider.DEFAULT_DYNAMIC,
                                                          true);
 
-    m_eSOAPVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
+    m_eSoapVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 
@@ -146,7 +146,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                   aEbms3CollaborationInfo,
                                   aEbms3PartyInfo,
                                   aEbms3MessageProperties,
-                                  m_eSOAPVersion)
+                                  m_eSoapVersion)
                          .setMustUnderstand (true);
   }
 }

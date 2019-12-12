@@ -52,7 +52,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
   @BeforeClass
@@ -109,7 +109,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
+    String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response
     ThreadHelper.sleepSeconds (2);
@@ -134,12 +134,12 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
 
     // add the ID from the usermessage since its still one async message
     // transfer
-    aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                          MessageHelperMethods.createEbms3MessageInfo (aID),
                                          AS4TestConstants.DEFAULT_MPC,
                                          aAny)
                                 .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sResponse = sendPlainMessage (aEntity, true, null);
 
     final NodeList nUserList = aDoc.getElementsByTagName ("eb:MessageId");

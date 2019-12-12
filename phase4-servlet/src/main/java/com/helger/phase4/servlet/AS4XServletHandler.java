@@ -148,7 +148,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
       if (m_aHandlerCustomizer != null)
         m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
     }
-    catch (final BadRequestException ex)
+    catch (final AS4BadRequestException ex)
     {
       // Logged inside
       aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST,

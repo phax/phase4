@@ -728,6 +728,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
   }
 }

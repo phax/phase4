@@ -19,6 +19,7 @@ package com.helger.phase4.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -26,9 +27,11 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillClose;
+import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
 
@@ -50,6 +53,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.functional.ISupplier;
+import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
@@ -140,34 +144,38 @@ public class AS4RequestHandler implements AutoCloseable
 {
   private static interface IAS4ResponseFactory
   {
-    void applyToResponse (@Nonnull ESOAPVersion eSOAPVersion, @Nonnull AS4UnifiedResponse aHttpResponse);
+    void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse);
 
     @Nonnull
-    HttpEntity getHttpEntity (@Nonnull ESOAPVersion eSOAPVersion);
+    HttpEntity getHttpEntity (@Nonnull IMimeType aMimType);
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
   {
     private final Document m_aDoc;
+    private final IMimeType m_aMimeType;
 
-    public AS4ResponseFactoryXML (@Nonnull final Document aDoc)
+    public AS4ResponseFactoryXML (@Nonnull final Document aDoc, @Nonnull final IMimeType aMimeType)
     {
       ValueEnforcer.notNull (aDoc, "Doc");
+      ValueEnforcer.notNull (aMimeType, "MimeType");
       m_aDoc = aDoc;
+      m_aMimeType = aMimeType;
     }
 
-    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion,
-                                 @Nonnull final AS4UnifiedResponse aHttpResponse)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
-      aHttpResponse.setContentAndCharset (sXML, AS4XMLHelper.XWS.getCharset ())
-                   .setMimeType (eSOAPVersion.getMimeType ());
+      final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
+      aHttpResponse.setCharset (aCharset);
+      aHttpResponse.setContent (sXML.getBytes (aCharset));
+      aHttpResponse.setMimeType (m_aMimeType);
     }
 
     @Nonnull
-    public HttpEntity getHttpEntity (@Nonnull final ESOAPVersion eSOAPVersion)
+    public HttpEntity getHttpEntity (@Nonnull final IMimeType aMimType)
     {
-      return new HttpXMLEntity (m_aDoc, eSOAPVersion);
+      return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
   }
 
@@ -183,8 +191,7 @@ public class AS4RequestHandler implements AutoCloseable
       m_aHeaders = MessageHelperMethods.getAndRemoveAllHeaders (m_aMimeMsg);
     }
 
-    public void applyToResponse (@Nonnull final ESOAPVersion eSOAPVersion,
-                                 @Nonnull final AS4UnifiedResponse aHttpResponse)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse)
     {
       aHttpResponse.addCustomResponseHeaders (m_aHeaders);
       aHttpResponse.setContent (HasInputStream.multiple ( () -> {
@@ -201,7 +208,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     @Nonnull
-    public HttpMimeMessageEntity getHttpEntity (@Nonnull final ESOAPVersion eSOAPVersion)
+    public HttpMimeMessageEntity getHttpEntity (@Nonnull final IMimeType aMimType)
     {
       return new HttpMimeMessageEntity (m_aMimeMsg);
     }
@@ -370,7 +377,7 @@ public class AS4RequestHandler implements AutoCloseable
   private static void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws BadRequestException
+                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
   {
     final ESOAPVersion eSOAPVersion = aState.getSOAPVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
@@ -380,7 +387,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                      eSOAPVersion.getNamespaceURI (),
                                                                      eSOAPVersion.getHeaderElementName ());
       if (aHeaderNode == null)
-        throw new BadRequestException ("SOAP document is missing a Header element");
+        throw new AS4BadRequestException ("SOAP document is missing a Header element");
 
       // Extract all header elements including their mustUnderstand value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -463,8 +470,8 @@ public class AS4RequestHandler implements AutoCloseable
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new BadRequestException ("Error processing required SOAP header element " +
-                                         aHeader.getQName ().toString ());
+          throw new AS4BadRequestException ("Error processing required SOAP header element " +
+                                            aHeader.getQName ().toString ());
     }
   }
 
@@ -689,10 +696,10 @@ public class AS4RequestHandler implements AutoCloseable
    *
    * @param aPropertyList
    *        the property list that should be checked for the two specific ones
-   * @throws BadRequestException
+   * @throws AS4BadRequestException
    *         on error
    */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws BadRequestException
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws AS4BadRequestException
   {
     String sOriginalSenderC1 = null;
     String sFinalRecipientC4 = null;
@@ -707,9 +714,9 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     if (StringHelper.hasNoText (sOriginalSenderC1))
-      throw new BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
+      throw new AS4BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
     if (StringHelper.hasNoText (sFinalRecipientC4))
-      throw new BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
+      throw new AS4BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
   /**
@@ -920,7 +927,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseDoc,
                                                        aEffectiveLeg.getProtocol ().getSOAPVersion (),
                                                        aReceiptMessage.getMessagingID ());
-    return new AS4ResponseFactoryXML (aSignedDoc);
+    return new AS4ResponseFactoryXML (aSignedDoc, eSOAPVersion.getMimeType ());
   }
 
   /**
@@ -1008,7 +1015,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aResponseAttachments.isEmpty ())
     {
       // FIXME encryption of SOAP body is missing here
-      ret = new AS4ResponseFactoryXML (aSignedDoc);
+      ret = new AS4ResponseFactoryXML (aSignedDoc, eSoapVersion.getMimeType ());
     }
     else
     {
@@ -1025,18 +1032,18 @@ public class AS4RequestHandler implements AutoCloseable
   @Nullable
   private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                   @Nonnull final Document aSOAPDocument,
-                                                  @Nonnull final ESOAPVersion eSOAPVersion,
+                                                  @Nonnull final ESOAPVersion eSoapVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                                                       MessagingException
   {
     ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
     ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
 
     if (LOGGER.isDebugEnabled ())
     {
-      LOGGER.debug ("Received the following SOAP " + eSOAPVersion.getVersion () + " document:");
+      LOGGER.debug ("Received the following SOAP " + eSoapVersion.getVersion () + " document:");
       LOGGER.debug (AS4XMLHelper.serializeXML (aSOAPDocument));
       LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
       LOGGER.debug (aIncomingAttachments.toString ());
@@ -1049,7 +1056,7 @@ public class AS4RequestHandler implements AutoCloseable
     IAS4MessageState aState;
     {
       // This is where all data from the SOAP headers is stored to
-      final AS4MessageState aStateImpl = new AS4MessageState (eSOAPVersion, m_aResHelper, m_aLocale);
+      final AS4MessageState aStateImpl = new AS4MessageState (eSoapVersion, m_aResHelper, m_aLocale);
 
       // Handle all headers - the only place where the AS4MessageState values
       // are written
@@ -1100,7 +1107,7 @@ public class AS4RequestHandler implements AutoCloseable
           aErrorMessages.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (m_aLocale,
                                                                                     aState.getRefToMessageID ()));
         else
-          throw new BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
+          throw new AS4BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
       }
 
       // XXX debugging
@@ -1118,11 +1125,11 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // User message requires PMode
         if (aPMode == null)
-          throw new BadRequestException ("No AS4 P-Mode configuration found for user-message!");
+          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for user-message!");
 
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
-          throw new BadRequestException ("No AS4 P-Mode leg could be determined!");
+          throw new AS4BadRequestException ("No AS4 P-Mode leg could be determined!");
 
         // Only do profile checks if a profile is set
         sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
@@ -1141,10 +1148,10 @@ public class AS4RequestHandler implements AutoCloseable
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             if (aErrorList.isNotEmpty ())
             {
-              throw new BadRequestException ("Error validating incoming AS4 message with the profile " +
-                                             aProfile.getDisplayName () +
-                                             "\n Following errors are present: " +
-                                             aErrorList.getAllErrors ().getAllTexts (m_aLocale));
+              throw new AS4BadRequestException ("Error validating incoming AS4 message with the profile " +
+                                                aProfile.getDisplayName () +
+                                                "\n Following errors are present: " +
+                                                aErrorList.getAllErrors ().getAllTexts (m_aLocale));
             }
           }
         }
@@ -1159,7 +1166,7 @@ public class AS4RequestHandler implements AutoCloseable
 
         // Pull-request also requires PMode
         if (aEbmsPullRequest != null && aPMode == null)
-          throw new BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
+          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
 
         sMessageID = aEbmsSignalMessage.getMessageInfo ().getMessageId ();
       }
@@ -1170,11 +1177,11 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Find SOAP body
       final Node aBodyNode = XMLHelper.getFirstChildElementOfName (aRealSOAPDoc.getDocumentElement (),
-                                                                   eSOAPVersion.getNamespaceURI (),
-                                                                   eSOAPVersion.getBodyElementName ());
+                                                                   eSoapVersion.getNamespaceURI (),
+                                                                   eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
-                                       " SOAP document is missing a Body element");
+        throw new AS4BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+                                          " SOAP document is missing a Body element");
       aPayloadNode = aBodyNode.getFirstChild ();
 
       if (aEbmsUserMessage != null)
@@ -1182,11 +1189,11 @@ public class AS4RequestHandler implements AutoCloseable
         // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory
         if (aEbmsUserMessage.getMessageProperties () == null)
-          throw new BadRequestException ("No Message Properties present but originalSender and finalRecipient have to be present");
+          throw new AS4BadRequestException ("No Message Properties present but originalSender and finalRecipient have to be present");
 
         final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
         if (aProps.isEmpty ())
-          throw new BadRequestException ("Message Property element present but no properties");
+          throw new AS4BadRequestException ("Message Property element present but no properties");
 
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }
@@ -1291,7 +1298,7 @@ public class AS4RequestHandler implements AutoCloseable
 
             // The response user message has no explicit payload.
             // All data of the response user message is in the local attachments
-            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
                                                                                 aFinalUserMessage,
                                                                                 aLocalResponseAttachments);
 
@@ -1315,10 +1322,11 @@ public class AS4RequestHandler implements AutoCloseable
             // SPI processing failed
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
-            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSOAPVersion,
+            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                               aState.getRefToMessageID (),
                                                                               aLocalErrorMessages);
-            aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument ());
+            aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument (),
+                                                               eSoapVersion.getMimeType ());
           }
 
           // where to send it back (must be determined by SPI!)
@@ -1332,7 +1340,7 @@ public class AS4RequestHandler implements AutoCloseable
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                                      aAsyncResponseFactory.getHttpEntity (eSOAPVersion),
+                                                                      aAsyncResponseFactory.getHttpEntity (eSoapVersion.getMimeType ()),
                                                                       null,
                                                                       new ResponseHandlerXml ());
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
@@ -1353,10 +1361,10 @@ public class AS4RequestHandler implements AutoCloseable
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion,
+          final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                     aState.getRefToMessageID (),
                                                                     aErrorMessages);
-          return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument ());
+          return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument (), eSoapVersion.getMimeType ());
         }
         LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
       }
@@ -1378,8 +1386,9 @@ public class AS4RequestHandler implements AutoCloseable
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
-              return new AS4ResponseFactoryXML (new AS4UserMessage (eSOAPVersion,
-                                                                    aSPIResult.getPullReturnUserMsg ()).getAsSOAPDocument ());
+              return new AS4ResponseFactoryXML (new AS4UserMessage (eSoapVersion,
+                                                                    aSPIResult.getPullReturnUserMsg ()).getAsSOAPDocument (),
+                                                eSoapVersion.getMimeType ());
             }
 
             if (aEbmsUserMessage != null)
@@ -1390,7 +1399,7 @@ public class AS4RequestHandler implements AutoCloseable
               if (bSendReceiptAsResponse)
               {
                 return _createResponseReceiptMessage (aSOAPDocument,
-                                                      eSOAPVersion,
+                                                      eSoapVersion,
                                                       aEffectiveLeg,
                                                       aEbmsUserMessage,
                                                       aResponseAttachments);
@@ -1404,13 +1413,13 @@ public class AS4RequestHandler implements AutoCloseable
             // synchronous TWO - WAY (= "SYNC")
             final PModeLeg aLeg2 = aPMode.getLeg2 ();
             if (aLeg2 == null)
-              throw new BadRequestException ("PMode has no leg2!");
+              throw new AS4BadRequestException ("PMode has no leg2!");
 
             if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
                                                    aPMode.getMEPBinding (),
                                                    EAS4MessageType.USER_MESSAGE))
             {
-              final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSOAPVersion,
+              final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
@@ -1437,36 +1446,40 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @param aHttpServletRequest
-   *        the current request. Never <code>null</code>.
+   * @param aHttpHeaders
+   *        the HTTP headers of the current request. Never <code>null</code>.
+   * @param aRequestInputStream
+   *        The InputStream to read the request payload from. Will not be closed
+   *        internally. Never <code>null</code>.
    * @param aIncomingDumper
    *        The incoming AS4 dumper. May be <code>null</code>. If
    *        <code>null</code> the global one from {@link AS4DumpManager} is
    *        used.
-   * @return the InputStream of the HttpServletRequest
+   * @return the InputStream to be used
    * @throws IOException
    */
   @Nonnull
-  private static InputStream _getRequestIS (@Nonnull final HttpServletRequest aHttpServletRequest,
+  private static InputStream _getRequestIS (@Nonnull final HttpHeaderMap aHttpHeaders,
+                                            @Nonnull @WillNotClose final InputStream aRequestInputStream,
                                             @Nullable final IAS4IncomingDumper aIncomingDumper) throws IOException
   {
-    final InputStream aIS = aHttpServletRequest.getInputStream ();
     final IAS4IncomingDumper aDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
     if (aDumper == null)
     {
       // No wrapping needed
-      return aIS;
+      return aRequestInputStream;
     }
 
     // Dump worthy?
-    final OutputStream aOS = aDumper.onNewRequest (aHttpServletRequest);
+    final OutputStream aOS = aDumper.onNewRequest (aHttpHeaders);
     if (aOS == null)
     {
       // No wrapping needed
-      return aIS;
+      return aRequestInputStream;
     }
 
-    return new WrappedInputStream (aIS)
+    // Read and write at once
+    return new WrappedInputStream (aRequestInputStream)
     {
       @Override
       public int read () throws IOException
@@ -1501,27 +1514,23 @@ public class AS4RequestHandler implements AutoCloseable
     };
   }
 
-  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws BadRequestException,
-                                                                              IOException,
-                                                                              MessagingException,
-                                                                              WSSecurityException
+  public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
+                             @Nonnull final HttpHeaderMap aHttpHeaders,
+                             @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws AS4BadRequestException,
+                                                                                   IOException,
+                                                                                   MessagingException,
+                                                                                   WSSecurityException
   {
-    AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
-
-    final HttpServletRequest aHttpServletRequest = aRequestScope.getRequest ();
-    final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
-
     // Determine content type
-    final String sContentType = aHttpServletRequest.getContentType ();
+    final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
     if (StringHelper.hasNoText (sContentType))
-      throw new BadRequestException ("Content-Type header is missing");
+      throw new AS4BadRequestException ("Content-Type header is missing");
 
     final IMimeType aContentType = AcceptMimeTypeHandler.safeParseMimeType (sContentType);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type: " + aContentType);
     if (aContentType == null)
-      throw new BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
+      throw new AS4BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
 
     Document aSOAPDocument = null;
     ESOAPVersion eSOAPVersion = null;
@@ -1536,13 +1545,13 @@ public class AS4RequestHandler implements AutoCloseable
 
       final String sBoundary = aContentType.getParameterValueWithName ("boundary");
       if (StringHelper.hasNoText (sBoundary))
-        throw new BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
+        throw new AS4BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("MIME Boundary = " + sBoundary);
 
       // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = _getRequestIS (aHttpServletRequest, null))
+      try (final InputStream aRequestIS = _getRequestIS (aHttpHeaders, aServletRequestIS, null))
       {
         // PARSING MIME Message via MultiPartStream
         final MultipartStream aMulti = new MultipartStream (aRequestIS,
@@ -1595,7 +1604,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpServletRequest, null));
+      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpHeaders, aServletRequestIS, null));
 
       if (aSOAPDocument != null)
       {
@@ -1613,10 +1622,10 @@ public class AS4RequestHandler implements AutoCloseable
     if (aSOAPDocument == null)
     {
       // We don't have a SOAP document
-      throw new BadRequestException (eSOAPVersion == null ? "Failed to parse incoming message!"
-                                                          : "Failed to parse incoming SOAP " +
-                                                            eSOAPVersion.getVersion () +
-                                                            " document!");
+      throw new AS4BadRequestException (eSOAPVersion == null ? "Failed to parse incoming message!"
+                                                             : "Failed to parse incoming SOAP " +
+                                                               eSOAPVersion.getVersion () +
+                                                               " document!");
     }
 
     if (eSOAPVersion == null)
@@ -1626,7 +1635,7 @@ public class AS4RequestHandler implements AutoCloseable
       final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
       eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
       if (eSOAPVersion == null)
-        throw new BadRequestException ("Failed to determine SOAP version from XML document!");
+        throw new AS4BadRequestException ("Failed to determine SOAP version from XML document!");
     }
 
     // SOAP document and SOAP version are determined
@@ -1637,7 +1646,7 @@ public class AS4RequestHandler implements AutoCloseable
     if (aResponder != null)
     {
       // Response present -> send back
-      aResponder.applyToResponse (eSOAPVersion, aHttpResponse);
+      aResponder.applyToResponse (aHttpResponse);
     }
     else
     {
@@ -1645,5 +1654,38 @@ public class AS4RequestHandler implements AutoCloseable
       aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
     }
     AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
+  }
+
+  /**
+   * This is the main handling routine when called from the Servlet API
+   *
+   * @param aRequestScope
+   *        HTTP request. Never <code>null</code>.
+   * @param aHttpResponse
+   *        HTTP response. Never <code>null</code>.
+   * @throws AS4BadRequestException
+   *         in case the request is missing certain prerequisites
+   * @throws IOException
+   *         In case of IO errors
+   * @throws MessagingException
+   *         MIME related errors
+   * @throws WSSecurityException
+   *         In case of WSS4J errors
+   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
+   *      for a more generic API
+   */
+  public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
+                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws AS4BadRequestException,
+                                                                              IOException,
+                                                                              MessagingException,
+                                                                              WSSecurityException
+  {
+    AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
+
+    final ServletInputStream aServletRequestIS = aRequestScope.getRequest ().getInputStream ();
+    final HttpHeaderMap aHttpHeaders = aRequestScope.headers ().getClone ();
+    final IAS4ResponseAbstraction aResponse = IAS4ResponseAbstraction.wrap (aHttpResponse);
+
+    handleRequest (aServletRequestIS, aHttpHeaders, aResponse);
   }
 }

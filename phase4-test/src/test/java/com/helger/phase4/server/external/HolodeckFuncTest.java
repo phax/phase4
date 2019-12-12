@@ -109,20 +109,20 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           m_eSOAPVersion)
+                                                           m_eSoapVersion)
                                                   .setMustUnderstand (true);
 
     // Sign payload document
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                aUserMsg.getAsSOAPDocument (),
-                                                               m_eSOAPVersion,
+                                                               m_eSoapVersion,
                                                                aUserMsg.getMessagingID (),
                                                                aAttachments,
                                                                new AS4ResourceHelper (),
                                                                false,
                                                                AS4SigningParams.createDefault ());
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aSignedDoc, aAttachments);
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aSignedDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
   }
 }

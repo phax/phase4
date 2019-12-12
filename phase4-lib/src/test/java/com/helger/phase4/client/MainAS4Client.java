@@ -118,7 +118,7 @@ public final class MainAS4Client
                                                                                      aPayload,
                                                                                      aAttachments);
         final Document aDoc = aMsg.getAsSOAPDocument (aPayload);
-        aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
+        aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ()));
       }
       else
         // BodyPayload SIGNED
@@ -128,7 +128,7 @@ public final class MainAS4Client
                                                                           aPayload,
                                                                           aAttachments,
                                                                           aResHelper);
-          aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
+          aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ()));
         }
         // BodyPayload ENCRYPTED
         else
@@ -144,7 +144,7 @@ public final class MainAS4Client
                                                         false,
                                                         AS4CryptParams.createDefault ().setAlias ("dummy"));
 
-            aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
+            aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ()));
           }
           else
             if (true)
@@ -183,7 +183,7 @@ public final class MainAS4Client
                                                             aDoc,
                                                             false,
                                                             AS4CryptParams.createDefault ().setAlias ("dummy"));
-                aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion));
+                aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ()));
               }
               else
                 throw new IllegalStateException ("Some test message should be selected :)");

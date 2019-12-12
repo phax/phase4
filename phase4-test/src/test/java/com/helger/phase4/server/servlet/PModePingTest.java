@@ -30,6 +30,6 @@ public final class PModePingTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = _modifyUserMessage (null, null, null, _defaultProperties (), null, null, null);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.AS4_DEFAULT), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.AS4_DEFAULT.getMimeType ()), true, null);
   }
 }

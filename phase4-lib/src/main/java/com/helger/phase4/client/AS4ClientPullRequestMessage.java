@@ -111,6 +111,6 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
   }
 }

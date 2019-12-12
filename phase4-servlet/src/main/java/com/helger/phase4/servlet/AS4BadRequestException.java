@@ -19,18 +19,18 @@ package com.helger.phase4.servlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BadRequestException extends RuntimeException
+public class AS4BadRequestException extends RuntimeException
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (BadRequestException.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4BadRequestException.class);
 
-  public BadRequestException (final String sMsg)
+  public AS4BadRequestException (final String sMsg)
   {
     super (sMsg);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("BadRequest: " + sMsg);
   }
 
-  public BadRequestException (final String sMsg, final Throwable t)
+  public AS4BadRequestException (final String sMsg, final Throwable t)
   {
     super (sMsg + "; Technical details [" + t.getClass ().getName () + "]: " + t.getMessage ());
     if (LOGGER.isDebugEnabled ())

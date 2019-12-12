@@ -54,7 +54,7 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
   @Before
@@ -91,7 +91,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
     assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
@@ -119,7 +119,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                               aAttachments,
                                               null,
                                               null);
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -151,7 +151,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                               aAttachments,
                                               null,
                                               null);
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aDoc, aAttachments);
+    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -199,11 +199,11 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getID ()));
     aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
 
-    final Document aSignedDoc = AS4UserMessage.create (m_eSOAPVersion, aEbms3UserMessage)
+    final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage)
                                               .setMustUnderstand (true)
                                               .getAsSOAPDocument (aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion),
+    sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
@@ -216,7 +216,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
@@ -228,7 +228,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }

@@ -19,18 +19,19 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.http.CHttp;
+import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.mutable.MutableInt;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
@@ -60,20 +61,26 @@ public class AS4IncomingDumperFileBased implements IAS4IncomingDumper
   }
 
   @Nonnull
-  public OutputStream onNewRequest (@Nonnull final HttpServletRequest aHttpServletRequest) throws IOException
+  public OutputStream onNewRequest (@Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.get ();
     LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
     final OutputStream ret = FileHelper.getBufferedOutputStream (aResponseFile);
     // Add all incoming headers
-    int nHeader = 0;
-    for (final String sHeader : CollectionHelper.newList (aHttpServletRequest.getHeaderNames ()))
-      for (final String sValue : CollectionHelper.newList (aHttpServletRequest.getHeaders (sHeader)))
+    final MutableInt aHeaderCount = new MutableInt (0);
+    aHttpHeaderMap.forEachSingleHeader ( (sHeader, sValue) -> {
+      aHeaderCount.inc ();
+      try
       {
-        nHeader++;
         ret.write ((sHeader + ": " + sValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
       }
-    if (nHeader > 0)
+      catch (final IOException ex)
+      {
+        throw new UncheckedIOException (ex);
+      }
+    }, false, false);
+
+    if (aHeaderCount.isGT0 ())
       ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
     return ret;
   }

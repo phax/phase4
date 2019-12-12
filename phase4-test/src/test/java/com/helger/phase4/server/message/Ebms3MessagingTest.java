@@ -53,7 +53,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 {
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
   private static final String SOAP_12_PARTY_ID = "APP_000000000012";
-  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.SOAP_12;
+  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.SOAP_12;
 
   private Document _getMessagingAsDocument (final Ebms3Messaging aEbms3Messaging)
   {
@@ -92,7 +92,8 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aSignalMsgList.add (aSignalMessage);
     aSignalMsgList.add (aSignalMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging),
+                                                  m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -101,7 +102,8 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging),
+                                                  m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -152,7 +154,8 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     aEbms3Messaging.addUserMessage (aEbms3UserMessage);
 
-    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging),
+                                                  m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -192,6 +195,6 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
                                       .getAsSOAPDocument ();
 
     // We've got our response
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
   }
 }

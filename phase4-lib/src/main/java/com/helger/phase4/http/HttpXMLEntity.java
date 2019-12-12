@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import org.apache.http.entity.StringEntity;
 import org.w3c.dom.Node;
 
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.commons.mime.IMimeType;
 import com.helger.phase4.util.AS4XMLHelper;
 
 /**
@@ -32,10 +32,10 @@ import com.helger.phase4.util.AS4XMLHelper;
  */
 public class HttpXMLEntity extends StringEntity
 {
-  public HttpXMLEntity (@Nonnull final Node aNode, @Nonnull final ESOAPVersion eSoapVersion)
+  public HttpXMLEntity (@Nonnull final Node aNode, @Nonnull final IMimeType aMimeType)
   {
     super (AS4XMLHelper.serializeXML (aNode), AS4XMLHelper.XWS.getCharset ());
     // Required for AS4.NET
-    setContentType (eSoapVersion.getMimeType ().getAsString ());
+    setContentType (aMimeType.getAsString ());
   }
 }

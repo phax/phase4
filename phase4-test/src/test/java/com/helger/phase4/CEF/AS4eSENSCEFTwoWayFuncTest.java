@@ -54,14 +54,14 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
   @Test
   public void eSENS_TA02_PushPush () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
 
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
@@ -93,8 +93,8 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),

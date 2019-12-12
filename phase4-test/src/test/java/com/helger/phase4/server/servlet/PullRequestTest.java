@@ -41,12 +41,12 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
 
   @Test
   public void sendPullRequestSuccess () throws Exception
   {
-    final AS4PullRequestMessage aPullReqMsg = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final AS4PullRequestMessage aPullReqMsg = AS4PullRequestMessage.create (m_eSoapVersion,
                                                                             MessageHelperMethods.createEbms3MessageInfo (),
                                                                             AS4TestConstants.DEFAULT_MPC,
                                                                             null);
@@ -55,14 +55,14 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final boolean bMustUnderstand = true;
     aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                           aDoc,
-                                          m_eSOAPVersion,
+                                          m_eSoapVersion,
                                           aPullReqMsg.getMessagingID (),
                                           null,
                                           new AS4ResourceHelper (),
                                           bMustUnderstand,
                                           AS4SigningParams.createDefault ());
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
@@ -77,13 +77,13 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
 
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sFailure,
                                                         null)
                                                .getAsSOAPDocument ();
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getErrorCode ());
   }
 
@@ -96,12 +96,12 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sFailure) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
 
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sFailure,
                                                         null)
                                                .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
@@ -113,12 +113,12 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     if (MetaAS4Manager.getMPCMgr ().getMPCOfID (sMPC) == null)
       MetaAS4Manager.getMPCMgr ().createMPC (aMPC);
 
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         sMPC,
                                                         null)
                                                .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
@@ -132,12 +132,12 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final ICommonsList <Object> aAny = new CommonsArrayList <> ();
     aAny.add (aPayload.getDocumentElement ());
 
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         AS4TestConstants.DEFAULT_MPC,
                                                         aAny)
                                                .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
@@ -153,12 +153,12 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
     final ICommonsList <Object> aAny = new CommonsArrayList <> ();
     aAny.add (aPayload.getDocumentElement ());
 
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         AS4TestConstants.DEFAULT_MPC,
                                                         aAny)
                                                .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     final String sResponse = sendPlainMessage (aEntity, true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
@@ -167,12 +167,12 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void sendPullRequestWithNoMPC () throws Exception
   {
-    final Document aDoc = AS4PullRequestMessage.create (m_eSOAPVersion,
+    final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
                                                         MessageHelperMethods.createEbms3MessageInfo (),
                                                         null,
                                                         null)
                                                .getAsSOAPDocument ();
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getErrorCode ());
   }
 }

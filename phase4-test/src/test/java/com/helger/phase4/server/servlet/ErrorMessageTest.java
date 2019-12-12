@@ -25,14 +25,14 @@ import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
+public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
 {
   @Test
   public void sendErrorMessage () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12), true, null);
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12.getMimeType ()), true, null);
   }
 
   @Test
@@ -40,7 +40,7 @@ public class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12),
+    sendPlainMessage (new HttpXMLEntity (aDoc, ESOAPVersion.SOAP_12.getMimeType ()),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }

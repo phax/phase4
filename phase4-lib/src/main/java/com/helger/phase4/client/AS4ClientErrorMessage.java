@@ -101,6 +101,6 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
       aCallback.onSOAPDocument (aDoc);
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
   }
 }

@@ -42,7 +42,7 @@ public final class ERBTest extends AbstractUserMessageTestSetUp
     final ESOAPVersion eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
     final Document aDoc = MockMessages.testSignedUserMessage (eSOAPVersion, aPayload, null, new AS4ResourceHelper ());
 
-    final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion);
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ());
 
     final String sResponse = sendPlainMessage (aEntity, true, null);
 

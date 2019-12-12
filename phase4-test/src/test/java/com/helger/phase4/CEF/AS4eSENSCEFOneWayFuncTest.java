@@ -101,8 +101,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA01 () throws Exception
   {
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                null,
                                                                                                new AS4ResourceHelper ()),
@@ -162,7 +162,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESOAPVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
@@ -192,8 +192,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -233,8 +233,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -282,8 +282,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     aResMgr2));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -327,8 +327,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     aResMgr2));
 
-    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                        testSignedUserMessage (m_eSOAPVersion,
+    final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                        testSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -380,7 +380,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     final DocumentBuilder aDocBuilder = aDbfac.newDocumentBuilder ();
     final Document aDoc = aDocBuilder.parse (ClassPathResource.getAsFile ("attachment/HyperlinkPayload.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSOAPVersion),
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getErrorCode ());
   }
@@ -457,8 +457,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                          testSignedUserMessage (m_eSOAPVersion,
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                          testSignedUserMessage (m_eSoapVersion,
                                                                                                  m_aPayload,
                                                                                                  null,
                                                                                                  new AS4ResourceHelper ()),
@@ -530,8 +530,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                          testSignedUserMessage (m_eSOAPVersion,
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                          testSignedUserMessage (m_eSoapVersion,
                                                                                                  m_aPayload,
                                                                                                  null,
                                                                                                  new AS4ResourceHelper ()),
@@ -584,7 +584,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA13 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     NodeList nList = aDoc.getElementsByTagName ("ds:SignatureMethod");
     String sAlgorithmToCheck = nList.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
@@ -617,8 +617,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA14 () throws Exception
   {
-    Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
-    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSOAPVersion, aDoc, true, m_aCryptParams);
+    Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
+    aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, true, m_aCryptParams);
 
     final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be
@@ -652,7 +652,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA15 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSOAPVersion, m_aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (),
@@ -710,8 +710,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     try
     {
       // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                          testSignedUserMessage (m_eSOAPVersion,
+      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                          testSignedUserMessage (m_eSoapVersion,
                                                                                                  m_aPayload,
                                                                                                  null,
                                                                                                  new AS4ResourceHelper ()),
@@ -804,12 +804,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       m_eSOAPVersion)
+                                                       m_eSoapVersion)
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                aDoc.getAsSOAPDocument (m_aPayload),
-                                                               m_eSOAPVersion,
+                                                               m_eSoapVersion,
                                                                aDoc.getMessagingID (),
                                                                null,
                                                                new AS4ResourceHelper (),
@@ -820,7 +820,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
                   sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSOAPVersion), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                                               true,
+                                               null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
