@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.Immutable;
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
@@ -97,6 +98,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
