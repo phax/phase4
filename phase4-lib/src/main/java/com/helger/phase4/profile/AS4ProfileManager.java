@@ -110,7 +110,9 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       if (m_aMap.size () == 1)
         m_aDefaultProfile = aAS4Profile;
     });
-    LOGGER.info ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
   }
 
   /**

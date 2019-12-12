@@ -21,11 +21,13 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
+import com.helger.commons.string.StringHelper;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegBusinessInformation;
 
@@ -180,7 +182,41 @@ public interface IPModeManager
    * @throws PModeValidationException
    *         in case the PMode is invalid.
    */
-  void validatePMode (@Nullable IPMode aPMode) throws PModeValidationException;
+  default void validatePMode (@Nullable final IPMode aPMode) throws PModeValidationException
+  {
+    ValueEnforcer.notNull (aPMode, "PMode");
+
+    // Needs ID
+    if (StringHelper.hasNoText (aPMode.getID ()))
+      throw new PModeValidationException ("No PMode ID present");
+
+    final PModeParty aInitiator = aPMode.getInitiator ();
+    if (aInitiator != null)
+    {
+      // INITIATOR PARTY_ID
+      if (StringHelper.hasNoText (aInitiator.getIDValue ()))
+        throw new PModeValidationException ("No PMode Initiator ID present");
+
+      // INITIATOR ROLE
+      if (StringHelper.hasNoText (aInitiator.getRole ()))
+        throw new PModeValidationException ("No PMode Initiator Role present");
+    }
+
+    final PModeParty aResponder = aPMode.getResponder ();
+    if (aResponder != null)
+    {
+      // RESPONDER PARTY_ID
+      if (StringHelper.hasNoText (aResponder.getIDValue ()))
+        throw new PModeValidationException ("No PMode Responder ID present");
+
+      // RESPONDER ROLE
+      if (StringHelper.hasNoText (aResponder.getRole ()))
+        throw new PModeValidationException ("No PMode Responder Role present");
+    }
+
+    if (aResponder == null && aInitiator == null)
+      throw new PModeValidationException ("PMode is missing Initiator and/or Responder");
+  }
 
   /**
    * Validate all contained PModes at once.

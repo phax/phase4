@@ -24,12 +24,11 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
-import com.helger.phase4.duplicate.AS4DuplicateManager;
+import com.helger.commons.string.StringParser;
+import com.helger.commons.system.SystemProperties;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
-import com.helger.phase4.model.mpc.MPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
-import com.helger.phase4.model.pmode.PModeManager;
 import com.helger.phase4.profile.AS4ProfileManager;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
@@ -41,9 +40,6 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
-  private static final String MPC_XML = "as4-mpc.xml";
-  private static final String PMODE_XML = "as4-pmode.xml";
-  private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
@@ -65,12 +61,26 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {
     try
     {
-      // MPC manager before PMode manager
-      m_aMPCMgr = new MPCManager (MPC_XML);
-      m_aPModeMgr = new PModeManager (PMODE_XML);
-      m_aIncomingDuplicateMgr = new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
+      final String sInMemory = SystemProperties.getPropertyValueOrNull ("phase4.manager.inmemory");
+      final boolean bInMemory = StringParser.parseBool (sInMemory, false);
+      final IManagerFactory aMgrFactory;
+      if (bInMemory)
+      {
+        LOGGER.info (ClassHelper.getClassLocalName (this) + " is initialized with in-memory data structures");
+        aMgrFactory = new ManagerFactoryInMemory ();
+      }
+      else
+      {
+        LOGGER.info (ClassHelper.getClassLocalName (this) + " is using file system persistence");
+        aMgrFactory = new ManagerFactoryPersistingFileSystem ();
+      }
 
-      // profile mgr is in-memory
+      // MPC manager before PMode manager
+      m_aMPCMgr = aMgrFactory.createMPCManager ();
+      m_aPModeMgr = aMgrFactory.createPModeManager ();
+      m_aIncomingDuplicateMgr = aMgrFactory.createDuplicateManager ();
+
+      // profile mgr is always in-memory
       m_aProfileMgr = new AS4ProfileManager ();
 
       _initCallbacks ();

@@ -60,11 +60,11 @@ server.datapath=/var/www/as4/data
 The file is searched in the locations specified as follows:
 * A path denoted by the environment variable `AS4_SERVER_CONFIG`
 * A path denoted by the system property `phase4.server.configfile`
-* A path denoted by the system property `as4.server.configfile`
+* A path denoted by the system property `as4.server.configfile` (for legacy reasons)
 * A file named `private-phase4.properties` within your classpath
 * A file named `phase4.properties` within your classpath
-* A file named `private-as4.properties` within your classpath
-* A file named `as4.properties` within your classpath
+* A file named `private-as4.properties` within your classpath (for legacy reasons)
+* A file named `as4.properties` within your classpath (for legacy reasons)
 
 The properties have the following meaning
 * **`server.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
@@ -74,6 +74,11 @@ The properties have the following meaning
 * **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
 * **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
 * **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
+
+### System properties
+
+The following special system properties are supported:
+* **`phase4.manager.inmemory`** (since v0.9.6): if set to `true` the system will not try to store data in the file system. By default this is `false`.
 
 # Peppol handling
 
@@ -118,6 +123,7 @@ Just write me an email - see pom.xml for my email address
     * Added specific `Phase4PeppolSMPException` for SMP lookup errors
     * Extracted interface `IAS4DuplicateManager` from `AS4DuplicateManager` and using it internally
     * Added the possibility to send pre-build SBDH messages (see [issue #22](https://github.com/phax/phase4/issues/22))
+    * Added support for creating in-memory managers only, using the system property `phase4.manager.inmemory`
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)

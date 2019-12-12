@@ -68,7 +68,9 @@ public final class SOAPHeaderElementProcessorRegistry extends AbstractGlobalSing
         throw new IllegalArgumentException ("A processor for QName " + aQName.toString () + " is already registered!");
       m_aMap.put (aQName, aProcessor);
     });
-    LOGGER.info ("Successfully registered SOAP header element processor for " + aQName.toString ());
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Successfully registered SOAP header element processor for " + aQName.toString ());
   }
 
   @Nullable

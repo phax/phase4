@@ -16,18 +16,27 @@
  */
 package com.helger.phase4.model.pmode;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.CommonsHashMap;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.collection.impl.ICommonsSet;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.state.EChange;
-import com.helger.dao.DAOException;
-import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
-import com.helger.photon.audit.AuditHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
 
 /**
@@ -36,14 +45,16 @@ import com.helger.photon.security.object.BusinessObjectHelper;
  * @author Philip Helger
  */
 @ThreadSafe
-public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> implements IPModeManager
+public class PModeManagerInMemory implements IPModeManager
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (PModeManagerInMemory.class);
 
-  public PModeManager (@Nullable final String sFilename) throws DAOException
-  {
-    super (PMode.class, sFilename);
-  }
+  private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();
+  @GuardedBy ("m_aRWLock")
+  private final ICommonsMap <String, PMode> m_aMap = new CommonsHashMap <> ();
+
+  public PModeManagerInMemory ()
+  {}
 
   public void createPMode (@Nonnull final PMode aPMode)
   {
@@ -60,9 +71,11 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     }
 
     m_aRWLock.writeLocked ( () -> {
-      internalCreateItem (aPMode);
+      final String sID = aPMode.getID ();
+      if (m_aMap.containsKey (sID))
+        throw new IllegalArgumentException ("An object with ID '" + sID + "' is already contained!");
+      m_aMap.put (sID, aPMode);
     });
-    AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
@@ -73,16 +86,8 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
   {
     ValueEnforcer.notNull (aPMode, "PMode");
     final PMode aRealPMode = getOfID (aPMode.getID ());
-    if (aRealPMode == null)
-    {
-      AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "no-such-id");
+    if (aRealPMode == null || aRealPMode.isDeleted ())
       return EChange.UNCHANGED;
-    }
-    if (aRealPMode.isDeleted ())
-    {
-      AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "already-deleted");
-      return EChange.UNCHANGED;
-    }
 
     m_aRWLock.writeLock ().lock ();
     try
@@ -101,13 +106,11 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
         return EChange.UNCHANGED;
 
       BusinessObjectHelper.setLastModificationNow (aRealPMode);
-      internalUpdateItem (aRealPMode);
     }
     finally
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPMode.getID ());
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Updated PMode with ID '" + aPMode.getID () + "'");
@@ -120,26 +123,18 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
     if (aDeletedPMode == null)
-    {
-      AuditHelper.onAuditDeleteFailure (PMode.OT, "no-such-object-id", sPModeID);
       return EChange.UNCHANGED;
-    }
 
     m_aRWLock.writeLock ().lock ();
     try
     {
       if (BusinessObjectHelper.setDeletionNow (aDeletedPMode).isUnchanged ())
-      {
-        AuditHelper.onAuditDeleteFailure (PMode.OT, "already-deleted", sPModeID);
         return EChange.UNCHANGED;
-      }
-      internalMarkItemDeleted (aDeletedPMode);
     }
     finally
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Marked PMode with ID '" + aDeletedPMode.getID () + "' as deleted");
@@ -152,28 +147,52 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
   {
     final PMode aDeletedPMode = getOfID (sPModeID);
     if (aDeletedPMode == null)
-    {
-      AuditHelper.onAuditDeleteFailure (PMode.OT, "no-such-object-id", sPModeID);
       return EChange.UNCHANGED;
-    }
 
     m_aRWLock.writeLock ().lock ();
     try
     {
-      internalDeleteItem (sPModeID);
+      m_aMap.remove (sPModeID);
     }
     finally
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditDeleteSuccess (PMode.OT, sPModeID);
 
     return EChange.CHANGED;
+  }
+
+  @Nullable
+  PMode getOfID (@Nullable final String sID)
+  {
+    if (StringHelper.hasNoText (sID))
+      return null;
+    return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
   }
 
   @Nullable
   public IPMode getPModeOfID (@Nullable final String sID)
   {
     return getOfID (sID);
+  }
+
+  @Nullable
+  public IPMode findFirst (@Nonnull final Predicate <? super IPMode> aFilter)
+  {
+    return m_aRWLock.readLocked ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsList <IPMode> getAll ()
+  {
+    return m_aRWLock.readLocked ( () -> new CommonsArrayList <> (m_aMap.values ()));
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public ICommonsSet <String> getAllIDs ()
+  {
+    return m_aRWLock.readLocked ( () -> m_aMap.copyOfKeySet ());
   }
 }

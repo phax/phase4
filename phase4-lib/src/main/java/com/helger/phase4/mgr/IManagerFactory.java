@@ -14,20 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.model.pmode;
+package com.helger.phase4.mgr;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
+import com.helger.phase4.duplicate.IAS4DuplicateManager;
+import com.helger.phase4.model.mpc.IMPCManager;
+import com.helger.phase4.model.pmode.IPModeManager;
+
 /**
- * A special exception thrown in PMode validation.
+ * Factory for global managers
  * 
  * @author Philip Helger
  * @since 0.9.6
  */
-public class PModeValidationException extends Exception
+public interface IManagerFactory extends Serializable
 {
-  public PModeValidationException (@Nonnull final String sMsg)
-  {
-    super (sMsg);
-  }
+  @Nonnull
+  IMPCManager createMPCManager () throws Exception;
+
+  @Nonnull
+  IPModeManager createPModeManager () throws Exception;
+
+  @Nonnull
+  IAS4DuplicateManager createDuplicateManager () throws Exception;
 }
