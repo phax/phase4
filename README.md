@@ -115,17 +115,17 @@ Just write me an email - see pom.xml for my email address
 * v0.9.7 - work in progress
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
-    * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception 
+    * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)
     * Added the possibility to configure the keystore without the need of having the `crypto.properties` file
     * Extracted interface `IMPCManager` from `MPCManager` and using it internally
     * Extracted interface `IPModeManager` from `PModeManager` and using it internally
-    * The method `IPModeManager.validatePMode` now throws a checked `PModeValidationException` exception
+    * The method `IPModeManager.validatePMode` now throws a checked `PModeValidationException` exception (incompatible change)
     * Added the possibility to customize the outgoing dumper in class `Phase4PeppolSender`
-    * Added specific `Phase4PeppolSMPException` for SMP lookup errors
+    * Added specific `Phase4PeppolSMPException` for SMP lookup errors (incompatible change)
     * Extracted interface `IAS4DuplicateManager` from `AS4DuplicateManager` and using it internally
-    * Added the possibility to send pre-build SBDH messages (see [issue #22](https://github.com/phax/phase4/issues/22))
+    * Added the possibility to send pre-build SBDH messages (see [issue #22](https://github.com/phax/phase4/issues/22)) (binary incompatible change)
     * Added support for creating in-memory managers only, using the system property `phase4.manager.inmemory`
-    * Parameter type of `IAS4IncomingDumper.onNewRequest` changed to `HttpHeaderMap`
+    * Parameter type of `IAS4IncomingDumper.onNewRequest` changed to `HttpHeaderMap` (incompatible change)
     * Made `AS4RequestHandler` usage more flexible to not solely rely on the Servlet API
     * New logo thanks to Maria Petritsopoulou - http://stirringpixels.com/
 * v0.9.5 - 2019-11-27
