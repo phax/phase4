@@ -127,7 +127,7 @@ Just write me an email - see pom.xml for my email address
     * Added support for creating in-memory managers only, using the system property `phase4.manager.inmemory`
     * Parameter type of `IAS4IncomingDumper.onNewRequest` changed to `HttpHeaderMap`
     * Made `AS4RequestHandler` usage more flexible to not solely rely on the Servlet API
-    * New logo thanks for Maria Petritsopoulou - http://stirringpixels.com/
+    * New logo thanks to Maria Petritsopoulou - http://stirringpixels.com/
 * v0.9.5 - 2019-11-27
     * Enforcing the usage of `Phase4PeppolSender.builder()` by making the main sending method private
     * Updated to peppol-commons 7.0.4 (moved classes `PeppolCerticateChecker` and `EPeppolCertificateCheckResult` there) (incompatible change)
