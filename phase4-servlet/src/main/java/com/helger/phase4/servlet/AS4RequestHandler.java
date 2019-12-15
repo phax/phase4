@@ -374,18 +374,18 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
-  private static void _processSOAPHeaderElements (@Nonnull final Document aSOAPDocument,
+  private static void _processSoapHeaderElements (@Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
   {
-    final ESOAPVersion eSOAPVersion = aState.getSOAPVersion ();
+    final ESOAPVersion eSoapVersion = aState.getSOAPVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
-      final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSOAPDocument.getDocumentElement (),
-                                                                     eSOAPVersion.getNamespaceURI (),
-                                                                     eSOAPVersion.getHeaderElementName ());
+      final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDocument.getDocumentElement (),
+                                                                     eSoapVersion.getNamespaceURI (),
+                                                                     eSoapVersion.getHeaderElementName ());
       if (aHeaderNode == null)
         throw new AS4BadRequestException ("SOAP document is missing a Header element");
 
@@ -393,8 +393,8 @@ public class AS4RequestHandler implements AutoCloseable
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
       {
         final QName aQName = XMLHelper.getQName (aHeaderChild);
-        final String sMustUnderstand = aHeaderChild.getAttributeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
-        final boolean bIsMustUnderstand = eSOAPVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
+        final String sMustUnderstand = aHeaderChild.getAttributeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
+        final boolean bIsMustUnderstand = eSoapVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
         aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
       }
     }
@@ -422,7 +422,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
-      if (aProcessor.processHeaderElement (aSOAPDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
+      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
                     .isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
@@ -724,7 +724,7 @@ public class AS4RequestHandler implements AutoCloseable
    * previously it was C1 => C4, now its C4 => C1 Also adds attachments if there
    * are some that should be added.
    *
-   * @param eSOAPVersion
+   * @param eSoapVersion
    *        of the message
    * @param aUserMessage
    *        the message that should be reversed
@@ -733,7 +733,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return the reversed usermessage in document form
    */
   @Nonnull
-  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
                                                             @Nonnull final Ebms3UserMessage aUserMessage,
                                                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
   {
@@ -784,7 +784,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                        aEbms3CollaborationInfo,
                                                                        aEbms3PartyInfo,
                                                                        aEbms3MessageProperties,
-                                                                       eSOAPVersion);
+                                                                       eSoapVersion);
     return aResponseUserMessage;
   }
 
@@ -837,7 +837,7 @@ public class AS4RequestHandler implements AutoCloseable
    *        Signing parameters
    * @param aDocToBeSigned
    *        the message that should be signed
-   * @param eSOAPVersion
+   * @param eSoapVersion
    *        SOAPVersion that is used
    * @param sMessagingID
    *        The messaging ID to be used for signing
@@ -850,7 +850,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                           @Nonnull final AS4SigningParams aSigningParams,
                                           @Nonnull final Document aDocToBeSigned,
-                                          @Nonnull final ESOAPVersion eSOAPVersion,
+                                          @Nonnull final ESOAPVersion eSoapVersion,
                                           @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
   {
     final Document ret;
@@ -860,7 +860,7 @@ public class AS4RequestHandler implements AutoCloseable
       final boolean bMustUnderstand = true;
       ret = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                            aDocToBeSigned,
-                                           eSOAPVersion,
+                                           eSoapVersion,
                                            sMessagingID,
                                            aResponseAttachments,
                                            m_aResHelper,
@@ -892,10 +892,10 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * @param aSOAPDocument
+   * @param aSoapDocument
    *        document which should be used as source for the receipt to convert
    *        it to non-repudiation information. Can be <code>null</code>.
-   * @param eSOAPVersion
+   * @param eSoapVersion
    *        SOAPVersion which should be used
    * @param aEffectiveLeg
    *        the leg that is used to determined, how the receipt should be build
@@ -906,16 +906,16 @@ public class AS4RequestHandler implements AutoCloseable
    *        that should be sent back if needed. Can be <code>null</code>.
    * @throws WSSecurityException
    */
-  private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSOAPDocument,
-                                                             @Nonnull final ESOAPVersion eSOAPVersion,
+  private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSoapDocument,
+                                                             @Nonnull final ESOAPVersion eSoapVersion,
                                                              @Nonnull final PModeLeg aEffectiveLeg,
                                                              @Nullable final Ebms3UserMessage aUserMessage,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
-    final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSOAPVersion,
+    final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSoapVersion,
                                                                         MessageHelperMethods.createRandomMessageID (),
                                                                         aUserMessage,
-                                                                        aSOAPDocument,
+                                                                        aSoapDocument,
                                                                         _isSendNonRepudiationInformation (aEffectiveLeg))
                                                                .setMustUnderstand (true);
 
@@ -927,7 +927,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseDoc,
                                                        aEffectiveLeg.getProtocol ().getSOAPVersion (),
                                                        aReceiptMessage.getMessagingID ());
-    return new AS4ResponseFactoryXML (aSignedDoc, eSOAPVersion.getMimeType ());
+    return new AS4ResponseFactoryXML (aSignedDoc, eSoapVersion.getMimeType ());
   }
 
   /**
@@ -1030,21 +1030,21 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   @Nullable
-  private IAS4ResponseFactory _handleSOAPMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
-                                                  @Nonnull final Document aSOAPDocument,
+  private IAS4ResponseFactory _handleSoapMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+                                                  @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ESOAPVersion eSoapVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                                                       MessagingException
   {
     ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
-    ValueEnforcer.notNull (aSOAPDocument, "SOAPDocument");
-    ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
+    ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
 
     if (LOGGER.isDebugEnabled ())
     {
       LOGGER.debug ("Received the following SOAP " + eSoapVersion.getVersion () + " document:");
-      LOGGER.debug (AS4XMLHelper.serializeXML (aSOAPDocument));
+      LOGGER.debug (AS4XMLHelper.serializeXML (aSoapDocument));
       LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
       LOGGER.debug (aIncomingAttachments.toString ());
     }
@@ -1060,7 +1060,7 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Handle all headers - the only place where the AS4MessageState values
       // are written
-      _processSOAPHeaderElements (aSOAPDocument, aIncomingAttachments, aStateImpl, aErrorMessages);
+      _processSoapHeaderElements (aSoapDocument, aIncomingAttachments, aStateImpl, aErrorMessages);
 
       aState = aStateImpl;
     }
@@ -1172,7 +1172,7 @@ public class AS4RequestHandler implements AutoCloseable
       }
 
       final boolean bUseDecryptedSOAP = aState.hasDecryptedSOAPDocument ();
-      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSOAPDocument () : aSOAPDocument;
+      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSOAPDocument () : aSoapDocument;
       assert aRealSOAPDoc != null;
 
       // Find SOAP body
@@ -1398,7 +1398,7 @@ public class AS4RequestHandler implements AutoCloseable
 
               if (bSendReceiptAsResponse)
               {
-                return _createResponseReceiptMessage (aSOAPDocument,
+                return _createResponseReceiptMessage (aSoapDocument,
                                                       eSoapVersion,
                                                       aEffectiveLeg,
                                                       aEbmsUserMessage,
@@ -1532,8 +1532,8 @@ public class AS4RequestHandler implements AutoCloseable
     if (aContentType == null)
       throw new AS4BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
 
-    Document aSOAPDocument = null;
-    ESOAPVersion eSOAPVersion = null;
+    Document aSoapDocument = null;
+    ESOAPVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
 
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
@@ -1580,11 +1580,18 @@ public class AS4RequestHandler implements AutoCloseable
                                                            .getCopyWithoutParameters ();
 
               // Determine SOAP version from MIME part content type
-              eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
+              eSoapVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
                                                     x -> aPlainPartMT.equals (x.getMimeType ()));
+              if (eSoapVersion == null)
+              {
+                LOGGER.warn ("Failed to determine SOAP version from Content-Type '" +
+                             aPlainPartMT.getAsString () +
+                             "'");
+                // There is another try down below by reading the payload XML
+              }
 
               // Read SOAP document
-              aSOAPDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
+              aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
             }
             else
             {
@@ -1604,44 +1611,44 @@ public class AS4RequestHandler implements AutoCloseable
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSOAPDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpHeaders, aServletRequestIS, null));
+      aSoapDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpHeaders, aServletRequestIS, null));
 
-      if (aSOAPDocument != null)
+      if (aSoapDocument != null)
       {
         // Determine SOAP version from the read document
-        eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSOAPDocument.getDocumentElement ().getNamespaceURI ());
+        eSoapVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDocument.getDocumentElement ().getNamespaceURI ());
       }
 
-      if (eSOAPVersion == null)
+      if (eSoapVersion == null)
       {
         // Determine SOAP version from content type
-        eSOAPVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainContentType);
+        eSoapVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainContentType);
       }
     }
 
-    if (aSOAPDocument == null)
+    if (aSoapDocument == null)
     {
       // We don't have a SOAP document
-      throw new AS4BadRequestException (eSOAPVersion == null ? "Failed to parse incoming message!"
+      throw new AS4BadRequestException (eSoapVersion == null ? "Failed to parse incoming message!"
                                                              : "Failed to parse incoming SOAP " +
-                                                               eSOAPVersion.getVersion () +
+                                                               eSoapVersion.getVersion () +
                                                                " document!");
     }
 
-    if (eSOAPVersion == null)
+    if (eSoapVersion == null)
     {
       // Determine SOAP version from namespace URI of read document as the
       // last fallback
-      final String sNamespaceURI = XMLHelper.getNamespaceURI (aSOAPDocument);
-      eSOAPVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
-      if (eSOAPVersion == null)
+      final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
+      eSoapVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
+      if (eSoapVersion == null)
         throw new AS4BadRequestException ("Failed to determine SOAP version from XML document!");
     }
 
     // SOAP document and SOAP version are determined
-    final IAS4ResponseFactory aResponder = _handleSOAPMessage (aHttpHeaders,
-                                                               aSOAPDocument,
-                                                               eSOAPVersion,
+    final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
+                                                               aSoapDocument,
+                                                               eSoapVersion,
                                                                aIncomingAttachments);
     if (aResponder != null)
     {
