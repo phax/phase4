@@ -24,11 +24,11 @@
     <artifactId>phase4-parent-pom</artifactId>
     <version>0.9.7-SNAPSHOT</version>
   </parent>
-  <artifactId>phase4-peppol-client</artifactId>
+  <artifactId>phase4-peppol-servlet</artifactId>
   <packaging>bundle</packaging>
-  <name>phase4-peppol-client</name>
-  <description>Peppol AS4 client for outgoing transmissions</description>
-  <url>https://github.com/phax/phase4/phase4-peppol-client</url>
+  <name>phase4-peppol-servlet</name>
+  <description>Peppol AS4 servlet for incoming transmissions</description>
+  <url>https://github.com/phax/phase4/phase4-peppol-servlet</url>
   <inceptionYear>2019</inceptionYear>
 
   <licenses>
@@ -68,10 +68,6 @@
       <groupId>com.helger</groupId>
       <artifactId>peppol-smp-client</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-bdve-peppol</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -99,8 +95,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Automatic-Module-Name>com.helger.phase4.peppol</Automatic-Module-Name>
-            <Export-Package>com.helger.phase4.peppol.*</Export-Package>
+            <Automatic-Module-Name>com.helger.phase4.peppol.servlet</Automatic-Module-Name>
+            <Export-Package>com.helger.phase4.peppol.servlet.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
           </instructions>
         </configuration>
@@ -115,7 +111,6 @@
             <exclude>**/*.p12</exclude>
             <exclude>**/*.jks</exclude>
             <exclude>src/test/resources/examples/**</exclude>
-            <exclude>phase4-peppol-client/**</exclude>
           </excludes>
         </configuration>
       </plugin>

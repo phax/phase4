@@ -223,6 +223,11 @@
         <artifactId>phase4-peppol-client</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>phase4-peppol-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   
@@ -234,6 +239,7 @@
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-peppol-client</module>
+    <module>phase4-peppol-servlet</module>
   </modules>
   
   <dependencies>

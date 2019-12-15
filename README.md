@@ -12,7 +12,8 @@ It consists of the following sub-projects:
   * **phase4-servlet** - AS4 servlet for integration into existing
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
-  * **phase4-peppol-client** - a specific client to send messages to PEPPOL (since v0.9.3)  
+  * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
+  * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -132,6 +133,8 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v0.9.7 - work in progress
+    * Removed the default configuration files from `phase4-peppol-client`
+    * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)
