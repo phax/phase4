@@ -240,10 +240,11 @@ public class AS4CryptoFactory implements Serializable
       final KeyStore aKeyStore = getKeyStore ();
       if (aKeyStore != null)
       {
+        final String sKeyPassword = m_aCryptoProps.getKeyPassword ();
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     m_aCryptoProps.getKeyPassword ().toCharArray ())
+                                                     sKeyPassword == null ? null : sKeyPassword.toCharArray ())
                                     .getKeyEntry ();
       }
     }
