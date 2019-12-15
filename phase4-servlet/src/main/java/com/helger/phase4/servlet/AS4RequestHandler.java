@@ -263,8 +263,8 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
+  public static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
-  private static final IMimeType MT_MULTIPART_RELATED = EMimeContentType.MULTIPART.buildMimeType ("related");
 
   private final AS4ResourceHelper m_aResHelper;
   private final AS4CryptoFactory m_aCryptoFactory;
