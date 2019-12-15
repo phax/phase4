@@ -146,7 +146,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
       // Customize after handling
       if (m_aHandlerCustomizer != null)
-        m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
+        m_aHandlerCustomizer.customizeAfterHandling (aRequestScope, aHttpResponse, aHandler);
     }
     catch (final AS4BadRequestException ex)
     {
