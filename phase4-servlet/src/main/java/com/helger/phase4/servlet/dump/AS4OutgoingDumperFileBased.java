@@ -19,7 +19,6 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -30,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
@@ -40,12 +37,12 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 /**
- * File based implementation if {@link IAS4OutgoingDumper}
+ * File based implementation of {@link IAS4OutgoingDumper}
  *
  * @author Philip Helger
  * @since 0.9.3
  */
-public class AS4OutgoingDumperFileBased implements IAS4OutgoingDumper
+public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders
 {
   public static interface IFileProvider
   {
@@ -67,7 +64,7 @@ public class AS4OutgoingDumperFileBased implements IAS4OutgoingDumper
                                                                       FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
                                                                       "-" +
                                                                       nTry +
-                                                                      ".dat"));
+                                                                      ".as4out"));
   }
 
   public AS4OutgoingDumperFileBased (@Nonnull final IFileProvider aFileProvider)
@@ -76,27 +73,13 @@ public class AS4OutgoingDumperFileBased implements IAS4OutgoingDumper
     m_aFileProvider = aFileProvider;
   }
 
-  @Nullable
-  public OutputStream onBeginRequest (@Nonnull @Nonempty final String sMessageID,
-                                      @Nullable final HttpHeaderMap aCustomHeaders,
-                                      @Nonnegative final int nTry) throws IOException
+  @Override
+  protected OutputStream openOutputStream (@Nonnull @Nonempty final String sMessageID,
+                                           @Nullable final HttpHeaderMap aCustomHeaders,
+                                           @Nonnegative final int nTry) throws IOException
   {
     final File aResponseFile = m_aFileProvider.getFile (sMessageID, nTry);
     LOGGER.info ("Logging outgoing AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
-    final OutputStream ret = FileHelper.getBufferedOutputStream (aResponseFile);
-    if (aCustomHeaders != null && aCustomHeaders.isNotEmpty ())
-    {
-      for (final Map.Entry <String, ICommonsList <String>> aEntry : aCustomHeaders)
-      {
-        final String sHeader = aEntry.getKey ();
-        for (final String sValue : aEntry.getValue ())
-          ret.write ((sHeader +
-                      ": " +
-                      HttpHeaderMap.getUnifiedValue (sValue, false) +
-                      CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
-      }
-      ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
-    }
-    return ret;
+    return FileHelper.getBufferedOutputStream (aResponseFile);
   }
 }
