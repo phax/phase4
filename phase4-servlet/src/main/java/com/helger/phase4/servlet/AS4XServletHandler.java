@@ -81,7 +81,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   /**
    * Default constructor.
-   * 
+   *
    * @since 0.9.7
    */
   public AS4XServletHandler ()
@@ -165,12 +165,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                       "Bad Request: " + ex.getMessage (),
                                       ex.getCause ());
     }
-    catch (final Throwable t)
+    catch (final Exception ex)
     {
       // Logged inside
       aHttpResponse.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                                       "Internal error processing AS4 request",
-                                      t);
+                                      ex);
     }
   }
 }
