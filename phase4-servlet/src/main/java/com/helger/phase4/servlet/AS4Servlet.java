@@ -17,8 +17,6 @@
 package com.helger.phase4.servlet;
 
 import com.helger.commons.http.EHttpMethod;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
-import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.xservlet.AbstractXServlet;
 
 /**
@@ -46,9 +44,7 @@ public class AS4Servlet extends AbstractXServlet
   {
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
-    final IIncomingAttachmentFactory aIAF = IIncomingAttachmentFactory.DEFAULT_INSTANCE;
     // HTTP POST only
-    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler (aCryptoFactory, aIAF));
+    handlerRegistry ().registerHandler (EHttpMethod.POST, new AS4XServletHandler ());
   }
 }

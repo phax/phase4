@@ -80,6 +80,16 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   private IHandlerCustomizer m_aHandlerCustomizer;
 
   /**
+   * Default constructor.
+   * 
+   * @since 0.9.7
+   */
+  public AS4XServletHandler ()
+  {
+    this (AS4CryptoFactory.getDefaultInstance (), IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+  }
+
+  /**
    * Constructor
    *
    * @param aCryptoFactory
