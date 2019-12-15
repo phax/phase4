@@ -304,12 +304,23 @@ public class AS4RequestHandler implements AutoCloseable
     return this;
   }
 
+  /**
+   * @return The supplier used to get all SPIs. By default this is
+   *         {@link AS4ServletMessageProcessorManager#getAllProcessors()}.
+   */
   @Nonnull
   public final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()
   {
     return m_aProcessorSupplier;
   }
 
+  /**
+   * Set a different processor supplier
+   *
+   * @param aProcessorSupplier
+   *        The processor supplier to be used. May not be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4RequestHandler setProcessorSupplier (@Nonnull final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
   {
@@ -523,7 +534,7 @@ public class AS4RequestHandler implements AutoCloseable
     final String sMessageID = bIsUserMessage ? aUserMessage.getMessageInfo ().getMessageId ()
                                              : aSignalMessage.getMessageInfo ().getMessageId ();
 
-    // Invoke all SPIs
+    // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
@@ -677,12 +688,13 @@ public class AS4RequestHandler implements AutoCloseable
           aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
           return;
         }
+        catch (final RuntimeException ex)
+        {
+          // Re-throw
+          throw ex;
+        }
         catch (final Exception ex)
         {
-
-          // Re-throw
-          if (ex instanceof RuntimeException)
-            throw (RuntimeException) ex;
           throw new IllegalStateException ("Error processing incoming AS4 message with processor " + aProcessor, ex);
         }
 
@@ -699,7 +711,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws AS4BadRequestException
    *         on error
    */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <Ebms3Property> aPropertyList) throws AS4BadRequestException
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <? extends Ebms3Property> aPropertyList) throws AS4BadRequestException
   {
     String sOriginalSenderC1 = null;
     String sFinalRecipientC4 = null;
