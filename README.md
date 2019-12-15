@@ -22,7 +22,9 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 
 The configuration of phase4 is based on 2 different files:
   * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
-  * `phase4.properties` - ph-as4-server specific configuration file (was called `as4.properties` before v0.9.0)
+  * `phase4.properties` - phase4-servlet specific configuration file (was called `as4.properties` before v0.9.0)
+
+Additionally some phase4 specific system properties are available.
   
 ### crypto.properties
 
@@ -41,14 +43,17 @@ The file is a classpath relative path like `keys/dummy-pw-test.jks`.
 
 PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
 
-**Note:** since v0.9.6 the configuration of the keystore and truststore can be done in the code only and this configuration file becomes optional. 
+**Note:** since v0.9.6 the configuration of the keystore and truststore can be done in the code and this configuration file becomes optional. 
 
 ### phase4.properties
 
-This AS4 server specific file contains the following properties:
+This property file must be provided, when the `phase4-servlet` submodule for receiving is used.
+If you are only using `phase4-lib` for sending, than this file is not of interest.
+
+This file contains the following properties:
 
 ```ini
-#server.profile=
+#server.profile=peppol
 server.debug=false
 server.production=false
 server.nostartupinfo=true
@@ -58,7 +63,7 @@ server.datapath=/var/www/as4/data
 ```
 
 The file is searched in the locations specified as follows:
-* A path denoted by the environment variable `AS4_SERVER_CONFIG`
+* A path denoted by the environment variable `PHASE4_SERVER_CONFIG`
 * A path denoted by the system property `phase4.server.configfile`
 * A path denoted by the system property `as4.server.configfile` (for legacy reasons)
 * A file named `private-phase4.properties` within your classpath
@@ -79,6 +84,18 @@ The properties have the following meaning
 
 The following special system properties are supported:
 * **`phase4.manager.inmemory`** (since v0.9.6): if set to `true` the system will not try to store data in the file system. By default this is `false`.
+
+# Different configurations
+
+To handle common parts of AS4 PModes this project uses so called "profiles". Currently two default profiles are available:
+
+* CEF with ID `cef` in submodule `phase4-profile-cef`
+* Peppol with ID `peppol` in submodule `phase4-profile-peppol`
+
+To use one of these profiles, the respective Maven artifacts must be added as dependencies to your project.
+
+If you want to create your own profile, you need to provide an [SPI](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) implementation of the as4-lib interface `com.helger.phase4.profile.IAS4ProfileRegistrarSPI`. See the above mentioned submodules as examples on how to do that.
+
 
 # Peppol handling
 
@@ -109,6 +126,8 @@ Per now the following known limitations exist:
 Any voluntary help on this project is welcome.
 If you want to write documentation or test the solution - I'm glad for every help.
 Just write me an email - see pom.xml for my email address
+
+If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
