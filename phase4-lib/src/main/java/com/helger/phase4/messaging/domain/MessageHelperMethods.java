@@ -40,7 +40,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.EURLProtocol;
 import com.helger.datetime.util.PDTXMLConverter;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.attachment.IAS4Attachment;
 import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Description;
@@ -302,7 +302,7 @@ public final class MessageHelperMethods
   }
 
   @Nullable
-  public static Ebms3PartInfo createEbms3PartInfo (@Nullable final WSS4JAttachment aAttachment)
+  public static Ebms3PartInfo createEbms3PartInfo (@Nullable final IAS4Attachment aAttachment)
   {
     if (aAttachment == null)
       return null;
@@ -330,7 +330,7 @@ public final class MessageHelperMethods
   /**
    * Add payload info if attachments are present.
    *
-   * @param bHasSOAPPayload
+   * @param bHasSoapPayload
    *        <code>true</code> if SOAP payload is present. This must be
    *        <code>false</code> when using MIME message layout!
    * @param aAttachments
@@ -338,17 +338,17 @@ public final class MessageHelperMethods
    * @return <code>null</code> if no attachments are present.
    */
   @Nullable
-  public static Ebms3PayloadInfo createEbms3PayloadInfo (final boolean bHasSOAPPayload,
-                                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static Ebms3PayloadInfo createEbms3PayloadInfo (final boolean bHasSoapPayload,
+                                                         @Nullable final ICommonsList <? extends IAS4Attachment> aAttachments)
   {
     final Ebms3PayloadInfo aEbms3PayloadInfo = new Ebms3PayloadInfo ();
 
     // Empty PayloadInfo only if sending as the body of the SOAP message
-    if (bHasSOAPPayload)
+    if (bHasSoapPayload)
       aEbms3PayloadInfo.addPartInfo (new Ebms3PartInfo ());
 
     if (aAttachments != null)
-      for (final WSS4JAttachment aAttachment : aAttachments)
+      for (final IAS4Attachment aAttachment : aAttachments)
         aEbms3PayloadInfo.addPartInfo (createEbms3PartInfo (aAttachment));
 
     if (aEbms3PayloadInfo.getPartInfoCount () == 0)

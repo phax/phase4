@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -68,7 +67,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @author Philip Helger
  */
 @NotThreadSafe
-public class WSS4JAttachment extends Attachment
+public class WSS4JAttachment extends Attachment implements IAS4Attachment
 {
   public static final String CONTENT_DESCRIPTION_ATTACHMENT = "Attachment";
   public static final String CONTENT_ID_PREFIX = "<attachment=";
@@ -129,9 +128,6 @@ public class WSS4JAttachment extends Attachment
     super.addHeader (sName, sValue);
   }
 
-  /**
-   * @return The MIME type of the uncompressed attachment.
-   */
   @Nullable
   public String getUncompressedMimeType ()
   {
@@ -145,14 +141,6 @@ public class WSS4JAttachment extends Attachment
     return getSourceStream (m_aResHelper);
   }
 
-  /**
-   * Get the source stream of the attachment using the provided resource helper.
-   * This can be helpful, if the source helper is already out of scope.
-   *
-   * @param aResourceHelper
-   *        The resource helper to use. May not be <code>null</code>.
-   * @return A non-<code>null</code> InputStream on the source.
-   */
   @Nonnull
   public InputStream getSourceStream (@Nonnull final AS4ResourceHelper aResourceHelper)
   {
@@ -184,21 +172,12 @@ public class WSS4JAttachment extends Attachment
     return m_aISP;
   }
 
-  public boolean isRepeatable ()
-  {
-    return m_aISP != null && m_aISP.isReadMultiple ();
-  }
-
   public void setSourceStreamProvider (@Nonnull final IHasInputStream aISP)
   {
     ValueEnforcer.notNull (aISP, "InputStreamProvider");
     m_aISP = aISP;
   }
 
-  /**
-   * @return The content transfer encoding to be used. Required for MIME
-   *         multipart handling only.
-   */
   @Nonnull
   public final EContentTransferEncoding getContentTransferEncoding ()
   {
@@ -218,11 +197,6 @@ public class WSS4JAttachment extends Attachment
     return m_eCompressionMode;
   }
 
-  public final boolean hasCompressionMode ()
-  {
-    return m_eCompressionMode != null;
-  }
-
   @Nonnull
   public final WSS4JAttachment setCompressionMode (@Nonnull final EAS4CompressionMode eCompressionMode)
   {
@@ -239,12 +213,6 @@ public class WSS4JAttachment extends Attachment
       super.setMimeType (m_sUncompressedMimeType);
     }
     return this;
-  }
-
-  @Nonnull
-  public final Charset getCharset ()
-  {
-    return getCharsetOrDefault (StandardCharsets.ISO_8859_1);
   }
 
   @Nullable
