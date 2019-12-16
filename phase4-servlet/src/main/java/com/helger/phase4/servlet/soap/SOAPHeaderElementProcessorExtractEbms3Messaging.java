@@ -35,6 +35,7 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashMap;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
+import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
@@ -416,7 +417,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             nSpecifiedAttachments++;
 
             final String sAttachmentID = StringHelper.trimStart (aPartInfo.getHref (), MessageHelperMethods.PREFIX_CID);
-            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> x.getId ().equals (sAttachmentID));
+            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (),
+                                                                                                          sAttachmentID));
             if (aIncomingAttachment == null)
               LOGGER.warn ("Failed to resolve MIME attachment '" +
                            sAttachmentID +
