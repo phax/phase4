@@ -106,7 +106,22 @@ The contained project contains a class called `Phase4PeppolSender.Builder` - it 
 
 ## Subproject phase4-peppol-servlet
 
-**The Peppol specific receiving part is work in progress and will be available soon**
+Available from version 0.9.7 onwards.
+Register the Servlet `com.helger.phase4.peppol.servlet.Phase4PeppolServlet` in your application.
+Than implement the SPI interface `com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI` to handle incoming Peppol messages.
+
+Sample setup for `WEB-INF/web.xml`:
+
+```xml
+<servlet>
+  <servlet-name>Phase4PeppolServlet</servlet-name>
+  <servlet-class>com.helger.phase4.peppol.servlet.Phase4PeppolServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>Phase4PeppolServlet</servlet-name>
+  <url-pattern>/as4</url-pattern>
+</servlet-mapping>
+```
 
 # Building from source
 
