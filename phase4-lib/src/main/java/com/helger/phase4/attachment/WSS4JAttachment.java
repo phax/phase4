@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
@@ -108,6 +109,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
   @Override
   @Deprecated
+  @UnsupportedOperation
   public final void setMimeType (@Nullable final String sMimeType)
   {
     throw new UnsupportedOperationException ();
@@ -161,6 +163,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    */
   @Override
   @Deprecated
+  @UnsupportedOperation
   public void setSourceStream (final InputStream sourceStream)
   {
     throw new UnsupportedOperationException ("Use setSourceStreamProvider instead");

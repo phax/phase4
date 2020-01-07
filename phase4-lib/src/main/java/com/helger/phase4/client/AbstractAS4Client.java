@@ -36,13 +36,10 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -50,7 +47,6 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactory;
-import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -62,8 +58,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.MultiOutputStream;
-import com.helger.security.keystore.EKeyStoreType;
-import com.helger.security.keystore.IKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
@@ -78,7 +72,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                         implements
                                         IGenericImplTrait <IMPLTYPE>
 {
-  public static final IKeyStoreType DEFAULT_KEYSTORE_TYPE = EKeyStoreType.JKS;
   public static final int DEFAULT_MAX_RETRIES = 0;
   public static final long DEFAULT_RETRY_INTERVAL_MS = 12_000;
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Client.class);
@@ -95,13 +88,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   private final AS4ResourceHelper m_aResHelper;
 
-  // KeyStore attributes
-  private IKeyStoreType m_aKeyStoreType = DEFAULT_KEYSTORE_TYPE;
-  private IReadableResource m_aKeyStoreRes;
-  private String m_sKeyStorePassword;
-  private String m_sKeyStoreAlias;
-  private String m_sKeyStoreKeyPassword;
-  // Alternative
   private AS4CryptoFactory m_aCryptoFactory;
   private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   private final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
@@ -132,155 +118,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The keystore type to use. Never <code>null</code>. Default is
-   *         {@link #DEFAULT_KEYSTORE_TYPE}.
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IKeyStoreType getKeyStoreType ()
-  {
-    return m_aKeyStoreType;
-  }
-
-  /**
-   * The type of the keystore needs to be set if a keystore is used.<br>
-   * MANDATORY if you want to use sign or encryption of an user message.
-   * Defaults to "jks".
-   *
-   * @param aKeyStoreType
-   *        keystore type that should be set, e.g. "jks". May not be
-   *        <code>null</code>.
-   * @return this for chaining
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setKeyStoreType (@Nonnull final IKeyStoreType aKeyStoreType)
-  {
-    ValueEnforcer.notNull (aKeyStoreType, "KeyStoreType");
-    m_aKeyStoreType = aKeyStoreType;
-    m_aCryptoFactory = null;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The keystore resource to use. May be <code>null</code>.
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nullable
-  public final IReadableResource getKeyStoreResource ()
-  {
-    return m_aKeyStoreRes;
-  }
-
-  /**
-   * The keystore that should be used can be set here.<br>
-   * MANDATORY if you want to use sign or encryption of an usermessage.
-   *
-   * @param aKeyStoreRes
-   *        the keystore file that should be used
-   * @return this for chaining
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setKeyStoreResource (@Nullable final IReadableResource aKeyStoreRes)
-  {
-    m_aKeyStoreRes = aKeyStoreRes;
-    m_aCryptoFactory = null;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The keystore password to use. May be <code>null</code>.
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nullable
-  public final String getKeyStorePassword ()
-  {
-    return m_sKeyStorePassword;
-  }
-
-  /**
-   * KeyStore password needs to be set if a keystore is used<br>
-   * MANDATORY if you want to use sign or encryption of an usermessage.
-   *
-   * @param sKeyStorePassword
-   *        password that should be set
-   * @return this for chaining
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setKeyStorePassword (@Nullable final String sKeyStorePassword)
-  {
-    m_sKeyStorePassword = sKeyStorePassword;
-    m_aCryptoFactory = null;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The keystore key alias to use. May be <code>null</code>.
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nullable
-  public final String getKeyStoreAlias ()
-  {
-    return m_sKeyStoreAlias;
-  }
-
-  /**
-   * KeyStorealias needs to be set if a keystore is used<br>
-   * MANDATORY if you want to use sign or encryption of an usermessage.
-   *
-   * @param sKeyStoreAlias
-   *        alias that should be set
-   * @return this for chaining
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setKeyStoreAlias (@Nullable final String sKeyStoreAlias)
-  {
-    m_sKeyStoreAlias = sKeyStoreAlias;
-    m_aCryptoFactory = null;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The keystore key password to use. May be <code>null</code>.
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nullable
-  public final String getKeyStoreKeyPassword ()
-  {
-    return m_sKeyStoreKeyPassword;
-  }
-
-  /**
-   * Key password needs to be set if a keystore is used<br>
-   * MANDATORY if you want to use sign or encryption of an usermessage.
-   *
-   * @param sKeyStoreKeyPassword
-   *        password that should be set
-   * @return this for chaining
-   * @deprecated Use {@link AS4CryptoFactory} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setKeyStoreKeyPassword (@Nullable final String sKeyStoreKeyPassword)
-  {
-    m_sKeyStoreKeyPassword = sKeyStoreKeyPassword;
-    m_aCryptoFactory = null;
-    return thisAsT ();
-  }
-
-  /**
    * @return The currently set crypto factory. <code>null</code> by default.
    */
   @Nullable
@@ -300,15 +137,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public final IMPLTYPE setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
   {
     m_aCryptoFactory = aCryptoFactory;
-    if (aCryptoFactory != null)
-    {
-      // Explicitly null all keystore/truststore types
-      m_aKeyStoreType = null;
-      m_aKeyStoreRes = null;
-      m_sKeyStorePassword = null;
-      m_sKeyStoreAlias = null;
-      m_sKeyStoreKeyPassword = null;
-    }
     return thisAsT ();
   }
 
@@ -484,42 +312,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return thisAsT ();
   }
 
-  private void _checkKeyStoreAttributes ()
-  {
-    if (m_aCryptoFactory == null)
-    {
-      if (m_aKeyStoreType == null)
-        throw new IllegalStateException ("KeyStore type is not configured.");
-      if (m_aKeyStoreRes == null)
-        throw new IllegalStateException ("KeyStore resources is not configured.");
-      if (!m_aKeyStoreRes.exists ())
-        throw new IllegalStateException ("KeyStore resource does not exist: " + m_aKeyStoreRes.getPath ());
-      if (m_sKeyStorePassword == null)
-        throw new IllegalStateException ("KeyStore password is not configured.");
-      if (StringHelper.hasNoText (m_sKeyStoreAlias))
-        throw new IllegalStateException ("KeyStore alias is not configured.");
-      if (m_sKeyStoreKeyPassword == null)
-        throw new IllegalStateException ("Key password is not configured.");
-    }
-  }
-
   @Nonnull
   protected AS4CryptoFactory internalCreateCryptoFactory ()
   {
-    _checkKeyStoreAttributes ();
+    if (m_aCryptoFactory == null)
+      throw new IllegalStateException ("No CryptoFactory is configured.");
 
-    // Shortcut?
-    if (m_aCryptoFactory != null)
-      return m_aCryptoFactory;
-
-    final ICommonsMap <String, String> aCryptoProps = new CommonsLinkedHashMap <> ();
-    aCryptoProps.put (AS4CryptoProperties.CRYPTO_PROVIDER, org.apache.wss4j.common.crypto.Merlin.class.getName ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_TYPE, getKeyStoreType ().getID ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_FILE, getKeyStoreResource ().getPath ());
-    aCryptoProps.put (AS4CryptoProperties.KEYSTORE_PASSWORD, getKeyStorePassword ());
-    aCryptoProps.put (AS4CryptoProperties.KEY_ALIAS, getKeyStoreAlias ());
-    aCryptoProps.put (AS4CryptoProperties.KEY_PASSWORD, getKeyStoreKeyPassword ());
-    return new AS4CryptoFactory (aCryptoProps);
+    return m_aCryptoFactory;
   }
 
   public final void setValuesFromPMode (@Nullable final IPMode aPMode, @Nullable final PModeLeg aLeg)

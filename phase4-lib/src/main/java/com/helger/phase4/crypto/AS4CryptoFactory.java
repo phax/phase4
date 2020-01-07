@@ -64,7 +64,9 @@ public class AS4CryptoFactory implements Serializable
   private static AS4CryptoFactory _DEFAULT_INSTANCE = null;
 
   /**
-   * @return The default instance
+   * @return The default instance, created by reading the default
+   *         "crypto.properties" file. If this file is not present, than this
+   *         method returns <code>null</code>.
    */
   @Nullable
   public static AS4CryptoFactory getDefaultInstance ()
@@ -84,16 +86,6 @@ public class AS4CryptoFactory implements Serializable
     }
     return ret;
   }
-
-  /**
-   * Default {@link AS4CryptoFactory} using file 'private-crypto.properties' or
-   * 'crypto.properties'
-   *
-   * @deprecated since 0.9.6; use {@link #getDefaultInstance()} instead
-   */
-  @Deprecated
-  @Nullable
-  public static final AS4CryptoFactory DEFAULT_INSTANCE = getDefaultInstance ();
 
   private final AS4CryptoProperties m_aCryptoProps;
   // Lazy initialized
@@ -163,18 +155,6 @@ public class AS4CryptoFactory implements Serializable
   {
     ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
     m_aCryptoProps = aCryptoProps.getClone ();
-  }
-
-  /**
-   * @return The crypto properties as created in the constructor. Never
-   *         <code>null</code>.
-   * @deprecated Use {@link #cryptoProperties()} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final AS4CryptoProperties getCryptoProperties ()
-  {
-    return cryptoProperties ();
   }
 
   /**
