@@ -666,7 +666,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
+    public final IMPLTYPE setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
     {
       ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
       m_aHttpClientFactory = aHttpClientFactory;
@@ -682,11 +682,21 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
+    public final IMPLTYPE setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
     {
       ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
       m_aCryptoFactory = aCryptoFactory;
       return thisAsT ();
+    }
+
+    /**
+     * @return The used P-Mode. Never <code>null</code>.
+     * @since 0.9.7
+     */
+    @Nonnull
+    public final IPMode getPMode ()
+    {
+      return m_aPMode;
     }
 
     /**
@@ -698,7 +708,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setPMode (@Nonnull final IPMode aPMode)
+    public final IMPLTYPE setPMode (@Nonnull final IPMode aPMode)
     {
       ValueEnforcer.notNull (aPMode, "PMode");
       m_aPMode = aPMode;
@@ -714,7 +724,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    public final IMPLTYPE setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
     {
       ValueEnforcer.notNull (aSenderID, "SenderID");
       m_aSenderID = aSenderID;
@@ -730,7 +740,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    public final IMPLTYPE setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
     {
       ValueEnforcer.notNull (aReceiverID, "ReceiverID");
       m_aReceiverID = aReceiverID;
@@ -746,7 +756,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    public final IMPLTYPE setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
     {
       ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
       m_aDocTypeID = aDocTypeID;
@@ -762,7 +772,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setProcessID (@Nonnull final IProcessIdentifier aProcessID)
+    public final IMPLTYPE setProcessID (@Nonnull final IProcessIdentifier aProcessID)
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
       m_aProcessID = aProcessID;
@@ -779,7 +789,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    public final IMPLTYPE setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
     {
       ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
       m_sSenderPartyID = sSenderPartyID;
@@ -796,7 +806,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setConversationID (@Nullable final String sConversationID)
+    public final IMPLTYPE setConversationID (@Nullable final String sConversationID)
     {
       m_sConversationID = sConversationID;
       return thisAsT ();
@@ -812,7 +822,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
+    public final IMPLTYPE setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
     {
       ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
       m_aPayloadMimeType = aPayloadMimeType;
@@ -829,7 +839,7 @@ public final class Phase4PeppolSender
      * @return this for chaining.
      */
     @Nonnull
-    public IMPLTYPE setCompressPayload (final boolean bCompressPayload)
+    public final IMPLTYPE setCompressPayload (final boolean bCompressPayload)
     {
       m_bCompressPayload = bCompressPayload;
       return thisAsT ();
@@ -846,7 +856,7 @@ public final class Phase4PeppolSender
      * @since 0.9.6
      */
     @Nonnull
-    public IMPLTYPE setBuildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
+    public final IMPLTYPE setBuildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
     {
       m_aBuildMessageCallback = aBuildMessageCallback;
       return thisAsT ();
@@ -862,7 +872,7 @@ public final class Phase4PeppolSender
      * @since 0.9.6
      */
     @Nonnull
-    public IMPLTYPE setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    public final IMPLTYPE setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       m_aOutgoingDumper = aOutgoingDumper;
       return thisAsT ();
@@ -878,7 +888,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
+    public final IMPLTYPE setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
     {
       m_aResponseConsumer = aResponseConsumer;
       return thisAsT ();
@@ -894,7 +904,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public IMPLTYPE setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
+    public final IMPLTYPE setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
     {
       m_aSignalMsgConsumer = aSignalMsgConsumer;
       return thisAsT ();
