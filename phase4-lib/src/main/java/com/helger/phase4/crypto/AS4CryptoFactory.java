@@ -93,6 +93,15 @@ public class AS4CryptoFactory implements Serializable
   private transient KeyStore m_aKeyStore;
   private transient KeyStore.PrivateKeyEntry m_aPK;
 
+  /**
+   * Read crypto properties from the specified file path.
+   *
+   * @param sCryptoPropertiesPath
+   *        The class path to read the properties file from. It is
+   *        <code>null</code> or empty, than the default file
+   *        "crypto.properties" is read.
+   * @return Never <code>null</code>.
+   */
   @Nonnull
   public static AS4CryptoProperties readCryptoPropertiesFromFile (@Nullable final String sCryptoPropertiesPath)
   {
@@ -137,7 +146,9 @@ public class AS4CryptoFactory implements Serializable
    *
    * @param aProps
    *        The properties to be used. May be <code>null</code>.
+   * @deprecated As of 0.9.7. Use constructor with {@link AS4CryptoProperties}
    */
+  @Deprecated
   public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
   {
     this (new AS4CryptoProperties (aProps));
@@ -184,7 +195,7 @@ public class AS4CryptoFactory implements Serializable
 
   /**
    * Lazily create a {@link Crypto} instance using the properties from
-   * {@link #getCryptoProperties()}.
+   * {@link #cryptoProperties()}.
    *
    * @return A {@link Crypto} instance and never <code>null</code>.
    */
@@ -231,6 +242,11 @@ public class AS4CryptoFactory implements Serializable
     return ret;
   }
 
+  /**
+   * @return The public certificate of the private key entry or
+   *         <code>null</code> if the private key entry could not be loaded.
+   * @see #getPrivateKeyEntry()
+   */
   @Nullable
   public final X509Certificate getCertificate ()
   {

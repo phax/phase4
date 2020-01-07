@@ -89,7 +89,9 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
    *
    * @param aProps
    *        key value pair map. May be <code>null</code>.
+   * @deprecated As of 0.9.7. Will be removed afterwards.
    */
+  @Deprecated
   public AS4CryptoProperties (@Nullable final Map <String, String> aProps)
   {
     m_aProps = new NonBlockingProperties ();
