@@ -29,6 +29,7 @@ import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -75,7 +76,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     {}
   }
 
-  private final AS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
@@ -97,7 +98,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @param aIAF
    *        The attachment factory for incoming attachments.
    */
-  public AS4XServletHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
+  public AS4XServletHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");

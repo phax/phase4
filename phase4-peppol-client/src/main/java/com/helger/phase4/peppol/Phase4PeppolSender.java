@@ -74,6 +74,7 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -478,7 +479,7 @@ public final class Phase4PeppolSender
    *         if something goes wrong
    */
   private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
-                                       @Nonnull final AS4CryptoFactory aCryptoFactory,
+                                       @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                        @Nonnull final IPMode aSrcPMode,
                                        @Nonnull final IParticipantIdentifier aSenderID,
                                        @Nonnull final IParticipantIdentifier aReceiverID,
@@ -613,7 +614,7 @@ public final class Phase4PeppolSender
                                                    IGenericImplTrait <IMPLTYPE>
   {
     protected HttpClientFactory m_aHttpClientFactory;
-    protected AS4CryptoFactory m_aCryptoFactory;
+    protected IAS4CryptoFactory m_aCryptoFactory;
     protected IPMode m_aPMode;
 
     protected IParticipantIdentifier m_aSenderID;
@@ -634,7 +635,8 @@ public final class Phase4PeppolSender
     /**
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setCryptoFactory(AS4CryptoFactory)} {@link #setPMode(IPMode)}<br>
+     * {@link #setCryptoFactory(IAS4CryptoFactory)}
+     * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
      */
@@ -682,7 +684,7 @@ public final class Phase4PeppolSender
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setCryptoFactory (@Nonnull final AS4CryptoFactory aCryptoFactory)
+    public final IMPLTYPE setCryptoFactory (@Nonnull final IAS4CryptoFactory aCryptoFactory)
     {
       ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
       m_aCryptoFactory = aCryptoFactory;

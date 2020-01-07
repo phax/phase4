@@ -46,8 +46,8 @@ import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.AS4HttpDebug;
@@ -88,7 +88,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   private final AS4ResourceHelper m_aResHelper;
 
-  private AS4CryptoFactory m_aCryptoFactory;
+  private IAS4CryptoFactory m_aCryptoFactory;
   private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   private final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
 
@@ -121,7 +121,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The currently set crypto factory. <code>null</code> by default.
    */
   @Nullable
-  public final AS4CryptoFactory getAS4CryptoFactory ()
+  public final IAS4CryptoFactory getAS4CryptoFactory ()
   {
     return m_aCryptoFactory;
   }
@@ -134,7 +134,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setAS4CryptoFactory (@Nullable final AS4CryptoFactory aCryptoFactory)
+  public final IMPLTYPE setAS4CryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
   {
     m_aCryptoFactory = aCryptoFactory;
     return thisAsT ();
@@ -313,7 +313,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   @Nonnull
-  protected AS4CryptoFactory internalCreateCryptoFactory ()
+  protected IAS4CryptoFactory internalCreateCryptoFactory ()
   {
     if (m_aCryptoFactory == null)
       throw new IllegalStateException ("No CryptoFactory is configured.");

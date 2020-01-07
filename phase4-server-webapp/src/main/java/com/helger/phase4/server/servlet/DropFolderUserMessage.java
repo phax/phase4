@@ -56,10 +56,9 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.crypto.AS4CryptoFactory;
-import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESOAPVersion;
@@ -67,7 +66,6 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.settings.ISettings;
 
 public final class DropFolderUserMessage
@@ -82,7 +80,7 @@ public final class DropFolderUserMessage
   private DropFolderUserMessage ()
   {}
 
-  private static void _send (@Nonnull final AS4CryptoProperties aCP, final Path aSendFile, final Path aIncomingDir)
+  private static void _send (@Nonnull final IAS4CryptoFactory aCF, final Path aSendFile, final Path aIncomingDir)
   {
     final StopWatch aSW = StopWatch.createdStarted ();
     boolean bSuccess = false;
@@ -116,22 +114,14 @@ public final class DropFolderUserMessage
         }
         else
         {
-          final KeyStore aOurKS = KeyStoreHelper.loadKeyStore (aCP.getKeyStoreType (),
-                                                               aCP.getKeyStorePath (),
-                                                               aCP.getKeyStorePassword ())
-                                                .getKeyStore ();
-          final KeyStore.PrivateKeyEntry aOurCert = KeyStoreHelper.loadPrivateKey (aOurKS,
-                                                                                   aCP.getKeyStorePath (),
-                                                                                   aCP.getKeyAlias (),
-                                                                                   aCP.getKeyPassword ().toCharArray ())
-                                                                  .getKeyEntry ();
+          final KeyStore.PrivateKeyEntry aOurCert = aCF.getPrivateKeyEntry ();
           final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
 
           final AS4ClientUserMessage aClient = new AS4ClientUserMessage (aResHelper);
           aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
 
           // Keystore data
-          aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
+          aClient.setAS4CryptoFactory (aCF);
 
           aClient.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
           aClient.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
@@ -203,7 +193,7 @@ public final class DropFolderUserMessage
     }
   }
 
-  public static void init (@Nonnull final AS4CryptoProperties aCryptoProps)
+  public static void init (@Nonnull final IAS4CryptoFactory aCryptoFactory)
   {
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");
@@ -228,7 +218,7 @@ public final class DropFolderUserMessage
             aCurFile.getFileName () != null &&
             aCurFile.getFileName ().toString ().endsWith (".xml"))
         {
-          _send (aCryptoProps, aCurFile, aIncomingDir);
+          _send (aCryptoFactory, aCurFile, aIncomingDir);
         }
       };
       s_aWatch = WatchDir.createAsyncRunningWatchDir (aOutgoingDir, false, aCB);
@@ -242,7 +232,7 @@ public final class DropFolderUserMessage
                                                                                   .endsWith (".xml")))
       {
         for (final Path aCur : aStream)
-          _send (aCryptoProps, aCur, aIncomingDir);
+          _send (aCryptoFactory, aCur, aIncomingDir);
       }
     }
     catch (final IOException ex)

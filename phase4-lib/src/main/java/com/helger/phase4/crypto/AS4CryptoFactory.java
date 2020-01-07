@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.io.Serializable;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -29,7 +28,6 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.dom.WsuIdAllocator;
 import org.apache.wss4j.dom.engine.WSSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,6 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -51,7 +48,7 @@ import com.helger.security.keystore.KeyStoreHelper;
  * @author Philip Helger
  */
 @Immutable
-public class AS4CryptoFactory implements Serializable
+public class AS4CryptoFactory implements IAS4CryptoFactory
 {
   static
   {
@@ -242,6 +239,18 @@ public class AS4CryptoFactory implements Serializable
     return ret;
   }
 
+  @Nullable
+  public final String getKeyAlias ()
+  {
+    return m_aCryptoProps.getKeyAlias ();
+  }
+
+  @Nullable
+  public final String getKeyPassword ()
+  {
+    return m_aCryptoProps.getKeyPassword ();
+  }
+
   /**
    * @return The public certificate of the private key entry or
    *         <code>null</code> if the private key entry could not be loaded.
@@ -252,24 +261,5 @@ public class AS4CryptoFactory implements Serializable
   {
     final KeyStore.PrivateKeyEntry aPK = getPrivateKeyEntry ();
     return aPK == null ? null : (X509Certificate) aPK.getCertificate ();
-  }
-
-  @Nonnull
-  public WSSConfig createWSSConfig ()
-  {
-    final WSSConfig ret = WSSConfig.getNewInstance ();
-    ret.setIdAllocator (new WsuIdAllocator ()
-    {
-      public String createId (@Nullable final String sPrefix, final Object o)
-      {
-        return createSecureId (sPrefix, o);
-      }
-
-      public String createSecureId (final String sPrefix, final Object o)
-      {
-        return StringHelper.getConcatenatedOnDemand (sPrefix, "-", MessageHelperMethods.createRandomWSUID ());
-      }
-    });
-    return ret;
   }
 }

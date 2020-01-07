@@ -40,7 +40,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
@@ -657,7 +657,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
       AS4HttpDebug.debug ( () -> "Unsigned/unencrypted UserMessage:\n" +
                                  XMLWriter.getNodeAsString (aPureDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
 
-      final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
+      final IAS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       // 2a. sign
       if (bSign)

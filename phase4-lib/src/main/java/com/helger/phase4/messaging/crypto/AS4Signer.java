@@ -34,9 +34,8 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.phase4.crypto.AS4CryptoFactory;
-import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -76,7 +75,7 @@ public final class AS4Signer
    *         If an error occurs during signing
    */
   @Nonnull
-  public static Document createSignedMessage (@Nonnull final AS4CryptoFactory aCryptoFactory,
+  public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                               @Nonnull final Document aPreSigningMessage,
                                               @Nonnull final ESOAPVersion eSOAPVersion,
                                               @Nonnull @Nonempty final String sMessagingID,
@@ -92,15 +91,13 @@ public final class AS4Signer
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
 
-    final AS4CryptoProperties aCryptoProps = aCryptoFactory.cryptoProperties ();
-
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
     aSecHeader.insertSecurityHeader ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    aBuilder.setUserInfo (aCryptoProps.getKeyAlias (), aCryptoProps.getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());

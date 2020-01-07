@@ -35,6 +35,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -58,15 +59,14 @@ public final class SignatureTest
   @Test
   public void testX509SignatureIS () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
-    final Document doc = _getSoapEnvelope11 ();
-    final WSSecHeader secHeader = new WSSecHeader (doc);
-    secHeader.insertSecurityHeader ();
+    final Document aDoc = _getSoapEnvelope11 ();
+    final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
+    aSecHeader.insertSecurityHeader ();
 
-    final WSSecSignature aBuilder = new WSSecSignature (secHeader);
-    aBuilder.setUserInfo (aCryptoFactory.cryptoProperties ().getKeyAlias (),
-                          aCryptoFactory.cryptoProperties ().getKeyPassword ());
+    final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
+    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function

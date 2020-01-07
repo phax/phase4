@@ -203,15 +203,16 @@ public final class AS4ClientUserMessageTest
     // No Keystore attributes set
     _ensureInvalidState (aClient);
     final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks");
-    aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
+    final AS4CryptoFactory aCF = new AS4CryptoFactory (aCP);
+    aClient.setAS4CryptoFactory (aCF);
     _ensureInvalidState (aClient);
-    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyStorePassword ("test");
+    aCF.cryptoProperties ().setKeyStorePassword ("test");
     _ensureInvalidState (aClient);
-    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyStoreType (EKeyStoreType.JKS);
+    aCF.cryptoProperties ().setKeyStoreType (EKeyStoreType.JKS);
     _ensureInvalidState (aClient);
-    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyAlias ("ph-as4");
+    aCF.cryptoProperties ().setKeyAlias ("ph-as4");
     _ensureInvalidState (aClient);
-    aClient.getAS4CryptoFactory ().cryptoProperties ().setKeyPassword ("test");
+    aCF.cryptoProperties ().setKeyPassword ("test");
     _ensureValidState (aClient);
   }
 

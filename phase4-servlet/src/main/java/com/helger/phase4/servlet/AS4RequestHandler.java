@@ -73,8 +73,8 @@ import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.BasicHttpPoster;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.AS4SigningParams;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -267,14 +267,14 @@ public class AS4RequestHandler implements AutoCloseable
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RequestHandler.class);
 
   private final AS4ResourceHelper m_aResHelper;
-  private final AS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
 
-  public AS4RequestHandler (@Nonnull final AS4CryptoFactory aCryptoFactory,
+  public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");

@@ -153,6 +153,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Extracted interface `IAS4Attachment` from `WSS4JAttachment` for read-only access
     * Fixed NPE when receiving an attachment without a "Content-ID"
     * Removed all deprecated and unused methods from previous versions
+    * Extracted `IAS4CryptoFactory` interface for broader usage
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)

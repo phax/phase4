@@ -37,7 +37,7 @@ import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
@@ -84,7 +84,7 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  public static Document encryptSoapBodyPayload (@Nonnull final AS4CryptoFactory aCryptoFactory,
+  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                  @Nonnull final ESOAPVersion eSOAPVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
@@ -112,7 +112,7 @@ public final class AS4Encryptor
   public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
                                                    @Nonnull final Document aDoc,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                   @Nonnull final AS4CryptoFactory aCryptoFactory,
+                                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                    final boolean bMustUnderstand,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,

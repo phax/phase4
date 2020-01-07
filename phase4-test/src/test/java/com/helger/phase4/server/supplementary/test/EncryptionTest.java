@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -61,7 +62,7 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
@@ -71,8 +72,7 @@ public final class EncryptionTest
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     aBuilder.setSymmetricKey (null);
-    aBuilder.setUserInfo (aCryptoFactory.cryptoProperties ().getKeyAlias (),
-                          aCryptoFactory.cryptoProperties ().getKeyPassword ());
+    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
 
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
@@ -91,7 +91,7 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final AS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
@@ -99,8 +99,7 @@ public final class EncryptionTest
 
     final WSSecEncrypt builder = new WSSecEncrypt (secHeader);
     // builder.setUserInfo ("wss40");
-    builder.setUserInfo (aCryptoFactory.cryptoProperties ().getKeyAlias (),
-                         aCryptoFactory.cryptoProperties ().getKeyPassword ());
+    builder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto ());

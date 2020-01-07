@@ -24,7 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Signer;
@@ -163,7 +163,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
     if (m_bReceiptShouldBeSigned && signingParams ().isSigningEnabled ())
     {
-      final AS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
+      final IAS4CryptoFactory aCryptoFactory = internalCreateCryptoFactory ();
 
       final boolean bMustUnderstand = true;
       final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,

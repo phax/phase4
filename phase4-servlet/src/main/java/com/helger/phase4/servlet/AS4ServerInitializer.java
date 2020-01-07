@@ -19,7 +19,7 @@ package com.helger.phase4.servlet;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
@@ -54,7 +54,7 @@ public final class AS4ServerInitializer
    *        Crypto factory to use. May not be <code>null</code>.
    */
   public static void initAS4Server (@Nonnull final IPModeResolver aPModeResolver,
-                                    @Nonnull final AS4CryptoFactory aCryptoFactory)
+                                    @Nonnull final IAS4CryptoFactory aCryptoFactory)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!

@@ -52,9 +52,9 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
-import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
@@ -76,9 +76,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                                         "Security");
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
-  private final AS4CryptoFactory m_aCryptoFactory;
+  private final IAS4CryptoFactory m_aCryptoFactory;
 
-  public SOAPHeaderElementProcessorWSS4J (@Nonnull final AS4CryptoFactory aCryptoFactory)
+  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory)
   {
     ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
     m_aCryptoFactory = aCryptoFactory;
@@ -224,7 +224,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       try
       {
         // Convert to WSS4J attachments
-        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory.cryptoProperties ());
+        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory);
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                               aState.getResourceHelper ());
 

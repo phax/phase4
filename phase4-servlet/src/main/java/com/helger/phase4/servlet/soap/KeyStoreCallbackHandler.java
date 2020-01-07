@@ -28,17 +28,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
-import com.helger.phase4.crypto.AS4CryptoProperties;
+import com.helger.commons.annotation.Nonempty;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 
 final class KeyStoreCallbackHandler implements CallbackHandler
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
-  private final AS4CryptoProperties m_aCryptoProperties;
+  private final IAS4CryptoFactory m_aCryptoFactory;
 
-  public KeyStoreCallbackHandler (@Nonnull final AS4CryptoProperties aCryptoProperties)
+  public KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory)
   {
-    ValueEnforcer.notNull (aCryptoProperties, "CryptoProperties");
-    m_aCryptoProperties = aCryptoProperties;
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    m_aCryptoFactory = aCryptoFactory;
+  }
+
+  @SuppressWarnings ("deprecation")
+  @Nonnull
+  @Nonempty
+  private static String _getUsage (final int nUsage)
+  {
+    switch (nUsage)
+    {
+      case WSPasswordCallback.UNKNOWN:
+        return "UNKNOWN";
+      case WSPasswordCallback.DECRYPT:
+        return "DECRYPT";
+      case WSPasswordCallback.USERNAME_TOKEN:
+        return "USERNAME_TOKEN";
+      case WSPasswordCallback.SIGNATURE:
+        return "SIGNATURE";
+      case WSPasswordCallback.KEY_NAME:
+        return "KEY_NAME (deprecated)";
+      case WSPasswordCallback.USERNAME_TOKEN_UNKNOWN:
+        return "USERNAME_TOKEN_UNKNOWN (deprecated)";
+      case WSPasswordCallback.SECURITY_CONTEXT_TOKEN:
+        return "SECURITY_CONTEXT_TOKEN";
+      case WSPasswordCallback.CUSTOM_TOKEN:
+        return "CUSTOM_TOKEN";
+      case WSPasswordCallback.ENCRYPTED_KEY_TOKEN:
+        return "ENCRYPTED_KEY_TOKEN (deprecated)";
+      case WSPasswordCallback.SECRET_KEY:
+        return "SECRET_KEY";
+      case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD:
+        return "PASSWORD_ENCRYPTOR_PASSWORD";
+    }
+    return "Unknown value" + nUsage;
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
@@ -48,13 +82,20 @@ final class KeyStoreCallbackHandler implements CallbackHandler
       if (aCallback instanceof WSPasswordCallback)
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
-        if (m_aCryptoProperties.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
+
+        if (m_aCryptoFactory.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
         {
-          aPasswordCallback.setPassword (m_aCryptoProperties.getKeyPassword ());
-          LOGGER.info ("Found keystore password for alias '" + aPasswordCallback.getIdentifier () + "'");
+          aPasswordCallback.setPassword (m_aCryptoFactory.getKeyPassword ());
+          LOGGER.info ("Found keystore password for alias '" +
+                       aPasswordCallback.getIdentifier () +
+                       "' and usage " +
+                       _getUsage (aPasswordCallback.getUsage ()));
         }
         else
-          LOGGER.warn ("Found unsupported keystore alias '" + aPasswordCallback.getIdentifier () + "'");
+          LOGGER.warn ("Found unsupported keystore alias '" +
+                       aPasswordCallback.getIdentifier () +
+                       "' and usage " +
+                       _getUsage (aPasswordCallback.getUsage ()));
       }
       else
       {
