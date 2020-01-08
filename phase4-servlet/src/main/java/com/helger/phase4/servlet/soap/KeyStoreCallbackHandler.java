@@ -83,7 +83,8 @@ final class KeyStoreCallbackHandler implements CallbackHandler
       {
         final WSPasswordCallback aPasswordCallback = (WSPasswordCallback) aCallback;
 
-        if (m_aCryptoFactory.getKeyAlias ().equals (aPasswordCallback.getIdentifier ()))
+        // Use case insensitive compare, depends on the keystore type
+        if (m_aCryptoFactory.getKeyAlias ().equalsIgnoreCase (aPasswordCallback.getIdentifier ()))
         {
           aPasswordCallback.setPassword (m_aCryptoFactory.getKeyPassword ());
           LOGGER.info ("Found keystore password for alias '" +
