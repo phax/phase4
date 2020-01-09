@@ -24,10 +24,7 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidationAUNZ;
 import com.helger.bdve.result.ValidationResultList;
-import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.system.SystemProperties;
-import com.helger.datetime.util.PDTIOHelper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -35,7 +32,6 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
@@ -70,25 +66,9 @@ public final class MainPhase4PeppolSenderMaxDebug
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0151:90794605008");
-      final IPhase4PeppolResponseConsumer aResponseConsumer = aResponseEntity -> {
-        if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
-        {
-          final String sMessageID = aResponseEntity.getMessageID ();
-          final String sFilename = "outgoing/" +
-                                   PDTIOHelper.getCurrentLocalDateTimeForFilename () +
-                                   "-" +
-                                   FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
-                                   "-response.xml";
-          final File aResponseFile = new File (AS4ServerConfiguration.getDataPath (), sFilename);
-          if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
-            LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
-          else
-            LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
-        }
-      };
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
       if (Phase4PeppolSender.builder ()
-                            .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:aunz:3.0::2.1"))
+                            .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                             .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc"))
                             .setReceiverParticipantID (aReceiverID)
@@ -96,8 +76,8 @@ public final class MainPhase4PeppolSenderMaxDebug
                             .setPayload (aPayloadElement)
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
-                                                                  ESML.DIGIT_PRODUCTION))
-                            .setResponseConsumer (aResponseConsumer)
+                                                                  ESML.DIGIT_TEST))
+                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_101,
                                                          new IPhase4PeppolValidatonResultHandler ()
                                                          {

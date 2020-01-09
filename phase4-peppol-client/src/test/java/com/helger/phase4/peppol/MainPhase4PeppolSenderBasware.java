@@ -42,9 +42,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderEcosio
+public final class MainPhase4PeppolSenderBasware
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderEcosio.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderBasware.class);
 
   public static void main (final String [] args)
   {
@@ -65,7 +65,7 @@ public final class MainPhase4PeppolSenderEcosio
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:atu68241501");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:baswareAPAs4TestEndpoint");
       if (Phase4PeppolSender.builder ()
                             .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
