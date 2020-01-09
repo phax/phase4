@@ -109,19 +109,63 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
                                        .getToString ();
   }
 
+  /**
+   * @return A new success object.
+   */
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
   {
-    return createSuccess (null, null);
+    return createSuccessExt (null, null);
   }
 
+  /**
+   * Create a success message with optional attachments. Usually you don't need
+   * this. Just call {@link #createSuccess()} and you are fine.
+   *
+   * @param aAttachments
+   *        Optional list of RESPONSE (!) attachments. Don't put the incoming
+   *        attachments here.
+   * @param sAsyncResponseURL
+   *        The optional asynchronous response URL.
+   * @return Never <code>null</code>.
+   * @deprecated Since 0.9.7 Use {@link #createSuccessExt(ICommonsList,String)}
+   *             instead
+   */
+  @Deprecated
   @Nonnull
   public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                          @Nullable final String sAsyncResponseURL)
   {
+    return createSuccessExt (aAttachments, sAsyncResponseURL);
+  }
+
+  /**
+   * Create a success message with optional attachments. Usually you don't need
+   * this. Just call {@link #createSuccess()} and you are fine.
+   *
+   * @param aAttachments
+   *        Optional list of RESPONSE (!) attachments. Don't put the incoming
+   *        attachments here.
+   * @param sAsyncResponseURL
+   *        The optional asynchronous response URL.
+   * @return Never <code>null</code>.
+   * @see #createSuccess()
+   * @since 0.9.7
+   */
+  @Nonnull
+  public static AS4MessageProcessorResult createSuccessExt (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                            @Nullable final String sAsyncResponseURL)
+  {
     return new AS4MessageProcessorResult (ESuccess.SUCCESS, (String) null, aAttachments, sAsyncResponseURL);
   }
 
+  /**
+   * Create a negative response with the provided error message.
+   *
+   * @param sErrorMsg
+   *        The error message to send back. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   */
   @Nonnull
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
