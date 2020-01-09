@@ -167,8 +167,7 @@ public class AS4RequestHandler implements AutoCloseable
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-      aHttpResponse.setCharset (aCharset);
-      aHttpResponse.setContent (sXML.getBytes (aCharset));
+      aHttpResponse.setContent (sXML.getBytes (aCharset), aCharset);
       aHttpResponse.setMimeType (m_aMimeType);
     }
 

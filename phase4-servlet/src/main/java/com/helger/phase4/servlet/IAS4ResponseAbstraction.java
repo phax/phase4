@@ -36,9 +36,16 @@ public interface IAS4ResponseAbstraction
 {
   void addCustomResponseHeaders (@Nonnull HttpHeaderMap aHeaderMap);
 
-  void setCharset (@Nonnull Charset aCharset);
-
-  void setContent (@Nonnull byte [] aBytes);
+  /**
+   * Set the response payload as a byte array with a certain character set.
+   * 
+   * @param aBytes
+   *        The bytes to be set. May not be <code>null</code>.
+   * @param aCharset
+   *        The character set of the byte array. May not be <code>null</code>.
+   * @since 0.9.7 this was merged from setContent and setCharset
+   */
+  void setContent (@Nonnull byte [] aBytes, @Nonnull Charset aCharset);
 
   void setContent (@Nonnull IHasInputStream aHasIS);
 
@@ -56,14 +63,10 @@ public interface IAS4ResponseAbstraction
         aHttpResponse.addCustomResponseHeaders (aHeaderMap);
       }
 
-      public void setCharset (@Nonnull final Charset aCharset)
-      {
-        aHttpResponse.setCharset (aCharset);
-      }
-
-      public void setContent (@Nonnull final byte [] aBytes)
+      public void setContent (@Nonnull final byte [] aBytes, @Nonnull final Charset aCharset)
       {
         aHttpResponse.setContent (aBytes);
+        aHttpResponse.setCharset (aCharset);
       }
 
       public void setContent (@Nonnull final IHasInputStream aHasIS)
