@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.peppol;
 
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -54,10 +53,7 @@ import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
-import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.EndpointType;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
-import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
@@ -250,57 +246,6 @@ public final class Phase4PeppolSender
   }
 
   /**
-   * @param aDocTypeID
-   *        document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Participant ID of the receiver. May not be <code>null</code>.
-   * @param aSMPClient
-   *        The SMP client to be used. May not be <code>null</code>.
-   * @return The non-<code>null</code> AS4 endpoint.
-   * @throws Phase4SMPPeppolException
-   *         In case the endpoint resolution failed.
-   */
-  @Nonnull
-  private static EndpointType _performSMPLookup (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                                 @Nonnull final IProcessIdentifier aProcID,
-                                                 @Nonnull final IParticipantIdentifier aReceiverID,
-                                                 @Nonnull final SMPClientReadOnly aSMPClient) throws Phase4PeppolSMPException
-  {
-    ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
-    ValueEnforcer.notNull (aProcID, "ProcID");
-    ValueEnforcer.notNull (aReceiverID, "ReceiverID");
-
-    // Perform SMP lookup
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Start performing SMP lookup (" +
-                    aReceiverID.getURIEncoded () +
-                    ", " +
-                    aDocTypeID.getURIEncoded () +
-                    ", " +
-                    aProcID.getURIEncoded () +
-                    ")");
-
-    // Perform SMP lookup
-    final EndpointType aEndpoint;
-    try
-    {
-      aEndpoint = aSMPClient.getEndpoint (aReceiverID,
-                                          aDocTypeID,
-                                          aProcID,
-                                          ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
-      if (aEndpoint == null)
-        throw new Phase4PeppolSMPException ("Failed to resolve SMP endpoint");
-    }
-    catch (final SMPClientException ex)
-    {
-      throw new Phase4PeppolSMPException ("Failed to resolve SMP endpoint", ex);
-    }
-    return aEndpoint;
-  }
-
-  /**
    * @param aPayloadElement
    *        The payload element to be validated. May not be <code>null</code>.
    * @param aVESID
@@ -375,52 +320,39 @@ public final class Phase4PeppolSender
   /**
    * Get the receiver certificate from the specified SMP endpoint.
    *
-   * @param aEndpoint
-   *        The determined SMP endpoint. Never <code>null</code>.
+   * @param aReceiverCert
+   *        The determined receiver AP certificate to check. Never
+   *        <code>null</code>.
    * @param aCertificateConsumer
    *        An optional consumer that is invoked with the received AP
    *        certificate to be used for the transmission. The certification check
    *        result must be considered when used. May be <code>null</code>.
-   * @return The extracted certificate and never <code>null</code>.
    * @throws Phase4PeppolException
    *         in case of error
    */
-  @Nonnull
-  private static X509Certificate _getReceiverAPCert (final EndpointType aEndpoint,
-                                                     final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer) throws Phase4PeppolException
+  private static void _checkReceiverAPCert (@Nullable final X509Certificate aReceiverCert,
+                                            @Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer) throws Phase4PeppolException
   {
-    final X509Certificate aReceiverCert;
-    try
-    {
-      aReceiverCert = SMPClientReadOnly.getEndpointCertificate (aEndpoint);
-    }
-    catch (final CertificateException ex)
-    {
-      throw new Phase4PeppolException ("Failed to extract AP certificate from SMP endpoint", ex);
-    }
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received the following AP certificate from the SMP: " + aReceiverCert);
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
-      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
-      final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
-                                                                                                                aNow,
-                                                                                                                ETriState.UNDEFINED,
-                                                                                                                ETriState.UNDEFINED);
+    final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+    final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
+                                                                                                              aNow,
+                                                                                                              ETriState.UNDEFINED,
+                                                                                                              ETriState.UNDEFINED);
 
-      // Interested in the certificate?
-      if (aCertificateConsumer != null)
-        aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, eCertCheckResult);
+    // Interested in the certificate?
+    if (aCertificateConsumer != null)
+      aCertificateConsumer.onCertificateCheckResult (aReceiverCert, aNow, eCertCheckResult);
 
-      if (eCertCheckResult.isInvalid ())
-      {
-        throw new Phase4PeppolException ("The received AP certificate from the SMP is not valid (at " +
-                                         aNow +
-                                         ") and cannot be used for sending. Aborting. Reason: " +
-                                         eCertCheckResult.getReason ());
-      }
+    if (eCertCheckResult.isInvalid ())
+    {
+      throw new Phase4PeppolException ("The configured receiver AP certificate is not valid (at " +
+                                       aNow +
+                                       ") and cannot be used for sending. Aborting. Reason: " +
+                                       eCertCheckResult.getReason ());
     }
-    return aReceiverCert;
   }
 
   /**
@@ -500,11 +432,14 @@ public final class Phase4PeppolSender
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
-    ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
-    ValueEnforcer.notNull (aProcessID, "ProcID");
     ValueEnforcer.notNull (aSenderID, "SenderID");
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
+    ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
+    ValueEnforcer.notNull (aProcessID, "ProcID");
     ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
+    ValueEnforcer.notNull (aReceiverCert, "ReceiverCert");
+    ValueEnforcer.notEmpty (sReceiverEndpointURL, "ReceiverEndpointURL");
+    ValueEnforcer.notNull (aPayloadSBDBytes, "PayloadSBDBytes");
     ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
 
     // Temporary file manager
@@ -626,6 +561,8 @@ public final class Phase4PeppolSender
 
     protected IMimeType m_aPayloadMimeType;
     protected boolean m_bCompressPayload;
+
+    protected IPhase4PeppolEndpointDetailProvider m_aEndpointDetailProvider;
 
     protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
     protected IAS4OutgoingDumper m_aOutgoingDumper;
@@ -815,6 +752,41 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set the abstract endpoint detail provider to be used. This can be an SMP
+     * lookup routine or in certain test cases a predefined certificate and
+     * endpoint URL.
+     *
+     * @param aEndpointDetailProvider
+     *        The endpoint detail provider to be used. May not be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @see #setSMPClient(SMPClientReadOnly)
+     */
+    @Nonnull
+    public final IMPLTYPE setEndpointDetailProvider (@Nonnull final IPhase4PeppolEndpointDetailProvider aEndpointDetailProvider)
+    {
+      ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
+      m_aEndpointDetailProvider = aEndpointDetailProvider;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the SMP client to be used. This is the point where e.g. the
+     * differentiation between SMK and SML can be done. This must be set prior
+     * to sending.
+     *
+     * @param aSMPClient
+     *        The SMP client to be used. May not be <code>null</code>.
+     * @return this for chaining
+     * @see #setEndpointDetailProvider(IPhase4PeppolEndpointDetailProvider)
+     */
+    @Nonnull
+    public final IMPLTYPE setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    {
+      return setEndpointDetailProvider (new Phase4PeppolEndpointDetailProviderSMP (aSMPClient));
+    }
+
+    /**
      * Set the MIME type of the payload. By default it is
      * <code>application/xml</code> and MUST usually not be changed. This value
      * is required for sending.
@@ -932,6 +904,8 @@ public final class Phase4PeppolSender
       if (StringHelper.hasNoText (m_sSenderPartyID))
         return false;
       // m_sConversationID is optional
+      if (m_aEndpointDetailProvider == null)
+        return false;
 
       if (m_aPayloadMimeType == null)
         return false;
@@ -978,7 +952,6 @@ public final class Phase4PeppolSender
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
-    private SMPClientReadOnly m_aSMPClient;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
 
     /**
@@ -1062,23 +1035,6 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SMP client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
-     *
-     * @param aSMPClient
-     *        The SMP client to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
-    {
-      ValueEnforcer.notNull (aSMPClient, "SMPClient");
-      m_aSMPClient = aSMPClient;
-      return this;
-    }
-
-    /**
      * Set an optional Consumer for the retrieved certificate, independent of
      * its usability.
      *
@@ -1152,8 +1108,6 @@ public final class Phase4PeppolSender
       // m_sSBDHUBLVersion may be null
       if (m_aPayloadElement == null && m_aPayloadBytes == null)
         return false;
-      if (m_aSMPClient == null)
-        return false;
       // m_aCertificateConsumer may be null
       // m_aVESID may be null
       // m_aValidationResultHandler may be null
@@ -1193,16 +1147,15 @@ public final class Phase4PeppolSender
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESID, m_aValidationResultHandler);
 
-      // SMP lookup
-      final EndpointType aEndpoint = _performSMPLookup (m_aDocTypeID, m_aProcessID, m_aReceiverID, m_aSMPClient);
+      // e.g. SMP lookup
+      m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
-      // Certificate from SMP lookup
-      final X509Certificate aReceiverCert = _getReceiverAPCert (aEndpoint, m_aCertificateConsumer);
+      // Certificate from e.g. SMP lookup
+      final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
+      _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
 
-      // URL from SMP lookup
-      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
-      if (StringHelper.hasNoText (sDestURL))
-        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
+      // URL from e.g. SMP lookup
+      final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
 
       // Created SBDH
       final byte [] aSBDBytes = _createSBDH (m_aSenderID,
@@ -1247,7 +1200,6 @@ public final class Phase4PeppolSender
   public static class SBDHBuilder extends AbstractBaseBuilder <SBDHBuilder>
   {
     private byte [] m_aPayloadBytes;
-    private SMPClientReadOnly m_aSMPClient;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
 
     /**
@@ -1276,23 +1228,6 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SMP client to be used. This is the point where e.g. the
-     * differentiation between SMK and SML can be done. This must be set prior
-     * to sending.
-     *
-     * @param aSMPClient
-     *        The SMP client to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public SBDHBuilder setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
-    {
-      ValueEnforcer.notNull (aSMPClient, "SMPClient");
-      m_aSMPClient = aSMPClient;
-      return this;
-    }
-
-    /**
      * Set an optional Consumer for the retrieved certificate, independent of
      * its usability.
      *
@@ -1317,8 +1252,6 @@ public final class Phase4PeppolSender
 
       if (m_aPayloadBytes == null)
         return false;
-      if (m_aSMPClient == null)
-        return false;
       // m_aCertificateConsumer may be null
 
       // All valid
@@ -1335,16 +1268,15 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
       }
 
-      // SMP lookup
-      final EndpointType aEndpoint = _performSMPLookup (m_aDocTypeID, m_aProcessID, m_aReceiverID, m_aSMPClient);
+      // e.g. SMP lookup
+      m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
-      // Certificate from SMP lookup
-      final X509Certificate aReceiverCert = _getReceiverAPCert (aEndpoint, m_aCertificateConsumer);
+      // Certificate from e.g. SMP lookup
+      final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
+      _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
 
-      // URL from SMP lookup
-      final String sDestURL = SMPClientReadOnly.getEndpointAddress (aEndpoint);
-      if (StringHelper.hasNoText (sDestURL))
-        throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + aEndpoint);
+      // URL from e.g. SMP lookup
+      final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
