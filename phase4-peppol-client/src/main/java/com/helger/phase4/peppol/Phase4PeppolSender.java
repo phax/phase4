@@ -786,6 +786,13 @@ public final class Phase4PeppolSender
       return setEndpointDetailProvider (new Phase4PeppolEndpointDetailProviderSMP (aSMPClient));
     }
 
+    @Nonnull
+    public final IMPLTYPE setReceiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                      @Nonnull @Nonempty final String sDestURL)
+    {
+      return setEndpointDetailProvider (new Phase4PeppolEndpointDetailProviderConstant (aCert, sDestURL));
+    }
+
     /**
      * Set the MIME type of the payload. By default it is
      * <code>application/xml</code> and MUST usually not be changed. This value

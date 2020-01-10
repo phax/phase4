@@ -24,13 +24,12 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation390;
 import com.helger.commons.system.SystemProperties;
-import com.helger.peppol.sml.ESML;
-import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
@@ -73,9 +72,41 @@ public final class MainPhase4PeppolSender1984
                             .setReceiverParticipantID (aReceiverID)
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadElement)
-                            .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                  aReceiverID,
-                                                                  ESML.DIGIT_TEST))
+                            .setReceiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\r\n" +
+                                                                                                      "MIIFzzCCA7egAwIBAgIQE9UWdJAj7xeapgMq0uA0nTANBgkqhkiG9w0BAQsFADBr\r\n" +
+                                                                                                      "MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UE\r\n" +
+                                                                                                      "CxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBU\r\n" +
+                                                                                                      "RVNUIENBIC0gRzIwHhcNMjAwMTA2MDAwMDAwWhcNMjExMjI2MjM1OTU5WjBcMRIw\r\n" +
+                                                                                                      "EAYDVQQDDAlQT1AwMDAyMDIxFzAVBgNVBAsMDlBFUFBPTCBURVNUIEFQMSAwHgYD\r\n" +
+                                                                                                      "VQQKDBdJTlBPU0lBIFNvbHV0aW9ucyBHbWJIIDELMAkGA1UEBhMCRVMwggEiMA0G\r\n" +
+                                                                                                      "CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDDo3ByOQy0/xkRvraL6YYLdcNdcXVw\r\n" +
+                                                                                                      "rJMHp39Tv0WTZ3efhcsO8lS9dPN7QvNSxJ87msjfrRB15ZZULWCDANtmkvOk+3t+\r\n" +
+                                                                                                      "S7vd5R1OmL/fZiKr7yGAvO1L/RQp/WTE5jtOLy6BDDs5mvckhvbO8Hf1u6e9gYGV\r\n" +
+                                                                                                      "Dksxs7RECv9xYQVj4CUK2BQ26sfHP6TTCMAt4kJqHcNSqXlCZ5V9XrpuJw2uuPsg\r\n" +
+                                                                                                      "0+RLw2uAPY2HLqil/fYC8+CMw3+d9a0kUBkULJIVlorMUQ4dMEj8rzfSJ4Q1L1pU\r\n" +
+                                                                                                      "UcqWQT8uuW9Ii+38nPzM6ac93K7EDbh2EN4Uqa1AmFChopd/UYRM5dCtAgMBAAGj\r\n" +
+                                                                                                      "ggF8MIIBeDAMBgNVHRMBAf8EAjAAMA4GA1UdDwEB/wQEAwIDqDAWBgNVHSUBAf8E\r\n" +
+                                                                                                      "DDAKBggrBgEFBQcDAjAdBgNVHQ4EFgQU7ft5Uz1oYnT/ZkzeY5yO1rQbdhUwXQYD\r\n" +
+                                                                                                      "VR0fBFYwVDBSoFCgToZMaHR0cDovL3BraS1jcmwuc3ltYXV0aC5jb20vY2FfNmE5\r\n" +
+                                                                                                      "Mzc3MzRhMzkzYTA4MDViZjMzY2RhOGIzMzEwOTMvTGF0ZXN0Q1JMLmNybDA3Bggr\r\n" +
+                                                                                                      "BgEFBQcBAQQrMCkwJwYIKwYBBQUHMAGGG2h0dHA6Ly9wa2ktb2NzcC5zeW1hdXRo\r\n" +
+                                                                                                      "LmNvbTAfBgNVHSMEGDAWgBRrb0u28Te6Kzx/GM26K7K5fCo36zAtBgpghkgBhvhF\r\n" +
+                                                                                                      "ARADBB8wHQYTYIZIAYb4RQEQAQIDAQGBqZDhAxYGOTU3NjA4MDkGCmCGSAGG+EUB\r\n" +
+                                                                                                      "EAUEKzApAgEAFiRhSFIwY0hNNkx5OXdhMmt0Y21FdWMzbHRZWFYwYUM1amIyMD0w\r\n" +
+                                                                                                      "DQYJKoZIhvcNAQELBQADggIBACFbupStt66573YBXhHij67vTfJ02Ub0vSPuYTUu\r\n" +
+                                                                                                      "vynCzT2RBWPOZZ/qPHgACg633Zxx3NINRbHdiclRrhUqh7AhyF9T9cBvZOCziVq1\r\n" +
+                                                                                                      "+iueifXAYMb0mGJ6L+6AXJthfZKpz1WdM3rft+ycG5e8Sjw/7t+xKybr+r+7fwc/\r\n" +
+                                                                                                      "knyV3j4qWGVmQXbFwpCYO82N+YHKIGjqtrAe3kceMegGZdEDkuPL4DcAxW+OfjYO\r\n" +
+                                                                                                      "Udgr/2vCbp4jAoRc7GAZOLhqHTZW06dzz8sTphrLzwi+/a3oEfb4xCUrnqN1b5Vc\r\n" +
+                                                                                                      "vOu8JE/nS9SJ2NMJ5RVjopcCCX3AIzD7uZUCSNnPTnhYULM2WXClow00yOLRE/mR\r\n" +
+                                                                                                      "xjCjMU36IdsDl4y0UexYjuN3feBFhsS8U5R1BvJfNZ7og3/vUIm+nvOBYLDp9waE\r\n" +
+                                                                                                      "MpoUsfE72kCYrq7uaqZmT7G8hB5WRy7QCMbWlMhcFEAss674EI7wZANJNjuj+qVA\r\n" +
+                                                                                                      "S0IKcv1qnbCJTs9c0KxqNnBc7mX4gTKUahVYyC8rhNIMr68EGWAZdh1YS3oxJx/y\r\n" +
+                                                                                                      "WH9rG/0Mw9CiNLMMT2SSiCvTaM0GKHYZr0+1jWSBi4yEJZhS7EXPmC51z7O6ek27\r\n" +
+                                                                                                      "SQbv4FcK5PhrJEbvA/HYDwGbMEeyqnLlkns0KOZ7V/PK+rLF17VNRnBEXINHqzd1\r\n" +
+                                                                                                      "njEO\r\n" +
+                                                                                                      "-----END CERTIFICATE-----\r\n"),
+                                                         "https://www.zweikommadrei.de/as4")
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
                                                          new IPhase4PeppolValidatonResultHandler ()

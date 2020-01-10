@@ -37,10 +37,11 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 
 /**
- * The default implementation of IPhase4PeppolEndpointDetailProvider using a
- * Peppol SMP Client to determine this information from an endpoint.
+ * The default implementation of {@link IPhase4PeppolEndpointDetailProvider}
+ * using a Peppol SMP Client to determine this information from an endpoint.
  *
  * @author Philip Helger
+ * @since 0.9.7
  */
 public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpointDetailProvider
 {
