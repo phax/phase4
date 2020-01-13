@@ -87,9 +87,9 @@ public class AS4CryptoFactory implements IAS4CryptoFactory
 
   private final AS4CryptoProperties m_aCryptoProps;
   // Lazy initialized
-  private transient Crypto m_aCrypto;
-  private transient KeyStore m_aKeyStore;
-  private transient KeyStore.PrivateKeyEntry m_aPK;
+  private Crypto m_aCrypto;
+  private KeyStore m_aKeyStore;
+  private KeyStore.PrivateKeyEntry m_aPK;
 
   /**
    * Read crypto properties from the specified file path.

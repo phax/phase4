@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.crypto;
 
-import java.io.Serializable;
 import java.security.KeyStore;
 
 import javax.annotation.Nonnull;
@@ -39,7 +38,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
  * @author Philip Helger
  * @since 0.9.7
  */
-public interface IAS4CryptoFactory extends Serializable
+public interface IAS4CryptoFactory
 {
   /**
    * @return A WSS4J {@link Crypto} instance and never <code>null</code>.
