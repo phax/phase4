@@ -34,6 +34,7 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
  * Manages the AS4 server configuration file. The files are read in the
  * following order:
  * <ol>
+ * <li>Environment variable <code>PHASE4_SERVER_CONFIG</code></li>
  * <li>System property <code>phase4.server.configfile</code></li>
  * <li>System property <code>as4.server.configfile</code></li>
  * <li>private-phase4.properties</li>
@@ -144,6 +145,11 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsString ("server.datapath", "conf");
   }
 
+  /**
+   * @return the number of minutes, the message IDs of incoming messages are
+   *         stored for duplication check. By default this is
+   *         {@value #DEFAULT_RESET_MINUTES} minutes.
+   */
   public static long getIncomingDuplicateDisposalMinutes ()
   {
     return getSettings ().getAsLong ("server.incoming.duplicatedisposal.minutes", DEFAULT_RESET_MINUTES);

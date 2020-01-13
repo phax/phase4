@@ -1170,8 +1170,10 @@ public class AS4RequestHandler implements AutoCloseable
         if (aEffectiveLeg == null)
           throw new AS4BadRequestException ("No AS4 P-Mode leg could be determined!");
 
-        // Only do profile checks if a profile is set
+        // The profile ID from the configuration file is optional
         sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
+
+        // Only do profile checks if a profile is set
         if (StringHelper.hasText (sProfileID))
         {
           final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
