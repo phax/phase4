@@ -130,6 +130,6 @@ public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpo
     final String sDestURL = SMPClientReadOnly.getEndpointAddress (m_aEndpoint);
     if (StringHelper.hasNoText (sDestURL))
       throw new Phase4PeppolException ("Failed to determine the destination URL from the SMP endpoint: " + m_aEndpoint);
-    return null;
+    return sDestURL;
   }
 }
