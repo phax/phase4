@@ -8,7 +8,7 @@ Licensed under the Apache 2 License!
 It consists of the following sub-projects:
   * **phase4-lib** - basic data structures for AS4 handling
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
-  * **phase4-profile-peppol** - AS4 profile for PEPPOL as well as the PMode and the respective validation (since v0.9.1)
+  * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation (since v0.9.1)
   * **phase4-servlet** - AS4 servlet for integration into existing
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
@@ -17,7 +17,7 @@ It consists of the following sub-projects:
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
-This solution is Peppol compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/PEPPOL/TestBedReport-POP000306-20190906T103327.pdf
+This solution is Peppol compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/Peppol/TestBedReport-POP000306-20190906T103327.pdf
     
 # Configuration
 
@@ -42,9 +42,11 @@ org.apache.wss4j.crypto.merlin.keystore.private.password=test
 
 The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
 
-PEPPOL users: the key store must contain the AccessPoint private key and the truststore must contain the PEPPOL truststore.
+Peppol users: the key store must contain the AccessPoint private key and the truststore must contain the Peppol truststore.
 
-**Note:** since v0.9.6 the configuration of the keystore and truststore can be done in the code and this configuration file becomes optional. 
+**Note:** since v0.9.6 the configuration of the keystore and truststore can be done in the code (using `AS4CryptoProperties`) and this configuration file becomes optional.
+
+**Note:** since v0.9.7 the whole crypto configuration can be done in-memory when using `AS4CryptoFactoryInMemoryKeyStore`.
 
 ### phase4.properties
 
@@ -93,20 +95,30 @@ To handle common parts of AS4 PModes this project uses so called "profiles". Cur
 * CEF with ID `cef` in submodule `phase4-profile-cef`
 * Peppol with ID `peppol` in submodule `phase4-profile-peppol`
 
-To use one of these profiles, the respective Maven artifacts must be added as dependencies to your project.
+To use one of these profiles, the respective Maven artifacts must be added as dependencies to your project as in
 
-If you want to create your own profile, you need to provide an [SPI](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) implementation of the as4-lib interface `com.helger.phase4.profile.IAS4ProfileRegistrarSPI`. See the above mentioned submodules as examples on how to do that.
+```xml
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>phase4-profile-peppol</artifactId>
+      <version>x.y.z</version>
+    </dependency>
+```
+
+If you want to create your own profile, you need to provide an [SPI](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) implementation of the `phase4-lib` interface `com.helger.phase4.profile.IAS4ProfileRegistrarSPI`. See the above mentioned submodules as examples on how to do that.
 
 
 # Peppol handling
 
 ## Subproject phase4-peppol-client
 
-The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
+The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. Alternatively the class `Phase4PeppolSender.SBDHBuilder` offers a build class where you can add your pre-build StandardBusinessDocument, which implies that no validation takes place.
+
+As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
 
 ## Subproject phase4-peppol-servlet
 
-Available from version 0.9.7 onwards.
+Available from v0.9.7 onwards.
 Register the Servlet `com.helger.phase4.peppol.servlet.Phase4PeppolServlet` in your application.
 Than implement the SPI interface `com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI` to handle incoming Peppol messages.
 
@@ -192,18 +204,18 @@ If you like the project, a star on GitHub is always appreciated.
     * Added a new `Builder` class for the Peppol AS4 client - use `Phase4PeppolSender.builder()` to get started
 * v0.9.3 - 2019-11-05
     * Updated to peppol-commons 7.0.3
-    * Added new subproject `phase4-peppol-client` to easily send AS4 messages to PEPPOL
+    * Added new subproject `phase4-peppol-client` to easily send AS4 messages to Peppol
     * Fixed default initiator URL (see [issue #18](https://github.com/phax/phase4/issues/18))
 * v0.9.2 - 2019-10-07
-    * Fixed an invalid assumption in the PEPPOL PMode validator.
-* v0.9.1 - 2019-09-06 - PEPPOL conformant
+    * Fixed an invalid assumption in the Peppol PMode validator.
+* v0.9.1 - 2019-09-06 - Peppol conformant
     * Ignored WSS4J dependency "ehcache" to create smaller deployments
-    * Added new subproject `phase4-profile-peppol` for the PEPPOL AS4 profile
+    * Added new subproject `phase4-profile-peppol` for the Peppol AS4 profile
     * From Party ID type and To Party ID type can now be set in the client
     * The service type can now be set in a PMode
     * Requires ph-commons 9.3.6
     * Requires ph-web 9.1.3
-    * This is the first version passing the PEPPOL Testbed v1
+    * This is the first version passing the Peppol Testbed v1
 * v0.9.0 - 2019-08-08 - CEF conformant
     * The GitHub repository was officially renamed to **phase4**
     * All Maven artifact IDs were renamed from `ph-as4-*` to `phase4-*`
