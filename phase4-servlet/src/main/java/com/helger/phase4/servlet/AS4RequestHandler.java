@@ -52,6 +52,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
@@ -272,6 +273,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
+  private IConsumer <ICommonsList <Ebms3Error>> m_aErrorConsumer;
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IIncomingAttachmentFactory aIAF)
@@ -325,6 +327,32 @@ public class AS4RequestHandler implements AutoCloseable
   {
     ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
     m_aProcessorSupplier = aProcessorSupplier;
+    return this;
+  }
+
+  /**
+   * @return An optional error consumer. <code>null</code> by default.
+   * @since 0.9.7
+   */
+  @Nullable
+  public final IConsumer <ICommonsList <Ebms3Error>> getErrorConsumer ()
+  {
+    return m_aErrorConsumer;
+  }
+
+  /**
+   * Set an optional error consumer that is invoked with all errors determined
+   * during message processing. The consumed list MUST NOT be modified.
+   *
+   * @param aErrorConsumer
+   *        The consumer to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 0.9.7
+   */
+  @Nonnull
+  public final AS4RequestHandler setErrorConsumer (@Nullable final IConsumer <ICommonsList <Ebms3Error>> aErrorConsumer)
+  {
+    m_aErrorConsumer = aErrorConsumer;
     return this;
   }
 
@@ -1367,6 +1395,10 @@ public class AS4RequestHandler implements AutoCloseable
       // Not an incoming Ebms Error Message
       if (aErrorMessages.isNotEmpty ())
       {
+        // Call optional consumer
+        if (m_aErrorConsumer != null)
+          m_aErrorConsumer.accept (aErrorMessages);
+
         // Generate ErrorMessage if errors in the process are present and the
         // pmode wants an error response
         // When aLeg == null, the response is true
