@@ -27,12 +27,13 @@ import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
+import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 /**
  * Example implementation of {@link IPhase4PeppolResponseConsumer} writing to a
  * file.
- * 
+ *
  * @author Philip Helger
  */
 public class ResponseConsumerWriteToFile implements IPhase4PeppolResponseConsumer
@@ -44,7 +45,7 @@ public class ResponseConsumerWriteToFile implements IPhase4PeppolResponseConsume
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
       final String sMessageID = aResponseEntity.getMessageID ();
-      final String sFilename = "outgoing/" +
+      final String sFilename = AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
                                PDTIOHelper.getCurrentLocalDateTimeForFilename () +
                                "-" +
                                FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
@@ -56,5 +57,4 @@ public class ResponseConsumerWriteToFile implements IPhase4PeppolResponseConsume
         LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
     }
   }
-
 }
