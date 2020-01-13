@@ -38,10 +38,7 @@ public interface IPhase4PeppolValidatonResultHandler extends Serializable
    * @throws Phase4PeppolException
    *         Implementation dependent
    */
-  default void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException
-  {
-    // empty
-  }
+  void onValidationSuccess (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
 
   /**
    * Invoked, if at least one validation error is present.
@@ -51,8 +48,5 @@ public interface IPhase4PeppolValidatonResultHandler extends Serializable
    * @throws Phase4PeppolException
    *         Implementation dependent
    */
-  default void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException
-  {
-    throw new Phase4PeppolValidationException (aValidationResult);
-  }
+  void onValidationErrors (@Nonnull final ValidationResultList aValidationResult) throws Phase4PeppolException;
 }

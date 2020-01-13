@@ -153,7 +153,7 @@ public final class Phase4PeppolSender
     return null;
   }
 
-  private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClient,
+  private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClientUserMsg,
                                  @Nonnull final String sURL,
                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
@@ -161,19 +161,19 @@ public final class Phase4PeppolSender
                                  @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClient.getMaxRetries () + " retries");
+      LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
-      LOGGER.debug ("  ServiceType = '" + aClient.getServiceType () + "'");
-      LOGGER.debug ("  Service = '" + aClient.getServiceValue () + "'");
-      LOGGER.debug ("  Action = '" + aClient.getAction () + "'");
-      LOGGER.debug ("  ConversationId = '" + aClient.getConversationID () + "'");
+      LOGGER.debug ("  ServiceType = '" + aClientUserMsg.getServiceType () + "'");
+      LOGGER.debug ("  Service = '" + aClientUserMsg.getServiceValue () + "'");
+      LOGGER.debug ("  Action = '" + aClientUserMsg.getAction () + "'");
+      LOGGER.debug ("  ConversationId = '" + aClientUserMsg.getConversationID () + "'");
       LOGGER.debug ("  MessageProperties:");
-      for (final Ebms3Property p : aClient.ebms3Properties ())
+      for (final Ebms3Property p : aClientUserMsg.ebms3Properties ())
         LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
-      LOGGER.debug ("  Attachments (" + aClient.attachments ().size () + "):");
-      for (final WSS4JAttachment a : aClient.attachments ())
+      LOGGER.debug ("  Attachments (" + aClientUserMsg.attachments ().size () + "):");
+      for (final WSS4JAttachment a : aClientUserMsg.attachments ())
       {
         LOGGER.debug ("    [" +
                       a.getId () +
@@ -189,10 +189,10 @@ public final class Phase4PeppolSender
       }
     }
 
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (sURL,
-                                                                                           new ResponseHandlerByteArray (),
-                                                                                           aBuildMessageCallback,
-                                                                                           aOutgoingDumper);
+    final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
+                                                                                                  new ResponseHandlerByteArray (),
+                                                                                                  aBuildMessageCallback,
+                                                                                                  aOutgoingDumper);
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
                    aResponseEntity.getMessageID () +
@@ -209,7 +209,7 @@ public final class Phase4PeppolSender
       if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
       {
         // Read response as EBMS3 Signal Message
-        final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClient.getAS4ResourceHelper (),
+        final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClientUserMsg.getAS4ResourceHelper (),
                                                                       aResponseEntity.getResponse ());
         if (aSignalMessage != null)
           aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
@@ -1076,8 +1076,7 @@ public final class Phase4PeppolSender
     public Builder setValidationConfiguration (@Nullable final VESID aVESID)
     {
       final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
-                                                                      : new IPhase4PeppolValidatonResultHandler ()
-                                                                      {};
+                                                                      : new Phase4PeppolValidatonResultHandler ();
       return setValidationConfiguration (aVESID, aHdl);
     }
 

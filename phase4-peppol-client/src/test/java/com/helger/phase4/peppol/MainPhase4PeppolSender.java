@@ -88,9 +88,10 @@ public final class MainPhase4PeppolSender
                                                                   ESML.DIGIT_TEST))
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
-                                                         new IPhase4PeppolValidatonResultHandler ()
+                                                         new Phase4PeppolValidatonResultHandler ()
                                                          {
-                                                           public void onValidationSuccess (final ValidationResultList aValidationResult) throws Phase4PeppolException
+                                                           @Override
+                                                           public void onValidationSuccess (final ValidationResultList aValidationResult)
                                                            {
                                                              LOGGER.info ("Successfully validated XML payload");
                                                            }

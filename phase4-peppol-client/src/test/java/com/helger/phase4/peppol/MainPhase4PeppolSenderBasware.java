@@ -78,8 +78,7 @@ public final class MainPhase4PeppolSenderBasware
                                                                   ESML.DIGIT_TEST))
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
-                                                         new IPhase4PeppolValidatonResultHandler ()
-                                                         {})
+                                                         new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
       {

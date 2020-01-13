@@ -74,8 +74,7 @@ public final class MainPhase4PeppolSenderMinimum
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
-                                                         new IPhase4PeppolValidatonResultHandler ()
-                                                         {})
+                                                         new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
       {

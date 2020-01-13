@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidationAUNZ;
-import com.helger.bdve.result.ValidationResultList;
 import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
@@ -79,13 +78,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                                                                   ESML.DIGIT_TEST))
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_101,
-                                                         new IPhase4PeppolValidatonResultHandler ()
-                                                         {
-                                                           public void onValidationSuccess (final ValidationResultList aValidationResult) throws Phase4PeppolException
-                                                           {
-                                                             LOGGER.info ("Successfully validated XML payload");
-                                                           }
-                                                         })
+                                                         new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
       {

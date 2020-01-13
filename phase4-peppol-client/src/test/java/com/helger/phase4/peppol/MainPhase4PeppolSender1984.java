@@ -109,8 +109,7 @@ public final class MainPhase4PeppolSender1984
                                                          "https://www.zweikommadrei.de/as4")
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
-                                                         new IPhase4PeppolValidatonResultHandler ()
-                                                         {})
+                                                         new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
       {
