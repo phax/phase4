@@ -50,6 +50,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     File getFile (@Nonnull @Nonempty String sMessageID, @Nonnegative int nTry);
   }
 
+  public static final String DEFAULT_BASE_PATH = "outgoing/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4OutgoingDumperFileBased.class);
 
   private final IFileProvider m_aFileProvider;
@@ -58,7 +59,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   {
     this ( (sMessageID,
             nTry) -> new File (AS4ServerConfiguration.getDataPath (),
-                               "outgoing/" +
+                               DEFAULT_BASE_PATH +
                                                                       PDTIOHelper.getCurrentLocalDateTimeForFilename () +
                                                                       "-" +
                                                                       FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +

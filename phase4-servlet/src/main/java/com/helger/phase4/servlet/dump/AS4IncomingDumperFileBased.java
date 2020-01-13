@@ -42,6 +42,7 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
  */
 public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHeaders
 {
+  public static final String DEFAULT_BASE_PATH = "incoming/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
 
   private final Supplier <File> m_aFileProvider;
@@ -49,7 +50,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public AS4IncomingDumperFileBased ()
   {
     this ( () -> new File (AS4ServerConfiguration.getDataPath (),
-                           "incoming/" + PDTIOHelper.getCurrentLocalDateTimeForFilename () + ".as4in"));
+                           DEFAULT_BASE_PATH + PDTIOHelper.getCurrentLocalDateTimeForFilename () + ".as4in"));
   }
 
   public AS4IncomingDumperFileBased (@Nonnull final Supplier <File> aFileProvider)
