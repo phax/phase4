@@ -14,25 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.peppol;
+package com.helger.phase4.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.helger.phase4.util.Phase4Exception;
-
 /**
- * Generic exception to be thrown from the phase4 Peppol sender.
+ * phase4 base exception
  *
  * @author Philip Helger
+ * @since 0.9.7
  */
-public class Phase4PeppolException extends Phase4Exception
+public class Phase4Exception extends Exception
 {
   /**
    * @param sMessage
    *        Error message
    */
-  public Phase4PeppolException (@Nonnull final String sMessage)
+  public Phase4Exception (@Nonnull final String sMessage)
   {
     super (sMessage);
   }
@@ -43,7 +42,7 @@ public class Phase4PeppolException extends Phase4Exception
    * @param aCause
    *        Optional causing exception
    */
-  public Phase4PeppolException (@Nonnull final String sMessage, @Nullable final Throwable aCause)
+  public Phase4Exception (@Nonnull final String sMessage, @Nullable final Throwable aCause)
   {
     super (sMessage, aCause);
   }
