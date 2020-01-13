@@ -126,7 +126,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                                                                   "SignatureMethod");
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
-
         if (eSignAlgo == null)
         {
           LOGGER.error ("Error processing the Security Header, your signing algorithm '" +
@@ -148,7 +147,6 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "DigestMethod");
         sAlgorithm = aSignedNode == null ? null : aSignedNode.getAttribute ("Algorithm");
         final ECryptoAlgorithmSignDigest eSignDigestAlgo = ECryptoAlgorithmSignDigest.getFromURIOrNull (sAlgorithm);
-
         if (eSignDigestAlgo == null)
         {
           LOGGER.error ("Error processing the Security Header, your signing digest algorithm is incorrect. Expected one of the following'" +

@@ -19,6 +19,8 @@ package com.helger.phase4.peppol.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,6 +41,15 @@ import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.ServiceLoaderHelper;
 import com.helger.commons.string.StringHelper;
+import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.peppol.smp.ESMPTransportProfile;
+import com.helger.peppol.smp.EndpointType;
+import com.helger.peppol.smpclient.SMPClientReadOnly;
+import com.helger.peppolid.IDocumentTypeIdentifier;
+import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.peppolid.IProcessIdentifier;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -53,7 +64,9 @@ import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.builder.SBDHReader;
+import com.helger.security.certificate.CertificateHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
@@ -144,6 +157,131 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   {
     ValueEnforcer.notNull (aHandlers, "Handlers");
     m_aHandlers = new CommonsArrayList <> (aHandlers);
+  }
+
+  @Nullable
+  private static EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
+                                                    @Nullable final IParticipantIdentifier aRecipientID,
+                                                    @Nullable final IDocumentTypeIdentifier aDocTypeID,
+                                                    @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
+  {
+    // Get configured client
+    final SMPClientReadOnly aSMPClient = Phase4PeppolServletConfiguration.getSMPClient ();
+    if (aSMPClient == null)
+      throw new Phase4PeppolServletException (sLogPrefix + "No SMP client configured!");
+
+    if (aRecipientID == null || aDocTypeID == null || aProcessID == null)
+      return null;
+
+    try
+    {
+      if (LOGGER.isDebugEnabled ())
+      {
+        LOGGER.debug (sLogPrefix +
+                      "Looking up the endpoint of recipient " +
+                      aRecipientID.getURIEncoded () +
+                      " at SMP URL '" +
+                      aSMPClient.getSMPHostURI () +
+                      "' for " +
+                      aRecipientID.getURIEncoded () +
+                      " and " +
+                      aDocTypeID.getURIEncoded () +
+                      " and " +
+                      aProcessID.getURIEncoded ());
+      }
+
+      // Query the SMP
+      return aSMPClient.getEndpoint (aRecipientID,
+                                     aDocTypeID,
+                                     aProcessID,
+                                     ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
+    }
+    catch (final Throwable t)
+    {
+      throw new Phase4PeppolServletException (sLogPrefix +
+                                              "Failed to retrieve endpoint of recipient " +
+                                              aRecipientID.getURIEncoded (),
+                                              t);
+    }
+  }
+
+  private static void _checkIfReceiverEndpointURLMatches (@Nonnull final String sLogPrefix,
+                                                          @Nonnull final EndpointType aRecipientEndpoint) throws Phase4PeppolServletException
+  {
+    // Get our public endpoint address from the configuration
+    final String sOwnAPUrl = Phase4PeppolServletConfiguration.getAS4EndpointURL ();
+    if (StringHelper.hasNoText (sOwnAPUrl))
+      throw new Phase4PeppolServletException (sLogPrefix + "The endpoint URL of this AP is not configured!");
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug (sLogPrefix + "Our AP URL is " + sOwnAPUrl);
+
+    final String sRecipientAPUrl = SMPClientReadOnly.getEndpointAddress (aRecipientEndpoint);
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug (sLogPrefix + "Recipient AP URL from SMP is " + sRecipientAPUrl);
+
+    // Is it for us?
+    if (sRecipientAPUrl == null || !sRecipientAPUrl.contains (sOwnAPUrl))
+    {
+      final String sErrorMsg = sLogPrefix +
+                               "Internal error: The request is targeted for '" +
+                               sRecipientAPUrl +
+                               "' and is not for us (" +
+                               sOwnAPUrl +
+                               ")";
+      LOGGER.error (sErrorMsg);
+      throw new Phase4PeppolServletException (sErrorMsg);
+    }
+  }
+
+  private static void _checkIfEndpointCertificateMatches (@Nonnull final String sLogPrefix,
+                                                          @Nonnull final EndpointType aRecipientEndpoint) throws Phase4PeppolServletException
+  {
+    final X509Certificate aOurCert = Phase4PeppolServletConfiguration.getAPCertificate ();
+    if (aOurCert == null)
+      throw new Phase4PeppolServletException (sLogPrefix + "The certificate of this AP is not configured!");
+
+    final String sRecipientCertString = aRecipientEndpoint.getCertificate ();
+    X509Certificate aRecipientCert = null;
+    try
+    {
+      aRecipientCert = CertificateHelper.convertStringToCertficate (sRecipientCertString);
+    }
+    catch (final CertificateException t)
+    {
+      throw new Phase4PeppolServletException (sLogPrefix +
+                                              "Internal error: Failed to convert looked up endpoint certificate string '" +
+                                              sRecipientCertString +
+                                              "' to an X.509 certificate!",
+                                              t);
+    }
+
+    if (aRecipientCert == null)
+    {
+      // No certificate found - most likely because of invalid SMP entry
+      throw new Phase4PeppolServletException (sLogPrefix +
+                                              "No certificate found in looked up endpoint! Is this AP maybe NOT contained in an SMP?");
+    }
+
+    // Certificate found
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug (sLogPrefix + "Conformant recipient certificate present: " + aRecipientCert.toString ());
+
+    // Compare serial numbers
+    if (!aOurCert.getSerialNumber ().equals (aRecipientCert.getSerialNumber ()))
+    {
+      final String sErrorMsg = sLogPrefix +
+                               "Certificate retrieved from SMP lookup (" +
+                               aRecipientCert +
+                               ") does not match this APs configured Certificate (" +
+                               aOurCert +
+                               ") - different serial numbers - ignoring document";
+      LOGGER.error (sErrorMsg);
+      throw new Phase4PeppolServletException (sErrorMsg);
+    }
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug (sLogPrefix + "The certificate of the SMP lookup matches our certificate");
   }
 
   @Nonnull
@@ -260,25 +398,68 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                       " attachments");
     }
 
-    final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
     if (m_aHandlers.isEmpty ())
       LOGGER.warn ("No handler is present - the message is unhandled and discarded");
     else
+    {
+      final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
+      final String sLogPrefix = "[" + sMessageID + "] ";
+
+      // Start consistency checks?
+      if (Phase4PeppolServletConfiguration.isReceiverCheckEnabled ())
+      {
+        try
+        {
+          // Extract Peppol values from SBD
+          final PeppolSBDHDocument aDD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
+
+          // Get the endpoint information required from the recipient
+          // Check if an endpoint is registered
+          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
+                                                                       aDD.getReceiverAsIdentifier (),
+                                                                       aDD.getDocumentTypeAsIdentifier (),
+                                                                       aDD.getProcessAsIdentifier ());
+
+          if (aReceiverEndpoint == null)
+          {
+            return AS4MessageProcessorResult.createFailure (sLogPrefix +
+                                                            "Failed to resolve endpoint for provided receiver/documentType/process - not handling incoming AS4 document");
+          }
+
+          // Check if the message is for us
+          _checkIfReceiverEndpointURLMatches (sMessageID, aReceiverEndpoint);
+
+          // Get the recipient certificate from the SMP
+          _checkIfEndpointCertificateMatches (sMessageID, aReceiverEndpoint);
+        }
+        catch (final Phase4Exception | PeppolSBDHDocumentReadException ex)
+        {
+          return AS4MessageProcessorResult.createFailure (sLogPrefix +
+                                                          "The contained StandardBusinessDocument could not be read. Technical details: " +
+                                                          ex.getMessage ());
+        }
+      }
+      else
+      {
+        LOGGER.info (sLogPrefix + "Endpoint checks for incoming AS4 messages are disabled");
+      }
+
       for (final IPhase4PeppolIncomingSBDHandlerSPI aHandler : m_aHandlers)
       {
         try
         {
           if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Invoking Peppol handler " + aHandler);
+            LOGGER.debug (sLogPrefix + "Invoking Peppol handler " + aHandler);
           aHandler.handleIncomingSBD (aHttpHeaders.getClone (),
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument ());
         }
         catch (final Exception ex)
         {
-          LOGGER.error ("Error invoking Peppol handler " + aHandler, ex);
+          LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler, ex);
         }
       }
+    }
 
     return AS4MessageProcessorResult.createSuccess ();
   }
