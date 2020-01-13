@@ -186,12 +186,9 @@ public class BasicHttpPoster
 
       if (aCustomHeaders != null)
       {
-        // Manually quote
-        aCustomHeaders.forEachSingleHeader ( (n,
-                                              v) -> aPost.addHeader (n,
-                                                                     HttpHeaderMap.getUnifiedValue (v,
-                                                                                                    m_bQuoteHttpHeaders)),
-                                             false);
+        // Always unify line endings
+        // By default quoting is disabled
+        aCustomHeaders.forEachSingleHeader (aPost::addHeader, true, m_bQuoteHttpHeaders);
       }
 
       aPost.setEntity (aHttpEntity);

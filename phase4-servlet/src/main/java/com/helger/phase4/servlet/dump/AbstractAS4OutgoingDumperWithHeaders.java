@@ -57,7 +57,14 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
       {
         final String sHeader = aEntry.getKey ();
         for (final String sValue : aEntry.getValue ())
-          ret.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+        {
+          // By default quoting is disabled
+          final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, false);
+          ret.write ((sHeader +
+                      HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                      sUnifiedValue +
+                      CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+        }
       }
       ret.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
     }
