@@ -97,6 +97,7 @@ public final class AS4Signer
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    // Set keystore alias and key password
     aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
