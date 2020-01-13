@@ -70,6 +70,7 @@
     <xmlsec.version>2.1.4</xmlsec.version>
     <wss4j.version>2.2.4</wss4j.version>
     <log4j.version>2.13.0</log4j.version>
+    <peppol-commons.version>7.0.5</peppol-commons.version>
   </properties>
   
   <dependencyManagement>
@@ -126,7 +127,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
-        <version>7.0.5</version>
+        <version>${peppol-commons.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -136,6 +137,18 @@
         <version>5.2.4</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>peppol-commons</artifactId>
+        <version>${peppol-commons.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>

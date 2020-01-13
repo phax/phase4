@@ -160,6 +160,8 @@ If you like the project, a star on GitHub is always appreciated.
     * Changed `IPhase4PeppolValidatonResultHandler` to be an empty interface and `Phase4PeppolValidatonResultHandler` is the default implementation
     * The base class of `Phase4PeppolException` changed from `Exception` to `Phase4Exception`
     * Incoming messages are checked via against the values configured in class `Phase4PeppolServletConfiguration`
+    * For security reasons the dependency to the XML pull parser "woodstox" was removed
+    * For security reasons the dependency to the DNS library "dnsjava" was removed
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)
