@@ -86,8 +86,8 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
   }
 
   /**
-   * Lazily create a {@link Crypto} instance using the properties from
-   * {@link #cryptoProperties()}.
+   * Lazily create a {@link Crypto} instance using the key store and trust store
+   * from the constructor.
    *
    * @return A {@link Crypto} instance and never <code>null</code>.
    */
@@ -137,5 +137,11 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
   public final String getKeyPassword ()
   {
     return m_sKeyPassword;
+  }
+
+  @Nullable
+  public final KeyStore getTrustStore ()
+  {
+    return m_aTrustStore;
   }
 }
