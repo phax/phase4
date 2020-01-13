@@ -46,6 +46,7 @@ import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.EndpointType;
+import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -137,9 +138,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
   }
 
+  public static final ESMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletMessageProcessorSPI.class);
 
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
+  private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
 
   public Phase4PeppolServletMessageProcessorSPI ()
   {
@@ -159,11 +162,33 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     m_aHandlers = new CommonsArrayList <> (aHandlers);
   }
 
+  /**
+   * @return the transport profile to be handled. Never <code>null</code>. By
+   *         default it is "Peppol AS4 v2".
+   */
+  @Nonnull
+  public ISMPTransportProfile getTransportProfile ()
+  {
+    return m_aTransportProfile;
+  }
+
+  /**
+   * Set the transport profile to be used. By default it is Peppol AS4 v2.
+   *
+   * @param aTransportProfile
+   *        The transport profile to be used. May not be <code>null</code>.
+   */
+  public void setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
+  {
+    ValueEnforcer.notNull (aTransportProfile, "TransportProfile");
+    m_aTransportProfile = aTransportProfile;
+  }
+
   @Nullable
-  private static EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
-                                                    @Nullable final IParticipantIdentifier aRecipientID,
-                                                    @Nullable final IDocumentTypeIdentifier aDocTypeID,
-                                                    @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
+  private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
+                                             @Nullable final IParticipantIdentifier aRecipientID,
+                                             @Nullable final IDocumentTypeIdentifier aDocTypeID,
+                                             @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
   {
     // Get configured client
     final SMPClientReadOnly aSMPClient = Phase4PeppolServletConfiguration.getSMPClient ();
@@ -187,21 +212,27 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                       " and " +
                       aDocTypeID.getURIEncoded () +
                       " and " +
-                      aProcessID.getURIEncoded ());
+                      aProcessID.getURIEncoded () +
+                      " and " +
+                      m_aTransportProfile.getID ());
       }
 
       // Query the SMP
-      return aSMPClient.getEndpoint (aRecipientID,
-                                     aDocTypeID,
-                                     aProcessID,
-                                     ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2);
+      return aSMPClient.getEndpoint (aRecipientID, aDocTypeID, aProcessID, m_aTransportProfile);
     }
-    catch (final Throwable t)
+    catch (final Exception ex)
     {
       throw new Phase4PeppolServletException (sLogPrefix +
-                                              "Failed to retrieve endpoint of recipient " +
-                                              aRecipientID.getURIEncoded (),
-                                              t);
+                                              "Failed to retrieve endpoint of (" +
+                                              aRecipientID.getURIEncoded () +
+                                              ", " +
+                                              aDocTypeID.getURIEncoded () +
+                                              ", " +
+                                              aProcessID.getURIEncoded () +
+                                              ", " +
+                                              m_aTransportProfile.getID () +
+                                              ")",
+                                              ex);
     }
   }
 
