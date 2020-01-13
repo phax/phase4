@@ -25,8 +25,6 @@ import org.w3c.dom.Element;
 import com.helger.bdve.peppol.PeppolValidation390;
 import com.helger.bdve.result.ValidationResultList;
 import com.helger.commons.debug.GlobalDebug;
-import com.helger.commons.id.factory.FileIntIDFactory;
-import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -58,8 +56,6 @@ public final class MainPhase4PeppolSender
 
     final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
-    if (false)
-      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
     // Dump (for debugging purpose only)
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());

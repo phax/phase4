@@ -36,14 +36,13 @@ import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * Special main class with a constant receiver. This one skips the SMP lookup.
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSender1984
+public final class MainPhase4PeppolSenderConstantReceiver
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSender1984.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderConstantReceiver.class);
 
   public static void main (final String [] args)
   {

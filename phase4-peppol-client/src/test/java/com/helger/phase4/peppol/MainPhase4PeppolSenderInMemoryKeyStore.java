@@ -39,8 +39,8 @@ import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * An example file that uses an externally supplied key store and trust store so
+ * that no disc access is needed.
  *
  * @author Philip Helger
  */

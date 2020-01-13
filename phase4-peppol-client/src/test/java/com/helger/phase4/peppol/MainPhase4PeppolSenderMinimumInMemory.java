@@ -35,7 +35,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * is a dummy and needs to be adopted to your needs. It just does the absolute
+ * minimum, without storing data in the file system.
  *
  * @author Philip Helger
  */

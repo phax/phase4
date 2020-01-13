@@ -23,8 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation390;
-import com.helger.commons.id.factory.FileIntIDFactory;
-import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -37,7 +35,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * is a dummy and needs to be adopted to your needs. It just does the absolute
+ * minimum, but stores data in the file system.
  *
  * @author Philip Helger
  */
@@ -49,10 +48,9 @@ public final class MainPhase4PeppolSenderMinimum
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
+    // Set data IO base directory
     final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
-    if (false)
-      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
     try (final WebScoped w = new WebScoped ())
     {

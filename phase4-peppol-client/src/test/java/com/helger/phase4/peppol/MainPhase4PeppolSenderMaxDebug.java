@@ -24,10 +24,12 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidationAUNZ;
 import com.helger.commons.system.SystemProperties;
+import com.helger.httpclient.HttpDebugger;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
@@ -52,6 +54,10 @@ public final class MainPhase4PeppolSenderMaxDebug
     SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
+
+    // Enable some low level debugging
+    HttpDebugger.setEnabled (true);
+    AS4HttpDebug.setEnabled (true);
 
     // Dump (for debugging purpose only)
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
@@ -79,6 +85,8 @@ public final class MainPhase4PeppolSenderMaxDebug
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_101,
                                                          new Phase4PeppolValidatonResultHandler ())
+                            .setResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
+                                                                               new String (aResponseMsg.getResponse ())))
                             .sendMessage ()
                             .isSuccess ())
       {

@@ -38,8 +38,8 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 
 /**
- * The main class that requires manual configuration before it can be run. This
- * is a dummy and needs to be adopted to your needs.
+ * Example class that provides the configuration items "inline" to avoid the
+ * need for "crypto.properties" file.
  *
  * @author Philip Helger
  */

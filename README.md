@@ -116,6 +116,8 @@ The contained project contains a class called `Phase4PeppolSender.Builder` - it 
 
 As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
 
+See the folder https://github.com/phax/phase4/tree/master/phase4-peppol-client/src/test/java/com/helger/phase4/peppol for different examples on how to send messages via the Peppol AS4 client. 
+
 ## Subproject phase4-peppol-servlet
 
 Available from v0.9.7 onwards.
