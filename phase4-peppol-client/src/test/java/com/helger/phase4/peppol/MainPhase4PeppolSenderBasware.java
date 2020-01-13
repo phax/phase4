@@ -27,7 +27,10 @@ import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.messaging.domain.AS4UserMessage;
+import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
@@ -66,6 +69,17 @@ public final class MainPhase4PeppolSenderBasware
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:baswareAPAs4TestEndpoint");
+      final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
+      {
+        public void onAS4Message (final AbstractAS4Message <?> aMsg)
+        {
+          final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
+          LOGGER.info ("Sending out AS4 message with message ID '" + aUserMsg.getMessagingID () + "'");
+          LOGGER.info ("Sending out AS4 message with conversation ID '" +
+                       aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
+                       "'");
+        }
+      };
       if (Phase4PeppolSender.builder ()
                             .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
@@ -79,6 +93,7 @@ public final class MainPhase4PeppolSenderBasware
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
                                                          new Phase4PeppolValidatonResultHandler ())
+                            .setBuildMessageCallback (aBuildMessageCallback)
                             .sendMessage ()
                             .isSuccess ())
       {
