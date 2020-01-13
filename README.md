@@ -123,6 +123,8 @@ Sample setup for `WEB-INF/web.xml`:
 </servlet-mapping>
 ```
 
+By default the "receiver checks" are enabled. They are checking if the incoming message is targeted for the correct Access Point. That is done by performing an SMP lookup on the receiver/document type/process ID and check if the resulting values match the preconfigured values. That of course requires that the preconfigured values need to be set, before a message can be received. That needs to be done via the static methods in class `Phase4PeppolServletConfiguration`. Alternatively you can disable the receiver checks using the `setReceiverCheckEnabled` method in said class.
+
 # Building from source
 
 Apache Maven needed 3.6 or later and Java JDK 8 or later is required.
@@ -156,6 +158,8 @@ If you like the project, a star on GitHub is always appreciated.
     * Extracted `IAS4CryptoFactory` interface for broader usage
     * Added possibility to use a preconfigured receiver AP certificate and endpoint URL for the Peppol client
     * Changed `IPhase4PeppolValidatonResultHandler` to be an empty interface and `Phase4PeppolValidatonResultHandler` is the default implementation
+    * The base class of `Phase4PeppolException` changed from `Exception` to `Phase4Exception`
+    * Incoming messages are checked via against the values configured in class `Phase4PeppolServletConfiguration`
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)
