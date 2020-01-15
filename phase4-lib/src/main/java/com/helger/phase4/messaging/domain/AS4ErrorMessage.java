@@ -28,7 +28,12 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.soap.ESOAPVersion;
 
 /**
- * AS4 error message
+ * AS4 error message.<br>
+ * An Error does not have to be associated with a P-Mode when it is
+ * synchronously send back. Only when Errors need to be send async a P-Mode is
+ * needed to find the URL where to send to. <br>
+ * Errors do not need to be signed, just because problems like these can occur
+ * where a gateway doesn’t know how to sign.
  *
  * @author Philip Helger
  */
@@ -66,6 +71,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
                                         @Nullable final String sRefToMessageID,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
+    // Creates a random message ID
     final Ebms3MessageInfo aMessageInfo = MessageHelperMethods.createEbms3MessageInfo (sRefToMessageID);
     return create (eSOAPVersion, aMessageInfo, aErrorMessages);
   }
