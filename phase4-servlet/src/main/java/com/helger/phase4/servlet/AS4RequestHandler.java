@@ -1431,9 +1431,9 @@ public class AS4RequestHandler implements AutoCloseable
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
-              return new AS4ResponseFactoryXML (new AS4UserMessage (eSoapVersion,
-                                                                    aSPIResult.getPullReturnUserMsg ()).getAsSOAPDocument (),
-                                                eSoapVersion.getMimeType ());
+              final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
+                                                                          aSPIResult.getPullReturnUserMsg ());
+              return new AS4ResponseFactoryXML (aResponseUserMsg.getAsSOAPDocument (), eSoapVersion.getMimeType ());
             }
 
             if (aEbmsUserMessage != null)
