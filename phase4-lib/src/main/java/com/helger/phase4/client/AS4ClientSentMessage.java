@@ -36,18 +36,32 @@ public final class AS4ClientSentMessage <T>
   private final AS4ClientBuiltMessage m_aBuiltMsg;
   private final T m_aResponse;
 
+  /**
+   * @param aBuiltMsg
+   *        The built message with headers, payload and message ID.
+   * @param aResponse
+   *        The response payload. May be <code>null</code>.
+   */
   public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg, @Nullable final T aResponse)
   {
     m_aBuiltMsg = ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
     m_aResponse = aResponse;
   }
 
+  /**
+   * @return The built message as provided in the constructor. Never
+   *         <code>null</code>.
+   */
   @Nonnull
   public AS4ClientBuiltMessage getBuiltMessage ()
   {
     return m_aBuiltMsg;
   }
 
+  /**
+   * @return The message ID of the sent out message. Neither <code>null</code>
+   *         nor empty.
+   */
   @Nonnull
   @Nonempty
   public String getMessageID ()
@@ -55,12 +69,19 @@ public final class AS4ClientSentMessage <T>
     return m_aBuiltMsg.getMessageID ();
   }
 
+  /**
+   * @return The response payload. May be <code>null</code>.
+   */
   @Nullable
   public T getResponse ()
   {
     return m_aResponse;
   }
 
+  /**
+   * @return <code>true</code> if a response payload is present,
+   *         <code>false</code> if not.
+   */
   public boolean hasResponse ()
   {
     return m_aResponse != null;
