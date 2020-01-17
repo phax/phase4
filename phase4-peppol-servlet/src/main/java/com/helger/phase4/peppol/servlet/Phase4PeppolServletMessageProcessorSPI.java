@@ -47,6 +47,7 @@ import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.EndpointType;
 import com.helger.peppol.smp.ISMPTransportProfile;
+import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -191,7 +192,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                              @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
   {
     // Get configured client
-    final SMPClientReadOnly aSMPClient = Phase4PeppolServletConfiguration.getSMPClient ();
+    final ISMPServiceMetadataProvider aSMPClient = Phase4PeppolServletConfiguration.getSMPClient ();
     if (aSMPClient == null)
       throw new Phase4PeppolServletException (sLogPrefix + "No SMP client configured!");
 
@@ -205,9 +206,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         LOGGER.debug (sLogPrefix +
                       "Looking up the endpoint of recipient " +
                       aRecipientID.getURIEncoded () +
-                      " at SMP URL '" +
-                      aSMPClient.getSMPHostURI () +
-                      "' for " +
+                      " for " +
                       aRecipientID.getURIEncoded () +
                       " and " +
                       aDocTypeID.getURIEncoded () +

@@ -177,6 +177,7 @@ If you like the project, a star on GitHub is always appreciated.
     * For security reasons the dependency to the XML pull parser "woodstox" was removed
     * For security reasons the dependency to the DNS library "dnsjava" was removed
     * Added the new class `AS4CryptoFactoryInMemoryKeyStore` that takes an in-memory key store and trust store (see [issue #28](https://github.com/phax/phase4/issues/28))
+    * Updated to peppol-commons 7.0.6 with more flexible SMP client API
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)

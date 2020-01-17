@@ -53,7 +53,7 @@ import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
-import com.helger.peppol.smpclient.SMPClientReadOnly;
+import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
 import com.helger.peppol.url.IPeppolURLProvider;
 import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
@@ -760,7 +760,7 @@ public final class Phase4PeppolSender
      *        The endpoint detail provider to be used. May not be
      *        <code>null</code>.
      * @return this for chaining
-     * @see #setSMPClient(SMPClientReadOnly)
+     * @see #setSMPClient(ISMPServiceMetadataProvider)
      */
     @Nonnull
     public final IMPLTYPE setEndpointDetailProvider (@Nonnull final IPhase4PeppolEndpointDetailProvider aEndpointDetailProvider)
@@ -781,7 +781,7 @@ public final class Phase4PeppolSender
      * @see #setEndpointDetailProvider(IPhase4PeppolEndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE setSMPClient (@Nonnull final SMPClientReadOnly aSMPClient)
+    public final IMPLTYPE setSMPClient (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
     {
       return setEndpointDetailProvider (new Phase4PeppolEndpointDetailProviderSMP (aSMPClient));
     }

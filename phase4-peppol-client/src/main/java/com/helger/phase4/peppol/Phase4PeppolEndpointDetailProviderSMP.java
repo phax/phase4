@@ -30,6 +30,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.smp.ESMPTransportProfile;
 import com.helger.peppol.smp.EndpointType;
+import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
 import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppolid.IDocumentTypeIdentifier;
@@ -49,10 +50,10 @@ public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpo
   // The transport profile to be used is fixed
   private static final ESMPTransportProfile TP = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
 
-  private final SMPClientReadOnly m_aSMPClient;
+  private final ISMPServiceMetadataProvider m_aSMPClient;
   private EndpointType m_aEndpoint;
 
-  public Phase4PeppolEndpointDetailProviderSMP (@Nonnull final SMPClientReadOnly aSMPClient)
+  public Phase4PeppolEndpointDetailProviderSMP (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
   {
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     m_aSMPClient = aSMPClient;
