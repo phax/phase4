@@ -28,6 +28,10 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 import javax.xml.namespace.QName;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
@@ -48,8 +52,9 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.response.ResponseHandlerByteArray;
+import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
@@ -110,10 +115,13 @@ public final class Phase4PeppolSender
 
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                       @Nonnull final byte [] aBytes) throws Phase4PeppolException
+                                                       @Nonnull final HttpResponse aHttpResponse,
+                                                       @Nonnull final byte [] aResponsePayload) throws Phase4PeppolException
   {
+    // TODO differentiate between MIME and direct XML here
+
     // Read response as XML
-    final Document aSoapDoc = DOMReader.readXMLDOM (aBytes);
+    final Document aSoapDoc = DOMReader.readXMLDOM (aResponsePayload);
     if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
       throw new Phase4PeppolException ("Failed to parse as XML");
 
@@ -189,8 +197,16 @@ public final class Phase4PeppolSender
       }
     }
 
+    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
+    final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
+      if (aEntity == null)
+        return null;
+      aWrappedResponse.set (aHttpResponse);
+      return EntityUtils.toByteArray (aEntity);
+    };
     final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                                                  new ResponseHandlerByteArray (),
+                                                                                                  aResponseHdl,
                                                                                                   aBuildMessageCallback,
                                                                                                   aOutgoingDumper);
     if (LOGGER.isInfoEnabled ())
@@ -203,20 +219,18 @@ public final class Phase4PeppolSender
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
 
-    if (aSignalMsgConsumer != null)
+    // Try interpret result as SignalMessage
+    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
-      // Try interpret result as SignalMessage
-      if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
-      {
-        // Read response as EBMS3 Signal Message
-        final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClientUserMsg.getAS4ResourceHelper (),
-                                                                      aResponseEntity.getResponse ());
-        if (aSignalMessage != null)
-          aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
-      }
-      else
-        LOGGER.info ("AS4 ResponseEntity is empty");
+      // Read response as EBMS3 Signal Message
+      final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClientUserMsg.getAS4ResourceHelper (),
+                                                                    aWrappedResponse.get (),
+                                                                    aResponseEntity.getResponse ());
+      if (aSignalMessage != null && aSignalMsgConsumer != null)
+        aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
     }
+    else
+      LOGGER.info ("AS4 ResponseEntity is empty");
   }
 
   @Nonnull
