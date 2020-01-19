@@ -33,6 +33,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 

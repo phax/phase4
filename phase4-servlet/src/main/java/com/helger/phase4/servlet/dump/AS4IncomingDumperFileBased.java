@@ -31,6 +31,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.phase4.dump.AbstractAS4IncomingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 

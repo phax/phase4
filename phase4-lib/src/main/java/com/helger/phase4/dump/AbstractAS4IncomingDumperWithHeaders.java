@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet.dump;
+package com.helger.phase4.dump;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.dump.IAS4IncomingDumper;
 
 /**
  * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the
