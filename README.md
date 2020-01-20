@@ -165,7 +165,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.9.7 - work in progress
+* v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
     * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff
     * Extracted interface `IAS4Attachment` from `WSS4JAttachment` for read-only access
