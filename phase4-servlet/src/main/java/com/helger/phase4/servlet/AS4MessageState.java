@@ -46,7 +46,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 /**
  * This class keeps track of the status of an incoming message. It is basically
  * a String to any map.<br>
- * Keys starting with <code>as4.</code> are reserved for internal use.<br>
+ * Keys starting with <code>phase4.</code> are reserved for internal use.<br>
  * Instances of this object are only modified in the SOAP header handlers.
  *
  * @author Philip Helger
@@ -54,21 +54,21 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @NotThreadSafe
 public class AS4MessageState extends AttributeContainerAny <String> implements IAS4MessageState
 {
-  private static final String KEY_EBMS3_MESSAGING = "as4.ebms3.messaging";
-  private static final String KEY_PMODE = "as4.pmode.config";
-  private static final String KEY_MPC = "as4.mpc";
-  private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "as4.soap.attachmentlist";
-  private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "as4.soap.decrypted.document";
-  private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "as4.soap.decrypted.attachmentlist";
-  private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "as4.compressed.attachment.ids";
-  private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "as4.soap.body.payload.present";
-  private static final String KEY_INITIATOR_ID = "as4.initiator.id";
-  private static final String KEY_RESPONDER_ID = "as4.responder.id";
-  private static final String KEY_USED_CERTIFICATE = "as4.used.certificate";
-  private static final String KEY_EFFECTIVE_PMODE_LEG = "as4.pmode.effective.leg";
-  private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "as4.pmode.effective.leg.number";
-  private static final String KEY_SOAP_CHECKED_SIGNATURE = "as4.soap.signature.checked";
-  private static final String KEY_SOAP_DECRYPTED = "as4.soap.decrypted";
+  private static final String KEY_EBMS3_MESSAGING = "phase4.ebms3.messaging";
+  private static final String KEY_PMODE = "phase4.pmode.config";
+  private static final String KEY_MPC = "phase4.mpc";
+  private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "phase4.soap.attachmentlist";
+  private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "phase4.soap.decrypted.document";
+  private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "phase4.soap.decrypted.attachmentlist";
+  private static final String KEY_COMPRESSED_ATTACHMENT_IDS = "phase4.compressed.attachment.ids";
+  private static final String KEY_SOAP_BODY_PAYLOAD_PRESENT = "phase4.soap.body.payload.present";
+  private static final String KEY_INITIATOR_ID = "phase4.initiator.id";
+  private static final String KEY_RESPONDER_ID = "phase4.responder.id";
+  private static final String KEY_USED_CERTIFICATE = "phase4.used.certificate";
+  private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
+  private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
+  private static final String KEY_SOAP_CHECKED_SIGNATURE = "phase4.soap.signature.checked";
+  private static final String KEY_SOAP_DECRYPTED = "phase4.soap.decrypted";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
