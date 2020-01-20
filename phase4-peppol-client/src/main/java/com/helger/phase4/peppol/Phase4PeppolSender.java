@@ -28,6 +28,7 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 import javax.xml.namespace.QName;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
@@ -46,6 +47,8 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
+import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
@@ -70,12 +73,14 @@ import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
+import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -84,6 +89,8 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.peppol.PeppolPMode;
+import com.helger.phase4.servlet.AS4IncomingHandler;
+import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.AS4MessageState;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.phase4.soap.ESOAPVersion;
@@ -114,57 +121,91 @@ public final class Phase4PeppolSender
   {}
 
   @Nullable
-  public static Ebms3SignalMessage parseSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nonnull final HttpResponse aHttpResponse,
-                                                       @Nonnull final byte [] aResponsePayload) throws Phase4PeppolException
+                                                       @Nonnull final byte [] aResponsePayload,
+                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4PeppolException
   {
-    // TODO differentiate between MIME and direct XML here
-
-    // Read response as XML
-    final Document aSoapDoc = DOMReader.readXMLDOM (aResponsePayload);
-    if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
-      throw new Phase4PeppolException ("Failed to parse as XML");
-
-    // Check if it is SOAP
-    final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
-                                                                                      .getNamespaceURI ());
-    if (eSOAPVersion == null)
-      throw new Phase4PeppolException ("Failed to determine SOAP version");
-
-    // Find SOAP header
-    final Node aSOAPHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
-                                                                       eSOAPVersion.getNamespaceURI (),
-                                                                       eSOAPVersion.getHeaderElementName ());
-    if (aSOAPHeaderNode == null)
-      throw new Phase4PeppolException ("SOAP document is missing a Header element");
-
-    // Iterate all SOAP header elements
-    for (final Element aHeaderChild : new ChildElementIterator (aSOAPHeaderNode))
+    if (false)
     {
-      final QName aQName = XMLHelper.getQName (aHeaderChild);
-      if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
+      // Read like a request
+      final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+        // TODO
+
+      };
+
+      // Create header map
+      final HttpHeaderMap aHttpHeaders = new HttpHeaderMap ();
+      for (final Header aHeader : aHttpResponse.getAllHeaders ())
+        aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
+
+      try
       {
-        final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, Locale.US);
-        final ErrorList aErrorList = new ErrorList ();
-        new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
-                                                                                                   aHeaderChild,
-                                                                                                   new CommonsArrayList <> (),
-                                                                                                   aState,
-                                                                                                   aErrorList);
-        // Check if a signal message is contained
-        final Ebms3SignalMessage aSignalMessage = CollectionHelper.getAtIndex (aState.getMessaging ()
-                                                                                     .getSignalMessage (),
-                                                                               0);
-        return aSignalMessage;
+        AS4IncomingHandler.parseAS4Message (aIAF,
+                                            aResHelper,
+                                            new NonBlockingByteArrayInputStream (aResponsePayload),
+                                            aHttpHeaders,
+                                            aCallback,
+                                            aIncomingDumper);
+      }
+      catch (final Exception ex)
+      {
+        throw new Phase4PeppolException ("Error parsing signal message", ex);
+      }
+    }
+    else
+    {
+      // Read response as XML
+      final Document aSoapDoc = DOMReader.readXMLDOM (aResponsePayload);
+      if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
+        throw new Phase4PeppolException ("Failed to parse as XML");
+
+      // Check if it is SOAP
+      final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
+                                                                                        .getNamespaceURI ());
+      if (eSOAPVersion == null)
+        throw new Phase4PeppolException ("Failed to determine SOAP version");
+
+      // Find SOAP header
+      final Node aSOAPHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
+                                                                         eSOAPVersion.getNamespaceURI (),
+                                                                         eSOAPVersion.getHeaderElementName ());
+      if (aSOAPHeaderNode == null)
+        throw new Phase4PeppolException ("SOAP document is missing a Header element");
+
+      // Iterate all SOAP header elements
+      for (final Element aHeaderChild : new ChildElementIterator (aSOAPHeaderNode))
+      {
+        final QName aQName = XMLHelper.getQName (aHeaderChild);
+        if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
+        {
+          final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, Locale.US);
+          final ErrorList aErrorList = new ErrorList ();
+          new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
+                                                                                                     aHeaderChild,
+                                                                                                     new CommonsArrayList <> (),
+                                                                                                     aState,
+                                                                                                     aErrorList);
+          // Check if a signal message is contained
+          final Ebms3SignalMessage aSignalMessage = CollectionHelper.getAtIndex (aState.getMessaging ()
+                                                                                       .getSignalMessage (),
+                                                                                 0);
+          return aSignalMessage;
+        }
       }
     }
     return null;
   }
 
-  private static void _sendHttp (@Nonnull final AS4ClientUserMessage aClientUserMsg,
+  private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                 @Nonnull final IIncomingAttachmentFactory aIAF,
+                                 @Nonnull final AS4ClientUserMessage aClientUserMsg,
                                  @Nonnull final String sURL,
                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
                                  @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                  @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
@@ -223,9 +264,12 @@ public final class Phase4PeppolSender
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
       // Read response as EBMS3 Signal Message
-      final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aClientUserMsg.getAS4ResourceHelper (),
+      final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aCryptoFactory,
+                                                                    aIAF,
+                                                                    aClientUserMsg.getAS4ResourceHelper (),
                                                                     aWrappedResponse.get (),
-                                                                    aResponseEntity.getResponse ());
+                                                                    aResponseEntity.getResponse (),
+                                                                    aIncomingDumper);
       if (aSignalMessage != null && aSignalMsgConsumer != null)
         aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
     }
@@ -415,6 +459,9 @@ public final class Phase4PeppolSender
    * @param aOutgoingDumper
    *        An outgoing dumper to be used. Maybe <code>null</code>. If
    *        <code>null</code> the global outgoing dumper is used.
+   * @param aIncomingDumper
+   *        An incoming dumper to be used. Maybe <code>null</code>. If
+   *        <code>null</code> the global incoming dumper is used.
    * @param aResponseConsumer
    *        An optional consumer for the AS4 message that was sent. May be
    *        <code>null</code>.
@@ -426,6 +473,7 @@ public final class Phase4PeppolSender
    */
   private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
                                        @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                       @Nonnull final IIncomingAttachmentFactory aIAF,
                                        @Nonnull final IPMode aSrcPMode,
                                        @Nonnull final IParticipantIdentifier aSenderID,
                                        @Nonnull final IParticipantIdentifier aReceiverID,
@@ -440,6 +488,7 @@ public final class Phase4PeppolSender
                                        final boolean bCompressPayload,
                                        @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                        @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                       @Nullable final IAS4IncomingDumper aIncomingDumper,
                                        @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                        @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
@@ -510,10 +559,13 @@ public final class Phase4PeppolSender
                                                                             aResHelper));
 
       // Main sending
-      _sendHttp (aUserMsg,
+      _sendHttp (aCryptoFactory,
+                 aIAF,
+                 aUserMsg,
                  sReceiverEndpointURL,
                  aBuildMessageCallback,
                  aOutgoingDumper,
+                 aIncomingDumper,
                  aResponseConsumer,
                  aSignalMsgConsumer);
     }
@@ -564,6 +616,7 @@ public final class Phase4PeppolSender
   {
     protected HttpClientFactory m_aHttpClientFactory;
     protected IAS4CryptoFactory m_aCryptoFactory;
+    protected IIncomingAttachmentFactory m_aIAF;
     protected IPMode m_aPMode;
 
     protected IParticipantIdentifier m_aSenderID;
@@ -580,13 +633,15 @@ public final class Phase4PeppolSender
 
     protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
     protected IAS4OutgoingDumper m_aOutgoingDumper;
+    protected IAS4IncomingDumper m_aIncomingDumper;
     protected IPhase4PeppolResponseConsumer m_aResponseConsumer;
     protected IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setCryptoFactory(IAS4CryptoFactory)}
+     * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
+     * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
@@ -598,6 +653,7 @@ public final class Phase4PeppolSender
       {
         setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
         setCryptoFactory (AS4CryptoFactory.getDefaultInstance ());
+        setIncomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
         setPMode (Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null));
         setPayloadMimeType (CMimeType.APPLICATION_XML);
         setCompressPayload (true);
@@ -639,6 +695,22 @@ public final class Phase4PeppolSender
     {
       ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
       m_aCryptoFactory = aCryptoFactory;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the incoming attachment factory to be used.
+     *
+     * @param aIAF
+     *        The incoming attachment factory to be used. May not be
+     *        <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setIncomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
+    {
+      ValueEnforcer.notNull (aIAF, "IAF");
+      m_aIAF = aIAF;
       return thisAsT ();
     }
 
@@ -874,6 +946,22 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set a specific incoming dumper for this builder.
+     *
+     * @param aIncomingDumper
+     *        An incoming dumper to be used. Maybe <code>null</code>. If
+     *        <code>null</code> the global incoming dumper is used.
+     * @return this for chaining
+     * @since 0.9.7
+     */
+    @Nonnull
+    public final IMPLTYPE setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
+    {
+      m_aIncomingDumper = aIncomingDumper;
+      return thisAsT ();
+    }
+
+    /**
      * Set an optional handler for the synchronous result message received from
      * the other side. This method is optional and must not be called prior to
      * sending.
@@ -934,6 +1022,7 @@ public final class Phase4PeppolSender
 
       // m_aBuildMessageCallback may be null
       // m_aOutgoingDumper may be null
+      // m_aIncomingDumper may be null
       // m_aResponseConsumer may be null
       // m_aSignalMsgConsumer may be null
 
@@ -1188,6 +1277,7 @@ public final class Phase4PeppolSender
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
+                       m_aIAF,
                        m_aPMode,
                        m_aSenderID,
                        m_aReceiverID,
@@ -1202,6 +1292,7 @@ public final class Phase4PeppolSender
                        m_bCompressPayload,
                        m_aBuildMessageCallback,
                        m_aOutgoingDumper,
+                       m_aIncomingDumper,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
       return ESuccess.SUCCESS;
@@ -1300,6 +1391,7 @@ public final class Phase4PeppolSender
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
+                       m_aIAF,
                        m_aPMode,
                        m_aSenderID,
                        m_aReceiverID,
@@ -1314,6 +1406,7 @@ public final class Phase4PeppolSender
                        m_bCompressPayload,
                        m_aBuildMessageCallback,
                        m_aOutgoingDumper,
+                       m_aIncomingDumper,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
       return ESuccess.SUCCESS;

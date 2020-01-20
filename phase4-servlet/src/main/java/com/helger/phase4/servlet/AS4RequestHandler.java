@@ -18,9 +18,7 @@ package com.helger.phase4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -28,9 +26,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillClose;
-import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeBodyPart;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
@@ -46,7 +42,6 @@ import org.w3c.dom.Node;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -54,18 +49,14 @@ import com.helger.commons.error.IError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
-import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.io.stream.WrappedInputStream;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
-import com.helger.http.AcceptMimeTypeHandler;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
@@ -76,7 +67,6 @@ import com.helger.phase4.client.BasicHttpPoster;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -112,6 +102,7 @@ import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
+import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.mgr.AS4ServletMessageProcessorManager;
 import com.helger.phase4.servlet.soap.AS4SingleSOAPHeader;
@@ -123,13 +114,9 @@ import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
-import com.helger.web.multipart.MultipartProgressNotifier;
-import com.helger.web.multipart.MultipartStream;
-import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
-import com.helger.xml.serialize.read.DOMReader;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
@@ -270,6 +257,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
+  private IAS4IncomingDumper m_aIncomingDumper;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
@@ -291,17 +279,54 @@ public class AS4RequestHandler implements AutoCloseable
     m_aResHelper.close ();
   }
 
+  /**
+   * @return The locale for error messages. Never <code>null</code>.
+   */
   @Nonnull
   public final Locale getLocale ()
   {
     return m_aLocale;
   }
 
+  /**
+   * Set the error for Ebms error messages.
+   *
+   * @param aLocale
+   *        The locale. May not be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4RequestHandler setLocale (@Nonnull final Locale aLocale)
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     m_aLocale = aLocale;
+    return this;
+  }
+
+  /**
+   * @return The specific dumper for incoming messages. May be
+   *         <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  public final IAS4IncomingDumper getIncomingDumper ()
+  {
+    return m_aIncomingDumper;
+  }
+
+  /**
+   * Set the specific dumper for incoming message. If none is set, the global
+   * incoming dumper is used.
+   *
+   * @param aIncomingDumper
+   *        The specific incoming dumper. May be <code>null</code>.
+   * @return this for chaining
+   * @since v0.9.7
+   */
+  @Nonnull
+  public final AS4RequestHandler setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
+  {
+    m_aIncomingDumper = aIncomingDumper;
     return this;
   }
 
@@ -356,9 +381,9 @@ public class AS4RequestHandler implements AutoCloseable
     return this;
   }
 
-  private static void _decompressAttachments (@Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final IAS4MessageState aState,
-                                              @Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments)
+  private static void _decompressAttachments (@Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
+                                              @Nonnull final Ebms3UserMessage aUserMessage,
+                                              @Nonnull final IAS4MessageState aState)
   {
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
     {
@@ -1084,8 +1109,15 @@ public class AS4RequestHandler implements AutoCloseable
     {
       LOGGER.debug ("Received the following SOAP " + eSoapVersion.getVersion () + " document:");
       LOGGER.debug (AS4XMLHelper.serializeXML (aSoapDocument));
-      LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
-      LOGGER.debug (aIncomingAttachments.toString ());
+      if (aIncomingAttachments.isEmpty ())
+      {
+        LOGGER.debug ("Without any incoming attachments");
+      }
+      else
+      {
+        LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
+        LOGGER.debug (aIncomingAttachments.toString ());
+      }
     }
 
     // Collect all runtime errors
@@ -1150,10 +1182,8 @@ public class AS4RequestHandler implements AutoCloseable
       }
 
       // XXX debugging
-      if (LOGGER.isDebugEnabled () && aEbmsReceipt != null)
-      {
+      if (aEbmsReceipt != null && LOGGER.isDebugEnabled ())
         LOGGER.debug ("RECEIPT INCOMING");
-      }
 
       // Ensure the decrypted attachments are used
       aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
@@ -1199,7 +1229,7 @@ public class AS4RequestHandler implements AutoCloseable
         sMessageID = aEbmsUserMessage.getMessageInfo ().getMessageId ();
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
-        _decompressAttachments (aEbmsUserMessage, aState, aDecryptedAttachments);
+        _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aState);
       }
       else
       {
@@ -1490,222 +1520,37 @@ public class AS4RequestHandler implements AutoCloseable
     return null;
   }
 
-  /**
-   * @param aHttpHeaders
-   *        the HTTP headers of the current request. Never <code>null</code>.
-   * @param aRequestInputStream
-   *        The InputStream to read the request payload from. Will not be closed
-   *        internally. Never <code>null</code>.
-   * @param aIncomingDumper
-   *        The incoming AS4 dumper. May be <code>null</code>. If
-   *        <code>null</code> the global one from {@link AS4DumpManager} is
-   *        used.
-   * @return the InputStream to be used
-   * @throws IOException
-   */
-  @Nonnull
-  private static InputStream _getRequestIS (@Nonnull final HttpHeaderMap aHttpHeaders,
-                                            @Nonnull @WillNotClose final InputStream aRequestInputStream,
-                                            @Nullable final IAS4IncomingDumper aIncomingDumper) throws IOException
-  {
-    final IAS4IncomingDumper aDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
-    if (aDumper == null)
-    {
-      // No wrapping needed
-      return aRequestInputStream;
-    }
-
-    // Dump worthy?
-    final OutputStream aOS = aDumper.onNewRequest (aHttpHeaders);
-    if (aOS == null)
-    {
-      // No wrapping needed
-      return aRequestInputStream;
-    }
-
-    // Read and write at once
-    return new WrappedInputStream (aRequestInputStream)
-    {
-      @Override
-      public int read () throws IOException
-      {
-        final int ret = super.read ();
-        if (ret != -1)
-        {
-          aOS.write (ret & 0xff);
-        }
-        return ret;
-      }
-
-      @Override
-      public int read (final byte [] b, final int nOffset, final int nLength) throws IOException
-      {
-        final int ret = super.read (b, nOffset, nLength);
-        if (ret != -1)
-        {
-          aOS.write (b, nOffset, ret);
-        }
-        return ret;
-      }
-
-      @Override
-      public void close () throws IOException
-      {
-        // Flush and close output stream as well
-        StreamHelper.flush (aOS);
-        StreamHelper.close (aOS);
-        super.close ();
-      }
-    };
-  }
-
   public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
-                             @Nonnull final HttpHeaderMap aHttpHeaders,
+                             @Nonnull final HttpHeaderMap aRequestHttpHeaders,
                              @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws AS4BadRequestException,
                                                                                    IOException,
                                                                                    MessagingException,
                                                                                    WSSecurityException
   {
-    // Determine content type
-    final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
-    if (StringHelper.hasNoText (sContentType))
-      throw new AS4BadRequestException ("Content-Type header is missing");
-
-    final IMimeType aContentType = AcceptMimeTypeHandler.safeParseMimeType (sContentType);
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Received Content-Type: " + aContentType);
-    if (aContentType == null)
-      throw new AS4BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
-
-    Document aSoapDocument = null;
-    ESOAPVersion eSoapVersion = null;
-    final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
-
-    final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
-    if (aPlainContentType.equals (MT_MULTIPART_RELATED))
-    {
-      // MIME message
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received MIME message");
-
-      final String sBoundary = aContentType.getParameterValueWithName ("boundary");
-      if (StringHelper.hasNoText (sBoundary))
-        throw new AS4BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
-
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("MIME Boundary = " + sBoundary);
-
-      // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = _getRequestIS (aHttpHeaders, aServletRequestIS, null))
+    final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+      // SOAP document and SOAP version are determined
+      final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
+                                                                 aSoapDocument,
+                                                                 eSoapVersion,
+                                                                 aIncomingAttachments);
+      if (aResponder != null)
       {
-        // PARSING MIME Message via MultiPartStream
-        final MultipartStream aMulti = new MultipartStream (aRequestIS,
-                                                            sBoundary.getBytes (StandardCharsets.ISO_8859_1),
-                                                            (MultipartProgressNotifier) null);
-
-        int nIndex = 0;
-        while (true)
-        {
-          final boolean bHasNextPart = nIndex == 0 ? aMulti.skipPreamble () : aMulti.readBoundary ();
-          if (!bHasNextPart)
-            break;
-
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Found MIME part " + nIndex);
-
-          try (final MultipartItemInputStream aItemIS2 = aMulti.createInputStream ())
-          {
-            // Read headers AND content
-            final MimeBodyPart aBodyPart = new MimeBodyPart (aItemIS2);
-
-            if (nIndex == 0)
-            {
-              // First MIME part -> SOAP document
-              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
-                                                           .getCopyWithoutParameters ();
-
-              // Determine SOAP version from MIME part content type
-              eSoapVersion = ArrayHelper.findFirst (ESOAPVersion.values (),
-                                                    x -> aPlainPartMT.equals (x.getMimeType ()));
-              if (eSoapVersion == null)
-              {
-                LOGGER.warn ("Failed to determine SOAP version from Content-Type '" +
-                             aPlainPartMT.getAsString () +
-                             "'");
-                // There is another try down below by reading the payload XML
-              }
-
-              // Read SOAP document
-              aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
-            }
-            else
-            {
-              // MIME Attachment (index is gt 0)
-              final WSS4JAttachment aAttachment = m_aIAF.createAttachment (aBodyPart, m_aResHelper);
-              aIncomingAttachments.add (aAttachment);
-            }
-          }
-          nIndex++;
-        }
+        // Response present -> send back
+        aResponder.applyToResponse (aHttpResponse);
       }
-    }
-    else
-    {
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Received plain message with Content-Type " + aContentType.getAsString ());
-
-      // Expect plain SOAP - read whole request to DOM
-      // Note: this may require a huge amount of memory for large requests
-      aSoapDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpHeaders, aServletRequestIS, null));
-
-      if (aSoapDocument != null)
+      else
       {
-        // Determine SOAP version from the read document
-        eSoapVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDocument.getDocumentElement ().getNamespaceURI ());
+        // Success, HTTP No Content
+        aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
       }
-
-      if (eSoapVersion == null)
-      {
-        // Determine SOAP version from content type
-        eSoapVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainContentType);
-      }
-    }
-
-    if (aSoapDocument == null)
-    {
-      // We don't have a SOAP document
-      throw new AS4BadRequestException (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                             : "Failed to parse incoming SOAP " +
-                                                               eSoapVersion.getVersion () +
-                                                               " document!");
-    }
-
-    if (eSoapVersion == null)
-    {
-      // Determine SOAP version from namespace URI of read document as the
-      // last fallback
-      final String sNamespaceURI = XMLHelper.getNamespaceURI (aSoapDocument);
-      eSoapVersion = ArrayHelper.findFirst (ESOAPVersion.values (), x -> x.getNamespaceURI ().equals (sNamespaceURI));
-      if (eSoapVersion == null)
-        throw new AS4BadRequestException ("Failed to determine SOAP version from XML document!");
-    }
-
-    // SOAP document and SOAP version are determined
-    final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
-                                                               aSoapDocument,
-                                                               eSoapVersion,
-                                                               aIncomingAttachments);
-    if (aResponder != null)
-    {
-      // Response present -> send back
-      aResponder.applyToResponse (aHttpResponse);
-    }
-    else
-    {
-      // Success, HTTP No Content
-      aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
-    }
-    AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
+      AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
+    };
+    AS4IncomingHandler.parseAS4Message (m_aIAF,
+                                        m_aResHelper,
+                                        aServletRequestIS,
+                                        aRequestHttpHeaders,
+                                        aCallback,
+                                        m_aIncomingDumper);
   }
 
   /**
