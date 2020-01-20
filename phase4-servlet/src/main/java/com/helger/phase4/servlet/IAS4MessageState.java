@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -32,8 +33,12 @@ import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.ebms3header.Ebms3MessageInfo;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.ebms3header.Ebms3PullRequest;
+import com.helger.phase4.ebms3header.Ebms3Receipt;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -75,24 +80,66 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   Locale getLocale ();
 
   /**
-   * @return The parent of the usermessage/signal message for further
+   * @return The parent of the user message/signal message for further
    *         evaluation.
    */
   @Nullable
   Ebms3Messaging getMessaging ();
 
+  /**
+   * @return The EBMS user message. May be <code>null</code>.
+   * @since v0.9.7
+   */
   @Nullable
-  default String getRefToMessageID ()
+  default Ebms3UserMessage getEbmsUserMessage ()
   {
-    Ebms3MessageInfo aMsgInfo = null;
     final Ebms3Messaging aMessaging = getMessaging ();
-    if (aMessaging != null)
-      if (aMessaging.hasUserMessageEntries ())
-        aMsgInfo = aMessaging.getUserMessageAtIndex (0).getMessageInfo ();
-      else
-        if (aMessaging.hasSignalMessageEntries ())
-          aMsgInfo = aMessaging.getSignalMessageAtIndex (0).getMessageInfo ();
-    return aMsgInfo != null ? aMsgInfo.getMessageId () : "";
+    return aMessaging != null && aMessaging.hasUserMessageEntries () ? aMessaging.getUserMessageAtIndex (0) : null;
+  }
+
+  /**
+   * @return The EBMS signal message. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  default Ebms3SignalMessage getEbmsSignalMessage ()
+  {
+    final Ebms3Messaging aMessaging = getMessaging ();
+    return aMessaging != null && aMessaging.hasSignalMessageEntries () ? aMessaging.getSignalMessageAtIndex (0) : null;
+  }
+
+  /**
+   * @return The EBMS signal message error. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  default Ebms3Error getEbmsError ()
+  {
+    final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
+  }
+
+  /**
+   * @return The EBMS signal message pull request. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  default Ebms3PullRequest getEbmsPullRequest ()
+  {
+    final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
+    return aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest () : null;
+  }
+
+  /**
+   * @return The EBMS signal message receipt. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  default Ebms3Receipt getEbmsReceipt ()
+  {
+    final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
+    return aEbmsSignalMessage != null ? aEbmsSignalMessage.getReceipt () : null;
   }
 
   /**
@@ -252,4 +299,32 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    *         <code>false</code> otherwise.
    */
   boolean isSoapDecrypted ();
+
+  /**
+   * @return The phase4 profile ID to be used. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  String getProfileID ();
+
+  /**
+   * @return The AS4 message ID. May be <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  String getMessageID ();
+
+  /**
+   * @return <code>true</code> if the incoming message is an AS4 ping message,
+   *         <code>false</code> otherwise.
+   * @since v0.9.7
+   */
+  boolean isPingMessage ();
+
+  /**
+   * @return The child of the SOAP Body node or <code>null</code>.
+   * @since v0.9.7
+   */
+  @Nullable
+  Node getPayloadNode ();
 }

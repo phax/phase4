@@ -382,7 +382,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         if (a.m_aPayloadBytes == null)
         {
           final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (),
-                                                                                               aState.getRefToMessageID ());
+                                                                                               aState.getMessageID ());
           aProcessingErrorMessages.add (aEbmsError);
           return AS4MessageProcessorResult.createFailure ("Processing errors occurred");
         }
@@ -392,7 +392,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         if (a.m_aSBDH == null)
         {
           final Ebms3Error aEbmsError = EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsEbms3Error (aState.getLocale (),
-                                                                                                aState.getRefToMessageID ());
+                                                                                                aState.getMessageID ());
           aProcessingErrorMessages.add (aEbmsError);
           return AS4MessageProcessorResult.createFailure ("Failed to interprete payload as SBDH");
         }
@@ -420,8 +420,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     if (aReadAttachments.size () != 1)
     {
       // In Peppol there must be exactly one payload
-      final Ebms3Error aEbmsError = EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (),
-                                                                           aState.getRefToMessageID ());
+      final Ebms3Error aEbmsError = EEbmsError.EBMS_OTHER.getAsEbms3Error (aState.getLocale (), aState.getMessageID ());
       aProcessingErrorMessages.add (aEbmsError);
       return AS4MessageProcessorResult.createFailure ("In Peppol exactly one payload attachment is expected. This request has " +
                                                       aReadAttachments.size () +

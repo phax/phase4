@@ -45,6 +45,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -82,6 +83,7 @@ import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -92,6 +94,7 @@ import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.AS4MessageState;
+import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -124,16 +127,24 @@ public final class Phase4PeppolSender
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                        @Nonnull final IIncomingAttachmentFactory aIAF,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nonnull final Locale aLocale,
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4PeppolException
   {
     if (false)
     {
-      // Read like a request
       final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+        // Parse AS4, verify signature etc
+        final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+        final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
+                                                                               aLocale,
+                                                                               aHttpHeaders,
+                                                                               aSoapDocument,
+                                                                               eSoapVersion,
+                                                                               aIncomingAttachments,
+                                                                               aErrorMessages);
         // TODO
-
       };
 
       // Create header map
@@ -141,14 +152,10 @@ public final class Phase4PeppolSender
       for (final Header aHeader : aHttpResponse.getAllHeaders ())
         aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
 
-      try
+      // Parse incoming message
+      try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
       {
-        AS4IncomingHandler.parseAS4Message (aIAF,
-                                            aResHelper,
-                                            new NonBlockingByteArrayInputStream (aResponsePayload),
-                                            aHttpHeaders,
-                                            aCallback,
-                                            aIncomingDumper);
+        AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
       }
       catch (final Exception ex)
       {
@@ -181,7 +188,7 @@ public final class Phase4PeppolSender
         final QName aQName = XMLHelper.getQName (aHeaderChild);
         if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
         {
-          final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, Locale.US);
+          final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, aLocale);
           final ErrorList aErrorList = new ErrorList ();
           new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
                                                                                                      aHeaderChild,
@@ -202,6 +209,7 @@ public final class Phase4PeppolSender
   private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                  @Nonnull final IIncomingAttachmentFactory aIAF,
                                  @Nonnull final AS4ClientUserMessage aClientUserMsg,
+                                 @Nonnull final Locale aLocale,
                                  @Nonnull final String sURL,
                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
@@ -267,6 +275,7 @@ public final class Phase4PeppolSender
       final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aCryptoFactory,
                                                                     aIAF,
                                                                     aClientUserMsg.getAS4ResourceHelper (),
+                                                                    aLocale,
                                                                     aWrappedResponse.get (),
                                                                     aResponseEntity.getResponse (),
                                                                     aIncomingDumper);
@@ -562,6 +571,7 @@ public final class Phase4PeppolSender
       _sendHttp (aCryptoFactory,
                  aIAF,
                  aUserMsg,
+                 Locale.US,
                  sReceiverEndpointURL,
                  aBuildMessageCallback,
                  aOutgoingDumper,

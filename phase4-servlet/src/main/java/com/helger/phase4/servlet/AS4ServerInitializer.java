@@ -37,6 +37,7 @@ import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
  * also be started.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 @Immutable
 public final class AS4ServerInitializer

@@ -19,9 +19,7 @@ package com.helger.phase4.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,38 +27,30 @@ import javax.annotation.WillClose;
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 
 import org.apache.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.error.IError;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
-import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
-import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.BasicHttpPoster;
@@ -72,12 +62,9 @@ import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
-import com.helger.phase4.ebms3header.Ebms3PartInfo;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.ebms3header.Ebms3PullRequest;
-import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
@@ -94,20 +81,13 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.model.AS4Helper;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.MEPHelper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.profile.IAS4Profile;
-import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.mgr.AS4ServletMessageProcessorManager;
-import com.helger.phase4.servlet.soap.AS4SingleSOAPHeader;
-import com.helger.phase4.servlet.soap.ISOAPHeaderElementProcessor;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -115,8 +95,6 @@ import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
-import com.helger.xml.ChildElementIterator;
-import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**
@@ -381,163 +359,6 @@ public class AS4RequestHandler implements AutoCloseable
     return this;
   }
 
-  private static void _decompressAttachments (@Nonnull final ICommonsList <WSS4JAttachment> aIncomingDecryptedAttachments,
-                                              @Nonnull final Ebms3UserMessage aUserMessage,
-                                              @Nonnull final IAS4MessageState aState)
-  {
-    for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
-    {
-      final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
-      if (eCompressionMode != null)
-      {
-        final IHasInputStream aOldISP = aIncomingAttachment.getInputStreamProvider ();
-        aIncomingAttachment.setSourceStreamProvider (new HasInputStream ( () -> {
-          try
-          {
-            final InputStream aSrcIS = aOldISP.getInputStream ();
-            if (aSrcIS == null)
-              throw new IllegalStateException ("Failed to create InputStream from " + aOldISP);
-            return eCompressionMode.getDecompressStream (aSrcIS);
-          }
-          catch (final IOException ex)
-          {
-            // This is e.g. invoked, if the GZIP decompression failed because of
-            // invalid payload
-            throw new AS4DecompressException (ex);
-          }
-        }, aOldISP.isReadMultiple ()));
-
-        final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getId (), "attachment=");
-        // x.getHref() != null needed since, if a message contains a payload and
-        // an attachment, it would throw a NullPointerException since a payload
-        // does not have anything written in its partinfo therefore also now
-        // href
-        final Ebms3PartInfo aPartInfo = CollectionHelper.findFirst (aUserMessage.getPayloadInfo ().getPartInfo (),
-                                                                    x -> x.getHref () != null &&
-                                                                         x.getHref ().contains (sAttachmentContentID));
-        if (aPartInfo != null && aPartInfo.getPartProperties () != null)
-        {
-          // Find MimeType property
-          final Ebms3Property aProperty = CollectionHelper.findFirst (aPartInfo.getPartProperties ().getProperty (),
-                                                                      x -> x.getName ()
-                                                                            .equalsIgnoreCase (MessageHelperMethods.PART_PROPERTY_MIME_TYPE));
-          if (aProperty != null)
-          {
-            final String sMimeType = aProperty.getValue ();
-            if (MimeTypeParser.safeParseMimeType (sMimeType) == null)
-              LOGGER.warn ("Value '" +
-                           sMimeType +
-                           "' of property '" +
-                           MessageHelperMethods.PART_PROPERTY_MIME_TYPE +
-                           "' is not a valid MIME type");
-            aIncomingAttachment.overwriteMimeType (sMimeType);
-          }
-        }
-      }
-    }
-  }
-
-  private static void _processSoapHeaderElements (@Nonnull final Document aSoapDocument,
-                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                  @Nonnull final AS4MessageState aState,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
-  {
-    final ESOAPVersion eSoapVersion = aState.getSOAPVersion ();
-    final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
-    {
-      // Find SOAP header
-      final Node aHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDocument.getDocumentElement (),
-                                                                     eSoapVersion.getNamespaceURI (),
-                                                                     eSoapVersion.getHeaderElementName ());
-      if (aHeaderNode == null)
-        throw new AS4BadRequestException ("SOAP document is missing a Header element");
-
-      // Extract all header elements including their mustUnderstand value
-      for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
-      {
-        final QName aQName = XMLHelper.getQName (aHeaderChild);
-        final String sMustUnderstand = aHeaderChild.getAttributeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
-        final boolean bIsMustUnderstand = eSoapVersion.getMustUnderstandValue (true).equals (sMustUnderstand);
-        aHeaders.add (new AS4SingleSOAPHeader (aHeaderChild, aQName, bIsMustUnderstand));
-      }
-    }
-
-    // handle all headers in the order of the registered handlers!
-    for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : SOAPHeaderElementProcessorRegistry.getInstance ()
-                                                                                                         .getAllElementProcessors ()
-                                                                                                         .entrySet ())
-    {
-      final QName aQName = aEntry.getKey ();
-
-      // Check if this message contains a header for the current handler
-      final AS4SingleSOAPHeader aHeader = aHeaders.findFirst (x -> aQName.equals (x.getQName ()));
-      if (aHeader == null)
-      {
-        // no header element for current processor
-        if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Message contains no SOAP header element with QName " + aQName.toString ());
-        continue;
-      }
-
-      final ISOAPHeaderElementProcessor aProcessor = aEntry.getValue ();
-      if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
-
-      // Process element
-      final ErrorList aErrorList = new ErrorList ();
-      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
-                    .isSuccess ())
-      {
-        // Mark header as processed (for mustUnderstand check)
-        aHeader.setProcessed (true);
-      }
-      else
-      {
-        // upon failure, the element stays unprocessed and sends back a signal
-        // message with the errors
-        LOGGER.warn ("Failed to process SOAP header element " +
-                     aQName.toString () +
-                     " with processor " +
-                     aProcessor +
-                     "; error details: " +
-                     aErrorList);
-
-        final String sRefToMessageID = aState.getRefToMessageID ();
-        final Locale aLocale = aState.getLocale ();
-        for (final IError aError : aErrorList)
-        {
-          final EEbmsError ePredefinedError = EEbmsError.getFromErrorCodeOrNull (aError.getErrorID ());
-          if (ePredefinedError != null)
-            aErrorMessages.add (ePredefinedError.getAsEbms3Error (aLocale, sRefToMessageID));
-          else
-          {
-            final Ebms3Error aEbms3Error = new Ebms3Error ();
-            aEbms3Error.setErrorDetail (aError.getErrorText (aLocale));
-            aEbms3Error.setErrorCode (aError.getErrorID ());
-            aEbms3Error.setSeverity (aError.getErrorLevel ().getID ());
-            aEbms3Error.setOrigin (aError.getErrorFieldName ());
-            aEbms3Error.setRefToMessageInError (sRefToMessageID);
-            aErrorMessages.add (aEbms3Error);
-          }
-        }
-
-        // Stop processing of other headers
-        break;
-      }
-    }
-
-    // If an error message is present, send it back gracefully
-    if (aErrorMessages.isEmpty ())
-    {
-      // Now check if all must understand headers were processed
-      // Are all must-understand headers processed?
-      for (final AS4SingleSOAPHeader aHeader : aHeaders)
-        if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new AS4BadRequestException ("Error processing required SOAP header element " +
-                                            aHeader.getQName ().toString ());
-    }
-  }
-
   /**
    * Invoke custom SPI message processors
    *
@@ -752,35 +573,6 @@ public class AS4RequestHandler implements AutoCloseable
 
     // Remember success
     aSPIResult.setSuccess (true);
-  }
-
-  /**
-   * Checks the mandatory properties OriginalSender and FinalRecipient if those
-   * two are set.
-   *
-   * @param aPropertyList
-   *        the property list that should be checked for the two specific ones
-   * @throws AS4BadRequestException
-   *         on error
-   */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <? extends Ebms3Property> aPropertyList) throws AS4BadRequestException
-  {
-    String sOriginalSenderC1 = null;
-    String sFinalRecipientC4 = null;
-
-    for (final Ebms3Property sProperty : aPropertyList)
-    {
-      if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
-        sOriginalSenderC1 = sProperty.getValue ();
-      else
-        if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
-          sFinalRecipientC4 = sProperty.getValue ();
-    }
-
-    if (StringHelper.hasNoText (sOriginalSenderC1))
-      throw new AS4BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
-    if (StringHelper.hasNoText (sFinalRecipientC4))
-      throw new AS4BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
   /**
@@ -1100,211 +892,52 @@ public class AS4RequestHandler implements AutoCloseable
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                                                       MessagingException
   {
-    ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
-    ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
-    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
-    ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
-
-    if (LOGGER.isDebugEnabled ())
-    {
-      LOGGER.debug ("Received the following SOAP " + eSoapVersion.getVersion () + " document:");
-      LOGGER.debug (AS4XMLHelper.serializeXML (aSoapDocument));
-      if (aIncomingAttachments.isEmpty ())
-      {
-        LOGGER.debug ("Without any incoming attachments");
-      }
-      else
-      {
-        LOGGER.debug ("Including the following " + aIncomingAttachments.size () + " attachments:");
-        LOGGER.debug (aIncomingAttachments.toString ());
-      }
-    }
-
     // Collect all runtime errors
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
-    // All further operations should only operate on the interface
-    IAS4MessageState aState;
-    {
-      // This is where all data from the SOAP headers is stored to
-      final AS4MessageState aStateImpl = new AS4MessageState (eSoapVersion, m_aResHelper, m_aLocale);
-
-      // Handle all headers - the only place where the AS4MessageState values
-      // are written
-      _processSoapHeaderElements (aSoapDocument, aIncomingAttachments, aStateImpl, aErrorMessages);
-
-      aState = aStateImpl;
-    }
-
+    final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
+                                                                           m_aLocale,
+                                                                           aHttpHeaders,
+                                                                           aSoapDocument,
+                                                                           eSoapVersion,
+                                                                           aIncomingAttachments,
+                                                                           aErrorMessages);
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-    final Ebms3UserMessage aEbmsUserMessage;
-    final Ebms3SignalMessage aEbmsSignalMessage;
-    final Ebms3Error aEbmsError;
-    final Node aPayloadNode;
-    final ICommonsList <WSS4JAttachment> aDecryptedAttachments;
-    // Storing for two-way response messages
-    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
-    boolean bCanInvokeSPIs = false;
-    String sProfileID = null;
+    final String sProfileID = aState.getProfileID ();
+    final String sMessageID = aState.getMessageID ();
+    final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                   : aState.getOriginalAttachments ();
+    final Node aPayloadNode = aState.getPayloadNode ();
+    final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
+    final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
+    final Ebms3Error aEbmsError = aState.getEbmsError ();
 
-    if (aErrorMessages.isEmpty ())
+    final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
+                                               .registerAndCheck (sMessageID,
+                                                                  sProfileID,
+                                                                  aPMode == null ? null : aPMode.getID ())
+                                               .isBreak ();
+    if (bIsDuplicate)
     {
-      // Every message can only contain 1 User message or 1 pull message
-      // aUserMessage can be null on incoming Pull-Message!
-      aEbmsUserMessage = aState.getMessaging ().hasUserMessageEntries () ? aState.getMessaging ()
-                                                                                 .getUserMessageAtIndex (0)
-                                                                         : null;
-      aEbmsSignalMessage = aState.getMessaging ().hasSignalMessageEntries ()
-                                                                             ? aState.getMessaging ()
-                                                                                     .getSignalMessageAtIndex (0)
-                                                                             : null;
-      aEbmsError = aEbmsSignalMessage != null &&
-                   aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
-
-      final Ebms3PullRequest aEbmsPullRequest = aEbmsSignalMessage != null ? aEbmsSignalMessage.getPullRequest ()
-                                                                           : null;
-      final Ebms3Receipt aEbmsReceipt = aEbmsSignalMessage != null ? aEbmsSignalMessage.getReceipt () : null;
-
-      final int nCountData = (aEbmsUserMessage != null ? 1 : 0) +
-                             (aEbmsPullRequest != null ? 1 : 0) +
-                             (aEbmsReceipt != null ? 1 : 0) +
-                             (aEbmsError != null ? 1 : 0);
-      // Errors do not count
-      if (nCountData != 1)
-      {
-        // send EBMS:0001 error back
-        if (true)
-          aErrorMessages.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (m_aLocale,
-                                                                                    aState.getRefToMessageID ()));
-        else
-          throw new AS4BadRequestException ("Exactly one UserMessage or one PullRequest or one Receipt or on Error must be present!");
-      }
-
-      // XXX debugging
-      if (aEbmsReceipt != null && LOGGER.isDebugEnabled ())
-        LOGGER.debug ("RECEIPT INCOMING");
-
-      // Ensure the decrypted attachments are used
-      aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                : aState.getOriginalAttachments ();
-
-      final String sMessageID;
-      if (aEbmsUserMessage != null)
-      {
-        // User message requires PMode
-        if (aPMode == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for user-message!");
-
-        // Only check leg if the message is a usermessage
-        if (aEffectiveLeg == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode leg could be determined!");
-
-        // The profile ID from the configuration file is optional
-        sProfileID = AS4ServerConfiguration.getAS4ProfileID ();
-
-        // Only do profile checks if a profile is set
-        if (StringHelper.hasText (sProfileID))
-        {
-          final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
-          if (aProfile == null)
-            throw new IllegalStateException ("The configured AS4 profile " + sProfileID + " does not exist.");
-
-          // Profile Checks gets set when started with Server
-          final IAS4ProfileValidator aValidator = aProfile.getValidator ();
-          if (aValidator != null)
-          {
-            final ErrorList aErrorList = new ErrorList ();
-            aValidator.validatePMode (aPMode, aErrorList);
-            aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
-            if (aErrorList.isNotEmpty ())
-            {
-              throw new AS4BadRequestException ("Error validating incoming AS4 message with the profile " +
-                                                aProfile.getDisplayName () +
-                                                "\n Following errors are present: " +
-                                                aErrorList.getAllErrors ().getAllTexts (m_aLocale));
-            }
-          }
-        }
-        sMessageID = aEbmsUserMessage.getMessageInfo ().getMessageId ();
-        // Decompress attachments (if compressed)
-        // Result is directly in the decrypted attachments list!
-        _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aState);
-      }
-      else
-      {
-        // Signal message
-
-        // Pull-request also requires PMode
-        if (aEbmsPullRequest != null && aPMode == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
-
-        sMessageID = aEbmsSignalMessage.getMessageInfo ().getMessageId ();
-      }
-
-      final boolean bUseDecryptedSOAP = aState.hasDecryptedSOAPDocument ();
-      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSOAPDocument () : aSoapDocument;
-      assert aRealSOAPDoc != null;
-
-      // Find SOAP body
-      final Node aBodyNode = XMLHelper.getFirstChildElementOfName (aRealSOAPDoc.getDocumentElement (),
-                                                                   eSoapVersion.getNamespaceURI (),
-                                                                   eSoapVersion.getBodyElementName ());
-      if (aBodyNode == null)
-        throw new AS4BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
-                                          " SOAP document is missing a Body element");
-      aPayloadNode = aBodyNode.getFirstChild ();
-
-      if (aEbmsUserMessage != null)
-      {
-        // Check if originalSender and finalRecipient are present
-        // Since these two properties are mandatory
-        if (aEbmsUserMessage.getMessageProperties () == null)
-          throw new AS4BadRequestException ("No Message Properties present but originalSender and finalRecipient have to be present");
-
-        final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
-        if (aProps.isEmpty ())
-          throw new AS4BadRequestException ("Message Property element present but no properties");
-
-        _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
-      }
-
-      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
-                                                 .registerAndCheck (sMessageID,
-                                                                    sProfileID,
-                                                                    aPMode == null ? null : aPMode.getID ())
-                                                 .isBreak ();
-      if (bIsDuplicate)
-      {
-        LOGGER.info ("Not invoking SPIs, because message was already handled!");
-        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
-                                                                   sMessageID,
-                                                                   "Another message with the same ID was already received!"));
-      }
-      else
-      {
-        if (!AS4Helper.isPingMessage (aPMode))
-        {
-          // Invoke SPIs if
-          // * Valid PMode
-          // * Exactly one UserMessage or SignalMessage
-          // * No ping/test message
-          // * No Duplicate message ID
-          // * No errors so far (sign, encrypt, ...)
-          bCanInvokeSPIs = true;
-        }
-      }
-    }
-    else
-    {
-      aEbmsUserMessage = null;
-      aEbmsSignalMessage = null;
-      aEbmsError = null;
-      aPayloadNode = null;
-      aDecryptedAttachments = null;
+      LOGGER.info ("Not invoking SPIs, because message was already handled!");
+      aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                 sMessageID,
+                                                                 "Another message with the same ID was already received!"));
     }
 
     final SPIInvocationResult aSPIResult = new SPIInvocationResult ();
+
+    // Storing for two-way response messages
+    final ICommonsList <WSS4JAttachment> aResponseAttachments = new CommonsArrayList <> ();
+
+    // Invoke SPIs if
+    // * No errors so far (sign, encrypt, ...)
+    // * Valid PMode
+    // * Exactly one UserMessage or SignalMessage
+    // * No ping/test message
+    // * No Duplicate message ID
+    final boolean bCanInvokeSPIs = aErrorMessages.isEmpty () && !aState.isPingMessage ();
     if (bCanInvokeSPIs)
     {
       // PMode may be null for receipts
@@ -1338,12 +971,6 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // Call asynchronous
         // Only leg1 can be async!
-
-        final Ebms3UserMessage aFinalUserMessage = aEbmsUserMessage;
-        final Ebms3SignalMessage aFinalSignalMessage = aEbmsSignalMessage;
-        final Node aFinalPayloadNode = aPayloadNode;
-        final ICommonsList <WSS4JAttachment> aFinalDecryptedAttachments = aDecryptedAttachments;
-
         AS4WorkerPool.getInstance ().run ( () -> {
           // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
@@ -1351,10 +978,10 @@ public class AS4RequestHandler implements AutoCloseable
 
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
           _invokeSPIs (aHttpHeaders,
-                       aFinalUserMessage,
-                       aFinalSignalMessage,
-                       aFinalPayloadNode,
-                       aFinalDecryptedAttachments,
+                       aEbmsUserMessage,
+                       aEbmsSignalMessage,
+                       aPayloadNode,
+                       aDecryptedAttachments,
                        aPMode,
                        aState,
                        aLocalErrorMessages,
@@ -1370,15 +997,12 @@ public class AS4RequestHandler implements AutoCloseable
             // The response user message has no explicit payload.
             // All data of the response user message is in the local attachments
             final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
-                                                                                aFinalUserMessage,
+                                                                                aEbmsUserMessage,
                                                                                 aLocalResponseAttachments);
 
             // Send UserMessage or receipt
             final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
-            final String sEncryptionAlias = aFinalUserMessage.getPartyInfo ()
-                                                             .getTo ()
-                                                             .getPartyIdAtIndex (0)
-                                                             .getValue ();
+            final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
             final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
                                                                      .setAlias (sEncryptionAlias);
             aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSOAPVersion (),
@@ -1394,7 +1018,7 @@ public class AS4RequestHandler implements AutoCloseable
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                              aState.getRefToMessageID (),
+                                                                              aState.getMessageID (),
                                                                               aLocalErrorMessages);
             aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument (),
                                                                eSoapVersion.getMimeType ());
@@ -1437,7 +1061,7 @@ public class AS4RequestHandler implements AutoCloseable
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
           final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                    aState.getRefToMessageID (),
+                                                                    aState.getMessageID (),
                                                                     aErrorMessages);
           return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument (), eSoapVersion.getMimeType ());
         }
