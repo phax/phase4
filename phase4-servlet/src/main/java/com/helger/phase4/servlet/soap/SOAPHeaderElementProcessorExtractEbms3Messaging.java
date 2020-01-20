@@ -567,13 +567,11 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           if (!aSignalMessage.getError ().isEmpty ())
           {
             for (final Ebms3Error aError : aSignalMessage.getError ())
-            {
               if (StringHelper.hasNoText (aError.getRefToMessageInError ()))
               {
                 aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
                 return ESuccess.FAILURE;
               }
-            }
           }
         }
     }

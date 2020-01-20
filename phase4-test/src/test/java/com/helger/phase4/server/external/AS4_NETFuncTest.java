@@ -48,7 +48,7 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-@Ignore ("Working! Requires external proxy and PEPPOL pilot certificate!")
+@Ignore ("Working! Requires external proxy and Peppol pilot certificate!")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
 {
   /** TThe test URL for AS4.NET */

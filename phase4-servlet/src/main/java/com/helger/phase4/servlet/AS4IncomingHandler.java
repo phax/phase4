@@ -348,7 +348,7 @@ public class AS4IncomingHandler
     aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
   }
 
-  private static void _processSoapHeaderElements (@Nonnull final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllProcessors,
+  private static void _processSoapHeaderElements (@Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
@@ -374,6 +374,7 @@ public class AS4IncomingHandler
       }
     }
 
+    final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllProcessors = aRegistry.getAllElementProcessors ();
     if (aAllProcessors.isEmpty ())
       LOGGER.warn ("No SOAP Header element processor is registered");
 
@@ -539,6 +540,7 @@ public class AS4IncomingHandler
   @Nonnull
   public static IAS4MessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                      @Nonnull final Locale aLocale,
+                                                     @Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                      @Nonnull final HttpHeaderMap aHttpHeaders,
                                                      @Nonnull final Document aSoapDocument,
                                                      @Nonnull final ESOAPVersion eSoapVersion,
@@ -569,9 +571,9 @@ public class AS4IncomingHandler
     final AS4MessageState aState = new AS4MessageState (eSoapVersion, aResHelper, aLocale);
 
     // Handle all headers - modifies the state
-    final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllProcessors = SOAPHeaderElementProcessorRegistry.getInstance ()
-                                                                                                                     .getAllElementProcessors ();
-    _processSoapHeaderElements (aAllProcessors, aSoapDocument, aIncomingAttachments, aState, aErrorMessages);
+    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessages);
+
+    aState.setSoapHeaderElementProcessingSuccessful (aErrorMessages.isEmpty ());
 
     if (aErrorMessages.isEmpty ())
     {

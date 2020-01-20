@@ -30,6 +30,8 @@ import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
+import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -77,6 +79,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
@@ -87,7 +90,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler ()
   {
-    this (AS4CryptoFactory.getDefaultInstance (), IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+    this (AS4CryptoFactory.getDefaultInstance (),
+          DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+          IIncomingAttachmentFactory.DEFAULT_INSTANCE);
   }
 
   /**
@@ -95,15 +100,20 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *
    * @param aCryptoFactory
    *        Crypto factory. May not be <code>null</code>.
+   * @param aPModeResolver
+   *        PMode resolved to be used. May not be <code>null</code>.
    * @param aIAF
    *        The attachment factory for incoming attachments.
    */
   public AS4XServletHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                             @Nonnull final IPModeResolver aPModeResolver,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
     m_aCryptoFactory = aCryptoFactory;
+    m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
   }
 
@@ -146,7 +156,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory, m_aIAF))
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory, m_aPModeResolver, m_aIAF))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)

@@ -26,10 +26,6 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
-import com.helger.phase4.crypto.AS4CryptoFactory;
-import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -112,8 +108,6 @@ public final class AS4WebAppListener extends WebAppListener
   @Override
   protected void initManagers ()
   {
-    final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
-    AS4ServerInitializer.initAS4Server (aPModeResolver, aCryptoFactory);
+    AS4ServerInitializer.initAS4Server ();
   }
 }

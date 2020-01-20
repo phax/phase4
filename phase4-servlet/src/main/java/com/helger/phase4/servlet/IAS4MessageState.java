@@ -327,4 +327,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    */
   @Nullable
   Node getPayloadNode ();
+
+  /**
+   * @return <code>true</code> if SOAP header element processing was successful,
+   *         <code>false</code> if not.
+   * @since v0.9.7
+   */
+  boolean isSoapHeaderElementProcessingSuccessful ();
 }

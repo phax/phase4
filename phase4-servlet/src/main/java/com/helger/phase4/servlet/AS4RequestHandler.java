@@ -86,8 +86,10 @@ import com.helger.phase4.model.MEPHelper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.EPModeSendReceiptReplyPattern;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.mgr.AS4ServletMessageProcessorManager;
+import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -233,6 +235,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   private final AS4ResourceHelper m_aResHelper;
   private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
@@ -242,13 +245,16 @@ public class AS4RequestHandler implements AutoCloseable
   private IConsumer <ICommonsList <Ebms3Error>> m_aErrorConsumer;
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                            @Nonnull final IPModeResolver aPModeResolver,
                             @Nonnull final IIncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
+    m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
   }
 
@@ -895,8 +901,11 @@ public class AS4RequestHandler implements AutoCloseable
     // Collect all runtime errors
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
+    final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
+                                                                                                           m_aCryptoFactory);
     final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
                                                                            m_aLocale,
+                                                                           aRegistry,
                                                                            aHttpHeaders,
                                                                            aSoapDocument,
                                                                            eSoapVersion,
@@ -911,19 +920,21 @@ public class AS4RequestHandler implements AutoCloseable
     final Node aPayloadNode = aState.getPayloadNode ();
     final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
-    final Ebms3Error aEbmsError = aState.getEbmsError ();
 
-    final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
-                                               .registerAndCheck (sMessageID,
-                                                                  sProfileID,
-                                                                  aPMode == null ? null : aPMode.getID ())
-                                               .isBreak ();
-    if (bIsDuplicate)
+    if (aErrorMessages.isEmpty ())
     {
-      LOGGER.info ("Not invoking SPIs, because message was already handled!");
-      aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
-                                                                 sMessageID,
-                                                                 "Another message with the same ID was already received!"));
+      final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
+                                                 .registerAndCheck (sMessageID,
+                                                                    sProfileID,
+                                                                    aPMode == null ? null : aPMode.getID ())
+                                                 .isBreak ();
+      if (bIsDuplicate)
+      {
+        LOGGER.info ("Not invoking SPIs, because message was already handled!");
+        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                   sMessageID,
+                                                                   "Another message with the same ID was already received!"));
+      }
     }
 
     final SPIInvocationResult aSPIResult = new SPIInvocationResult ();
@@ -1046,8 +1057,9 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Try building error message
-    if (aEbmsError == null)
+    if (!aState.isSoapHeaderElementProcessingSuccessful () || aState.getEbmsError () == null)
     {
+      // Either error in header processing or
       // Not an incoming Ebms Error Message
       if (aErrorMessages.isNotEmpty ())
       {

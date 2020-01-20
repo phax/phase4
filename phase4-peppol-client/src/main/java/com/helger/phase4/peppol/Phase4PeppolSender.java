@@ -96,6 +96,7 @@ import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.AS4MessageState;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
+import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHWriter;
@@ -115,7 +116,6 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
-  public static final IPModeResolver PMODE_RESOLVER = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
   public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = CPeppolSBDH.TYPE_VERSION_21;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
@@ -125,6 +125,7 @@ public final class Phase4PeppolSender
 
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                       @Nonnull final IPModeResolver aPModeResolver,
                                                        @Nonnull final IIncomingAttachmentFactory aIAF,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nonnull final Locale aLocale,
@@ -137,8 +138,11 @@ public final class Phase4PeppolSender
       final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
         // Parse AS4, verify signature etc
         final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+        final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
+                                                                                                               aCryptoFactory);
         final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
                                                                                aLocale,
+                                                                               aRegistry,
                                                                                aHttpHeaders,
                                                                                aSoapDocument,
                                                                                eSoapVersion,
@@ -190,7 +194,7 @@ public final class Phase4PeppolSender
         {
           final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, aLocale);
           final ErrorList aErrorList = new ErrorList ();
-          new SOAPHeaderElementProcessorExtractEbms3Messaging (PMODE_RESOLVER).processHeaderElement (aSoapDoc,
+          new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver).processHeaderElement (aSoapDoc,
                                                                                                      aHeaderChild,
                                                                                                      new CommonsArrayList <> (),
                                                                                                      aState,
@@ -207,6 +211,7 @@ public final class Phase4PeppolSender
   }
 
   private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                 @Nonnull final IPModeResolver aPModeResolver,
                                  @Nonnull final IIncomingAttachmentFactory aIAF,
                                  @Nonnull final AS4ClientUserMessage aClientUserMsg,
                                  @Nonnull final Locale aLocale,
@@ -273,6 +278,7 @@ public final class Phase4PeppolSender
     {
       // Read response as EBMS3 Signal Message
       final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aCryptoFactory,
+                                                                    aPModeResolver,
                                                                     aIAF,
                                                                     aClientUserMsg.getAS4ResourceHelper (),
                                                                     aLocale,
@@ -430,6 +436,8 @@ public final class Phase4PeppolSender
    *        The HTTP client factory to be used. May not be <code>null</code>.
    * @param aCryptoFactory
    *        The crypto factory to be used. May not be <code>null</code>.
+   * @param aPModeResolver
+   *        PMode resolver. May not be <code>null</code>.
    * @param aSrcPMode
    *        The source PMode to be used. May not be <code>null</code>.
    * @param aSenderID
@@ -482,6 +490,7 @@ public final class Phase4PeppolSender
    */
   private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
                                        @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                       @Nonnull final IPModeResolver aPModeResolver,
                                        @Nonnull final IIncomingAttachmentFactory aIAF,
                                        @Nonnull final IPMode aSrcPMode,
                                        @Nonnull final IParticipantIdentifier aSenderID,
@@ -569,6 +578,7 @@ public final class Phase4PeppolSender
 
       // Main sending
       _sendHttp (aCryptoFactory,
+                 aPModeResolver,
                  aIAF,
                  aUserMsg,
                  Locale.US,
@@ -626,6 +636,7 @@ public final class Phase4PeppolSender
   {
     protected HttpClientFactory m_aHttpClientFactory;
     protected IAS4CryptoFactory m_aCryptoFactory;
+    protected IPModeResolver m_aPModeResolver;
     protected IIncomingAttachmentFactory m_aIAF;
     protected IPMode m_aPMode;
 
@@ -651,6 +662,7 @@ public final class Phase4PeppolSender
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
      * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
+     * {@link #setPModeResolver(IPModeResolver)}<br>
      * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
@@ -663,8 +675,10 @@ public final class Phase4PeppolSender
       {
         setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
         setCryptoFactory (AS4CryptoFactory.getDefaultInstance ());
+        final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
+        setPModeResolver (aPModeResolver);
         setIncomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
-        setPMode (Phase4PeppolSender.PMODE_RESOLVER.getPModeOfID (null, "s", "a", "i", "r", null));
+        setPMode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", null));
         setPayloadMimeType (CMimeType.APPLICATION_XML);
         setCompressPayload (true);
       }
@@ -705,6 +719,21 @@ public final class Phase4PeppolSender
     {
       ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
       m_aCryptoFactory = aCryptoFactory;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the PMode resolver to be used.
+     *
+     * @param aPModeResolver
+     *        The PMode resolver to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setPModeResolver (@Nonnull final IPModeResolver aPModeResolver)
+    {
+      ValueEnforcer.notNull (aPModeResolver, "aPModeResolver");
+      m_aPModeResolver = aPModeResolver;
       return thisAsT ();
     }
 
@@ -1287,6 +1316,7 @@ public final class Phase4PeppolSender
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
+                       m_aPModeResolver,
                        m_aIAF,
                        m_aPMode,
                        m_aSenderID,
@@ -1401,6 +1431,7 @@ public final class Phase4PeppolSender
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
+                       m_aPModeResolver,
                        m_aIAF,
                        m_aPMode,
                        m_aSenderID,

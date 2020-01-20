@@ -16,25 +16,18 @@
  */
 package com.helger.phase4.servlet;
 
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J;
 
 /**
- * This class contains the init method for the AS4Server. Registering alle
- * Processors that are currently used
- * {@link SOAPHeaderElementProcessorExtractEbms3Messaging} and
- * {@link SOAPHeaderElementProcessorWSS4J}. Also a {@link MetaAS4Manager}
- * instance gets provided for the server to use. The duplicate cleanup job will
- * also be started.
+ * This class contains the init method for the server:
+ * <ul>
+ * <li>The {@link MetaAS4Manager} instance is ensured to be present</li>
+ * <li>The duplicate cleanup job will also be started.</li>
+ * </ul>
  *
  * @author bayerlma
  * @author Philip Helger
@@ -48,27 +41,9 @@ public final class AS4ServerInitializer
   /**
    * Call this method in your AS4 server to initialize everything that is
    * necessary to use the {@link AS4Servlet}.
-   *
-   * @param aPModeResolver
-   *        PMode resolver. May not be <code>null</code>.
-   * @param aCryptoFactory
-   *        Crypto factory to use. May not be <code>null</code>.
    */
-  public static void initAS4Server (@Nonnull final IPModeResolver aPModeResolver,
-                                    @Nonnull final IAS4CryptoFactory aCryptoFactory)
+  public static void initAS4Server ()
   {
-    // Register all SOAP header element processors
-    // Registration order matches execution order!
-    final SOAPHeaderElementProcessorRegistry aReg = SOAPHeaderElementProcessorRegistry.getInstance ();
-    if (!aReg.containsHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
-      aReg.registerHeaderElementProcessor (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING,
-                                           new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver));
-
-    // WSS4J must be after Ebms3Messaging handler!
-    if (!aReg.containsHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY))
-      aReg.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
-                                           new SOAPHeaderElementProcessorWSS4J (aCryptoFactory));
-
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
 

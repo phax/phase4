@@ -75,6 +75,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
   private static final String KEY_SOAP_BODY_PAYLOAD_NODE = "phase4.soap.body.first.child";
+  private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
 
   private final LocalDateTime m_aReceiptDT;
   private final ESOAPVersion m_eSOAPVersion;
@@ -323,5 +324,15 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   public void setPayloadNode (@Nullable final Node aPayloadNode)
   {
     putIn (KEY_SOAP_BODY_PAYLOAD_NODE, aPayloadNode);
+  }
+
+  public boolean isSoapHeaderElementProcessingSuccessful ()
+  {
+    return getAsBoolean (KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, false);
+  }
+
+  public void setSoapHeaderElementProcessingSuccessful (final boolean bSuccess)
+  {
+    putIn (KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, bSuccess);
   }
 }
