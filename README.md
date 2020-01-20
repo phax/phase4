@@ -110,9 +110,11 @@ If you want to create your own profile, you need to provide an [SPI](https://doc
 
 # Peppol handling
 
+Peppol is an international eDelivery network. Read more on https://peppol.eu
+
 ## Subproject phase4-peppol-client
 
-The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. Alternatively the class `Phase4PeppolSender.SBDHBuilder` offers a build class where you can add your pre-build StandardBusinessDocument, which implies that no validation takes place.
+The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. Alternatively the class `Phase4PeppolSender.SBDHBuilder` offers a build class where you can add your pre-build StandardBusinessDocument, which implies that no implicit validation of the business document takes place. This class contains utility methods to explicitly validate the payload.
 
 As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
 
