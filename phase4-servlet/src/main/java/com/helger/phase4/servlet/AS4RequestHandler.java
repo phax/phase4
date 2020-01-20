@@ -902,7 +902,8 @@ public class AS4RequestHandler implements AutoCloseable
     final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
 
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
-                                                                                                           m_aCryptoFactory);
+                                                                                                           m_aCryptoFactory,
+                                                                                                           (IPMode) null);
     final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (m_aResHelper,
                                                                            m_aLocale,
                                                                            aRegistry,

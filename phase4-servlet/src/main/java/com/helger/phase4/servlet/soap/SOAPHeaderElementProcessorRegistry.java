@@ -29,6 +29,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsLinkedHashMap;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 
 /**
@@ -83,7 +84,8 @@ public class SOAPHeaderElementProcessorRegistry
 
   @Nonnull
   public static SOAPHeaderElementProcessorRegistry createDefault (@Nonnull final IPModeResolver aPModeResolver,
-                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactory)
+                                                                  @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                                  @Nullable final IPMode aFallbackPMode)
   {
     // Register all SOAP header element processors
     // Registration order matches execution order!
@@ -93,7 +95,7 @@ public class SOAPHeaderElementProcessorRegistry
 
     // WSS4J must be after Ebms3Messaging handler!
     ret.registerHeaderElementProcessor (SOAPHeaderElementProcessorWSS4J.QNAME_SECURITY,
-                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactory));
+                                        new SOAPHeaderElementProcessorWSS4J (aCryptoFactory, aFallbackPMode));
     return ret;
   }
 }

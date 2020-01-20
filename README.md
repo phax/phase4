@@ -181,6 +181,9 @@ If you like the project, a star on GitHub is always appreciated.
     * Added the new class `AS4CryptoFactoryInMemoryKeyStore` that takes an in-memory key store and trust store (see [issue #28](https://github.com/phax/phase4/issues/28))
     * Updated to peppol-commons 7.0.6 with more flexible SMP client API
     * `SOAPHeaderElementProcessorRegistry` is no longer a singleton
+    * The Peppol client can now handle Receipts that are MIME encoded
+    * The Peppol client now verifies the signatures of the response messages
+    * The Peppol client now honours the "incoming dumper" for the response messages
 * v0.9.6 - 2019-12-12
     * Removed the "ExceptionCallback" from `Phase4PeppolSender`
     * Changed the data types of "ResponseConsumer" and "SignalMsgConsumer" from `Phase4PeppolSender` to be able to throw exception (binary incompatible change)

@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
-import javax.xml.namespace.QName;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -38,16 +37,13 @@ import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.helger.bdve.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
-import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.mime.CMimeType;
@@ -93,15 +89,11 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
-import com.helger.phase4.servlet.AS4MessageState;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHWriter;
-import com.helger.xml.ChildElementIterator;
-import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -128,86 +120,55 @@ public final class Phase4PeppolSender
                                                        @Nonnull final IPModeResolver aPModeResolver,
                                                        @Nonnull final IIncomingAttachmentFactory aIAF,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nullable final IPMode aSendingPMode,
                                                        @Nonnull final Locale aLocale,
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4PeppolException
   {
-    if (false)
+    final Wrapper <Ebms3SignalMessage> aRetWrapper = new Wrapper <> ();
+
+    // Handler for the parsed message
+    final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+      final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+
+      // Use the sending PMode as fallback, because from the incoming
+      // receipt/error it is impossible to detect a PMode
+      final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
+                                                                                                             aCryptoFactory,
+                                                                                                             aSendingPMode);
+
+      // Parse AS4, verify signature etc
+      final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
+                                                                             aLocale,
+                                                                             aRegistry,
+                                                                             aHttpHeaders,
+                                                                             aSoapDocument,
+                                                                             eSoapVersion,
+                                                                             aIncomingAttachments,
+                                                                             aErrorMessages);
+
+      // Remember the parsed signal message
+      aRetWrapper.set (aState.getEbmsSignalMessage ());
+    };
+
+    // Create header map from response headers
+    final HttpHeaderMap aHttpHeaders = new HttpHeaderMap ();
+    for (final Header aHeader : aHttpResponse.getAllHeaders ())
+      aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
+
+    // Parse incoming message
+    try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
-      final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
-        // Parse AS4, verify signature etc
-        final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
-        final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
-                                                                                                               aCryptoFactory);
-        final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
-                                                                               aLocale,
-                                                                               aRegistry,
-                                                                               aHttpHeaders,
-                                                                               aSoapDocument,
-                                                                               eSoapVersion,
-                                                                               aIncomingAttachments,
-                                                                               aErrorMessages);
-        // TODO
-      };
-
-      // Create header map
-      final HttpHeaderMap aHttpHeaders = new HttpHeaderMap ();
-      for (final Header aHeader : aHttpResponse.getAllHeaders ())
-        aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
-
-      // Parse incoming message
-      try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
-      {
-        AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
-      }
-      catch (final Exception ex)
-      {
-        throw new Phase4PeppolException ("Error parsing signal message", ex);
-      }
+      AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
     }
-    else
+    catch (final Exception ex)
     {
-      // Read response as XML
-      final Document aSoapDoc = DOMReader.readXMLDOM (aResponsePayload);
-      if (aSoapDoc == null || aSoapDoc.getDocumentElement () == null)
-        throw new Phase4PeppolException ("Failed to parse as XML");
-
-      // Check if it is SOAP
-      final ESOAPVersion eSOAPVersion = ESOAPVersion.getFromNamespaceURIOrNull (aSoapDoc.getDocumentElement ()
-                                                                                        .getNamespaceURI ());
-      if (eSOAPVersion == null)
-        throw new Phase4PeppolException ("Failed to determine SOAP version");
-
-      // Find SOAP header
-      final Node aSOAPHeaderNode = XMLHelper.getFirstChildElementOfName (aSoapDoc.getDocumentElement (),
-                                                                         eSOAPVersion.getNamespaceURI (),
-                                                                         eSOAPVersion.getHeaderElementName ());
-      if (aSOAPHeaderNode == null)
-        throw new Phase4PeppolException ("SOAP document is missing a Header element");
-
-      // Iterate all SOAP header elements
-      for (final Element aHeaderChild : new ChildElementIterator (aSOAPHeaderNode))
-      {
-        final QName aQName = XMLHelper.getQName (aHeaderChild);
-        if (aQName.equals (SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING))
-        {
-          final AS4MessageState aState = new AS4MessageState (eSOAPVersion, aResHelper, aLocale);
-          final ErrorList aErrorList = new ErrorList ();
-          new SOAPHeaderElementProcessorExtractEbms3Messaging (aPModeResolver).processHeaderElement (aSoapDoc,
-                                                                                                     aHeaderChild,
-                                                                                                     new CommonsArrayList <> (),
-                                                                                                     aState,
-                                                                                                     aErrorList);
-          // Check if a signal message is contained
-          final Ebms3SignalMessage aSignalMessage = CollectionHelper.getAtIndex (aState.getMessaging ()
-                                                                                       .getSignalMessage (),
-                                                                                 0);
-          return aSignalMessage;
-        }
-      }
+      throw new Phase4PeppolException ("Error parsing signal message", ex);
     }
-    return null;
+
+    // This one contains the result
+    return aRetWrapper.get ();
   }
 
   private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
@@ -281,6 +242,7 @@ public final class Phase4PeppolSender
                                                                     aPModeResolver,
                                                                     aIAF,
                                                                     aClientUserMsg.getAS4ResourceHelper (),
+                                                                    aClientUserMsg.getPMode (),
                                                                     aLocale,
                                                                     aWrappedResponse.get (),
                                                                     aResponseEntity.getResponse (),

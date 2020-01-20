@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -55,7 +56,6 @@ import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
@@ -77,11 +77,14 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorWSS4J.class);
 
   private final IAS4CryptoFactory m_aCryptoFactory;
+  private final IPMode m_aFallbackPMode;
 
-  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory)
+  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                          @Nullable final IPMode aFallbackPMode)
   {
     ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
     m_aCryptoFactory = aCryptoFactory;
+    m_aFallbackPMode = aFallbackPMode;
   }
 
   @Nonnull
@@ -91,7 +94,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                         @Nonnull final AS4MessageState aState,
                                         @Nonnull final ErrorList aErrorList)
   {
-    final IPMode aPMode = aState.getPMode ();
+    IPMode aPMode = aState.getPMode ();
+    if (aPMode == null)
+      aPMode = m_aFallbackPMode;
 
     // Safety Check
     if (aPMode == null)
@@ -100,17 +105,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     // Default is Leg 1, gets overwritten when a reference to a message id
     // exists and then uses leg2
     final Locale aLocale = aState.getLocale ();
-    final Ebms3Messaging aMessage = aState.getMessaging ();
+
     PModeLeg aPModeLeg = aPMode.getLeg1 ();
-    Ebms3UserMessage aUserMessage = null;
-    if (aMessage != null && aMessage.hasUserMessageEntries ())
-    {
-      aUserMessage = aMessage.getUserMessageAtIndex (0);
-      if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
-      {
-        aPModeLeg = aPMode.getLeg2 ();
-      }
-    }
+    final Ebms3UserMessage aUserMessage = aState.getEbmsUserMessage ();
+    if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
+      aPModeLeg = aPMode.getLeg2 ();
 
     // Does security - legpart checks if not <code>null</code>
     if (aPModeLeg.getSecurity () != null)
