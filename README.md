@@ -92,8 +92,8 @@ The following special system properties are supported:
 
 To handle common parts of AS4 PModes this project uses so called "profiles". Currently two default profiles are available:
 
-* CEF with ID `cef` in submodule `phase4-profile-cef`
-* Peppol with ID `peppol` in submodule `phase4-profile-peppol`
+* CEF with ID `cef` in submodule `phase4-profile-cef` - see https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery+AS4+-+1.14 for the full specification
+* Peppol with ID `peppol` in submodule `phase4-profile-peppol` - see https://docs.peppol.eu/edelivery/as4/specification/ for the full specification
 
 To use one of these profiles, the respective Maven artifacts must be added as dependencies to your project as in
 
