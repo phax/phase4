@@ -36,6 +36,16 @@ import com.helger.commons.http.HttpHeaderMap;
  */
 public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4IncomingDumper
 {
+  /**
+   * Create the output stream to which the data should be dumped.
+   * 
+   * @param aHttpHeaderMap
+   *        The HTTP headers of the incoming message. Never <code>null</code>.
+   * @return The output stream to dump to or <code>null</code> if no dumping
+   *         should be performed.
+   * @throws IOException
+   *         On IO error
+   */
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException;
 

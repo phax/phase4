@@ -38,6 +38,22 @@ import com.helger.commons.http.HttpHeaderMap;
  */
 public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4OutgoingDumper
 {
+  /**
+   * Create the output stream to which the data should be dumped.
+   *
+   * @param sMessageID
+   *        The AS4 message ID of the outgoing message. Neither
+   *        <code>null</code> nor empty.
+   * @param aHttpHeaderMap
+   *        The HTTP headers of the outgoing message. Never <code>null</code>.
+   * @param nTry
+   *        The index of the try. The first try has always index 0, the first
+   *        retry has index 1, the second retry has index 2 etc. Always &ge; 0.
+   * @return The output stream to dump to or <code>null</code> if no dumping
+   *         should be performed.
+   * @throws IOException
+   *         On IO error
+   */
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull @Nonempty final String sMessageID,
                                                     @Nullable final HttpHeaderMap aCustomHeaders,
@@ -58,7 +74,8 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
         for (final String sValue : aEntry.getValue ())
         {
           // By default quoting is disabled
-          final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, false);
+          final boolean bQuoteIfNecessary = false;
+          final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
           ret.write ((sHeader +
                       HttpHeaderMap.SEPARATOR_KEY_VALUE +
                       sUnifiedValue +
