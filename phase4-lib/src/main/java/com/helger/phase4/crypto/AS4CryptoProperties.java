@@ -18,7 +18,6 @@ package com.helger.phase4.crypto;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Nonnull;
@@ -82,21 +81,6 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   {
     m_aProps = new NonBlockingProperties ();
     setCryptoProviderDefault ();
-  }
-
-  /**
-   * Constructor
-   *
-   * @param aProps
-   *        key value pair map. May be <code>null</code>.
-   * @deprecated As of 0.9.7. Will be removed afterwards.
-   */
-  @Deprecated
-  public AS4CryptoProperties (@Nullable final Map <String, String> aProps)
-  {
-    m_aProps = new NonBlockingProperties ();
-    if (aProps != null)
-      m_aProps.putAll (aProps);
   }
 
   /**
@@ -331,7 +315,9 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   @ReturnsMutableCopy
   public AS4CryptoProperties getClone ()
   {
-    return new AS4CryptoProperties (m_aProps);
+    final AS4CryptoProperties ret = new AS4CryptoProperties ();
+    ret.m_aProps.setAll (m_aProps);
+    return ret;
   }
 
   @Override

@@ -18,7 +18,6 @@ package com.helger.phase4.crypto;
 
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
@@ -135,21 +134,6 @@ public class AS4CryptoFactory implements IAS4CryptoFactory
     this (readCryptoPropertiesFromFile (sCryptoPropertiesPath));
     if (!m_aCryptoProps.isRead ())
       throw new InitializationException ("Failed to locate crypto properties in '" + sCryptoPropertiesPath + "'");
-  }
-
-  /**
-   * This constructor takes the crypto properties directly from a map. No file
-   * access is performed. See the
-   * {@link com.helger.phase4.client.AbstractAS4Client} for a usage example.
-   *
-   * @param aProps
-   *        The properties to be used. May be <code>null</code>.
-   * @deprecated As of 0.9.7. Use constructor with {@link AS4CryptoProperties}
-   */
-  @Deprecated
-  public AS4CryptoFactory (@Nullable final Map <String, String> aProps)
-  {
-    this (new AS4CryptoProperties (aProps));
   }
 
   /**

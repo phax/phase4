@@ -128,27 +128,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
    * @param sAsyncResponseURL
    *        The optional asynchronous response URL.
    * @return Never <code>null</code>.
-   * @deprecated Since 0.9.7 Use {@link #createSuccessExt(ICommonsList,String)}
-   *             instead
-   */
-  @Deprecated
-  @Nonnull
-  public static AS4MessageProcessorResult createSuccess (@Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                         @Nullable final String sAsyncResponseURL)
-  {
-    return createSuccessExt (aAttachments, sAsyncResponseURL);
-  }
-
-  /**
-   * Create a success message with optional attachments. Usually you don't need
-   * this. Just call {@link #createSuccess()} and you are fine.
-   *
-   * @param aAttachments
-   *        Optional list of RESPONSE (!) attachments. Don't put the incoming
-   *        attachments here.
-   * @param sAsyncResponseURL
-   *        The optional asynchronous response URL.
-   * @return Never <code>null</code>.
    * @see #createSuccess()
    * @since 0.9.7
    */
