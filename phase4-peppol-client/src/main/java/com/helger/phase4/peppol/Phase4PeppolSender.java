@@ -20,6 +20,7 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -1088,6 +1089,7 @@ public final class Phase4PeppolSender
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+    private Consumer <String> m_aAPEndointURLConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -1186,6 +1188,22 @@ public final class Phase4PeppolSender
     public Builder setCertificateConsumer (@Nullable final IPhase4PeppolCertificateCheckResultHandler aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
+      return this;
+    }
+
+    /**
+     * Set an optional Consumer for the destination AP address, independent of
+     * its usability.
+     *
+     * @param aAPEndointURLConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since v0.9.8
+     */
+    @Nonnull
+    public Builder setAPEndointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    {
+      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
       return this;
     }
 
@@ -1293,6 +1311,8 @@ public final class Phase4PeppolSender
 
       // URL from e.g. SMP lookup
       final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
+      if (m_aAPEndointURLConsumer != null)
+        m_aAPEndointURLConsumer.accept (sDestURL);
 
       // Created SBDH
       final byte [] aSBDBytes = _createSBDH (m_aSenderID,
@@ -1342,6 +1362,7 @@ public final class Phase4PeppolSender
   {
     private byte [] m_aPayloadBytes;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
+    private Consumer <String> m_aAPEndointURLConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -1388,6 +1409,22 @@ public final class Phase4PeppolSender
       return this;
     }
 
+    /**
+     * Set an optional Consumer for the destination AP address, independent of
+     * its usability.
+     *
+     * @param aAPEndointURLConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since v0.9.8
+     */
+    @Nonnull
+    public SBDHBuilder setAPEndointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    {
+      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
+      return this;
+    }
+
     @Override
     public boolean isEveryRequiredFieldSet ()
     {
@@ -1421,6 +1458,8 @@ public final class Phase4PeppolSender
 
       // URL from e.g. SMP lookup
       final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
+      if (m_aAPEndointURLConsumer != null)
+        m_aAPEndointURLConsumer.accept (sDestURL);
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
