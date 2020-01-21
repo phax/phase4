@@ -126,6 +126,7 @@ public final class Phase4PeppolSender
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4PeppolException
   {
+    // This wrapper will take the result
     final Wrapper <Ebms3SignalMessage> aRetWrapper = new Wrapper <> ();
 
     // Handler for the parsed message
@@ -1091,6 +1092,9 @@ public final class Phase4PeppolSender
     /**
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
+     * {@link #setPModeResolver(IPModeResolver)}<br>
+     * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
@@ -1342,6 +1346,9 @@ public final class Phase4PeppolSender
     /**
      * Create a new builder, with the following fields already set:<br>
      * {@link #setHttpClientFactory(HttpClientFactory)}<br>
+     * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
+     * {@link #setPModeResolver(IPModeResolver)}<br>
+     * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
      * {@link #setPayloadMimeType(IMimeType)}<br>
      * {@link #setCompressPayload(boolean)}<br>
