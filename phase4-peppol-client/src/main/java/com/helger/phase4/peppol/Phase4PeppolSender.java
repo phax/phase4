@@ -415,9 +415,12 @@ public final class Phase4PeppolSender
    * @param sSenderPartyID
    *        The sending party ID (the CN part of the senders certificate
    *        subject). May not be <code>null</code>.
+   * @param sMessageID
+   *        The AS4 message ID to be used. If none is provided, a random UUID is
+   *        used. May be <code>null</code>.
    * @param sConversationID
-   *        The AS4 conversation to be used. If none is provided, a random UUID
-   *        is used. May be <code>null</code>.
+   *        The AS4 conversation ID to be used. If none is provided, a random
+   *        UUID is used. May be <code>null</code>.
    * @param aEndpoint
    *        The determined SMP endpoint. Never <code>null</code>.
    * @param aCertificateConsumer
@@ -460,6 +463,7 @@ public final class Phase4PeppolSender
                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                        @Nonnull final IProcessIdentifier aProcessID,
                                        @Nonnull @Nonempty final String sSenderPartyID,
+                                       @Nullable final String sMessageID,
                                        @Nullable final String sConversationID,
                                        @Nonnull final X509Certificate aReceiverCert,
                                        @Nonnull @Nonempty final String sReceiverEndpointURL,
@@ -512,6 +516,8 @@ public final class Phase4PeppolSender
       aUserMsg.setServiceType (aProcessID.getScheme ());
       aUserMsg.setServiceValue (aProcessID.getValue ());
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
+      if (StringHelper.hasText (sMessageID))
+        aUserMsg.setMessageID (sMessageID);
       aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID
                                                                          : UUID.randomUUID ().toString ());
 
@@ -607,6 +613,7 @@ public final class Phase4PeppolSender
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
     protected String m_sSenderPartyID;
+    protected String m_sMessageID;
     protected String m_sConversationID;
 
     protected IMimeType m_aPayloadMimeType;
@@ -823,6 +830,21 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set the optional AS4 message ID. If this field is not set, a random
+     * message ID is created.
+     *
+     * @param sMessageID
+     *        The optional AS4 message ID to be used. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setMessageID (@Nullable final String sMessageID)
+    {
+      m_sMessageID = sMessageID;
+      return thisAsT ();
+    }
+
+    /**
      * Set the optional AS4 conversation ID. If this field is not set, a random
      * conversation ID is created.
      *
@@ -1013,6 +1035,7 @@ public final class Phase4PeppolSender
         return false;
       if (StringHelper.hasNoText (m_sSenderPartyID))
         return false;
+      // m_sMessageID is optional
       // m_sConversationID is optional
       if (m_aEndpointDetailProvider == null)
         return false;
@@ -1286,6 +1309,7 @@ public final class Phase4PeppolSender
                        m_aDocTypeID,
                        m_aProcessID,
                        m_sSenderPartyID,
+                       m_sMessageID,
                        m_sConversationID,
                        aReceiverCert,
                        sDestURL,
@@ -1401,6 +1425,7 @@ public final class Phase4PeppolSender
                        m_aDocTypeID,
                        m_aProcessID,
                        m_sSenderPartyID,
+                       m_sMessageID,
                        m_sConversationID,
                        aReceiverCert,
                        sDestURL,
