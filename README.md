@@ -169,6 +169,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added possibility to use external message ID in Peppol client
     * Added new classes `AS4IncomingDumperSingleUse` and `AS4OutgoingDumperSingleUse` for easier per-call dumping
     * Peppol client now has an additional callback to retrieve the AS4 URL where the message is send to
+    * No longer throwing an exception if `phase4.properties` is not available. Changed to a warning.
 * v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
     * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff
