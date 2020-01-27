@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.VisibleForTesting;
-import com.helger.commons.exception.InitializationException;
 import com.helger.settings.ISettings;
 import com.helger.settings.Settings;
 import com.helger.settings.exchange.configfile.ConfigFile;
@@ -77,9 +76,10 @@ public final class AS4ServerConfiguration
     }
     final ConfigFile aCF = aBuilder.build ();
     if (!aCF.isRead ())
-      throw new InitializationException ("Failed to read phase4 server configuration file!");
-
-    LOGGER.info ("Successfully read phase4 configuration file from " + aCF.getReadResource ().getPath ());
+      LOGGER.warn ("Failed to read phase4 server configuration file! All values will be default values");
+    else
+      LOGGER.info ("Successfully read phase4 configuration file from " + aCF.getReadResource ().getPath ());
+    // Can handle null
     SETTINGS.setAll (aCF.getSettings ());
   }
 
@@ -120,19 +120,16 @@ public final class AS4ServerConfiguration
     return getSettings ().getAsString ("server.profile");
   }
 
-  @Nonnull
   public static boolean isGlobalDebug ()
   {
     return getSettings ().getAsBoolean ("server.debug", false);
   }
 
-  @Nonnull
   public static boolean isGlobalProduction ()
   {
     return getSettings ().getAsBoolean ("server.production", false);
   }
 
-  @Nonnull
   public static boolean isNoStartupInfo ()
   {
     return getSettings ().getAsBoolean ("server.nostartupinfo", true);
