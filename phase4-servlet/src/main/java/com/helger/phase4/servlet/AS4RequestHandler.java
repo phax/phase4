@@ -399,16 +399,16 @@ public class AS4RequestHandler implements AutoCloseable
    * @param aSPIResult
    *        The result object to be filled. May not be <code>null</code>.
    */
-  private void _invokeSPIs (@Nonnull final HttpHeaderMap aHttpHeaders,
-                            @Nullable final Ebms3UserMessage aUserMessage,
-                            @Nullable final Ebms3SignalMessage aSignalMessage,
-                            @Nullable final Node aPayloadNode,
-                            @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
-                            @Nullable final IPMode aPMode,
-                            @Nonnull final IAS4MessageState aState,
-                            @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                            @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                            @Nonnull final SPIInvocationResult aSPIResult)
+  private void _invokeSPIsForIncoming (@Nonnull final HttpHeaderMap aHttpHeaders,
+                                       @Nullable final Ebms3UserMessage aUserMessage,
+                                       @Nullable final Ebms3SignalMessage aSignalMessage,
+                                       @Nullable final Node aPayloadNode,
+                                       @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
+                                       @Nullable final IPMode aPMode,
+                                       @Nonnull final IAS4MessageState aState,
+                                       @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
+                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                       @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
     ValueEnforcer.isFalse (aUserMessage != null && aSignalMessage != null,
@@ -462,12 +462,19 @@ public class AS4RequestHandler implements AutoCloseable
 
           // Result returned?
           if (aResult == null)
-            throw new IllegalStateException ("No result object present from AS4 SPI processor " + aProcessor);
+            throw new IllegalStateException ("No result object present from AS4 message processor " +
+                                             aProcessor +
+                                             " - this is a programming error");
 
           if (aProcessingErrorMessages.isNotEmpty ())
           {
-            if (!aResult.isFailure ())
-              LOGGER.warn ("Processing errors are present, but success was returned");
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("Processing errors are present after AS4 message processor " + aProcessor + " - breaking");
+
+            if (aResult.isSuccess ())
+              LOGGER.warn ("Processing errors are present but success was returned by AS4 message processor " +
+                           aProcessor +
+                           " - considering it to be failed");
 
             aErrorMessages.addAll (aProcessingErrorMessages);
             // Stop processing
@@ -488,7 +495,7 @@ public class AS4RequestHandler implements AutoCloseable
             return;
           }
 
-          // SPI invocation was okay
+          // SPI invocation returned success and no errors
           {
             final String sAsyncResultURL = aResult.getAsyncResponseURL ();
             if (StringHelper.hasText (sAsyncResultURL))
@@ -998,16 +1005,16 @@ public class AS4RequestHandler implements AutoCloseable
         // Might add to aErrorMessages
         // Might add to aResponseAttachments
         // Might add to m_aPullReturnUserMsg
-        _invokeSPIs (aHttpHeaders,
-                     aEbmsUserMessage,
-                     aEbmsSignalMessage,
-                     aPayloadNode,
-                     aDecryptedAttachments,
-                     aPMode,
-                     aState,
-                     aErrorMessages,
-                     aResponseAttachments,
-                     aSPIResult);
+        _invokeSPIsForIncoming (aHttpHeaders,
+                                aEbmsUserMessage,
+                                aEbmsSignalMessage,
+                                aPayloadNode,
+                                aDecryptedAttachments,
+                                aPMode,
+                                aState,
+                                aErrorMessages,
+                                aResponseAttachments,
+                                aSPIResult);
         if (aSPIResult.isFailure ())
           LOGGER.warn ("Error invoking synchronous SPIs");
         else
@@ -1024,16 +1031,16 @@ public class AS4RequestHandler implements AutoCloseable
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
 
           final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
-          _invokeSPIs (aHttpHeaders,
-                       aEbmsUserMessage,
-                       aEbmsSignalMessage,
-                       aPayloadNode,
-                       aDecryptedAttachments,
-                       aPMode,
-                       aState,
-                       aLocalErrorMessages,
-                       aLocalResponseAttachments,
-                       aAsyncSPIResult);
+          _invokeSPIsForIncoming (aHttpHeaders,
+                                  aEbmsUserMessage,
+                                  aEbmsSignalMessage,
+                                  aPayloadNode,
+                                  aDecryptedAttachments,
+                                  aPMode,
+                                  aState,
+                                  aLocalErrorMessages,
+                                  aLocalResponseAttachments,
+                                  aAsyncSPIResult);
 
           final IAS4ResponseFactory aAsyncResponseFactory;
           if (aAsyncSPIResult.isSuccess ())
