@@ -25,6 +25,7 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * This is the interface that must be implemented to handle incoming SBD
@@ -52,6 +53,8 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    * @param aPeppolSBD
    *        The pre-parsed Peppol Standard Business Document. Never
    *        <code>null</code>. Since v0.9.8.
+   * @param aState
+   *        The message state. Never <code>null</code>. Since v0.9.8
    * @throws Exception
    *         In case it cannot be processed.
    */
@@ -60,5 +63,6 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull Ebms3UserMessage aUserMessage,
                           @Nonnull byte [] aSBDBytes,
                           @Nonnull StandardBusinessDocument aSBD,
-                          @Nonnull PeppolSBDHDocument aPeppolSBD) throws Exception;
+                          @Nonnull PeppolSBDHDocument aPeppolSBD,
+                          @Nonnull IAS4MessageState aState) throws Exception;
 }

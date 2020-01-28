@@ -172,7 +172,7 @@ If you like the project, a star on GitHub is always appreciated.
     * No longer throwing an exception if `phase4.properties` is not available. Changed to a warning.
     * Added new class `AS4IncomingMessageMetadata` to hold metadata for each incoming message
     * The `IAS4ServletMessageProcessorSPI` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
-    * The `IPhase4PeppolIncomingSBDHandlerSPI` API was modified to now include `IAS4IncomingMessageMetadata` as well as `PeppolSBDHDocument` and `Ebms3UserMessage` (backwards incompatible change)  
+    * The `IPhase4PeppolIncomingSBDHandlerSPI` API was modified to now include `IAS4IncomingMessageMetadata` as well as `PeppolSBDHDocument`, `Ebms3UserMessage` and `IAS4MessageState` (backwards incompatible change)  
     * The `IAS4IncomingDumper` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
 * v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
