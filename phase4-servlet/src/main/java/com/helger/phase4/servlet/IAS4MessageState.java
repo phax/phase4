@@ -53,8 +53,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 public interface IAS4MessageState extends IAttributeContainer <String, Object>
 {
   /**
-   * @return Date and time when the receipt started. This is constantly set in
-   *         the constructor and never <code>null</code>.
+   * @return Date and time when the receipt started. This must be set in the
+   *         implementation and never <code>null</code>.
    */
   @Nonnull
   LocalDateTime getReceiptDT ();
