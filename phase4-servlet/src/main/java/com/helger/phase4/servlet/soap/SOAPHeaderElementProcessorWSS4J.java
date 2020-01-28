@@ -258,6 +258,8 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
               case WSConstants.ENCR:
                 aState.setSoapDecrypted (true);
                 break;
+              default:
+                LOGGER.warn ("Unexpected security engine tag action found: " + aAction.intValue ());
             }
         }
 

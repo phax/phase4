@@ -46,7 +46,7 @@ import com.helger.phase4.soap.ESOAPVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
- * Read-only AS4 message state.
+ * Read-only AS4 message state for incoming messages.
  *
  * @author Philip Helger
  */
@@ -149,6 +149,21 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   IPMode getPMode ();
 
   /**
+   * @return get the original SOAP document, only the entire document no
+   *         attachment. This might by encrypted.
+   * @see #hasDecryptedSOAPDocument()
+   * @see #getDecryptedSOAPDocument()
+   * @since v0.9.8
+   */
+  @Nullable
+  Document getOriginalSOAPDocument ();
+
+  default boolean hasOriginalSOAPDocument ()
+  {
+    return getOriginalSOAPDocument () != null;
+  }
+
+  /**
    * @return has saved the original attachment, can be encrypted or not depends
    *         if encryption is used or not
    */
@@ -164,6 +179,8 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   /**
    * @return get the decrypted SOAP document, only the entire document no
    *         attachment
+   * @see #hasOriginalSOAPDocument()
+   * @see #getOriginalSOAPDocument()
    */
   @Nullable
   Document getDecryptedSOAPDocument ();
@@ -322,7 +339,8 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   boolean isPingMessage ();
 
   /**
-   * @return The child of the SOAP Body node or <code>null</code>.
+   * @return The child of the SOAP Body node or <code>null</code>. That is
+   *         always decrypted.
    * @since v0.9.7
    */
   @Nullable

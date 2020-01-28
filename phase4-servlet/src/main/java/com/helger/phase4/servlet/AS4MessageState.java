@@ -59,6 +59,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_EBMS3_MESSAGING = "phase4.ebms3.messaging";
   private static final String KEY_PMODE = "phase4.pmode";
   private static final String KEY_MPC = "phase4.mpc";
+  private static final String KEY_ORIGINAL_SOAP_DOCUMENT = "phase4.soap.document";
   private static final String KEY_ORIGINAL_ATTACHMENT_LIST = "phase4.soap.attachmentlist";
   private static final String KEY_DECRYPTED_SOAP_DOCUMENT = "phase4.soap.decrypted.document";
   private static final String KEY_DECRYPTED_ATTACHMENT_LIST = "phase4.soap.decrypted.attachmentlist";
@@ -144,6 +145,17 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   public void setPMode (@Nullable final IPMode aPMode)
   {
     putIn (KEY_PMODE, aPMode);
+  }
+
+  @Nullable
+  public Document getOriginalSOAPDocument ()
+  {
+    return getCastedValue (KEY_ORIGINAL_SOAP_DOCUMENT);
+  }
+
+  public void setOriginalSOAPDocument (@Nullable final Document aDocument)
+  {
+    putIn (KEY_ORIGINAL_SOAP_DOCUMENT, aDocument);
   }
 
   @Nullable
