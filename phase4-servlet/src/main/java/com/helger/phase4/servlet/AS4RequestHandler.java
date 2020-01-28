@@ -613,17 +613,10 @@ public class AS4RequestHandler implements AutoCloseable
     aSPIResult.setSuccess (true);
   }
 
-  private void _invokeSPIsForResponse (@Nullable final Ebms3UserMessage aEbmsUserMessage,
-                                       @Nullable final Ebms3SignalMessage aEbmsSignalMessage,
-                                       @Nonnull final IAS4MessageState aState,
+  private void _invokeSPIsForResponse (@Nonnull final IAS4MessageState aState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nonnull final IMimeType aMimeType)
   {
-    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
-                          "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null,
-                           "Only one of User OR Signal Message may be present");
-
     // Get response payload
     final boolean bResponsePayloadIsAvailable = aResponseFactory != null;
     byte [] aResponsePayload = null;
@@ -1161,11 +1154,7 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
-          _invokeSPIsForResponse (aEbmsUserMessage,
-                                  aEbmsSignalMessage,
-                                  aState,
-                                  aAsyncResponseFactory,
-                                  eSoapVersion.getMimeType ());
+          _invokeSPIsForResponse (aState, aAsyncResponseFactory, eSoapVersion.getMimeType ());
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
@@ -1296,7 +1285,7 @@ public class AS4RequestHandler implements AutoCloseable
     else
       ret = null;
 
-    _invokeSPIsForResponse (aEbmsUserMessage, aEbmsSignalMessage, aState, ret, eSoapVersion.getMimeType ());
+    _invokeSPIsForResponse (aState, ret, eSoapVersion.getMimeType ());
 
     return ret;
   }
