@@ -98,9 +98,11 @@ public final class AS4XMLHelper
    *        The source element to extract the attributes from. May not be
    *        <code>null</code>.
    * @return A new map and never <code>null</code> but maybe empty.
+   * @deprecated in v0.9.8 because not used
    */
   @Nonnull
   @ReturnsMutableCopy
+  @Deprecated
   public static StringMap getAllAttrsWithLowercaseName (@Nonnull final IMicroElement aElement)
   {
     ValueEnforcer.notNull (aElement, "Element");
@@ -110,8 +112,19 @@ public final class AS4XMLHelper
     return ret;
   }
 
+  /**
+   * Legacy method
+   *
+   * @param aElement
+   *        source element
+   * @param aRequiredAttributes
+   *        required attributes
+   * @return string map
+   * @deprecated in v0.9.8 because not used
+   */
   @Nonnull
   @ReturnsMutableCopy
+  @Deprecated
   public static StringMap getAllAttrsWithLowercaseNameWithRequired (@Nonnull final IMicroElement aElement,
                                                                     @Nonnull final String... aRequiredAttributes)
   {
@@ -136,7 +149,9 @@ public final class AS4XMLHelper
    *        The attribute name of the value.
    * @return The non-<code>null</code> {@link Map}. @ In case a node is missing
    *         a key or value attribute.
+   * @deprecated in v0.9.8 because not used
    */
+  @Deprecated
   @Nonnull
   @ReturnsMutableCopy
   public static ICommonsOrderedMap <String, String> mapAttributeNodes (@Nonnull final IMicroElement aNode,
