@@ -39,7 +39,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -110,7 +110,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       ESOAPVersion.AS4_DEFAULT)
+                                                       ESoapVersion.AS4_DEFAULT)
                                               .setMustUnderstand (true);
 
     if (aMessagingIDConsumer != null)

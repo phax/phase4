@@ -43,7 +43,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -67,7 +67,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    */
   @Nonnull
   @Deprecated
-  default ESOAPVersion getSOAPVersion ()
+  default ESoapVersion getSOAPVersion ()
   {
     return getSoapVersion ();
   }
@@ -78,7 +78,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    * @since v0.9.8
    */
   @Nonnull
-  ESOAPVersion getSoapVersion ();
+  ESoapVersion getSoapVersion ();
 
   /**
    * @return The resource manager as specified in the constructor. Never

@@ -46,7 +46,7 @@ import com.helger.phase4.messaging.domain.AS4ErrorMessage;
 import com.helger.phase4.messaging.domain.AS4ReceiptMessage;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -64,7 +64,7 @@ final class MockClientMessages
   private MockClientMessages ()
   {}
 
-  public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
@@ -81,7 +81,7 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
@@ -100,7 +100,7 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                              @Nullable final Node aPayload,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
@@ -127,7 +127,7 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
                                                              @Nullable final Node aPayload,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -163,7 +163,7 @@ final class MockClientMessages
     return aDoc;
   }
 
-  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
                                                                       @Nullable final Node aPayload,
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -199,7 +199,7 @@ final class MockClientMessages
 
   @Nullable
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
-  public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                            @Nullable final Node aPayload,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {

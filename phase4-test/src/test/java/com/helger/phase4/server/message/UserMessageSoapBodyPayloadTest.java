@@ -44,7 +44,7 @@ import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.external.IHolodeckTests;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
@@ -54,12 +54,12 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+    return CollectionHelper.newListMapped (ESoapVersion.values (), x -> new Object [] { x });
   }
 
-  private final ESOAPVersion m_eSoapVersion;
+  private final ESoapVersion m_eSoapVersion;
 
-  public UserMessageSoapBodyPayloadTest (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageSoapBodyPayloadTest (@Nonnull final ESoapVersion eSOAPVersion)
   {
     m_eSoapVersion = eSOAPVersion;
   }

@@ -48,7 +48,7 @@ import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.server.standalone.RunInJettyAS4TEST9090;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
@@ -58,7 +58,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   protected PMode m_aESENSTwoWayPMode;
-  protected ESOAPVersion m_eSoapVersion;
+  protected ESoapVersion m_eSoapVersion;
   protected Node m_aPayload;
 
   protected AbstractCEFTwoWayTestSetUp ()
@@ -99,7 +99,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 
-  protected Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  protected Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                             @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException

@@ -25,7 +25,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * AS4 error message.<br>
@@ -41,7 +41,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public AS4ErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
                           @Nonnull final Ebms3SignalMessage aSignalMessage) throws IllegalArgumentException
   {
     super (eSOAPVersion, EAS4MessageType.ERROR_MESSAGE);
@@ -67,7 +67,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
   }
 
   @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSOAPVersion,
                                         @Nullable final String sRefToMessageID,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
@@ -77,7 +77,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
   }
 
   @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSOAPVersion,
                                         @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {

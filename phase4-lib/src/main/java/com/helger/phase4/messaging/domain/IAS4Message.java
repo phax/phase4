@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * Base interface for an AS4 message.
@@ -38,7 +38,7 @@ public interface IAS4Message extends Serializable
    * @return The SOAP version to use. May not be <code>null</code>.
    */
   @Nonnull
-  ESOAPVersion getSOAPVersion ();
+  ESoapVersion getSOAPVersion ();
 
   /**
    * @return The type of the underlying message. Never <code>null</code>.

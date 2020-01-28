@@ -61,7 +61,7 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
@@ -118,7 +118,7 @@ public final class DropFolderUserMessage
           final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
 
           final AS4ClientUserMessage aClient = new AS4ClientUserMessage (aResHelper);
-          aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
+          aClient.setSOAPVersion (ESoapVersion.SOAP_12);
 
           // Keystore data
           aClient.setAS4CryptoFactory (aCF);

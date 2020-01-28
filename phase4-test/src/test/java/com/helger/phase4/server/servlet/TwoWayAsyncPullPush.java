@@ -46,13 +46,13 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.standalone.RunInJettyAS4TEST9090;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
   @BeforeClass

@@ -47,7 +47,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.profile.IAS4ProfileValidator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 
 /**
@@ -98,7 +98,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
             aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
           }
 
-      final ESOAPVersion eSOAPVersion = aLegProtocol.getSOAPVersion ();
+      final ESoapVersion eSOAPVersion = aLegProtocol.getSOAPVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
         aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));

@@ -36,7 +36,7 @@ import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.serialize.read.DOMReader;
@@ -97,7 +97,7 @@ public final class AS4ClientReceiptMessageTest
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
@@ -111,7 +111,7 @@ public final class AS4ClientReceiptMessageTest
   public void buildMessageSignedChecks () throws Exception
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));

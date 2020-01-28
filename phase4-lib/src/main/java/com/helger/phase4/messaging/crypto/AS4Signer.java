@@ -37,7 +37,7 @@ import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -77,7 +77,7 @@ public final class AS4Signer
   @Nonnull
   public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                               @Nonnull final Document aPreSigningMessage,
-                                              @Nonnull final ESOAPVersion eSOAPVersion,
+                                              @Nonnull final ESoapVersion eSOAPVersion,
                                               @Nonnull @Nonempty final String sMessagingID,
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,

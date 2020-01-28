@@ -47,7 +47,7 @@ import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -64,12 +64,12 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+    return CollectionHelper.newListMapped (ESoapVersion.values (), x -> new Object [] { x });
   }
 
-  private final ESOAPVersion m_eSOAPVersion;
+  private final ESoapVersion m_eSOAPVersion;
 
-  public UserMessageManyAttachmentTest (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageManyAttachmentTest (@Nonnull final ESoapVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }

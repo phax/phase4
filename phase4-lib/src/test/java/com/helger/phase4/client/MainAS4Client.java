@@ -52,7 +52,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -106,7 +106,7 @@ public final class MainAS4Client
 
       final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
       final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource ("SOAPBodyPayload.xml"));
-      final ESOAPVersion eSOAPVersion = ESOAPVersion.SOAP_12;
+      final ESoapVersion eSOAPVersion = ESoapVersion.SOAP_12;
       final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
 
       // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -

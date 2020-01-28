@@ -57,21 +57,21 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeCheckTest.class);
 
-  private ESOAPVersion m_eSoapVersion;
+  private ESoapVersion m_eSoapVersion;
   private Ebms3UserMessage m_aEbms3UserMessage;
   private Node m_aPayload;
 
   @Before
   public void setupMessage ()
   {
-    m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
+    m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
     m_aEbms3UserMessage = new Ebms3UserMessage ();
 
     // Default Payload for testing

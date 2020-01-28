@@ -49,7 +49,7 @@ import com.helger.phase4.model.pmode.leg.PModeLegReliability;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 import com.helger.phase4.model.pmode.leg.PModePayloadProfile;
 import com.helger.phase4.model.pmode.leg.PModeProperty;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.xml.mock.XMLTestHelper;
 
@@ -178,7 +178,7 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegProtocol _generatePModeLegProtocol ()
   {
-    return new PModeLegProtocol ("addressProtocol", ESOAPVersion.SOAP_11);
+    return new PModeLegProtocol ("addressProtocol", ESoapVersion.SOAP_11);
   }
 
   @Nonnull

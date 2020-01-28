@@ -26,7 +26,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * AS4 user message
@@ -37,7 +37,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
 {
   private final Ebms3UserMessage m_aUserMessage;
 
-  public AS4UserMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3UserMessage aUserMessage)
+  public AS4UserMessage (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final Ebms3UserMessage aUserMessage)
   {
     super (eSOAPVersion, EAS4MessageType.USER_MESSAGE);
 
@@ -58,7 +58,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   @Nonnull
-  public static AS4UserMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4UserMessage create (@Nonnull final ESoapVersion eSOAPVersion,
                                        @Nonnull final Ebms3UserMessage aUserMessage)
   {
     return new AS4UserMessage (eSOAPVersion, aUserMessage);
@@ -70,7 +70,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
                                        @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                        @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
                                        @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                       @Nonnull final ESOAPVersion eSOAPVersion)
+                                       @Nonnull final ESoapVersion eSOAPVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 

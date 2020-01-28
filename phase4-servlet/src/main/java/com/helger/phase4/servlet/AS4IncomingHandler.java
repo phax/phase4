@@ -82,7 +82,7 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.servlet.soap.AS4SingleSOAPHeader;
 import com.helger.phase4.servlet.soap.ISOAPHeaderElementProcessor;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.web.multipart.MultipartProgressNotifier;
@@ -130,7 +130,7 @@ public class AS4IncomingHandler
      */
     void handle (@Nonnull HttpHeaderMap aHttpHeaders,
                  @Nonnull Document aSoapDocument,
-                 @Nonnull ESOAPVersion eSoapVersion,
+                 @Nonnull ESoapVersion eSoapVersion,
                  @Nonnull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                MessagingException;
   }
@@ -232,7 +232,7 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     Document aSoapDocument = null;
-    ESOAPVersion eSoapVersion = null;
+    ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
     if (aPlainContentType.equals (AS4RequestHandler.MT_MULTIPART_RELATED))
     {
@@ -283,14 +283,14 @@ public class AS4IncomingHandler
                                                            .getCopyWithoutParameters ();
 
               // Determine SOAP version from MIME part content type
-              eSoapVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainPartMT);
+              eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
               if (eSoapVersion != null && LOGGER.isDebugEnabled ())
                 LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
 
               if (eSoapVersion == null && aSoapDocument != null)
               {
                 // Determine SOAP version from the read document
-                eSoapVersion = ESOAPVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
+                eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
                 if (eSoapVersion != null && LOGGER.isDebugEnabled ())
                   LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
               }
@@ -332,7 +332,7 @@ public class AS4IncomingHandler
       if (aSoapDocument != null)
       {
         // Determine SOAP version from the read document
-        eSoapVersion = ESOAPVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
+        eSoapVersion = ESoapVersion.getFromNamespaceURIOrNull (XMLHelper.getNamespaceURI (aSoapDocument));
         if (eSoapVersion != null && LOGGER.isDebugEnabled ())
           LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from XML root element namespace URI");
       }
@@ -340,7 +340,7 @@ public class AS4IncomingHandler
       if (eSoapVersion == null)
       {
         // Determine SOAP version from content type
-        eSoapVersion = ESOAPVersion.getFromMimeTypeOrNull (aPlainContentType);
+        eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainContentType);
         if (eSoapVersion != null && LOGGER.isDebugEnabled ())
           LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
       }
@@ -372,7 +372,7 @@ public class AS4IncomingHandler
                                                   @Nonnull final AS4MessageState aState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
   {
-    final ESOAPVersion eSoapVersion = aState.getSoapVersion ();
+    final ESoapVersion eSoapVersion = aState.getSoapVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
@@ -561,7 +561,7 @@ public class AS4IncomingHandler
                                                      @Nonnull final SOAPHeaderElementProcessorRegistry aRegistry,
                                                      @Nonnull final HttpHeaderMap aHttpHeaders,
                                                      @Nonnull final Document aSoapDocument,
-                                                     @Nonnull final ESOAPVersion eSoapVersion,
+                                                     @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                      @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {

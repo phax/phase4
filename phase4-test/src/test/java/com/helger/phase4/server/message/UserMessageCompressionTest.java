@@ -45,7 +45,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.external.IHolodeckTests;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 @RunWith (Parameterized.class)
 public final class UserMessageCompressionTest extends AbstractUserMessageTestSetUp
@@ -53,12 +53,12 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return CollectionHelper.newListMapped (ESOAPVersion.values (), x -> new Object [] { x });
+    return CollectionHelper.newListMapped (ESoapVersion.values (), x -> new Object [] { x });
   }
 
-  private final ESOAPVersion m_eSOAPVersion;
+  private final ESoapVersion m_eSOAPVersion;
 
-  public UserMessageCompressionTest (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageCompressionTest (@Nonnull final ESoapVersion eSOAPVersion)
   {
     m_eSOAPVersion = eSOAPVersion;
   }

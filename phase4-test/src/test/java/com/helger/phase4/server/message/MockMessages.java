@@ -49,7 +49,7 @@ import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.spi.MockMessageProcessorCheckingStreamsSPI;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -63,7 +63,7 @@ public final class MockMessages
   private MockMessages ()
   {}
 
-  public static Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
@@ -80,7 +80,7 @@ public final class MockMessages
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
@@ -99,7 +99,7 @@ public final class MockMessages
     return aSignedDoc;
   }
 
-  public static AS4ReceiptMessage testReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4ReceiptMessage testReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                       @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                       @Nullable final Document aUserMessage) throws DOMException
   {
@@ -111,7 +111,7 @@ public final class MockMessages
                             .setMustUnderstand (true);
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
                                                              @Nullable final Node aPayload,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -126,7 +126,7 @@ public final class MockMessages
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
-    if (eSOAPVersion.equals (ESOAPVersion.SOAP_11))
+    if (eSOAPVersion.equals (ESoapVersion.SOAP_11))
     {
       sPModeID = SOAP_11_PARTY_ID + "-" + SOAP_11_PARTY_ID;
 
@@ -168,7 +168,7 @@ public final class MockMessages
                          .setMustUnderstand (true);
   }
 
-  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
                                                                       @Nullable final Node aPayload,
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -205,7 +205,7 @@ public final class MockMessages
 
   @Nullable
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
-  public static Document emptyUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                            @Nullable final Node aPayload,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {

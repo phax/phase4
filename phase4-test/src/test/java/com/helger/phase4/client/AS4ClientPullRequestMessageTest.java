@@ -30,7 +30,7 @@ import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -89,7 +89,7 @@ public final class AS4ClientPullRequestMessageTest
   {
     final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
     _ensureValidState (aClient);

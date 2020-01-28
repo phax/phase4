@@ -35,7 +35,7 @@ import com.helger.phase4.ebms3header.MessagePartNRInformation;
 import com.helger.phase4.ebms3header.NonRepudiationInformation;
 import com.helger.phase4.marshaller.Ebms3WriterBuilder;
 import com.helger.phase4.marshaller.XMLDSigReaderBuilder;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.ChildElementIterator;
 import com.helger.xml.XMLHelper;
 import com.helger.xsds.xmldsig.ReferenceType;
@@ -49,7 +49,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ReceiptMessage (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSOAPVersion, EAS4MessageType.RECEIPT);
 
@@ -117,7 +117,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    * @return AS4ReceiptMessage
    */
   @Nonnull
-  public static AS4ReceiptMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4ReceiptMessage create (@Nonnull final ESoapVersion eSOAPVersion,
                                           @Nonnull @Nonempty final String sMessageID,
                                           @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                           @Nullable final Node aSOAPDocument,

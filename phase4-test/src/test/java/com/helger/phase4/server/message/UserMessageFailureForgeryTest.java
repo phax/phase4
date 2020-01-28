@@ -55,7 +55,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.messaging.mime.SoapMimeMultipart;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.XMLHelper;
 import com.helger.xml.serialize.read.DOMReader;
@@ -73,12 +73,12 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return new CommonsArrayList <> (ESOAPVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESoapVersion.values (), x -> new Object [] { x });
   }
 
-  private final ESOAPVersion m_eSoapVersion;
+  private final ESoapVersion m_eSoapVersion;
 
-  public UserMessageFailureForgeryTest (@Nonnull final ESOAPVersion eSOAPVersion)
+  public UserMessageFailureForgeryTest (@Nonnull final ESoapVersion eSOAPVersion)
   {
     m_eSoapVersion = eSOAPVersion;
   }

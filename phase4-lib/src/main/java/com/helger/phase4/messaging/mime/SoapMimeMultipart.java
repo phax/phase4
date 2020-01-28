@@ -23,7 +23,7 @@ import javax.mail.internet.ContentType;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.ParseException;
 
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * Special {@link MimeMultipart} that modifies the Content-Type to add the
@@ -33,7 +33,7 @@ import com.helger.phase4.soap.ESOAPVersion;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESOAPVersion eSOAPVersion,
+  public SoapMimeMultipart (@Nonnull final ESoapVersion eSOAPVersion,
                             @Nonnull final Charset aCharset) throws ParseException
   {
     super ("related");

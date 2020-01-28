@@ -55,7 +55,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.MultiOutputStream;
 import com.helger.xml.microdom.IMicroDocument;
@@ -95,7 +95,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
-  private ESOAPVersion m_eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+  private ESoapVersion m_eSOAPVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
   private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
@@ -237,7 +237,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The SOAP version to be used. May not be <code>null</code>.
    */
   @Nonnull
-  public final ESOAPVersion getSOAPVersion ()
+  public final ESoapVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
   }
@@ -250,7 +250,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  public final IMPLTYPE setSOAPVersion (@Nonnull final ESoapVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eSOAPVersion = eSOAPVersion;

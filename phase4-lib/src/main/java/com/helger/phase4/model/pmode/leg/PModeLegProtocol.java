@@ -30,7 +30,7 @@ import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.url.URLHelper;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * PMode leg protocol parameters.
@@ -56,9 +56,9 @@ public class PModeLegProtocol implements Serializable
    * <code>1.2</code>). In some implementations, this parameter may be
    * constrained by the implementation, and not set by users.
    */
-  private ESOAPVersion m_eSOAPVersion;
+  private ESoapVersion m_eSOAPVersion;
 
-  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESOAPVersion eSOAPVersion)
+  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESoapVersion eSOAPVersion)
   {
     setAddress (sAddress);
     setSOAPVersion (eSOAPVersion);
@@ -87,13 +87,13 @@ public class PModeLegProtocol implements Serializable
   }
 
   @Nonnull
-  public final ESOAPVersion getSOAPVersion ()
+  public final ESoapVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
   }
 
   @Nonnull
-  public final EChange setSOAPVersion (@Nonnull final ESOAPVersion eSOAPVersion)
+  public final EChange setSOAPVersion (@Nonnull final ESoapVersion eSOAPVersion)
   {
     ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     if (eSOAPVersion.equals (m_eSOAPVersion))
@@ -130,6 +130,6 @@ public class PModeLegProtocol implements Serializable
   @Nonnull
   public static PModeLegProtocol createForDefaultSOAPVersion (@Nullable final String sAddress)
   {
-    return new PModeLegProtocol (sAddress, ESOAPVersion.AS4_DEFAULT);
+    return new PModeLegProtocol (sAddress, ESoapVersion.AS4_DEFAULT);
   }
 }

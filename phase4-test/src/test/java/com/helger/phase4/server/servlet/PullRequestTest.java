@@ -35,13 +35,13 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.MPC;
 import com.helger.phase4.server.spi.MockMessageProcessorSPI;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   @Test
   public void sendPullRequestSuccess () throws Exception

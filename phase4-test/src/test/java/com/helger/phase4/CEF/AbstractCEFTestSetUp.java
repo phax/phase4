@@ -44,7 +44,7 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -53,7 +53,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   protected static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   protected PMode m_aESENSOneWayPMode;
-  protected ESOAPVersion m_eSoapVersion;
+  protected ESoapVersion m_eSoapVersion;
   protected Node m_aPayload;
 
   @Before
@@ -70,7 +70,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   }
 
   @Nonnull
-  protected Document testSignedUserMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  protected Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                             @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException

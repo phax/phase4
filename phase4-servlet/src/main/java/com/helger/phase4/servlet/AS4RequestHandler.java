@@ -94,7 +94,7 @@ import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -618,7 +618,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return the reversed usermessage in document form
    */
   @Nonnull
-  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
+  private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                             @Nonnull final Ebms3UserMessage aUserMessage,
                                                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
   {
@@ -735,7 +735,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Document _signResponseIfNeeded (@Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                           @Nonnull final AS4SigningParams aSigningParams,
                                           @Nonnull final Document aDocToBeSigned,
-                                          @Nonnull final ESOAPVersion eSoapVersion,
+                                          @Nonnull final ESoapVersion eSoapVersion,
                                           @Nonnull @Nonempty final String sMessagingID) throws WSSecurityException
   {
     final Document ret;
@@ -792,7 +792,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @throws WSSecurityException
    */
   private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSoapDocument,
-                                                             @Nonnull final ESOAPVersion eSoapVersion,
+                                                             @Nonnull final ESoapVersion eSoapVersion,
                                                              @Nonnull final PModeLeg aEffectiveLeg,
                                                              @Nullable final Ebms3UserMessage aUserMessage,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
@@ -834,7 +834,7 @@ public class AS4RequestHandler implements AutoCloseable
   @Nonnull
   private AS4MimeMessage _createMimeMessageForResponse (@Nonnull final Document aResponseDoc,
                                                         @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
-                                                        @Nonnull final ESOAPVersion eSoapVersion,
+                                                        @Nonnull final ESoapVersion eSoapVersion,
                                                         @Nonnull final AS4CryptParams aCryptParms) throws WSSecurityException,
                                                                                                    MessagingException
   {
@@ -882,7 +882,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         on error
    */
   @Nonnull
-  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ESOAPVersion eSoapVersion,
+  private IAS4ResponseFactory _createResponseUserMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                           @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                                           @Nonnull final Document aSrcDoc,
                                                           @Nonnull @Nonempty final String sMessagingID,
@@ -917,7 +917,7 @@ public class AS4RequestHandler implements AutoCloseable
   @Nullable
   private IAS4ResponseFactory _handleSoapMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                   @Nonnull final Document aSoapDocument,
-                                                  @Nonnull final ESOAPVersion eSoapVersion,
+                                                  @Nonnull final ESoapVersion eSoapVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
                                                                                                                       MessagingException
   {

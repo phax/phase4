@@ -34,20 +34,20 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
-public enum ESOAPVersion
+public enum ESoapVersion
 {
   SOAP_11 ("http://schemas.xmlsoap.org/soap/envelope/", "S11", CMimeType.TEXT_XML, "1.1"),
   SOAP_12 ("http://www.w3.org/2003/05/soap-envelope", "S12", CMimeType.APPLICATION_SOAP_XML, "1.2");
 
   /** According to spec 2.1. Feature Set */
-  public static final ESOAPVersion AS4_DEFAULT = ESOAPVersion.SOAP_12;
+  public static final ESoapVersion AS4_DEFAULT = ESoapVersion.SOAP_12;
 
   private final String m_sNamespaceURI;
   private final String m_sNamespacePrefix;
   private final IMimeType m_aMimeType;
   private final String m_sVersion;
 
-  private ESOAPVersion (@Nonnull @Nonempty final String sNamespaceURI,
+  private ESoapVersion (@Nonnull @Nonempty final String sNamespaceURI,
                         @Nonnull @Nonempty final String sNamespacePrefix,
                         @Nonnull final IMimeType aMimeType,
                         @Nonnull @Nonempty final String sVersion)
@@ -158,14 +158,14 @@ public enum ESOAPVersion
   }
 
   @Nullable
-  public static ESOAPVersion getFromVersionOrNull (@Nullable final String sVersion)
+  public static ESoapVersion getFromVersionOrNull (@Nullable final String sVersion)
   {
     return getFromVersionOrDefault (sVersion, null);
   }
 
   @Nullable
-  public static ESOAPVersion getFromVersionOrDefault (@Nullable final String sVersion,
-                                                      @Nullable final ESOAPVersion eDefault)
+  public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion,
+                                                      @Nullable final ESoapVersion eDefault)
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;
@@ -173,7 +173,7 @@ public enum ESOAPVersion
   }
 
   @Nullable
-  public static ESOAPVersion getFromNamespaceURIOrNull (@Nullable final String sNamespaceURI)
+  public static ESoapVersion getFromNamespaceURIOrNull (@Nullable final String sNamespaceURI)
   {
     if (StringHelper.hasNoText (sNamespaceURI))
       return null;
@@ -181,7 +181,7 @@ public enum ESOAPVersion
   }
 
   @Nullable
-  public static ESOAPVersion getFromMimeTypeOrNull (@Nullable final IMimeType aMimeType)
+  public static ESoapVersion getFromMimeTypeOrNull (@Nullable final IMimeType aMimeType)
   {
     if (aMimeType == null)
       return null;

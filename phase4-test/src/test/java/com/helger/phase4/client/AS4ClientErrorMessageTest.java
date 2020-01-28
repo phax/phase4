@@ -32,7 +32,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -91,7 +91,7 @@ public final class AS4ClientErrorMessageTest
   {
     final AS4ClientErrorMessage aClient = new AS4ClientErrorMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESOAPVersion.AS4_DEFAULT);
+    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     aClient.addErrorMessage (EEbmsError.EBMS_INVALID_HEADER, Locale.US);
     _ensureInvalidState (aClient);

@@ -174,7 +174,8 @@ If you like the project, a star on GitHub is always appreciated.
     * The `IAS4ServletMessageProcessorSPI` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
     * The `IPhase4PeppolIncomingSBDHandlerSPI` API was modified to now include `IAS4IncomingMessageMetadata` as well as `PeppolSBDHDocument`, `Ebms3UserMessage` and `IAS4MessageState` (backwards incompatible change)  
     * The `IAS4IncomingDumper` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
-    * Added the original (potentially encrypted) SOAP document into `IAS4MessageState`  
+    * Added the original (potentially encrypted) SOAP document into `IAS4MessageState`
+    * Renamed type `ESOAPVersion` to `ESoapVersion` (backwards incompatible change)
 * v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
     * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff

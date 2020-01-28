@@ -26,7 +26,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 
 /**
  * AS4 pull request message
@@ -37,7 +37,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4PullRequestMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                 @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSOAPVersion, EAS4MessageType.PULL_REQUEST);
@@ -59,7 +59,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
   }
 
   @Nonnull
-  public static AS4PullRequestMessage create (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4PullRequestMessage create (@Nonnull final ESoapVersion eSOAPVersion,
                                               @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                               @Nullable final String sMPC,
                                               @Nullable final List <Object> aAny)

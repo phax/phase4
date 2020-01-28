@@ -43,7 +43,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.marshaller.Ebms3WriterBuilder;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.soap12.Soap12Body;
 import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
@@ -53,7 +53,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 {
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
   private static final String SOAP_12_PARTY_ID = "APP_000000000012";
-  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.SOAP_12;
+  private final ESoapVersion m_eSoapVersion = ESoapVersion.SOAP_12;
 
   private Document _getMessagingAsDocument (final Ebms3Messaging aEbms3Messaging)
   {
@@ -191,7 +191,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
 
     // Now send receipt
-    final Document aDoc = MockMessages.testReceiptMessage (ESOAPVersion.AS4_DEFAULT, aEbms3UserMessage, null)
+    final Document aDoc = MockMessages.testReceiptMessage (ESoapVersion.AS4_DEFAULT, aEbms3UserMessage, null)
                                       .getAsSOAPDocument ();
 
     // We've got our response

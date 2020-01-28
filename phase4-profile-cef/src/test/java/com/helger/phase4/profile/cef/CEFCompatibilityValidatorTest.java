@@ -48,7 +48,7 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.leg.PModeLegErrorHandling;
 import com.helger.phase4.model.pmode.leg.PModeLegProtocol;
 import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.wss.EWSSVersion;
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
@@ -143,7 +143,7 @@ public final class CEFCompatibilityValidatorTest
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
     m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
-                                                          ESOAPVersion.SOAP_11),
+                                                          ESoapVersion.SOAP_11),
                                     null,
                                     null,
                                     null,

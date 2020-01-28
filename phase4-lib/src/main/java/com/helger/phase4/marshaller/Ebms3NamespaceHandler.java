@@ -17,7 +17,7 @@
 package com.helger.phase4.marshaller;
 
 import com.helger.phase4.CAS4;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 
 /**
@@ -39,7 +39,7 @@ public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
     addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
     addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");
     addMapping ("xlink", "http://www.w3.org/1999/xlink");
-    for (final ESOAPVersion e : ESOAPVersion.values ())
+    for (final ESoapVersion e : ESoapVersion.values ())
       addMapping (e.getNamespacePrefix (), e.getNamespaceURI ());
   }
 }

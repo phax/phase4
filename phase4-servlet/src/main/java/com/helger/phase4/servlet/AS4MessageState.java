@@ -43,7 +43,7 @@ import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -79,11 +79,11 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
 
   private final LocalDateTime m_aReceiptDT;
-  private final ESOAPVersion m_eSoapVersion;
+  private final ESoapVersion m_eSoapVersion;
   private final AS4ResourceHelper m_aResHelper;
   private final Locale m_aLocale;
 
-  public AS4MessageState (@Nonnull final ESOAPVersion eSoapVersion,
+  public AS4MessageState (@Nonnull final ESoapVersion eSoapVersion,
                           @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                           @Nonnull final Locale aLocale)
   {
@@ -102,7 +102,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nonnull
-  public final ESOAPVersion getSoapVersion ()
+  public final ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
   }

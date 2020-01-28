@@ -45,7 +45,7 @@ import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.xml.microdom.IMicroDocument;
@@ -95,7 +95,7 @@ public final class AS4ClientUserMessageTest
   private static AS4ClientUserMessage _getMandatoryAttributesSuccessMessage ()
   {
     final AS4ClientUserMessage aClient = new AS4ClientUserMessage (s_aResMgr);
-    aClient.setSOAPVersion (ESOAPVersion.SOAP_12);
+    aClient.setSOAPVersion (ESoapVersion.SOAP_12);
 
     final String sSenderID = "MyPartyIDforSending";
     final String sResponderID = "MyPartyIDforReceving";

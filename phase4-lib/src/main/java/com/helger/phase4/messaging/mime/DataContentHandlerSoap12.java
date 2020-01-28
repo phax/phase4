@@ -31,7 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.sun.mail.handlers.text_plain;
 
 /**
@@ -42,7 +42,7 @@ import com.sun.mail.handlers.text_plain;
 public class DataContentHandlerSoap12 extends text_plain
 {
   private static final ActivationDataFlavor [] FLAVORS = { new ActivationDataFlavor (StreamSource.class,
-                                                                                     ESOAPVersion.SOAP_12.getMimeType ()
+                                                                                     ESoapVersion.SOAP_12.getMimeType ()
                                                                                                          .getAsStringWithoutParameters (),
                                                                                      "SOAP") };
 

@@ -35,7 +35,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.external.IHolodeckTests;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 @RunWith (Parameterized.class)
@@ -46,12 +46,12 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   @Parameters (name = "{index}: {0}")
   public static Collection <Object []> data ()
   {
-    return new CommonsArrayList <> (ESOAPVersion.values (), x -> new Object [] { x });
+    return new CommonsArrayList <> (ESoapVersion.values (), x -> new Object [] { x });
   }
 
-  private final ESOAPVersion m_eSoapVersion;
+  private final ESoapVersion m_eSoapVersion;
 
-  public ReceiptMessageTest (@Nonnull final ESOAPVersion eSOAPVersion)
+  public ReceiptMessageTest (@Nonnull final ESoapVersion eSOAPVersion)
   {
     m_eSoapVersion = eSOAPVersion;
   }

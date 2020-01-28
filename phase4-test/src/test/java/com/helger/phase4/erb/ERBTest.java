@@ -29,7 +29,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.server.message.MockMessages;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -39,7 +39,7 @@ public final class ERBTest extends AbstractUserMessageTestSetUp
   public void duplicateSignedMessage () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final ESOAPVersion eSOAPVersion = ESOAPVersion.AS4_DEFAULT;
+    final ESoapVersion eSOAPVersion = ESoapVersion.AS4_DEFAULT;
     final Document aDoc = MockMessages.testSignedUserMessage (eSOAPVersion, aPayload, null, new AS4ResourceHelper ());
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ());

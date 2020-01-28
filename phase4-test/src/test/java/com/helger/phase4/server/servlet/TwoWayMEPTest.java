@@ -48,13 +48,13 @@ import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
   @Before

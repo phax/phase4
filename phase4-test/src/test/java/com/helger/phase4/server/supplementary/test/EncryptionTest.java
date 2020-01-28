@@ -32,7 +32,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -77,7 +77,7 @@ public final class EncryptionTest
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
     // "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
     // "Element");
-    final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESOAPVersion.SOAP_11.getNamespaceURI (), "Element");
+    final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESoapVersion.SOAP_11.getNamespaceURI (), "Element");
     aBuilder.getParts ().add (encP);
 
     LOGGER.info ("Before Encryption AES 128/RSA-15....");

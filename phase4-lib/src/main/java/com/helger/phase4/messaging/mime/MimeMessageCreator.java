@@ -35,7 +35,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4XMLHelper;
 
 public final class MimeMessageCreator
@@ -73,7 +73,7 @@ public final class MimeMessageCreator
 
     {
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
-      aCommandMap.addMailcap (ESOAPVersion.SOAP_12.getMimeType ().getAsStringWithoutParameters () +
+      aCommandMap.addMailcap (ESoapVersion.SOAP_12.getMimeType ().getAsStringWithoutParameters () +
                               ";; x-java-content-handler=" +
                               DataContentHandlerSoap12.class.getName ());
       CommandMap.setDefaultCommandMap (aCommandMap);
@@ -84,7 +84,7 @@ public final class MimeMessageCreator
   {}
 
   @Nonnull
-  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                     @Nonnull final Document aSOAPEnvelope,
                                                     @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {

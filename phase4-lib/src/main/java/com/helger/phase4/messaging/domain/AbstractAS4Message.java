@@ -30,7 +30,7 @@ import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.marshaller.Ebms3WriterBuilder;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.soap11.Soap11Body;
 import com.helger.phase4.soap11.Soap11Envelope;
 import com.helger.phase4.soap11.Soap11Header;
@@ -49,12 +49,12 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
 {
-  private final ESOAPVersion m_eSOAPVersion;
+  private final ESoapVersion m_eSOAPVersion;
   private final EAS4MessageType m_eMsgType;
   private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
-  public AbstractAS4Message (@Nonnull final ESOAPVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
+  public AbstractAS4Message (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
   {
     m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
@@ -65,7 +65,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   }
 
   @Nonnull
-  public final ESOAPVersion getSOAPVersion ()
+  public final ESoapVersion getSOAPVersion ()
   {
     return m_eSOAPVersion;
   }

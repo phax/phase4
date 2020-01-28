@@ -95,7 +95,7 @@ import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.xml.serialize.read.DOMReader;
@@ -513,7 +513,7 @@ public final class Phase4PeppolSender
 
       // Otherwise Oxalis dies
       aUserMsg.setQuoteHttpHeaders (false);
-      aUserMsg.setSOAPVersion (ESOAPVersion.SOAP_12);
+      aUserMsg.setSOAPVersion (ESoapVersion.SOAP_12);
       // Set the keystore/truststore parameters
       aUserMsg.setAS4CryptoFactory (aCryptoFactory);
       aUserMsg.setPMode (aSrcPMode, true);

@@ -68,7 +68,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -161,7 +161,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
-    final Document aDoc = new AS4UserMessage (ESOAPVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
+    final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());

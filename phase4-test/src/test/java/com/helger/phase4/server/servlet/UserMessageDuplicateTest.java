@@ -28,12 +28,12 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
-  private final ESOAPVersion m_eSoapVersion = ESOAPVersion.AS4_DEFAULT;
+  private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   @Test
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception

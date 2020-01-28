@@ -41,7 +41,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
-import com.helger.phase4.soap.ESOAPVersion;
+import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -85,7 +85,7 @@ public final class AS4Encryptor
 
   @Nonnull
   public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                 @Nonnull final ESOAPVersion eSOAPVersion,
+                                                 @Nonnull final ESoapVersion eSOAPVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
                                                  @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
@@ -109,7 +109,7 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESOAPVersion eSOAPVersion,
+  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                                    @Nonnull final Document aDoc,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactory,
