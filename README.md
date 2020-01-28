@@ -177,6 +177,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added the original (potentially encrypted) SOAP document into `IAS4MessageState`
     * Renamed type `ESOAPVersion` to `ESoapVersion` (backwards incompatible change)
     * Method names in `IAS4ClientBuildMessageCallback` changed to use `Soap` instead of `SOAP`
+    * Extended `IAS4ServletMessageProcessorSPI` with a possibility to process the response message send out
 * v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
     * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff

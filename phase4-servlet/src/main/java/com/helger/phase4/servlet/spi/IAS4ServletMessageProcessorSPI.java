@@ -110,4 +110,29 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
                                                            @Nullable IPMode aPMode,
                                                            @Nonnull IAS4MessageState aState,
                                                            @Nonnull ICommonsList <Ebms3Error> aProcessingErrorMessages);
+
+  /**
+   * Optional callback to process a response message
+   *
+   * @param aMessageMetadata
+   *        Incoming message metadata. Never <code>null</code>.
+   * @param aState
+   *        The current message state. Can be used to determine all other things
+   *        potentially necessary for processing the incoming message. Never
+   *        <code>null</code>.
+   * @param aResponseBytes
+   *        The response bytes to be written. May be <code>null</code> for
+   *        several reasons.
+   * @param bResponsePayloadIsAvailable
+   *        if this is <code>true</code> and response bytes is <code>null</code>
+   *        than most likely the response entity is not repeatable.
+   * @since v0.9.8
+   */
+  default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                          @Nonnull final IAS4MessageState aState,
+                                          @Nullable final byte [] aResponseBytes,
+                                          final boolean bResponsePayloadIsAvailable)
+  {
+    // Do nothing for backwards compatibility
+  }
 }

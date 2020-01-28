@@ -44,6 +44,7 @@ import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ISuccessIndicator;
@@ -116,7 +117,7 @@ public class AS4RequestHandler implements AutoCloseable
     void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse);
 
     @Nonnull
-    HttpEntity getHttpEntity (@Nonnull IMimeType aMimType);
+    HttpEntity getHttpEntity (@Nonnull IMimeType aMimeType);
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
@@ -375,10 +376,10 @@ public class AS4RequestHandler implements AutoCloseable
    *
    * @param aHttpHeaders
    *        The received HTTP headers. Never <code>null</code>.
-   * @param aUserMessage
+   * @param aEbmsUserMessage
    *        Current user message. Either this OR signal message must be
    *        non-<code>null</code>.
-   * @param aSignalMessage
+   * @param aEbmsSignalMessage
    *        The signal message to use. Either this OR user message must be
    *        non-<code>null</code>.
    * @param aPayloadNode
@@ -400,8 +401,8 @@ public class AS4RequestHandler implements AutoCloseable
    *        The result object to be filled. May not be <code>null</code>.
    */
   private void _invokeSPIsForIncoming (@Nonnull final HttpHeaderMap aHttpHeaders,
-                                       @Nullable final Ebms3UserMessage aUserMessage,
-                                       @Nullable final Ebms3SignalMessage aSignalMessage,
+                                       @Nullable final Ebms3UserMessage aEbmsUserMessage,
+                                       @Nullable final Ebms3SignalMessage aEbmsSignalMessage,
                                        @Nullable final Node aPayloadNode,
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
@@ -410,13 +411,14 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
                                        @Nonnull final SPIInvocationResult aSPIResult)
   {
-    ValueEnforcer.isTrue (aUserMessage != null || aSignalMessage != null, "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aUserMessage != null && aSignalMessage != null,
+    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
+                          "User OR Signal Message must be present");
+    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null,
                            "Only one of User OR Signal Message may be present");
 
-    final boolean bIsUserMessage = aUserMessage != null;
-    final String sMessageID = bIsUserMessage ? aUserMessage.getMessageInfo ().getMessageId ()
-                                             : aSignalMessage.getMessageInfo ().getMessageId ();
+    final boolean bIsUserMessage = aEbmsUserMessage != null;
+    final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
+                                             : aEbmsSignalMessage.getMessageInfo ().getMessageId ();
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
@@ -434,7 +436,7 @@ public class AS4RequestHandler implements AutoCloseable
         try
         {
           if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("Invoking AS4 message processor " + aProcessor);
+            LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for incoming message");
 
           // Main processing
           final AS4MessageProcessorResult aResult;
@@ -443,7 +445,7 @@ public class AS4RequestHandler implements AutoCloseable
           {
             aResult = aProcessor.processAS4UserMessage (m_aMessageMetadata,
                                                         aHttpHeaders,
-                                                        aUserMessage,
+                                                        aEbmsUserMessage,
                                                         aPMode,
                                                         aPayloadNode,
                                                         aDecryptedAttachments,
@@ -454,7 +456,7 @@ public class AS4RequestHandler implements AutoCloseable
           {
             aResult = aProcessor.processAS4SignalMessage (m_aMessageMetadata,
                                                           aHttpHeaders,
-                                                          aSignalMessage,
+                                                          aEbmsSignalMessage,
                                                           aPMode,
                                                           aState,
                                                           aProcessingErrorMessages);
@@ -536,7 +538,7 @@ public class AS4RequestHandler implements AutoCloseable
             // Signal message specific processing result handling
             assert aResult instanceof AS4SignalMessageProcessorResult;
 
-            if (aSignalMessage.getReceipt () == null)
+            if (aEbmsSignalMessage.getReceipt () == null)
             {
               final Ebms3UserMessage aPullReturnUserMsg = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
               if (aSPIResult.hasPullReturnUserMsg ())
@@ -609,6 +611,79 @@ public class AS4RequestHandler implements AutoCloseable
 
     // Remember success
     aSPIResult.setSuccess (true);
+  }
+
+  private void _invokeSPIsForResponse (@Nullable final Ebms3UserMessage aEbmsUserMessage,
+                                       @Nullable final Ebms3SignalMessage aEbmsSignalMessage,
+                                       @Nonnull final IAS4MessageState aState,
+                                       @Nullable final IAS4ResponseFactory aResponseFactory,
+                                       @Nonnull final IMimeType aMimeType)
+  {
+    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
+                          "User OR Signal Message must be present");
+    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null,
+                           "Only one of User OR Signal Message may be present");
+
+    // Get response payload
+    final boolean bResponsePayloadIsAvailable = aResponseFactory != null;
+    byte [] aResponsePayload = null;
+    if (aResponseFactory != null)
+    {
+      final HttpEntity aHttpEntity = aResponseFactory.getHttpEntity (aMimeType);
+      if (aHttpEntity.isRepeatable ())
+      {
+        try (
+            final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ((int) aHttpEntity.getContentLength ()))
+        {
+          aHttpEntity.writeTo (aBAOS);
+          aResponsePayload = aBAOS.getBufferOrCopy ();
+        }
+        catch (final IOException ex)
+        {
+          LOGGER.error ("Error dumping response entity", ex);
+        }
+      }
+      else
+        LOGGER.warn ("Response entity is not repeatable and therefore not read for SPIs");
+    }
+    else
+      LOGGER.info ("No response factory present");
+
+    // Get all processors
+    final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Trying to invoke the following " +
+                    aAllProcessors.size () +
+                    " SPIs on message ID '" +
+                    aState.getMessageID () +
+                    "': " +
+                    aAllProcessors);
+
+    for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
+      if (aProcessor != null)
+        try
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for response");
+
+          aProcessor.processAS4ResponseMessage (m_aMessageMetadata,
+                                                aState,
+                                                aResponsePayload,
+                                                bResponsePayloadIsAvailable);
+
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Finished invoking AS4 message processor " + aProcessor + " for response");
+        }
+        catch (final RuntimeException ex)
+        {
+          // Re-throw
+          throw ex;
+        }
+        catch (final Exception ex)
+        {
+          throw new IllegalStateException ("Error invoking AS4 message processor " + aProcessor + " for response", ex);
+        }
   }
 
   /**
@@ -1086,6 +1161,12 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
+          _invokeSPIsForResponse (aEbmsUserMessage,
+                                  aEbmsSignalMessage,
+                                  aState,
+                                  aAsyncResponseFactory,
+                                  eSoapVersion.getMimeType ());
+
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
@@ -1214,6 +1295,8 @@ public class AS4RequestHandler implements AutoCloseable
     }
     else
       ret = null;
+
+    _invokeSPIsForResponse (aEbmsUserMessage, aEbmsSignalMessage, aState, ret, eSoapVersion.getMimeType ());
 
     return ret;
   }
