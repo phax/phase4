@@ -19,7 +19,6 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,18 +43,34 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
  */
 public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHeaders
 {
+  /**
+   * Callback interface to create a file based on the provided metadata.
+   *
+   * @author Philip Helger
+   * @since 0.9.8
+   */
+  @FunctionalInterface
+  public static interface IFileProvider
+  {
+    @Nonnull
+    File createFile (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull HttpHeaderMap aHttpHeaderMap);
+  }
+
   public static final String DEFAULT_BASE_PATH = "incoming/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
 
-  private final Supplier <File> m_aFileProvider;
+  private final IFileProvider m_aFileProvider;
 
   public AS4IncomingDumperFileBased ()
   {
-    this ( () -> new File (AS4ServerConfiguration.getDataPath (),
-                           DEFAULT_BASE_PATH + PDTIOHelper.getCurrentLocalDateTimeForFilename () + ".as4in"));
+    this ( (aMessageMetadata,
+            aHttpHeaderMap) -> new File (AS4ServerConfiguration.getDataPath (),
+                                         DEFAULT_BASE_PATH +
+                                                                                PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) +
+                                                                                ".as4in"));
   }
 
-  public AS4IncomingDumperFileBased (@Nonnull final Supplier <File> aFileProvider)
+  public AS4IncomingDumperFileBased (@Nonnull final IFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
     m_aFileProvider = aFileProvider;
@@ -66,7 +81,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
-    final File aResponseFile = m_aFileProvider.get ();
+    final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
     LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
   }
