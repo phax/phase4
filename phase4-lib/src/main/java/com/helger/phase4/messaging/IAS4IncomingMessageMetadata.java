@@ -6,6 +6,7 @@ import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -17,6 +18,15 @@ import com.helger.commons.string.StringHelper;
  */
 public interface IAS4IncomingMessageMetadata
 {
+  /**
+   * @return A unique ID created just for this message metadata. It can be used
+   *         to reference to this message internally. Usually this is a UUID.
+   *         Never <code>null</code> nor empty.
+   */
+  @Nonnull
+  @Nonempty
+  String getIncomingUniqueID ();
+
   /**
    * @return The date and time when the request was received. Never
    *         <code>null</code>.
