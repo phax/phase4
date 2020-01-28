@@ -435,26 +435,28 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                       " attachments");
     }
 
+    // The one and only
+    final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
+
+    // Extract Peppol values from SBD
+    final PeppolSBDHDocument aPeppolSBD;
+    try
+    {
+      aPeppolSBD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
+    }
+    catch (final PeppolSBDHDocumentReadException ex)
+    {
+      return AS4MessageProcessorResult.createFailure ("Failed to extract the Peppol data from SBDH. Technical details: " +
+                                                      ex.getClass ().getName () +
+                                                      " - " +
+                                                      ex.getMessage ());
+    }
+
     if (m_aHandlers.isEmpty ())
       LOGGER.warn ("No handler is present - the message is unhandled and discarded");
     else
     {
-      final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
       final String sLogPrefix = "[" + sMessageID + "] ";
-
-      // Extract Peppol values from SBD
-      final PeppolSBDHDocument aPeppolSBD;
-      try
-      {
-        aPeppolSBD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
-      }
-      catch (final PeppolSBDHDocumentReadException ex)
-      {
-        return AS4MessageProcessorResult.createFailure ("Failed to extract the Peppol data from SBDH. Technical details: " +
-                                                        ex.getClass ().getName () +
-                                                        " - " +
-                                                        ex.getMessage ());
-      }
 
       // Start consistency checks?
       if (Phase4PeppolServletConfiguration.isReceiverCheckEnabled ())
@@ -500,6 +502,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
             LOGGER.debug (sLogPrefix + "Invoking Peppol handler " + aHandler);
           aHandler.handleIncomingSBD (aMessageMetadata,
                                       aHttpHeaders.getClone (),
+                                      aUserMessage.clone (),
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument (),
                                       aPeppolSBD);
