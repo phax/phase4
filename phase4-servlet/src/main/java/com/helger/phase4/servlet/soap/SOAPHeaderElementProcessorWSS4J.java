@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
-import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -242,6 +241,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         // Collect all unique used certificates
         final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
+        int nWSS4JSecurityActions = 0;
         for (final WSSecurityEngineResult aResult : aResults)
         {
           final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
@@ -250,18 +250,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
           final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
           if (aAction != null)
-            switch (aAction.intValue ())
-            {
-              case WSConstants.SIGN:
-                aState.setSoapSignatureChecked (true);
-                break;
-              case WSConstants.ENCR:
-                aState.setSoapDecrypted (true);
-                break;
-              default:
-                LOGGER.warn ("Unexpected security engine tag action found: " + aAction.intValue ());
-            }
+            nWSS4JSecurityActions |= aAction.intValue ();
         }
+        // this determines if a signature check or a decrpytion happened
+        aState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
 
         if (aCertSet.size () > 1)
         {
@@ -272,7 +264,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         // Remember in State
         aState.setUsedCertificate (aCertSet.getAtIndex (0));
-        aState.setDecryptedSOAPDocument (aSOAPDoc);
+        aState.setDecryptedSoapDocument (aSOAPDoc);
 
         // Decrypting the Attachments
         final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();

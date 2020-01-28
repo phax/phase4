@@ -372,7 +372,7 @@ public class AS4IncomingHandler
                                                   @Nonnull final AS4MessageState aState,
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
   {
-    final ESOAPVersion eSoapVersion = aState.getSOAPVersion ();
+    final ESOAPVersion eSoapVersion = aState.getSoapVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
     {
       // Find SOAP header
@@ -679,8 +679,8 @@ public class AS4IncomingHandler
           throw new AS4BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
       }
 
-      final boolean bUseDecryptedSOAP = aState.hasDecryptedSOAPDocument ();
-      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSOAPDocument () : aSoapDocument;
+      final boolean bUseDecryptedSOAP = aState.hasDecryptedSoapDocument ();
+      final Document aRealSOAPDoc = bUseDecryptedSOAP ? aState.getDecryptedSoapDocument () : aSoapDocument;
       assert aRealSOAPDoc != null;
 
       // Find SOAP body (mandatory according to SOAP XSD)
@@ -690,7 +690,7 @@ public class AS4IncomingHandler
       if (aBodyNode == null)
         throw new AS4BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
                                           " SOAP document is missing a Body element");
-      aState.setPayloadNode (aBodyNode.getFirstChild ());
+      aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       if (aEbmsUserMessage != null)
       {

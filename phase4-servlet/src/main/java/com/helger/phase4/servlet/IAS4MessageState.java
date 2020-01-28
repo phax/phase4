@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 
 import javax.annotation.CheckForSigned;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -62,9 +63,22 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   /**
    * @return The SOAP version of the current request as specified in the
    *         constructor. Never <code>null</code>.
+   * @deprecated use {@link #getSoapVersion()} instead; since v0.9.8
    */
   @Nonnull
-  ESOAPVersion getSOAPVersion ();
+  @Deprecated
+  default ESOAPVersion getSOAPVersion ()
+  {
+    return getSoapVersion ();
+  }
+
+  /**
+   * @return The SOAP version of the current request as specified in the
+   *         constructor. Never <code>null</code>.
+   * @since v0.9.8
+   */
+  @Nonnull
+  ESOAPVersion getSoapVersion ();
 
   /**
    * @return The resource manager as specified in the constructor. Never
@@ -152,15 +166,15 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    * @return get the original SOAP document, only the entire document no
    *         attachment. This might by encrypted.
    * @see #hasDecryptedSOAPDocument()
-   * @see #getDecryptedSOAPDocument()
+   * @see #getDecryptedSoapDocument()
    * @since v0.9.8
    */
   @Nullable
-  Document getOriginalSOAPDocument ();
+  Document getOriginalSoapDocument ();
 
-  default boolean hasOriginalSOAPDocument ()
+  default boolean hasOriginalSoapDocument ()
   {
-    return getOriginalSOAPDocument () != null;
+    return getOriginalSoapDocument () != null;
   }
 
   /**
@@ -179,15 +193,36 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   /**
    * @return get the decrypted SOAP document, only the entire document no
    *         attachment
-   * @see #hasOriginalSOAPDocument()
-   * @see #getOriginalSOAPDocument()
+   * @see #hasOriginalSoapDocument()
+   * @see #getOriginalSoapDocument()
+   * @deprecated Use {@link #getDecryptedSoapDocument()} instead; since v0.9.8
    */
+  @Deprecated
   @Nullable
-  Document getDecryptedSOAPDocument ();
+  default Document getDecryptedSOAPDocument ()
+  {
+    return getDecryptedSoapDocument ();
+  }
 
+  @Deprecated
   default boolean hasDecryptedSOAPDocument ()
   {
-    return getDecryptedSOAPDocument () != null;
+    return getDecryptedSoapDocument () != null;
+  }
+
+  /**
+   * @return get the decrypted SOAP document, only the entire document no
+   *         attachment
+   * @see #hasOriginalSoapDocument()
+   * @see #getOriginalSoapDocument()
+   * @since v0.9.8
+   */
+  @Nullable
+  Document getDecryptedSoapDocument ();
+
+  default boolean hasDecryptedSoapDocument ()
+  {
+    return getDecryptedSoapDocument () != null;
   }
 
   /**
@@ -250,7 +285,9 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   }
 
   /**
-   * @return true if a payload in the soap body is present, else false
+   * @return <code>true</code> if a payload in the soap body is present, else
+   *         <code>false</code>
+   * @see #getSoapBodyPayloadNode()
    */
   boolean isSoapBodyPayloadPresent ();
 
@@ -306,6 +343,15 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   int getEffectivePModeLegNumber ();
 
   /**
+   * @return A bit set of the WSS4J security action tags found. 0 for nothing.
+   *         See class org.apache.wss4j.dom.WSContants line 326ff for the
+   *         constants.
+   * @since v0.9.8
+   */
+  @Nonnegative
+  int getSoapWSS4JSecurityActions ();
+
+  /**
    * @return <code>true</code> if the incoming message was signed and the
    *         signature was verified, <code>false</code> otherwise.
    */
@@ -342,9 +388,22 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    * @return The child of the SOAP Body node or <code>null</code>. That is
    *         always decrypted.
    * @since v0.9.7
+   * @deprecated use {@link #getSoapBodyPayloadNode()} instead
    */
   @Nullable
-  Node getPayloadNode ();
+  @Deprecated
+  default Node getPayloadNode ()
+  {
+    return getSoapBodyPayloadNode ();
+  }
+
+  /**
+   * @return The child of the SOAP Body node or <code>null</code>. That is
+   *         always decrypted.
+   * @since v0.9.8
+   */
+  @Nullable
+  Node getSoapBodyPayloadNode ();
 
   /**
    * @return <code>true</code> if SOAP header element processing was successful,

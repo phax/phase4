@@ -578,7 +578,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     // Remember in state
     aState.setPMode (aPMode);
-    aState.setOriginalSOAPDocument (aSOAPDoc);
+    aState.setOriginalSoapDocument (aSOAPDoc);
     aState.setOriginalAttachments (aAttachments);
     aState.setCompressedAttachmentIDs (aCompressionAttachmentIDs);
     aState.setMPC (aEffectiveMPC);

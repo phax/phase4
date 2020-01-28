@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.apache.wss4j.dom.WSConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -70,8 +71,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_USED_CERTIFICATE = "phase4.used.certificate";
   private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
-  private static final String KEY_SOAP_CHECKED_SIGNATURE = "phase4.soap.signature.checked";
-  private static final String KEY_SOAP_DECRYPTED = "phase4.soap.decrypted";
+  private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
   private static final String KEY_PHASE4_PROFILE_ID = "phase4.profile.id";
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
@@ -79,16 +79,16 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
 
   private final LocalDateTime m_aReceiptDT;
-  private final ESOAPVersion m_eSOAPVersion;
+  private final ESOAPVersion m_eSoapVersion;
   private final AS4ResourceHelper m_aResHelper;
   private final Locale m_aLocale;
 
-  public AS4MessageState (@Nonnull final ESOAPVersion eSOAPVersion,
+  public AS4MessageState (@Nonnull final ESOAPVersion eSoapVersion,
                           @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                           @Nonnull final Locale aLocale)
   {
     m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
-    m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     m_aLocale = ValueEnforcer.notNull (aLocale, "Locale");
     // The profile ID from the configuration file is optional
@@ -102,9 +102,9 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nonnull
-  public final ESOAPVersion getSOAPVersion ()
+  public final ESOAPVersion getSoapVersion ()
   {
-    return m_eSOAPVersion;
+    return m_eSoapVersion;
   }
 
   @Nonnull
@@ -148,12 +148,12 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
-  public Document getOriginalSOAPDocument ()
+  public Document getOriginalSoapDocument ()
   {
     return getCastedValue (KEY_ORIGINAL_SOAP_DOCUMENT);
   }
 
-  public void setOriginalSOAPDocument (@Nullable final Document aDocument)
+  public void setOriginalSoapDocument (@Nullable final Document aDocument)
   {
     putIn (KEY_ORIGINAL_SOAP_DOCUMENT, aDocument);
   }
@@ -170,12 +170,12 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
-  public Document getDecryptedSOAPDocument ()
+  public Document getDecryptedSoapDocument ()
   {
     return getCastedValue (KEY_DECRYPTED_SOAP_DOCUMENT);
   }
 
-  public void setDecryptedSOAPDocument (@Nullable final Document aDocument)
+  public void setDecryptedSoapDocument (@Nullable final Document aDocument)
   {
     putIn (KEY_DECRYPTED_SOAP_DOCUMENT, aDocument);
   }
@@ -275,24 +275,24 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
     putIn (KEY_EFFECTIVE_PMODE_LEG_NUMBER, nLegNumber);
   }
 
-  public boolean isSoapSignatureChecked ()
+  public int getSoapWSS4JSecurityActions ()
   {
-    return getAsBoolean (KEY_SOAP_CHECKED_SIGNATURE, false);
+    return getAsInt (KEY_WSS4J_SECURITY_ACTIONS, 0);
   }
 
-  public void setSoapSignatureChecked (final boolean bSignatureChecked)
+  public void setSoapWSS4JSecurityActions (final int nSecurityActions)
   {
-    putIn (KEY_SOAP_CHECKED_SIGNATURE, bSignatureChecked);
+    putIn (KEY_WSS4J_SECURITY_ACTIONS, nSecurityActions);
+  }
+
+  public boolean isSoapSignatureChecked ()
+  {
+    return (getSoapWSS4JSecurityActions () & WSConstants.SIGN) == WSConstants.SIGN;
   }
 
   public boolean isSoapDecrypted ()
   {
-    return getAsBoolean (KEY_SOAP_DECRYPTED, false);
-  }
-
-  public void setSoapDecrypted (final boolean bDecrypted)
-  {
-    putIn (KEY_SOAP_DECRYPTED, bDecrypted);
+    return (getSoapWSS4JSecurityActions () & WSConstants.ENCR) == WSConstants.ENCR;
   }
 
   @Nullable
@@ -328,12 +328,12 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nullable
-  public Node getPayloadNode ()
+  public Node getSoapBodyPayloadNode ()
   {
     return getCastedValue (KEY_SOAP_BODY_PAYLOAD_NODE);
   }
 
-  public void setPayloadNode (@Nullable final Node aPayloadNode)
+  public void setSoapBodyPayloadNode (@Nullable final Node aPayloadNode)
   {
     putIn (KEY_SOAP_BODY_PAYLOAD_NODE, aPayloadNode);
   }

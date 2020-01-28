@@ -941,7 +941,7 @@ public class AS4RequestHandler implements AutoCloseable
     final String sMessageID = aState.getMessageID ();
     final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                                                    : aState.getOriginalAttachments ();
-    final Node aPayloadNode = aState.getPayloadNode ();
+    final Node aPayloadNode = aState.getSoapBodyPayloadNode ();
     final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
 
