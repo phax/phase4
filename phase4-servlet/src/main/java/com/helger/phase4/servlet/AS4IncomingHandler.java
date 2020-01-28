@@ -147,7 +147,8 @@ public class AS4IncomingHandler
    *        The incoming AS4 dumper. May be <code>null</code>. If
    *        <code>null</code> the global one from {@link AS4DumpManager} is
    *        used.
-   * @return the InputStream to be used
+   * @return the InputStream to be used. The caller is responsible for closing
+   *         the stream. Never <code>null</code>.
    * @throws IOException
    */
   @Nonnull
@@ -344,6 +345,8 @@ public class AS4IncomingHandler
           LOGGER.debug ("Determined SOAP version " + eSoapVersion + " from Content-Type");
       }
     }
+
+    // Here, the incoming dump should be closed and usable
 
     if (aSoapDocument == null)
     {
