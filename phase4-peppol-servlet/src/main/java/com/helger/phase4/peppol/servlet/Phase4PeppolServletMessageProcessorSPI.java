@@ -34,6 +34,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.annotation.UnsupportedOperation;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -62,6 +63,7 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
@@ -315,7 +317,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
                                                           @Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aSrcPMode,
                                                           @Nullable final Node aPayload,
@@ -494,7 +497,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+  @UnsupportedOperation
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
                                                                   @Nonnull final IAS4MessageState aState,

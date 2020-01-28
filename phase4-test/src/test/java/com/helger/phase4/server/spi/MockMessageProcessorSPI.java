@@ -42,6 +42,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.MockPModeGenerator;
+import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
@@ -62,7 +63,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+                                                          @Nonnull final HttpHeaderMap aHttpHeaders,
                                                           @Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
                                                           @Nullable final Node aPayload,
@@ -83,7 +85,8 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
   }
 
   @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+                                                                  @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,
                                                                   @Nonnull final IAS4MessageState aState,

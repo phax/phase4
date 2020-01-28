@@ -21,9 +21,12 @@ import java.io.Serializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
@@ -77,6 +80,8 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                          @Nonnull final AS4RequestHandler aHandler)
     {}
   }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4XServletHandler.class);
 
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
@@ -156,32 +161,49 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Created above in #createUnifiedResponse
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory, m_aPModeResolver, m_aIAF))
+    // Start metadata
+    final AS4IncomingRequestMetadata aRequestMetadata = new AS4IncomingRequestMetadata ().setIncomingDTNow ()
+                                                                                         .setRemoteAddr (aRequestScope.getRemoteAddr ())
+                                                                                         .setRemoteHost (aRequestScope.getRemoteHost ())
+                                                                                         .setRemotePort (aRequestScope.getRemotePort ());
+
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory,
+                                                                   m_aPModeResolver,
+                                                                   m_aIAF,
+                                                                   aRequestMetadata))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)
+      {
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("Before customizeBeforeHandling");
         m_aHandlerCustomizer.customizeBeforeHandling (aRequestScope, aHttpResponse, aHandler);
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("After customizeBeforeHandling");
+      }
 
       // Main handling
       aHandler.handleRequest (aRequestScope, aHttpResponse);
 
       // Customize after handling
       if (m_aHandlerCustomizer != null)
+      {
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("Before customizeAfterHandling");
         m_aHandlerCustomizer.customizeAfterHandling (aRequestScope, aHttpResponse, aHandler);
+        if (LOGGER.isTraceEnabled ())
+          LOGGER.trace ("After customizeAfterHandling");
+      }
     }
     catch (final AS4BadRequestException ex)
     {
       // Logged inside
-      aHttpResponse.setResponseError (HttpServletResponse.SC_BAD_REQUEST,
-                                      "Bad Request: " + ex.getMessage (),
-                                      ex.getCause ());
+      aHttpResponse.setResponseError (CHttp.HTTP_BAD_REQUEST, "Bad Request: " + ex.getMessage (), ex.getCause ());
     }
     catch (final Exception ex)
     {
       // Logged inside
-      aHttpResponse.setResponseError (HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                                      "Internal error processing AS4 request",
-                                      ex);
+      aHttpResponse.setResponseError (CHttp.HTTP_INTERNAL_SERVER_ERROR, "Internal error processing AS4 request", ex);
     }
   }
 }

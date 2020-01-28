@@ -237,6 +237,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
+  private final AS4IncomingRequestMetadata m_aRequestMetadata;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
 
@@ -246,16 +247,19 @@ public class AS4RequestHandler implements AutoCloseable
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
-                            @Nonnull final IIncomingAttachmentFactory aIAF)
+                            @Nonnull final IIncomingAttachmentFactory aIAF,
+                            @Nonnull final AS4IncomingRequestMetadata aRequestMetadata)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
+    ValueEnforcer.notNull (aRequestMetadata, "RequestMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
     m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
+    m_aRequestMetadata = aRequestMetadata;
   }
 
   public void close ()
@@ -415,6 +419,15 @@ public class AS4RequestHandler implements AutoCloseable
 
     // Get all processors
     final ICommonsList <IAS4ServletMessageProcessorSPI> aAllProcessors = m_aProcessorSupplier.get ();
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Trying to invoke the following " +
+                    aAllProcessors.size () +
+                    " SPIs on message ID '" +
+                    sMessageID +
+                    "': " +
+                    aAllProcessors);
+
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
         try
@@ -427,7 +440,8 @@ public class AS4RequestHandler implements AutoCloseable
           final ICommonsList <Ebms3Error> aProcessingErrorMessages = new CommonsArrayList <> ();
           if (bIsUserMessage)
           {
-            aResult = aProcessor.processAS4UserMessage (aHttpHeaders,
+            aResult = aProcessor.processAS4UserMessage (m_aRequestMetadata,
+                                                        aHttpHeaders,
                                                         aUserMessage,
                                                         aPMode,
                                                         aPayloadNode,
@@ -437,7 +451,8 @@ public class AS4RequestHandler implements AutoCloseable
           }
           else
           {
-            aResult = aProcessor.processAS4SignalMessage (aHttpHeaders,
+            aResult = aProcessor.processAS4SignalMessage (m_aRequestMetadata,
+                                                          aHttpHeaders,
                                                           aSignalMessage,
                                                           aPMode,
                                                           aState,
@@ -494,6 +509,11 @@ public class AS4RequestHandler implements AutoCloseable
                 return;
               }
               aSPIResult.setAsyncResponseURL (sAsyncResultURL);
+              LOGGER.info ("Using asynchronous response URL '" +
+                           sAsyncResultURL +
+                           "' for message ID '" +
+                           sMessageID +
+                           "'");
             }
           }
 
@@ -506,6 +526,8 @@ public class AS4RequestHandler implements AutoCloseable
           else
           {
             // Signal message specific processing result handling
+            assert aResult instanceof AS4SignalMessageProcessorResult;
+
             if (aSignalMessage.getReceipt () == null)
             {
               final Ebms3UserMessage aPullReturnUserMsg = ((AS4SignalMessageProcessorResult) aResult).getPullReturnUserMessage ();
@@ -924,6 +946,13 @@ public class AS4RequestHandler implements AutoCloseable
 
     if (aErrorMessages.isEmpty ())
     {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("No checking for duplicate message with message ID '" +
+                      sMessageID +
+                      "' and profile ID '" +
+                      sProfileID +
+                      "'");
+
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
                                                  .registerAndCheck (sMessageID,
                                                                     sProfileID,
@@ -931,10 +960,15 @@ public class AS4RequestHandler implements AutoCloseable
                                                  .isBreak ();
       if (bIsDuplicate)
       {
-        LOGGER.info ("Not invoking SPIs, because message was already handled!");
+        LOGGER.warn ("Not invoking SPIs, because message with Message ID '" + sMessageID + "' was already handled!");
         aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
                                                                    sMessageID,
                                                                    "Another message with the same ID was already received!"));
+      }
+      else
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Message is not a duplicate");
       }
     }
 

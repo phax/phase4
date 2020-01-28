@@ -267,6 +267,8 @@ public class AS4IncomingHandler
             if (nIndex == 0)
             {
               // First MIME part -> SOAP document
+              if (LOGGER.isDebugEnabled ())
+                LOGGER.debug ("Parsing first MIME part as SOAP document");
 
               // Read SOAP document
               aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
@@ -290,6 +292,9 @@ public class AS4IncomingHandler
             else
             {
               // MIME Attachment (index is gt 0)
+              if (LOGGER.isDebugEnabled ())
+                LOGGER.debug ("Parsing MIME part #" + nIndex + " as attachment");
+
               final WSS4JAttachment aAttachment = aIAF.createAttachment (aBodyPart, aResHelper);
               aIncomingAttachments.add (aAttachment);
             }
@@ -297,6 +302,8 @@ public class AS4IncomingHandler
           nIndex++;
         }
       }
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Read MIME message with " + aIncomingAttachments.size () + " attachment(s)");
     }
     else
     {

@@ -31,6 +31,7 @@ import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
@@ -44,6 +45,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
   /**
    * Process incoming AS4 user message
    *
+   * @param aRequestMetadata
+   *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
    * @param aUserMessage
@@ -68,7 +71,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4UserMessage (@Nonnull HttpHeaderMap aHttpHeaders,
+  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingRequestMetadata aRequestMetadata,
+                                                   @Nonnull HttpHeaderMap aHttpHeaders,
                                                    @Nonnull Ebms3UserMessage aUserMessage,
                                                    @Nonnull IPMode aPMode,
                                                    @Nullable Node aPayload,
@@ -82,6 +86,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * not be added to a SignalMessage Because the will be ignored in the MSH -
    * Processing.
    *
+   * @param aRequestMetadata
+   *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
    * @param aSignalMessage
@@ -98,7 +104,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull HttpHeaderMap aHttpHeaders,
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingRequestMetadata aRequestMetadata,
+                                                           @Nonnull HttpHeaderMap aHttpHeaders,
                                                            @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,
                                                            @Nonnull IAS4MessageState aState,
