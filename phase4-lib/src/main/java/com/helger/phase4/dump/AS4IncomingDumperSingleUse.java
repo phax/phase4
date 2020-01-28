@@ -25,6 +25,7 @@ import javax.annotation.WillNotClose;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
  * A simple {@link IAS4IncomingDumper} that can be used for a single
@@ -53,7 +54,8 @@ public class AS4IncomingDumperSingleUse extends AbstractAS4IncomingDumperWithHea
   }
 
   @Override
-  protected OutputStream openOutputStream (final HttpHeaderMap aHttpHeaderMap) throws IOException
+  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                           @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     if (!m_aUsedOS.compareAndSet (false, true))
       throw new IllegalStateException ("This single-use dumper was already used.");

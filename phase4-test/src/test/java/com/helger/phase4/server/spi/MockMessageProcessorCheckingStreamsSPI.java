@@ -44,10 +44,10 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3PullRequest;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
@@ -69,7 +69,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   private static final Logger LOGGER = LoggerFactory.getLogger (MockMessageProcessorCheckingStreamsSPI.class);
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,
                                                           @Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aPMode,
@@ -118,7 +118,7 @@ public class MockMessageProcessorCheckingStreamsSPI implements IAS4ServletMessag
   }
 
   @Nonnull
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nonnull final IPMode aPmode,

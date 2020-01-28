@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
  * Abstract version of {@link IAS4IncomingDumper} that emits all headers on the
@@ -38,7 +39,9 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
 {
   /**
    * Create the output stream to which the data should be dumped.
-   * 
+   *
+   * @param aMessageMetadata
+   *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the incoming message. Never <code>null</code>.
    * @return The output stream to dump to or <code>null</code> if no dumping
@@ -47,12 +50,14 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException;
+  protected abstract OutputStream openOutputStream (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+                                                    @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   @Nullable
-  public OutputStream onNewRequest (@Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
+  public OutputStream onNewRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                    @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
-    final OutputStream ret = openOutputStream (aHttpHeaderMap);
+    final OutputStream ret = openOutputStream (aMessageMetadata, aHttpHeaderMap);
     if (ret != null && aHttpHeaderMap.isNotEmpty ())
     {
       // At least one header is contained

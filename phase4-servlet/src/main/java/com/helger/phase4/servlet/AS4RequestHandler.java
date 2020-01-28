@@ -71,6 +71,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
@@ -237,7 +238,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
-  private final AS4IncomingRequestMetadata m_aRequestMetadata;
+  private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
 
@@ -248,18 +249,18 @@ public class AS4RequestHandler implements AutoCloseable
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
                             @Nonnull final IIncomingAttachmentFactory aIAF,
-                            @Nonnull final AS4IncomingRequestMetadata aRequestMetadata)
+                            @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
-    ValueEnforcer.notNull (aRequestMetadata, "RequestMetadata");
+    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     // Create dynamically here, to avoid leaving too many streams open
     m_aResHelper = new AS4ResourceHelper ();
     m_aCryptoFactory = aCryptoFactory;
     m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
-    m_aRequestMetadata = aRequestMetadata;
+    m_aMessageMetadata = aMessageMetadata;
   }
 
   public void close ()
@@ -277,7 +278,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the error for Ebms error messages.
+   * Set the error for EBMS error messages.
    *
    * @param aLocale
    *        The locale. May not be <code>null</code>.
@@ -440,7 +441,7 @@ public class AS4RequestHandler implements AutoCloseable
           final ICommonsList <Ebms3Error> aProcessingErrorMessages = new CommonsArrayList <> ();
           if (bIsUserMessage)
           {
-            aResult = aProcessor.processAS4UserMessage (m_aRequestMetadata,
+            aResult = aProcessor.processAS4UserMessage (m_aMessageMetadata,
                                                         aHttpHeaders,
                                                         aUserMessage,
                                                         aPMode,
@@ -451,7 +452,7 @@ public class AS4RequestHandler implements AutoCloseable
           }
           else
           {
-            aResult = aProcessor.processAS4SignalMessage (m_aRequestMetadata,
+            aResult = aProcessor.processAS4SignalMessage (m_aMessageMetadata,
                                                           aHttpHeaders,
                                                           aSignalMessage,
                                                           aPMode,
@@ -1218,6 +1219,7 @@ public class AS4RequestHandler implements AutoCloseable
     };
     AS4IncomingHandler.parseAS4Message (m_aIAF,
                                         m_aResHelper,
+                                        m_aMessageMetadata,
                                         aServletRequestIS,
                                         aRequestHttpHeaders,
                                         aCallback,

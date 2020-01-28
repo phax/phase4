@@ -30,8 +30,8 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
@@ -45,8 +45,8 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
   /**
    * Process incoming AS4 user message
    *
-   * @param aRequestMetadata
-   *        Request metadata. Never <code>null</code>. Since v0.9.8.
+   * @param aMessageMetadata
+   *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
    * @param aUserMessage
@@ -71,7 +71,7 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingRequestMetadata aRequestMetadata,
+  AS4MessageProcessorResult processAS4UserMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                                                    @Nonnull HttpHeaderMap aHttpHeaders,
                                                    @Nonnull Ebms3UserMessage aUserMessage,
                                                    @Nonnull IPMode aPMode,
@@ -86,7 +86,7 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * not be added to a SignalMessage Because the will be ignored in the MSH -
    * Processing.
    *
-   * @param aRequestMetadata
+   * @param aMessageMetadata
    *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaders
    *        The original HTTP headers. Never <code>null</code>.
@@ -104,7 +104,7 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    * @return A non-<code>null</code> result object.
    */
   @Nonnull
-  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingRequestMetadata aRequestMetadata,
+  AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                                                            @Nonnull HttpHeaderMap aHttpHeaders,
                                                            @Nonnull Ebms3SignalMessage aSignalMessage,
                                                            @Nullable IPMode aPMode,

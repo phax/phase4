@@ -62,8 +62,8 @@ import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.servlet.IAS4IncomingRequestMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
@@ -317,7 +317,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   @Nonnull
-  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+  public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,
                                                           @Nonnull final Ebms3UserMessage aUserMessage,
                                                           @Nonnull final IPMode aSrcPMode,
@@ -347,9 +347,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       LOGGER.debug ("  ConversationId = '" + sConversationID + "'");
 
       // Log source properties
-      LOGGER.debug ("  MessageProperties:");
-      for (final Ebms3Property p : aUserMessage.getMessageProperties ().getProperty ())
-        LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
+      if (aUserMessage.getMessageProperties () != null)
+      {
+        LOGGER.debug ("  MessageProperties:");
+        for (final Ebms3Property p : aUserMessage.getMessageProperties ().getProperty ())
+          LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
+      }
+      else
+        LOGGER.debug ("  No Mesage Properties present");
 
       if (aPayload == null)
         LOGGER.debug ("  No Payload present");
@@ -482,7 +487,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         {
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug (sLogPrefix + "Invoking Peppol handler " + aHandler);
-          aHandler.handleIncomingSBD (aHttpHeaders.getClone (),
+          aHandler.handleIncomingSBD (aMessageMetadata,
+                                      aHttpHeaders.getClone (),
                                       aReadAttachment.payloadBytes (),
                                       aReadAttachment.standardBusinessDocument ());
         }
@@ -498,7 +504,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
   @Nonnull
   @UnsupportedOperation
-  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingRequestMetadata aRequestMetadata,
+  public AS4SignalMessageProcessorResult processAS4SignalMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                                   @Nonnull final HttpHeaderMap aHttpHeaders,
                                                                   @Nonnull final Ebms3SignalMessage aSignalMessage,
                                                                   @Nullable final IPMode aPMode,

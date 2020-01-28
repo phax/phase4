@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
  * Interface for dumping incoming requests
@@ -36,6 +37,8 @@ public interface IAS4IncomingDumper extends Serializable
   /**
    * Called for new requests.
    *
+   * @param aMessageMetadata
+   *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
    *        The HTTP headers of the request. Never <code>null</code>.
    * @return If <code>null</code> is returned, nothing is dumped, else each byte
@@ -46,5 +49,6 @@ public interface IAS4IncomingDumper extends Serializable
    *        {@link HttpHeaderMap}
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
+  OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+                             @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 }

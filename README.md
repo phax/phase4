@@ -170,8 +170,10 @@ If you like the project, a star on GitHub is always appreciated.
     * Added new classes `AS4IncomingDumperSingleUse` and `AS4OutgoingDumperSingleUse` for easier per-call dumping
     * Peppol client now has an additional callback to retrieve the AS4 URL where the message is send to
     * No longer throwing an exception if `phase4.properties` is not available. Changed to a warning.
-    * Added new class `AS4IncomingRequestMetadata` to hold metadata for each incoming request
-    * The MessageProcessor SPI API was modified to now include `IAS4IncomingRequestMetadata` (backwards incompatible change)  
+    * Added new class `AS4IncomingMessageMetadata` to hold metadata for each incoming message
+    * The `IAS4ServletMessageProcessorSPI` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
+    * The `IPhase4PeppolIncomingSBDHandlerSPI` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
+    * The `IAS4IncomingDumper` API was modified to now include `IAS4IncomingMessageMetadata` (backwards incompatible change)  
 * v0.9.7 - 2020-01-20
     * Removed the default configuration files from `phase4-peppol-client`
     * Added the new submodule `phase4-peppol-servlet` with the Peppol specific receiving stuff

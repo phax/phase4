@@ -71,6 +71,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.AS4Helper;
@@ -135,6 +136,8 @@ public class AS4IncomingHandler
   }
 
   /**
+   * @param aMessageMetadata
+   *        Request metadata. Never <code>null</code>.
    * @param aHttpHeaders
    *        the HTTP headers of the current request. Never <code>null</code>.
    * @param aRequestInputStream
@@ -148,7 +151,8 @@ public class AS4IncomingHandler
    * @throws IOException
    */
   @Nonnull
-  private static InputStream _getRequestIS (@Nonnull final HttpHeaderMap aHttpHeaders,
+  private static InputStream _getRequestIS (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                            @Nonnull final HttpHeaderMap aHttpHeaders,
                                             @Nonnull @WillNotClose final InputStream aRequestInputStream,
                                             @Nullable final IAS4IncomingDumper aIncomingDumper) throws IOException
   {
@@ -160,7 +164,7 @@ public class AS4IncomingHandler
     }
 
     // Dump worthy?
-    final OutputStream aOS = aDumper.onNewRequest (aHttpHeaders);
+    final OutputStream aOS = aDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
     if (aOS == null)
     {
       // No wrapping needed
@@ -205,6 +209,7 @@ public class AS4IncomingHandler
 
   public static void parseAS4Message (@Nonnull final IIncomingAttachmentFactory aIAF,
                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                      @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                       @Nonnull @WillClose final InputStream aPayloadIS,
                                       @Nonnull final HttpHeaderMap aHttpHeaders,
                                       @Nonnull final IAS4ParsedMessageCallback aCallback,
@@ -242,7 +247,7 @@ public class AS4IncomingHandler
         LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
 
       // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = _getRequestIS (aHttpHeaders, aPayloadIS, aIncomingDumper))
+      try (final InputStream aRequestIS = _getRequestIS (aMessageMetadata, aHttpHeaders, aPayloadIS, aIncomingDumper))
       {
         // PARSING MIME Message via MultipartStream
         final MultipartStream aMulti = new MultipartStream (aRequestIS,
@@ -312,7 +317,10 @@ public class AS4IncomingHandler
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSoapDocument = DOMReader.readXMLDOM (_getRequestIS (aHttpHeaders, aPayloadIS, aIncomingDumper));
+      aSoapDocument = DOMReader.readXMLDOM (_getRequestIS (aMessageMetadata,
+                                                           aHttpHeaders,
+                                                           aPayloadIS,
+                                                           aIncomingDumper));
 
       if (LOGGER.isDebugEnabled ())
         if (aSoapDocument != null)

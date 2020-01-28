@@ -1,4 +1,4 @@
-package com.helger.phase4.servlet;
+package com.helger.phase4.messaging;
 
 import java.time.LocalDateTime;
 
@@ -9,12 +9,12 @@ import com.helger.commons.string.StringHelper;
 
 /**
  * This interface lets you access optional metadata for a single incoming
- * request.
+ * message.
  *
  * @author Philip Helger
  * @since 0.9.8
  */
-public interface IAS4IncomingRequestMetadata
+public interface IAS4IncomingMessageMetadata
 {
   /**
    * @return The date and time when the request was received. May be
@@ -26,6 +26,17 @@ public interface IAS4IncomingRequestMetadata
   default boolean hasIncomingDT ()
   {
     return getIncomingDT () != null;
+  }
+
+  /**
+   * @return The message mode. May be <code>null</code>.
+   */
+  @Nullable
+  EAS4IncomingMessageMode getMode ();
+
+  default boolean hasMode ()
+  {
+    return getMode () != null;
   }
 
   /**

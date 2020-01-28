@@ -83,6 +83,8 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.messaging.EAS4IncomingMessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
@@ -90,6 +92,7 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingHandler.IAS4ParsedMessageCallback;
+import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.soap.ESOAPVersion;
@@ -123,6 +126,7 @@ public final class Phase4PeppolSender
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nullable final IPMode aSendingPMode,
                                                        @Nonnull final Locale aLocale,
+                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                        @Nonnull final HttpResponse aHttpResponse,
                                                        @Nonnull final byte [] aResponsePayload,
                                                        @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4PeppolException
@@ -162,7 +166,13 @@ public final class Phase4PeppolSender
     // Parse incoming message
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
-      AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
+      AS4IncomingHandler.parseAS4Message (aIAF,
+                                          aResHelper,
+                                          aMessageMetadata,
+                                          aPayloadIS,
+                                          aHttpHeaders,
+                                          aCallback,
+                                          aIncomingDumper);
     }
     catch (final Exception ex)
     {
@@ -239,6 +249,9 @@ public final class Phase4PeppolSender
     // Try interpret result as SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
+      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata ().setIncomingDTNow ()
+                                                                                            .setMode (EAS4IncomingMessageMode.RESPONSE);
+
       // Read response as EBMS3 Signal Message
       final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aCryptoFactory,
                                                                     aPModeResolver,
@@ -246,6 +259,7 @@ public final class Phase4PeppolSender
                                                                     aClientUserMsg.getAS4ResourceHelper (),
                                                                     aClientUserMsg.getPMode (),
                                                                     aLocale,
+                                                                    aMessageMetadata,
                                                                     aWrappedResponse.get (),
                                                                     aResponseEntity.getResponse (),
                                                                     aIncomingDumper);

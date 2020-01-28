@@ -33,6 +33,7 @@ import com.helger.commons.io.file.FileHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.dump.AbstractAS4IncomingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4IncomingDumper;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 /**
@@ -62,7 +63,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
 
   @Override
   @Nullable
-  protected OutputStream openOutputStream (@Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
+  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                           @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.get ();
     LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");

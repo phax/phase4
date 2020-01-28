@@ -33,6 +33,8 @@ import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactory;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.messaging.EAS4IncomingMessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.servlet.response.UnifiedResponse;
@@ -162,15 +164,16 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     // Start metadata
-    final AS4IncomingRequestMetadata aRequestMetadata = new AS4IncomingRequestMetadata ().setIncomingDTNow ()
-                                                                                         .setRemoteAddr (aRequestScope.getRemoteAddr ())
-                                                                                         .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                                         .setRemotePort (aRequestScope.getRemotePort ());
+    final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata ().setIncomingDTNow ()
+                                                                                          .setMode (EAS4IncomingMessageMode.REQUEST)
+                                                                                          .setRemoteAddr (aRequestScope.getRemoteAddr ())
+                                                                                          .setRemoteHost (aRequestScope.getRemoteHost ())
+                                                                                          .setRemotePort (aRequestScope.getRemotePort ());
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory,
                                                                    m_aPModeResolver,
                                                                    m_aIAF,
-                                                                   aRequestMetadata))
+                                                                   aMessageMetadata))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)
