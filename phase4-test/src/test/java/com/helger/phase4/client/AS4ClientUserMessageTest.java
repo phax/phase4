@@ -95,7 +95,7 @@ public final class AS4ClientUserMessageTest
   private static AS4ClientUserMessage _getMandatoryAttributesSuccessMessage ()
   {
     final AS4ClientUserMessage aClient = new AS4ClientUserMessage (s_aResMgr);
-    aClient.setSOAPVersion (ESoapVersion.SOAP_12);
+    aClient.setSoapVersion (ESoapVersion.SOAP_12);
 
     final String sSenderID = "MyPartyIDforSending";
     final String sResponderID = "MyPartyIDforReceving";

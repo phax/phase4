@@ -118,7 +118,7 @@ public final class MainAS4Client
         final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
                                                                                      aPayload,
                                                                                      aAttachments);
-        final Document aDoc = aMsg.getAsSOAPDocument (aPayload);
+        final Document aDoc = aMsg.getAsSoapDocument (aPayload);
         aPost.setEntity (new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ()));
       }
       else
@@ -138,7 +138,7 @@ public final class MainAS4Client
             final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSOAPVersion,
                                                                                          aPayload,
                                                                                          aAttachments);
-            Document aDoc = aMsg.getAsSOAPDocument (aPayload);
+            Document aDoc = aMsg.getAsSoapDocument (aPayload);
             aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                         eSOAPVersion,
                                                         aDoc,
@@ -159,7 +159,7 @@ public final class MainAS4Client
                                                                                            aAttachments);
               final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSOAPVersion,
                                                                                       AS4Signer.createSignedMessage (aCryptoFactory,
-                                                                                                                     aMsg.getAsSOAPDocument (null),
+                                                                                                                     aMsg.getAsSoapDocument (null),
                                                                                                                      eSOAPVersion,
                                                                                                                      aMsg.getMessagingID (),
                                                                                                                      aAttachments,

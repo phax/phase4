@@ -78,7 +78,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                            aMsg.getAsSOAPDocument (),
+                                                                            aMsg.getAsSoapDocument (),
                                                                             aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
@@ -99,7 +99,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
                                                                             AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                                                           aMsg.getAsSOAPDocument (),
+                                                                                                           aMsg.getAsSoapDocument (),
                                                                                                            m_eSOAPVersion,
                                                                                                            aMsg.getMessagingID (),
                                                                                                            aAttachments,
@@ -127,7 +127,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
-                                                                     aMsg.getAsSOAPDocument (),
+                                                                     aMsg.getAsSoapDocument (),
                                                                      aAttachments,
                                                                      m_aCryptoFactory,
                                                                      false,
@@ -150,7 +150,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                               aMsg.getAsSOAPDocument (),
+                                                               aMsg.getAsSoapDocument (),
                                                                m_eSOAPVersion,
                                                                aMsg.getMessagingID (),
                                                                aAttachments,

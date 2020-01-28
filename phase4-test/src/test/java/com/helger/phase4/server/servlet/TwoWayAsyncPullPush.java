@@ -123,7 +123,7 @@ public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
                                                   MessageHelperMethods.createEbms3MessageInfo (),
                                                   AS4TestConstants.DEFAULT_MPC,
                                                   aAny)
-                                         .getAsSOAPDocument ();
+                                         .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     String sResponse = sendPlainMessage (aEntity, true, null);
 

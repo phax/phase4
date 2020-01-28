@@ -91,7 +91,7 @@ public final class AS4ClientErrorMessageTest
   {
     final AS4ClientErrorMessage aClient = new AS4ClientErrorMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
+    aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     aClient.addErrorMessage (EEbmsError.EBMS_INVALID_HEADER, Locale.US);
     _ensureInvalidState (aClient);

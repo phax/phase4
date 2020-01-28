@@ -89,7 +89,7 @@ public final class AS4ClientPullRequestMessageTest
   {
     final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
+    aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     aClient.setMPC (AS4TestConstants.DEFAULT_MPC);
     _ensureValidState (aClient);

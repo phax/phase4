@@ -161,7 +161,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setPayloadInfo (aEbms3PayloadInfo);
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
-    final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSOAPDocument (m_aPayload);
+    final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSoapDocument (m_aPayload);
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
                       EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
@@ -808,7 +808,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                               aDoc.getAsSOAPDocument (m_aPayload),
+                                                               aDoc.getAsSoapDocument (m_aPayload),
                                                                m_eSoapVersion,
                                                                aDoc.getMessagingID (),
                                                                null,

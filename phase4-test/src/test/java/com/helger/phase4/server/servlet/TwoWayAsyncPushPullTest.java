@@ -138,7 +138,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
                                          MessageHelperMethods.createEbms3MessageInfo (aID),
                                          AS4TestConstants.DEFAULT_MPC,
                                          aAny)
-                                .getAsSOAPDocument ();
+                                .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
     sResponse = sendPlainMessage (aEntity, true, null);
 

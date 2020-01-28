@@ -77,7 +77,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                             MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                        null,
                                                                                                                        aAttachments)
-                                                                                        .getAsSOAPDocument (),
+                                                                                        .getAsSoapDocument (),
                                                                             aAttachments);
 
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
@@ -94,7 +94,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                         aMsg.getAsSOAPDocument (),
+                                                         aMsg.getAsSoapDocument (),
                                                          m_eSOAPVersion,
                                                          aMsg.getMessagingID (),
                                                          aAttachments,
@@ -116,7 +116,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     s_aResMgr));
 
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
-                                      .getAsSOAPDocument ();
+                                      .getAsSoapDocument ();
 
     final AS4MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                  aDoc,
@@ -139,7 +139,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                         aMsg.getAsSOAPDocument (),
+                                                         aMsg.getAsSoapDocument (),
                                                          m_eSOAPVersion,
                                                          aMsg.getMessagingID (),
                                                          aAttachments,

@@ -97,11 +97,11 @@ public final class AS4ClientReceiptMessageTest
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     _ensureInvalidState (aClient);
-    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
+    aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);
     _ensureInvalidState (aClient);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
+    aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
     _ensureInvalidState (aClient);
     aClient.setNonRepudiation (true);
     _ensureValidState (aClient);
@@ -111,10 +111,10 @@ public final class AS4ClientReceiptMessageTest
   public void buildMessageSignedChecks () throws Exception
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
-    aClient.setSOAPVersion (ESoapVersion.AS4_DEFAULT);
+    aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSOAPVersion (), aPayload, null, s_aResMgr));
+    aClient.setSOAPDocument (MockMessages.testSignedUserMessage (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 

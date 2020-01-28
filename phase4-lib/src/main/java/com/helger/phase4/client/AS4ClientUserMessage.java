@@ -635,16 +635,16 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                            aEbms3CollaborationInfo,
                                                            aEbms3PartyInfo,
                                                            aEbms3MessageProperties,
-                                                           getSOAPVersion ())
+                                                           getSoapVersion ())
                                                   .setMustUnderstand (true);
 
     if (aCallback != null)
       aCallback.onAS4Message (aUserMsg);
 
-    final Document aPureDoc = aUserMsg.getAsSOAPDocument (m_aPayload);
+    final Document aPureDoc = aUserMsg.getAsSoapDocument (m_aPayload);
 
     if (aCallback != null)
-      aCallback.onSOAPDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureDoc);
 
     // 1. compress
     // Is done when the attachments are added
@@ -665,7 +665,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         final boolean bMustUnderstand = true;
         final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
                                                                    aDoc,
-                                                                   getSOAPVersion (),
+                                                                   getSoapVersion (),
                                                                    aUserMsg.getMessagingID (),
                                                                    m_aAttachments,
                                                                    getAS4ResourceHelper (),
@@ -674,7 +674,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         aDoc = aSignedDoc;
 
         if (aCallback != null)
-          aCallback.onSignedSOAPDocument (aSignedDoc);
+          aCallback.onSignedSoapDocument (aSignedDoc);
 
         AS4HttpDebug.debug ( () -> "Signed UserMessage:\n" +
                                    XMLWriter.getNodeAsString (aSignedDoc, AS4HttpDebug.getDebugXMLWriterSettings ()));
@@ -687,7 +687,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         final boolean bMustUnderstand = true;
         if (bAttachmentsPresent)
         {
-          aMimeMsg = AS4Encryptor.encryptMimeMessage (getSOAPVersion (),
+          aMimeMsg = AS4Encryptor.encryptMimeMessage (getSoapVersion (),
                                                       aDoc,
                                                       m_aAttachments,
                                                       aCryptoFactory,
@@ -701,13 +701,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
         else
         {
           final Document aEncryptedDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
-                                                                              getSOAPVersion (),
+                                                                              getSoapVersion (),
                                                                               aDoc,
                                                                               bMustUnderstand,
                                                                               cryptParams ().getClone ());
 
           if (aCallback != null)
-            aCallback.onEncryptedSOAPDocument (aDoc);
+            aCallback.onEncryptedSoapDocument (aDoc);
 
           aDoc = aEncryptedDoc;
         }
@@ -718,7 +718,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     {
       // * not encrypted, not signed
       // * not encrypted, signed
-      aMimeMsg = MimeMessageCreator.generateMimeMessage (getSOAPVersion (), aDoc, m_aAttachments);
+      aMimeMsg = MimeMessageCreator.generateMimeMessage (getSoapVersion (), aDoc, m_aAttachments);
     }
 
     if (aMimeMsg != null)
@@ -728,6 +728,6 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
   }
 }

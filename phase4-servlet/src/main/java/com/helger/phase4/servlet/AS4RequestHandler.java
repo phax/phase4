@@ -805,7 +805,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                .setMustUnderstand (true);
 
     // We've got our response
-    final Document aResponseDoc = aReceiptMessage.getAsSOAPDocument ();
+    final Document aResponseDoc = aReceiptMessage.getAsSoapDocument ();
     final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
@@ -1054,7 +1054,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                      .setAlias (sEncryptionAlias);
             aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSOAPVersion (),
                                                                 aResponseAttachments,
-                                                                aResponseUserMsg.getAsSOAPDocument (),
+                                                                aResponseUserMsg.getAsSoapDocument (),
                                                                 aResponseUserMsg.getMessagingID (),
                                                                 aSigningParams,
                                                                 aCryptParams);
@@ -1067,7 +1067,7 @@ public class AS4RequestHandler implements AutoCloseable
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                               aState.getMessageID (),
                                                                               aLocalErrorMessages);
-            aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSOAPDocument (),
+            aAsyncResponseFactory = new AS4ResponseFactoryXML (aResponseErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion.getMimeType ());
           }
 
@@ -1111,7 +1111,7 @@ public class AS4RequestHandler implements AutoCloseable
           final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                     aState.getMessageID (),
                                                                     aErrorMessages);
-          return new AS4ResponseFactoryXML (aErrorMsg.getAsSOAPDocument (), eSoapVersion.getMimeType ());
+          return new AS4ResponseFactoryXML (aErrorMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
         }
         LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
       }
@@ -1135,7 +1135,7 @@ public class AS4RequestHandler implements AutoCloseable
             {
               final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
                                                                           aSPIResult.getPullReturnUserMsg ());
-              return new AS4ResponseFactoryXML (aResponseUserMsg.getAsSOAPDocument (), eSoapVersion.getMimeType ());
+              return new AS4ResponseFactoryXML (aResponseUserMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
             }
 
             if (aEbmsUserMessage != null)
@@ -1179,7 +1179,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                        .setAlias (sEncryptionAlias);
               return _createResponseUserMessage (aLeg2.getProtocol ().getSOAPVersion (),
                                                  aResponseAttachments,
-                                                 aResponseUserMsg.getAsSOAPDocument (),
+                                                 aResponseUserMsg.getAsSoapDocument (),
                                                  aResponseUserMsg.getMessagingID (),
                                                  aSigningParams,
                                                  aCryptParams);

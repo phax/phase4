@@ -513,7 +513,7 @@ public final class Phase4PeppolSender
 
       // Otherwise Oxalis dies
       aUserMsg.setQuoteHttpHeaders (false);
-      aUserMsg.setSOAPVersion (ESoapVersion.SOAP_12);
+      aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
       // Set the keystore/truststore parameters
       aUserMsg.setAS4CryptoFactory (aCryptoFactory);
       aUserMsg.setPMode (aSrcPMode, true);

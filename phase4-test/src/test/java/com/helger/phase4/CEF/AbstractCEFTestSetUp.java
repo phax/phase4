@@ -77,7 +77,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                               aMsg.getAsSOAPDocument (aPayload),
+                                                               aMsg.getAsSoapDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
                                                                aAttachments,

@@ -118,7 +118,7 @@ public final class DropFolderUserMessage
           final X509Certificate aTheirCert = CertificateHelper.convertStringToCertficate (aEndpoint.getCertificate ());
 
           final AS4ClientUserMessage aClient = new AS4ClientUserMessage (aResHelper);
-          aClient.setSOAPVersion (ESoapVersion.SOAP_12);
+          aClient.setSoapVersion (ESoapVersion.SOAP_12);
 
           // Keystore data
           aClient.setAS4CryptoFactory (aCF);

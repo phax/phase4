@@ -49,14 +49,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
                                          IAS4Message,
                                          IGenericImplTrait <IMPLTYPE>
 {
-  private final ESoapVersion m_eSOAPVersion;
+  private final ESoapVersion m_eSoapVersion;
   private final EAS4MessageType m_eMsgType;
   private final String m_sMessagingID;
   protected final Ebms3Messaging m_aMessaging = new Ebms3Messaging ();
 
-  public AbstractAS4Message (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final EAS4MessageType eMsgType)
+  public AbstractAS4Message (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final EAS4MessageType eMsgType)
   {
-    m_eSOAPVersion = ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     m_eMsgType = ValueEnforcer.notNull (eMsgType, "MessageType");
     m_sMessagingID = MessageHelperMethods.createRandomMessagingID ();
 
@@ -65,9 +65,9 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   }
 
   @Nonnull
-  public final ESoapVersion getSOAPVersion ()
+  public final ESoapVersion getSoapVersion ()
   {
-    return m_eSOAPVersion;
+    return m_eSoapVersion;
   }
 
   @Nonnull
@@ -86,7 +86,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
   @Nonnull
   public final IMPLTYPE setMustUnderstand (final boolean bMustUnderstand)
   {
-    switch (m_eSOAPVersion)
+    switch (m_eSoapVersion)
     {
       case SOAP_11:
         m_aMessaging.setS11MustUnderstand (Boolean.valueOf (bMustUnderstand));
@@ -95,13 +95,13 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         m_aMessaging.setS12MustUnderstand (Boolean.valueOf (bMustUnderstand));
         break;
       default:
-        throw new IllegalStateException ("Unsupported SOAP version " + m_eSOAPVersion);
+        throw new IllegalStateException ("Unsupported SOAP version " + m_eSoapVersion);
     }
     return thisAsT ();
   }
 
   @Nonnull
-  public final Document getAsSOAPDocument (@Nullable final Node aPayload)
+  public final Document getAsSoapDocument (@Nullable final Node aPayload)
   {
     // Convert to DOM Node
     final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (m_aMessaging);
@@ -110,7 +110,7 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
 
     final Node aRealPayload = aPayload instanceof Document ? ((Document) aPayload).getDocumentElement () : aPayload;
 
-    switch (m_eSOAPVersion)
+    switch (m_eSoapVersion)
     {
       case SOAP_11:
       {
@@ -135,14 +135,14 @@ public abstract class AbstractAS4Message <IMPLTYPE extends AbstractAS4Message <I
         return Ebms3WriterBuilder.soap12 ().getAsDocument (aSoapEnv);
       }
       default:
-        throw new IllegalStateException ("Unsupported SOAP version " + m_eSOAPVersion);
+        throw new IllegalStateException ("Unsupported SOAP version " + m_eSoapVersion);
     }
   }
 
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("SOAPVersion", m_eSOAPVersion)
+    return new ToStringGenerator (this).append ("SOAPVersion", m_eSoapVersion)
                                        .append ("MsgType", m_eMsgType)
                                        .append ("MessagingID", m_sMessagingID)
                                        .getToString ();

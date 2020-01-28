@@ -201,7 +201,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage)
                                               .setMustUnderstand (true)
-                                              .getAsSOAPDocument (aPayload);
+                                              .getAsSoapDocument (aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
                       false,

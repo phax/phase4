@@ -119,7 +119,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
@@ -142,7 +142,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
@@ -176,7 +176,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
       final AS4UserMessage aMsg = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).setMustUnderstand (true);
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                 aMsg.getAsSOAPDocument (m_aPayload),
+                                                                 aMsg.getAsSoapDocument (m_aPayload),
                                                                  m_eSoapVersion,
                                                                  aMsg.getMessagingID (),
                                                                  null,
@@ -225,7 +225,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
       final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                                 .setMustUnderstand (true)
-                                                .getAsSOAPDocument (m_aPayload);
+                                                .getAsSoapDocument (m_aPayload);
 
       sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
                         false,
@@ -246,7 +246,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMpc ("http://random.com/testmpc");
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -259,7 +259,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (null);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, "");
   }
@@ -276,7 +276,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, "");
   }
@@ -296,7 +296,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,
@@ -318,7 +318,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
     final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
                                         .setMustUnderstand (true)
-                                        .getAsSOAPDocument (m_aPayload);
+                                        .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                       false,

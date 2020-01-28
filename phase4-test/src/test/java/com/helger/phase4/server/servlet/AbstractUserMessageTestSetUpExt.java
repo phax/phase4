@@ -116,7 +116,7 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
     if (aMessagingIDConsumer != null)
       aMessagingIDConsumer.accept (aMsg.getMessagingID ());
 
-    return aAttachments != null ? aMsg.getAsSOAPDocument (null) : aMsg.getAsSOAPDocument (aPayload);
+    return aAttachments != null ? aMsg.getAsSoapDocument (null) : aMsg.getAsSoapDocument (aPayload);
   }
 
   @Nonnull

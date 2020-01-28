@@ -61,7 +61,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSOAPDocument (aPayload);
+                                      .getAsSoapDocument (aPayload);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 

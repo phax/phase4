@@ -69,7 +69,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSOAPDocument (aPayload);
+                                      .getAsSoapDocument (aPayload);
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -115,7 +115,7 @@ public final class UserMessageSoapBodyPayloadTest extends AbstractUserMessageTes
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, aAttachments)
-                                .getAsSOAPDocument (aPayload);
+                                .getAsSoapDocument (aPayload);
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, false, m_aCryptParams);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);

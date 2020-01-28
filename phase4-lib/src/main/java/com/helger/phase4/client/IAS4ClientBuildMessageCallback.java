@@ -49,7 +49,7 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
    * @param aDoc
    *        The created SOAP document
    */
-  default void onSOAPDocument (@Nonnull final Document aDoc)
+  default void onSoapDocument (@Nonnull final Document aDoc)
   {}
 
   /**
@@ -59,7 +59,7 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
    * @param aDoc
    *        The signed SOAP document
    */
-  default void onSignedSOAPDocument (@Nonnull final Document aDoc)
+  default void onSignedSoapDocument (@Nonnull final Document aDoc)
   {}
 
   /**
@@ -69,7 +69,7 @@ public interface IAS4ClientBuildMessageCallback extends Serializable
    * @param aDoc
    *        The encrypted SOAP document
    */
-  default void onEncryptedSOAPDocument (@Nonnull final Document aDoc)
+  default void onEncryptedSoapDocument (@Nonnull final Document aDoc)
   {}
 
   /**

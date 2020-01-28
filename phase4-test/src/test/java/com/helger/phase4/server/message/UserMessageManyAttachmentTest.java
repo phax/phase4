@@ -98,7 +98,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                                             MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                        null,
                                                                                                                        aAttachments)
-                                                                                        .getAsSOAPDocument (),
+                                                                                        .getAsSoapDocument (),
                                                                             aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 
@@ -128,7 +128,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
                                                                             AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                                                                           aMsg.getAsSOAPDocument (),
+                                                                                                           aMsg.getAsSoapDocument (),
                                                                                                            m_eSOAPVersion,
                                                                                                            aMsg.getMessagingID (),
                                                                                                            aAttachments,
@@ -167,7 +167,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
                                                                      MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
                                                                                                                 null,
                                                                                                                 aAttachments)
-                                                                                 .getAsSOAPDocument (),
+                                                                                 .getAsSoapDocument (),
                                                                      aAttachments,
                                                                      m_aCryptoFactory,
                                                                      false,
@@ -201,7 +201,7 @@ public final class UserMessageManyAttachmentTest extends AbstractUserMessageTest
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                         aMsg.getAsSOAPDocument (),
+                                                         aMsg.getAsSoapDocument (),
                                                          m_eSOAPVersion,
                                                          aMsg.getMessagingID (),
                                                          aAttachments,

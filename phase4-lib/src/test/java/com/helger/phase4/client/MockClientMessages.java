@@ -71,7 +71,7 @@ final class MockClientMessages
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
-                                                               aMsg.getAsSOAPDocument (aPayload),
+                                                               aMsg.getAsSoapDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
                                                                aAttachments,
@@ -90,7 +90,7 @@ final class MockClientMessages
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
-                                                               aErrorMsg.getAsSOAPDocument (),
+                                                               aErrorMsg.getAsSoapDocument (),
                                                                eSOAPVersion,
                                                                aErrorMsg.getMessagingID (),
                                                                aAttachments,
@@ -114,7 +114,7 @@ final class MockClientMessages
                                                                     aUserMessage,
                                                                     true)
                                                            .setMustUnderstand (true);
-    final Document aDoc = aReceiptMsg.getAsSOAPDocument ();
+    final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aDoc,
@@ -194,7 +194,7 @@ final class MockClientMessages
                                                        aEbms3MessageProperties,
                                                        eSOAPVersion)
                                               .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aDoc.getAsSoapDocument (aPayload);
   }
 
   @Nullable
@@ -228,6 +228,6 @@ final class MockClientMessages
                                                        aEbms3MessageProperties,
                                                        eSOAPVersion)
                                               .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aDoc.getAsSoapDocument (aPayload);
   }
 }

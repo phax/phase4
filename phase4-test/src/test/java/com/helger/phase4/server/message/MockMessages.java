@@ -70,7 +70,7 @@ public final class MockMessages
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
-                                                               aMsg.getAsSOAPDocument (aPayload),
+                                                               aMsg.getAsSoapDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
                                                                aAttachments,
@@ -89,7 +89,7 @@ public final class MockMessages
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
-                                                               aErrorMsg.getAsSOAPDocument (),
+                                                               aErrorMsg.getAsSoapDocument (),
                                                                eSOAPVersion,
                                                                aErrorMsg.getMessagingID (),
                                                                aAttachments,
@@ -200,7 +200,7 @@ public final class MockMessages
                                                        aEbms3MessageProperties,
                                                        eSOAPVersion)
                                               .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aDoc.getAsSoapDocument (aPayload);
   }
 
   @Nullable
@@ -234,6 +234,6 @@ public final class MockMessages
                                                        aEbms3MessageProperties,
                                                        eSOAPVersion)
                                               .setMustUnderstand (true);
-    return aDoc.getAsSOAPDocument (aPayload);
+    return aDoc.getAsSoapDocument (aPayload);
   }
 }

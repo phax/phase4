@@ -95,7 +95,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
-  private ESoapVersion m_eSOAPVersion = ESoapVersion.AS4_DEFAULT;
+  private ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
   private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
@@ -235,25 +235,51 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The SOAP version to be used. May not be <code>null</code>.
+   * @deprecated Use {@link #getSoapVersion()} instead; since v0.9.8
    */
+  @Deprecated
   @Nonnull
   public final ESoapVersion getSOAPVersion ()
   {
-    return m_eSOAPVersion;
+    return getSoapVersion ();
+  }
+
+  /**
+   * @return The SOAP version to be used. May not be <code>null</code>.
+   */
+  @Nonnull
+  public final ESoapVersion getSoapVersion ()
+  {
+    return m_eSoapVersion;
   }
 
   /**
    * This method sets the SOAP Version. AS4 - Profile default is SOAP 1.2
    *
-   * @param eSOAPVersion
-   *        SOAPVersion which should be set. MAy not be <code>null</code>.
+   * @param eSoapVersion
+   *        SOAP version which should be set. May not be <code>null</code>.
+   * @return this for chaining
+   * @deprecated Use {@link #setSoapVersion(ESoapVersion)} instead; since v0.9.8
+   */
+  @Deprecated
+  @Nonnull
+  public final IMPLTYPE setSOAPVersion (@Nonnull final ESoapVersion eSoapVersion)
+  {
+    return setSoapVersion (eSoapVersion);
+  }
+
+  /**
+   * This method sets the SOAP Version. AS4 - Profile default is SOAP 1.2
+   *
+   * @param eSoapVersion
+   *        SOAP version which should be set. May not be <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setSOAPVersion (@Nonnull final ESoapVersion eSOAPVersion)
+  public final IMPLTYPE setSoapVersion (@Nonnull final ESoapVersion eSoapVersion)
   {
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-    m_eSOAPVersion = eSOAPVersion;
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    m_eSoapVersion = eSoapVersion;
     return thisAsT ();
   }
 

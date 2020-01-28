@@ -69,8 +69,8 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 
   private void _checkMandatoryAttributes ()
   {
-    if (getSOAPVersion () == null)
-      throw new IllegalStateException ("A SOAPVersion must be set.");
+    if (getSoapVersion () == null)
+      throw new IllegalStateException ("A SOAP version must be set.");
 
     if (m_aErrorMessages.isEmpty ())
       throw new IllegalStateException ("No Errors specified!");
@@ -90,17 +90,17 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID ());
 
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSOAPVersion (), aEbms3MessageInfo, m_aErrorMessages);
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSoapVersion (), aEbms3MessageInfo, m_aErrorMessages);
 
     if (aCallback != null)
       aCallback.onAS4Message (aErrorMsg);
 
-    final Document aDoc = aErrorMsg.getAsSOAPDocument ();
+    final Document aDoc = aErrorMsg.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSOAPDocument (aDoc);
+      aCallback.onSoapDocument (aDoc);
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
   }
 }

@@ -124,7 +124,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                               .setMustUnderstand (true);
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                               aMsg.getAsSOAPDocument (m_aPayload),
+                                                               aMsg.getAsSoapDocument (m_aPayload),
                                                                m_eSoapVersion,
                                                                aMsg.getMessagingID (),
                                                                null,
@@ -442,7 +442,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     aAttachments.get (0).setSourceStreamProvider (new ClassPathResource ("attachment/CompressedPayload.txt"));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                            aMsg.getAsSOAPDocument (m_aPayload),
+                                                                            aMsg.getAsSoapDocument (m_aPayload),
                                                                             aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
                      false,
@@ -617,7 +617,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
-                                                                     aMsg.getAsSOAPDocument (),
+                                                                     aMsg.getAsSoapDocument (),
                                                                      aAttachments,
                                                                      m_aCryptoFactory,
                                                                      false,
@@ -646,7 +646,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, m_aPayload, null);
     final Document aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                                m_eSoapVersion,
-                                                               aMsg.getAsSOAPDocument (m_aPayload),
+                                                               aMsg.getAsSoapDocument (m_aPayload),
                                                                true,
                                                                m_aCryptParams);
 
@@ -696,7 +696,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                         aMsg.getAsSOAPDocument (null),
+                                                         aMsg.getAsSoapDocument (null),
                                                          m_eSoapVersion,
                                                          aMsg.getMessagingID (),
                                                          aAttachments,
@@ -744,7 +744,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void AS4_TA27 () throws Exception
   {
-    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null).getAsSOAPDocument (m_aPayload);
+    final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null).getAsSoapDocument (m_aPayload);
 
     NodeList nList = aDoc.getElementsByTagName ("eb:PartyId");
     final String sPartyID = nList.item (0).getTextContent ();
@@ -789,7 +789,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                         MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion,
                                                                                                                    null,
                                                                                                                    aAttachments)
-                                                                                    .getAsSOAPDocument (),
+                                                                                    .getAsSoapDocument (),
                                                                         aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
 

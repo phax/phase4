@@ -192,7 +192,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
     // Now send receipt
     final Document aDoc = MockMessages.testReceiptMessage (ESoapVersion.AS4_DEFAULT, aEbms3UserMessage, null)
-                                      .getAsSOAPDocument ();
+                                      .getAsSoapDocument ();
 
     // We've got our response
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);

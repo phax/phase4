@@ -61,7 +61,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
 
   private void _checkMandatoryAttributes ()
   {
-    if (getSOAPVersion () == null)
+    if (getSoapVersion () == null)
       throw new IllegalStateException ("A SOAPVersion must be set.");
     if (StringHelper.hasNoText (m_sMPC))
       throw new IllegalStateException ("A MPC has to be present");
@@ -76,7 +76,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID ());
 
-    final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSOAPVersion (),
+    final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSoapVersion (),
                                                                              aEbms3MessageInfo,
                                                                              m_sMPC,
                                                                              any ().getClone ());
@@ -84,10 +84,10 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     if (aCallback != null)
       aCallback.onAS4Message (aPullRequest);
 
-    final Document aPureDoc = aPullRequest.getAsSOAPDocument ();
+    final Document aPureDoc = aPullRequest.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSOAPDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureDoc);
 
     Document aDoc = aPureDoc;
     if (signingParams ().isSigningEnabled ())
@@ -97,7 +97,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
       final boolean bMustUnderstand = true;
       final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
                                                                  aDoc,
-                                                                 getSOAPVersion (),
+                                                                 getSoapVersion (),
                                                                  aPullRequest.getMessagingID (),
                                                                  null,
                                                                  getAS4ResourceHelper (),
@@ -105,12 +105,12 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
                                                                  signingParams ().getClone ());
 
       if (aCallback != null)
-        aCallback.onSignedSOAPDocument (aSignedDoc);
+        aCallback.onSignedSoapDocument (aSignedDoc);
 
       aDoc = aSignedDoc;
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
   }
 }

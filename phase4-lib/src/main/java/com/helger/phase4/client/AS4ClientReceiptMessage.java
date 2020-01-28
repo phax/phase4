@@ -121,7 +121,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
   private void _checkMandatoryAttributes ()
   {
-    if (getSOAPVersion () == null)
+    if (getSoapVersion () == null)
       throw new IllegalStateException ("A SOAPVersion must be set.");
 
     if (m_aSOAPDocument == null && m_aEbms3UserMessage == null)
@@ -145,7 +145,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   {
     _checkMandatoryAttributes ();
 
-    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (getSOAPVersion (),
+    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (getSoapVersion (),
                                                                     sMessageID,
                                                                     m_aEbms3UserMessage,
                                                                     m_aSOAPDocument,
@@ -154,10 +154,10 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     if (aCallback != null)
       aCallback.onAS4Message (aReceiptMsg);
 
-    final Document aPureDoc = aReceiptMsg.getAsSOAPDocument ();
+    final Document aPureDoc = aReceiptMsg.getAsSoapDocument ();
 
     if (aCallback != null)
-      aCallback.onSOAPDocument (aPureDoc);
+      aCallback.onSoapDocument (aPureDoc);
 
     Document aDoc = aPureDoc;
 
@@ -168,7 +168,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
       final boolean bMustUnderstand = true;
       final Document aSignedDoc = AS4Signer.createSignedMessage (aCryptoFactory,
                                                                  aDoc,
-                                                                 getSOAPVersion (),
+                                                                 getSoapVersion (),
                                                                  aReceiptMsg.getMessagingID (),
                                                                  null,
                                                                  getAS4ResourceHelper (),
@@ -176,12 +176,12 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
                                                                  signingParams ().getClone ());
 
       if (aCallback != null)
-        aCallback.onSignedSOAPDocument (aSignedDoc);
+        aCallback.onSignedSoapDocument (aSignedDoc);
 
       aDoc = aSignedDoc;
     }
 
     // Wrap SOAP XML
-    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSOAPVersion ().getMimeType ()));
+    return new AS4ClientBuiltMessage (sMessageID, new HttpXMLEntity (aDoc, getSoapVersion ().getMimeType ()));
   }
 }
