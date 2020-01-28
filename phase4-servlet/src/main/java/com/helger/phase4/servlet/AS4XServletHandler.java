@@ -164,11 +164,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     // Start metadata
-    final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata ().setIncomingDTNow ()
-                                                                                          .setMode (EAS4IncomingMessageMode.REQUEST)
-                                                                                          .setRemoteAddr (aRequestScope.getRemoteAddr ())
-                                                                                          .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                                          .setRemotePort (aRequestScope.getRemotePort ());
+    final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
+                                                                                                                         .setRemoteHost (aRequestScope.getRemoteHost ())
+                                                                                                                         .setRemotePort (aRequestScope.getRemotePort ());
 
     try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory,
                                                                    m_aPModeResolver,

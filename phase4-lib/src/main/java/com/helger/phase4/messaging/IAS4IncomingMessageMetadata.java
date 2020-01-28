@@ -3,6 +3,7 @@ package com.helger.phase4.messaging;
 import java.time.LocalDateTime;
 
 import javax.annotation.CheckForSigned;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.string.StringHelper;
@@ -17,27 +18,17 @@ import com.helger.commons.string.StringHelper;
 public interface IAS4IncomingMessageMetadata
 {
   /**
-   * @return The date and time when the request was received. May be
+   * @return The date and time when the request was received. Never
    *         <code>null</code>.
    */
-  @Nullable
+  @Nonnull
   LocalDateTime getIncomingDT ();
-
-  default boolean hasIncomingDT ()
-  {
-    return getIncomingDT () != null;
-  }
 
   /**
    * @return The message mode. May be <code>null</code>.
    */
-  @Nullable
+  @Nonnull
   EAS4IncomingMessageMode getMode ();
-
-  default boolean hasMode ()
-  {
-    return getMode () != null;
-  }
 
   /**
    * Returns the Internet Protocol (IP) address of the client or last proxy that

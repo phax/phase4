@@ -249,8 +249,7 @@ public final class Phase4PeppolSender
     // Try interpret result as SignalMessage
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
-      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata ().setIncomingDTNow ()
-                                                                                            .setMode (EAS4IncomingMessageMode.RESPONSE);
+      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.RESPONSE);
 
       // Read response as EBMS3 Signal Message
       final Ebms3SignalMessage aSignalMessage = parseSignalMessage (aCryptoFactory,

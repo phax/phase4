@@ -6,6 +6,7 @@ import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
@@ -20,45 +21,30 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
  */
 public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 {
-  private LocalDateTime m_aIncomingDT;
-  private EAS4IncomingMessageMode m_eMode;
+  private final LocalDateTime m_aIncomingDT;
+  private final EAS4IncomingMessageMode m_eMode;
   private String m_sRemoteAddr;
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
 
-  public AS4IncomingMessageMetadata ()
-  {}
+  public AS4IncomingMessageMetadata (@Nonnull final EAS4IncomingMessageMode eMode)
+  {
+    ValueEnforcer.notNull (eMode, "Mode");
 
-  @Nullable
+    m_aIncomingDT = PDTFactory.getCurrentLocalDateTime ();
+    m_eMode = eMode;
+  }
+
+  @Nonnull
   public LocalDateTime getIncomingDT ()
   {
     return m_aIncomingDT;
   }
 
   @Nonnull
-  public AS4IncomingMessageMetadata setIncomingDT (@Nullable final LocalDateTime aIncomingDT)
-  {
-    m_aIncomingDT = aIncomingDT;
-    return this;
-  }
-
-  @Nonnull
-  public AS4IncomingMessageMetadata setIncomingDTNow ()
-  {
-    return setIncomingDT (PDTFactory.getCurrentLocalDateTime ());
-  }
-
-  @Nullable
   public EAS4IncomingMessageMode getMode ()
   {
     return m_eMode;
-  }
-
-  @Nonnull
-  public AS4IncomingMessageMetadata setMode (@Nullable final EAS4IncomingMessageMode eMode)
-  {
-    m_eMode = eMode;
-    return this;
   }
 
   @Nullable
