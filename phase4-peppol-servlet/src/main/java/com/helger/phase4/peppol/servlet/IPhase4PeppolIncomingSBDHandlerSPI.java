@@ -22,6 +22,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -37,7 +38,7 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    * Handle the provided incoming StandardBusinessDocument
    *
    * @param aMessageMetadata
-   *        Message metadata. Never <code>null</code>. Since v0.9.8
+   *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHeaders
    *        The HTTP headers of the incoming request. Never <code>null</code>.
    * @param aSBDBytes
@@ -45,11 +46,15 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
    * @param aSBD
    *        The incoming document that is never <code>null</code>. This is the
    *        pre-parsed SBD bytes.
+   * @param aPeppolSBD
+   *        The pre-parsed Peppol Standard Business Document. Never
+   *        <code>null</code>. Since v0.9.8.
    * @throws Exception
    *         In case it cannot be processed.
    */
   void handleIncomingSBD (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                           @Nonnull HttpHeaderMap aHeaders,
                           @Nonnull byte [] aSBDBytes,
-                          @Nonnull StandardBusinessDocument aSBD) throws Exception;
+                          @Nonnull StandardBusinessDocument aSBD,
+                          @Nonnull PeppolSBDHDocument aPeppolSBD) throws Exception;
 }

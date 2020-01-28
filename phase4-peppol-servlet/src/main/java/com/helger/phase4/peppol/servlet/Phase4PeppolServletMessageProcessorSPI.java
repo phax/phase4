@@ -442,20 +442,31 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       final ReadAttachment aReadAttachment = aReadAttachments.getFirst ();
       final String sLogPrefix = "[" + sMessageID + "] ";
 
+      // Extract Peppol values from SBD
+      final PeppolSBDHDocument aPeppolSBD;
+      try
+      {
+        aPeppolSBD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
+      }
+      catch (final PeppolSBDHDocumentReadException ex)
+      {
+        return AS4MessageProcessorResult.createFailure ("Failed to extract the Peppol data from SBDH. Technical details: " +
+                                                        ex.getClass ().getName () +
+                                                        " - " +
+                                                        ex.getMessage ());
+      }
+
       // Start consistency checks?
       if (Phase4PeppolServletConfiguration.isReceiverCheckEnabled ())
       {
         try
         {
-          // Extract Peppol values from SBD
-          final PeppolSBDHDocument aDD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
-
           // Get the endpoint information required from the recipient
           // Check if an endpoint is registered
           final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
-                                                                       aDD.getReceiverAsIdentifier (),
-                                                                       aDD.getDocumentTypeAsIdentifier (),
-                                                                       aDD.getProcessAsIdentifier ());
+                                                                       aPeppolSBD.getReceiverAsIdentifier (),
+                                                                       aPeppolSBD.getDocumentTypeAsIdentifier (),
+                                                                       aPeppolSBD.getProcessAsIdentifier ());
 
           if (aReceiverEndpoint == null)
           {
@@ -469,7 +480,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           // Get the recipient certificate from the SMP
           _checkIfEndpointCertificateMatches (sMessageID, aReceiverEndpoint);
         }
-        catch (final Phase4Exception | PeppolSBDHDocumentReadException ex)
+        catch (final Phase4Exception ex)
         {
           return AS4MessageProcessorResult.createFailure (sLogPrefix +
                                                           "The contained StandardBusinessDocument could not be read. Technical details: " +
@@ -490,7 +501,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           aHandler.handleIncomingSBD (aMessageMetadata,
                                       aHttpHeaders.getClone (),
                                       aReadAttachment.payloadBytes (),
-                                      aReadAttachment.standardBusinessDocument ());
+                                      aReadAttachment.standardBusinessDocument (),
+                                      aPeppolSBD);
         }
         catch (final Exception ex)
         {
