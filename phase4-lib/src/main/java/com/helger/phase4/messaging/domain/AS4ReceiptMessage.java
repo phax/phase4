@@ -49,9 +49,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4ReceiptMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    super (eSOAPVersion, EAS4MessageType.RECEIPT);
+    super (eSoapVersion, EAS4MessageType.RECEIPT);
 
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
@@ -103,13 +103,13 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
   /**
    * This method creates a receipt message.
    *
-   * @param eSOAPVersion
+   * @param eSoapVersion
    *        SOAP Version which should be used
    * @param sMessageID
    *        Message ID to use. May neither be <code>null</code> nor empty.
    * @param aEbms3UserMessage
    *        The received usermessage which should be responded too
-   * @param aSOAPDocument
+   * @param aSoapDocument
    *        If the SOAPDocument has WSS4j elements and the following parameter
    *        is true NonRepudiation will be used if the message is signed
    * @param bShouldUseNonRepudiation
@@ -117,14 +117,14 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
    * @return AS4ReceiptMessage
    */
   @Nonnull
-  public static AS4ReceiptMessage create (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4ReceiptMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                           @Nonnull @Nonempty final String sMessageID,
                                           @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                          @Nullable final Node aSOAPDocument,
+                                          @Nullable final Node aSoapDocument,
                                           @Nonnull final boolean bShouldUseNonRepudiation)
   {
     // Only for signed messages
-    final ICommonsList <Node> aDSRefs = _getAllReferences (aSOAPDocument);
+    final ICommonsList <Node> aDSRefs = _getAllReferences (aSoapDocument);
 
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
 
@@ -159,12 +159,12 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // If the original usermessage is not signed, the receipt will contain the
       // original message part with out wss4j security
-      aEbms3Receipt.addAny (AS4UserMessage.create (eSOAPVersion, aEbms3UserMessage)
+      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage)
                                           .getAsSoapDocument ()
                                           .getDocumentElement ());
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
-    return new AS4ReceiptMessage (eSOAPVersion, aSignalMessage);
+    return new AS4ReceiptMessage (eSoapVersion, aSignalMessage);
   }
 }

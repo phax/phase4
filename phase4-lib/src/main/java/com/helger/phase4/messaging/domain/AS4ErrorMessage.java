@@ -41,10 +41,10 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public AS4ErrorMessage (@Nonnull final ESoapVersion eSoapVersion,
                           @Nonnull final Ebms3SignalMessage aSignalMessage) throws IllegalArgumentException
   {
-    super (eSOAPVersion, EAS4MessageType.ERROR_MESSAGE);
+    super (eSoapVersion, EAS4MessageType.ERROR_MESSAGE);
 
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
@@ -67,17 +67,17 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
   }
 
   @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                         @Nullable final String sRefToMessageID,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
     // Creates a random message ID
     final Ebms3MessageInfo aMessageInfo = MessageHelperMethods.createEbms3MessageInfo (sRefToMessageID);
-    return create (eSOAPVersion, aMessageInfo, aErrorMessages);
+    return create (eSoapVersion, aMessageInfo, aErrorMessages);
   }
 
   @Nonnull
-  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4ErrorMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                         @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                         @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
   {
@@ -89,6 +89,6 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
     // Error Message
     aSignalMessage.setError (aErrorMessages);
 
-    return new AS4ErrorMessage (eSOAPVersion, aSignalMessage);
+    return new AS4ErrorMessage (eSoapVersion, aSignalMessage);
   }
 }

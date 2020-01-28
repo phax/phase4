@@ -50,7 +50,7 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegProtocol _generatePModeLegProtocol (@Nullable final String sAddress)
   {
-    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
+    return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
   @Nonnull

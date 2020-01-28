@@ -56,12 +56,12 @@ public class PModeLegProtocol implements Serializable
    * <code>1.2</code>). In some implementations, this parameter may be
    * constrained by the implementation, and not set by users.
    */
-  private ESoapVersion m_eSOAPVersion;
+  private ESoapVersion m_eSoapVersion;
 
-  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESoapVersion eSOAPVersion)
+  public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESoapVersion eSoapVersion)
   {
     setAddress (sAddress);
-    setSOAPVersion (eSOAPVersion);
+    setSoapVersion (eSoapVersion);
   }
 
   @Nullable
@@ -86,19 +86,39 @@ public class PModeLegProtocol implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * @deprecated Use {@link #getSoapVersion()} instead; since v0.9.8
+   */
+  @Deprecated
   @Nonnull
   public final ESoapVersion getSOAPVersion ()
   {
-    return m_eSOAPVersion;
+    return getSoapVersion ();
   }
 
   @Nonnull
-  public final EChange setSOAPVersion (@Nonnull final ESoapVersion eSOAPVersion)
+  public final ESoapVersion getSoapVersion ()
   {
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-    if (eSOAPVersion.equals (m_eSOAPVersion))
+    return m_eSoapVersion;
+  }
+
+  /**
+   * @deprecated Use {@link #setSoapVersion(ESoapVersion)} instead; since v0.9.8
+   */
+  @Deprecated
+  @Nonnull
+  public final EChange setSOAPVersion (@Nonnull final ESoapVersion eSoapVersion)
+  {
+    return setSoapVersion (eSoapVersion);
+  }
+
+  @Nonnull
+  public final EChange setSoapVersion (@Nonnull final ESoapVersion eSoapVersion)
+  {
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    if (eSoapVersion.equals (m_eSoapVersion))
       return EChange.UNCHANGED;
-    m_eSOAPVersion = eSOAPVersion;
+    m_eSoapVersion = eSoapVersion;
     return EChange.CHANGED;
   }
 
@@ -110,25 +130,36 @@ public class PModeLegProtocol implements Serializable
     if (o == null || !getClass ().equals (o.getClass ()))
       return false;
     final PModeLegProtocol rhs = (PModeLegProtocol) o;
-    return EqualsHelper.equals (m_sAddress, rhs.m_sAddress) && m_eSOAPVersion.equals (rhs.m_eSOAPVersion);
+    return EqualsHelper.equals (m_sAddress, rhs.m_sAddress) && m_eSoapVersion.equals (rhs.m_eSoapVersion);
   }
 
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sAddress).append (m_eSOAPVersion).getHashCode ();
+    return new HashCodeGenerator (this).append (m_sAddress).append (m_eSoapVersion).getHashCode ();
   }
 
   @Override
   public String toString ()
   {
     return new ToStringGenerator (this).append ("Address", m_sAddress)
-                                       .append ("SOAPVersion", m_eSOAPVersion)
+                                       .append ("SoapVersion", m_eSoapVersion)
                                        .getToString ();
   }
 
+  /**
+   * @deprecated Use {@link #createForDefaultSoapVersion(String)} instead; since
+   *             v0.9.8
+   */
+  @Deprecated
   @Nonnull
   public static PModeLegProtocol createForDefaultSOAPVersion (@Nullable final String sAddress)
+  {
+    return createForDefaultSoapVersion (sAddress);
+  }
+
+  @Nonnull
+  public static PModeLegProtocol createForDefaultSoapVersion (@Nullable final String sAddress)
   {
     return new PModeLegProtocol (sAddress, ESoapVersion.AS4_DEFAULT);
   }

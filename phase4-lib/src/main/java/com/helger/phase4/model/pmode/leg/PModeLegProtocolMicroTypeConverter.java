@@ -34,6 +34,7 @@ import com.helger.xml.microdom.MicroQName;
 public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeConverter <PModeLegProtocol>
 {
   private static final IMicroQName ATTR_ADDRESS = new MicroQName ("Address");
+  // Legacy name
   private static final IMicroQName ATTR_SOAP_VERSION = new MicroQName ("SOAPVersion");
 
   @Nonnull
@@ -43,7 +44,7 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.setAttribute (ATTR_ADDRESS, aValue.getAddress ());
-    ret.setAttribute (ATTR_SOAP_VERSION, aValue.getSOAPVersion ().getVersion ());
+    ret.setAttribute (ATTR_SOAP_VERSION, aValue.getSoapVersion ().getVersion ());
     return ret;
   }
 
@@ -52,11 +53,11 @@ public class PModeLegProtocolMicroTypeConverter extends AbstractPModeMicroTypeCo
   {
     final String sAddress = aElement.getAttributeValue (ATTR_ADDRESS);
 
-    final String sSOAPVersion = aElement.getAttributeValue (ATTR_SOAP_VERSION);
-    final ESoapVersion eSOAPVersion = ESoapVersion.getFromVersionOrNull (sSOAPVersion);
-    if (eSOAPVersion == null)
-      throw new IllegalStateException ("Failed to resolve SOAP version '" + sSOAPVersion + "'");
+    final String sSoapVersion = aElement.getAttributeValue (ATTR_SOAP_VERSION);
+    final ESoapVersion eSoapVersion = ESoapVersion.getFromVersionOrNull (sSoapVersion);
+    if (eSoapVersion == null)
+      throw new IllegalStateException ("Failed to resolve SOAP version '" + sSoapVersion + "'");
 
-    return new PModeLegProtocol (sAddress, eSOAPVersion);
+    return new PModeLegProtocol (sAddress, eSoapVersion);
   }
 }

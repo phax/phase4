@@ -58,7 +58,7 @@ public final class AS4Signer
    *        CryptoFactory to use. May not be <code>null</code>.
    * @param aPreSigningMessage
    *        SOAP Document before signing
-   * @param eSOAPVersion
+   * @param eSoapVersion
    *        SOAP version to use
    * @param sMessagingID
    *        The ID of the "Messaging" element to sign.
@@ -77,7 +77,7 @@ public final class AS4Signer
   @Nonnull
   public static Document createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                               @Nonnull final Document aPreSigningMessage,
-                                              @Nonnull final ESoapVersion eSOAPVersion,
+                                              @Nonnull final ESoapVersion eSoapVersion,
                                               @Nonnull @Nonempty final String sMessagingID,
                                               @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
@@ -86,7 +86,7 @@ public final class AS4Signer
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
@@ -107,7 +107,7 @@ public final class AS4Signer
     aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));
 
     // Sign the SOAP body
-    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
+    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), "Content"));
 
     if (CollectionHelper.isNotEmpty (aAttachments))
     {
@@ -123,9 +123,9 @@ public final class AS4Signer
 
     // Set the mustUnderstand header of the wsse:Security element as well
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
-                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
+                                           .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
-      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
+      aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
     return aBuilder.build (aCryptoFactory.getCrypto ());
   }

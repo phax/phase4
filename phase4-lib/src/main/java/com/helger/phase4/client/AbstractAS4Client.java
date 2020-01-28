@@ -246,6 +246,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The SOAP version to be used. May not be <code>null</code>.
+   * @since v0.9.8
    */
   @Nonnull
   public final ESoapVersion getSoapVersion ()
@@ -274,6 +275,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param eSoapVersion
    *        SOAP version which should be set. May not be <code>null</code>.
    * @return this for chaining
+   * @since v0.9.8
    */
   @Nonnull
   public final IMPLTYPE setSoapVersion (@Nonnull final ESoapVersion eSoapVersion)

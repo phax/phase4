@@ -39,7 +39,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4ClientReceiptMessage>
 {
   private boolean m_bNonRepudiation = false;
-  private Node m_aSOAPDocument;
+  private Node m_aSoapDocument;
   private Ebms3UserMessage m_aEbms3UserMessage;
   private boolean m_bReceiptShouldBeSigned = false;
 
@@ -65,24 +65,50 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     return this;
   }
 
+  /**
+   * @deprecated Use {@link #getSoapDocument()} instead; since v0.9.8
+   */
+  @Deprecated
   @Nullable
   public final Node getSOAPDocument ()
   {
-    return m_aSOAPDocument;
+    return getSoapDocument ();
+  }
+
+  @Nullable
+  public final Node getSoapDocument ()
+  {
+    return m_aSoapDocument;
   }
 
   /**
    * As node set the usermessage if it is signed, so the references can be
    * counted and used in non repudiation.
    *
-   * @param aSOAPDocument
+   * @param aSoapDocument
+   *        Signed UserMessage
+   * @return this for chaining
+   * @deprecated Use {@link #setSoapDocument(Node)} instead; since v0.9.8
+   */
+  @Deprecated
+  @Nonnull
+  public final AS4ClientReceiptMessage setSOAPDocument (@Nullable final Node aSoapDocument)
+  {
+    return setSoapDocument (aSoapDocument);
+  }
+
+  /**
+   * As node set the usermessage if it is signed, so the references can be
+   * counted and used in non repudiation.
+   *
+   * @param aSoapDocument
    *        Signed UserMessage
    * @return this for chaining
    */
   @Nonnull
-  public final AS4ClientReceiptMessage setSOAPDocument (@Nullable final Node aSOAPDocument)
+  public final AS4ClientReceiptMessage setSoapDocument (@Nullable final Node aSoapDocument)
   {
-    m_aSOAPDocument = aSOAPDocument;
+    m_aSoapDocument = aSoapDocument;
     return this;
   }
 
@@ -122,20 +148,20 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
   private void _checkMandatoryAttributes ()
   {
     if (getSoapVersion () == null)
-      throw new IllegalStateException ("A SOAPVersion must be set.");
+      throw new IllegalStateException ("A SOAP version must be set.");
 
-    if (m_aSOAPDocument == null && m_aEbms3UserMessage == null)
-      throw new IllegalStateException ("A SOAPDocument or a Ebms3UserMessage has to be set.");
+    if (m_aSoapDocument == null && m_aEbms3UserMessage == null)
+      throw new IllegalStateException ("A SOAP document or a Ebms3UserMessage has to be set.");
 
     if (m_bNonRepudiation)
     {
-      if (m_aSOAPDocument == null)
-        throw new IllegalStateException ("Nonrepudiation only works in conjunction with a set SOAPDocument.");
+      if (m_aSoapDocument == null)
+        throw new IllegalStateException ("Nonrepudiation only works in conjunction with a set SOAP document.");
     }
     else
     {
       if (m_aEbms3UserMessage == null)
-        throw new IllegalStateException ("Ebms3UserMessage has to be set, if the SOAPDocument is not signed.");
+        throw new IllegalStateException ("Ebms3UserMessage has to be set, if the SOAP document is not signed.");
     }
   }
 
@@ -148,7 +174,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (getSoapVersion (),
                                                                     sMessageID,
                                                                     m_aEbms3UserMessage,
-                                                                    m_aSOAPDocument,
+                                                                    m_aSoapDocument,
                                                                     m_bNonRepudiation);
 
     if (aCallback != null)

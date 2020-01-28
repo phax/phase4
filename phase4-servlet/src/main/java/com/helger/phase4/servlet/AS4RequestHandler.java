@@ -810,7 +810,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Document aSignedDoc = _signResponseIfNeeded (aResponseAttachments,
                                                        aSigningParams,
                                                        aResponseDoc,
-                                                       aEffectiveLeg.getProtocol ().getSOAPVersion (),
+                                                       aEffectiveLeg.getProtocol ().getSoapVersion (),
                                                        aReceiptMessage.getMessagingID ());
     return new AS4ResponseFactoryXML (aSignedDoc, eSoapVersion.getMimeType ());
   }
@@ -1052,7 +1052,7 @@ public class AS4RequestHandler implements AutoCloseable
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
             final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
                                                                      .setAlias (sEncryptionAlias);
-            aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSOAPVersion (),
+            aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSoapVersion (),
                                                                 aResponseAttachments,
                                                                 aResponseUserMsg.getAsSoapDocument (),
                                                                 aResponseUserMsg.getMessagingID (),
@@ -1177,7 +1177,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                               .getValue ();
               final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
                                                                        .setAlias (sEncryptionAlias);
-              return _createResponseUserMessage (aLeg2.getProtocol ().getSOAPVersion (),
+              return _createResponseUserMessage (aLeg2.getProtocol ().getSoapVersion (),
                                                  aResponseAttachments,
                                                  aResponseUserMsg.getAsSoapDocument (),
                                                  aResponseUserMsg.getMessagingID (),

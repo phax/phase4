@@ -151,7 +151,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
             aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
           }
 
-      final ESoapVersion eSOAPVersion = aLegProtocol.getSOAPVersion ();
+      final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
         aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));

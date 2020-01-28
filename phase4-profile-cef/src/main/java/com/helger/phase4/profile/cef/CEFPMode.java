@@ -61,7 +61,7 @@ public final class CEFPMode
   public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
   {
     // Set the endpoint URL
-    return PModeLegProtocol.createForDefaultSOAPVersion (sAddress);
+    return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
   @Nonnull

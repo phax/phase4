@@ -62,7 +62,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
   private void _checkMandatoryAttributes ()
   {
     if (getSoapVersion () == null)
-      throw new IllegalStateException ("A SOAPVersion must be set.");
+      throw new IllegalStateException ("A SOAP version must be set.");
     if (StringHelper.hasNoText (m_sMPC))
       throw new IllegalStateException ("A MPC has to be present");
   }

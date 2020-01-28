@@ -352,7 +352,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
     final PMode aPMode = MockPModeGenerator.getTestPMode (m_eSoapVersion);
-    aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSOAPVersion ("TestsimulationAddressWrong"),
+    aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("TestsimulationAddressWrong"),
                                   null,
                                   null,
                                   null,

@@ -37,10 +37,10 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSoapVersion,
                                 @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
-    super (eSOAPVersion, EAS4MessageType.PULL_REQUEST);
+    super (eSoapVersion, EAS4MessageType.PULL_REQUEST);
 
     ValueEnforcer.notNull (aSignalMessage, "SignalMessage");
     m_aMessaging.addSignalMessage (aSignalMessage);
@@ -59,7 +59,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
   }
 
   @Nonnull
-  public static AS4PullRequestMessage create (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4PullRequestMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                               @Nonnull final Ebms3MessageInfo aEbms3MessageInfo,
                                               @Nullable final String sMPC,
                                               @Nullable final List <Object> aAny)
@@ -79,6 +79,6 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
 
     aSignalMessage.setAny (aAny);
 
-    return new AS4PullRequestMessage (eSOAPVersion, aSignalMessage);
+    return new AS4PullRequestMessage (eSoapVersion, aSignalMessage);
   }
 }

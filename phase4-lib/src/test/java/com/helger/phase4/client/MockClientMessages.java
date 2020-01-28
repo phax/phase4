@@ -52,7 +52,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Only used for SOAPClientSAAJ.java as test message constructor.
+ * Only used for {@link MainAS4Client} as test message constructor.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -64,15 +64,15 @@ final class MockClientMessages
   private MockClientMessages ()
   {}
 
-  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                 @Nullable final Node aPayload,
                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
-    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
+    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aMsg.getAsSoapDocument (aPayload),
-                                                               eSOAPVersion,
+                                                               eSoapVersion,
                                                                aMsg.getMessagingID (),
                                                                aAttachments,
                                                                aResHelper,
@@ -81,17 +81,17 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public static Document testErrorMessage (@Nonnull final ESoapVersion eSoapVersion,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                            @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
-                                                               eSOAPVersion,
+                                                               eSoapVersion,
                                                                aErrorMsg.getMessagingID (),
                                                                aAttachments,
                                                                aResHelper,
@@ -100,15 +100,15 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public static Document testReceiptMessage (@Nonnull final ESoapVersion eSoapVersion,
                                              @Nullable final Node aPayload,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
                                                                                                         DOMException
   {
-    final Document aUserMessage = testSignedUserMessage (eSOAPVersion, aPayload, aAttachments, aResHelper);
+    final Document aUserMessage = testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
 
-    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (eSOAPVersion,
+    final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (eSoapVersion,
                                                                     MessageHelperMethods.createRandomMessageID (),
                                                                     null,
                                                                     aUserMessage,
@@ -118,7 +118,7 @@ final class MockClientMessages
 
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
                                                                aDoc,
-                                                               eSOAPVersion,
+                                                               eSoapVersion,
                                                                aReceiptMsg.getMessagingID (),
                                                                aAttachments,
                                                                aResHelper,
@@ -127,7 +127,7 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSoapVersion,
                                                              @Nullable final Node aPayload,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -158,12 +158,12 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSOAPVersion)
+                                                       eSoapVersion)
                                               .setMustUnderstand (true);
     return aDoc;
   }
 
-  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
+  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSoapVersion,
                                                                       @Nullable final Node aPayload,
                                                                       @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -192,14 +192,14 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSOAPVersion)
+                                                       eSoapVersion)
                                               .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }
 
   @Nullable
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
-  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSoapVersion,
                                            @Nullable final Node aPayload,
                                            @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
@@ -226,7 +226,7 @@ final class MockClientMessages
                                                        aEbms3CollaborationInfo,
                                                        aEbms3PartyInfo,
                                                        aEbms3MessageProperties,
-                                                       eSOAPVersion)
+                                                       eSoapVersion)
                                               .setMustUnderstand (true);
     return aDoc.getAsSoapDocument (aPayload);
   }

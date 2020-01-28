@@ -183,7 +183,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     // Check if a SOAPBodyPayload exists
     final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
                                                                 aPModeLeg.getProtocol ()
-                                                                         .getSOAPVersion ()
+                                                                         .getSoapVersion ()
                                                                          .getBodyElementName ());
     return aBody != null && aBody.hasChildNodes ();
   }

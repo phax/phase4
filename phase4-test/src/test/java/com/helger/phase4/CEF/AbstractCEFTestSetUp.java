@@ -65,7 +65,7 @@ public abstract class AbstractCEFTestSetUp extends AbstractUserMessageTestSetUp
                                                    IPModeIDProvider.DEFAULT_DYNAMIC,
                                                    true);
 
-    m_eSoapVersion = m_aESENSOneWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
+    m_eSoapVersion = m_aESENSOneWayPMode.getLeg1 ().getProtocol ().getSoapVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 

@@ -37,9 +37,9 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
 {
   private final Ebms3UserMessage m_aUserMessage;
 
-  public AS4UserMessage (@Nonnull final ESoapVersion eSOAPVersion, @Nonnull final Ebms3UserMessage aUserMessage)
+  public AS4UserMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3UserMessage aUserMessage)
   {
-    super (eSOAPVersion, EAS4MessageType.USER_MESSAGE);
+    super (eSoapVersion, EAS4MessageType.USER_MESSAGE);
 
     ValueEnforcer.notNull (aUserMessage, "UserMessage");
     m_aMessaging.addUserMessage (aUserMessage);
@@ -58,10 +58,10 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   @Nonnull
-  public static AS4UserMessage create (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion,
                                        @Nonnull final Ebms3UserMessage aUserMessage)
   {
-    return new AS4UserMessage (eSOAPVersion, aUserMessage);
+    return new AS4UserMessage (eSoapVersion, aUserMessage);
   }
 
   @Nonnull
@@ -70,7 +70,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
                                        @Nonnull final Ebms3CollaborationInfo aEbms3CollaborationInfo,
                                        @Nonnull final Ebms3PartyInfo aEbms3PartyInfo,
                                        @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                       @Nonnull final ESoapVersion eSOAPVersion)
+                                       @Nonnull final ESoapVersion eSoapVersion)
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
 
@@ -89,6 +89,6 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
     // Message Info
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
-    return new AS4UserMessage (eSOAPVersion, aUserMessage);
+    return new AS4UserMessage (eSoapVersion, aUserMessage);
   }
 }

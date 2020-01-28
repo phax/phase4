@@ -33,7 +33,7 @@ import com.helger.phase4.soap.ESoapVersion;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESoapVersion eSOAPVersion,
+  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion,
                             @Nonnull final Charset aCharset) throws ParseException
   {
     super ("related");
@@ -41,7 +41,7 @@ public class SoapMimeMultipart extends MimeMultipart
     // type parameter is essential for Axis to work!
     // But no charset! RFC 2387, section 3.4 has a special definition
     final ContentType aContentType = new ContentType (contentType);
-    aContentType.setParameter ("type", eSOAPVersion.getMimeType ().getAsString ());
+    aContentType.setParameter ("type", eSoapVersion.getMimeType ().getAsString ());
     aContentType.setParameter ("charset", aCharset.name ());
     contentType = aContentType.toString ();
   }

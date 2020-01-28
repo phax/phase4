@@ -85,13 +85,13 @@ public final class AS4Encryptor
 
   @Nonnull
   public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                 @Nonnull final ESoapVersion eSOAPVersion,
+                                                 @Nonnull final ESoapVersion eSoapVersion,
                                                  @Nonnull final Document aDoc,
                                                  final boolean bMustUnderstand,
                                                  @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
@@ -100,16 +100,16 @@ public final class AS4Encryptor
 
     final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, aCryptParams);
 
-    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSOAPVersion.getNamespaceURI (), "Content"));
+    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), "Content"));
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
-                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
+                                           .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
-      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
+      aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
     return aBuilder.build (aCryptoFactory.getCrypto ());
   }
 
   @Nonnull
-  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSOAPVersion,
+  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
                                                    @Nonnull final Document aDoc,
                                                    @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactory,
@@ -119,7 +119,7 @@ public final class AS4Encryptor
                                                                                                MessagingException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
@@ -140,9 +140,9 @@ public final class AS4Encryptor
     }
 
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
-                                           .getAttributeNodeNS (eSOAPVersion.getNamespaceURI (), "mustUnderstand");
+                                           .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
-      aMustUnderstand.setValue (eSOAPVersion.getMustUnderstandValue (bMustUnderstand));
+      aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
     // Main sign and/or encrypt
     final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
@@ -162,6 +162,6 @@ public final class AS4Encryptor
     }
 
     // Use the encrypted attachments!
-    return MimeMessageCreator.generateMimeMessage (eSOAPVersion, aEncryptedDoc, aEncryptedAttachments);
+    return MimeMessageCreator.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
   }
 }

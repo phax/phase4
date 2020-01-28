@@ -47,28 +47,28 @@ public final class CAS4TestFiles
 
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <String> getTestFilesSOAP11ValidXML ()
+  public static ICommonsList <String> getTestFilesSoap11ValidXML ()
   {
     return new CommonsArrayList <> (SOAP_11_VALID_XML);
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <String> getTestFilesSOAP12ValidXML ()
+  public static ICommonsList <String> getTestFilesSoap12ValidXML ()
   {
     return new CommonsArrayList <> (SOAP_12_VALID_XML);
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <String> getTestFilesSOAP11InvalidXML ()
+  public static ICommonsList <String> getTestFilesSoap11InvalidXML ()
   {
     return new CommonsArrayList <> (SOAP_11_INVALID_XML);
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public static ICommonsList <String> getTestFilesSOAP12InvalidXML ()
+  public static ICommonsList <String> getTestFilesSoap12InvalidXML ()
   {
     return new CommonsArrayList <> (SOAP_12_INVALID_XML);
   }

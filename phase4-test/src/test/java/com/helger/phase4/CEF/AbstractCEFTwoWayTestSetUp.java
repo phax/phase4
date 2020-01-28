@@ -95,7 +95,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
                                                          IPModeIDProvider.DEFAULT_DYNAMIC,
                                                          true);
 
-    m_eSoapVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSOAPVersion ();
+    m_eSoapVersion = m_aESENSTwoWayPMode.getLeg1 ().getProtocol ().getSoapVersion ();
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 

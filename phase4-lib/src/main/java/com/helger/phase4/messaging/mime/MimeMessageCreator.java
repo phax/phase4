@@ -84,22 +84,22 @@ public final class MimeMessageCreator
   {}
 
   @Nonnull
-  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                                    @Nonnull final Document aSOAPEnvelope,
+  public static AS4MimeMessage generateMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                    @Nonnull final Document aSoapEnvelope,
                                                     @Nullable final ICommonsList <WSS4JAttachment> aEncryptedAttachments) throws MessagingException
   {
-    ValueEnforcer.notNull (eSOAPVersion, "SOAPVersion");
-    ValueEnforcer.notNull (aSOAPEnvelope, "SOAPEnvelope");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    ValueEnforcer.notNull (aSoapEnvelope, "SoapEnvelope");
 
     final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
-    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSOAPVersion, aCharset);
+    final SoapMimeMultipart aMimeMultipart = new SoapMimeMultipart (eSoapVersion, aCharset);
     final EContentTransferEncoding eCTE = EContentTransferEncoding.BINARY;
-    final String sContentType = eSOAPVersion.getMimeType (aCharset).getAsString ();
+    final String sContentType = eSoapVersion.getMimeType (aCharset).getAsString ();
 
     {
       // Message Itself (repeatable)
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      aMessagePart.setContent (new DOMSource (aSOAPEnvelope), sContentType);
+      aMessagePart.setContent (new DOMSource (aSoapEnvelope), sContentType);
       aMessagePart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
@@ -117,7 +117,6 @@ public final class MimeMessageCreator
     final AS4MimeMessage aMsg = new AS4MimeMessage ((Session) null, bIsRepeatable);
     aMsg.setContent (aMimeMultipart);
     aMsg.saveChanges ();
-
     return aMsg;
   }
 }
