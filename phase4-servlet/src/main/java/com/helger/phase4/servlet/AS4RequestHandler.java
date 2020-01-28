@@ -1100,6 +1100,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Try building error message
+    final IAS4ResponseFactory ret;
     if (!aState.isSoapHeaderElementProcessingSuccessful () || aState.getEbmsError () == null)
     {
       // Either error in header processing or
@@ -1118,12 +1119,18 @@ public class AS4RequestHandler implements AutoCloseable
           final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                     aState.getMessageID (),
                                                                     aErrorMessages);
-          return new AS4ResponseFactoryXML (aErrorMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
+          ret = new AS4ResponseFactoryXML (aErrorMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
         }
-        LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
+        else
+        {
+          LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
+          ret = null;
+        }
       }
       else
       {
+        // No errors occurred
+
         // Do not respond to receipt (except with error message - see above)
         if (aEbmsSignalMessage == null || aEbmsSignalMessage.getReceipt () == null)
         {
@@ -1142,25 +1149,31 @@ public class AS4RequestHandler implements AutoCloseable
             {
               final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
                                                                           aSPIResult.getPullReturnUserMsg ());
-              return new AS4ResponseFactoryXML (aResponseUserMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
+              ret = new AS4ResponseFactoryXML (aResponseUserMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
             }
-
-            if (aEbmsUserMessage != null)
-            {
-              // No errors occurred
-              final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
-
-              if (bSendReceiptAsResponse)
+            else
+              if (aEbmsUserMessage != null)
               {
-                return _createResponseReceiptMessage (aSoapDocument,
-                                                      eSoapVersion,
-                                                      aEffectiveLeg,
-                                                      aEbmsUserMessage,
-                                                      aResponseAttachments);
+                // We received an incoming user message and no errors occurred
+                final boolean bSendReceiptAsResponse = _isSendReceiptAsResponse (aEffectiveLeg);
+
+                if (bSendReceiptAsResponse)
+                {
+                  ret = _createResponseReceiptMessage (aSoapDocument,
+                                                       eSoapVersion,
+                                                       aEffectiveLeg,
+                                                       aEbmsUserMessage,
+                                                       aResponseAttachments);
+                }
+                else
+                {
+                  // TODO
+                  LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+                  ret = null;
+                }
               }
-              // else TODO
-              LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
-            }
+              else
+                ret = null;
           }
           else
           {
@@ -1184,19 +1197,25 @@ public class AS4RequestHandler implements AutoCloseable
                                                               .getValue ();
               final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
                                                                        .setAlias (sEncryptionAlias);
-              return _createResponseUserMessage (aLeg2.getProtocol ().getSoapVersion (),
-                                                 aResponseAttachments,
-                                                 aResponseUserMsg.getAsSoapDocument (),
-                                                 aResponseUserMsg.getMessagingID (),
-                                                 aSigningParams,
-                                                 aCryptParams);
+              ret = _createResponseUserMessage (aLeg2.getProtocol ().getSoapVersion (),
+                                                aResponseAttachments,
+                                                aResponseUserMsg.getAsSoapDocument (),
+                                                aResponseUserMsg.getMessagingID (),
+                                                aSigningParams,
+                                                aCryptParams);
             }
+            else
+              ret = null;
           }
         }
+        else
+          ret = null;
       }
     }
+    else
+      ret = null;
 
-    return null;
+    return ret;
   }
 
   public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
