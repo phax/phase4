@@ -44,7 +44,7 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
-   * @param aHttpHeaderMap
+   * @param aCustomHeaders
    *        The HTTP headers of the outgoing message. Never <code>null</code>.
    * @param nTry
    *        The index of the try. The first try has always index 0, the first
