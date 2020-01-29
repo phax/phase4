@@ -17,9 +17,7 @@
 package com.helger.phase4.peppol.servlet;
 
 import com.helger.commons.http.EHttpMethod;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -50,9 +48,7 @@ public class Phase4PeppolServlet extends AbstractXServlet
   {
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
-    final AS4XServletHandler aHdl = new AS4XServletHandler ( () -> AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
-                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                             IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+    final AS4XServletHandler aHdl = new AS4XServletHandler ();
     // HTTP POST only
     handlerRegistry ().registerHandler (EHttpMethod.POST, aHdl);
   }
