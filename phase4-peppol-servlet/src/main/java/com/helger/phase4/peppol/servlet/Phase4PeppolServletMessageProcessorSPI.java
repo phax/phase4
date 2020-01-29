@@ -473,7 +473,15 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           if (aReceiverEndpoint == null)
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
-                                                            "Failed to resolve endpoint for provided receiver/documentType/process - not handling incoming AS4 document");
+                                                            "Failed to resolve SMP endpoint for provided receiver ID (" +
+                                                            aPeppolSBD.getReceiverAsIdentifier ().getURIEncoded () +
+                                                            ")/documentType ID (" +
+                                                            aPeppolSBD.getDocumentTypeAsIdentifier ().getURIEncoded () +
+                                                            ")/process ID (" +
+                                                            aPeppolSBD.getProcessAsIdentifier ().getURIEncoded () +
+                                                            ")/transport profile (" +
+                                                            m_aTransportProfile.getID () +
+                                                            ")  - not handling incoming AS4 document");
           }
 
           // Check if the message is for us
