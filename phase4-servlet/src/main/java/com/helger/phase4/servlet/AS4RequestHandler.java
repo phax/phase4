@@ -625,8 +625,11 @@ public class AS4RequestHandler implements AutoCloseable
       final HttpEntity aHttpEntity = aResponseFactory.getHttpEntity (aMimeType);
       if (aHttpEntity.isRepeatable ())
       {
-        try (
-            final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream ((int) aHttpEntity.getContentLength ()))
+        int nContentLength = (int) aHttpEntity.getContentLength ();
+        if (nContentLength < 0)
+          nContentLength = 16 * CGlobal.BYTES_PER_KILOBYTE;
+
+        try (final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream (nContentLength))
         {
           aHttpEntity.writeTo (aBAOS);
           aResponsePayload = aBAOS.getBufferOrCopy ();
