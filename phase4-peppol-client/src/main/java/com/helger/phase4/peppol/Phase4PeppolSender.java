@@ -1315,14 +1315,14 @@ public final class Phase4PeppolSender
       // Optional payload validation
       _validatePayload (aPayloadElement, m_aVESID, m_aValidationResultHandler);
 
-      // e.g. SMP lookup
+      // e.g. SMP lookup (may throw an exception)
       m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
-      // Certificate from e.g. SMP lookup
+      // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
 
-      // URL from e.g. SMP lookup
+      // URL from e.g. SMP lookup (may throw an exception)
       final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
       if (m_aAPEndointURLConsumer != null)
         m_aAPEndointURLConsumer.accept (sDestURL);
@@ -1462,14 +1462,14 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
       }
 
-      // e.g. SMP lookup
+      // e.g. SMP lookup (may throw an exception)
       m_aEndpointDetailProvider.init (m_aDocTypeID, m_aProcessID, m_aReceiverID);
 
-      // Certificate from e.g. SMP lookup
+      // Certificate from e.g. SMP lookup (may throw an exception)
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       _checkReceiverAPCert (aReceiverCert, m_aCertificateConsumer);
 
-      // URL from e.g. SMP lookup
+      // URL from e.g. SMP lookup (may throw an exception)
       final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
       if (m_aAPEndointURLConsumer != null)
         m_aAPEndointURLConsumer.accept (sDestURL);
