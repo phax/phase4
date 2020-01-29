@@ -29,6 +29,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
+import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -42,7 +43,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.HasInputStream;
@@ -241,29 +241,50 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
 
         // Collect all unique used certificates
         final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
+        // Preferred certificate from BinarySecurityToken
+        X509Certificate aPreferredCert = null;
         int nWSS4JSecurityActions = 0;
         for (final WSSecurityEngineResult aResult : aResults)
         {
-          final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
-          if (aCert != null)
-            aCertSet.add (aCert);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("WSSecurityEngineResult: " + aResult);
 
           final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
-          if (aAction != null)
-            nWSS4JSecurityActions |= aAction.intValue ();
+          final int nAction = aAction != null ? aAction.intValue () : 0;
+          nWSS4JSecurityActions |= nAction;
+
+          final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+          if (aCert != null)
+          {
+            aCertSet.add (aCert);
+            if (nAction == WSConstants.BST && aPreferredCert == null)
+              aPreferredCert = aCert;
+          }
         }
-        // this determines if a signature check or a decrpytion happened
+        // this determines if a signature check or a decryption happened
         aState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
 
+        final X509Certificate aUsedCert;
         if (aCertSet.size () > 1)
         {
-          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
-          if (GlobalDebug.isDebugMode ())
-            LOGGER.warn ("Debug mode details: " + aCertSet);
+          if (aPreferredCert == null)
+          {
+            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("All gathered certificates: " + aCertSet);
+            aUsedCert = aCertSet.getAtIndex (0);
+          }
+          else
+            aUsedCert = aPreferredCert;
         }
+        else
+          if (aCertSet.size () == 1)
+            aUsedCert = aCertSet.getAtIndex (0);
+          else
+            aUsedCert = null;
 
         // Remember in State
-        aState.setUsedCertificate (aCertSet.getAtIndex (0));
+        aState.setUsedCertificate (aUsedCert);
         aState.setDecryptedSoapDocument (aSOAPDoc);
 
         // Decrypting the Attachments
