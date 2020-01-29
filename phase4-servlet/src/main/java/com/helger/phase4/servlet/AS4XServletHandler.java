@@ -17,6 +17,7 @@
 package com.helger.phase4.servlet;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,7 +86,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4XServletHandler.class);
 
-  private final IAS4CryptoFactory m_aCryptoFactory;
+  private final Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
   private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
@@ -97,9 +98,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler ()
   {
-    this (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
-          DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-          IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+    this ( () -> AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
+           DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+           IIncomingAttachmentFactory.DEFAULT_INSTANCE);
   }
 
   /**
@@ -111,15 +112,37 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    *        PMode resolved to be used. May not be <code>null</code>.
    * @param aIAF
    *        The attachment factory for incoming attachments.
+   * @deprecated Use
+   *             {@link #AS4XServletHandler(Supplier, IPModeResolver, IIncomingAttachmentFactory)}
+   *             instead
    */
+  @Deprecated
   public AS4XServletHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                              @Nonnull final IPModeResolver aPModeResolver,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    this ( () -> aCryptoFactory, aPModeResolver, aIAF);
+  }
+
+  /**
+   * Constructor
+   *
+   * @param aCryptoFactorySupplier
+   *        Crypto factory supplier. May not be <code>null</code>.
+   * @param aPModeResolver
+   *        PMode resolved to be used. May not be <code>null</code>.
+   * @param aIAF
+   *        The attachment factory for incoming attachments.
+   * @since v0.9.8
+   */
+  public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
+                             @Nonnull final IPModeResolver aPModeResolver,
+                             @Nonnull final IIncomingAttachmentFactory aIAF)
+  {
+    ValueEnforcer.notNull (aCryptoFactorySupplier, "CryptoFactorySupplier");
     ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     ValueEnforcer.notNull (aIAF, "IAF");
-    m_aCryptoFactory = aCryptoFactory;
+    m_aCryptoFactorySupplier = aCryptoFactorySupplier;
     m_aPModeResolver = aPModeResolver;
     m_aIAF = aIAF;
   }
@@ -168,10 +191,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
                                                                                                                          .setRemoteHost (aRequestScope.getRemoteHost ())
                                                                                                                          .setRemotePort (aRequestScope.getRemotePort ());
 
-    try (final AS4RequestHandler aHandler = new AS4RequestHandler (m_aCryptoFactory,
-                                                                   m_aPModeResolver,
-                                                                   m_aIAF,
-                                                                   aMessageMetadata))
+    // Resolved once per request
+    final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
+    if (aCF == null)
+      throw new IllegalStateException ("Failed to get an AS4 CryptoFactory");
+
+    try (final AS4RequestHandler aHandler = new AS4RequestHandler (aCF, m_aPModeResolver, m_aIAF, aMessageMetadata))
     {
       // Customize before handling
       if (m_aHandlerCustomizer != null)
