@@ -16,12 +16,9 @@
  */
 package com.helger.phase4.peppol.servlet;
 
-import javax.annotation.Nonnull;
-
 import com.helger.commons.http.EHttpMethod;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
-import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.xservlet.AbstractXServlet;
@@ -51,23 +48,11 @@ public class Phase4PeppolServlet extends AbstractXServlet
    */
   public Phase4PeppolServlet ()
   {
-    this (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
-  }
-
-  /**
-   * Additional constructor that allows to provide a custom crypto factory.
-   *
-   * @param aCryptoFactory
-   *        The crypto factory used. Never <code>null</code>.
-   * @since v0.9.8
-   */
-  protected Phase4PeppolServlet (@Nonnull final IAS4CryptoFactory aCryptoFactory)
-  {
     // Multipart is handled specifically inside
     settings ().setMultipartEnabled (false);
-    final AS4XServletHandler aHdl = new AS4XServletHandler (aCryptoFactory,
-                                                            DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-                                                            IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+    final AS4XServletHandler aHdl = new AS4XServletHandler ( () -> AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
+                                                             DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+                                                             IIncomingAttachmentFactory.DEFAULT_INSTANCE);
     // HTTP POST only
     handlerRegistry ().registerHandler (EHttpMethod.POST, aHdl);
   }
