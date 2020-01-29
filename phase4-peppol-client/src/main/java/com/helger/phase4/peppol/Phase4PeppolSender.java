@@ -76,7 +76,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
@@ -658,7 +658,7 @@ public final class Phase4PeppolSender
       try
       {
         setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
-        setCryptoFactory (AS4CryptoFactory.getDefaultInstance ());
+        setCryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
         final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
         setPModeResolver (aPModeResolver);
         setIncomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);

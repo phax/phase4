@@ -43,7 +43,7 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
 {
   static
   {
-    // Init once
+    // Init once - must be present!
     WSSConfig.init ();
   }
 

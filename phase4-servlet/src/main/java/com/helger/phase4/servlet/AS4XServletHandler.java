@@ -31,7 +31,7 @@ import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
@@ -97,7 +97,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler ()
   {
-    this (AS4CryptoFactory.getDefaultInstance (),
+    this (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
           DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
           IIncomingAttachmentFactory.DEFAULT_INSTANCE);
   }

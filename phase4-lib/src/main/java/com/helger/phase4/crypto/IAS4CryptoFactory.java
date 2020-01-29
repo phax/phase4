@@ -31,8 +31,8 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 /**
  * The basic phase4 crypto interface.
  * <ul>
- * <li>See {@link AS4CryptoFactory} for an implementation of this interface
- * using a properties based approach</li>
+ * <li>See {@link AS4CryptoFactoryPropertiesFile} for an implementation of this
+ * interface using a properties based approach</li>
  * </ul>
  *
  * @author Philip Helger

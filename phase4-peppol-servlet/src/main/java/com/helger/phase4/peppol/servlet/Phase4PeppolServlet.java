@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 
 import com.helger.commons.http.EHttpMethod;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.servlet.AS4XServletHandler;
@@ -47,11 +47,11 @@ import com.helger.xservlet.AbstractXServlet;
 public class Phase4PeppolServlet extends AbstractXServlet
 {
   /**
-   * Default constructor using {@link AS4CryptoFactory}.
+   * Default constructor using {@link AS4CryptoFactoryPropertiesFile}.
    */
   public Phase4PeppolServlet ()
   {
-    this (AS4CryptoFactory.getDefaultInstance ());
+    this (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
   }
 
   /**

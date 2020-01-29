@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -123,7 +123,7 @@ public final class AS4ClientReceiptMessageTest
                                                               .setKeyStorePassword ("test")
                                                               .setKeyAlias ("ph-as4")
                                                               .setKeyPassword ("test");
-    aClient.setAS4CryptoFactory (new AS4CryptoFactory (aCP));
+    aClient.setAS4CryptoFactory (new AS4CryptoFactoryPropertiesFile (aCP));
 
     aClient.signingParams ()
            .setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)

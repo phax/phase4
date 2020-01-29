@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESoapVersion;
@@ -62,7 +62,7 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryPropertiesFile.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
@@ -91,7 +91,7 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactory.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryPropertiesFile.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

@@ -31,7 +31,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -69,7 +69,7 @@ public final class MockMessages
                                                 @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
                                                                aMsg.getAsSoapDocument (aPayload),
                                                                eSOAPVersion,
                                                                aMsg.getMessagingID (),
@@ -88,7 +88,7 @@ public final class MockMessages
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
                                                      .setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactory.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSOAPVersion,
                                                                aErrorMsg.getMessagingID (),

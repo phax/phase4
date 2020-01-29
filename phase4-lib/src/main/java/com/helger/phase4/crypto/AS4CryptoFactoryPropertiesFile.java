@@ -48,17 +48,17 @@ import com.helger.security.keystore.KeyStoreHelper;
  * @author Philip Helger
  */
 @Immutable
-public class AS4CryptoFactory implements IAS4CryptoFactory
+public class AS4CryptoFactoryPropertiesFile implements IAS4CryptoFactory
 {
   static
   {
-    // Init once
+    // Init once - must be present!
     WSSConfig.init ();
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryPropertiesFile.class);
   private static final AtomicBoolean DEFAULT_INSTANCE_INITED = new AtomicBoolean (false);
-  private static AS4CryptoFactory _DEFAULT_INSTANCE = null;
+  private static AS4CryptoFactoryPropertiesFile _DEFAULT_INSTANCE = null;
 
   /**
    * @return The default instance, created by reading the default
@@ -66,14 +66,14 @@ public class AS4CryptoFactory implements IAS4CryptoFactory
    *         method returns <code>null</code>.
    */
   @Nullable
-  public static AS4CryptoFactory getDefaultInstance ()
+  public static AS4CryptoFactoryPropertiesFile getDefaultInstance ()
   {
-    AS4CryptoFactory ret = _DEFAULT_INSTANCE;
+    AS4CryptoFactoryPropertiesFile ret = _DEFAULT_INSTANCE;
     if (DEFAULT_INSTANCE_INITED.compareAndSet (false, true))
     {
       try
       {
-        ret = _DEFAULT_INSTANCE = new AS4CryptoFactory ((String) null);
+        ret = _DEFAULT_INSTANCE = new AS4CryptoFactoryPropertiesFile ((String) null);
       }
       catch (final InitializationException ex)
       {
@@ -129,7 +129,7 @@ public class AS4CryptoFactory implements IAS4CryptoFactory
    * @throws InitializationException
    *         If the file could not be loaded
    */
-  public AS4CryptoFactory (@Nullable final String sCryptoPropertiesPath)
+  public AS4CryptoFactoryPropertiesFile (@Nullable final String sCryptoPropertiesPath)
   {
     this (readCryptoPropertiesFromFile (sCryptoPropertiesPath));
     if (!m_aCryptoProps.isRead ())
@@ -144,7 +144,7 @@ public class AS4CryptoFactory implements IAS4CryptoFactory
    *        The properties to be used. May not be <code>null</code>. Note: the
    *        object is cloned internally to avoid outside modification.
    */
-  public AS4CryptoFactory (@Nonnull final AS4CryptoProperties aCryptoProps)
+  public AS4CryptoFactoryPropertiesFile (@Nonnull final AS4CryptoProperties aCryptoProps)
   {
     ValueEnforcer.notNull (aCryptoProps, "CryptoProps");
     m_aCryptoProps = aCryptoProps.getClone ();

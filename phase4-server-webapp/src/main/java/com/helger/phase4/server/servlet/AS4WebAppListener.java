@@ -31,7 +31,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
-import com.helger.phase4.crypto.AS4CryptoFactory;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
@@ -125,7 +125,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected void initManagers ()
   {
     AS4ServerInitializer.initAS4Server ();
-    DropFolderUserMessage.init (AS4CryptoFactory.getDefaultInstance ());
+    DropFolderUserMessage.init (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
   }
 
   @Override
