@@ -65,36 +65,10 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     return this;
   }
 
-  /**
-   * @deprecated Use {@link #getSoapDocument()} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nullable
-  public final Node getSOAPDocument ()
-  {
-    return getSoapDocument ();
-  }
-
   @Nullable
   public final Node getSoapDocument ()
   {
     return m_aSoapDocument;
-  }
-
-  /**
-   * As node set the usermessage if it is signed, so the references can be
-   * counted and used in non repudiation.
-   *
-   * @param aSoapDocument
-   *        Signed UserMessage
-   * @return this for chaining
-   * @deprecated Use {@link #setSoapDocument(Node)} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nonnull
-  public final AS4ClientReceiptMessage setSOAPDocument (@Nullable final Node aSoapDocument)
-  {
-    return setSoapDocument (aSoapDocument);
   }
 
   /**

@@ -36,16 +36,6 @@ public interface IAS4Message extends Serializable
 {
   /**
    * @return The SOAP version to use. May not be <code>null</code>.
-   */
-  @Nonnull
-  @Deprecated
-  default ESoapVersion getSOAPVersion ()
-  {
-    return getSoapVersion ();
-  }
-
-  /**
-   * @return The SOAP version to use. May not be <code>null</code>.
    * @since v0.9.8
    */
   @Nonnull
@@ -79,42 +69,12 @@ public interface IAS4Message extends Serializable
    * Create a SOAP document from this message without a payload.
    *
    * @return The created DOM document
-   * @deprecated Use {@link #getAsSoapDocument()} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nonnull
-  default Document getAsSOAPDocument ()
-  {
-    return getAsSoapDocument ();
-  }
-
-  /**
-   * Create a SOAP document from this message without a payload.
-   *
-   * @return The created DOM document
    * @since v0.9.8
    */
   @Nonnull
   default Document getAsSoapDocument ()
   {
     return getAsSoapDocument ((Node) null);
-  }
-
-  /**
-   * Create a SOAP document from this message with the specified optional
-   * payload. Attachments are not handled by this method.
-   *
-   * @param aPayload
-   *        The payload to be added into the SOAP body. May be
-   *        <code>null</code>.
-   * @return The created DOM document.
-   * @deprecated Use {@link #getAsSoapDocument(Node)} instead; since v0.9.8
-   */
-  @Nonnull
-  @Deprecated
-  default Document getAsSOAPDocument (@Nullable final Node aPayload)
-  {
-    return getAsSoapDocument (aPayload);
   }
 
   /**

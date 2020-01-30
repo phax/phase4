@@ -16,9 +16,6 @@
  */
 package com.helger.phase4.util;
 
-import java.util.Locale;
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -28,14 +25,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 
-import com.helger.commons.ValueEnforcer;
-import com.helger.commons.annotation.ReturnsMutableCopy;
-import com.helger.commons.collection.attr.StringMap;
-import com.helger.commons.collection.impl.CommonsLinkedHashMap;
-import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.stream.NonBlockingStringWriter;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
-import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.EXMLSerializeXMLDeclaration;
 import com.helger.xml.serialize.write.XMLWriter;
@@ -88,107 +79,5 @@ public final class AS4XMLHelper
     if (true)
       return _serializeRT (aNode);
     return _serializePh (aNode);
-  }
-
-  /**
-   * Get all attributes of the passed element as a map with a lowercase
-   * attribute name.
-   *
-   * @param aElement
-   *        The source element to extract the attributes from. May not be
-   *        <code>null</code>.
-   * @return A new map and never <code>null</code> but maybe empty.
-   * @deprecated in v0.9.8 because not used
-   */
-  @Nonnull
-  @ReturnsMutableCopy
-  @Deprecated
-  public static StringMap getAllAttrsWithLowercaseName (@Nonnull final IMicroElement aElement)
-  {
-    ValueEnforcer.notNull (aElement, "Element");
-
-    final StringMap ret = new StringMap ();
-    aElement.forAllAttributes ( (ns, name, value) -> ret.putIn (name.toLowerCase (Locale.US), value));
-    return ret;
-  }
-
-  /**
-   * Legacy method
-   *
-   * @param aElement
-   *        source element
-   * @param aRequiredAttributes
-   *        required attributes
-   * @return string map
-   * @deprecated in v0.9.8 because not used
-   */
-  @Nonnull
-  @ReturnsMutableCopy
-  @Deprecated
-  public static StringMap getAllAttrsWithLowercaseNameWithRequired (@Nonnull final IMicroElement aElement,
-                                                                    @Nonnull final String... aRequiredAttributes)
-  {
-    final StringMap aAttributes = getAllAttrsWithLowercaseName (aElement);
-    for (final String sRequiredAttribute : aRequiredAttributes)
-      if (!aAttributes.containsKey (sRequiredAttribute))
-        throw new IllegalStateException (aElement.getTagName () +
-                                         " is missing required attribute '" +
-                                         sRequiredAttribute +
-                                         "'");
-    return aAttributes;
-  }
-
-  /**
-   * @param aNode
-   *        Start node. May not be <code>null</code>.
-   * @param sNodeName
-   *        The element name to be queried relative to the start node.
-   * @param sNodeKeyName
-   *        The attribute name of the key.
-   * @param sNodeValueName
-   *        The attribute name of the value.
-   * @return The non-<code>null</code> {@link Map}. @ In case a node is missing
-   *         a key or value attribute.
-   * @deprecated in v0.9.8 because not used
-   */
-  @Deprecated
-  @Nonnull
-  @ReturnsMutableCopy
-  public static ICommonsOrderedMap <String, String> mapAttributeNodes (@Nonnull final IMicroElement aNode,
-                                                                       @Nonnull final String sNodeName,
-                                                                       @Nonnull final String sNodeKeyName,
-                                                                       @Nonnull final String sNodeValueName)
-  {
-    ValueEnforcer.notNull (aNode, "Node");
-    ValueEnforcer.notNull (sNodeName, "NodeName");
-    ValueEnforcer.notNull (sNodeKeyName, "NodeKeyName");
-    ValueEnforcer.notNull (sNodeValueName, "NodeValueName");
-
-    final ICommonsOrderedMap <String, String> ret = new CommonsLinkedHashMap <> ();
-    int nIndex = 0;
-    for (final IMicroElement eChild : aNode.getAllChildElements (sNodeName))
-    {
-      final String sName = eChild.getAttributeValue (sNodeKeyName);
-      if (sName == null)
-        throw new IllegalStateException (sNodeName +
-                                         "[" +
-                                         nIndex +
-                                         "] does not have key attribute '" +
-                                         sNodeKeyName +
-                                         "'");
-
-      final String sValue = eChild.getAttributeValue (sNodeValueName);
-      if (sValue == null)
-        throw new IllegalStateException (sNodeName +
-                                         "[" +
-                                         nIndex +
-                                         "] does not have value attribute '" +
-                                         sNodeValueName +
-                                         "'");
-
-      ret.put (sName, sValue);
-      ++nIndex;
-    }
-    return ret;
   }
 }

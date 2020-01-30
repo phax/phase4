@@ -106,27 +106,6 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   /**
    * Constructor
    *
-   * @param aCryptoFactory
-   *        Crypto factory. May not be <code>null</code>.
-   * @param aPModeResolver
-   *        PMode resolved to be used. May not be <code>null</code>.
-   * @param aIAF
-   *        The attachment factory for incoming attachments.
-   * @deprecated Use
-   *             {@link #AS4XServletHandler(Supplier, IPModeResolver, IIncomingAttachmentFactory)}
-   *             instead
-   */
-  @Deprecated
-  public AS4XServletHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                             @Nonnull final IPModeResolver aPModeResolver,
-                             @Nonnull final IIncomingAttachmentFactory aIAF)
-  {
-    this ( () -> aCryptoFactory, aPModeResolver, aIAF);
-  }
-
-  /**
-   * Constructor
-   *
    * @param aCryptoFactorySupplier
    *        Crypto factory supplier. May not be <code>null</code>.
    * @param aPModeResolver
