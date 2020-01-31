@@ -86,30 +86,10 @@ public class PModeLegProtocol implements Serializable
     return EChange.CHANGED;
   }
 
-  /**
-   * @deprecated Use {@link #getSoapVersion()} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nonnull
-  public final ESoapVersion getSOAPVersion ()
-  {
-    return getSoapVersion ();
-  }
-
   @Nonnull
   public final ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
-  }
-
-  /**
-   * @deprecated Use {@link #setSoapVersion(ESoapVersion)} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nonnull
-  public final EChange setSOAPVersion (@Nonnull final ESoapVersion eSoapVersion)
-  {
-    return setSoapVersion (eSoapVersion);
   }
 
   @Nonnull
@@ -145,17 +125,6 @@ public class PModeLegProtocol implements Serializable
     return new ToStringGenerator (this).append ("Address", m_sAddress)
                                        .append ("SoapVersion", m_eSoapVersion)
                                        .getToString ();
-  }
-
-  /**
-   * @deprecated Use {@link #createForDefaultSoapVersion(String)} instead; since
-   *             v0.9.8
-   */
-  @Deprecated
-  @Nonnull
-  public static PModeLegProtocol createForDefaultSOAPVersion (@Nullable final String sAddress)
-  {
-    return createForDefaultSoapVersion (sAddress);
   }
 
   @Nonnull

@@ -63,18 +63,6 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   /**
    * @return The SOAP version of the current request as specified in the
    *         constructor. Never <code>null</code>.
-   * @deprecated use {@link #getSoapVersion()} instead; since v0.9.8
-   */
-  @Nonnull
-  @Deprecated
-  default ESoapVersion getSOAPVersion ()
-  {
-    return getSoapVersion ();
-  }
-
-  /**
-   * @return The SOAP version of the current request as specified in the
-   *         constructor. Never <code>null</code>.
    * @since v0.9.8
    */
   @Nonnull
@@ -165,7 +153,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   /**
    * @return get the original SOAP document, only the entire document no
    *         attachment. This might by encrypted.
-   * @see #hasDecryptedSOAPDocument()
+   * @see #hasDecryptedSoapDocument()
    * @see #getDecryptedSoapDocument()
    * @since v0.9.8
    */
@@ -188,26 +176,6 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   {
     final ICommonsList <WSS4JAttachment> aAttachments = getOriginalAttachments ();
     return aAttachments != null && aAttachments.isNotEmpty ();
-  }
-
-  /**
-   * @return get the decrypted SOAP document, only the entire document no
-   *         attachment
-   * @see #hasOriginalSoapDocument()
-   * @see #getOriginalSoapDocument()
-   * @deprecated Use {@link #getDecryptedSoapDocument()} instead; since v0.9.8
-   */
-  @Deprecated
-  @Nullable
-  default Document getDecryptedSOAPDocument ()
-  {
-    return getDecryptedSoapDocument ();
-  }
-
-  @Deprecated
-  default boolean hasDecryptedSOAPDocument ()
-  {
-    return getDecryptedSoapDocument () != null;
   }
 
   /**
@@ -383,19 +351,6 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
    * @since v0.9.7
    */
   boolean isPingMessage ();
-
-  /**
-   * @return The child of the SOAP Body node or <code>null</code>. That is
-   *         always decrypted.
-   * @since v0.9.7
-   * @deprecated use {@link #getSoapBodyPayloadNode()} instead
-   */
-  @Nullable
-  @Deprecated
-  default Node getPayloadNode ()
-  {
-    return getSoapBodyPayloadNode ();
-  }
 
   /**
    * @return The child of the SOAP Body node or <code>null</code>. That is
