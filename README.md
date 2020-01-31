@@ -112,6 +112,11 @@ If you want to create your own profile, you need to provide an [SPI](https://doc
 
 Peppol is an international eDelivery network. Read more on https://peppol.eu
 
+To perform testing with Peppol you **MUST** have a valid Peppol certificate.
+Testing with self-signed certificates does not work.
+Only certificates that are based on the Peppol PKI will be accepted.
+You may read https://peppol.helger.com/public/locale-en_US/menuitem-docs-peppol-pki for more information on the Peppol PKI.
+
 ## Subproject phase4-peppol-client
 
 The contained project contains a class called `Phase4PeppolSender.Builder` - it contains all the parameters with some example values so that you can start easily. Alternatively the class `Phase4PeppolSender.SBDHBuilder` offers a build class where you can add your pre-build StandardBusinessDocument, which implies that no implicit validation of the business document takes place. This class contains utility methods to explicitly validate the payload.
