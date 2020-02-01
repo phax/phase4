@@ -58,6 +58,8 @@ Peppol users: the key store must contain the AccessPoint private key and the tru
 
 **Note:** since v0.9.7 the whole crypto configuration can be done in-memory when using `AS4CryptoFactoryInMemoryKeyStore`.
 
+**Note:** since v0.9.8 the crypto factory reading from a file was renamed from `AS4CryptoFactory` to `AS4CryptoFactoryPropertiesFile`
+
 ### phase4.properties
 
 This property file must be provided, when the `phase4-servlet` submodule for receiving is used.
@@ -93,6 +95,8 @@ The properties have the following meaning
 * **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
 * **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
 
+**Note:** since v0.9.8 the existence of this file is optional. If this file is not present, ensure to set the system property `phase4.manager.inmemory` (see below).
+
 ### System properties
 
 The following special system properties are supported:
@@ -123,8 +127,8 @@ If you want to create your own profile, you need to provide an [SPI](https://doc
 Peppol is an international eDelivery network. Read more on https://peppol.eu
 
 To perform testing with Peppol you **MUST** have a valid Peppol certificate.
-Testing with self-signed certificates does not work.
-Only certificates that are based on the Peppol PKI will be accepted.
+Testing with a self-signed certificate does **not** work.
+Only certificates that are based on the Peppol AP PKI will be accepted.
 You may read https://peppol.helger.com/public/locale-en_US/menuitem-docs-peppol-pki for more information on the Peppol PKI.
 
 ## Subproject phase4-peppol-client
@@ -155,6 +159,8 @@ Sample setup for `WEB-INF/web.xml`:
 ```
 
 By default the "receiver checks" are enabled. They are checking if the incoming message is targeted for the correct Access Point. That is done by performing an SMP lookup on the receiver/document type/process ID and check if the resulting values match the preconfigured values. That of course requires that the preconfigured values need to be set, before a message can be received. That needs to be done via the static methods in class `Phase4PeppolServletConfiguration`. Alternatively you can disable the receiver checks using the `setReceiverCheckEnabled` method in said class.
+
+**Note:** in v0.9.8 the receiving SPI method was heavily extended to be able to retrieve more information elements directly, without needing to dive deeper into the code.
 
 # Building from source
 
