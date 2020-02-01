@@ -18,6 +18,16 @@ It consists of the following sub-projects:
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
 This solution is Peppol compliant. See the test report at https://github.com/phax/phase4/blob/master/docs/Peppol/TestBedReport-POP000306-20190906T103327.pdf
+
+## Known users
+
+Known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
+* Bundesrechenzentrum / Federal Computing Center (AT)
+* ecosio GmbH (AT)
+* Qvalia Group AB (SE)
+* TOOP4EU (EU project)
+
+If you are a phase4 user and want to be listed here, write me an email to phase4[at]helger[dot]com
     
 # Configuration
 
