@@ -95,7 +95,7 @@ The properties have the following meaning
 * **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
 * **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
 
-**Note:** since v0.9.8 the existence of this file is optional. If this file is not present, ensure to set the system property `phase4.manager.inmemory` (see below).
+**Note:** since v0.9.8 the existence of this file is optional. If this file is not present, ensure to set the system property `phase4.manager.inmemory` to `true` (see below).
 
 ### System properties
 
