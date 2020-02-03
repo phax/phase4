@@ -149,7 +149,7 @@ It assumes you are running an Application server like [Apache Tomcat](https://to
 
 Available from v0.9.7 onwards.
 Register the Servlet `com.helger.phase4.peppol.servlet.Phase4PeppolServlet` in your application.
-Than implement the SPI interface `com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI` to handle incoming Peppol messages. See [Introduction to the Service Providers Interface](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) if you are not familiar with the Java concept of SPI.
+Then implement the SPI interface `com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI` to handle incoming Peppol messages. See [Introduction to the Service Providers Interface](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) if you are not familiar with the Java concept of SPI.
 
 Sample setup for `WEB-INF/web.xml`:
 
@@ -166,7 +166,7 @@ Sample setup for `WEB-INF/web.xml`:
 
 By default the "receiver checks" are enabled. They are checking if the incoming message is targeted for the correct Access Point. That is done by performing an SMP lookup on the receiver/document type/process ID and check if the resulting values match the preconfigured values. That of course requires that the preconfigured values need to be set, before a message can be received. That needs to be done via the static methods in class `Phase4PeppolServletConfiguration`. Alternatively you can disable the receiver checks using the `setReceiverCheckEnabled` method in said class.
 
-Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implementation of this interface provides they keystore as well as the private key for doing signing and encryption services in phase4. Default implementations shipping with phase4 are `AS4CryptoFactoryPropertiesFile` and `AS4CryptoFactoryInMemoryKeyStore`. To change that configuration use the extended constructor of `AS4XServletHandler` that itself is instantiated in the `Phase4PeppolServlet` - therefore a custom Servlet class is required, where `Phase4PeppolServlet` should be used as the "copy-paste template" (and don't forget to reference the new servlet class from the `WEB-INF/web.xml` mentioned above). 
+Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implementation of this interface provides the keystore as well as the private key for doing signing and/or encryption services in phase4. Default implementations shipping with phase4 are `AS4CryptoFactoryPropertiesFile` and `AS4CryptoFactoryInMemoryKeyStore`. To change that configuration use the extended constructor of `AS4XServletHandler` that itself is instantiated in the `Phase4PeppolServlet` - therefore a custom Servlet class is required, where `Phase4PeppolServlet` should be used as the "copy-paste template" (and don't forget to reference the new servlet class from the `WEB-INF/web.xml` mentioned above). 
 
 **Note:** in v0.9.8 the receiving SPI method was heavily extended to be able to retrieve more information elements directly, without needing to dive deeper into the code.
 
