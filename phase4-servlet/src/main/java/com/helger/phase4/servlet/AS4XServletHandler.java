@@ -98,9 +98,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler ()
   {
-    this ( () -> AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
-           DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-           IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+    this (AS4CryptoFactoryPropertiesFile::getDefaultInstance,
+          DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
+          IIncomingAttachmentFactory.DEFAULT_INSTANCE);
   }
 
   /**
