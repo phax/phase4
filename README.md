@@ -78,9 +78,9 @@ server.datapath=/var/www/as4/data
 ```
 
 The file is searched in the locations specified as follows:
-* A path denoted by the environment variable `PHASE4_SERVER_CONFIG`
 * A path denoted by the system property `phase4.server.configfile`
 * A path denoted by the system property `as4.server.configfile` (for legacy reasons)
+* A path denoted by the environment variable `PHASE4_SERVER_CONFIG`
 * A file named `private-phase4.properties` within your classpath
 * A file named `phase4.properties` within your classpath
 * A file named `private-as4.properties` within your classpath (for legacy reasons)
@@ -126,10 +126,26 @@ If you want to create your own profile, you need to provide an [SPI](https://doc
 
 Peppol is an international eDelivery network. Read more on https://peppol.eu
 
+## Peppol Prerequisites
+
 To perform testing with Peppol you **MUST** have a valid Peppol certificate.
 Testing with a self-signed certificate does **not** work.
 Only certificates that are based on the Peppol AP PKI will be accepted.
 You may read https://peppol.helger.com/public/locale-en_US/menuitem-docs-peppol-pki for more information on the Peppol PKI.
+To retrieve a Peppol certificate, you must be a member of OpenPEPPOL AISBL - see https://peppol.eu/get-involved/join-openpeppol/ for details.
+
+## Peppol AS4 specifics
+
+OASIS AS4 is a profile of OASIS EBMS v3. CEF AS4 is a profile of OASIS AS4. Peppol AS4 is a profile of CEF AS4. Find the Peppol specification document at https://docs.peppol.eu/edelivery/as4/specification/
+
+Peppol has a very limited use of AS4. Some highlights are:
+* It uses only one-way push
+* TLS certificates must have SSL labs test grade "A" - that means e.g. no TLS 1.0 or 1.1 support
+* Signing and encryption rules follow the CEF AS4 profile requirements (AES 128 CGM, SHA-256)
+* It allows only for one payload
+* You have to use MIME encoding for the payload - and are not allowed to add it into the SOAP body
+* The payload is always an SBD envelope (Standard Business Document; mostly wrongly addressed as SBDH - Standard Business Document Header) - same as for Peppol AS2
+* Compression must be supported but can be chosen on the senders discretion
 
 ## Subproject phase4-peppol-client
 
