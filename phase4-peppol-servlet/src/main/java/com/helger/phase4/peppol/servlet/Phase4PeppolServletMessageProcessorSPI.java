@@ -46,10 +46,7 @@ import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReadException;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.EndpointType;
 import com.helger.peppol.smp.ISMPTransportProfile;
-import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
-import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -71,6 +68,9 @@ import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.builder.SBDHReader;
 import com.helger.security.certificate.CertificateHelper;
+import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.peppol.jaxb.EndpointType;
 import com.helger.xml.serialize.write.XMLWriter;
 
 /**

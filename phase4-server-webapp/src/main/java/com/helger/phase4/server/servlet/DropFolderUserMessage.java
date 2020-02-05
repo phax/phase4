@@ -44,12 +44,7 @@ import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.EndpointType;
-import com.helger.peppol.smpclient.SMPClient;
-import com.helger.peppol.url.IPeppolURLProvider;
-import com.helger.peppol.url.PeppolURLProvider;
 import com.helger.peppol.utils.PeppolCertificateHelper;
-import com.helger.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.peppolid.factory.IIdentifierFactory;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
@@ -67,6 +62,12 @@ import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.settings.ISettings;
+import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.SMPClient;
+import com.helger.smpclient.peppol.jaxb.EndpointType;
+import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
+import com.helger.smpclient.url.IPeppolURLProvider;
+import com.helger.smpclient.url.PeppolURLProvider;
 
 public final class DropFolderUserMessage
 {
@@ -98,7 +99,9 @@ public final class DropFolderUserMessage
       {
         // Extract PEPPOL specific data
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
-        final SMPClient aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
+        final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP,
+                                                                      aSBDH.getReceiverAsIdentifier (),
+                                                                      ESML.DIGIT_TEST);
         final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
                                                                aSBDH.getDocumentTypeAsIdentifier (),
                                                                aSBDH.getProcessAsIdentifier (),

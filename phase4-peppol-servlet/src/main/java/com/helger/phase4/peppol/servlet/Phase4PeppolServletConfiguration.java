@@ -21,7 +21,7 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 
 /**
  * This class contains the references values against which incoming values are

@@ -24,11 +24,11 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation390;
 import com.helger.peppol.sml.ESML;
-import com.helger.peppol.smpclient.SMPClientReadOnly;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;

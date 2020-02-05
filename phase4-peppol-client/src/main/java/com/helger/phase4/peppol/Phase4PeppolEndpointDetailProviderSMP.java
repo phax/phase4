@@ -29,13 +29,13 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.smp.ESMPTransportProfile;
-import com.helger.peppol.smp.EndpointType;
-import com.helger.peppol.smpclient.ISMPServiceMetadataProvider;
-import com.helger.peppol.smpclient.SMPClientReadOnly;
-import com.helger.peppol.smpclient.exception.SMPClientException;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.smpclient.exception.SMPClientException;
+import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
+import com.helger.smpclient.peppol.jaxb.EndpointType;
 
 /**
  * The default implementation of {@link IPhase4PeppolEndpointDetailProvider}
