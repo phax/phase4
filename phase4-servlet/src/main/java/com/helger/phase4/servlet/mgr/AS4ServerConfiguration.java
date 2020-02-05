@@ -59,16 +59,16 @@ public final class AS4ServerConfiguration
     final ConfigFileBuilder aBuilder = new ConfigFileBuilder ();
     if (bForUnitTest)
     {
-      aBuilder.addPathFromEnvVar ("PHASE4_SERVER_TEST_CONFIG")
-              .addPathFromSystemProperty ("phase4.server.test.configfile")
+      aBuilder.addPathFromSystemProperty ("phase4.server.test.configfile")
+              .addPathFromEnvVar ("PHASE4_SERVER_TEST_CONFIG")
               .addPath ("private-test-phase4.properties")
               .addPath ("test-phase4.properties");
     }
     else
     {
-      aBuilder.addPathFromEnvVar ("PHASE4_SERVER_CONFIG")
-              .addPathFromSystemProperty ("phase4.server.configfile")
+      aBuilder.addPathFromSystemProperty ("phase4.server.configfile")
               .addPathFromSystemProperty ("as4.server.configfile")
+              .addPathFromEnvVar ("PHASE4_SERVER_CONFIG")
               .addPath ("private-phase4.properties")
               .addPath ("phase4.properties")
               .addPath ("private-as4.properties")
