@@ -213,6 +213,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.9.9 - work in progress
     * Removed the methods deprecated in v0.9.8
     * Updated to peppol-commons 8.x
+    * Extended `Phase4PeppolEndpointDetailProviderSMP` API
 * v0.9.8 - 2020-01-29
     * Added possibility to use external message ID in Peppol client
     * Added new classes `AS4IncomingDumperSingleUse` and `AS4OutgoingDumperSingleUse` for easier per-call dumping

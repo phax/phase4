@@ -29,6 +29,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.smp.ESMPTransportProfile;
+import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -46,17 +47,70 @@ import com.helger.smpclient.peppol.jaxb.EndpointType;
  */
 public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpointDetailProvider
 {
+  public static final ISMPTransportProfile DEFAULT_TRANSPORT_PROFILE = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolEndpointDetailProviderSMP.class);
-  // The transport profile to be used is fixed
-  private static final ESMPTransportProfile TP = ESMPTransportProfile.TRANSPORT_PROFILE_PEPPOL_AS4_V2;
 
   private final ISMPServiceMetadataProvider m_aSMPClient;
+  private ISMPTransportProfile m_aTP = DEFAULT_TRANSPORT_PROFILE;
   private EndpointType m_aEndpoint;
 
   public Phase4PeppolEndpointDetailProviderSMP (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
   {
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     m_aSMPClient = aSMPClient;
+  }
+
+  /**
+   * @return The service metadata provider passed in the constructor. Never
+   *         <code>null</code>.
+   * @since v0.9.9
+   */
+  @Nonnull
+  public final ISMPServiceMetadataProvider getServiceMetadataProvider ()
+  {
+    return m_aSMPClient;
+  }
+
+  /**
+   * @return The transport profile to be used. Defaults to
+   *         {@link #DEFAULT_TRANSPORT_PROFILE}.
+   * @since v0.9.9
+   */
+  @Nonnull
+  public final ISMPTransportProfile getTransportProfile ()
+  {
+    return m_aTP;
+  }
+
+  /**
+   * Change the transport profile to be used. This only has an effect if it is
+   * called prior to
+   * {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}.
+   *
+   * @param aTP
+   *        The transport profile to be used. May not be <code>null</code>.
+   * @return this for chaining.
+   * @since v0.9.9
+   */
+  @Nonnull
+  public final Phase4PeppolEndpointDetailProviderSMP setTransportProfile (@Nonnull final ISMPTransportProfile aTP)
+  {
+    ValueEnforcer.notNull (aTP, "TransportProfile");
+    m_aTP = aTP;
+    return this;
+  }
+
+  /**
+   * @return The endpoint resolved. May only be non-<code>null</code> if
+   *         {@link #init(IDocumentTypeIdentifier, IProcessIdentifier, IParticipantIdentifier)}
+   *         was called.
+   * @since v0.9.9
+   */
+  @Nullable
+  public final EndpointType getEndpoint ()
+  {
+    return m_aEndpoint;
   }
 
   public void init (@Nonnull final IDocumentTypeIdentifier aDocTypeID,
@@ -83,7 +137,7 @@ public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpo
       // Perform SMP lookup
       try
       {
-        m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, TP);
+        m_aEndpoint = m_aSMPClient.getEndpoint (aReceiverID, aDocTypeID, aProcID, m_aTP);
         if (m_aEndpoint == null)
           throw new Phase4PeppolSMPException ("Failed to resolve SMP endpoint (" +
                                               aReceiverID.getURIEncoded () +
@@ -92,8 +146,19 @@ public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpo
                                               ", " +
                                               aProcID.getURIEncoded () +
                                               ", " +
-                                              TP.getID () +
+                                              m_aTP.getID () +
                                               ")");
+
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Successfully resolved SMP endpoint (" +
+                        aReceiverID.getURIEncoded () +
+                        ", " +
+                        aDocTypeID.getURIEncoded () +
+                        ", " +
+                        aProcID.getURIEncoded () +
+                        ", " +
+                        m_aTP.getID () +
+                        ")");
       }
       catch (final SMPClientException ex)
       {
@@ -104,7 +169,7 @@ public class Phase4PeppolEndpointDetailProviderSMP implements IPhase4PeppolEndpo
                                             ", " +
                                             aProcID.getURIEncoded () +
                                             ", " +
-                                            TP.getID () +
+                                            m_aTP.getID () +
                                             ")",
                                             ex);
       }
