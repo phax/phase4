@@ -16,11 +16,21 @@
  */
 package com.helger.phase4.dump;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.stream.StreamHelper;
+import com.helger.commons.io.stream.WrappedInputStream;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
  * This class holds the global stream dumper.
@@ -78,5 +88,84 @@ public final class AS4DumpManager
   public static void setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
     s_aRWLock.writeLocked ( () -> s_aOutgoingDumper = aOutgoingDumper);
+  }
+
+  /**
+   * @param aIncomingDumper
+   *        The incoming AS4 dumper. May be <code>null</code>. If
+   *        <code>null</code> the global one from {@link AS4DumpManager} is
+   *        used.
+   * @param aRequestInputStream
+   *        The InputStream to read the request payload from. Will not be closed
+   *        internally. Never <code>null</code>.
+   * @param aMessageMetadata
+   *        Request metadata. Never <code>null</code>.
+   * @param aHttpHeaders
+   *        the HTTP headers of the current request. Never <code>null</code>.
+   * @return the InputStream to be used. The caller is responsible for closing
+   *         the stream. Never <code>null</code>.
+   * @throws IOException
+   */
+  @Nonnull
+  public static InputStream getIncomingDumpAwareInputStream (@Nullable final IAS4IncomingDumper aIncomingDumper,
+                                                             @Nonnull @WillNotClose final InputStream aRequestInputStream,
+                                                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                             @Nonnull final HttpHeaderMap aHttpHeaders) throws IOException
+  {
+    final IAS4IncomingDumper aRealDumper = aIncomingDumper != null ? aIncomingDumper : getIncomingDumper ();
+    if (aRealDumper == null)
+    {
+      // No wrapping needed
+      return aRequestInputStream;
+    }
+
+    // Dump worthy?
+    final OutputStream aOS = aRealDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
+    if (aOS == null)
+    {
+      // No wrapping needed
+      return aRequestInputStream;
+    }
+
+    // Read and write at once
+    return new WrappedInputStream (aRequestInputStream)
+    {
+      @Override
+      public int read () throws IOException
+      {
+        final int ret = super.read ();
+        if (ret != -1)
+        {
+          aOS.write (ret & 0xff);
+        }
+        return ret;
+      }
+
+      @Override
+      public int read (final byte [] b, final int nOffset, final int nLength) throws IOException
+      {
+        final int ret = super.read (b, nOffset, nLength);
+        if (ret != -1)
+        {
+          aOS.write (b, nOffset, ret);
+        }
+        return ret;
+      }
+
+      @Override
+      public void close () throws IOException
+      {
+        try
+        {
+          // Flush and close output stream as well
+          StreamHelper.flush (aOS);
+          StreamHelper.close (aOS);
+        }
+        finally
+        {
+          super.close ();
+        }
+      }
+    };
   }
 }

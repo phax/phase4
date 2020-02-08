@@ -361,20 +361,20 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                       @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
   @Nonnull
-  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aDumper,
+  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                   @Nonnull final HttpEntity aSrcEntity,
                                                   @Nonnull @Nonempty final String sMessageID,
                                                   @Nullable final HttpHeaderMap aCustomHeaders,
                                                   @Nonnegative final int nTry,
                                                   @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
-    if (aDumper == null)
+    if (aOutgoingDumper == null)
     {
       // No dumper
       return aSrcEntity;
     }
 
-    final OutputStream aDumpOS = aDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
     if (aDumpOS == null)
     {
       // No dumping needed

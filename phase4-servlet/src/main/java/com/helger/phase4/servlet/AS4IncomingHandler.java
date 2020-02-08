@@ -18,7 +18,6 @@ package com.helger.phase4.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -50,8 +49,6 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
-import com.helger.commons.io.stream.StreamHelper;
-import com.helger.commons.io.stream.WrappedInputStream;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
@@ -135,79 +132,6 @@ public class AS4IncomingHandler
                                                                                MessagingException;
   }
 
-  /**
-   * @param aMessageMetadata
-   *        Request metadata. Never <code>null</code>.
-   * @param aHttpHeaders
-   *        the HTTP headers of the current request. Never <code>null</code>.
-   * @param aRequestInputStream
-   *        The InputStream to read the request payload from. Will not be closed
-   *        internally. Never <code>null</code>.
-   * @param aIncomingDumper
-   *        The incoming AS4 dumper. May be <code>null</code>. If
-   *        <code>null</code> the global one from {@link AS4DumpManager} is
-   *        used.
-   * @return the InputStream to be used. The caller is responsible for closing
-   *         the stream. Never <code>null</code>.
-   * @throws IOException
-   */
-  @Nonnull
-  private static InputStream _getRequestIS (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                            @Nonnull final HttpHeaderMap aHttpHeaders,
-                                            @Nonnull @WillNotClose final InputStream aRequestInputStream,
-                                            @Nullable final IAS4IncomingDumper aIncomingDumper) throws IOException
-  {
-    final IAS4IncomingDumper aDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
-    if (aDumper == null)
-    {
-      // No wrapping needed
-      return aRequestInputStream;
-    }
-
-    // Dump worthy?
-    final OutputStream aOS = aDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
-    if (aOS == null)
-    {
-      // No wrapping needed
-      return aRequestInputStream;
-    }
-
-    // Read and write at once
-    return new WrappedInputStream (aRequestInputStream)
-    {
-      @Override
-      public int read () throws IOException
-      {
-        final int ret = super.read ();
-        if (ret != -1)
-        {
-          aOS.write (ret & 0xff);
-        }
-        return ret;
-      }
-
-      @Override
-      public int read (final byte [] b, final int nOffset, final int nLength) throws IOException
-      {
-        final int ret = super.read (b, nOffset, nLength);
-        if (ret != -1)
-        {
-          aOS.write (b, nOffset, ret);
-        }
-        return ret;
-      }
-
-      @Override
-      public void close () throws IOException
-      {
-        // Flush and close output stream as well
-        StreamHelper.flush (aOS);
-        StreamHelper.close (aOS);
-        super.close ();
-      }
-    };
-  }
-
   public static void parseAS4Message (@Nonnull final IIncomingAttachmentFactory aIAF,
                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
@@ -248,7 +172,10 @@ public class AS4IncomingHandler
         LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
 
       // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = _getRequestIS (aMessageMetadata, aHttpHeaders, aPayloadIS, aIncomingDumper))
+      try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aIncomingDumper,
+                                                                                          aPayloadIS,
+                                                                                          aMessageMetadata,
+                                                                                          aHttpHeaders))
       {
         // PARSING MIME Message via MultipartStream
         final MultipartStream aMulti = new MultipartStream (aRequestIS,
@@ -318,10 +245,10 @@ public class AS4IncomingHandler
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSoapDocument = DOMReader.readXMLDOM (_getRequestIS (aMessageMetadata,
-                                                           aHttpHeaders,
-                                                           aPayloadIS,
-                                                           aIncomingDumper));
+      aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aIncomingDumper,
+                                                                                            aPayloadIS,
+                                                                                            aMessageMetadata,
+                                                                                            aHttpHeaders));
 
       if (LOGGER.isDebugEnabled ())
         if (aSoapDocument != null)
