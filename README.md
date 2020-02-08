@@ -192,6 +192,7 @@ Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implem
 This subproject shows how to a simple standalone Peppol AS4 server could look like.
 It is a **demo** implementation and does not do anything with the payload except storing it on disk.
 Use this as the basis for implementing your own solution - don't take it "as is".
+It takes incoming requests via HTTP POST at the URL `/as4`.
 
 Upon startup it checks that a valid Peppol Access Point (AP) certificate is installed.
 
@@ -202,6 +203,9 @@ It stores all incoming requests on disk based on the incoming date time.
 * The returned receipt is stored with extension `.response`
 
 To configure your certificate, modify the file `crypto.properties`. Don't alter the truststore - it's a Peppol default.
+
+To start it from within your IDE you may run the test class `com.helger.phase4.peppol.server.standalone.RunInJettyPHASE4PEPPOL` - it will spawn on http://localhost:8080`.
+For IntelliJ users: make sure the folder `phase4-peppol-server-webapp` is the startup directory.
 
 # Building from source
 
