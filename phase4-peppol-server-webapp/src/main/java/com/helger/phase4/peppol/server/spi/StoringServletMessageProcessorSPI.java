@@ -34,15 +34,14 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
+import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorExtractEbms3Messaging;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
-import com.helger.phase4.wss.EWSSVersion;
 import com.helger.xml.namespace.MapBasedNamespaceContext;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
@@ -64,10 +63,7 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
 
     final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
                                                                  : aState.getOriginalSoapDocument ();
-    final MapBasedNamespaceContext aNSCtx = new MapBasedNamespaceContext ();
-    aNSCtx.addMapping ("soap", aState.getSoapVersion ().getNamespaceURI ());
-    aNSCtx.addMapping ("wss4j", EWSSVersion.WSS_111.getNamespaceURI ());
-    aNSCtx.addMapping ("ebms3", SOAPHeaderElementProcessorExtractEbms3Messaging.QNAME_MESSAGING.getNamespaceURI ());
+    final MapBasedNamespaceContext aNSCtx = new Ebms3NamespaceHandler ();
     final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc, new XMLWriterSettings ().setNamespaceContext (aNSCtx));
     if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
       LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "'");
