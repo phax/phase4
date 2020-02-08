@@ -262,6 +262,7 @@
     <module>phase4-server-webapp</module>
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
+    <module>phase4-peppol-server-webapp</module>
   </modules>
   
   <dependencies>

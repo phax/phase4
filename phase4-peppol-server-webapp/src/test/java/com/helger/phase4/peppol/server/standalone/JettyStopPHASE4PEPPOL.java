@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2020 Philip Helger (www.helger.com)
+ * Copyright (C) 2020 Philip Helger (www.helger.com)
  * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.server.standalone;
+package com.helger.phase4.peppol.server.standalone;
 
-import com.helger.photon.jetty.JettyStarter;
+import java.io.IOException;
+
+import com.helger.photon.jetty.JettyStopper;
 
 /**
- * Run this AS4 server locally using Jetty on port 8080 in / context.
- *
  * @author Philip Helger
  */
-public final class RunInJettyPHASE4
+public final class JettyStopPHASE4PEPPOL
 {
-  public static void main (final String... args) throws Exception
+  public static void main (final String [] args) throws IOException
   {
-    new JettyStarter (RunInJettyPHASE4.class).setSessionCookieName ("PHASE4_SESSION")
-                                             .setContainerIncludeJarPattern (".*/classes/.*")
-                                             .run ();
+    new JettyStopper ().run ();
   }
 }

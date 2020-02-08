@@ -1,0 +1,178 @@
+/**
+ * Copyright (C) 2020 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.helger.phase4.peppol.server.servlet;
+
+import java.security.KeyStore;
+import java.security.KeyStore.PrivateKeyEntry;
+import java.security.cert.X509Certificate;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
+import javax.servlet.annotation.WebListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import com.helger.commons.datetime.PDTFactory;
+import com.helger.commons.debug.GlobalDebug;
+import com.helger.commons.exception.InitializationException;
+import com.helger.commons.state.ETriState;
+import com.helger.httpclient.HttpDebugger;
+import com.helger.peppol.utils.EPeppolCertificateCheckResult;
+import com.helger.peppol.utils.PeppolCertificateChecker;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.peppol.server.storage.StorageHelper;
+import com.helger.phase4.servlet.AS4ServerInitializer;
+import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.photon.core.servlet.WebAppListener;
+import com.helger.photon.security.CSecurity;
+import com.helger.photon.security.mgr.PhotonSecurityManager;
+import com.helger.photon.security.user.UserManager;
+import com.helger.xservlet.requesttrack.RequestTracker;
+
+@WebListener
+public final class Phase4PeppolWebAppListener extends WebAppListener
+{
+  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolWebAppListener.class);
+
+  @Override
+  @Nullable
+  protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
+  {
+    return Boolean.toString (AS4ServerConfiguration.isGlobalDebug ());
+  }
+
+  @Override
+  @Nullable
+  protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
+  {
+    return Boolean.toString (AS4ServerConfiguration.isGlobalProduction ());
+  }
+
+  @Override
+  @Nullable
+  protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
+  {
+    return Boolean.toString (AS4ServerConfiguration.isNoStartupInfo ());
+  }
+
+  @Override
+  protected String getDataPath (@Nonnull final ServletContext aSC)
+  {
+    return AS4ServerConfiguration.getDataPath ();
+  }
+
+  @Override
+  protected boolean shouldCheckFileAccess (@Nonnull final ServletContext aSC)
+  {
+    return false;
+  }
+
+  @Override
+  protected void afterContextInitialized (@Nonnull final ServletContext aSC)
+  {
+    super.afterContextInitialized (aSC);
+
+    // Show registered servlets
+    for (final Map.Entry <String, ? extends ServletRegistration> aEntry : aSC.getServletRegistrations ().entrySet ())
+      LOGGER.info ("Servlet '" + aEntry.getKey () + "' is mapped to " + aEntry.getValue ().getMappings ());
+  }
+
+  @Override
+  protected void initGlobalSettings ()
+  {
+    // Logging: JUL to SLF4J
+    SLF4JBridgeHandler.removeHandlersForRootLogger ();
+    SLF4JBridgeHandler.install ();
+
+    if (GlobalDebug.isDebugMode ())
+      RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+
+    HttpDebugger.setEnabled (false);
+  }
+
+  @Override
+  protected void initSecurity ()
+  {
+    // Ensure user exists
+    final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
+    if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
+    {
+      aUserMgr.createPredefinedUser (CSecurity.USER_ADMINISTRATOR_ID,
+                                     CSecurity.USER_ADMINISTRATOR_LOGIN,
+                                     CSecurity.USER_ADMINISTRATOR_EMAIL,
+                                     CSecurity.USER_ADMINISTRATOR_PASSWORD,
+                                     "Admin",
+                                     "istrator",
+                                     null,
+                                     Locale.US,
+                                     null,
+                                     false);
+    }
+  }
+
+  private void _initAS4 ()
+  {
+    AS4ServerInitializer.initAS4Server ();
+
+    // Store the incoming file as is
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
+                                                                        aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
+                                                                                                                         ".as4in")));
+    // Outgoing message is manually dumped in StoringServletMessageProcessorSPI
+  }
+
+  private void _initPeppol ()
+  {
+    // Check if crypto properties are okay
+    final KeyStore aKS = AS4CryptoFactoryPropertiesFile.getDefaultInstance ().getKeyStore ();
+    if (aKS == null)
+      throw new InitializationException ("Failed to load configured Keystore");
+
+    final PrivateKeyEntry aPKE = AS4CryptoFactoryPropertiesFile.getDefaultInstance ().getPrivateKeyEntry ();
+    if (aPKE == null)
+      throw new InitializationException ("Failed to load configured private key");
+
+    // No OCSP check for performance
+    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate ((X509Certificate) aPKE.getCertificate (),
+                                                                                                          PDTFactory.getCurrentLocalDateTime (),
+                                                                                                          ETriState.FALSE,
+                                                                                                          ETriState.UNDEFINED);
+    if (eCheckResult.isInvalid ())
+      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " +
+                                         eCheckResult);
+    LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
+  }
+
+  @Override
+  protected void initManagers ()
+  {
+    _initAS4 ();
+    _initPeppol ();
+  }
+
+  @Override
+  protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
+  {}
+}

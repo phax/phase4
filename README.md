@@ -14,6 +14,7 @@ It consists of the following sub-projects:
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
   * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
+  * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9) 
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -185,6 +186,22 @@ By default the "receiver checks" are enabled. They are checking if the incoming 
 Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implementation of this interface provides the keystore as well as the private key for doing signing and/or encryption services in phase4. Default implementations shipping with phase4 are `AS4CryptoFactoryPropertiesFile` and `AS4CryptoFactoryInMemoryKeyStore`. To change that configuration use the extended constructor of `AS4XServletHandler` that itself is instantiated in the `Phase4PeppolServlet` - therefore a custom Servlet class is required, where `Phase4PeppolServlet` should be used as the "copy-paste template" (and don't forget to reference the new servlet class from the `WEB-INF/web.xml` mentioned above). 
 
 **Note:** in v0.9.8 the receiving SPI method was heavily extended to be able to retrieve more information elements directly, without needing to dive deeper into the code.
+
+## Subproject phase4-peppol-server-webapp
+
+This subproject shows how to a simple standalone Peppol AS4 server could look like.
+It is a **demo** implementation and does not do anything with the payload except storing it on disk.
+Use this as the basis for implementing your own solution - don't take it "as is".
+
+Upon startup it checks that a valid Peppol Access Point (AP) certificate is installed.
+
+It stores all incoming requests on disk based on the incoming date time.
+* The full incoming message is stored with extension `.as4in`
+* The SOAP document is stored with extension `.soap`
+* The (decrypted) Peppol payload (SBD Document) is stored with extension `.sbd`
+* The returned receipt is stored with extension `.response`
+
+To configure your certificate, modify the file `crypto.properties`. Don't alter the truststore - it's a Peppol default.
 
 # Building from source
 
