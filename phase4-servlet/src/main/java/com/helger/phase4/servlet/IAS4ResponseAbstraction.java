@@ -34,11 +34,10 @@ import com.helger.commons.mime.IMimeType;
  */
 public interface IAS4ResponseAbstraction
 {
-  void addCustomResponseHeaders (@Nonnull HttpHeaderMap aHeaderMap);
-
   /**
-   * Set the response payload as a byte array with a certain character set.
-   * 
+   * Set the response payload as a byte array with a certain character set. This
+   * is called, if the an XML response is sent back.
+   *
    * @param aBytes
    *        The bytes to be set. May not be <code>null</code>.
    * @param aCharset
@@ -47,30 +46,57 @@ public interface IAS4ResponseAbstraction
    */
   void setContent (@Nonnull byte [] aBytes, @Nonnull Charset aCharset);
 
-  void setContent (@Nonnull IHasInputStream aHasIS);
+  /**
+   * Set the content as an input stream provider. This is used if a MIME
+   * response is sent back.
+   *
+   * @param aHeaderMap
+   *        Custom HTTP headers to be used. Never <code>null</code> but maybe
+   *        empty.
+   * @param aHasIS
+   *        The input stream provider.
+   * @since 0.9.9 this was merged from addCustomResponseHeaders and setContent
+   */
+  void setContent (@Nonnull HttpHeaderMap aHeaderMap, @Nonnull IHasInputStream aHasIS);
 
+  /**
+   * Set the MIME type (Content-Type) of the response.
+   *
+   * @param aMimeType
+   *        Mime type to use. May not be <code>null</code>.
+   */
   void setMimeType (@Nonnull IMimeType aMimeType);
 
+  /**
+   * Set the HTTP status code to be returned.
+   *
+   * @param nStatusCode
+   *        The HTTP status code.
+   */
   void setStatus (int nStatusCode);
 
+  /**
+   * Create the {@link IAS4ResponseAbstraction} for use with
+   * {@link AS4UnifiedResponse}.
+   *
+   * @param aHttpResponse
+   *        The unified response to be wrapped. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   */
   @Nonnull
   static IAS4ResponseAbstraction wrap (@Nonnull final AS4UnifiedResponse aHttpResponse)
   {
     return new IAS4ResponseAbstraction ()
     {
-      public void addCustomResponseHeaders (@Nonnull final HttpHeaderMap aHeaderMap)
-      {
-        aHttpResponse.addCustomResponseHeaders (aHeaderMap);
-      }
-
       public void setContent (@Nonnull final byte [] aBytes, @Nonnull final Charset aCharset)
       {
         aHttpResponse.setContent (aBytes);
         aHttpResponse.setCharset (aCharset);
       }
 
-      public void setContent (@Nonnull final IHasInputStream aHasIS)
+      public void setContent (@Nonnull final HttpHeaderMap aHeaderMap, @Nonnull final IHasInputStream aHasIS)
       {
+        aHttpResponse.addCustomResponseHeaders (aHeaderMap);
         aHttpResponse.setContent (aHasIS);
       }
 

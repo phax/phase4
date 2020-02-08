@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.annotation.WillClose;
 import javax.mail.MessagingException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.HttpEntity;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -42,7 +41,9 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
+import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.mime.EMimeContentType;
@@ -116,10 +117,10 @@ public class AS4RequestHandler implements AutoCloseable
 {
   private static interface IAS4ResponseFactory
   {
-    void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse);
-
     @Nonnull
     HttpEntity getHttpEntity (@Nonnull IMimeType aMimeType);
+
+    void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse);
   }
 
   private static final class AS4ResponseFactoryXML implements IAS4ResponseFactory
@@ -135,18 +136,18 @@ public class AS4RequestHandler implements AutoCloseable
       m_aMimeType = aMimeType;
     }
 
+    @Nonnull
+    public HttpEntity getHttpEntity (@Nonnull final IMimeType aMimType)
+    {
+      return new HttpXMLEntity (m_aDoc, m_aMimeType);
+    }
+
     public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
       aHttpResponse.setContent (sXML.getBytes (aCharset), aCharset);
       aHttpResponse.setMimeType (m_aMimeType);
-    }
-
-    @Nonnull
-    public HttpEntity getHttpEntity (@Nonnull final IMimeType aMimType)
-    {
-      return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
   }
 
@@ -164,10 +165,16 @@ public class AS4RequestHandler implements AutoCloseable
         LOGGER.warn ("The response MIME message is not repeatable");
     }
 
+    @Nonnull
+    public HttpMimeMessageEntity getHttpEntity (@Nonnull final IMimeType aMimType)
+    {
+      // Repeatable if the underlying Mime message is repeatable
+      return new HttpMimeMessageEntity (m_aMimeMsg);
+    }
+
     public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse)
     {
-      aHttpResponse.addCustomResponseHeaders (m_aHeaders);
-      aHttpResponse.setContent (HasInputStream.multiple ( () -> {
+      final IHasInputStream aContent = HasInputStream.multiple ( () -> {
         try
         {
           return m_aMimeMsg.getInputStream ();
@@ -176,15 +183,9 @@ public class AS4RequestHandler implements AutoCloseable
         {
           throw new IllegalStateException ("Failed to get MIME input stream", ex);
         }
-      }));
+      });
+      aHttpResponse.setContent (m_aHeaders, aContent);
       aHttpResponse.setMimeType (MT_MULTIPART_RELATED);
-    }
-
-    @Nonnull
-    public HttpMimeMessageEntity getHttpEntity (@Nonnull final IMimeType aMimType)
-    {
-      // Repeatable if the underlying Mime message is repeatable
-      return new HttpMimeMessageEntity (m_aMimeMsg);
     }
   }
 
@@ -247,6 +248,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
+  private IAS4OutgoingDumper m_aOutgoingDumper;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
@@ -310,7 +312,7 @@ public class AS4RequestHandler implements AutoCloseable
   }
 
   /**
-   * Set the specific dumper for incoming message. If none is set, the global
+   * Set the specific dumper for incoming messages. If none is set, the global
    * incoming dumper is used.
    *
    * @param aIncomingDumper
@@ -322,6 +324,33 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
     m_aIncomingDumper = aIncomingDumper;
+    return this;
+  }
+
+  /**
+   * @return The specific dumper for outgoing messages. May be
+   *         <code>null</code>.
+   * @since v0.9.9
+   */
+  @Nullable
+  public final IAS4OutgoingDumper getOutgoingDumper ()
+  {
+    return m_aOutgoingDumper;
+  }
+
+  /**
+   * Set the specific dumper for outgoing messages. If none is set, the global
+   * outgoing dumper is used.
+   *
+   * @param aOutgoingDumper
+   *        The specific outgoing dumper. May be <code>null</code>.
+   * @return this for chaining
+   * @since v0.9.9
+   */
+  @Nonnull
+  public final AS4RequestHandler setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
+  {
+    m_aOutgoingDumper = aOutgoingDumper;
     return this;
   }
 
@@ -1343,7 +1372,7 @@ public class AS4RequestHandler implements AutoCloseable
       else
       {
         // Success, HTTP No Content
-        aHttpResponse.setStatus (HttpServletResponse.SC_NO_CONTENT);
+        aHttpResponse.setStatus (CHttp.HTTP_NO_CONTENT);
       }
       AS4HttpDebug.debug ( () -> "RECEIVE-END with " + (aResponder != null ? "EBMS message" : "no content"));
     };

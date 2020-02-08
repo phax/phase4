@@ -238,6 +238,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added new subproject `phase4-peppol-server-webapp` with a demo server for receiving messages via Peppol
     * Extended `IAS4IncomingDumper` API
     * The asynchronous response now also uses the outgoing dumper
+    * Merged two methods in class `IAS4ResponseAbstraction` into one (backwards incompatible change)
 * v0.9.8 - 2020-01-29
     * Added possibility to use external message ID in Peppol client
     * Added new classes `AS4IncomingDumperSingleUse` and `AS4OutgoingDumperSingleUse` for easier per-call dumping
