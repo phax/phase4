@@ -59,7 +59,6 @@ import com.helger.phase4.client.BasicHttpPoster;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -118,7 +117,7 @@ public class AS4RequestHandler implements AutoCloseable
   private static interface IAS4ResponseFactory
   {
     @Nonnull
-    HttpEntity getHttpEntity (@Nonnull IMimeType aMimeType);
+    HttpEntity getHttpEntityForSending (@Nonnull IMimeType aMimeType);
 
     void applyToResponse (@Nonnull IAS4ResponseAbstraction aHttpResponse);
   }
@@ -137,7 +136,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     @Nonnull
-    public HttpEntity getHttpEntity (@Nonnull final IMimeType aMimType)
+    public HttpEntity getHttpEntityForSending (@Nonnull final IMimeType aMimType)
     {
       return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
@@ -166,7 +165,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     @Nonnull
-    public HttpMimeMessageEntity getHttpEntity (@Nonnull final IMimeType aMimType)
+    public HttpMimeMessageEntity getHttpEntityForSending (@Nonnull final IMimeType aMimType)
     {
       // Repeatable if the underlying Mime message is repeatable
       return new HttpMimeMessageEntity (m_aMimeMsg);
@@ -649,6 +648,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   private void _invokeSPIsForResponse (@Nonnull final IAS4MessageState aState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
+                                       @Nullable final HttpEntity aHttpEntity,
                                        @Nonnull final IMimeType aMimeType)
   {
     // Get response payload
@@ -656,16 +656,17 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aHttpEntity = aResponseFactory.getHttpEntity (aMimeType);
-      if (aHttpEntity.isRepeatable ())
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      if (aRealHttpEntity.isRepeatable ())
       {
-        int nContentLength = (int) aHttpEntity.getContentLength ();
+        int nContentLength = (int) aRealHttpEntity.getContentLength ();
         if (nContentLength < 0)
           nContentLength = 16 * CGlobal.BYTES_PER_KILOBYTE;
 
         try (final NonBlockingByteArrayOutputStream aBAOS = new NonBlockingByteArrayOutputStream (nContentLength))
         {
-          aHttpEntity.writeTo (aBAOS);
+          aRealHttpEntity.writeTo (aBAOS);
           aResponsePayload = aBAOS.getBufferOrCopy ();
         }
         catch (final IOException ex)
@@ -1191,11 +1192,12 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
-          _invokeSPIsForResponse (aState, aAsyncResponseFactory, eSoapVersion.getMimeType ());
-
           // Ensure HttpEntity is repeatable
-          HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntity (eSoapVersion.getMimeType ());
+          HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntityForSending (eSoapVersion.getMimeType ());
           aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
+
+          // Use the prebuilt entity for dumping
+          _invokeSPIsForResponse (aState, aAsyncResponseFactory, aHttpEntity, eSoapVersion.getMimeType ());
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
@@ -1206,7 +1208,6 @@ public class AS4RequestHandler implements AutoCloseable
             // TODO make async send parameters customizable
             final int nMaxRetries = 1;
             final long nRetryIntervalMS = 12_000;
-            final IAS4OutgoingDumper aOutgoingDumper = AS4DumpManager.getOutgoingDumper ();
             aAsyncResponse = aSender.sendGenericMessageWithRetries (aResponseHttpHeaders,
                                                                     aHttpEntity,
                                                                     sMessageID,
@@ -1214,7 +1215,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     nMaxRetries,
                                                                     nRetryIntervalMS,
                                                                     new ResponseHandlerXml (),
-                                                                    aOutgoingDumper);
+                                                                    m_aOutgoingDumper);
           }
           else
           {
@@ -1346,7 +1347,8 @@ public class AS4RequestHandler implements AutoCloseable
     else
       ret = null;
 
-    _invokeSPIsForResponse (aState, ret, eSoapVersion.getMimeType ());
+    // Create the HttpEntity on demand
+    _invokeSPIsForResponse (aState, ret, null, eSoapVersion.getMimeType ());
 
     return ret;
   }
