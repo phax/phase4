@@ -20,9 +20,12 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
@@ -31,7 +34,7 @@ import com.helger.photon.app.io.WebFileIO;
 
 /**
  * Central storage helper
- * 
+ *
  * @author Philip Helger
  */
 public final class StorageHelper
@@ -43,14 +46,8 @@ public final class StorageHelper
   {}
 
   @Nonnull
-  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                     @Nonnull final String sExt)
+  private static File _getStorageFile (@Nonnull final LocalDateTime aLDT, @Nonnull final String sExt)
   {
-    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
-    ValueEnforcer.notEmpty (sExt, "Ext");
-    ValueEnforcer.isTrue (sExt.startsWith ("."), "Extension must start with a dot");
-
-    final LocalDateTime aLDT = aMessageMetadata.getIncomingDT ();
     final String sYear = StringHelper.getLeadingZero (aLDT.getYear (), 4);
     final String sMonth = StringHelper.getLeadingZero (aLDT.getMonthValue (), 2);
     final String sDay = StringHelper.getLeadingZero (aLDT.getDayOfMonth (), 2);
@@ -58,8 +55,30 @@ public final class StorageHelper
                                                                       "-" +
                                                                       FILE_SEQ_COUNTER.incrementAndGet () +
                                                                       "-" +
-                                                                      aMessageMetadata.getIncomingUniqueID () +
                                                                       sExt);
     return WebFileIO.getDataIO ().getFile ("as4dump/" + sYear + "/" + sMonth + "/" + sDay + "/" + sFilename);
+  }
+
+  @Nonnull
+  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                     @Nonnull final String sExt)
+  {
+    ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
+    ValueEnforcer.notEmpty (sExt, "Ext");
+    ValueEnforcer.isTrue (sExt.startsWith ("."), "Extension must start with a dot");
+
+    return _getStorageFile (aMessageMetadata.getIncomingDT (), aMessageMetadata.getIncomingUniqueID () + sExt);
+  }
+
+  @Nonnull
+  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID,
+                                     @Nonnegative final int nTry,
+                                     @Nonnull final String sExt)
+  {
+    ValueEnforcer.notEmpty (sMessageID, "MessageID");
+    ValueEnforcer.notEmpty (sExt, "Ext");
+    ValueEnforcer.isTrue (sExt.startsWith ("."), "Extension must start with a dot");
+
+    return _getStorageFile (PDTFactory.getCurrentLocalDateTime (), sMessageID + "-" + nTry + sExt);
   }
 }

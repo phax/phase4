@@ -47,6 +47,7 @@ import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -145,7 +146,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                         aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
                                                                                                                          ".as4in")));
 
-    // Outgoing message is manually dumped in StoringServletMessageProcessorSPI
+    // Store the outgoings file as well
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID,
+                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                               nTry,
+                                                                                                               ".as4out")));
   }
 
   private void _initPeppolAS4 ()
