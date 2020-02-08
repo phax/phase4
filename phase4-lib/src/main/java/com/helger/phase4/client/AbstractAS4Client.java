@@ -16,10 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,20 +23,14 @@ import javax.annotation.WillNotClose;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.entity.HttpEntityWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
-import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -54,7 +44,6 @@ import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.phase4.util.MultiOutputStream;
 import com.helger.xml.microdom.IMicroDocument;
 import com.helger.xml.microdom.serialize.MicroWriter;
 
@@ -71,7 +60,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 {
   public static final int DEFAULT_MAX_RETRIES = 0;
   public static final long DEFAULT_RETRY_INTERVAL_MS = 12_000;
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4Client.class);
 
   /**
    * @return The default message ID factory to be used.
@@ -360,48 +348,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public abstract AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty String sMessageID,
                                                       @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
-  @Nonnull
-  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                  @Nonnull final HttpEntity aSrcEntity,
-                                                  @Nonnull @Nonempty final String sMessageID,
-                                                  @Nullable final HttpHeaderMap aCustomHeaders,
-                                                  @Nonnegative final int nTry,
-                                                  @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
-  {
-    if (aOutgoingDumper == null)
-    {
-      // No dumper
-      return aSrcEntity;
-    }
-
-    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
-    if (aDumpOS == null)
-    {
-      // No dumping needed
-      return aSrcEntity;
-    }
-
-    aDumpOSHolder.set (aDumpOS);
-    return new HttpEntityWrapper (aSrcEntity)
-    {
-      @Override
-      public InputStream getContent () throws IOException
-      {
-        throw new UnsupportedOperationException ();
-      }
-
-      @Override
-      public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
-      {
-        final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
-        // write to both streams
-        super.writeTo (aMultiOS);
-        // Flush both, but do not close both
-        aMultiOS.flush ();
-      }
-    };
-  }
-
   /**
    * Send the AS4 client message created by
    * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
@@ -447,10 +393,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aResponseHandler
    *        The response handler that converts the HTTP response to a domain
    *        object. May not be <code>null</code>.
-   * @param aCallback
-   *        The optional callback that is invoked during the creation of the
-   *        {@link AS4ClientBuiltMessage}. It can be used to access several
-   *        states of message creation. May be <code>null</code>.
    * @param aOutgoingDumper
    *        An outgoing dumper to be used. Maybe <code>null</code>. If
    *        <code>null</code> the global outgoing dumper from
@@ -469,123 +411,35 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
-    final HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
+    HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
+    final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
-                                                                           : AS4DumpManager.getOutgoingDumper ();
-    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
-    try
+    if (m_nMaxRetries > 0)
     {
-      if (m_nMaxRetries > 0)
-      {
-        // Send with retry
-
-        // Ensure a repeatable entity is provided
-        final HttpEntity aRepeatableEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
-
-        final int nMaxTries = 1 + m_nMaxRetries;
-        for (int nTry = 0; nTry < nMaxTries; nTry++)
-        {
-          if (nTry > 0)
-            LOGGER.info ("Retry #" + nTry + "/" + nMaxTries + " for sending message with ID '" + sMessageID + "'");
-
-          try
-          {
-            // Create a new one every time (for new filename, new timestamp,
-            // etc.)
-            final HttpEntity aDumpingEntity = _createDumpingEntity (aOutgoingDumper,
-                                                                    aRepeatableEntity,
-                                                                    sMessageID,
-                                                                    aBuiltMsg.getCustomHeaders (),
-                                                                    nTry,
-                                                                    aDumpOSHolder);
-
-            // Dump only for the first try - the remaining tries
-            final T aResponse = sendGenericMessage (sURL,
-                                                    aDumpingEntity,
-                                                    aBuiltMsg.getCustomHeaders (),
-                                                    aResponseHandler);
-            return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
-          }
-          catch (final IOException ex)
-          {
-            // Last try? -> propagate exception
-            if (nTry == nMaxTries - 1)
-              throw ex;
-
-            LOGGER.warn ("Error sending message: " +
-                         ex.getClass ().getSimpleName () +
-                         " - " +
-                         ex.getMessage () +
-                         " - waiting " +
-                         m_nRetryIntervalMS +
-                         " ms, than retrying");
-
-            // Sleep and try again afterwards
-            ThreadHelper.sleep (m_nRetryIntervalMS);
-          }
-          finally
-          {
-            // Flush and close the dump output stream (if any)
-            StreamHelper.close (aDumpOSHolder.get ());
-          }
-        }
-        throw new IllegalStateException ("Should never be reached (after maximum of " + nMaxTries + " tries)!");
-      }
-      // else non retry
-      {
-        final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
-                                                                aBuiltEntity,
-                                                                sMessageID,
-                                                                aBuiltMsg.getCustomHeaders (),
-                                                                0,
-                                                                aDumpOSHolder);
-
-        try
-        {
-          // Send without retry
-          final T aResponse = sendGenericMessage (sURL,
-                                                  aDumpingEntity,
-                                                  aBuiltMsg.getCustomHeaders (),
-                                                  aResponseHandler);
-          return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
-        }
-        finally
-        {
-          // Close the dump output stream (if any)
-          StreamHelper.flush (aDumpOSHolder.get ());
-          StreamHelper.close (aDumpOSHolder.get ());
-        }
-      }
+      // Ensure a repeatable entity is provided
+      aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
     }
-    finally
-    {
-      // Add the possibility to close open resources
-      if (aRealOutgoingDumper != null)
-        try
-        {
-          aRealOutgoingDumper.onEndRequest (sMessageID);
-        }
-        catch (final Exception ex)
-        {
-          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
-                        aRealOutgoingDumper +
-                        "; MessageID=" +
-                        sMessageID,
-                        ex);
-        }
-    }
+
+    final T aResponse = super.sendGenericMessageWithRetries (aBuiltHttpHeaders,
+                                                             aBuiltEntity,
+                                                             sMessageID,
+                                                             sURL,
+                                                             m_nMaxRetries,
+                                                             m_nRetryIntervalMS,
+                                                             aResponseHandler,
+                                                             aOutgoingDumper);
+    return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
   }
 
   @Nullable
   public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
   {
     final IAS4ClientBuildMessageCallback aCallback = null;
-    final IAS4OutgoingDumper aDumper = null;
+    final IAS4OutgoingDumper aOutgoingDumper = null;
     final IMicroDocument ret = sendMessageWithRetries (sURL,
                                                        new ResponseHandlerMicroDom (),
                                                        aCallback,
-                                                       aDumper).getResponse ();
+                                                       aOutgoingDumper).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;

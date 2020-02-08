@@ -17,28 +17,41 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
+import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.AS4HttpDebug;
+import com.helger.phase4.util.MultiOutputStream;
 
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and
@@ -57,6 +70,8 @@ public class BasicHttpPoster
   {
     return new HttpClientFactory ();
   }
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (BasicHttpPoster.class);
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
@@ -220,6 +235,155 @@ public class BasicHttpPoster
       });
 
       return aClient.execute (aPost, aResponseHandler);
+    }
+  }
+
+  @Nonnull
+  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                  @Nonnull final HttpEntity aSrcEntity,
+                                                  @Nonnull @Nonempty final String sMessageID,
+                                                  @Nullable final HttpHeaderMap aCustomHeaders,
+                                                  @Nonnegative final int nTry,
+                                                  @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+  {
+    if (aOutgoingDumper == null)
+    {
+      // No dumper
+      return aSrcEntity;
+    }
+
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
+    if (aDumpOS == null)
+    {
+      // No dumping needed
+      return aSrcEntity;
+    }
+
+    aDumpOSHolder.set (aDumpOS);
+    return new HttpEntityWrapper (aSrcEntity)
+    {
+      @Override
+      public InputStream getContent () throws IOException
+      {
+        throw new UnsupportedOperationException ();
+      }
+
+      @Override
+      public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
+      {
+        final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
+        // write to both streams
+        super.writeTo (aMultiOS);
+        // Flush both, but do not close both
+        aMultiOS.flush ();
+      }
+    };
+  }
+
+  @Nonnull
+  public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
+                                                    @Nonnull final HttpEntity aHttpEntity,
+                                                    @Nonnull final String sMessageID,
+                                                    @Nonnull final String sURL,
+                                                    final int nMaxRetries,
+                                                    final long nRetryIntervalMS,
+                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
+  {
+    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
+                                                                           : AS4DumpManager.getOutgoingDumper ();
+    final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
+    try
+    {
+      if (nMaxRetries > 0)
+      {
+        // Send with retry
+        if (!aHttpEntity.isRepeatable ())
+          throw new IllegalStateException ("If retry is enabled, a repeatable entity must be provided");
+
+        final int nMaxTries = 1 + nMaxRetries;
+        for (int nTry = 0; nTry < nMaxTries; nTry++)
+        {
+          if (nTry > 0)
+            LOGGER.info ("Retry #" + nTry + "/" + nMaxTries + " for sending message with ID '" + sMessageID + "'");
+
+          try
+          {
+            // Create a new one every time (for new filename, new timestamp,
+            // etc.)
+            final HttpEntity aDumpingEntity = _createDumpingEntity (aOutgoingDumper,
+                                                                    aHttpEntity,
+                                                                    sMessageID,
+                                                                    aHttpHeaders,
+                                                                    nTry,
+                                                                    aDumpOSHolder);
+
+            // Dump only for the first try - the remaining tries
+            return sendGenericMessage (sURL, aDumpingEntity, aHttpHeaders, aResponseHandler);
+          }
+          catch (final IOException ex)
+          {
+            // Last try? -> propagate exception
+            if (nTry == nMaxTries - 1)
+              throw ex;
+
+            LOGGER.warn ("Error sending message: " +
+                         ex.getClass ().getSimpleName () +
+                         " - " +
+                         ex.getMessage () +
+                         " - waiting " +
+                         nRetryIntervalMS +
+                         " ms, than retrying");
+
+            // Sleep and try again afterwards
+            ThreadHelper.sleep (nRetryIntervalMS);
+          }
+          finally
+          {
+            // Flush and close the dump output stream (if any)
+            StreamHelper.close (aDumpOSHolder.get ());
+          }
+        }
+        throw new IllegalStateException ("Should never be reached (after maximum of " + nMaxTries + " tries)!");
+      }
+      // else non retry
+      {
+        final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
+                                                                aHttpEntity,
+                                                                sMessageID,
+                                                                aHttpHeaders,
+                                                                0,
+                                                                aDumpOSHolder);
+
+        try
+        {
+          // Send without retry
+          return sendGenericMessage (sURL, aDumpingEntity, aHttpHeaders, aResponseHandler);
+        }
+        finally
+        {
+          // Close the dump output stream (if any)
+          StreamHelper.flush (aDumpOSHolder.get ());
+          StreamHelper.close (aDumpOSHolder.get ());
+        }
+      }
+    }
+    finally
+    {
+      // Add the possibility to close open resources
+      if (aRealOutgoingDumper != null)
+        try
+        {
+          aRealOutgoingDumper.onEndRequest (sMessageID);
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
+                        aRealOutgoingDumper +
+                        "; MessageID=" +
+                        sMessageID,
+                        ex);
+        }
     }
   }
 

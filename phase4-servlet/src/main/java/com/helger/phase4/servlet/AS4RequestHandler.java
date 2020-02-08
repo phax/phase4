@@ -58,7 +58,9 @@ import com.helger.phase4.client.BasicHttpPoster;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
+import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3MessageInfo;
@@ -1162,16 +1164,36 @@ public class AS4RequestHandler implements AutoCloseable
 
           _invokeSPIsForResponse (aState, aAsyncResponseFactory, eSoapVersion.getMimeType ());
 
-          // TODO outgoing dumper
+          // Ensure HttpEntity is repeatable
           HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntity (eSoapVersion.getMimeType ());
           aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
-          final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                                      aHttpEntity,
-                                                                      null,
-                                                                      new ResponseHandlerXml ());
+          final Document aAsyncResponse;
+          if (true)
+          {
+            final HttpHeaderMap aResponseHttpHeaders = null;
+            // TODO make async send parameters customizable
+            final int nMaxRetries = 1;
+            final long nRetryIntervalMS = 12_000;
+            final IAS4OutgoingDumper aOutgoingDumper = AS4DumpManager.getOutgoingDumper ();
+            aAsyncResponse = aSender.sendGenericMessageWithRetries (aResponseHttpHeaders,
+                                                                    aHttpEntity,
+                                                                    sMessageID,
+                                                                    sAsyncResponseURL,
+                                                                    nMaxRetries,
+                                                                    nRetryIntervalMS,
+                                                                    new ResponseHandlerXml (),
+                                                                    aOutgoingDumper);
+          }
+          else
+          {
+            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
+                                                         aHttpEntity,
+                                                         null,
+                                                         new ResponseHandlerXml ());
+          }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse,
                                                                 AS4HttpDebug.getDebugXMLWriterSettings ()));
@@ -1247,7 +1269,7 @@ public class AS4RequestHandler implements AutoCloseable
                 }
                 else
                 {
-                  // TODO
+                  // TODO what shall we send back here?
                   LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
                   ret = null;
                 }
