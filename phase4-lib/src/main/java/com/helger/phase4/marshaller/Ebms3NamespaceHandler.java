@@ -30,11 +30,14 @@ public class Ebms3NamespaceHandler extends MapBasedNamespaceContext
   public Ebms3NamespaceHandler ()
   {
     addMapping ("ds", CAS4.DS_NS);
+    addMapping ("dsig11", CAS4.DSISG11_NS);
     addMapping ("eb", CAS4.EBMS_NS);
     addMapping ("ebbp", CAS4.EBBP_NS);
     addMapping ("wsse", CAS4.WSSE_NS);
     addMapping ("wsu", CAS4.WSU_NS);
     addMapping ("xenc", CAS4.XENC_NS);
+    addMapping ("xenc11", CAS4.XENC11_NS);
+    // UBL
     addMapping ("cac", "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2");
     addMapping ("cbc", "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2");
     addMapping ("ec", "http://www.w3.org/2001/10/xml-exc-c14n#");

@@ -49,11 +49,13 @@ public final class CAS4
 
   // Namespaces
   public static final String DS_NS = "http://www.w3.org/2000/09/xmldsig#";
+  public static final String DSISG11_NS = "http://www.w3.org/2009/xmldsig11#";
   public static final String EBBP_NS = "http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0";
   public static final String EBMS_NS = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/";
   public static final String WSSE_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
   public static final String WSU_NS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
   public static final String XENC_NS = "http://www.w3.org/2001/04/xmlenc#";
+  public static final String XENC11_NS = "http://www.w3.org/2009/xmlenc11#";
 
   // Must start with a letter and must be a valid XML ID and token
   public static final String LIB_NAME = "phase4";
