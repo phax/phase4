@@ -158,7 +158,7 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     else
     {
       // If the original usermessage is not signed, the receipt will contain the
-      // original message part with out wss4j security
+      // original message part without wss4j security
       aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage)
                                           .getAsSoapDocument ()
                                           .getDocumentElement ());
