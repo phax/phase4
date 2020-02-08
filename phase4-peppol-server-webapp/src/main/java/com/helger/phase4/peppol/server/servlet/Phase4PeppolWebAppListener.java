@@ -144,6 +144,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
                                                                         aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
                                                                                                                          ".as4in")));
+
     // Outgoing message is manually dumped in StoringServletMessageProcessorSPI
   }
 
