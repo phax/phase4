@@ -19,12 +19,15 @@ package com.helger.phase4.util;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.FileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,7 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FileIOError;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.phase4.CAS4;
@@ -203,4 +207,46 @@ public class AS4ResourceHelper implements Closeable
       }
     }
   }
+
+  /**
+   * Ensure the provided {@link HttpEntity} can be read more than once. If the
+   * provided entity is not repeatable a temporary file is created and a new
+   * file-based Http Entity is created.
+   *
+   * @param aSrcEntity
+   *        The source Http entity. May not be <code>null</code>.
+   * @return A non-<code>null</code> Http entity that can be read more than
+   *         once.
+   * @throws IOException
+   *         on IO error
+   * @since v0.9.9
+   */
+  @Nonnull
+  public HttpEntity createRepeatableHttpEntity (@Nonnull final HttpEntity aSrcEntity) throws IOException
+  {
+    if (aSrcEntity.isRepeatable ())
+      return aSrcEntity;
+
+    // First serialize the content once to a file, so that a repeatable entity
+    // can be created
+    final File aTempFile = createTempFile ();
+
+    LOGGER.info ("Converting " +
+                 aSrcEntity +
+                 " to a repeatable HTTP entity using file " +
+                 aTempFile.getAbsolutePath ());
+
+    try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
+    {
+      aSrcEntity.writeTo (aOS);
+    }
+
+    // Than use the FileEntity as the basis
+    final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
+    aRepeatableEntity.setContentType (aSrcEntity.getContentType ());
+    aRepeatableEntity.setContentEncoding (aSrcEntity.getContentEncoding ());
+    aRepeatableEntity.setChunked (aSrcEntity.isChunked ());
+    return aRepeatableEntity;
+  }
+
 }

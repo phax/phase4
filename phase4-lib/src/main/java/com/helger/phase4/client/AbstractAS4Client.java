@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +27,6 @@ import javax.annotation.WillNotClose;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +37,6 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -364,40 +361,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                       @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
 
   @Nonnull
-  private HttpEntity _createRepeatableEntity (@Nonnull final HttpEntity aSrcEntity) throws IOException
-  {
-    if (aSrcEntity.isRepeatable ())
-      return aSrcEntity;
-
-    // First serialize the content once to a file, so that a repeatable entity
-    // can be created
-    final File aTempFile = m_aResHelper.createTempFile ();
-
-    LOGGER.info ("Converting " +
-                 aSrcEntity +
-                 " to a repeatable HTTP entity using file " +
-                 aTempFile.getAbsolutePath ());
-
-    try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aTempFile))
-    {
-      aSrcEntity.writeTo (aOS);
-    }
-
-    // Than use the FileEntity as the basis
-    final FileEntity aRepeatableEntity = new FileEntity (aTempFile);
-    aRepeatableEntity.setContentType (aSrcEntity.getContentType ());
-    aRepeatableEntity.setContentEncoding (aSrcEntity.getContentEncoding ());
-    aRepeatableEntity.setChunked (aSrcEntity.isChunked ());
-    return aRepeatableEntity;
-  }
-
-  @Nonnull
-  private HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aDumper,
-                                           @Nonnull final HttpEntity aSrcEntity,
-                                           @Nonnull @Nonempty final String sMessageID,
-                                           @Nullable final HttpHeaderMap aCustomHeaders,
-                                           @Nonnegative final int nTry,
-                                           @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aDumper,
+                                                  @Nonnull final HttpEntity aSrcEntity,
+                                                  @Nonnull @Nonempty final String sMessageID,
+                                                  @Nullable final HttpHeaderMap aCustomHeaders,
+                                                  @Nonnegative final int nTry,
+                                                  @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aDumper == null)
     {
@@ -509,7 +478,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
         // Send with retry
 
         // Ensure a repeatable entity is provided
-        final HttpEntity aRepeatableEntity = _createRepeatableEntity (aBuiltEntity);
+        final HttpEntity aRepeatableEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
 
         final int nMaxTries = 1 + m_nMaxRetries;
         for (int nTry = 0; nTry < nMaxTries; nTry++)
