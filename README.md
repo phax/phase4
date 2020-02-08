@@ -204,6 +204,8 @@ It stores all incoming requests on disk based on the incoming date time.
 
 To configure your certificate, modify the file `crypto.properties`. Don't alter the truststore - it's a Peppol default.
 
+Note: this application uses the property `smp.url` in configuration file `phase4.properties` to locate it's home SMP for cross checking if the incoming request is targeted for itself.
+
 To start it from within your IDE you may run the test class `com.helger.phase4.peppol.server.standalone.RunInJettyPHASE4PEPPOL` - it will spawn on http://localhost:8080`.
 For IntelliJ users: make sure the folder `phase4-peppol-server-webapp` is the startup directory.
 
@@ -231,14 +233,15 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.9.9 - work in progress
+* v0.9.9 - 2020-02-09
     * Removed the methods deprecated in v0.9.8
     * Updated to peppol-commons 8.x
     * Extended `Phase4PeppolEndpointDetailProviderSMP` API
     * Added new subproject `phase4-peppol-server-webapp` with a demo server for receiving messages via Peppol
-    * Extended `IAS4IncomingDumper` API
+    * Extended `IAS4IncomingDumper` API with an "end request" notifier
     * The asynchronous response now also uses the outgoing dumper
     * Merged two methods in class `IAS4ResponseAbstraction` into one (backwards incompatible change)
+    * Invoking the outgoing dumper also for responses sent for incoming messages
 * v0.9.8 - 2020-01-29
     * Added possibility to use external message ID in Peppol client
     * Added new classes `AS4IncomingDumperSingleUse` and `AS4OutgoingDumperSingleUse` for easier per-call dumping
