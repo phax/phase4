@@ -239,12 +239,12 @@ public class BasicHttpPoster
   }
 
   @Nonnull
-  private static HttpEntity _createDumpingEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                  @Nonnull final HttpEntity aSrcEntity,
-                                                  @Nonnull @Nonempty final String sMessageID,
-                                                  @Nullable final HttpHeaderMap aCustomHeaders,
-                                                  @Nonnegative final int nTry,
-                                                  @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+  private static HttpEntity _createDumpingHttpEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                      @Nonnull final HttpEntity aSrcEntity,
+                                                      @Nonnull @Nonempty final String sMessageID,
+                                                      @Nullable final HttpHeaderMap aCustomHeaders,
+                                                      @Nonnegative final int nTry,
+                                                      @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aOutgoingDumper == null)
     {
@@ -311,12 +311,12 @@ public class BasicHttpPoster
           {
             // Create a new one every time (for new filename, new timestamp,
             // etc.)
-            final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
-                                                                    aHttpEntity,
-                                                                    sMessageID,
-                                                                    aHttpHeaders,
-                                                                    nTry,
-                                                                    aDumpOSHolder);
+            final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
+                                                                        aHttpEntity,
+                                                                        sMessageID,
+                                                                        aHttpHeaders,
+                                                                        nTry,
+                                                                        aDumpOSHolder);
 
             // Dump only for the first try - the remaining tries
             return sendGenericMessage (sURL, aDumpingEntity, aHttpHeaders, aResponseHandler);
@@ -341,6 +341,7 @@ public class BasicHttpPoster
           finally
           {
             // Flush and close the dump output stream (if any)
+            StreamHelper.flush (aDumpOSHolder.get ());
             StreamHelper.close (aDumpOSHolder.get ());
           }
         }
@@ -348,12 +349,12 @@ public class BasicHttpPoster
       }
       // else non retry
       {
-        final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
-                                                                aHttpEntity,
-                                                                sMessageID,
-                                                                aHttpHeaders,
-                                                                0,
-                                                                aDumpOSHolder);
+        final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
+                                                                    aHttpEntity,
+                                                                    sMessageID,
+                                                                    aHttpHeaders,
+                                                                    0,
+                                                                    aDumpOSHolder);
 
         try
         {
