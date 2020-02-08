@@ -394,7 +394,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
       {
         final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
-        // write to both stream
+        // write to both streams
         super.writeTo (aMultiOS);
         // Flush both, but do not close both
         aMultiOS.flush ();
@@ -469,7 +469,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     final AS4ClientBuiltMessage aBuiltMsg = buildMessage (sMessageID, aCallback);
     final HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
 
-    final IAS4OutgoingDumper aDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
+    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
+                                                                           : AS4DumpManager.getOutgoingDumper ();
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
     try
     {
@@ -490,7 +491,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
           {
             // Create a new one every time (for new filename, new timestamp,
             // etc.)
-            final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
+            final HttpEntity aDumpingEntity = _createDumpingEntity (aOutgoingDumper,
                                                                     aRepeatableEntity,
                                                                     sMessageID,
                                                                     aBuiltMsg.getCustomHeaders (),
@@ -531,7 +532,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       }
       // else non retry
       {
-        final HttpEntity aDumpingEntity = _createDumpingEntity (aDumper,
+        final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
                                                                 aBuiltEntity,
                                                                 sMessageID,
                                                                 aBuiltMsg.getCustomHeaders (),
@@ -558,8 +559,19 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     finally
     {
       // Add the possibility to close open resources
-      if (aDumper != null)
-        aDumper.onEndRequest (sMessageID);
+      if (aRealOutgoingDumper != null)
+        try
+        {
+          aRealOutgoingDumper.onEndRequest (sMessageID);
+        }
+        catch (final Exception ex)
+        {
+          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
+                        aRealOutgoingDumper +
+                        "; MessageID=" +
+                        sMessageID,
+                        ex);
+        }
     }
   }
 

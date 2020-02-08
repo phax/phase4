@@ -155,6 +155,10 @@ public class AS4IncomingHandler
       throw new AS4BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
+    // Fallback to global dumper if none is provided
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
+
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
     final ICommonsList <WSS4JAttachment> aIncomingAttachments = new CommonsArrayList <> ();
@@ -172,7 +176,7 @@ public class AS4IncomingHandler
         LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
 
       // Ensure the stream gets closed correctly
-      try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aIncomingDumper,
+      try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                           aPayloadIS,
                                                                                           aMessageMetadata,
                                                                                           aHttpHeaders))
@@ -245,7 +249,7 @@ public class AS4IncomingHandler
 
       // Expect plain SOAP - read whole request to DOM
       // Note: this may require a huge amount of memory for large requests
-      aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aIncomingDumper,
+      aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
                                                                                             aMessageMetadata,
                                                                                             aHttpHeaders));
@@ -274,6 +278,19 @@ public class AS4IncomingHandler
     }
 
     // Here, the incoming dump should be closed and usable
+    if (aRealIncomingDumper != null)
+      try
+      {
+        aRealIncomingDumper.onEndRequest (aMessageMetadata);
+      }
+      catch (final Exception ex)
+      {
+        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
+                      aRealIncomingDumper +
+                      "; MessageMetadata=" +
+                      aMessageMetadata,
+                      ex);
+      }
 
     if (aSoapDocument == null)
     {

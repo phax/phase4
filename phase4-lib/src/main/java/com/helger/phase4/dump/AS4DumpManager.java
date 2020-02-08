@@ -92,9 +92,9 @@ public final class AS4DumpManager
 
   /**
    * @param aIncomingDumper
-   *        The incoming AS4 dumper. May be <code>null</code>. If
-   *        <code>null</code> the global one from {@link AS4DumpManager} is
-   *        used.
+   *        The incoming AS4 dumper. May be <code>null</code>. The caller is
+   *        responsible to invoke {@link AS4DumpManager#getIncomingDumper()}
+   *        outside.
    * @param aRequestInputStream
    *        The InputStream to read the request payload from. Will not be closed
    *        internally. Never <code>null</code>.
@@ -112,15 +112,14 @@ public final class AS4DumpManager
                                                              @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                              @Nonnull final HttpHeaderMap aHttpHeaders) throws IOException
   {
-    final IAS4IncomingDumper aRealDumper = aIncomingDumper != null ? aIncomingDumper : getIncomingDumper ();
-    if (aRealDumper == null)
+    if (aIncomingDumper == null)
     {
       // No wrapping needed
       return aRequestInputStream;
     }
 
     // Dump worthy?
-    final OutputStream aOS = aRealDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
+    final OutputStream aOS = aIncomingDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
     if (aOS == null)
     {
       // No wrapping needed

@@ -51,4 +51,15 @@ public interface IAS4IncomingDumper extends Serializable
   @Nullable
   OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                              @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
+
+  /**
+   * Called after the request is finished. Can e.g. be used to cleanup resources
+   * belonging to the message. This method may not throw an exception.
+   *
+   * @param aMessageMetadata
+   *        Message metadata. Never <code>null</code>.
+   * @since v0.9.9
+   */
+  default void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+  {}
 }
