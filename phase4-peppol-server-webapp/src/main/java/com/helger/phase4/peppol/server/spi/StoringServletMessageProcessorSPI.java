@@ -17,6 +17,8 @@
 package com.helger.phase4.peppol.server.spi;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +44,8 @@ import com.helger.phase4.servlet.IAS4MessageState;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
-import com.helger.xml.namespace.MapBasedNamespaceContext;
+import com.helger.security.certificate.CertificateHelper;
+import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.XMLWriter;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
@@ -59,16 +62,33 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                  @Nonnull final IAS4MessageState aState)
   {
-    final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
+    // Write formatted SOAP
+    {
+      final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
+                                                                   : aState.getOriginalSoapDocument ();
+      final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
+                                                       new XMLWriterSettings ().setNamespaceContext (new Ebms3NamespaceHandler ())
+                                                                               .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));
+      if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
+        LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "'");
+      else
+        LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "'");
+    }
 
-    final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
-                                                                 : aState.getOriginalSoapDocument ();
-    final MapBasedNamespaceContext aNSCtx = new Ebms3NamespaceHandler ();
-    final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc, new XMLWriterSettings ().setNamespaceContext (aNSCtx));
-    if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
-      LOGGER.error ("Failed to write SOAP to '" + aFile.getAbsolutePath () + "'");
-    else
-      LOGGER.info ("Wrote SOAP to '" + aFile.getAbsolutePath () + "'");
+    if (aState.hasUsedCertificate ())
+    {
+      // Dump the senders certificate as PEM file
+      // That can usually extracted from the Binary Security Token of the SOAP
+      final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".pem");
+      final X509Certificate aUsedCert = aState.getUsedCertificate ();
+      final String sPEM = CertificateHelper.getPEMEncodedCertificate (aUsedCert);
+      final byte [] aBytes = sPEM.getBytes (StandardCharsets.US_ASCII);
+      if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
+        LOGGER.error ("Failed to write certificate to '" + aFile.getAbsolutePath () + "'");
+      else
+        LOGGER.info ("Wrote certificate to '" + aFile.getAbsolutePath () + "'");
+    }
   }
 
   @Nonnull
