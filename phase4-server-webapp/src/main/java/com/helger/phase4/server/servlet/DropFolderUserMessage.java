@@ -130,8 +130,7 @@ public final class DropFolderUserMessage
           aClient.signingParams ().setAlgorithmSign (ECryptoAlgorithmSign.RSA_SHA_512);
           aClient.signingParams ().setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.DIGEST_SHA_512);
 
-          // XXX
-          // to send the message too
+          // FIXME Action, Service etc. are missing
           aClient.setAction ("xxx");
           aClient.setServiceType ("xxx");
           aClient.setServiceValue ("xxx");

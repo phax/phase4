@@ -189,7 +189,7 @@ public final class MainAS4Client
               else
                 throw new IllegalStateException ("Some test message should be selected :)");
 
-      // XXX reinstate if you wanna see the request that is getting sent
+      // re-instantiate if you want to see the request that is getting sent
       LOGGER.info (EntityUtils.toString (aPost.getEntity ()));
 
       final CloseableHttpResponse aHttpResponse = aClient.execute (aPost);
