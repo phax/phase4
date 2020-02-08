@@ -311,7 +311,7 @@ public class BasicHttpPoster
           {
             // Create a new one every time (for new filename, new timestamp,
             // etc.)
-            final HttpEntity aDumpingEntity = _createDumpingEntity (aOutgoingDumper,
+            final HttpEntity aDumpingEntity = _createDumpingEntity (aRealOutgoingDumper,
                                                                     aHttpEntity,
                                                                     sMessageID,
                                                                     aHttpHeaders,
