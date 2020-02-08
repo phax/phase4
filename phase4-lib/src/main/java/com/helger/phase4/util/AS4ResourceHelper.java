@@ -224,6 +224,9 @@ public class AS4ResourceHelper implements Closeable
   @Nonnull
   public HttpEntity createRepeatableHttpEntity (@Nonnull final HttpEntity aSrcEntity) throws IOException
   {
+    ValueEnforcer.notNull (aSrcEntity, "SrcEntity");
+
+    // Do we need to do anything?
     if (aSrcEntity.isRepeatable ())
       return aSrcEntity;
 
