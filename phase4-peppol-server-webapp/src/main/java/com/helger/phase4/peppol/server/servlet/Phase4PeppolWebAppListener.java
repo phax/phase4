@@ -177,7 +177,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
-      LOGGER.warn ("phase4 Peppol receiver checks are enabled");
+      LOGGER.info ("phase4 Peppol receiver checks are enabled");
     }
     else
     {
