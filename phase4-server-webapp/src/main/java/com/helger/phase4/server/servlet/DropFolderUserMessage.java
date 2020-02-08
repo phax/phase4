@@ -54,6 +54,7 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
@@ -147,9 +148,11 @@ public final class DropFolderUserMessage
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
           final IAS4ClientBuildMessageCallback aCallback = null;
+          final IAS4OutgoingDumper aOutgoingDumper = null;
           final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                                  new ResponseHandlerByteArray (),
-                                                                                                 aCallback);
+                                                                                                 aCallback,
+                                                                                                 aOutgoingDumper);
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aResponseEntity.getMessageID () +
                        "' for '" +

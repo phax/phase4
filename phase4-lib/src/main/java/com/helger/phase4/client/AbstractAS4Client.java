@@ -422,7 +422,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The sent message that contains
    * @throws Exception
    *         in case of error when building or sending the message
+   * @deprecated Use the version with the dumper directory. Since v0.9.9
    */
+  @Deprecated
   @Nonnull
   public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
                                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,

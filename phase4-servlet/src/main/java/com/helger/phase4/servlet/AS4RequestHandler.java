@@ -158,6 +158,8 @@ public class AS4RequestHandler implements AutoCloseable
       ValueEnforcer.notNull (aMimeMsg, "MimeMsg");
       m_aMimeMsg = aMimeMsg;
       m_aHeaders = MessageHelperMethods.getAndRemoveAllHeaders (m_aMimeMsg);
+      if (!aMimeMsg.isRepeatable ())
+        LOGGER.warn ("The response MIME message is not repeatable");
     }
 
     public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse)
@@ -179,6 +181,7 @@ public class AS4RequestHandler implements AutoCloseable
     @Nonnull
     public HttpMimeMessageEntity getHttpEntity (@Nonnull final IMimeType aMimType)
     {
+      // Repeatable if the underlying Mime message is repeatable
       return new HttpMimeMessageEntity (m_aMimeMsg);
     }
   }
@@ -1159,10 +1162,14 @@ public class AS4RequestHandler implements AutoCloseable
 
           _invokeSPIsForResponse (aState, aAsyncResponseFactory, eSoapVersion.getMimeType ());
 
+          // TODO outgoing dumper
+          HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntity (eSoapVersion.getMimeType ());
+          aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
+
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
           final Document aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                                      aAsyncResponseFactory.getHttpEntity (eSoapVersion.getMimeType ()),
+                                                                      aHttpEntity,
                                                                       null,
                                                                       new ResponseHandlerXml ());
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
