@@ -36,12 +36,15 @@ import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.StringHelper;
+import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
+import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
@@ -49,6 +52,7 @@ import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.UserManager;
+import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTracker;
 
 @WebListener
@@ -143,7 +147,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // Outgoing message is manually dumped in StoringServletMessageProcessorSPI
   }
 
-  private void _initPeppol ()
+  private void _initPeppolAS4 ()
   {
     // Check if crypto properties are okay
     final KeyStore aKS = AS4CryptoFactoryPropertiesFile.getDefaultInstance ().getKeyStore ();
@@ -155,7 +159,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       throw new InitializationException ("Failed to load configured private key");
 
     // No OCSP check for performance
-    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate ((X509Certificate) aPKE.getCertificate (),
+    final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
+    final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
                                                                                                           PDTFactory.getCurrentLocalDateTime (),
                                                                                                           ETriState.FALSE,
                                                                                                           ETriState.UNDEFINED);
@@ -163,13 +168,29 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " +
                                          eCheckResult);
     LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
+
+    final String sSMPURL = AS4ServerConfiguration.getSettings ().getAsString ("smp.url");
+    final String sAPURL = AS4ServerConfiguration.getServerAddress ();
+    if (StringHelper.hasText (sSMPURL) && StringHelper.hasNoText (sAPURL))
+    {
+      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
+      Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
+      Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
+      Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
+      LOGGER.warn ("phase4 Peppol receiver checks are enabled");
+    }
+    else
+    {
+      Phase4PeppolServletConfiguration.setReceiverCheckEnabled (false);
+      LOGGER.warn ("phase4 Peppol receiver checks are disabled");
+    }
   }
 
   @Override
   protected void initManagers ()
   {
     _initAS4 ();
-    _initPeppol ();
+    _initPeppolAS4 ();
   }
 
   @Override
