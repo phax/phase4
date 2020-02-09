@@ -105,6 +105,7 @@ public final class AS4DumpManager
    * @return the InputStream to be used. The caller is responsible for closing
    *         the stream. Never <code>null</code>.
    * @throws IOException
+   *         In case of IO error
    */
   @Nonnull
   public static InputStream getIncomingDumpAwareInputStream (@Nullable final IAS4IncomingDumper aIncomingDumper,
