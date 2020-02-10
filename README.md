@@ -22,7 +22,7 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 
 ## Known users
 
-Known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
+Some known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
 * Bundesrechenzentrum / Federal Computing Center (AT)
 * ecosio GmbH (AT)
 * Qvalia Group AB (SE)
@@ -156,7 +156,9 @@ The contained project contains a class called `Phase4PeppolSender.Builder` (acce
 
 As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
 
-See the folder https://github.com/phax/phase4/tree/master/phase4-peppol-client/src/test/java/com/helger/phase4/peppol for different examples on how to send messages via the Peppol AS4 client. 
+See the folder https://github.com/phax/phase4/tree/master/phase4-peppol-client/src/test/java/com/helger/phase4/peppol for different examples on how to send messages via the Peppol AS4 client.
+
+The client side validation of outgoing business documents is implemented using the [Business Document Validation Engine](https://github.com/phax/ph-bdve/) (BDVE).
 
 ## Subproject phase4-peppol-servlet
 
@@ -213,7 +215,7 @@ For IntelliJ users: make sure the folder `phase4-peppol-server-webapp` is the st
 
 Apache Maven needed 3.6 or later and Java JDK 8 or later is required.
 
-To build the whole package on the commandline use `mvn clean install`.
+To build the whole package on the commandline use `mvn clean install -U`.
 
 If you are importing this into your IDE and you get build errors, it maybe necessary to run `mvn process-sources` once in the `phase4-lib` subproject. Afterwards the folder `target/generated-sources/xjc` must be added to the source build path. When building only on the commandline, this is done automatically.
 
