@@ -271,7 +271,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   {
     final X509Certificate aOurCert = Phase4PeppolServletConfiguration.getAPCertificate ();
     if (aOurCert == null)
-      throw new Phase4PeppolServletException (sLogPrefix + "The certificate of this AP is not configured!");
+      throw new Phase4PeppolServletException (sLogPrefix +
+                                              "The certificate of this AP is not configured! Cannot check if the incoming message is for this AP.");
 
     final String sRecipientCertString = aRecipientEndpoint.getCertificate ();
     X509Certificate aRecipientCert = null;
