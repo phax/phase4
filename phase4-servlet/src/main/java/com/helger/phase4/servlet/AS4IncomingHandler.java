@@ -507,12 +507,13 @@ public class AS4IncomingHandler
                                                      @Nonnull final Document aSoapDocument,
                                                      @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessages)
+                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget)
   {
     ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
+    ValueEnforcer.notNull (aErrorMessagesTarget, "aErrorMessagesTarget");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -533,11 +534,11 @@ public class AS4IncomingHandler
     final AS4MessageState aState = new AS4MessageState (eSoapVersion, aResHelper, aLocale);
 
     // Handle all headers - modifies the state
-    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessages);
+    _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessagesTarget);
 
-    aState.setSoapHeaderElementProcessingSuccessful (aErrorMessages.isEmpty ());
+    aState.setSoapHeaderElementProcessingSuccessful (aErrorMessagesTarget.isEmpty ());
 
-    if (aErrorMessages.isEmpty ())
+    if (aErrorMessagesTarget.isEmpty ())
     {
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
@@ -566,7 +567,7 @@ public class AS4IncomingHandler
       if (nCountData != 1)
       {
         // send EBMS:0001 error back
-        aErrorMessages.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, sMessageID));
+        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, sMessageID));
       }
 
       // Ensure the decrypted attachments are used
