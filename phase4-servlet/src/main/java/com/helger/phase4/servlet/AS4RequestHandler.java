@@ -40,7 +40,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.functional.IConsumer;
 import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
@@ -309,7 +308,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
-  private IConsumer <ICommonsList <Ebms3Error>> m_aErrorConsumer;
+  private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
@@ -441,7 +440,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 0.9.7
    */
   @Nullable
-  public final IConsumer <ICommonsList <Ebms3Error>> getErrorConsumer ()
+  public final IAS4RequestHandlerErrorConsumer getErrorConsumer ()
   {
     return m_aErrorConsumer;
   }
@@ -457,7 +456,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 0.9.7
    */
   @Nonnull
-  public final AS4RequestHandler setErrorConsumer (@Nullable final IConsumer <ICommonsList <Ebms3Error>> aErrorConsumer)
+  public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
     return this;
@@ -1231,14 +1230,16 @@ public class AS4RequestHandler implements AutoCloseable
           else
           {
             // SPI processing failed
-            if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
-              m_aErrorConsumer.accept (aLocalErrorMessages);
 
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                               aState.getMessageID (),
                                                                               aLocalErrorMessages);
+
+            if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
+              m_aErrorConsumer.onAS4ErrorMessage (aState, aLocalErrorMessages, aResponseErrorMsg);
+
             final String sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ()
                                                                .getMessageInfo ()
                                                                .getMessageId ();
@@ -1302,18 +1303,19 @@ public class AS4RequestHandler implements AutoCloseable
       // Not an incoming Ebms Error Message
       if (aErrorMessagesTarget.isNotEmpty ())
       {
+        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
+                                                                          aState.getMessageID (),
+                                                                          aErrorMessagesTarget);
+
         // Call optional consumer
         if (m_aErrorConsumer != null)
-          m_aErrorConsumer.accept (aErrorMessagesTarget);
+          m_aErrorConsumer.onAS4ErrorMessage (aState, aErrorMessagesTarget, aResponseErrorMsg);
 
         // Generate ErrorMessage if errors in the process are present and the
         // pmode wants an error response
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                            aState.getMessageID (),
-                                                                            aErrorMessagesTarget);
           final String sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ()
                                                              .getMessageInfo ()
                                                              .getMessageId ();
