@@ -1089,12 +1089,10 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4ResponseFactory _handleSoapMessage (@Nonnull final HttpHeaderMap aHttpHeaders,
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ESoapVersion eSoapVersion,
-                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                                                                      MessagingException
+                                                  @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws WSSecurityException,
+                                                                                                                 MessagingException
   {
-    // Collect all runtime errors
-    final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
-
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
                                                                                                            m_aCryptoFactory,
                                                                                                            (IPMode) null);
@@ -1105,7 +1103,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                            aSoapDocument,
                                                                            eSoapVersion,
                                                                            aIncomingAttachments,
-                                                                           aErrorMessages);
+                                                                           aErrorMessagesTarget);
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
     final String sProfileID = aState.getProfileID ();
@@ -1116,7 +1114,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
 
-    if (aErrorMessages.isEmpty ())
+    if (aErrorMessagesTarget.isEmpty ())
     {
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("No checking for duplicate message with message ID '" +
@@ -1133,9 +1131,9 @@ public class AS4RequestHandler implements AutoCloseable
       if (bIsDuplicate)
       {
         LOGGER.warn ("Not invoking SPIs, because message with Message ID '" + sMessageID + "' was already handled!");
-        aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
-                                                                   sMessageID,
-                                                                   "Another message with the same ID was already received!"));
+        aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale,
+                                                                         sMessageID,
+                                                                         "Another message with the same ID was already received!"));
       }
       else
       {
@@ -1155,7 +1153,7 @@ public class AS4RequestHandler implements AutoCloseable
     // * Exactly one UserMessage or SignalMessage
     // * No ping/test message
     // * No Duplicate message ID
-    final boolean bCanInvokeSPIs = aErrorMessages.isEmpty () && !aState.isPingMessage ();
+    final boolean bCanInvokeSPIs = aErrorMessagesTarget.isEmpty () && !aState.isPingMessage ();
     if (bCanInvokeSPIs)
     {
       // PMode may be null for receipts
@@ -1176,7 +1174,7 @@ public class AS4RequestHandler implements AutoCloseable
                                 aDecryptedAttachments,
                                 aPMode,
                                 aState,
-                                aErrorMessages,
+                                aErrorMessagesTarget,
                                 aResponseAttachments,
                                 aSPIResult);
         if (aSPIResult.isFailure ())
@@ -1298,11 +1296,11 @@ public class AS4RequestHandler implements AutoCloseable
     {
       // Either error in header processing or
       // Not an incoming Ebms Error Message
-      if (aErrorMessages.isNotEmpty ())
+      if (aErrorMessagesTarget.isNotEmpty ())
       {
         // Call optional consumer
         if (m_aErrorConsumer != null)
-          m_aErrorConsumer.accept (aErrorMessages);
+          m_aErrorConsumer.accept (aErrorMessagesTarget);
 
         // Generate ErrorMessage if errors in the process are present and the
         // pmode wants an error response
@@ -1311,7 +1309,7 @@ public class AS4RequestHandler implements AutoCloseable
         {
           final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
                                                                             aState.getMessageID (),
-                                                                            aErrorMessages);
+                                                                            aErrorMessagesTarget);
           final String sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ()
                                                              .getMessageInfo ()
                                                              .getMessageId ();
@@ -1432,10 +1430,13 @@ public class AS4RequestHandler implements AutoCloseable
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined
+      // Collect all runtime errors
+      final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
       final IAS4ResponseFactory aResponder = _handleSoapMessage (aHttpHeaders,
                                                                  aSoapDocument,
                                                                  eSoapVersion,
-                                                                 aIncomingAttachments);
+                                                                 aIncomingAttachments,
+                                                                 aErrorMessages);
       if (aResponder != null)
       {
         // Response present -> send back
