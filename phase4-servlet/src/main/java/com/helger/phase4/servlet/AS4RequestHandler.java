@@ -448,7 +448,8 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * Set an optional error consumer that is invoked with all errors determined
-   * during message processing. The consumed list MUST NOT be modified.
+   * during message processing. The consumed list MUST NOT be modified.<br>
+   * Note: the error consumer is ONLY called if the error list is non-empty.
    *
    * @param aErrorConsumer
    *        The consumer to be used. May be <code>null</code>.
@@ -1230,6 +1231,9 @@ public class AS4RequestHandler implements AutoCloseable
           else
           {
             // SPI processing failed
+            if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
+              m_aErrorConsumer.accept (aLocalErrorMessages);
+
             // Send ErrorMessage
             // Undefined - see https://github.com/phax/ph-as4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
