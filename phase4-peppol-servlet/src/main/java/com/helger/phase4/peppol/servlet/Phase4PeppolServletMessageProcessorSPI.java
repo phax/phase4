@@ -470,7 +470,6 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                                        aPeppolSBD.getReceiverAsIdentifier (),
                                                                        aPeppolSBD.getDocumentTypeAsIdentifier (),
                                                                        aPeppolSBD.getProcessAsIdentifier ());
-
           if (aReceiverEndpoint == null)
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
@@ -482,19 +481,19 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                             aPeppolSBD.getProcessAsIdentifier ().getURIEncoded () +
                                                             ")/transport profile (" +
                                                             m_aTransportProfile.getID () +
-                                                            ")  - not handling incoming AS4 document");
+                                                            ") - not handling incoming AS4 document");
           }
 
-          // Check if the message is for us
-          _checkIfReceiverEndpointURLMatches (sMessageID, aReceiverEndpoint);
-
           // Get the recipient certificate from the SMP
-          _checkIfEndpointCertificateMatches (sMessageID, aReceiverEndpoint);
+          _checkIfEndpointCertificateMatches (sLogPrefix, aReceiverEndpoint);
+
+          // Check if the message is for us
+          _checkIfReceiverEndpointURLMatches (sLogPrefix, aReceiverEndpoint);
         }
         catch (final Phase4Exception ex)
         {
           return AS4MessageProcessorResult.createFailure (sLogPrefix +
-                                                          "The contained StandardBusinessDocument could not be read. Technical details: " +
+                                                          "The addressing data contained in the SBD could not be verified. Technical details: " +
                                                           ex.getMessage ());
         }
       }
