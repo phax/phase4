@@ -83,7 +83,7 @@ import com.helger.xml.serialize.write.XMLWriter;
 @IsSPIImplementation
 public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
 {
-  public static final class ReadAttachment
+  private static final class ReadAttachment
   {
     private String m_sID;
     private String m_sMimeType;
