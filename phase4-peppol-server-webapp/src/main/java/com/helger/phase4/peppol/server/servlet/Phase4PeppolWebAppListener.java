@@ -177,7 +177,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
     final String sSMPURL = AS4ServerConfiguration.getSettings ().getAsString ("smp.url");
     final String sAPURL = AS4ServerConfiguration.getServerAddress ();
-    if (StringHelper.hasText (sSMPURL) && StringHelper.hasNoText (sAPURL))
+    if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
     {
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
