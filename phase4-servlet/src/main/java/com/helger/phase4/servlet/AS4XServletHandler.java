@@ -168,7 +168,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     // Start metadata
     final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
                                                                                                                          .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                                                                         .setRemotePort (aRequestScope.getRemotePort ());
+                                                                                                                         .setRemotePort (aRequestScope.getRemotePort ())
+                                                                                                                         .setRemoteUser (aRequestScope.getRemoteUser ())
+                                                                                                                         .setCookies (aRequestScope.getCookies ());
 
     // Resolved once per request
     final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();

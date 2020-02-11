@@ -22,9 +22,13 @@ import java.util.UUID;
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.Cookie;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
@@ -45,11 +49,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   private String m_sRemoteAddr;
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
+  private String m_sRemoteUser;
+  private final ICommonsList <Cookie> m_aCookies = new CommonsArrayList <> ();
 
   /**
    * Default constructor using a UUID as the incoming unique ID and the current
    * date time.
-   * 
+   *
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
    */
@@ -61,7 +67,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   /**
    * Constructor in case this every needs to be deserialized or other weird
    * things are necessary.
-   * 
+   *
    * @param sIncomingUniqueID
    *        Incoming unique ID. May neither be <code>null</code> nor empty.
    * @param aIncomingDT
@@ -140,6 +146,42 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
+  /**
+   * @return The remote user provided. May be <code>null</code>.
+   * @since 0.9.10
+   */
+  @Nullable
+  public String getRemoteUser ()
+  {
+    return m_sRemoteUser;
+  }
+
+  @Nonnull
+  public AS4IncomingMessageMetadata setRemoteUser (@Nullable final String sRemoteUser)
+  {
+    m_sRemoteUser = sRemoteUser;
+    return this;
+  }
+
+  /**
+   * @return The HTTP cookies provided in the source request. Never
+   *         <code>null</code> but maybe empty.
+   * @since 0.9.10
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  public ICommonsList <Cookie> cookies ()
+  {
+    return m_aCookies;
+  }
+
+  @Nonnull
+  public AS4IncomingMessageMetadata setCookies (@Nullable final Cookie [] aCookies)
+  {
+    m_aCookies.setAll (aCookies);
+    return this;
+  }
+
   @Override
   public String toString ()
   {
@@ -149,6 +191,8 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
                                        .append ("RemoteAddr", m_sRemoteAddr)
                                        .append ("RemoteHost", m_sRemoteHost)
                                        .append ("RemotePort", m_nRemotePort)
+                                       .append ("RemoteUser", m_sRemoteUser)
+                                       .append ("Cookies", m_aCookies)
                                        .getToString ();
   }
 }
