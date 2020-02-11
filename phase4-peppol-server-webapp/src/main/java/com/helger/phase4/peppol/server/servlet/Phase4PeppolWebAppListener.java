@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.peppol.server.servlet;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
@@ -35,14 +37,18 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
 import com.helger.httpclient.HttpDebugger;
+import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.messaging.AS4MessagingHelper;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
@@ -144,7 +150,22 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // Store the incoming file as is
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
                                                                         aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
-                                                                                                                         ".as4in")));
+                                                                                                                         ".as4in"))
+    {
+      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+      {
+        // Save the metadata also to a file
+        final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");
+        if (SimpleFileIO.writeFile (aFile,
+                                    AS4MessagingHelper.getIncomingMetadataAsJson (aMessageMetadata)
+                                                      .getAsJsonString (new JsonWriterSettings ().setIndentEnabled (true)),
+                                    StandardCharsets.UTF_8)
+                        .isFailure ())
+          LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
+        else
+          LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
+      }
+    });
 
     // Store the outgoings file as well
     AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID,
