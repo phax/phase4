@@ -126,7 +126,8 @@ public interface IAS4IncomingMessageMetadata
 
   /**
    * @return A list of all Cookies contained in the request. Never
-   *         <code>null</code> but maybe empty.
+   *         <code>null</code> but maybe empty. The returned list is mutable so
+   *         handle with care.
    * @since 0.9.10
    */
   @Nonnull
