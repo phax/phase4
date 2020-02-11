@@ -25,7 +25,7 @@ import com.helger.commons.io.file.LoggingFileOperationCallback;
 
 /**
  * IO related helper classes
- * 
+ *
  * @author Philip Helger
  */
 @Immutable
