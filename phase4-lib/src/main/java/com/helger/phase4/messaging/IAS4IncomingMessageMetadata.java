@@ -21,8 +21,11 @@ import java.time.LocalDateTime;
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.Cookie;
 
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.StringHelper;
 
 /**
@@ -102,4 +105,31 @@ public interface IAS4IncomingMessageMetadata
   {
     return getRemotePort () > 0;
   }
+
+  /**
+   * Returns the login of the user making this request, if the user has been
+   * authenticated, or <code>null</code> if the user has not been authenticated.
+   * Whether the user name is sent with each subsequent request depends on the
+   * browser and type of authentication.
+   *
+   * @return a <code>String</code> specifying the login of the user making this
+   *         request, or <code>null</code> if the user login is not known
+   * @since 0.9.10
+   */
+  @Nullable
+  String getRemoteUser ();
+
+  default boolean hasRemoteUser ()
+  {
+    return StringHelper.hasText (getRemoteUser ());
+  }
+
+  /**
+   * @return A list of all Cookies contained in the request. Never
+   *         <code>null</code> but maybe empty.
+   * @since 0.9.10
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  ICommonsList <Cookie> cookies ();
 }

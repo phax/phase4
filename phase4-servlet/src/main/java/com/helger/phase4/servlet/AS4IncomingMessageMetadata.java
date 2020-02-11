@@ -146,10 +146,6 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
-  /**
-   * @return The remote user provided. May be <code>null</code>.
-   * @since 0.9.10
-   */
   @Nullable
   public String getRemoteUser ()
   {
@@ -163,11 +159,6 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return this;
   }
 
-  /**
-   * @return The HTTP cookies provided in the source request. Never
-   *         <code>null</code> but maybe empty.
-   * @since 0.9.10
-   */
   @Nonnull
   @ReturnsMutableObject
   public ICommonsList <Cookie> cookies ()
