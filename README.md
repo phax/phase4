@@ -26,6 +26,7 @@ Some known users of phase4 - mostly in the context of Peppol - are (in alphabeti
 * Bundesrechenzentrum / Federal Computing Center (AT)
 * ecosio GmbH (AT)
 * Qvalia Group AB (SE)
+* Telema AS (EE)
 * TOOP4EU (EU project)
 
 If you are a phase4 user and want to be listed here, write me an email to phase4[at]helger[dot]com
