@@ -96,7 +96,7 @@ public final class MainAS4Client
         aHCF.setSSLContextTrustAll ();
       if (true)
       {
-        aHCF.setProxy (new HttpHost ("172.30.9.6", 8080));
+        aHCF.setProxyHost (new HttpHost ("172.30.9.6", 8080));
         aHCF.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
       }
       final CloseableHttpClient aClient = aHCF.createHttpClient ();
