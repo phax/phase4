@@ -39,6 +39,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
@@ -91,15 +92,15 @@ public final class MainAS4Client
       if (false)
         sURL = "http://localhost:8080/msh/";
 
-      final HttpClientFactory aHCF = new HttpClientFactory ();
+      final HttpClientSettings aHCS = new HttpClientSettings ();
       if (sURL.startsWith ("https"))
-        aHCF.setSSLContextTrustAll ();
+        aHCS.setSSLContextTrustAll ();
       if (true)
       {
-        aHCF.setProxyHost (new HttpHost ("172.30.9.6", 8080));
-        aHCF.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
+        aHCS.setProxyHost (new HttpHost ("172.30.9.6", 8080));
+        aHCS.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
       }
-      final CloseableHttpClient aClient = aHCF.createHttpClient ();
+      final CloseableHttpClient aClient = new HttpClientFactory (aHCS).createHttpClient ();
 
       LOGGER.info ("Sending to " + sURL);
       final HttpPost aPost = new HttpPost (sURL);

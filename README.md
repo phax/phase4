@@ -241,6 +241,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Invoking the `AS4RequestHandler` error consumer also on asynchronous processing
     * Extended the error consumer interface of `AS4RequestHandler` from `Consumer` to `IAS4RequestHandlerErrorConsumer`
     * Extended the message metadata class `AS4IncomingMessageMetadata`
+    * Updated to ph-web 9.1.8
 * v0.9.9 - 2020-02-09
     * Removed the methods deprecated in v0.9.8
     * Updated to peppol-commons 8.x

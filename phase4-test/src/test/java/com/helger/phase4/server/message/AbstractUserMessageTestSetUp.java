@@ -26,8 +26,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.mail.MessagingException;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.http.Header;
@@ -48,9 +46,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
-import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
@@ -107,19 +105,12 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Before
   public void setUpHttpClient () throws GeneralSecurityException
   {
-    final SSLContext aSSLContext = SSLContext.getInstance ("TLS");
-    aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
-
-    final HttpClientFactory aFactory = new HttpClientFactory ()
-    {
-      @Override
-      @Nonnull
-      public RequestConfig.Builder createRequestConfigBuilder ()
-      {
-        return super.createRequestConfigBuilder ().setSocketTimeout (500_000);
-      }
-    }.setSSLContext (aSSLContext).setRetries (m_nRetries).setRetryMode (ERetryMode.RETRY_ALWAYS);
-    m_aHttpClient = aFactory.createHttpClient ();
+    final HttpClientSettings aHCS = new HttpClientSettings ();
+    aHCS.setSSLContextTrustAll ();
+    aHCS.setSocketTimeoutMS (500_000);
+    aHCS.setRetryCount (m_nRetries);
+    aHCS.setRetryMode (ERetryMode.RETRY_ALWAYS);
+    m_aHttpClient = new HttpClientFactory (aHCS).createHttpClient ();
   }
 
   @After
