@@ -195,7 +195,7 @@ public class BasicHttpPoster
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
 
-    try (final HttpClientManager aClient = new HttpClientManager (m_aHttpClientFactory))
+    try (final HttpClientManager aClientMgr = new HttpClientManager (m_aHttpClientFactory))
     {
       final HttpPost aPost = new HttpPost (sURL);
 
@@ -234,7 +234,7 @@ public class BasicHttpPoster
         return ret.toString ();
       });
 
-      return aClient.execute (aPost, aResponseHandler);
+      return aClientMgr.execute (aPost, aResponseHandler);
     }
   }
 
@@ -393,6 +393,7 @@ public class BasicHttpPoster
   {
     return new ToStringGenerator (this).append ("HttpClientFactory", m_aHttpClientFactory)
                                        .append ("HttpCustomizer", m_aHttpCustomizer)
+                                       .append ("QuoteHttpHeaders", m_bQuoteHttpHeaders)
                                        .getToString ();
 
   }
