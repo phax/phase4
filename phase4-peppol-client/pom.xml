@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>0.9.10</version>
+    <version>0.9.11-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-peppol-client</artifactId>
   <packaging>bundle</packaging>
