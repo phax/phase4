@@ -143,7 +143,7 @@
             <exclude>**/*.cer</exclude>
             <exclude>**/*.mime</exclude>
             <exclude>**/*.mmd</exclude>
-            <exclude>as4-data/*</exclude>
+            <exclude>as4-data/**</exclude>
           </excludes>
         </configuration>
       </plugin>

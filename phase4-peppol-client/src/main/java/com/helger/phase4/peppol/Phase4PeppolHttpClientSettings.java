@@ -23,6 +23,7 @@ import javax.net.ssl.TrustManager;
 
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.phase4.CAS4Version;
 
 /**
  * Special {@link HttpClientSettings} with better defaults for Peppol.
@@ -44,5 +45,8 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     setConnectionRequestTimeoutMS (100_000);
     setConnectionTimeoutMS (5_000);
     setSocketTimeoutMS (100_000);
+
+    // Set an explicit user agent
+    setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " github.com/phax/phase4");
   }
 }

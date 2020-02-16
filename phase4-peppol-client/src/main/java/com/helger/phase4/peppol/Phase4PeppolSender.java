@@ -657,7 +657,7 @@ public final class Phase4PeppolSender
       // Set default values
       try
       {
-        setHttpClientFactory (new Phase4PeppolHttpClientFactory ());
+        setHttpClientFactory (new HttpClientFactory (new Phase4PeppolHttpClientSettings ()));
         setCryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
         final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
         setPModeResolver (aPModeResolver);
@@ -674,8 +674,8 @@ public final class Phase4PeppolSender
 
     /**
      * Set the HTTP client factory to be used. By default an instance of
-     * {@link Phase4PeppolHttpClientFactory} is used and there is no need to
-     * invoke this method.
+     * {@link HttpClientFactory} is used and there is no need to invoke this
+     * method.
      *
      * @param aHttpClientFactory
      *        The new HTTP client factory to be used. May not be
