@@ -239,7 +239,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.9.10 - 2020-02-16
     * Fixed a stupid error in the demo code that prohibits the correct receiver check activation - see https://github.com/phax/phase4/commit/796c054d972562d31fe33597b8f7938081b8183e for the resolution
     * Invoking the `AS4RequestHandler` error consumer also on asynchronous processing
-    * Extended the error consumer interface of `AS4RequestHandler` from `Consumer` to `IAS4RequestHandlerErrorConsumer`
+    * Extended the error consumer interface of `AS4RequestHandler` from `Consumer` to `IAS4RequestHandlerErrorConsumer` (backwards incompatible change)
     * Extended the message metadata class `AS4IncomingMessageMetadata`
     * Updated to ph-web 9.1.9
 * v0.9.9 - 2020-02-09
