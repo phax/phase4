@@ -166,6 +166,8 @@ osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
 osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.commons.thirdparty.IThirdPartyModuleProviderSPI,
 osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI</Provide-Capability>
+            <!-- The latter one has precedence -->
+            <Include-Resource>{maven-resources},phase4-version.properties=target/classes/phase4-version.properties</Include-Resource>
           </instructions>
         </configuration>
       </plugin>
