@@ -236,6 +236,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.9.11 - work in progress
+    * Updated to ph-web 9.1.10
 * v0.9.10 - 2020-02-16
     * Fixed a stupid error in the demo code that prohibits the correct receiver check activation - see https://github.com/phax/phase4/commit/796c054d972562d31fe33597b8f7938081b8183e for the resolution
     * Invoking the `AS4RequestHandler` error consumer also on asynchronous processing
