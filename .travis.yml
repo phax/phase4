@@ -1,8 +1,6 @@
 dist: xenial
+sudo: required
 language: java
-# Required to avoid timeout!
-# This is still needed when "travis_wait" is used!
-sudo: true
 
 env:
   global:
@@ -15,7 +13,7 @@ S0T1+dWofRI4SObpxaW6ZrEW/+7RbYmYduzfPIQ+QV9MBAQs2AyeYZeYSsGfLpor4WrbL7bf5w7P3vHT
 9EQxJMVhBpJ+pauvbRL45pCYRhOda8GPHQ6S7m1M6zkKVDF69phGJN5YuoZKfuoPcsXwQyt9Au136CAZnKN5eKAngSdkVA="
 
 install:
-  - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U -e
+  - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
   
 cache:
   directories:
@@ -39,6 +37,6 @@ jobs:
       script:
         - mvn test -B
     - stage: test
-      jdk: openjdk12
+      jdk: openjdk13
       script:
         - mvn test -B
