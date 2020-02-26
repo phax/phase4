@@ -25,6 +25,7 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 Some known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
 * Bundesrechenzentrum / Federal Computing Center (AT)
 * ecosio GmbH (AT)
+* GHX LLC (UK)
 * Qvalia Group AB (SE)
 * Telema AS (EE)
 * TOOP4EU (EU project)
