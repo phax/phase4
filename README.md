@@ -29,6 +29,7 @@ Some known users of phase4 - mostly in the context of Peppol - are (in alphabeti
 * Qvalia Group AB (SE)
 * Telema AS (EE)
 * TOOP4EU (EU project)
+* unifiedpost group (BE)
 
 If you are a phase4 user and want to be listed here, write me an email to phase4[at]helger[dot]com
     
