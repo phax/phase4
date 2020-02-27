@@ -102,6 +102,7 @@ import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -482,10 +483,10 @@ public class AS4RequestHandler implements AutoCloseable
    *        PMode to be used - may be <code>null</code> for Receipt messages.
    * @param aState
    *        The current state. Never <code>null</<code></code>.
-   * @param aErrorMessages
+   * @param aErrorMessagesTarget
    *        The list of error messages to be filled if something goes wrong.
    *        Never <code>null</code>.
-   * @param aResponseAttachments
+   * @param aResponseAttachmentsTarget
    *        The list of attachments to be added to the response. Never
    *        <code>null</code>.
    * @param aSPIResult
@@ -498,8 +499,8 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nullable final ICommonsList <WSS4JAttachment> aDecryptedAttachments,
                                        @Nullable final IPMode aPMode,
                                        @Nonnull final IAS4MessageState aState,
-                                       @Nonnull final ICommonsList <Ebms3Error> aErrorMessages,
-                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments,
+                                       @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget,
+                                       @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
   {
     ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
@@ -569,7 +570,7 @@ public class AS4RequestHandler implements AutoCloseable
                            aProcessor +
                            " - considering it to be failed");
 
-            aErrorMessages.addAll (aProcessingErrorMessages);
+            aErrorMessagesTarget.addAll (aProcessingErrorMessages);
             // Stop processing
             return;
           }
@@ -583,7 +584,7 @@ public class AS4RequestHandler implements AutoCloseable
                                      "' returned a failure: " +
                                      aResult.getErrorMessage ();
             LOGGER.warn (sErrorMsg);
-            aErrorMessages.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
+            aErrorMessagesTarget.add (EEbmsError.EBMS_OTHER.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
             // Stop processing
             return;
           }
@@ -603,9 +604,9 @@ public class AS4RequestHandler implements AutoCloseable
                                          sMessageID +
                                          "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
                 LOGGER.error (sErrorMsg);
-                aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                        sMessageID,
-                                                                                        sErrorMsg));
+                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                              sMessageID,
+                                                                                              sErrorMsg));
                 // Stop processing
                 return;
               }
@@ -646,9 +647,9 @@ public class AS4RequestHandler implements AutoCloseable
                                            sMessageID +
                                            "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
                   LOGGER.warn (sErrorMsg);
-                  aErrorMessages.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                          sMessageID,
-                                                                                          sErrorMsg));
+                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                                sMessageID,
+                                                                                                sErrorMsg));
                   // Stop processing
                   return;
                 }
@@ -665,9 +666,9 @@ public class AS4RequestHandler implements AutoCloseable
                                            sMessageID +
                                            "' returned a failure: no UserMessage contained in the MPC";
                   LOGGER.warn (sErrorMsg);
-                  aErrorMessages.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
-                                                                                                       sMessageID,
-                                                                                                       sErrorMsg));
+                  aErrorMessagesTarget.add (EEbmsError.EBMS_EMPTY_MESSAGE_PARTITION_CHANNEL.getAsEbms3Error (m_aLocale,
+                                                                                                             sMessageID,
+                                                                                                             sErrorMsg));
                   // Stop processing
                   return;
                 }
@@ -679,7 +680,7 @@ public class AS4RequestHandler implements AutoCloseable
           }
 
           // Add response attachments, payloads
-          aResult.addAllAttachmentsTo (aResponseAttachments);
+          aResult.addAllAttachmentsTo (aResponseAttachmentsTarget);
 
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Successfully invoked AS4 message processor " + aProcessor);
@@ -687,7 +688,7 @@ public class AS4RequestHandler implements AutoCloseable
         catch (final AS4DecompressException ex)
         {
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
-          aErrorMessages.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
+          aErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
           return;
         }
         catch (final RuntimeException ex)
@@ -1114,7 +1115,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
     final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
 
-    if (aErrorMessagesTarget.isEmpty ())
+    if (aState.isSoapHeaderElementProcessingSuccessful ())
     {
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("No checking for duplicate message with message ID '" +
@@ -1427,12 +1428,37 @@ public class AS4RequestHandler implements AutoCloseable
     return ret;
   }
 
+  /**
+   * This is the main handling routine when called from an abstract
+   * (non-Servlet) API
+   *
+   * @param aServletRequestIS
+   *        The input stream with the request data. May not be
+   *        <code>null</code>.
+   * @param aRequestHttpHeaders
+   *        The HTTP headers of the request. May not be <code>null</code>.
+   * @param aHttpResponse
+   *        The HTTP response to be filled. May not be <code>null</code>.
+   * @throws AS4BadRequestException
+   *         in case the request is missing certain prerequisites
+   * @throws IOException
+   *         In case of IO errors
+   * @throws MessagingException
+   *         MIME related errors
+   * @throws WSSecurityException
+   *         In case of WSS4J errors
+   * @throws Phase4Exception
+   *         In case of an internal processing error. Since 0.9.11
+   * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
+   *      for a more generic API
+   */
   public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
                              @Nonnull final HttpHeaderMap aRequestHttpHeaders,
                              @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws AS4BadRequestException,
                                                                                    IOException,
                                                                                    MessagingException,
-                                                                                   WSSecurityException
+                                                                                   WSSecurityException,
+                                                                                   Phase4Exception
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined
@@ -1481,6 +1507,8 @@ public class AS4RequestHandler implements AutoCloseable
    *         MIME related errors
    * @throws WSSecurityException
    *         In case of WSS4J errors
+   * @throws Phase4Exception
+   *         In case of an internal processing error. Since 0.9.11
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
    *      for a more generic API
    */
@@ -1488,7 +1516,8 @@ public class AS4RequestHandler implements AutoCloseable
                              @Nonnull final AS4UnifiedResponse aHttpResponse) throws AS4BadRequestException,
                                                                               IOException,
                                                                               MessagingException,
-                                                                              WSSecurityException
+                                                                              WSSecurityException,
+                                                                              Phase4Exception
   {
     AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
 

@@ -332,6 +332,21 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   boolean isSoapDecrypted ();
 
   /**
+   * @return An Exception that occurred during processing the incoming SOAP
+   *         WS-Security handler. If this is a
+   *         <code>org.apache.wss4j.common.ext.WSSecurityException</code>
+   *         exception something happened on the security level.
+   * @since 0.9.11
+   */
+  @Nullable
+  Exception getSoapWSS4JException ();
+
+  default boolean hasSoapWSS4JException ()
+  {
+    return getSoapWSS4JException () != null;
+  }
+
+  /**
    * @return The phase4 profile ID to be used. May be <code>null</code>.
    * @since v0.9.7
    */

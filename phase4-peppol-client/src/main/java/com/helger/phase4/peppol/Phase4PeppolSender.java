@@ -154,8 +154,15 @@ public final class Phase4PeppolSender
                                                                              aIncomingAttachments,
                                                                              aErrorMessages);
 
-      // Remember the parsed signal message
-      aRetWrapper.set (aState.getEbmsSignalMessage ());
+      if (aState.isSoapHeaderElementProcessingSuccessful ())
+      {
+        // Remember the parsed signal message
+        aRetWrapper.set (aState.getEbmsSignalMessage ());
+      }
+      else
+      {
+        throw new Phase4PeppolException ("Error processing AS4 signal message", aState.getSoapWSS4JException ());
+      }
     };
 
     // Create header map from response headers
@@ -173,6 +180,10 @@ public final class Phase4PeppolSender
                                           aHttpHeaders,
                                           aCallback,
                                           aIncomingDumper);
+    }
+    catch (final Phase4PeppolException ex)
+    {
+      throw ex;
     }
     catch (final Exception ex)
     {

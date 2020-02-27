@@ -82,6 +82,7 @@ import com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorRegistry;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.web.multipart.MultipartProgressNotifier;
 import com.helger.web.multipart.MultipartStream;
 import com.helger.web.multipart.MultipartStream.MultipartItemInputStream;
@@ -124,12 +125,15 @@ public class AS4IncomingHandler
      *         In case of WSS4J errors
      * @throws MessagingException
      *         In case of MIME errors
+     * @throws Phase4Exception
+     *         In case of a processing error (since 0.9.11)
      */
     void handle (@Nonnull HttpHeaderMap aHttpHeaders,
                  @Nonnull Document aSoapDocument,
                  @Nonnull ESoapVersion eSoapVersion,
                  @Nonnull ICommonsList <WSS4JAttachment> aIncomingAttachments) throws WSSecurityException,
-                                                                               MessagingException;
+                                                                               MessagingException,
+                                                                               Phase4Exception;
   }
 
   public static void parseAS4Message (@Nonnull final IIncomingAttachmentFactory aIAF,
@@ -141,7 +145,8 @@ public class AS4IncomingHandler
                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws AS4BadRequestException,
                                                                                           IOException,
                                                                                           MessagingException,
-                                                                                          WSSecurityException
+                                                                                          WSSecurityException,
+                                                                                          Phase4Exception
   {
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
@@ -536,9 +541,11 @@ public class AS4IncomingHandler
     // Handle all headers - modifies the state
     _processSoapHeaderElements (aRegistry, aSoapDocument, aIncomingAttachments, aState, aErrorMessagesTarget);
 
-    aState.setSoapHeaderElementProcessingSuccessful (aErrorMessagesTarget.isEmpty ());
+    // Remember if header processing was successful or not
+    final boolean bSoapHeaderElementProcessingSuccess = aErrorMessagesTarget.isEmpty ();
+    aState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
 
-    if (aErrorMessagesTarget.isEmpty ())
+    if (bSoapHeaderElementProcessingSuccess)
     {
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!

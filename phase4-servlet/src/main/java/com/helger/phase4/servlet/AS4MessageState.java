@@ -72,6 +72,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_EFFECTIVE_PMODE_LEG = "phase4.pmode.effective.leg";
   private static final String KEY_EFFECTIVE_PMODE_LEG_NUMBER = "phase4.pmode.effective.leg.number";
   private static final String KEY_WSS4J_SECURITY_ACTIONS = "phase4.soap.wss4j-security-actions";
+  private static final String KEY_WSS4J_EXCEPTION = "phase4.soap.wss4j-exception";
   private static final String KEY_PHASE4_PROFILE_ID = "phase4.profile.id";
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
@@ -293,6 +294,17 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   public boolean isSoapDecrypted ()
   {
     return (getSoapWSS4JSecurityActions () & WSConstants.ENCR) == WSConstants.ENCR;
+  }
+
+  @Nullable
+  public Exception getSoapWSS4JException ()
+  {
+    return getCastedValue (KEY_WSS4J_EXCEPTION);
+  }
+
+  public void setSoapWSS4JException (@Nullable final Exception aException)
+  {
+    putIn (KEY_WSS4J_EXCEPTION, aException);
   }
 
   @Nullable

@@ -303,7 +303,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // Remember in State
         aState.setDecryptedAttachments (aResponseAttachments);
       }
-      catch (final IOException | WSSecurityException ex)
+      catch (final WSSecurityException ex)
       {
         // Decryption or Signature check failed
         LOGGER.error ("Error processing the WSSSecurity Header", ex);
@@ -311,7 +311,15 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         // TODO we need a way to distinct
         // signature and decrypt WSSecurityException provides no such thing
         aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
-
+        aState.setSoapWSS4JException (ex);
+        return ESuccess.FAILURE;
+      }
+      catch (final IOException ex)
+      {
+        // Decryption or Signature check failed
+        LOGGER.error ("IO error processing the WSSSecurity Header", ex);
+        aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
+        aState.setSoapWSS4JException (ex);
         return ESuccess.FAILURE;
       }
     }
