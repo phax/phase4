@@ -1092,7 +1092,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                   @Nonnull final ESoapVersion eSoapVersion,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws WSSecurityException,
-                                                                                                                 MessagingException
+                                                                                                                 MessagingException,
+                                                                                                                 Phase4Exception
   {
     final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (m_aPModeResolver,
                                                                                                            m_aCryptoFactory,
@@ -1388,7 +1389,7 @@ public class AS4RequestHandler implements AutoCloseable
             // synchronous TWO - WAY (= "SYNC")
             final PModeLeg aLeg2 = aPMode.getLeg2 ();
             if (aLeg2 == null)
-              throw new AS4BadRequestException ("PMode has no leg2!");
+              throw new Phase4Exception ("PMode has no leg2!");
 
             if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
                                                    aPMode.getMEPBinding (),
@@ -1439,26 +1440,23 @@ public class AS4RequestHandler implements AutoCloseable
    *        The HTTP headers of the request. May not be <code>null</code>.
    * @param aHttpResponse
    *        The HTTP response to be filled. May not be <code>null</code>.
-   * @throws AS4BadRequestException
-   *         in case the request is missing certain prerequisites
+   * @throws Phase4Exception
+   *         in case the request is missing certain prerequisites. Since 0.9.11
    * @throws IOException
    *         In case of IO errors
    * @throws MessagingException
    *         MIME related errors
    * @throws WSSecurityException
    *         In case of WSS4J errors
-   * @throws Phase4Exception
-   *         In case of an internal processing error. Since 0.9.11
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
    *      for a more generic API
    */
   public void handleRequest (@Nonnull @WillClose final InputStream aServletRequestIS,
                              @Nonnull final HttpHeaderMap aRequestHttpHeaders,
-                             @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws AS4BadRequestException,
+                             @Nonnull final IAS4ResponseAbstraction aHttpResponse) throws Phase4Exception,
                                                                                    IOException,
                                                                                    MessagingException,
-                                                                                   WSSecurityException,
-                                                                                   Phase4Exception
+                                                                                   WSSecurityException
   {
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
       // SOAP document and SOAP version are determined
@@ -1499,25 +1497,22 @@ public class AS4RequestHandler implements AutoCloseable
    *        HTTP request. Never <code>null</code>.
    * @param aHttpResponse
    *        HTTP response. Never <code>null</code>.
-   * @throws AS4BadRequestException
-   *         in case the request is missing certain prerequisites
+   * @throws Phase4Exception
+   *         in case the request is missing certain prerequisites. Since 0.9.11
    * @throws IOException
    *         In case of IO errors
    * @throws MessagingException
    *         MIME related errors
    * @throws WSSecurityException
    *         In case of WSS4J errors
-   * @throws Phase4Exception
-   *         In case of an internal processing error. Since 0.9.11
    * @see #handleRequest(InputStream, HttpHeaderMap, IAS4ResponseAbstraction)
    *      for a more generic API
    */
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
-                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws AS4BadRequestException,
+                             @Nonnull final AS4UnifiedResponse aHttpResponse) throws Phase4Exception,
                                                                               IOException,
                                                                               MessagingException,
-                                                                              WSSecurityException,
-                                                                              Phase4Exception
+                                                                              WSSecurityException
   {
     AS4HttpDebug.debug ( () -> "RECEIVE-START at " + aRequestScope.getFullContextAndServletPath ());
 

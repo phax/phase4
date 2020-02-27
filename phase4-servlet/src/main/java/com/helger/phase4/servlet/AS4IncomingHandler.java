@@ -142,7 +142,7 @@ public class AS4IncomingHandler
                                       @Nonnull @WillClose final InputStream aPayloadIS,
                                       @Nonnull final HttpHeaderMap aHttpHeaders,
                                       @Nonnull final IAS4ParsedMessageCallback aCallback,
-                                      @Nullable final IAS4IncomingDumper aIncomingDumper) throws AS4BadRequestException,
+                                      @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception,
                                                                                           IOException,
                                                                                           MessagingException,
                                                                                           WSSecurityException,
@@ -151,13 +151,13 @@ public class AS4IncomingHandler
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);
     if (StringHelper.hasNoText (sContentType))
-      throw new AS4BadRequestException ("Content-Type header is missing");
+      throw new Phase4Exception ("Content-Type header is missing");
 
     final IMimeType aContentType = AcceptMimeTypeHandler.safeParseMimeType (sContentType);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type: " + aContentType);
     if (aContentType == null)
-      throw new AS4BadRequestException ("Failed to parse Content-Type '" + sContentType + "'");
+      throw new Phase4Exception ("Failed to parse Content-Type '" + sContentType + "'");
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
@@ -175,7 +175,7 @@ public class AS4IncomingHandler
 
       final String sBoundary = aContentType.getParameterValueWithName ("boundary");
       if (StringHelper.hasNoText (sBoundary))
-        throw new AS4BadRequestException ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
+        throw new Phase4Exception ("Content-Type '" + sContentType + "' misses 'boundary' parameter");
 
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("MIME Boundary: '" + sBoundary + "'");
@@ -300,16 +300,16 @@ public class AS4IncomingHandler
     if (aSoapDocument == null)
     {
       // We don't have a SOAP document
-      throw new AS4BadRequestException (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                             : "Failed to parse incoming SOAP " +
-                                                               eSoapVersion.getVersion () +
-                                                               " document!");
+      throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
+                                                      : "Failed to parse incoming SOAP " +
+                                                        eSoapVersion.getVersion () +
+                                                        " document!");
     }
 
     if (eSoapVersion == null)
     {
       // We're missing a SOAP version
-      throw new AS4BadRequestException ("Failed to determine SOAP version of XML document!");
+      throw new Phase4Exception ("Failed to determine SOAP version of XML document!");
     }
 
     aCallback.handle (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments);
@@ -319,7 +319,7 @@ public class AS4IncomingHandler
                                                   @Nonnull final Document aSoapDocument,
                                                   @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
                                                   @Nonnull final AS4MessageState aState,
-                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws AS4BadRequestException
+                                                  @Nonnull final ICommonsList <Ebms3Error> aErrorMessages) throws Phase4Exception
   {
     final ESoapVersion eSoapVersion = aState.getSoapVersion ();
     final ICommonsList <AS4SingleSOAPHeader> aHeaders = new CommonsArrayList <> ();
@@ -329,7 +329,10 @@ public class AS4IncomingHandler
                                                                      eSoapVersion.getNamespaceURI (),
                                                                      eSoapVersion.getHeaderElementName ());
       if (aHeaderNode == null)
-        throw new AS4BadRequestException ("SOAP document is missing a Header element");
+        throw new Phase4Exception ("SOAP document is missing a Header element {" +
+                                   eSoapVersion.getNamespaceURI () +
+                                   "}" +
+                                   eSoapVersion.getHeaderElementName ());
 
       // Extract all header elements including their mustUnderstand value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
@@ -414,8 +417,8 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new AS4BadRequestException ("Error processing required SOAP header element " +
-                                            aHeader.getQName ().toString ());
+          throw new Phase4Exception ("Error processing required SOAP header element " +
+                                     aHeader.getQName ().toString ());
     }
   }
 
@@ -481,10 +484,10 @@ public class AS4IncomingHandler
    *
    * @param aPropertyList
    *        the property list that should be checked for the two specific ones
-   * @throws AS4BadRequestException
+   * @throws Phase4Exception
    *         on error
    */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <? extends Ebms3Property> aPropertyList) throws AS4BadRequestException
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <? extends Ebms3Property> aPropertyList) throws Phase4Exception
   {
     String sOriginalSenderC1 = null;
     String sFinalRecipientC4 = null;
@@ -499,9 +502,9 @@ public class AS4IncomingHandler
     }
 
     if (StringHelper.hasNoText (sOriginalSenderC1))
-      throw new AS4BadRequestException (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
+      throw new Phase4Exception (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
     if (StringHelper.hasNoText (sFinalRecipientC4))
-      throw new AS4BadRequestException (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
+      throw new Phase4Exception (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
   }
 
   @Nonnull
@@ -512,7 +515,7 @@ public class AS4IncomingHandler
                                                      @Nonnull final Document aSoapDocument,
                                                      @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
-                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget)
+                                                     @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws Phase4Exception
   {
     ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
@@ -588,11 +591,11 @@ public class AS4IncomingHandler
       {
         // User message requires PMode
         if (aPMode == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for user-message!");
+          throw new Phase4Exception ("No AS4 P-Mode configuration found for user-message!");
 
         // Only check leg if the message is a usermessage
         if (aEffectiveLeg == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode leg could be determined!");
+          throw new Phase4Exception ("No AS4 P-Mode leg could be determined!");
 
         // Only do profile checks if a profile is set
         final String sProfileID = aState.getProfileID ();
@@ -611,10 +614,10 @@ public class AS4IncomingHandler
             aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
             if (aErrorList.isNotEmpty ())
             {
-              throw new AS4BadRequestException ("Error validating incoming AS4 message with the profile " +
-                                                aProfile.getDisplayName () +
-                                                "\n Following errors are present: " +
-                                                aErrorList.getAllErrors ().getAllTexts (aLocale));
+              throw new Phase4Exception ("Error validating incoming AS4 message with the profile " +
+                                         aProfile.getDisplayName () +
+                                         "\n Following errors are present: " +
+                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
             }
           }
         }
@@ -628,7 +631,7 @@ public class AS4IncomingHandler
 
         // Pull-request also requires PMode
         if (aEbmsPullRequest != null && aPMode == null)
-          throw new AS4BadRequestException ("No AS4 P-Mode configuration found for pull-request!");
+          throw new Phase4Exception ("No AS4 P-Mode configuration found for pull-request!");
       }
 
       final boolean bUseDecryptedSOAP = aState.hasDecryptedSoapDocument ();
@@ -640,8 +643,8 @@ public class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new AS4BadRequestException ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
-                                          " SOAP document is missing a Body element");
+        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+                                   " SOAP document is missing a Body element");
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       if (aEbmsUserMessage != null)
@@ -651,11 +654,11 @@ public class AS4IncomingHandler
         // TODO move check to CEF and Peppol profile
 
         if (aEbmsUserMessage.getMessageProperties () == null)
-          throw new AS4BadRequestException ("No Message Properties present but originalSender and finalRecipient have to be present");
+          throw new Phase4Exception ("No Message Properties present but originalSender and finalRecipient have to be present");
 
         final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
         if (aProps.isEmpty ())
-          throw new AS4BadRequestException ("Message Property element present but no properties");
+          throw new Phase4Exception ("Message Property element present but no properties");
 
         _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
       }

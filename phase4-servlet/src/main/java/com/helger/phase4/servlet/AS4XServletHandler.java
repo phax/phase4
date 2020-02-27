@@ -38,6 +38,7 @@ import com.helger.phase4.messaging.EAS4IncomingMessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.servlet.response.UnifiedResponse;
 import com.helger.web.scope.IRequestWebScope;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
@@ -202,7 +203,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
           LOGGER.trace ("After customizeAfterHandling");
       }
     }
-    catch (final AS4BadRequestException ex)
+    catch (final Phase4Exception ex)
     {
       // Logged inside
       aHttpResponse.setResponseError (CHttp.HTTP_BAD_REQUEST, "Bad Request: " + ex.getMessage (), ex.getCause ());
