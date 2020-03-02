@@ -42,7 +42,7 @@ public enum EMEPBinding implements IHasID <String>
    * transport protocol, as a result of an ebMS Pull Signal sent over the first
    * leg.
    */
-  PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull", 2),
+  PULL ("pull", "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/pull", 1),
   /**
    * maps an exchange of two User messages respectively to the first and second
    * legs of a two-way underlying transport protocol.

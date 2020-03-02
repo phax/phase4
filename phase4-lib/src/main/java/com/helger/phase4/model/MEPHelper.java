@@ -17,6 +17,7 @@
 package com.helger.phase4.model;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 
@@ -25,6 +26,7 @@ import com.helger.phase4.messaging.domain.EAS4MessageType;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class MEPHelper
 {
   private MEPHelper ()
@@ -45,6 +47,7 @@ public final class MEPHelper
           case PUSH:
             return eMsgType.isReceiptOrError ();
           case PULL:
+            return eMsgType.isUserMessage ();
           case SYNC:
           case PUSH_PUSH:
           case PUSH_PULL:
@@ -60,8 +63,10 @@ public final class MEPHelper
         switch (eMEPBinding)
         {
           case PUSH:
+            assert bLeg1;
             return eMsgType.isReceiptOrError ();
           case PULL:
+            assert bLeg1;
             return eMsgType.isUserMessage ();
           case SYNC:
             return eMsgType.isUserMessage ();
