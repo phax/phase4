@@ -466,19 +466,22 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         {
           // Get the endpoint information required from the recipient
           // Check if an endpoint is registered
-          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
-                                                                       aPeppolSBD.getReceiverAsIdentifier (),
-                                                                       aPeppolSBD.getDocumentTypeAsIdentifier (),
-                                                                       aPeppolSBD.getProcessAsIdentifier ());
+          final IParticipantIdentifier aReceiverID = aPeppolSBD.getReceiverAsIdentifier ();
+          final IDocumentTypeIdentifier aDocTypeID = aPeppolSBD.getDocumentTypeAsIdentifier ();
+          final IProcessIdentifier aProcessID = aPeppolSBD.getProcessAsIdentifier ();
+          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix, aReceiverID, aDocTypeID, aProcessID);
           if (aReceiverEndpoint == null)
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
                                                             "Failed to resolve SMP endpoint for provided receiver ID (" +
-                                                            aPeppolSBD.getReceiverAsIdentifier ().getURIEncoded () +
+                                                            (aReceiverID == null ? "null"
+                                                                                 : aReceiverID.getURIEncoded ()) +
                                                             ")/documentType ID (" +
-                                                            aPeppolSBD.getDocumentTypeAsIdentifier ().getURIEncoded () +
+                                                            (aDocTypeID == null ? "null"
+                                                                                : aDocTypeID.getURIEncoded ()) +
                                                             ")/process ID (" +
-                                                            aPeppolSBD.getProcessAsIdentifier ().getURIEncoded () +
+                                                            (aProcessID == null ? "null"
+                                                                                : aProcessID.getURIEncoded ()) +
                                                             ")/transport profile (" +
                                                             m_aTransportProfile.getID () +
                                                             ") - not handling incoming AS4 document");

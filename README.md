@@ -238,6 +238,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.9.12 - work in progress
+    * Fixed potential NPE in error case (see [issue #32](https://github.com/phax/phase4/issues/32))
 * v0.9.11 - 2020-03-03
     * Updated to ph-web 9.1.10
     * Propagating processing errors to the client (see [issue #30](https://github.com/phax/phase4/issues/30)) - thanks to https://github.com/RovoMe
