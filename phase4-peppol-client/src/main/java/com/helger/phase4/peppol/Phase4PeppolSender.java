@@ -554,9 +554,13 @@ public final class Phase4PeppolSender
       aUserMsg.setToPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
 
       aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getURIEncoded ()));
+              .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+                                                              aSenderID.getScheme (),
+                                                              aSenderID.getValue ()));
       aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aReceiverID.getURIEncoded ()));
+              .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                              aReceiverID.getScheme (),
+                                                              aReceiverID.getValue ()));
 
       // No payload - only one attachment
       aUserMsg.setPayload (null);

@@ -487,7 +487,7 @@ public class AS4IncomingHandler
    * @throws Phase4Exception
    *         on error
    */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final List <? extends Ebms3Property> aPropertyList) throws Phase4Exception
+  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final Iterable <? extends Ebms3Property> aPropertyList) throws Phase4Exception
   {
     String sOriginalSenderC1 = null;
     String sFinalRecipientC4 = null;

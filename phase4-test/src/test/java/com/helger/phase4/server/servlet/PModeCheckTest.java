@@ -286,7 +286,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
-    aEbms3Properties.removeIf (prop -> prop.getName ().equals (CAS4.ORIGINAL_SENDER));
+    aEbms3Properties.removeIf (x -> x.getName ().equals (CAS4.ORIGINAL_SENDER));
 
     assertEquals (1, aEbms3Properties.size ());
 
@@ -308,7 +308,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   {
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
-    aEbms3Properties.removeIf ( (prop) -> prop.getName ().equals (CAS4.FINAL_RECIPIENT));
+    aEbms3Properties.removeIf (x -> x.getName ().equals (CAS4.FINAL_RECIPIENT));
 
     assertEquals (1, aEbms3Properties.size ());
 

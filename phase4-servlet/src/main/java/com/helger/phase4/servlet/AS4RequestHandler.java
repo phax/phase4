@@ -814,14 +814,10 @@ public class AS4RequestHandler implements AutoCloseable
       for (final Ebms3Property aProp : aUserMessage.getMessageProperties ().getProperty ())
       {
         if (aProp.getName ().equals (CAS4.FINAL_RECIPIENT))
-        {
           aOriginalSender = aProp;
-        }
         else
           if (aProp.getName ().equals (CAS4.ORIGINAL_SENDER))
-          {
             aFinalRecipient = aProp;
-          }
       }
 
       if (aOriginalSender == null)

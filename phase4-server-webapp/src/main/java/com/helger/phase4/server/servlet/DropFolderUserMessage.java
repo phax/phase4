@@ -142,8 +142,12 @@ public final class DropFolderUserMessage
           aClient.setToRole (CAS4.DEFAULT_ROLE);
           aClient.setToPartyID (PeppolCertificateHelper.getSubjectCN (aTheirCert));
           aClient.ebms3Properties ()
-                 .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSBDH.getSenderValue ()),
-                          MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aSBDH.getReceiverValue ()));
+                 .setAll (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
+                                                                    aSBDH.getSenderScheme (),
+                                                                    aSBDH.getSenderValue ()),
+                          MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                                    aSBDH.getReceiverScheme (),
+                                                                    aSBDH.getReceiverValue ()));
           aClient.setPayload (SBDHWriter.standardBusinessDocument ().getAsDocument (aSBD));
 
           final IAS4ClientBuildMessageCallback aCallback = null;

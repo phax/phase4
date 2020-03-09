@@ -179,14 +179,24 @@ public final class MessageHelperMethods
   @Nonnull
   public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName, @Nonnull final String sValue)
   {
+    return createEbms3Property (sName, null, sValue);
+  }
+
+  @Nonnull
+  public static Ebms3Property createEbms3Property (@Nonnull @Nonempty final String sName,
+                                                   @Nullable final String sType,
+                                                   @Nonnull final String sValue)
+  {
     final Ebms3Property aProp = new Ebms3Property ();
     aProp.setName (sName);
+    aProp.setType (sType);
     aProp.setValue (sValue);
     return aProp;
   }
 
   @Nonnull
   @ReturnsMutableCopy
+  @Deprecated
   public static ICommonsList <Ebms3Property> createEmbs3PropertiesOriginalSenderFinalRecipient (@Nonnull final String sOriginalSender,
                                                                                                 @Nonnull final String sFinalRecipient)
   {
