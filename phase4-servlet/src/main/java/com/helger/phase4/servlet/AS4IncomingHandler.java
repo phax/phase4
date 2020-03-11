@@ -19,7 +19,6 @@ package com.helger.phase4.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -53,7 +52,6 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
 import com.helger.http.AcceptMimeTypeHandler;
-import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
@@ -478,35 +476,6 @@ public class AS4IncomingHandler
     }
   }
 
-  /**
-   * Checks the mandatory properties "originalSender" and "finalRecipient" if
-   * those two are set.
-   *
-   * @param aPropertyList
-   *        the property list that should be checked for the two specific ones
-   * @throws Phase4Exception
-   *         on error
-   */
-  private static void _checkPropertiesOrignalSenderAndFinalRecipient (@Nonnull final Iterable <? extends Ebms3Property> aPropertyList) throws Phase4Exception
-  {
-    String sOriginalSenderC1 = null;
-    String sFinalRecipientC4 = null;
-
-    for (final Ebms3Property sProperty : aPropertyList)
-    {
-      if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
-        sOriginalSenderC1 = sProperty.getValue ();
-      else
-        if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
-          sFinalRecipientC4 = sProperty.getValue ();
-    }
-
-    if (StringHelper.hasNoText (sOriginalSenderC1))
-      throw new Phase4Exception (CAS4.ORIGINAL_SENDER + " property is empty or not existant but mandatory");
-    if (StringHelper.hasNoText (sFinalRecipientC4))
-      throw new Phase4Exception (CAS4.FINAL_RECIPIENT + " property is empty or not existant but mandatory");
-  }
-
   @Nonnull
   public static IAS4MessageState processEbmsMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                      @Nonnull final Locale aLocale,
@@ -603,7 +572,7 @@ public class AS4IncomingHandler
         {
           final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
           if (aProfile == null)
-            throw new IllegalStateException ("The configured AS4 profile " + sProfileID + " does not exist.");
+            throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
 
           // Profile Checks gets set when started with Server
           final IAS4ProfileValidator aValidator = aProfile.getValidator ();
@@ -621,6 +590,12 @@ public class AS4IncomingHandler
             }
           }
         }
+        else
+        {
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
+        }
+
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
         _decompressAttachments (aDecryptedAttachments, aEbmsUserMessage, aState);
@@ -646,22 +621,6 @@ public class AS4IncomingHandler
         throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
                                    " SOAP document is missing a Body element");
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
-
-      if (aEbmsUserMessage != null)
-      {
-        // Check if originalSender and finalRecipient are present
-        // Since these two properties are mandatory
-        // TODO move check to CEF and Peppol profile
-
-        if (aEbmsUserMessage.getMessageProperties () == null)
-          throw new Phase4Exception ("No Message Properties present but originalSender and finalRecipient have to be present");
-
-        final List <Ebms3Property> aProps = aEbmsUserMessage.getMessageProperties ().getProperty ();
-        if (aProps.isEmpty ())
-          throw new Phase4Exception ("Message Property element present but no properties");
-
-        _checkPropertiesOrignalSenderAndFinalRecipient (aProps);
-      }
 
       aState.setPingMessage (AS4Helper.isPingMessage (aPMode));
     }

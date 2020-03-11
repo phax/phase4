@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.profile.cef;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -27,11 +29,16 @@ import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.ebms3header.Ebms3From;
+import com.helger.phase4.ebms3header.Ebms3MessageProperties;
+import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
@@ -65,61 +72,6 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
   private static IError _createError (@Nonnull final String sMsg)
   {
     return SingleError.builderError ().setErrorText (sMsg).build ();
-  }
-
-  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
-  {
-    assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
-
-    try
-    {
-      MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
-    }
-    catch (final PModeValidationException ex)
-    {
-      aErrorList.add (_createError (ex.getMessage ()));
-    }
-
-    final EMEP eMEP = aPMode.getMEP ();
-    final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
-
-    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
-        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
-    {
-      // Valid
-    }
-    else
-    {
-      aErrorList.add (_createError ("An invalid combination of PMode MEP (" +
-                                    eMEP +
-                                    ") and MEP binding (" +
-                                    eMEPBinding +
-                                    ") was specified, valid are only one-way/push and two-way/push-push."));
-    }
-
-    // Leg1 must be present
-    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
-    if (aPModeLeg1 == null)
-    {
-      aErrorList.add (_createError ("PMode is missing Leg 1"));
-    }
-    else
-    {
-      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1);
-
-      if (eMEP.isTwoWay ())
-      {
-        final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
-        if (aPModeLeg2 == null)
-        {
-          aErrorList.add (_createError ("PMode is missing Leg 2 and is specified as TWO-WAY"));
-        }
-        else
-        {
-          _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg2);
-        }
-      }
-    }
   }
 
   private void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
@@ -306,16 +258,105 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
+  public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
+  {
+    assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
+
+    try
+    {
+      MetaAS4Manager.getPModeMgr ().validatePMode (aPMode);
+    }
+    catch (final PModeValidationException ex)
+    {
+      aErrorList.add (_createError (ex.getMessage ()));
+    }
+
+    final EMEP eMEP = aPMode.getMEP ();
+    final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
+
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+    {
+      // Valid
+    }
+    else
+    {
+      aErrorList.add (_createError ("An invalid combination of PMode MEP (" +
+                                    eMEP +
+                                    ") and MEP binding (" +
+                                    eMEPBinding +
+                                    ") was specified, valid are only one-way/push and two-way/push-push."));
+    }
+
+    // Leg1 must be present
+    final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
+    if (aPModeLeg1 == null)
+    {
+      aErrorList.add (_createError ("PMode is missing Leg 1"));
+    }
+    else
+    {
+      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1);
+
+      if (eMEP.isTwoWay ())
+      {
+        final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
+        if (aPModeLeg2 == null)
+        {
+          aErrorList.add (_createError ("PMode is missing Leg 2 and is specified as TWO-WAY"));
+        }
+        else
+        {
+          _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg2);
+        }
+      }
+    }
+  }
+
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
     if (aUserMsg.getMessageInfo () != null)
     {
-
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
-      {
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+
+      {
+        // Check if originalSender and finalRecipient are present
+        // Since these two properties are mandatory
+        final Ebms3MessageProperties aMessageProperties = aUserMsg.getMessageProperties ();
+        if (aMessageProperties == null)
+          aErrorList.add (_createError ("No Message Properties present but originalSender and finalRecipient have to be present"));
+        else
+        {
+          final List <Ebms3Property> aProps = aMessageProperties.getProperty ();
+          if (aProps.isEmpty ())
+            aErrorList.add (_createError ("Message Property element present but no properties"));
+          else
+          {
+            String sOriginalSenderC1 = null;
+            String sFinalRecipientC4 = null;
+
+            for (final Ebms3Property sProperty : aProps)
+            {
+              if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
+                sOriginalSenderC1 = sProperty.getValue ();
+              else
+                if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
+                  sFinalRecipientC4 = sProperty.getValue ();
+            }
+
+            if (StringHelper.hasNoText (sOriginalSenderC1))
+              aErrorList.add (_createError ("'" +
+                                            CAS4.ORIGINAL_SENDER +
+                                            "' property is empty or not existant but mandatory"));
+            if (StringHelper.hasNoText (sFinalRecipientC4))
+              aErrorList.add (_createError ("'" +
+                                            CAS4.FINAL_RECIPIENT +
+                                            "' property is empty or not existant but mandatory"));
+          }
+        }
       }
     }
     else
@@ -323,26 +364,25 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
     }
 
-    if (aUserMsg.getPartyInfo () != null)
+    if (aUserMsg.getPartyInfo () == null)
     {
-      if (aUserMsg.getPartyInfo ().getTo () != null)
-      {
-        if (aUserMsg.getPartyInfo ().getTo ().getPartyIdCount () > 1)
-        {
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyTo - part"));
-        }
-      }
-      if (aUserMsg.getPartyInfo ().getFrom () != null)
-      {
-        if (aUserMsg.getPartyInfo ().getFrom ().getPartyIdCount () > 1)
-        {
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyFrom - part"));
-        }
-      }
+      aErrorList.add (_createError ("At least one PartyInfo element has to be present"));
     }
     else
     {
-      aErrorList.add (_createError ("At least one PartyInfo element has to be present"));
+      final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
+      if (aTo != null)
+      {
+        if (aTo.getPartyIdCount () > 1)
+          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/To - part"));
+      }
+
+      final Ebms3From aFrom = aUserMsg.getPartyInfo ().getFrom ();
+      if (aFrom != null)
+      {
+        if (aFrom.getPartyIdCount () > 1)
+          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/From - part"));
+      }
     }
   }
 
@@ -350,9 +390,10 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 
-    if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+    if (aSignalMsg.getMessageInfo () != null)
     {
-      aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
     }
   }
 }

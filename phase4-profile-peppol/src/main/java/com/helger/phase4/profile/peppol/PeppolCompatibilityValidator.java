@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.profile.peppol;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
@@ -27,11 +29,14 @@ import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.ebms3header.Ebms3From;
+import com.helger.phase4.ebms3header.Ebms3MessageProperties;
+import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3To;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -292,8 +297,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     {
       _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1);
 
-      final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
-      if (aPModeLeg2 != null)
+      if (aPMode.getLeg2 () != null)
       {
         aErrorList.add (_createError ("PMode should never have Leg 2"));
       }
@@ -308,6 +312,43 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     {
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+
+      {
+        // Check if originalSender and finalRecipient are present
+        // Since these two properties are mandatory
+        final Ebms3MessageProperties aMessageProperties = aUserMsg.getMessageProperties ();
+        if (aMessageProperties == null)
+          aErrorList.add (_createError ("No Message Properties present but originalSender and finalRecipient have to be present"));
+        else
+        {
+          final List <Ebms3Property> aProps = aMessageProperties.getProperty ();
+          if (aProps.isEmpty ())
+            aErrorList.add (_createError ("Message Property element present but no properties"));
+          else
+          {
+            String sOriginalSenderC1 = null;
+            String sFinalRecipientC4 = null;
+
+            for (final Ebms3Property sProperty : aProps)
+            {
+              if (sProperty.getName ().equals (CAS4.ORIGINAL_SENDER))
+                sOriginalSenderC1 = sProperty.getValue ();
+              else
+                if (sProperty.getName ().equals (CAS4.FINAL_RECIPIENT))
+                  sFinalRecipientC4 = sProperty.getValue ();
+            }
+
+            if (StringHelper.hasNoText (sOriginalSenderC1))
+              aErrorList.add (_createError ("'" +
+                                            CAS4.ORIGINAL_SENDER +
+                                            "' property is empty or not existant but mandatory"));
+            if (StringHelper.hasNoText (sFinalRecipientC4))
+              aErrorList.add (_createError ("'" +
+                                            CAS4.FINAL_RECIPIENT +
+                                            "' property is empty or not existant but mandatory"));
+          }
+        }
+      }
     }
     else
     {
@@ -360,9 +401,10 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 
-    if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+    if (aSignalMsg.getMessageInfo () != null)
     {
-      aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+      if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
+        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
     }
   }
 }
