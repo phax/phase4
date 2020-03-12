@@ -42,7 +42,7 @@ import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -92,8 +92,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
     m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     m_aLocale = ValueEnforcer.notNull (aLocale, "Locale");
-    // The profile ID from the configuration file is optional
-    setProfileID (AS4ServerConfiguration.getAS4ProfileID ());
+    setProfileID (AS4ProfileSelector.getAS4ProfileID ());
   }
 
   @Nonnull

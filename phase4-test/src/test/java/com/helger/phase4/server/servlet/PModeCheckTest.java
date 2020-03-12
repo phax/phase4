@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.server.servlet;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -279,50 +278,6 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                         .getAsSoapDocument (m_aPayload);
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, "");
-  }
-
-  @Test
-  public void testUserMessageFinalRecipientButNoOriginalSender () throws Exception
-  {
-    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
-    aEbms3Properties.removeIf (x -> x.getName ().equals (CAS4.ORIGINAL_SENDER));
-
-    assertEquals (1, aEbms3Properties.size ());
-
-    aEbms3Properties.add (_createRandomProperty ());
-    aEbms3MessageProperties.setProperty (aEbms3Properties);
-
-    m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
-
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "originalSender property is empty or not existant but mandatory");
-  }
-
-  @Test
-  public void testUserMessageOriginalSenderButNoFinalRecipient () throws Exception
-  {
-    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
-    aEbms3Properties.removeIf (x -> x.getName ().equals (CAS4.FINAL_RECIPIENT));
-
-    assertEquals (1, aEbms3Properties.size ());
-
-    aEbms3Properties.add (_createRandomProperty ());
-    aEbms3MessageProperties.setProperty (aEbms3Properties);
-
-    m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
-
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "finalRecipient property is empty or not existant but mandatory");
   }
 
   @Test
