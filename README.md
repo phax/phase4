@@ -207,7 +207,7 @@ It stores all incoming requests on disk based on the incoming date time.
 * The (decrypted) Peppol payload (SBD Document) is stored with extension `.sbd`
 * The returned receipt is stored with extension `.response`
 
-To configure your certificate, modify the file `crypto.properties`. Don't alter the truststore - it's a Peppol default.
+To configure your certificate, modify the file `crypto.properties`. Usually there is no need to alter the truststore - it's the Peppol default truststore and considered to be constant.
 
 Note: this application uses the property `smp.url` in configuration file `phase4.properties` to locate it's home SMP for cross checking if the incoming request is targeted for itself.
 
