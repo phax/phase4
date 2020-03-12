@@ -241,6 +241,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.9.13 - work in progress
     * Moved `originalSender` and `finalRecipient` tests to the CEF and Peppol profiles (see [issue #33](https://github.com/phax/phase4/issues/33))
     * Added new class `AS4ProfileSelector` for more flexible profile selection
+    * Added possibility for dumping the created SBDH in `Phase4PeppolSender.Builder` (see [issue #34](https://github.com/phax/phase4/issues/34))
 * v0.9.12 - 2020-03-09
     * Fixed potential NPE in error case (see [issue #32](https://github.com/phax/phase4/issues/32))
     * Fixed the setting of the `originalSender` and the `finalRecipient` message properties for Peppol. The `type` attribute must contain the identifier scheme.

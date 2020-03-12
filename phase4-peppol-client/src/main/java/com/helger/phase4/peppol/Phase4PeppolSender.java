@@ -1118,6 +1118,7 @@ public final class Phase4PeppolSender
     private byte [] m_aPayloadBytes;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndointURLConsumer;
+    private Consumer <byte []> m_aSBDBytesConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -1236,6 +1237,21 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set an optional Consumer for the created StandardBusinessDocument (SBD).
+     *
+     * @param aSBDBytesConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since v0.9.13
+     */
+    @Nonnull
+    public Builder setSBDBytesConsumer (@Nullable final Consumer <byte []> aSBDBytesConsumer)
+    {
+      m_aSBDBytesConsumer = aSBDBytesConsumer;
+      return this;
+    }
+
+    /**
      * Set the client side validation to be used. If this method is not invoked,
      * than it's the responsibility of the caller to validate the document prior
      * to sending it. This method uses a default "do nothing validation result
@@ -1350,6 +1366,8 @@ public final class Phase4PeppolSender
                                              m_sSBDHInstanceIdentifier,
                                              m_sSBDHUBLVersion,
                                              aPayloadElement);
+      if (m_aSBDBytesConsumer != null)
+        m_aSBDBytesConsumer.accept (aSBDBytes);
 
       _sendAS4Message (m_aHttpClientFactory,
                        m_aCryptoFactory,
