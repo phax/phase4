@@ -23,20 +23,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- --><Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" 
-         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
-         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+ -->
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+  xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
   <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
-  <cbc:CustomizationID schemeID="PEPPOL">urn:www.cenbii.eu:transaction:biicoretrdm010:ver1.0:#urn:www.peppol.eu:bis:peppol4a:ver1.0</cbc:CustomizationID>
-  <cbc:ProfileID>urn:www.cenbii.eu:profile:bii04:ver1.0</cbc:ProfileID>
+  <cbc:CustomizationID schemeID="PEPPOL">urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0
+  </cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
   <!-- Die Rechnungsnummer: -->
   <!-- The invoice number: -->
   <cbc:ID>ERB_UBL_INVOICE_001</cbc:ID>
   <cbc:IssueDate>2020-01-01</cbc:IssueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:Note>Das ist ein globaler Kommentar zur Rechnung.</cbc:Note>
-  <cbc:Note>Das ist die zweite Zeile des Kommentars.
-Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:OrderReference>
     <!-- Die Auftragsreferenz: -->
@@ -48,6 +48,7 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     <!-- The ID of your company in the systems of the government: -->
     <cbc:CustomerAssignedAccountID>11011011</cbc:CustomerAssignedAccountID>
     <cac:Party>
+      <cbc:EndpointID schemeID="0088">987654321</cbc:EndpointID>
       <cac:PartyName>
         <cbc:Name>Mustermann GmbH</cbc:Name>
       </cac:PartyName>
@@ -66,6 +67,10 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
           <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>SupplierOfficialName Ltd</cbc:RegistrationName>
+        <cbc:CompanyID>GB983294</cbc:CompanyID>
+      </cac:PartyLegalEntity>
       <cac:Contact>
         <cbc:Telephone>1234 567890</cbc:Telephone>
         <!-- An die folgende E-Mail-Adresse(n) werden die E-Mails gesendet: -->
@@ -83,6 +88,7 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     <!-- Invoice recipient -->
     <cbc:SupplierAssignedAccountID>149</cbc:SupplierAssignedAccountID>
     <cac:Party>
+      <cbc:EndpointID schemeID="0088">123456789</cbc:EndpointID>
       <cac:PartyName>
         <cbc:Name>BRZ GmbH</cbc:Name>
       </cac:PartyName>
@@ -101,6 +107,10 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
           <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Buyer Official Name</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0183">39937423947</cbc:CompanyID>
+      </cac:PartyLegalEntity>
       <cac:Contact>
         <cbc:Telephone>+43 / 1 / 78 56 789</cbc:Telephone>
         <cbc:ElectronicMail>support-erb@brz.gv.at; info@brz.gv.at</cbc:ElectronicMail>
@@ -159,9 +169,10 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     <!-- Globaler Zuschlag -->
     <!-- Global surcharge -->
     <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
-    <cbc:Amount currencyID="EUR">14.50</cbc:Amount>
+    <cbc:AllowanceChargeReason>plus</cbc:AllowanceChargeReason>
+    <cbc:Amount currencyID="EUR">5</cbc:Amount>
     <cac:TaxCategory>
-      <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">AA</cbc:ID>
+      <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
       <cbc:Percent>20</cbc:Percent>
       <cac:TaxScheme>
         <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
@@ -172,9 +183,10 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     <!-- Globaler Rabatt -->
     <!-- Global reduction -->
     <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
-    <cbc:Amount currencyID="EUR">0.13</cbc:Amount>
+    <cbc:AllowanceChargeReason>minus</cbc:AllowanceChargeReason>
+    <cbc:Amount currencyID="EUR">5</cbc:Amount>
     <cac:TaxCategory>
-      <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">AA</cbc:ID>
+      <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
       <cbc:Percent>20</cbc:Percent>
       <cac:TaxScheme>
         <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
@@ -182,10 +194,10 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     </cac:TaxCategory>
   </cac:AllowanceCharge>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="EUR">30</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
     <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="EUR">150</cbc:TaxableAmount>
-      <cbc:TaxAmount currencyID="EUR">30</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="EUR">135.63</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
       <cac:TaxCategory>
         <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
         <cbc:Percent>20</cbc:Percent>
@@ -199,7 +211,9 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
     <cbc:LineExtensionAmount currencyID="EUR">135.63</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="EUR">135.63</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="EUR">162.76</cbc:TaxInclusiveAmount>
-    <cbc:PayableAmount currencyID="EUR">180</cbc:PayableAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">5</cbc:AllowanceTotalAmount>
+    <cbc:ChargeTotalAmount currencyID="EUR">5</cbc:ChargeTotalAmount>
+    <cbc:PayableAmount currencyID="EUR">162.76</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
@@ -210,23 +224,16 @@ Auch Zeilenumbrüche in einer Note werden berücksichtigt.</cbc:Note>
       <!-- Order position number for this invoice line: -->
       <cbc:LineID>10</cbc:LineID>
     </cac:OrderLineReference>
-    <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
-      <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="EUR">135.63</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="EUR">27.13</cbc:TaxAmount>
-        <cac:TaxCategory>
-          <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5305">S</cbc:ID>
-          <cbc:Percent>20</cbc:Percent>
-          <cac:TaxScheme>
-            <cbc:ID schemeAgencyID="6" schemeID="UN/ECE 5153">VAT</cbc:ID>
-          </cac:TaxScheme>
-        </cac:TaxCategory>
-      </cac:TaxSubtotal>
-    </cac:TaxTotal>
     <cac:Item>
       <cbc:Description>Abrechnung</cbc:Description>
       <cbc:Name>Abrechnung</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>20</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
     </cac:Item>
     <cac:Price>
       <cbc:PriceAmount currencyID="EUR">1085.00</cbc:PriceAmount>
