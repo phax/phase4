@@ -52,6 +52,17 @@ public final class Phase4PeppolServletConfiguration
     return s_bReceiverCheckEnabled;
   }
 
+  /**
+   * Enable or disable the overall receiver checks. If the check is enabled,
+   * than all values MUST be set.
+   *
+   * @param bReceiverCheckEnabled
+   *        <code>true</code> to enable the checks, <code>false</code> to
+   *        disable them.
+   * @see #setAS4EndpointURL(String)
+   * @see #setSMPClient(ISMPServiceMetadataProvider)
+   * @see #setAPCertificate(X509Certificate)
+   */
   public static void setReceiverCheckEnabled (final boolean bReceiverCheckEnabled)
   {
     s_bReceiverCheckEnabled = bReceiverCheckEnabled;
@@ -69,6 +80,13 @@ public final class Phase4PeppolServletConfiguration
     return s_aSMPClient;
   }
 
+  /**
+   * Set the SMP client to use for reverse checking if the participant is
+   * registered or not.
+   *
+   * @param aSMPClient
+   *        The SMP metadata provider to be used. May be <code>null</code>.
+   */
   public static void setSMPClient (@Nullable final ISMPServiceMetadataProvider aSMPClient)
   {
     s_aSMPClient = aSMPClient;
@@ -84,6 +102,12 @@ public final class Phase4PeppolServletConfiguration
     return s_sAS4EndpointURL;
   }
 
+  /**
+   * Set the expected endpoint URL to be used.
+   *
+   * @param sAS4EndpointURL
+   *        The endpoint URL to check against. May be <code>null</code>.
+   */
   public static void setAS4EndpointURL (@Nullable final String sAS4EndpointURL)
   {
     s_sAS4EndpointURL = sAS4EndpointURL;
@@ -99,6 +123,14 @@ public final class Phase4PeppolServletConfiguration
     return s_aAPCertificate;
   }
 
+  /**
+   * Set the Peppol AP certificate to be used for comparing against the SMP
+   * lookup result.
+   *
+   * @param aAPCertificate
+   *        The AP certificate to be used for compatibility. May be
+   *        <code>null</code>.
+   */
   public static void setAPCertificate (@Nullable final X509Certificate aAPCertificate)
   {
     s_aAPCertificate = aAPCertificate;
