@@ -21,11 +21,13 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.string.StringHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 
 /**
  * This class contains the references values against which incoming values are
- * compared.
+ * compared. These are the static default values that can be overridden in
+ * {@link Phase4PeppolServletMessageProcessorSPI}.
  *
  * @author Philip Helger
  */
@@ -134,5 +136,28 @@ public final class Phase4PeppolServletConfiguration
   public static void setAPCertificate (@Nullable final X509Certificate aAPCertificate)
   {
     s_aAPCertificate = aAPCertificate;
+  }
+
+  /**
+   * Get the statically configured data as a
+   * {@link Phase4PeppolReceiverCheckData} instance. Returns <code>null</code>
+   * if the checks are disabled, or if at least one mandatory field is not set.
+   *
+   * @return The instance data or <code>null</code>.
+   * @since 0.9.13
+   */
+  @Nullable
+  public static Phase4PeppolReceiverCheckData getAsReceiverCheckData ()
+  {
+    if (!isReceiverCheckEnabled ())
+      return null;
+
+    final ISMPServiceMetadataProvider aSMPClient = getSMPClient ();
+    final String sAS4EndpointURL = getAS4EndpointURL ();
+    final X509Certificate aAPCertificate = getAPCertificate ();
+    if (aSMPClient == null || StringHelper.hasNoText (sAS4EndpointURL) || aAPCertificate == null)
+      return null;
+
+    return new Phase4PeppolReceiverCheckData (aSMPClient, sAS4EndpointURL, aAPCertificate);
   }
 }

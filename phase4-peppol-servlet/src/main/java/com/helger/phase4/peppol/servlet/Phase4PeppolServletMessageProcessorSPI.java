@@ -32,6 +32,7 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.annotation.UnsupportedOperation;
@@ -147,6 +148,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
+  private Phase4PeppolReceiverCheckData m_aReceiverCheckData;
 
   /**
    * Constructor. Uses all SPI implementations of
@@ -164,7 +166,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    */
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> getAllHandler ()
+  public final ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> getAllHandler ()
   {
     return m_aHandlers.getClone ();
   }
@@ -179,7 +181,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    * @return this for chaining
    */
   @Nonnull
-  public Phase4PeppolServletMessageProcessorSPI setAllHandler (@Nonnull final Iterable <? extends IPhase4PeppolIncomingSBDHandlerSPI> aHandlers)
+  public final Phase4PeppolServletMessageProcessorSPI setAllHandler (@Nonnull final Iterable <? extends IPhase4PeppolIncomingSBDHandlerSPI> aHandlers)
   {
     ValueEnforcer.notNull (aHandlers, "Handlers");
     m_aHandlers = new CommonsArrayList <> (aHandlers);
@@ -194,7 +196,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    *         {@link #DEFAULT_TRANSPORT_PROFILE}).
    */
   @Nonnull
-  public ISMPTransportProfile getTransportProfile ()
+  public final ISMPTransportProfile getTransportProfile ()
   {
     return m_aTransportProfile;
   }
@@ -207,24 +209,46 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    * @return this for chaining
    */
   @Nonnull
-  public Phase4PeppolServletMessageProcessorSPI setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
+  public final Phase4PeppolServletMessageProcessorSPI setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
   {
     ValueEnforcer.notNull (aTransportProfile, "TransportProfile");
     m_aTransportProfile = aTransportProfile;
     return this;
   }
 
+  /**
+   * @return The receiver check data to be used. <code>null</code> by default.
+   * @since 0.9.13
+   */
+  @Nullable
+  public final Phase4PeppolReceiverCheckData getReceiverCheckData ()
+  {
+    return m_aReceiverCheckData;
+  }
+
+  /**
+   * Set the receiver check data to be used. If set, it overrides the global one
+   * defined by {@link Phase4PeppolServletConfiguration}.
+   *
+   * @param aReceiverCheckData
+   *        The customer receiver check data to use. May be <code>null</code>.
+   * @return this for chaining
+   * @since 0.9.13
+   */
+  @Nonnull
+  public final Phase4PeppolServletMessageProcessorSPI setReceiverCheckData (@Nullable final Phase4PeppolReceiverCheckData aReceiverCheckData)
+  {
+    m_aReceiverCheckData = aReceiverCheckData;
+    return this;
+  }
+
   @Nullable
   private EndpointType _getReceiverEndpoint (@Nonnull final String sLogPrefix,
+                                             @Nonnull final ISMPServiceMetadataProvider aSMPClient,
                                              @Nullable final IParticipantIdentifier aRecipientID,
                                              @Nullable final IDocumentTypeIdentifier aDocTypeID,
                                              @Nullable final IProcessIdentifier aProcessID) throws Phase4PeppolServletException
   {
-    // Get configured client
-    final ISMPServiceMetadataProvider aSMPClient = Phase4PeppolServletConfiguration.getSMPClient ();
-    if (aSMPClient == null)
-      throw new Phase4PeppolServletException (sLogPrefix + "No SMP client configured!");
-
     if (aRecipientID == null || aDocTypeID == null || aProcessID == null)
       return null;
 
@@ -265,13 +289,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   private static void _checkIfReceiverEndpointURLMatches (@Nonnull final String sLogPrefix,
+                                                          @Nonnull @Nonempty final String sOwnAPUrl,
                                                           @Nonnull final EndpointType aRecipientEndpoint) throws Phase4PeppolServletException
   {
-    // Get our public endpoint address from the configuration
-    final String sOwnAPUrl = Phase4PeppolServletConfiguration.getAS4EndpointURL ();
-    if (StringHelper.hasNoText (sOwnAPUrl))
-      throw new Phase4PeppolServletException (sLogPrefix + "The endpoint URL of this AP is not configured!");
-
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug (sLogPrefix + "Our AP URL is " + sOwnAPUrl);
 
@@ -294,13 +314,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   }
 
   private static void _checkIfEndpointCertificateMatches (@Nonnull final String sLogPrefix,
+                                                          @Nonnull final X509Certificate aOurCert,
                                                           @Nonnull final EndpointType aRecipientEndpoint) throws Phase4PeppolServletException
   {
-    final X509Certificate aOurCert = Phase4PeppolServletConfiguration.getAPCertificate ();
-    if (aOurCert == null)
-      throw new Phase4PeppolServletException (sLogPrefix +
-                                              "The certificate of this AP is not configured! Cannot check if the incoming message is for this AP.");
-
     final String sRecipientCertString = aRecipientEndpoint.getCertificate ();
     X509Certificate aRecipientCert = null;
     try
@@ -487,7 +503,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
       final String sLogPrefix = "[" + sMessageID + "] ";
 
       // Start consistency checks?
-      if (Phase4PeppolServletConfiguration.isReceiverCheckEnabled ())
+      final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
+                                                                                            : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
+      if (aReceiverCheckData != null)
       {
         try
         {
@@ -496,7 +514,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           final IParticipantIdentifier aReceiverID = aPeppolSBD.getReceiverAsIdentifier ();
           final IDocumentTypeIdentifier aDocTypeID = aPeppolSBD.getDocumentTypeAsIdentifier ();
           final IProcessIdentifier aProcessID = aPeppolSBD.getProcessAsIdentifier ();
-          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix, aReceiverID, aDocTypeID, aProcessID);
+          final EndpointType aReceiverEndpoint = _getReceiverEndpoint (sLogPrefix,
+                                                                       aReceiverCheckData.getSMPClient (),
+                                                                       aReceiverID,
+                                                                       aDocTypeID,
+                                                                       aProcessID);
           if (aReceiverEndpoint == null)
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
@@ -514,11 +536,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                             ") - not handling incoming AS4 document");
           }
 
-          // Get the recipient certificate from the SMP
-          _checkIfEndpointCertificateMatches (sLogPrefix, aReceiverEndpoint);
-
           // Check if the message is for us
-          _checkIfReceiverEndpointURLMatches (sLogPrefix, aReceiverEndpoint);
+          _checkIfReceiverEndpointURLMatches (sLogPrefix, aReceiverCheckData.getAS4EndpointURL (), aReceiverEndpoint);
+
+          // Get the recipient certificate from the SMP
+          _checkIfEndpointCertificateMatches (sLogPrefix, aReceiverCheckData.getAPCertificate (), aReceiverEndpoint);
         }
         catch (final Phase4Exception ex)
         {
