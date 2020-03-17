@@ -148,6 +148,10 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
 
+  /**
+   * Constructor. Uses all SPI implementations of
+   * {@link IPhase4PeppolIncomingSBDHandlerSPI} as the handlers.
+   */
   @UsedViaReflection
   public Phase4PeppolServletMessageProcessorSPI ()
   {
@@ -168,7 +172,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   /**
    * Set all handler to be used. This is helpful, if this message processor is
    * not used as an SPI but as a manually configured handler.
-   * 
+   *
    * @param aHandlers
    *        The handler to be set. May not be <code>null</code> but maybe empty
    *        (in which case the message is basically discarded).
@@ -186,7 +190,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
 
   /**
    * @return the transport profile to be handled. Never <code>null</code>. By
-   *         default it is "Peppol AS4 v2".
+   *         default it is "Peppol AS4 v2" (see
+   *         {@link #DEFAULT_TRANSPORT_PROFILE}).
    */
   @Nonnull
   public ISMPTransportProfile getTransportProfile ()
