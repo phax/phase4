@@ -35,6 +35,7 @@ import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.annotation.UnsupportedOperation;
+import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
@@ -147,11 +148,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
   private ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> m_aHandlers;
   private ISMPTransportProfile m_aTransportProfile = DEFAULT_TRANSPORT_PROFILE;
 
+  @UsedViaReflection
   public Phase4PeppolServletMessageProcessorSPI ()
   {
     m_aHandlers = ServiceLoaderHelper.getAllSPIImplementations (IPhase4PeppolIncomingSBDHandlerSPI.class);
   }
 
+  /**
+   * @return A list of all contained Peppol specific SBD handlers. Never
+   *         <code>null</code> but maybe empty.
+   */
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <IPhase4PeppolIncomingSBDHandlerSPI> getAllHandler ()
@@ -159,10 +165,23 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     return m_aHandlers.getClone ();
   }
 
-  public void setAllHandler (@Nonnull final Iterable <? extends IPhase4PeppolIncomingSBDHandlerSPI> aHandlers)
+  /**
+   * Set all handler to be used. This is helpful, if this message processor is
+   * not used as an SPI but as a manually configured handler.
+   * 
+   * @param aHandlers
+   *        The handler to be set. May not be <code>null</code> but maybe empty
+   *        (in which case the message is basically discarded).
+   * @return this for chaining
+   */
+  @Nonnull
+  public Phase4PeppolServletMessageProcessorSPI setAllHandler (@Nonnull final Iterable <? extends IPhase4PeppolIncomingSBDHandlerSPI> aHandlers)
   {
     ValueEnforcer.notNull (aHandlers, "Handlers");
     m_aHandlers = new CommonsArrayList <> (aHandlers);
+    if (m_aHandlers.isEmpty ())
+      LOGGER.warn ("Phase4PeppolServletMessageProcessorSPI has an empty handler list - this means incoming messages are only checked and afterwards discarded");
+    return this;
   }
 
   /**
@@ -180,11 +199,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
    *
    * @param aTransportProfile
    *        The transport profile to be used. May not be <code>null</code>.
+   * @return this for chaining
    */
-  public void setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
+  @Nonnull
+  public Phase4PeppolServletMessageProcessorSPI setTransportProfile (@Nonnull final ISMPTransportProfile aTransportProfile)
   {
     ValueEnforcer.notNull (aTransportProfile, "TransportProfile");
     m_aTransportProfile = aTransportProfile;
+    return this;
   }
 
   @Nullable
