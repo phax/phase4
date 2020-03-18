@@ -105,7 +105,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG
                                                                                                       "QsSm4/2kuGIsWKRy+kf7s7xJT7olo1hBQQzNf1J1GN4WbXVWtkxD1jyXML+HnYfh\n" +
                                                                                                       "47A9zzduKT3CycRoqxaB\n" +
                                                                                                       "-----END CERTIFICATE-----"),
-                                                         "https://peppol-dev.ps-dev.strands.com/api-hub/as4")
+                                                         "https://peppol-dev.strands.com/api-hub/as4")
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
