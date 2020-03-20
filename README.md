@@ -238,6 +238,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.9.14 - work in progress
+    * Updated to WSS4J 2.2.5
 * v0.9.13 - 2020-03-17
     * Moved `originalSender` and `finalRecipient` tests to the CEF and Peppol profiles (see [issue #33](https://github.com/phax/phase4/issues/33))
     * Added new class `AS4ProfileSelector` for more flexible profile selection

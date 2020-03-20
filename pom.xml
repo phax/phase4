@@ -68,7 +68,7 @@
 
   <properties>
     <xmlsec.version>2.1.5</xmlsec.version>
-    <wss4j.version>2.2.4</wss4j.version>
+    <wss4j.version>2.2.5</wss4j.version>
     <log4j.version>2.13.1</log4j.version>
     <peppol-commons.version>8.0.2</peppol-commons.version>
   </properties>
