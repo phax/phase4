@@ -83,7 +83,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
                             .setResponseConsumer (new ResponseConsumerWriteToFile ())
-                            .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_101,
+                            .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .setResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
                                                                                new String (aResponseMsg.getResponse ())))
