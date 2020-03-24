@@ -214,6 +214,48 @@ Note: this application uses the property `smp.url` in configuration file `phase4
 To start it from within your IDE you may run the test class `com.helger.phase4.peppol.server.standalone.RunInJettyPHASE4PEPPOL` - it will spawn on http://localhost:8080`.
 For IntelliJ users: make sure the folder `phase4-peppol-server-webapp` is the startup directory.
 
+# Usage with Maven
+
+If you want to use phase4 with Maven I suggest the following way:
+
+1. add the BOM into your `<dependencyManagement>` section and
+2. add the main artefacts without version in the `<dependency>` block to have a consistent versioning:
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+...
+  <dependencyManagement>
+    <dependencies>
+...
+      <!-- step 1 -->
+      <dependency>
+        <groupId>com.helger</groupId>
+        <artifactId>phase4-parent-pom</artifactId>
+        <version>x.y.z</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+...
+    </dependencies>
+  </dependencyManagement>
+...
+  <dependencies>
+...
+    <!-- step 2 -->
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>phase4-lib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>phase4-profile-peppol</artifactId>
+    </dependency>
+...
+  </dependencies>
+...
+</project>
+```
+
 # Building from source
 
 Apache Maven needed 3.6 or later and Java JDK 8 or later is required.
