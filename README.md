@@ -23,13 +23,14 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 ## Known users
 
 Some known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
-* Bundesrechenzentrum / Federal Computing Center (AT)
-* ecosio GmbH (AT)
-* GHX LLC (UK)
-* Qvalia Group AB (SE)
-* Telema AS (EE)
-* TOOP4EU (EU project)
-* unifiedpost group (BE)
+* Bundesrechenzentrum / Federal Computing Center (AT) - https://www.brz.gv.at/
+* ecosio GmbH (AT) - https://ecosio.com/
+* GHX LLC (UK) - https://www.ghx.com/
+* Qvalia Group AB (SE) - https://qvalia.com/
+* Strands (ES) - https://strands.com/
+* Telema AS (EE) - https://telema.com/
+* TOOP4EU (EU project) - http://toop.eu/
+* unifiedpost group (BE) - https://www.unifiedpost.com/
 
 If you are a phase4 user and want to be listed here, write me an email to phase4[at]helger[dot]com
     
