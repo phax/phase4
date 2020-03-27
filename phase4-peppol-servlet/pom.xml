@@ -98,6 +98,10 @@
             <Automatic-Module-Name>com.helger.phase4.peppol.servlet</Automatic-Module-Name>
             <Export-Package>com.helger.phase4.peppol.servlet.*</Export-Package>
             <Import-Package>!javax.annotation.*,*</Import-Package>
+            <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
+osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
+            <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI</Provide-Capability>
           </instructions>
         </configuration>
       </plugin>
