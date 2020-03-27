@@ -47,6 +47,6 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     setSocketTimeoutMS (100_000);
 
     // Set an explicit user agent
-    setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " github.com/phax/phase4");
+    setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " https://github.com/phax/phase4");
   }
 }
