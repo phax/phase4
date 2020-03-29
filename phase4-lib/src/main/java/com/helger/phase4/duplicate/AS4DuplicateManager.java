@@ -71,7 +71,7 @@ public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4Dupli
   @Nonnull
   public EChange clearCache ()
   {
-    return m_aRWLock.writeLocked ( () -> internalRemoveAllItemsNoCallback ());
+    return m_aRWLock.writeLockedGet ( () -> internalRemoveAllItemsNoCallback ());
   }
 
   @Nonnull

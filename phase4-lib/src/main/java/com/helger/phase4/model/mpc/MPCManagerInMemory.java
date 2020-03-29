@@ -127,7 +127,7 @@ public class MPCManagerInMemory implements IMPCManager
   {
     if (StringHelper.hasNoText (sID))
       return null;
-    return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
   }
 
   @Nullable
@@ -140,6 +140,6 @@ public class MPCManagerInMemory implements IMPCManager
   {
     if (StringHelper.hasNoText (sID))
       return false;
-    return m_aRWLock.readLocked ( () -> m_aMap.containsKey (sID));
+    return m_aRWLock.readLockedBoolean ( () -> m_aMap.containsKey (sID));
   }
 }

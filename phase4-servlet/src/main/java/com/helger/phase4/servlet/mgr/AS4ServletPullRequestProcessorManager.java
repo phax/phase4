@@ -60,7 +60,7 @@ public final class AS4ServletPullRequestProcessorManager
     else
       LOGGER.info ("Found " + aProcessorSPIs.size () + " AS4 pull requests processors");
 
-    s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
+    s_aRWLock.writeLockedGet ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }
 
   static
@@ -77,6 +77,6 @@ public final class AS4ServletPullRequestProcessorManager
   @ReturnsMutableCopy
   public static ICommonsList <IAS4ServletPullRequestProcessorSPI> getAllProcessors ()
   {
-    return s_aRWLock.readLocked ( () -> s_aProcessors.getClone ());
+    return s_aRWLock.readLockedGet (s_aProcessors::getClone);
   }
 }

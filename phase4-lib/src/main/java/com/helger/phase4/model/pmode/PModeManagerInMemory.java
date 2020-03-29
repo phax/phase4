@@ -167,7 +167,7 @@ public class PModeManagerInMemory implements IPModeManager
   {
     if (StringHelper.hasNoText (sID))
       return null;
-    return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
   }
 
   @Nullable
@@ -179,20 +179,20 @@ public class PModeManagerInMemory implements IPModeManager
   @Nullable
   public IPMode findFirst (@Nonnull final Predicate <? super IPMode> aFilter)
   {
-    return m_aRWLock.readLocked ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
+    return m_aRWLock.readLockedGet ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <IPMode> getAll ()
   {
-    return m_aRWLock.readLocked ( () -> new CommonsArrayList <> (m_aMap.values ()));
+    return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsSet <String> getAllIDs ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.copyOfKeySet ());
+    return m_aRWLock.readLockedGet (m_aMap::copyOfKeySet);
   }
 }

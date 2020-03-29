@@ -56,7 +56,7 @@ public final class AS4DumpManager
   @Nullable
   public static IAS4IncomingDumper getIncomingDumper ()
   {
-    return s_aRWLock.readLocked ( () -> s_aIncomingDumper);
+    return s_aRWLock.readLockedGet ( () -> s_aIncomingDumper);
   }
 
   /**
@@ -67,7 +67,7 @@ public final class AS4DumpManager
    */
   public static void setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
   {
-    s_aRWLock.writeLocked ( () -> s_aIncomingDumper = aIncomingDumper);
+    s_aRWLock.writeLockedGet ( () -> s_aIncomingDumper = aIncomingDumper);
   }
 
   /**
@@ -76,7 +76,7 @@ public final class AS4DumpManager
   @Nullable
   public static IAS4OutgoingDumper getOutgoingDumper ()
   {
-    return s_aRWLock.readLocked ( () -> s_aOutgoingDumper);
+    return s_aRWLock.readLockedGet ( () -> s_aOutgoingDumper);
   }
 
   /**
@@ -87,7 +87,7 @@ public final class AS4DumpManager
    */
   public static void setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
-    s_aRWLock.writeLocked ( () -> s_aOutgoingDumper = aOutgoingDumper);
+    s_aRWLock.writeLockedGet ( () -> s_aOutgoingDumper = aOutgoingDumper);
   }
 
   /**

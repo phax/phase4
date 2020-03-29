@@ -78,13 +78,13 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   @ReturnsMutableCopy
   public ICommonsList <IAS4Profile> getAllProfiles ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.copyOfValues ());
+    return m_aRWLock.readLockedGet (m_aMap::copyOfValues);
   }
 
   @Nonnegative
   public final int getProfileCount ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.size ());
+    return m_aRWLock.readLockedInt (m_aMap::size);
   }
 
   @Nullable
@@ -93,7 +93,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     if (StringHelper.hasNoText (sID))
       return null;
 
-    return m_aRWLock.readLocked ( () -> m_aMap.get (sID));
+    return m_aRWLock.readLockedGet ( () -> m_aMap.get (sID));
   }
 
   public void registerProfile (@Nonnull final IAS4Profile aAS4Profile)
@@ -121,7 +121,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
    */
   public boolean hasDefaultProfile ()
   {
-    return m_aRWLock.readLocked ( () -> m_aDefaultProfile != null);
+    return m_aRWLock.readLockedBoolean ( () -> m_aDefaultProfile != null);
   }
 
   /**
@@ -132,7 +132,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   @Nullable
   public IAS4Profile getDefaultProfileOrNull ()
   {
-    return m_aRWLock.readLocked ( () -> {
+    return m_aRWLock.readLockedGet ( () -> {
       IAS4Profile ret = m_aDefaultProfile;
       if (ret == null)
       {
@@ -154,7 +154,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   @Nonnull
   public IAS4Profile getDefaultProfile ()
   {
-    return m_aRWLock.readLocked ( () -> {
+    return m_aRWLock.readLockedGet ( () -> {
       IAS4Profile ret = m_aDefaultProfile;
       if (ret == null)
       {
@@ -190,7 +190,7 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
 
   public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)
   {
-    final EChange eChanged = m_aRWLock.writeLocked ( () -> {
+    final EChange eChanged = m_aRWLock.writeLockedGet ( () -> {
       if (EqualsHelper.equals (aAS4Profile, m_aDefaultProfile))
         return EChange.UNCHANGED;
       m_aDefaultProfile = aAS4Profile;

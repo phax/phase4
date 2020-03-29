@@ -60,7 +60,7 @@ public final class AS4ServletMessageProcessorManager
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Found " + aProcessorSPIs.size () + " AS4 message processors");
 
-    s_aRWLock.writeLocked ( () -> s_aProcessors.setAll (aProcessorSPIs));
+    s_aRWLock.writeLockedGet ( () -> s_aProcessors.setAll (aProcessorSPIs));
   }
 
   static
@@ -77,6 +77,6 @@ public final class AS4ServletMessageProcessorManager
   @ReturnsMutableCopy
   public static ICommonsList <IAS4ServletMessageProcessorSPI> getAllProcessors ()
   {
-    return s_aRWLock.readLocked ( () -> s_aProcessors.getClone ());
+    return s_aRWLock.readLockedGet (s_aProcessors::getClone);
   }
 }

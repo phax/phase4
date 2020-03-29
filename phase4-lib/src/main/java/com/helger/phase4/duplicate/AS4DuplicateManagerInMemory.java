@@ -82,7 +82,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   @Nonnull
   public EChange clearCache ()
   {
-    return m_aRWLock.writeLocked ( () -> m_aMap.removeAll ());
+    return m_aRWLock.writeLockedGet (m_aMap::removeAll);
   }
 
   @Nonnull
@@ -111,25 +111,25 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
 
   public boolean isEmpty ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.isEmpty ());
+    return m_aRWLock.readLockedBoolean (m_aMap::isEmpty);
   }
 
   @Nonnegative
   public int size ()
   {
-    return m_aRWLock.readLocked ( () -> m_aMap.size ());
+    return m_aRWLock.readLockedInt (m_aMap::size);
   }
 
   @Nullable
   public IAS4DuplicateItem findFirst (@Nonnull final Predicate <? super IAS4DuplicateItem> aFilter)
   {
-    return m_aRWLock.readLocked ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
+    return m_aRWLock.readLockedGet ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
   }
 
   @Nonnull
   @ReturnsMutableCopy
   public ICommonsList <IAS4DuplicateItem> getAll ()
   {
-    return m_aRWLock.readLocked ( () -> new CommonsArrayList <> (m_aMap.values ()));
+    return m_aRWLock.readLockedGet ( () -> new CommonsArrayList <> (m_aMap.values ()));
   }
 }

@@ -40,12 +40,12 @@ public final class AS4ProfileSelector
   @Nullable
   public static String getCustomAS4ProfileID ()
   {
-    return s_aRWLock.readLocked ( () -> s_sAS4ProfileID);
+    return s_aRWLock.readLockedGet ( () -> s_sAS4ProfileID);
   }
 
   public static void setCustomAS4ProfileID (@Nullable final String sAS4ProfileID)
   {
-    s_aRWLock.writeLocked ( () -> s_sAS4ProfileID = sAS4ProfileID);
+    s_aRWLock.writeLockedGet ( () -> s_sAS4ProfileID = sAS4ProfileID);
   }
 
   /**
