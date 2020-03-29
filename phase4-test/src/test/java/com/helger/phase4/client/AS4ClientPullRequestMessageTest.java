@@ -26,7 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.helger.phase4.AS4TestConstants;
-import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
