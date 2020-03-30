@@ -62,12 +62,24 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
     }
   }
 
+  /**
+   * @return The current manager factory. Never <code>null</code>.
+   * @since 0.9.14
+   */
   @Nonnull
   public static IManagerFactory getFactory ()
   {
     return s_aFactory;
   }
 
+  /**
+   * Set the manager factory to be used. This must be called before the first
+   * invocation of {@link #getInstance()} to have an effect.
+   *
+   * @param aFactory
+   *        The new factory. May not be <code>null</code>.
+   * @since 0.9.14
+   */
   public static void setFactory (@Nonnull final IManagerFactory aFactory)
   {
     ValueEnforcer.notNull (aFactory, "Factory");
