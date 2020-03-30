@@ -50,7 +50,7 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class TwoWayAsyncPullPush extends AbstractUserMessageTestSetUpExt
+public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
 {
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;
