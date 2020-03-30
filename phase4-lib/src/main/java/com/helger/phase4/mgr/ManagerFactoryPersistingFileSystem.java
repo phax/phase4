@@ -18,6 +18,7 @@ package com.helger.phase4.mgr;
 
 import javax.annotation.Nonnull;
 
+import com.helger.dao.DAOException;
 import com.helger.phase4.duplicate.AS4DuplicateManager;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
@@ -39,19 +40,19 @@ public class ManagerFactoryPersistingFileSystem implements IManagerFactory
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
   @Nonnull
-  public IMPCManager createMPCManager () throws Exception
+  public IMPCManager createMPCManager () throws DAOException
   {
     return new MPCManager (MPC_XML);
   }
 
   @Nonnull
-  public IPModeManager createPModeManager () throws Exception
+  public IPModeManager createPModeManager () throws DAOException
   {
     return new PModeManager (PMODE_XML);
   }
 
   @Nonnull
-  public IAS4DuplicateManager createDuplicateManager () throws Exception
+  public IAS4DuplicateManager createDuplicateManager () throws DAOException
   {
     return new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
   }
