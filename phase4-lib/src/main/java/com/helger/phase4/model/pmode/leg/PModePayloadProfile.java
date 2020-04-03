@@ -72,45 +72,46 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
 
   @Nonnull
   @Nonempty
-  public String getName ()
+  public final String getName ()
   {
     return m_sName;
   }
 
   @Nonnull
-  public IMimeType getMimeType ()
+  public final IMimeType getMimeType ()
   {
     return m_aMimeType;
   }
 
   @Nullable
-  public String getXSDFilename ()
+  public final String getXSDFilename ()
   {
     return m_sXSDFilename;
   }
 
-  public boolean hasXSDFilename ()
+  public final boolean hasXSDFilename ()
   {
     return StringHelper.hasText (m_sXSDFilename);
   }
 
   @Nullable
-  public Integer getMaxSizeKB ()
+  public final Integer getMaxSizeKB ()
   {
     return m_aMaxSizeKB;
   }
 
-  public boolean hasMaxSizeKB ()
+  public final boolean hasMaxSizeKB ()
   {
     return m_aMaxSizeKB != null;
   }
 
-  public boolean isMandatory ()
+  public final boolean isMandatory ()
   {
     return m_eMandatory.isMandatory ();
   }
 
-  public boolean isOptional ()
+  @Override
+  public final boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
   }

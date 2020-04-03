@@ -57,12 +57,12 @@ public class PModeLeg implements Serializable
   }
 
   @Nullable
-  public PModeLegProtocol getProtocol ()
+  public final PModeLegProtocol getProtocol ()
   {
     return m_aProtocol;
   }
 
-  public boolean hasProtocol ()
+  public final boolean hasProtocol ()
   {
     return m_aProtocol != null;
   }
@@ -77,12 +77,12 @@ public class PModeLeg implements Serializable
   }
 
   @Nullable
-  public PModeLegBusinessInformation getBusinessInfo ()
+  public final PModeLegBusinessInformation getBusinessInfo ()
   {
     return m_aBusinessInfo;
   }
 
-  public boolean hasBusinessInfo ()
+  public final boolean hasBusinessInfo ()
   {
     return m_aBusinessInfo != null;
   }
@@ -97,12 +97,12 @@ public class PModeLeg implements Serializable
   }
 
   @Nullable
-  public PModeLegErrorHandling getErrorHandling ()
+  public final PModeLegErrorHandling getErrorHandling ()
   {
     return m_aErrorHandling;
   }
 
-  public boolean hasErrorHandling ()
+  public final boolean hasErrorHandling ()
   {
     return m_aErrorHandling != null;
   }
@@ -117,12 +117,12 @@ public class PModeLeg implements Serializable
   }
 
   @Nullable
-  public PModeLegReliability getReliability ()
+  public final PModeLegReliability getReliability ()
   {
     return m_aReliability;
   }
 
-  public boolean hasReliability ()
+  public final boolean hasReliability ()
   {
     return m_aReliability != null;
   }
@@ -137,12 +137,12 @@ public class PModeLeg implements Serializable
   }
 
   @Nullable
-  public PModeLegSecurity getSecurity ()
+  public final PModeLegSecurity getSecurity ()
   {
     return m_aSecurity;
   }
 
-  public boolean hasSecurity ()
+  public final boolean hasSecurity ()
   {
     return m_aSecurity != null;
   }

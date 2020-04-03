@@ -220,18 +220,18 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public EWSSVersion getWSSVersion ()
+  public final EWSSVersion getWSSVersion ()
   {
     return m_eWSSVersion;
   }
 
-  public boolean hasWSSVersion ()
+  public final boolean hasWSSVersion ()
   {
     return m_eWSSVersion != null;
   }
 
   @Nullable
-  public String getWSSVersionAsString ()
+  public final String getWSSVersionAsString ()
   {
     return m_eWSSVersion == null ? null : m_eWSSVersion.getVersion ();
   }
@@ -247,7 +247,7 @@ public class PModeLegSecurity implements Serializable
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509SignElement ()
+  public final ICommonsList <String> getX509SignElement ()
   {
     return m_aX509SignElement.getClone ();
   }
@@ -263,7 +263,7 @@ public class PModeLegSecurity implements Serializable
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509SignAttachment ()
+  public final ICommonsList <String> getX509SignAttachment ()
   {
     return m_aX509SignAttachment.getClone ();
   }
@@ -278,12 +278,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public String getX509SignatureCertificate ()
+  public final String getX509SignatureCertificate ()
   {
     return m_sX509SignatureCertificate;
   }
 
-  public boolean hasX509SignatureCertificate ()
+  public final boolean hasX509SignatureCertificate ()
   {
     return StringHelper.hasText (m_sX509SignatureCertificate);
   }
@@ -298,7 +298,7 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public ECryptoAlgorithmSignDigest getX509SignatureHashFunction ()
+  public final ECryptoAlgorithmSignDigest getX509SignatureHashFunction ()
   {
     return m_eX509SignatureHashFunction;
   }
@@ -309,7 +309,7 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public String getX509SignatureHashFunctionID ()
+  public final String getX509SignatureHashFunctionID ()
   {
     return m_eX509SignatureHashFunction == null ? null : m_eX509SignatureHashFunction.getID ();
   }
@@ -324,18 +324,18 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public ECryptoAlgorithmSign getX509SignatureAlgorithm ()
+  public final ECryptoAlgorithmSign getX509SignatureAlgorithm ()
   {
     return m_eX509SignatureAlgorithm;
   }
 
-  public boolean hasX509SignatureAlgorithm ()
+  public final boolean hasX509SignatureAlgorithm ()
   {
     return m_eX509SignatureAlgorithm != null;
   }
 
   @Nullable
-  public String getX509SignatureAlgorithmID ()
+  public final String getX509SignatureAlgorithmID ()
   {
     return m_eX509SignatureAlgorithm == null ? null : m_eX509SignatureAlgorithm.getID ();
   }
@@ -351,7 +351,7 @@ public class PModeLegSecurity implements Serializable
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509EncryptionEncryptElement ()
+  public final ICommonsList <String> getX509EncryptionEncryptElement ()
   {
     return m_aX509EncryptionEncryptElement.getClone ();
   }
@@ -367,7 +367,7 @@ public class PModeLegSecurity implements Serializable
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getX509EncryptionEncryptAttachment ()
+  public final ICommonsList <String> getX509EncryptionEncryptAttachment ()
   {
     return m_aX509EncryptionEncryptAttachment.getClone ();
   }
@@ -382,12 +382,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public String getX509EncryptionCertificate ()
+  public final String getX509EncryptionCertificate ()
   {
     return m_sX509EncryptionCertificate;
   }
 
-  public boolean hasX509EncryptionCertificate ()
+  public final boolean hasX509EncryptionCertificate ()
   {
     return StringHelper.hasText (m_sX509EncryptionCertificate);
   }
@@ -402,18 +402,18 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public ECryptoAlgorithmCrypt getX509EncryptionAlgorithm ()
+  public final ECryptoAlgorithmCrypt getX509EncryptionAlgorithm ()
   {
     return m_eX509EncryptionAlgorithm;
   }
 
-  public boolean hasX509EncryptionAlgorithm ()
+  public final boolean hasX509EncryptionAlgorithm ()
   {
     return m_eX509EncryptionAlgorithm != null;
   }
 
   @Nullable
-  public String getX509EncryptionAlgorithmID ()
+  public final String getX509EncryptionAlgorithmID ()
   {
     return m_eX509EncryptionAlgorithm == null ? null : m_eX509EncryptionAlgorithm.getID ();
   }
@@ -428,12 +428,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public Integer getX509EncryptionMinimumStrength ()
+  public final Integer getX509EncryptionMinimumStrength ()
   {
     return m_aX509EncryptionMinimumStrength;
   }
 
-  public boolean hasX509EncryptionMinimumStrength ()
+  public final boolean hasX509EncryptionMinimumStrength ()
   {
     return m_aX509EncryptionMinimumStrength != null;
   }
@@ -448,12 +448,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public String getUsernameTokenUsername ()
+  public final String getUsernameTokenUsername ()
   {
     return m_sUsernameTokenUsername;
   }
 
-  public boolean hasUsernameTokenUsername ()
+  public final boolean hasUsernameTokenUsername ()
   {
     return StringHelper.hasText (m_sUsernameTokenUsername);
   }
@@ -468,12 +468,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public String getUsernameTokenPassword ()
+  public final String getUsernameTokenPassword ()
   {
     return m_sUsernameTokenPassword;
   }
 
-  public boolean hasUsernameTokenPassword ()
+  public final boolean hasUsernameTokenPassword ()
   {
     return StringHelper.hasText (m_sUsernameTokenPassword);
   }
@@ -487,12 +487,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isUsernameTokenDigestDefined ()
+  public final boolean isUsernameTokenDigestDefined ()
   {
     return m_eUsernameTokenDigest.isDefined ();
   }
 
-  public boolean isUsernameTokenDigest ()
+  public final boolean isUsernameTokenDigest ()
   {
     return m_eUsernameTokenDigest.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_DIGEST);
   }
@@ -513,12 +513,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isUsernameTokenNonceDefined ()
+  public final boolean isUsernameTokenNonceDefined ()
   {
     return m_eUsernameTokenNonce.isDefined ();
   }
 
-  public boolean isUsernameTokenNonce ()
+  public final boolean isUsernameTokenNonce ()
   {
     return m_eUsernameTokenNonce.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_NONCE);
   }
@@ -539,12 +539,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isUsernameTokenCreatedDefined ()
+  public final boolean isUsernameTokenCreatedDefined ()
   {
     return m_eUsernameTokenCreated.isDefined ();
   }
 
-  public boolean isUsernameTokenCreated ()
+  public final boolean isUsernameTokenCreated ()
   {
     return m_eUsernameTokenCreated.getAsBooleanValue (DEFAULT_USERNAME_TOKEN_CREATED);
   }
@@ -565,12 +565,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isPModeAuthorizeDefined ()
+  public final boolean isPModeAuthorizeDefined ()
   {
     return m_ePModeAuthorize.isDefined ();
   }
 
-  public boolean isPModeAuthorize ()
+  public final boolean isPModeAuthorize ()
   {
     return m_ePModeAuthorize.getAsBooleanValue (DEFAULT_PMODE_AUTHORIZE);
   }
@@ -591,12 +591,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isSendReceiptDefined ()
+  public final boolean isSendReceiptDefined ()
   {
     return m_eSendReceipt.isDefined ();
   }
 
-  public boolean isSendReceipt ()
+  public final boolean isSendReceipt ()
   {
     return m_eSendReceipt.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
@@ -618,12 +618,12 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nullable
-  public EPModeSendReceiptReplyPattern getSendReceiptReplyPattern ()
+  public final EPModeSendReceiptReplyPattern getSendReceiptReplyPattern ()
   {
     return m_eSendReceiptReplyPattern;
   }
 
-  public String getSendReceiptReplyPatternID ()
+  public final String getSendReceiptReplyPatternID ()
   {
     return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
   }
@@ -637,12 +637,12 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isSendReceiptNonRepudiationDefined ()
+  public final boolean isSendReceiptNonRepudiationDefined ()
   {
     return m_eSendReceiptNonRepudiation.isDefined ();
   }
 
-  public boolean isSendReceiptNonRepudiation ()
+  public final boolean isSendReceiptNonRepudiation ()
   {
     return m_eSendReceiptNonRepudiation.getAsBooleanValue (DEFAULT_SEND_RECEIPT);
   }
@@ -663,7 +663,7 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
-  public void disableSigning ()
+  public final void disableSigning ()
   {
     setX509SignElement (null);
     setX509SignAttachment (null);
@@ -672,7 +672,7 @@ public class PModeLegSecurity implements Serializable
     setX509SignatureAlgorithm (null);
   }
 
-  public void disableEncryption ()
+  public final void disableEncryption ()
   {
     setX509EncryptionEncryptElement (null);
     setX509EncryptionEncryptAttachment (null);

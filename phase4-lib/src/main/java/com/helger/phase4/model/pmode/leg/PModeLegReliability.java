@@ -170,12 +170,12 @@ public class PModeLegReliability implements Serializable
     setTerminateGroup (eTerminateGroup);
   }
 
-  public boolean isAtLeastOnceContractDefined ()
+  public final boolean isAtLeastOnceContractDefined ()
   {
     return m_eAtLeastOnceContract.isDefined ();
   }
 
-  public boolean isAtLeastOnceContract ()
+  public final boolean isAtLeastOnceContract ()
   {
     return m_eAtLeastOnceContract.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT);
   }
@@ -196,12 +196,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isAtLeastOnceAckOnDeliveryDefined ()
+  public final boolean isAtLeastOnceAckOnDeliveryDefined ()
   {
     return m_eAtLeastOnceAckOnDelivery.isDefined ();
   }
 
-  public boolean isAtLeastOnceAckOnDelivery ()
+  public final boolean isAtLeastOnceAckOnDelivery ()
   {
     return m_eAtLeastOnceAckOnDelivery.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_ACK_ON_DELIVERY);
   }
@@ -223,7 +223,7 @@ public class PModeLegReliability implements Serializable
   }
 
   @Nullable
-  public String getAtLeastOnceContractAcksTo ()
+  public final String getAtLeastOnceContractAcksTo ()
   {
     return m_sAtLeastOnceContractAcksTo;
   }
@@ -237,12 +237,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isAtLeastOnceContractAckResponseDefined ()
+  public final boolean isAtLeastOnceContractAckResponseDefined ()
   {
     return m_eAtLeastOnceContractAckResponse.isDefined ();
   }
 
-  public boolean isAtLeastOnceContractAckResponse ()
+  public final boolean isAtLeastOnceContractAckResponse ()
   {
     return m_eAtLeastOnceContractAckResponse.getAsBooleanValue (DEFAULT_AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE);
   }
@@ -264,7 +264,7 @@ public class PModeLegReliability implements Serializable
   }
 
   @Nullable
-  public String getAtLeastOnceReplyPattern ()
+  public final String getAtLeastOnceReplyPattern ()
   {
     return m_sAtLeastOnceReplyPattern;
   }
@@ -278,12 +278,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isAtMostOnceContractDefined ()
+  public final boolean isAtMostOnceContractDefined ()
   {
     return m_eAtMostOnceContract.isDefined ();
   }
 
-  public boolean isAtMostOnceContract ()
+  public final boolean isAtMostOnceContract ()
   {
     return m_eAtMostOnceContract.getAsBooleanValue (DEFAULT_AT_MOST_ONCE_CONTRACT);
   }
@@ -304,12 +304,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isInOrderContractDefined ()
+  public final boolean isInOrderContractDefined ()
   {
     return m_eInOrderContract.isDefined ();
   }
 
-  public boolean isInOrderContract ()
+  public final boolean isInOrderContract ()
   {
     return m_eInOrderContract.getAsBooleanValue (DEFAULT_IN_ORDER_CONTACT);
   }
@@ -330,12 +330,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isStartGroupDefined ()
+  public final boolean isStartGroupDefined ()
   {
     return m_eStartGroup.isDefined ();
   }
 
-  public boolean isStartGroup ()
+  public final boolean isStartGroup ()
   {
     return m_eStartGroup.getAsBooleanValue (DEFAULT_START_GROUP);
   }
@@ -358,7 +358,7 @@ public class PModeLegReliability implements Serializable
 
   @Nullable
   @ReturnsMutableCopy
-  public ICommonsList <String> getCorrelation ()
+  public final ICommonsList <String> getCorrelation ()
   {
     return m_aCorrelation.getClone ();
   }
@@ -373,12 +373,12 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  public boolean isTerminateGroupDefined ()
+  public final boolean isTerminateGroupDefined ()
   {
     return m_eTerminateGroup.isDefined ();
   }
 
-  public boolean isTerminateGroup ()
+  public final boolean isTerminateGroup ()
   {
     return m_eTerminateGroup.getAsBooleanValue (DEFAULT_TERMINATE_GROUP);
   }

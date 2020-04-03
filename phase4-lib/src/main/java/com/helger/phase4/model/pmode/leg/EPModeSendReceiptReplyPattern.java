@@ -35,7 +35,7 @@ public enum EPModeSendReceiptReplyPattern implements IHasID <String>
 
   private final String m_sID;
 
-  private EPModeSendReceiptReplyPattern (@Nonnull @Nonempty final String sID)
+  EPModeSendReceiptReplyPattern (@Nonnull @Nonempty final String sID)
   {
     m_sID = sID;
   }

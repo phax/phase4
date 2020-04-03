@@ -22,7 +22,7 @@ import java.util.Collection;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
@@ -41,7 +41,7 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Philip Helger
  */
-@Immutable
+@NotThreadSafe
 @MustImplementEqualsAndHashcode
 public class PModeAddressList implements Serializable, ICloneable <PModeAddressList>
 {
@@ -72,31 +72,31 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   }
 
   @Nonnull
-  public EChange removeAddress (@Nullable final String sAddress)
+  public final EChange removeAddress (@Nullable final String sAddress)
   {
     return m_aAddresses.removeObject (sAddress);
   }
 
   @Nonnull
-  public EChange removeAllAddresses ()
+  public final EChange removeAllAddresses ()
   {
     return m_aAddresses.removeAll ();
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> getAllAddresses ()
+  public final ICommonsList <String> getAllAddresses ()
   {
     return m_aAddresses.getClone ();
   }
 
   @Nonnegative
-  public int getAddressCount ()
+  public final int getAddressCount ()
   {
     return m_aAddresses.size ();
   }
 
-  public boolean isEmpty ()
+  public final boolean isEmpty ()
   {
     return m_aAddresses.isEmpty ();
   }

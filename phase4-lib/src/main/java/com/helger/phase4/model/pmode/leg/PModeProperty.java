@@ -83,30 +83,31 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
 
   @Nonnull
   @Nonempty
-  public String getName ()
+  public final String getName ()
   {
     return m_sName;
   }
 
   @Nullable
-  public String getDescription ()
+  public final String getDescription ()
   {
     return m_sDescription;
   }
 
   @Nonnull
   @Nonempty
-  public String getDataType ()
+  public final String getDataType ()
   {
     return m_sDataType;
   }
 
-  public boolean isMandatory ()
+  public final boolean isMandatory ()
   {
     return m_eMandatory.isMandatory ();
   }
 
-  public boolean isOptional ()
+  @Override
+  public final boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
   }

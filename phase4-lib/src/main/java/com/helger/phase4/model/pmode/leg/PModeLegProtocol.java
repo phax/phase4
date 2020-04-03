@@ -71,7 +71,7 @@ public class PModeLegProtocol implements Serializable
   }
 
   @Nullable
-  public String getAddressProtocol ()
+  public final String getAddressProtocol ()
   {
     final URL aURL = URLHelper.getAsURL (m_sAddress);
     return aURL == null ? null : aURL.getProtocol ();

@@ -51,7 +51,7 @@ public enum EMEP implements IHasID <String>
   private final String m_sID;
   private final String m_sURI;
 
-  private EMEP (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
+  EMEP (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI)
   {
     m_sID = sID;
     m_sURI = sURI;
