@@ -401,12 +401,47 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @throws Exception
    *         in case of error when building or sending the message
    * @since 0.9.6
+   * @deprecated Since 0.9.14; Use
+   *             {@link #sendMessageWithRetries(String, ResponseHandler, IAS4ClientBuildMessageCallback, IAS4OutgoingDumper, IAS4RetryCallback)}
    */
+  @Deprecated
   @Nonnull
   public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
                                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
+  {
+    return sendMessageWithRetries (sURL, aResponseHandler, aCallback, aOutgoingDumper, (IAS4RetryCallback) null);
+  }
+
+  /**
+   * Send the AS4 client message created by
+   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
+   * provided URL. This methods does take retries into account. It synchronously
+   * handles the retries and only returns after the last retry.
+   *
+   * @param <T>
+   *        The response data type
+   * @param sURL
+   *        The URL to send the HTTP POST to
+   * @param aResponseHandler
+   *        The response handler that converts the HTTP response to a domain
+   *        object. May not be <code>null</code>.
+   * @param aOutgoingDumper
+   *        An outgoing dumper to be used. Maybe <code>null</code>. If
+   *        <code>null</code> the global outgoing dumper from
+   *        {@link AS4DumpManager} is used.
+   * @return The sent message that contains
+   * @throws Exception
+   *         in case of error when building or sending the message
+   * @since 0.9.14
+   */
+  @Nonnull
+  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
+                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                                    @Nullable final IAS4ClientBuildMessageCallback aCallback,
+                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws Exception
   {
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
@@ -427,7 +462,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                              m_nMaxRetries,
                                                              m_nRetryIntervalMS,
                                                              aResponseHandler,
-                                                             aOutgoingDumper);
+                                                             aOutgoingDumper,
+                                                             aRetryCallback);
     return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
   }
 
@@ -436,10 +472,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   {
     final IAS4ClientBuildMessageCallback aCallback = null;
     final IAS4OutgoingDumper aOutgoingDumper = null;
+    final IAS4RetryCallback aRetryCallback = null;
     final IMicroDocument ret = sendMessageWithRetries (sURL,
                                                        new ResponseHandlerMicroDom (),
                                                        aCallback,
-                                                       aOutgoingDumper).getResponse ();
+                                                       aOutgoingDumper,
+                                                       aRetryCallback).getResponse ();
     AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
                                MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;

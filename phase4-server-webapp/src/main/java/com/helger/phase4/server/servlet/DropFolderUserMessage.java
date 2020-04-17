@@ -51,6 +51,7 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -152,10 +153,12 @@ public final class DropFolderUserMessage
 
           final IAS4ClientBuildMessageCallback aCallback = null;
           final IAS4OutgoingDumper aOutgoingDumper = null;
+          final IAS4RetryCallback aRetryCallback = null;
           final AS4ClientSentMessage <byte []> aResponseEntity = aClient.sendMessageWithRetries (W3CEndpointReferenceHelper.getAddress (aEndpoint.getEndpointReference ()),
                                                                                                  new ResponseHandlerByteArray (),
                                                                                                  aCallback,
-                                                                                                 aOutgoingDumper);
+                                                                                                 aOutgoingDumper,
+                                                                                                 aRetryCallback);
           LOGGER.info ("Successfully transmitted document with message ID '" +
                        aResponseEntity.getMessageID () +
                        "' for '" +

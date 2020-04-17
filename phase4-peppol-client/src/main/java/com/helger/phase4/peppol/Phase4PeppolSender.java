@@ -73,6 +73,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
@@ -203,6 +204,7 @@ public final class Phase4PeppolSender
                                  @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                 @Nullable final IAS4RetryCallback aRetryCallback,
                                  @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                  @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
@@ -246,7 +248,8 @@ public final class Phase4PeppolSender
     final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
                                                                                                   aResponseHdl,
                                                                                                   aBuildMessageCallback,
-                                                                                                  aOutgoingDumper);
+                                                                                                  aOutgoingDumper,
+                                                                                                  aRetryCallback);
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
                    aResponseEntity.getMessageID () +
@@ -470,6 +473,7 @@ public final class Phase4PeppolSender
    * @param aIncomingDumper
    *        An incoming dumper to be used. Maybe <code>null</code>. If
    *        <code>null</code> the global incoming dumper is used.
+   * @param aRetryCallback
    * @param aResponseConsumer
    *        An optional consumer for the AS4 message that was sent. May be
    *        <code>null</code>.
@@ -499,6 +503,7 @@ public final class Phase4PeppolSender
                                        @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                        @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
+                                       @Nullable final IAS4RetryCallback aRetryCallback,
                                        @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
                                        @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
@@ -584,6 +589,7 @@ public final class Phase4PeppolSender
                  aBuildMessageCallback,
                  aOutgoingDumper,
                  aIncomingDumper,
+                 aRetryCallback,
                  aResponseConsumer,
                  aSignalMsgConsumer);
     }
@@ -654,6 +660,7 @@ public final class Phase4PeppolSender
     protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
     protected IAS4OutgoingDumper m_aOutgoingDumper;
     protected IAS4IncomingDumper m_aIncomingDumper;
+    protected IAS4RetryCallback m_aRetryCallback;
     protected IPhase4PeppolResponseConsumer m_aResponseConsumer;
     protected IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
 
@@ -1011,6 +1018,22 @@ public final class Phase4PeppolSender
     public final IMPLTYPE setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
     {
       m_aIncomingDumper = aIncomingDumper;
+      return thisAsT ();
+    }
+
+    /**
+     * Set an optional handler that is notified if an http sending will be
+     * retried. This method is optional and must not be called prior to sending.
+     *
+     * @param aRetryCallback
+     *        The optional retry callback. May be <code>null</code>.
+     * @return this for chaining
+     * @since 0.9.14
+     */
+    @Nonnull
+    public final IMPLTYPE setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
+    {
+      m_aRetryCallback = aRetryCallback;
       return thisAsT ();
     }
 
@@ -1389,6 +1412,7 @@ public final class Phase4PeppolSender
                        m_aBuildMessageCallback,
                        m_aOutgoingDumper,
                        m_aIncomingDumper,
+                       m_aRetryCallback,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
       return ESuccess.SUCCESS;
@@ -1527,6 +1551,7 @@ public final class Phase4PeppolSender
                        m_aBuildMessageCallback,
                        m_aOutgoingDumper,
                        m_aIncomingDumper,
+                       m_aRetryCallback,
                        m_aResponseConsumer,
                        m_aSignalMsgConsumer);
       return ESuccess.SUCCESS;

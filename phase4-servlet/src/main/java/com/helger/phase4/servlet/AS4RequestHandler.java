@@ -57,6 +57,7 @@ import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.BasicHttpPoster;
+import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -306,6 +307,7 @@ public class AS4RequestHandler implements AutoCloseable
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
+  private IAS4RetryCallback m_aRetryCallback;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
@@ -408,6 +410,32 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
   {
     m_aOutgoingDumper = aOutgoingDumper;
+    return this;
+  }
+
+  /**
+   * @return The HTTP retry callback for outgoing messages. May be
+   *         <code>null</code>.
+   * @since v0.9.14
+   */
+  @Nullable
+  public final IAS4RetryCallback getRetryCallback ()
+  {
+    return m_aRetryCallback;
+  }
+
+  /**
+   * Set the HTTP retry callback for outgoing messages.
+   *
+   * @param aRetryCallback
+   *        The specific retry callback. May be <code>null</code>.
+   * @return this for chaining
+   * @since v0.9.14
+   */
+  @Nonnull
+  public final AS4RequestHandler setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
+  {
+    m_aRetryCallback = aRetryCallback;
     return this;
   }
 
@@ -1277,7 +1305,8 @@ public class AS4RequestHandler implements AutoCloseable
                                                                     nMaxRetries,
                                                                     nRetryIntervalMS,
                                                                     new ResponseHandlerXml (),
-                                                                    m_aOutgoingDumper);
+                                                                    m_aOutgoingDumper,
+                                                                    m_aRetryCallback);
           }
           else
           {

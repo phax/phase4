@@ -280,6 +280,7 @@ public class BasicHttpPoster
     };
   }
 
+  @Deprecated
   @Nonnull
   public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
                                                     @Nonnull final HttpEntity aHttpEntity,
@@ -289,6 +290,28 @@ public class BasicHttpPoster
                                                     final long nRetryIntervalMS,
                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
+  {
+    return sendGenericMessageWithRetries (aHttpHeaders,
+                                          aHttpEntity,
+                                          sMessageID,
+                                          sURL,
+                                          nMaxRetries,
+                                          nRetryIntervalMS,
+                                          aResponseHandler,
+                                          aOutgoingDumper,
+                                          (IAS4RetryCallback) null);
+  }
+
+  @Nonnull
+  public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
+                                                    @Nonnull final HttpEntity aHttpEntity,
+                                                    @Nonnull final String sMessageID,
+                                                    @Nonnull final String sURL,
+                                                    final int nMaxRetries,
+                                                    final long nRetryIntervalMS,
+                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws Exception
   {
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
                                                                            : AS4DumpManager.getOutgoingDumper ();
@@ -305,7 +328,7 @@ public class BasicHttpPoster
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
-            LOGGER.info ("Retry #" + nTry + "/" + nMaxTries + " for sending message with ID '" + sMessageID + "'");
+            LOGGER.info ("Retry #" + nTry + "/" + nMaxRetries + " for sending message with ID '" + sMessageID + "'");
 
           try
           {
@@ -327,7 +350,29 @@ public class BasicHttpPoster
             if (nTry == nMaxTries - 1)
               throw ex;
 
-            LOGGER.warn ("Error sending message: " +
+            if (aRetryCallback != null)
+              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, nRetryIntervalMS, ex).isBreak ())
+              {
+                // Explicitly interrupt retry
+                LOGGER.warn ("Error sending message '" +
+                             sMessageID +
+                             "' to '" +
+                             sURL +
+                             ": " +
+                             ex.getClass ().getSimpleName () +
+                             " - " +
+                             ex.getMessage () +
+                             " - retrying was explicitly stopped by the RetryCallback");
+
+                // Propagate Exception as if it would be the last retry
+                throw ex;
+              }
+
+            LOGGER.warn ("Error sending message '" +
+                         sMessageID +
+                         "' to '" +
+                         sURL +
+                         "': " +
                          ex.getClass ().getSimpleName () +
                          " - " +
                          ex.getMessage () +
