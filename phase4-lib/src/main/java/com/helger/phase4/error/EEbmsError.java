@@ -64,11 +64,11 @@ public enum EEbmsError implements IEbmsError
                            "MimeInconsistency",
                            EEbmsErrorText.MIME_INCONSISTENCY,
                            EEbmsErrorCategory.UNPACKAGING),
-  EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENT ("EBMS:0008",
-                                           EEbmsErrorSeverity.FAILURE,
-                                           "FeatureNotSupportedInconsistency",
-                                           EEbmsErrorText.FEATURE_NOT_SUPPORTED_INCONSISTENT,
-                                           EEbmsErrorCategory.UNPACKAGING),
+  EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENCY ("EBMS:0008",
+                                            EEbmsErrorSeverity.FAILURE,
+                                            "FeatureNotSupportedInconsistency",
+                                            EEbmsErrorText.FEATURE_NOT_SUPPORTED_INCONSISTENT,
+                                            EEbmsErrorCategory.UNPACKAGING),
   EBMS_INVALID_HEADER ("EBMS:0009",
                        EEbmsErrorSeverity.FAILURE,
                        "InvalidHeader",
@@ -127,6 +127,12 @@ public enum EEbmsError implements IEbmsError
                               "DecompressionFailure",
                               EEbmsErrorText.DECOMPRESSION_FAILURE,
                               EEbmsErrorCategory.COMMUNICATION);
+
+  /**
+   * Legacy name. Deprecated since 0.9.14
+   */
+  @Deprecated
+  public static final EEbmsError EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENT = EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENCY;
 
   private final String m_sErrorCode;
   private final EEbmsErrorSeverity m_eSeverity;
