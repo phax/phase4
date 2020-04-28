@@ -23,6 +23,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -52,6 +54,8 @@ import com.helger.xml.serialize.read.DOMReader;
 
 public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (TwoWayAsyncPullPushTest.class);
+
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
@@ -128,7 +132,8 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
     String sResponse = sendPlainMessage (aEntity, true, null);
 
     // Avoid stopping server to receive async response
-    ThreadHelper.sleepSeconds (2);
+    LOGGER.info ("Waiting for 1 second");
+    ThreadHelper.sleepSeconds (1);
 
     final NodeList nPullList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
@@ -136,6 +141,10 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
 
     aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, aPullID, null);
     sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+
+    // Avoid stopping server to receive async response
+    LOGGER.info ("Waiting for 1 second");
+    ThreadHelper.sleepSeconds (1);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
@@ -149,5 +158,6 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
     // Pull => First UserMsg, Push part second UserMsg
     assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
 
+    LOGGER.info ("Done checking pull response");
   }
 }

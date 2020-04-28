@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.server.servlet;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -36,6 +37,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
+  @Ignore ("Allowed since 0.9.14")
   public void sendErrorMessageNoRefToMessageID () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));

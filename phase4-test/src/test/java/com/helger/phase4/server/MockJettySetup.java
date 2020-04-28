@@ -22,6 +22,8 @@ import javax.annotation.Nonnull;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
@@ -39,8 +41,15 @@ public final class MockJettySetup extends AbstractClientSetUp
   public static final String SETTINGS_SERVER_JETTY_ENABLED = "server.jetty.enabled";
   public static final String SETTINGS_SERVER_ADDRESS = "server.address";
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (MockJettySetup.class);
+
   private static JettyRunner s_aJetty;
   private static AS4ResourceHelper s_aResMgr;
+
+  static
+  {
+    Thread.setDefaultUncaughtExceptionHandler ( (t, e) -> LOGGER.error ("Thread " + t.getId () + " oopsed", e));
+  }
 
   private MockJettySetup ()
   {}
@@ -58,6 +67,7 @@ public final class MockJettySetup extends AbstractClientSetUp
   @BeforeClass
   public static void startServer () throws Exception
   {
+    LOGGER.info ("MockJettySetup - starting");
     if (_isRunJetty ())
     {
       final int nPort = _getJettyPort ();
@@ -70,26 +80,26 @@ public final class MockJettySetup extends AbstractClientSetUp
       s_aJetty = null;
       WebScopeManager.onGlobalBegin (MockServletContext.create ());
       final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
-      WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (),
-                           aSCPath.getAbsolutePath (),
-                           false);
+      WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (), aSCPath.getAbsolutePath (), false);
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
     }
     RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
     s_aResMgr = new AS4ResourceHelper ();
+
+    LOGGER.info ("MockJettySetup - started");
   }
 
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    LOGGER.info ("MockJettySetup - stopping");
+
     if (s_aResMgr != null)
       s_aResMgr.close ();
     if (_isRunJetty ())
     {
       if (s_aJetty != null)
-      {
         s_aJetty.shutDownServer ();
-      }
       s_aJetty = null;
     }
     else
@@ -97,6 +107,7 @@ public final class MockJettySetup extends AbstractClientSetUp
       WebFileIO.resetPaths ();
       WebScopeManager.onGlobalEnd ();
     }
+    LOGGER.info ("MockJettySetup - stopped");
   }
 
   @Nonnull

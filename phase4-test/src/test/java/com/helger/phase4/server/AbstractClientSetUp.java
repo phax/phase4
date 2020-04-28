@@ -19,6 +19,7 @@ package com.helger.phase4.server;
 import org.junit.Before;
 
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.scope.ScopeHelper;
 import com.helger.settings.Settings;
 
 /**
@@ -39,6 +40,8 @@ public abstract class AbstractClientSetUp
   @Before
   public void setUp ()
   {
+    if (false)
+      ScopeHelper.setLifeCycleDebuggingEnabled (true);
     AS4ServerConfiguration.internalReinitForTestOnly ();
 
     m_aSettings = AS4ServerConfiguration.getMutableSettings ();
