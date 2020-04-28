@@ -24,8 +24,9 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
- * This class correlates the built source message with the HTTP response of the
- * passed type
+ * This class correlates the built source message
+ * ({@link AS4ClientBuiltMessage}) with the HTTP response of the passed type
+ * (<code>T</code>).
  *
  * @author Philip Helger
  * @param <T>
@@ -60,7 +61,8 @@ public final class AS4ClientSentMessage <T>
 
   /**
    * @return The message ID of the sent out message. Neither <code>null</code>
-   *         nor empty.
+   *         nor empty. This is a shortcut for
+   *         <code>getBuiltMessage().getMessageID ()</code>.
    */
   @Nonnull
   @Nonempty
@@ -90,8 +92,6 @@ public final class AS4ClientSentMessage <T>
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
-                                       .append ("Response", m_aResponse)
-                                       .getToString ();
+    return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg).append ("Response", m_aResponse).getToString ();
   }
 }
