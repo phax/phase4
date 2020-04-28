@@ -32,7 +32,6 @@ import com.helger.settings.Settings;
  */
 public abstract class AbstractClientSetUp
 {
-  protected static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger (AbstractClientSetUp.class);
   protected static final String DEFAULT_PARTY_ID = "APP_MOCK_DUMMY_001";
 
   protected Settings m_aSettings;

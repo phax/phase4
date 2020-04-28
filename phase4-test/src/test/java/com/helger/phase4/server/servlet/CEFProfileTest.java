@@ -114,9 +114,9 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                         .setMustUnderstand (true)
                                         .getAsSoapDocument (m_aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "'originalSender' property is empty or not existant but mandatory");
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                             false,
+                             "'originalSender' property is empty or not existant but mandatory");
   }
 
   @Test
@@ -136,15 +136,14 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                         .setMustUnderstand (true)
                                         .getAsSoapDocument (m_aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      "'finalRecipient' property is empty or not existant but mandatory");
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                             false,
+                             "'finalRecipient' property is empty or not existant but mandatory");
   }
 
   @Nonnull
   private static Ebms3Property _createRandomProperty ()
   {
-    return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (),
-                                                     "randomvalue" + UUID.randomUUID ());
+    return MessageHelperMethods.createEbms3Property ("randomname" + UUID.randomUUID (), "randomvalue" + UUID.randomUUID ());
   }
 }

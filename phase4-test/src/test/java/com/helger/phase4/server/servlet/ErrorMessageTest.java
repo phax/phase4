@@ -33,7 +33,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()), true, null);
   }
 
   @Test
@@ -42,8 +42,8 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, ESoapVersion.SOAP_12.getMimeType ()),
+                             false,
+                             EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 }

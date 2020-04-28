@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.url.URLHelper;
@@ -68,25 +69,32 @@ public final class MockJettySetup extends AbstractClientSetUp
   public static void startServer () throws Exception
   {
     LOGGER.info ("MockJettySetup - starting");
-    if (_isRunJetty ())
+    try
     {
-      final int nPort = _getJettyPort ();
-      s_aJetty = new JettyRunner ("AS4 Mock Jetty");
-      s_aJetty.setPort (nPort).setStopPort (nPort + 1000).setAllowAnnotationBasedConfig (false);
-      s_aJetty.startServer ();
-    }
-    else
-    {
-      s_aJetty = null;
-      WebScopeManager.onGlobalBegin (MockServletContext.create ());
-      final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
-      WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (), aSCPath.getAbsolutePath (), false);
-      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
-    }
-    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
-    s_aResMgr = new AS4ResourceHelper ();
+      if (_isRunJetty ())
+      {
+        final int nPort = _getJettyPort ();
+        s_aJetty = new JettyRunner ("AS4 Mock Jetty");
+        s_aJetty.setPort (nPort).setStopPort (nPort + 1000).setAllowAnnotationBasedConfig (false);
+        s_aJetty.startServer ();
+      }
+      else
+      {
+        s_aJetty = null;
+        WebScopeManager.onGlobalBegin (MockServletContext.create ());
+        final File aSCPath = new File ("target/junittest").getAbsoluteFile ();
+        WebFileIO.initPaths (new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile (), aSCPath.getAbsolutePath (), false);
+        GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
+      }
+      RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
+      s_aResMgr = new AS4ResourceHelper ();
 
-    LOGGER.info ("MockJettySetup - started");
+      LOGGER.info ("MockJettySetup - started");
+    }
+    catch (final Exception ex)
+    {
+      LOGGER.error ("MockJettySetup error", ex);
+    }
   }
 
   @AfterClass
@@ -99,7 +107,11 @@ public final class MockJettySetup extends AbstractClientSetUp
     if (_isRunJetty ())
     {
       if (s_aJetty != null)
+      {
         s_aJetty.shutDownServer ();
+        // Wait a little until shutdown happened
+        ThreadHelper.sleep (500);
+      }
       s_aJetty = null;
     }
     else

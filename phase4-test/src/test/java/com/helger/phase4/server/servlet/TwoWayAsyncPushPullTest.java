@@ -23,6 +23,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -50,8 +52,10 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
+public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (TwoWayAsyncPushPullTest.class);
+
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
   private PMode m_aPMode;
 
@@ -109,10 +113,11 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
     Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response
-    ThreadHelper.sleepSeconds (2);
+    LOGGER.info ("Waiting for 1 second");
+    ThreadHelper.sleepSeconds (1);
 
     // Step one assertion for the sync part
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -140,7 +145,7 @@ public class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpExt
                                          aAny)
                                 .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    sResponse = sendPlainMessage (aEntity, true, null);
+    sResponse = sendPlainMessageAndWait (aEntity, true, null);
 
     final NodeList nUserList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once

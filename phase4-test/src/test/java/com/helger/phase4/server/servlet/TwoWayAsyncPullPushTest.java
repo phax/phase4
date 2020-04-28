@@ -52,7 +52,7 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
+public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (TwoWayAsyncPullPushTest.class);
 
@@ -129,7 +129,7 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
                                                   aAny)
                                          .getAsSoapDocument ();
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
-    String sResponse = sendPlainMessage (aEntity, true, null);
+    String sResponse = sendPlainMessageAndWait (aEntity, true, null);
 
     // Avoid stopping server to receive async response
     LOGGER.info ("Waiting for 1 second");
@@ -140,11 +140,7 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
     final String aPullID = nPullList.item (0).getTextContent ();
 
     aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, aPullID, null);
-    sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
-
-    // Avoid stopping server to receive async response
-    LOGGER.info ("Waiting for 1 second");
-    ThreadHelper.sleepSeconds (1);
+    sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
@@ -157,7 +153,5 @@ public class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpExt
     assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
     // Pull => First UserMsg, Push part second UserMsg
     assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
-
-    LOGGER.info ("Done checking pull response");
   }
 }

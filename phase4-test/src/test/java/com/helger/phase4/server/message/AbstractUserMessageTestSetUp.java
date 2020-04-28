@@ -41,9 +41,12 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
 import com.helger.httpclient.HttpClientFactory;
@@ -68,6 +71,8 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   public static final String SETTINGS_SERVER_PROXY_ENABLED = "server.proxy.enabled";
   public static final String SETTINGS_SERVER_PROXY_ADDRESS = "server.proxy.address";
   public static final String SETTINGS_SERVER_PROXY_PORT = "server.proxy.port";
+
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
 
   protected static AS4ResourceHelper s_aResMgr;
 
@@ -126,10 +131,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   private HttpPost _createPost ()
   {
-    final String sURL = m_aSettings.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
-                                                 AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    final String sURL = m_aSettings.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
 
-    LOG.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
+    LOGGER.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);
 
     if (m_aSettings.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
@@ -216,9 +220,9 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   }
 
   @Nonnull
-  protected String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
-                                    final boolean bExpectSuccess,
-                                    @Nullable final String sExpectedErrorCode) throws IOException, MessagingException
+  protected final String sendMimeMessage (@Nonnull final HttpMimeMessageEntity aHttpEntity,
+                                          final boolean bExpectSuccess,
+                                          @Nullable final String sExpectedErrorCode) throws IOException, MessagingException
   {
     final HttpPost aPost = _createPost ();
     MessageHelperMethods.forEachHeaderAndRemoveAfterwards (aHttpEntity.getMimeMessage (), aPost::addHeader, true);
@@ -238,11 +242,37 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
    * @throws IOException
    */
   @Nonnull
-  protected String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
-                                     final boolean bExpectSuccess,
-                                     @Nullable final String sExpectedErrorCode) throws IOException
+  protected final String sendPlainMessage (@Nonnull final HttpEntity aHttpEntity,
+                                           final boolean bExpectSuccess,
+                                           @Nullable final String sExpectedErrorCode) throws IOException
   {
     final HttpPost aPost = _createPost ();
     return _sendPlainMessage (aPost, aHttpEntity, bExpectSuccess, sExpectedErrorCode);
+  }
+
+  /**
+   * @param aHttpEntity
+   *        the entity to send to the server
+   * @param bExpectSuccess
+   *        specifies if the test case expects a positive or negative response
+   *        from the server
+   * @param sExpectedErrorCode
+   *        if you expect a negative response, you must give the expected error
+   *        code as it will get searched for in the response.
+   * @return Response as String
+   * @throws IOException
+   */
+  @Nonnull
+  protected final String sendPlainMessageAndWait (@Nonnull final HttpEntity aHttpEntity,
+                                                  final boolean bExpectSuccess,
+                                                  @Nullable final String sExpectedErrorCode) throws IOException
+  {
+    final String ret = sendPlainMessage (aHttpEntity, bExpectSuccess, sExpectedErrorCode);
+    if (false)
+    {
+      LOGGER.info ("Waiting for 0.5 seconds");
+      ThreadHelper.sleep (500);
+    }
+    return ret;
   }
 }

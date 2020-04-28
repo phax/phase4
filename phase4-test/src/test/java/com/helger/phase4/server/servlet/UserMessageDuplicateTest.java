@@ -39,14 +39,13 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageAndWait (aEntity, true, null);
 
-    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
+    sendPlainMessageAndWait (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
   // Only use if you need to test the feature, takes a long time
@@ -55,12 +54,11 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void sendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageAndWait (aEntity, true, null);
 
     // Making sure the message gets disposed off
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
@@ -68,6 +66,6 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     // differently
     Thread.sleep (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes () * 60000 * 2 + 10000);
 
-    sendPlainMessage (aEntity, true, null);
+    sendPlainMessageAndWait (aEntity, true, null);
   }
 }

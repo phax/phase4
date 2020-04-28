@@ -91,13 +91,10 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void receiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
   }
 
   @Test
@@ -112,21 +109,12 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     s_aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
-                                              null,
-                                              null,
-                                              _defaultProperties (),
-                                              aAttachments,
-                                              null,
-                                              null);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments, null, null);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
@@ -155,17 +143,11 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509EncryptionAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ()));
   }
 
   @Test
@@ -203,9 +185,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                               .setMustUnderstand (true)
                                               .getAsSoapDocument (aPayload);
 
-    sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                             false,
+                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -216,9 +198,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                             false,
+                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 
   @Test
@@ -228,8 +210,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                             false,
+                             EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
 }

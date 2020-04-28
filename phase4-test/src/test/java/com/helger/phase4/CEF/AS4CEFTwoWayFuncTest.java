@@ -19,6 +19,8 @@ package com.helger.phase4.CEF;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -30,6 +32,8 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 
 public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CEFTwoWayFuncTest.class);
+
   public AS4CEFTwoWayFuncTest ()
   {
     // No retries
@@ -61,10 +65,11 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response
-    ThreadHelper.sleepSeconds (2);
+    LOGGER.info ("Waiting for 1 second");
+    ThreadHelper.sleepSeconds (1);
 
     // Step one assertion for the sync part
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
@@ -104,10 +109,11 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response
-    ThreadHelper.sleepSeconds (2);
+    LOGGER.info ("Waiting for 1 second");
+    ThreadHelper.sleepSeconds (1);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
