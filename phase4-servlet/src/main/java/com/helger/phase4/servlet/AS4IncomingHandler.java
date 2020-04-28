@@ -30,6 +30,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.namespace.QName;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +50,17 @@ import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.stream.HasInputStream;
+import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.http.AcceptMimeTypeHandler;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -72,6 +77,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.AS4Helper;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
+import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.IAS4Profile;
 import com.helger.phase4.profile.IAS4ProfileValidator;
 import com.helger.phase4.servlet.soap.AS4SingleSOAPHeader;
@@ -159,8 +165,7 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -213,8 +218,7 @@ public class AS4IncomingHandler
               // Read SOAP document
               aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
 
-              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
-                                                           .getCopyWithoutParameters ();
+              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ()).getCopyWithoutParameters ();
 
               // Determine SOAP version from MIME part content type
               eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
@@ -288,20 +292,14 @@ public class AS4IncomingHandler
       }
       catch (final Exception ex)
       {
-        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
-                      aRealIncomingDumper +
-                      "; MessageMetadata=" +
-                      aMessageMetadata,
-                      ex);
+        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
       }
 
     if (aSoapDocument == null)
     {
       // We don't have a SOAP document
       throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                      : "Failed to parse incoming SOAP " +
-                                                        eSoapVersion.getVersion () +
-                                                        " document!");
+                                                      : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
     }
 
     if (eSoapVersion == null)
@@ -367,8 +365,7 @@ public class AS4IncomingHandler
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
-      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
-                    .isSuccess ())
+      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
         aHeader.setProcessed (true);
@@ -415,8 +412,7 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Error processing required SOAP header element " +
-                                     aHeader.getQName ().toString ());
+          throw new Phase4Exception ("Error processing required SOAP header element " + aHeader.getQName ().toString ());
     }
   }
 
@@ -618,13 +614,81 @@ public class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
-                                   " SOAP document is missing a Body element");
+        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") + " SOAP document is missing a Body element");
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       aState.setPingMessage (AS4Helper.isPingMessage (aPMode));
     }
 
     return aState;
+  }
+
+  @Nullable
+  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                       @Nonnull final IPModeResolver aPModeResolver,
+                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nullable final IPMode aSendingPMode,
+                                                       @Nonnull final Locale aLocale,
+                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                       @Nonnull final HttpResponse aHttpResponse,
+                                                       @Nonnull final byte [] aResponsePayload,
+                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+  {
+    // This wrapper will take the result
+    final Wrapper <Ebms3SignalMessage> aRetWrapper = new Wrapper <> ();
+
+    // Handler for the parsed message
+    final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
+      final ICommonsList <Ebms3Error> aErrorMessages = new CommonsArrayList <> ();
+
+      // Use the sending PMode as fallback, because from the incoming
+      // receipt/error it is impossible to detect a PMode
+      final SOAPHeaderElementProcessorRegistry aRegistry = SOAPHeaderElementProcessorRegistry.createDefault (aPModeResolver,
+                                                                                                             aCryptoFactory,
+                                                                                                             aSendingPMode);
+
+      // Parse AS4, verify signature etc
+      final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
+                                                                             aLocale,
+                                                                             aRegistry,
+                                                                             aHttpHeaders,
+                                                                             aSoapDocument,
+                                                                             eSoapVersion,
+                                                                             aIncomingAttachments,
+                                                                             aErrorMessages);
+
+      if (aState.isSoapHeaderElementProcessingSuccessful ())
+      {
+        // Remember the parsed signal message
+        aRetWrapper.set (aState.getEbmsSignalMessage ());
+      }
+      else
+      {
+        throw new Phase4Exception ("Error processing AS4 signal message", aState.getSoapWSS4JException ());
+      }
+    };
+
+    // Create header map from response headers
+    final HttpHeaderMap aHttpHeaders = new HttpHeaderMap ();
+    for (final Header aHeader : aHttpResponse.getAllHeaders ())
+      aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
+
+    // Parse incoming message
+    try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
+    {
+      AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
+    }
+    catch (final Phase4Exception ex)
+    {
+      throw ex;
+    }
+    catch (final Exception ex)
+    {
+      throw new Phase4Exception ("Error parsing signal message", ex);
+    }
+
+    // This one contains the result
+    return aRetWrapper.get ();
   }
 }
