@@ -82,7 +82,7 @@ public final class MainPhase4PeppolSender
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
                                                          new Phase4PeppolValidatonResultHandler ()
                                                          {

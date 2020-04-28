@@ -82,10 +82,10 @@ public final class MainPhase4PeppolSenderMaxDebug
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
-                            .setResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
+                            .setRawResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
                                                                                new String (aResponseMsg.getResponse ())))
                             .sendMessage ()
                             .isSuccess ())

@@ -106,7 +106,7 @@ public final class MainPhase4PeppolSenderConstantReceiver
                                                                                                       "njEO\r\n" +
                                                                                                       "-----END CERTIFICATE-----\r\n"),
                                                          "https://www.zweikommadrei.de/as4")
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()

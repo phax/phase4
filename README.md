@@ -284,6 +284,8 @@ If you like the project, a star on GitHub is always appreciated.
     * Updated to WSS4J 2.2.5
     * Updated to ph-commons 9.4.1
     * Improved configurability of `MetaAS4Manager`
+    * Moved callback interface `IPhase4PeppolResponseConsumer` to `IAS4RawResponseConsumer` in `phase4-lib` 
+    * Moved callback interface `IPhase4PeppolSignalMessageConsumer` to `IAS4SignalMessageConsumer` in `phase4-lib` 
 * v0.9.13 - 2020-03-17
     * Moved `originalSender` and `finalRecipient` tests to the CEF and Peppol profiles (see [issue #33](https://github.com/phax/phase4/issues/33))
     * Added new class `AS4ProfileSelector` for more flexible profile selection

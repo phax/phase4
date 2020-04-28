@@ -74,7 +74,7 @@ public final class MainPhase4PeppolSenderATGov
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
                                                                   aReceiverID,
                                                                   ESML.DIGIT_TEST))
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (null)
                             .sendMessage ()
                             .isSuccess ())

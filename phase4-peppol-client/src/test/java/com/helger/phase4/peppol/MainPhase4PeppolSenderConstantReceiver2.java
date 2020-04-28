@@ -106,7 +106,7 @@ public final class MainPhase4PeppolSenderConstantReceiver2
                                                                                                       "-----END CERTIFICATE-----\r\n"),
                                                          false ? "https://o96st7ob6h.execute-api.eu-west-1.amazonaws.com/prod/as4"
                                                                : "https://accap.mypeppol.app/as4")
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .sendMessage ()
                             .isSuccess ())
       {

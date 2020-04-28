@@ -105,7 +105,7 @@ public final class MainPhase4PeppolSenderLocalHost8080
                                                                                                       "TsWPMVgDKpgJ4Dm7" +
                                                                                                       "-----END CERTIFICATE-----\r\n"),
                                                          "http://localhost:8080/as4")
-                            .setResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .sendMessage ()
                             .isSuccess ())
       {

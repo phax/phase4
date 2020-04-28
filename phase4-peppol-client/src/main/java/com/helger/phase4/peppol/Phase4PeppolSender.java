@@ -73,7 +73,9 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
@@ -174,13 +176,7 @@ public final class Phase4PeppolSender
     // Parse incoming message
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
-      AS4IncomingHandler.parseAS4Message (aIAF,
-                                          aResHelper,
-                                          aMessageMetadata,
-                                          aPayloadIS,
-                                          aHttpHeaders,
-                                          aCallback,
-                                          aIncomingDumper);
+      AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
     }
     catch (final Phase4PeppolException ex)
     {
@@ -205,8 +201,8 @@ public final class Phase4PeppolSender
                                  @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                  @Nullable final IAS4IncomingDumper aIncomingDumper,
                                  @Nullable final IAS4RetryCallback aRetryCallback,
-                                 @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
-                                 @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Exception
+                                 @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                 @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
@@ -251,11 +247,7 @@ public final class Phase4PeppolSender
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 document with message ID '" +
-                   aResponseEntity.getMessageID () +
-                   "' to '" +
-                   sURL +
-                   "'");
+      LOGGER.info ("Successfully transmitted AS4 document with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
@@ -298,11 +290,9 @@ public final class Phase4PeppolSender
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
     aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
-                                     StringHelper.hasText (sUBLVersion) ? sUBLVersion
-                                                                        : DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID,
+                                     StringHelper.hasText (sUBLVersion) ? sUBLVersion : DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID,
                                      aPayloadElement.getLocalName (),
-                                     StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier
-                                                                                : UUID.randomUUID ().toString (),
+                                     StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier : UUID.randomUUID ().toString (),
                                      PDTFactory.getCurrentLocalDateTime ());
     aData.setBusinessMessage (aPayloadElement);
     final StandardBusinessDocument aSBD = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
@@ -504,8 +494,8 @@ public final class Phase4PeppolSender
                                        @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                        @Nullable final IAS4RetryCallback aRetryCallback,
-                                       @Nullable final IPhase4PeppolResponseConsumer aResponseConsumer,
-                                       @Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
+                                       @Nullable final IAS4RawResponseConsumer aResponseConsumer,
+                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4PeppolException
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
@@ -549,8 +539,7 @@ public final class Phase4PeppolSender
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
       if (StringHelper.hasText (sMessageID))
         aUserMsg.setMessageID (sMessageID);
-      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID
-                                                                         : UUID.randomUUID ().toString ());
+      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
 
       // Backend or gateway?
       aUserMsg.setFromPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
@@ -559,13 +548,9 @@ public final class Phase4PeppolSender
       aUserMsg.setToPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
 
       aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER,
-                                                              aSenderID.getScheme (),
-                                                              aSenderID.getValue ()));
+              .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getScheme (), aSenderID.getValue ()));
       aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
-                                                              aReceiverID.getScheme (),
-                                                              aReceiverID.getValue ()));
+              .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aReceiverID.getScheme (), aReceiverID.getValue ()));
 
       // No payload - only one attachment
       aUserMsg.setPayload (null);
@@ -575,8 +560,7 @@ public final class Phase4PeppolSender
                                                                             null,
                                                                             "document.xml",
                                                                             aPayloadMimeType,
-                                                                            bCompressPayload ? EAS4CompressionMode.GZIP
-                                                                                             : null,
+                                                                            bCompressPayload ? EAS4CompressionMode.GZIP : null,
                                                                             aResHelper));
 
       // Main sending
@@ -635,8 +619,7 @@ public final class Phase4PeppolSender
    *        The implementation type
    * @since 0.9.6
    */
-  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> implements
-                                                   IGenericImplTrait <IMPLTYPE>
+  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> implements IGenericImplTrait <IMPLTYPE>
   {
     protected HttpClientFactory m_aHttpClientFactory;
     protected IAS4CryptoFactory m_aCryptoFactory;
@@ -661,8 +644,8 @@ public final class Phase4PeppolSender
     protected IAS4OutgoingDumper m_aOutgoingDumper;
     protected IAS4IncomingDumper m_aIncomingDumper;
     protected IAS4RetryCallback m_aRetryCallback;
-    protected IPhase4PeppolResponseConsumer m_aResponseConsumer;
-    protected IPhase4PeppolSignalMessageConsumer m_aSignalMsgConsumer;
+    protected IAS4RawResponseConsumer m_aResponseConsumer;
+    protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
 
     /**
      * Create a new builder, with the following fields already set:<br>
@@ -933,8 +916,7 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE setReceiverEndpointDetails (@Nonnull final X509Certificate aCert,
-                                                      @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE setReceiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
       return setEndpointDetailProvider (new Phase4PeppolEndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -1045,9 +1027,29 @@ public final class Phase4PeppolSender
      * @param aResponseConsumer
      *        The optional response consumer. May be <code>null</code>.
      * @return this for chaining
+     * @deprecated Since 0.9.14; Use
+     *             {@link #setRawResponseConsumer(IAS4RawResponseConsumer)}
+     *             instead
      */
+    @Deprecated
     @Nonnull
     public final IMPLTYPE setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
+    {
+      return setRawResponseConsumer (aResponseConsumer);
+    }
+
+    /**
+     * Set an optional handler for the synchronous result message received from
+     * the other side. This method is optional and must not be called prior to
+     * sending.
+     *
+     * @param aResponseConsumer
+     *        The optional response consumer. May be <code>null</code>.
+     * @return this for chaining
+     * @since 0.9.14
+     */
+    @Nonnull
+    public final IMPLTYPE setRawResponseConsumer (@Nullable final IAS4RawResponseConsumer aResponseConsumer)
     {
       m_aResponseConsumer = aResponseConsumer;
       return thisAsT ();
@@ -1061,9 +1063,29 @@ public final class Phase4PeppolSender
      * @param aSignalMsgConsumer
      *        The optional signal message consumer. May be <code>null</code>.
      * @return this for chaining
+     * @deprecated Since 0.9.14; Use
+     *             {@link #setSignalMsgConsumer(IAS4SignalMessageConsumer)}
+     *             instead
      */
     @Nonnull
+    @Deprecated
     public final IMPLTYPE setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
+    {
+      return setSignalMsgConsumer ((IAS4SignalMessageConsumer) aSignalMsgConsumer);
+    }
+
+    /**
+     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
+     * the response is trying to be parsed as a Signal Message. This method is
+     * optional and must not be called prior to sending.
+     *
+     * @param aSignalMsgConsumer
+     *        The optional signal message consumer. May be <code>null</code>.
+     * @return this for chaining
+     * @since 0.9.14
+     */
+    @Nonnull
+    public final IMPLTYPE setSignalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
     {
       m_aSignalMsgConsumer = aSignalMsgConsumer;
       return thisAsT ();
@@ -1291,8 +1313,7 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder setValidationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
-                                                                      : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
       return setValidationConfiguration (aVESID, aHdl);
     }
 

@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.peppol;
+package com.helger.phase4.client;
+
+import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 
-import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
- * Specialized interface for the EBMS 3 Signal Message consumer.
+ * Specialized interface for the raw HTTP response consumer.
  *
  * @author Philip Helger
- * @deprecated Since 0.9.14; Use {@link IAS4SignalMessageConsumer} directly.
+ * @since 0.9.14
  */
 @FunctionalInterface
-@Deprecated
-public interface IPhase4PeppolSignalMessageConsumer extends IAS4SignalMessageConsumer
+public interface IAS4RawResponseConsumer extends Serializable
 {
   /**
-   * Handling an EBMS 3 Signal Message
+   * Handling a HTTP response
    *
-   * @param aSignalMsg
-   *        The Signal Message domain object. Never <code>null</code>.
-   * @throws Phase4PeppolException
-   *         in case of error
+   * @param aResponseMsg
+   *        The response message in relation to the source message
+   * @throws Phase4Exception
+   *         In case of error.
    */
-  void handleSignalMessage (@Nonnull Ebms3SignalMessage aSignalMsg) throws Phase4PeppolException;
+  void handleResponse (@Nonnull AS4ClientSentMessage <byte []> aResponseMsg) throws Phase4Exception;
 }

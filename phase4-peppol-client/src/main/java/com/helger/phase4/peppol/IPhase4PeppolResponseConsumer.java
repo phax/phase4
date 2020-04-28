@@ -16,19 +16,20 @@
  */
 package com.helger.phase4.peppol;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.client.AS4ClientSentMessage;
+import com.helger.phase4.client.IAS4RawResponseConsumer;
 
 /**
  * Specialized interface for the HTTP response consumer.
  *
  * @author Philip Helger
+ * @deprecated Since 0.9.14; Use {@link IAS4RawResponseConsumer} instead
  */
+@Deprecated
 @FunctionalInterface
-public interface IPhase4PeppolResponseConsumer extends Serializable
+public interface IPhase4PeppolResponseConsumer extends IAS4RawResponseConsumer
 {
   /**
    * Handling a HTTP response
