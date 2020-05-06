@@ -70,7 +70,7 @@
     <xmlsec.version>2.1.5</xmlsec.version>
     <wss4j.version>2.2.5</wss4j.version>
     <log4j.version>2.13.2</log4j.version>
-    <peppol-commons.version>8.0.6</peppol-commons.version>
+    <peppol-commons.version>8.0.7</peppol-commons.version>
   </properties>
   
   <dependencyManagement>
