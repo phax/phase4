@@ -280,6 +280,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.9.15 - work in progress
+    * Increased customizability of `AS4XServletHandler`
 * v0.9.14 - 2020-04-28
     * Updated to WSS4J 2.2.5
     * Updated to ph-commons 9.4.1

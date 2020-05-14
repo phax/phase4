@@ -87,9 +87,9 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4XServletHandler.class);
 
-  private final Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
-  private final IPModeResolver m_aPModeResolver;
-  private final IIncomingAttachmentFactory m_aIAF;
+  private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
+  private IPModeResolver m_aPModeResolver;
+  private IIncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
   /**
@@ -112,19 +112,92 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @param aPModeResolver
    *        PMode resolved to be used. May not be <code>null</code>.
    * @param aIAF
-   *        The attachment factory for incoming attachments.
+   *        The attachment factory for incoming attachments. May not be
+   *        <code>null</code>.
    * @since v0.9.8
    */
   public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
                              @Nonnull final IPModeResolver aPModeResolver,
                              @Nonnull final IIncomingAttachmentFactory aIAF)
   {
+    setCryptoFactorySupplier (aCryptoFactorySupplier);
+    setPModeResolver (aPModeResolver);
+    setIncomingAttachmentFactory (aIAF);
+  }
+
+  /**
+   * @return The supplier for the {@link IAS4CryptoFactory}. May not be
+   *         <code>null</code>.
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final Supplier <? extends IAS4CryptoFactory> getCryptoFactorySupplier ()
+  {
+    return m_aCryptoFactorySupplier;
+  }
+
+  /**
+   * @param aCryptoFactorySupplier
+   *        Crypto factory supplier. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final AS4XServletHandler setCryptoFactorySupplier (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier)
+  {
     ValueEnforcer.notNull (aCryptoFactorySupplier, "CryptoFactorySupplier");
-    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
-    ValueEnforcer.notNull (aIAF, "IAF");
     m_aCryptoFactorySupplier = aCryptoFactorySupplier;
+    return this;
+  }
+
+  /**
+   * @return The {@link IPModeResolver} to be used. Never <code>null</code>.
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final IPModeResolver getPModeResolver ()
+  {
+    return m_aPModeResolver;
+  }
+
+  /**
+   * @param aPModeResolver
+   *        PMode resolved to be used. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final AS4XServletHandler setPModeResolver (@Nonnull final IPModeResolver aPModeResolver)
+  {
+    ValueEnforcer.notNull (aPModeResolver, "PModeResolver");
     m_aPModeResolver = aPModeResolver;
+    return this;
+  }
+
+  /**
+   * @return The {@link IIncomingAttachmentFactory} to be used. Never
+   *         <code>null</code>.
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final IIncomingAttachmentFactory getIncomingAttachmentFactory ()
+  {
+    return m_aIAF;
+  }
+
+  /**
+   * @param aIAF
+   *        The attachment factory for incoming attachments. May not be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 0.9.15
+   */
+  @Nonnull
+  public final AS4XServletHandler setIncomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
+  {
+    ValueEnforcer.notNull (aIAF, "IAF");
     m_aIAF = aIAF;
+    return this;
   }
 
   /**
