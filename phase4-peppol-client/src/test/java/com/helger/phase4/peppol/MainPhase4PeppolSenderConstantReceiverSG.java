@@ -67,7 +67,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG
       if (Phase4PeppolSender.builder ()
                             .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#conformant#urn:fdc:peppol.eu:2017:poacc:billing:international:sg:3.0::2.1"))
                             .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc"))
+                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
                             .setReceiverParticipantID (aReceiverID)
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadElement)

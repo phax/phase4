@@ -65,8 +65,7 @@ public final class MainPhase4PeppolSenderMaxDebug
 
     try (final WebScoped w = new WebScoped ())
     {
-      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/AU Invoice.xml"))
-                                               .getDocumentElement ();
+      final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/AU Invoice.xml")).getDocumentElement ();
       if (aPayloadElement == null)
         throw new IllegalStateException ();
 
@@ -75,18 +74,16 @@ public final class MainPhase4PeppolSenderMaxDebug
       if (Phase4PeppolSender.builder ()
                             .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:abc"))
+                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
                             .setReceiverParticipantID (aReceiverID)
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadElement)
-                            .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                                  aReceiverID,
-                                                                  ESML.DIGIT_TEST))
+                            .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .setRawResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
-                                                                               new String (aResponseMsg.getResponse ())))
+                                                                                  new String (aResponseMsg.getResponse ())))
                             .sendMessage ()
                             .isSuccess ())
       {
