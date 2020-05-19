@@ -25,7 +25,6 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
-import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.Immutable;
 
 import org.apache.http.HttpEntity;
@@ -88,7 +87,6 @@ import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -113,31 +111,6 @@ public final class Phase4PeppolSender
 
   private Phase4PeppolSender ()
   {}
-
-  @Nullable
-  @Deprecated
-  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                       @Nonnull final IPModeResolver aPModeResolver,
-                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
-                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                       @Nullable final IPMode aSendingPMode,
-                                                       @Nonnull final Locale aLocale,
-                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                       @Nonnull final HttpResponse aHttpResponse,
-                                                       @Nonnull final byte [] aResponsePayload,
-                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
-  {
-    return AS4IncomingHandler.parseSignalMessage (aCryptoFactory,
-                                                  aPModeResolver,
-                                                  aIAF,
-                                                  aResHelper,
-                                                  aSendingPMode,
-                                                  aLocale,
-                                                  aMessageMetadata,
-                                                  aHttpResponse,
-                                                  aResponsePayload,
-                                                  aIncomingDumper);
-  }
 
   private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                  @Nonnull final IPModeResolver aPModeResolver,
@@ -975,25 +948,6 @@ public final class Phase4PeppolSender
      * @param aResponseConsumer
      *        The optional response consumer. May be <code>null</code>.
      * @return this for chaining
-     * @deprecated Since 0.9.14; Use
-     *             {@link #setRawResponseConsumer(IAS4RawResponseConsumer)}
-     *             instead
-     */
-    @Deprecated
-    @Nonnull
-    public final IMPLTYPE setResponseConsumer (@Nullable final IPhase4PeppolResponseConsumer aResponseConsumer)
-    {
-      return setRawResponseConsumer (aResponseConsumer);
-    }
-
-    /**
-     * Set an optional handler for the synchronous result message received from
-     * the other side. This method is optional and must not be called prior to
-     * sending.
-     *
-     * @param aResponseConsumer
-     *        The optional response consumer. May be <code>null</code>.
-     * @return this for chaining
      * @since 0.9.14
      */
     @Nonnull
@@ -1001,25 +955,6 @@ public final class Phase4PeppolSender
     {
       m_aResponseConsumer = aResponseConsumer;
       return thisAsT ();
-    }
-
-    /**
-     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
-     * the response is trying to be parsed as a Signal Message. This method is
-     * optional and must not be called prior to sending.
-     *
-     * @param aSignalMsgConsumer
-     *        The optional signal message consumer. May be <code>null</code>.
-     * @return this for chaining
-     * @deprecated Since 0.9.14; Use
-     *             {@link #setSignalMsgConsumer(IAS4SignalMessageConsumer)}
-     *             instead
-     */
-    @Nonnull
-    @Deprecated
-    public final IMPLTYPE setSignalMsgConsumer (@Nullable final IPhase4PeppolSignalMessageConsumer aSignalMsgConsumer)
-    {
-      return setSignalMsgConsumer ((IAS4SignalMessageConsumer) aSignalMsgConsumer);
     }
 
     /**

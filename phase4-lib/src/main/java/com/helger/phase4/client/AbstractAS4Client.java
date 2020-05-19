@@ -54,8 +54,7 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster
-                                        implements
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster implements
                                         IGenericImplTrait <IMPLTYPE>
 {
   public static final int DEFAULT_MAX_RETRIES = 0;
@@ -361,72 +360,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aResponseHandler
    *        The response handler that converts the HTTP response to a domain
    *        object. May not be <code>null</code>.
-   * @param aCallback
-   *        The optional callback that is invoked during the creation of the
-   *        {@link AS4ClientBuiltMessage}. It can be used to access several
-   *        states of message creation. May be <code>null</code>.
-   * @return The sent message that contains
-   * @throws Exception
-   *         in case of error when building or sending the message
-   * @deprecated Use the version with the dumper directory. Since v0.9.9
-   */
-  @Deprecated
-  @Nonnull
-  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
-                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                                                    @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
-
-  {
-    return sendMessageWithRetries (sURL, aResponseHandler, aCallback, (IAS4OutgoingDumper) null);
-  }
-
-  /**
-   * Send the AS4 client message created by
-   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
-   * provided URL. This methods does take retries into account. It synchronously
-   * handles the retries and only returns after the last retry.
-   *
-   * @param <T>
-   *        The response data type
-   * @param sURL
-   *        The URL to send the HTTP POST to
-   * @param aResponseHandler
-   *        The response handler that converts the HTTP response to a domain
-   *        object. May not be <code>null</code>.
-   * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper from
-   *        {@link AS4DumpManager} is used.
-   * @return The sent message that contains
-   * @throws Exception
-   *         in case of error when building or sending the message
-   * @since 0.9.6
-   * @deprecated Since 0.9.14; Use
-   *             {@link #sendMessageWithRetries(String, ResponseHandler, IAS4ClientBuildMessageCallback, IAS4OutgoingDumper, IAS4RetryCallback)}
-   */
-  @Deprecated
-  @Nonnull
-  public final <T> AS4ClientSentMessage <T> sendMessageWithRetries (@Nonnull final String sURL,
-                                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                                                    @Nullable final IAS4ClientBuildMessageCallback aCallback,
-                                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
-  {
-    return sendMessageWithRetries (sURL, aResponseHandler, aCallback, aOutgoingDumper, (IAS4RetryCallback) null);
-  }
-
-  /**
-   * Send the AS4 client message created by
-   * {@link #buildMessage(String, IAS4ClientBuildMessageCallback)} to the
-   * provided URL. This methods does take retries into account. It synchronously
-   * handles the retries and only returns after the last retry.
-   *
-   * @param <T>
-   *        The response data type
-   * @param sURL
-   *        The URL to send the HTTP POST to
-   * @param aResponseHandler
-   *        The response handler that converts the HTTP response to a domain
-   *        object. May not be <code>null</code>.
    * @param aOutgoingDumper
    *        An outgoing dumper to be used. Maybe <code>null</code>. If
    *        <code>null</code> the global outgoing dumper from
@@ -478,8 +411,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
-                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
   }
 }
