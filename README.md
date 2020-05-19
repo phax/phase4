@@ -15,6 +15,7 @@ It consists of the following sub-projects:
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
   * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
   * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9) 
+  * **phase4-cef-client** - a specific client to send messages using the CEF profile (since v0.9.15)
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -280,8 +281,9 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.9.15 - work in progress
+* v0.9.15 - 2020-05-19
     * Increased customizability of `AS4XServletHandler`
+    * Added a new submodule `phase4-cef-client` for easy sending using the CEF profile
 * v0.9.14 - 2020-04-28
     * Updated to WSS4J 2.2.5
     * Updated to ph-commons 9.4.1

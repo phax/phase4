@@ -16,7 +16,8 @@ target/
 *.iml
 .settings/ 
 .project 
-.classpath 
+.classpath
+zz 
 as4-test-data/
 phase4-peppol-client/phase4-peppol-client/
 phase4-cef-client/phase4-cef-client/
