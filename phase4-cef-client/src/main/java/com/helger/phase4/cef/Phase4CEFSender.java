@@ -113,6 +113,9 @@ public final class Phase4CEFSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
+    protected String m_sServiceType;
+    protected String m_sService;
+    protected String m_sAction;
     protected String m_sAgreementRef;
     protected IParticipantIdentifier m_aFromPartyID;
     protected IParticipantIdentifier m_aToPartyID;
@@ -311,6 +314,41 @@ public final class Phase4CEFSender
     }
 
     /**
+     * Set the "Service" value consisting of type and value. It's optional. If
+     * the "Service" value is not set, it the "service type" defaults to the
+     * "process identifier scheme" and the "service value" defaults to the
+     * "process identifier value".
+     *
+     * @param sServiceType
+     *        Service type. May be <code>null</code>.
+     * @param sServiceValue
+     *        Service value. May be <code>null</code>.
+     * @return this for chaining.
+     */
+    @Nonnull
+    public final IMPLTYPE setService (@Nullable final String sServiceType, @Nullable final String sServiceValue)
+    {
+      m_sServiceType = sServiceType;
+      m_sService = sServiceValue;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the "Action" value. It's optional. If the "Action" value is not set,
+     * it defaults to the "document type identifier value" (URI encoded).
+     *
+     * @param sAction
+     *        Action value. May be <code>null</code>.
+     * @return this for chaining.
+     */
+    @Nonnull
+    public final IMPLTYPE setAction (@Nullable final String sAction)
+    {
+      m_sAction = sAction;
+      return thisAsT ();
+    }
+
+    /**
      * Set the "AgreementRef" value. It's optional.
      *
      * @param sAgreementRef
@@ -320,7 +358,6 @@ public final class Phase4CEFSender
     @Nonnull
     public final IMPLTYPE setAgreementRef (@Nullable final String sAgreementRef)
     {
-      ValueEnforcer.notNull (sAgreementRef, "AgreementRef");
       m_sAgreementRef = sAgreementRef;
       return thisAsT ();
     }
@@ -537,6 +574,10 @@ public final class Phase4CEFSender
         return false;
       if (m_aProcessID == null)
         return false;
+      // m_sServiceType may be null
+      // m_sService may be null
+      // m_sAction may be null
+
       if (m_aFromPartyID == null)
         return false;
       if (m_aToPartyID == null)
@@ -747,9 +788,26 @@ public final class Phase4CEFSender
         // used as Access Points may use just one generic P-Mode for receiving
         // messages.
         aUserMsg.setPModeIDFactory (x -> null);
-        aUserMsg.setServiceType (m_aProcessID.getScheme ());
-        aUserMsg.setServiceValue (m_aProcessID.getValue ());
-        aUserMsg.setAction (m_aDocTypeID.getURIEncoded ());
+        if (StringHelper.hasText (m_sService))
+        {
+          aUserMsg.setServiceType (m_sServiceType);
+          aUserMsg.setServiceValue (m_sService);
+        }
+        else
+        {
+          // Default: Process ID
+          aUserMsg.setServiceType (m_aProcessID.getScheme ());
+          aUserMsg.setServiceValue (m_aProcessID.getValue ());
+        }
+        if (StringHelper.hasText (m_sAction))
+        {
+          aUserMsg.setAction (m_sAction);
+        }
+        else
+        {
+          // Default: DocumentType ID
+          aUserMsg.setAction (m_aDocTypeID.getURIEncoded ());
+        }
         if (StringHelper.hasText (m_sMessageID))
           aUserMsg.setMessageID (m_sMessageID);
         aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID : UUID.randomUUID ().toString ());
