@@ -281,7 +281,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.9.16 - work in progress
+* v0.9.16 - 2020-05-20
     * Becoming more specific in thrown exceptions. Avoiding all "throws Exception"
     * Fixed a potential concurrency error in `IPModeManager` implementations when calling "createOrUpdatePMode"
     * Fixed a potential concurrency error in `AS4CryptoFactoryPropertiesFile.getDefaultInstance()`
