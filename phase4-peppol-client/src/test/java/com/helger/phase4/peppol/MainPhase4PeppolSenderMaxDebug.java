@@ -32,6 +32,7 @@ import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -79,7 +80,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadElement)
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .setRawResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +

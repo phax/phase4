@@ -29,6 +29,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -106,7 +107,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG
                                                                                                       "47A9zzduKT3CycRoqxaB\n" +
                                                                                                       "-----END CERTIFICATE-----"),
                                                          "https://peppol-dev.strands.com/api-hub/as4")
-                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .setValidationConfiguration (PeppolValidationSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_102,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()

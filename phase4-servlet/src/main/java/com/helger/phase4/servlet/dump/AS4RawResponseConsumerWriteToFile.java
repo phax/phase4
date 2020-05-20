@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.cef;
+package com.helger.phase4.servlet.dump;
 
 import java.io.File;
 
@@ -28,18 +28,19 @@ import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
-import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
+ * The base directory is determined by
+ * {@link AS4ServerConfiguration#getDataPath()}.
  *
  * @author Philip Helger
  */
-public class ResponseConsumerWriteToFile implements IAS4RawResponseConsumer
+public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsumer
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ResponseConsumerWriteToFile.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
 
   public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
   {
@@ -51,6 +52,8 @@ public class ResponseConsumerWriteToFile implements IAS4RawResponseConsumer
                                "-" +
                                FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
                                "-response.xml";
+
+      // Use the configured data path as the base
       final File aResponseFile = new File (AS4ServerConfiguration.getDataPath (), sFilename);
       if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
         LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");

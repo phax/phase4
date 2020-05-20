@@ -35,6 +35,7 @@ import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.bdxr1.BDXRClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -96,7 +97,7 @@ public final class MainPhase4CEFSenderToop
                          .setToPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
                          .setPayload (Phase4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
                          .setSMPClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
-                         .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
+                         .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                          .setBuildMessageCallback (aBuildMessageCallback)
                          .sendMessage ()
                          .isSuccess ())

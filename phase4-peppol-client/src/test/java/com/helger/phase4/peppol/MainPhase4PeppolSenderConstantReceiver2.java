@@ -28,6 +28,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -97,7 +98,7 @@ public final class MainPhase4PeppolSenderConstantReceiver2
                                                                                                       "-----END CERTIFICATE-----\r\n"),
                                                          false ? "https://o96st7ob6h.execute-api.eu-west-1.amazonaws.com/prod/as4"
                                                                : "https://accap.mypeppol.app/as4")
-                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
+                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .sendMessage ()
                             .isSuccess ())
       {

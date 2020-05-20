@@ -23,13 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.peppol.PeppolValidation390;
+import com.helger.bdve.peppol.PeppolValidation3_10_0;
 import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.mgr.MetaAS4Manager;
+import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.servlet.mock.MockServletContext;
@@ -82,8 +83,8 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadElement)
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
-                            .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
+                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                            .setValidationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .setCryptoFactory (aInMemoryCryptoFactory)
                             .sendMessage ()
