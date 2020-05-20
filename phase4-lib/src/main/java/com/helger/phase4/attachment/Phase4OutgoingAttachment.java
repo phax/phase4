@@ -24,6 +24,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.ByteArrayWrapper;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
+import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 
 /**
@@ -35,7 +36,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 @Immutable
 public class Phase4OutgoingAttachment
 {
-  private final ByteArrayWrapper m_aSrcData;
+  private final ByteArrayWrapper m_aData;
   private final String m_sContentID;
   private final String m_sFilename;
   private final IMimeType m_aMimeType;
@@ -49,7 +50,7 @@ public class Phase4OutgoingAttachment
   {
     ValueEnforcer.notNull (aSrcData, "SrcData");
     ValueEnforcer.notNull (aMimeType, "MimeType");
-    m_aSrcData = aSrcData;
+    m_aData = aSrcData;
     m_sContentID = sContentID;
     m_sFilename = sFilename;
     m_aMimeType = aMimeType;
@@ -62,7 +63,7 @@ public class Phase4OutgoingAttachment
   @Nonnull
   public ByteArrayWrapper getData ()
   {
-    return m_aSrcData;
+    return m_aData;
   }
 
   /**
@@ -99,6 +100,17 @@ public class Phase4OutgoingAttachment
   public EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;
+  }
+
+  @Override
+  public String toString ()
+  {
+    return new ToStringGenerator (this).append ("Data", m_aData)
+                                       .append ("ContentID", m_sContentID)
+                                       .append ("Filename", m_sFilename)
+                                       .append ("MimeType", m_aMimeType)
+                                       .append ("CompressionMode", m_eCompressionMode)
+                                       .getToString ();
   }
 
   /**
