@@ -37,12 +37,8 @@ public final class CAS4
 
   // XSD
   public static final String PATH_SCHEMATA = "/schemas/";
-  public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA +
-                                                                                 "ebms-header-3_0-200704.xsd",
-                                                                                 _getCL ());
-  public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA +
-                                                                                  "ebbp-signals-2.0.4.xsd",
-                                                                                  _getCL ());
+  public static final ClassPathResource XSD_EBMS_HEADER = new ClassPathResource (PATH_SCHEMATA + "ebms-header-3_0-200704.xsd", _getCL ());
+  public static final ClassPathResource XSD_EBBP_SIGNALS = new ClassPathResource (PATH_SCHEMATA + "ebbp-signals-2.0.4.xsd", _getCL ());
   public static final ClassPathResource XSD_SOAP11 = new ClassPathResource (PATH_SCHEMATA + "soap11.xsd", _getCL ());
   public static final ClassPathResource XSD_SOAP12 = new ClassPathResource (PATH_SCHEMATA + "soap12.xsd", _getCL ());
   public static final ClassPathResource XSD_XML = new ClassPathResource (PATH_SCHEMATA + "xml.xsd", _getCL ());
@@ -61,8 +57,8 @@ public final class CAS4
   public static final String LIB_NAME = "phase4";
 
   // Constant Names
-  public static final String FINAL_RECIPIENT = "finalRecipient";
   public static final String ORIGINAL_SENDER = "originalSender";
+  public static final String FINAL_RECIPIENT = "finalRecipient";
 
   // Defaults
   public static final String DEFAULT_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultRole";
