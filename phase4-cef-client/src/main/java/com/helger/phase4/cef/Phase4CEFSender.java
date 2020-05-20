@@ -726,6 +726,34 @@ public final class Phase4CEFSender
     }
 
     /**
+     * Set optional attachments. All existing attachments are overridden.
+     *
+     * @param a
+     *        The attachment to be set. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setAttachments (@Nullable final Phase4OutgoingAttachment... a)
+    {
+      m_aAttachments.setAll (a);
+      return this;
+    }
+
+    /**
+     * Set optional attachments. All existing attachments are overridden.
+     *
+     * @param a
+     *        The attachment to be set. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setAttachments (@Nullable final Iterable <? extends Phase4OutgoingAttachment> a)
+    {
+      m_aAttachments.setAll (a);
+      return this;
+    }
+
+    /**
      * Set an optional Consumer for the retrieved certificate, independent of
      * its usability.
      *
