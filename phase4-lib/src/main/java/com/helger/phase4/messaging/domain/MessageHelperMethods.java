@@ -33,7 +33,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.CollectionHelper;
-import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
@@ -86,6 +85,13 @@ public final class MessageHelperMethods
   public static String createRandomMessageID ()
   {
     return UUID.randomUUID ().toString () + "@" + CAS4.LIB_NAME;
+  }
+
+  @Nonnull
+  @Nonempty
+  public static String createRandomContentID ()
+  {
+    return UUID.randomUUID ().toString () + "@cid." + CAS4.LIB_NAME;
   }
 
   @Nonnull
@@ -148,8 +154,7 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
-                                                         @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
 
@@ -192,16 +197,6 @@ public final class MessageHelperMethods
     aProp.setType (sType);
     aProp.setValue (sValue);
     return aProp;
-  }
-
-  @Nonnull
-  @ReturnsMutableCopy
-  @Deprecated
-  public static ICommonsList <Ebms3Property> createEmbs3PropertiesOriginalSenderFinalRecipient (@Nonnull final String sOriginalSender,
-                                                                                                @Nonnull final String sFinalRecipient)
-  {
-    return new CommonsArrayList <> (createEbms3Property (CAS4.ORIGINAL_SENDER, sOriginalSender),
-                                    createEbms3Property (CAS4.FINAL_RECIPIENT, sFinalRecipient));
   }
 
   @Nonnull
@@ -318,12 +313,10 @@ public final class MessageHelperMethods
       return null;
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
-                                                           aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
-                                                             aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
     }
     if (aAttachment.hasCompressionMode ())
     {
@@ -381,8 +374,7 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (),
-                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message

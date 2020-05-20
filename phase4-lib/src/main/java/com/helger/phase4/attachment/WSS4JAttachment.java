@@ -310,9 +310,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     if (StringHelper.hasText (sFilename))
     {
       if (sFilename.indexOf ('"') >= 0)
-        LOGGER.warn ("The filename '" +
-                     sFilename +
-                     "' contains a double quote which will most likely break the Content-Disposition");
+        LOGGER.warn ("The filename '" + sFilename + "' contains a double quote which will most likely break the Content-Disposition");
       aAttachment.addHeader (CHttpHeader.CONTENT_DISPOSITION, "attachment; filename=\"" + sFilename + "\"");
     }
     aAttachment.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + aAttachment.getId () + CONTENT_ID_SUFFIX);
@@ -401,6 +399,18 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     // FileInputStream internally)
     ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     return ret;
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final Phase4OutgoingAttachment aAttachment,
+                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+  {
+    return createOutgoingFileAttachment (aAttachment.getData ().bytes (),
+                                         aAttachment.getContentID (),
+                                         aAttachment.getFilename (),
+                                         aAttachment.getMimeType (),
+                                         aAttachment.getCompressionMode (),
+                                         aResHelper);
   }
 
   /**

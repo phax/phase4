@@ -33,8 +33,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.mime.CMimeType;
-import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -44,8 +42,8 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -121,9 +119,6 @@ public final class Phase4CEFSender
     protected String m_sMessageID;
     protected String m_sConversationID;
 
-    protected IMimeType m_aPayloadMimeType;
-    protected boolean m_bCompressPayload;
-
     protected IPhase4CEFEndpointDetailProvider m_aEndpointDetailProvider;
 
     protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
@@ -140,8 +135,6 @@ public final class Phase4CEFSender
      * {@link #setPModeResolver(IPModeResolver)}<br>
      * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
-     * {@link #setPayloadMimeType(IMimeType)}<br>
-     * {@link #setCompressPayload(boolean)}<br>
      */
     protected AbstractBaseBuilder ()
     {
@@ -154,8 +147,6 @@ public final class Phase4CEFSender
         setPModeResolver (aPModeResolver);
         setIncomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
         setPMode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", null));
-        setPayloadMimeType (CMimeType.APPLICATION_XML);
-        setCompressPayload (true);
       }
       catch (final Exception ex)
       {
@@ -321,7 +312,7 @@ public final class Phase4CEFSender
 
     /**
      * Set the "AgreementRef" value. It's optional.
-     * 
+     *
      * @param sAgreementRef
      *        Agreement reference. May be <code>null</code>.
      * @return this for chaining.
@@ -434,39 +425,6 @@ public final class Phase4CEFSender
     public final IMPLTYPE setReceiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
       return setEndpointDetailProvider (new Phase4CEFEndpointDetailProviderConstant (aCert, sDestURL));
-    }
-
-    /**
-     * Set the MIME type of the payload. By default it is
-     * <code>application/xml</code> and MUST usually not be changed. This value
-     * is required for sending.
-     *
-     * @param aPayloadMimeType
-     *        The payload MIME type. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setPayloadMimeType (@Nonnull final IMimeType aPayloadMimeType)
-    {
-      ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
-      m_aPayloadMimeType = aPayloadMimeType;
-      return thisAsT ();
-    }
-
-    /**
-     * Enable or disable the AS4 compression of the payload. By default
-     * compression is disabled.
-     *
-     * @param bCompressPayload
-     *        <code>true</code> to compress the payload, <code>false</code> to
-     *        not compress it.
-     * @return this for chaining.
-     */
-    @Nonnull
-    public final IMPLTYPE setCompressPayload (final boolean bCompressPayload)
-    {
-      m_bCompressPayload = bCompressPayload;
-      return thisAsT ();
     }
 
     /**
@@ -588,10 +546,6 @@ public final class Phase4CEFSender
       if (m_aEndpointDetailProvider == null)
         return false;
 
-      if (m_aPayloadMimeType == null)
-        return false;
-      // m_bCompressPayload cannot be null
-
       // m_aBuildMessageCallback may be null
       // m_aOutgoingDumper may be null
       // m_aIncomingDumper may be null
@@ -627,7 +581,8 @@ public final class Phase4CEFSender
    */
   public static class Builder extends AbstractBaseBuilder <Builder>
   {
-    private byte [] m_aPayloadBytes;
+    private Phase4OutgoingAttachment m_aPayload;
+    private final ICommonsList <Phase4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
     private Consumer <X509Certificate> m_aCertificateConsumer;
     private Consumer <String> m_aAPEndointURLConsumer;
 
@@ -638,26 +593,63 @@ public final class Phase4CEFSender
      * {@link #setPModeResolver(IPModeResolver)}<br>
      * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
      * {@link #setPMode(IPMode)}<br>
-     * {@link #setPayloadMimeType(IMimeType)}<br>
-     * {@link #setCompressPayload(boolean)}<br>
      */
     public Builder ()
     {}
 
     /**
-     * Set the payload to be used as a byte array. It will be parsed internally
-     * to a DOM element. If this method is called, it overwrites any other
-     * explicitly set payload.
+     * Set the payload to be send out.
      *
-     * @param aPayloadBytes
-     *        The payload bytes to be used. May not be <code>null</code>.
+     * @param aBuilder
+     *        The payload builder to be used. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public Builder setPayload (@Nonnull final byte [] aPayloadBytes)
+    public Builder setPayload (@Nonnull final Phase4OutgoingAttachment.Builder aBuilder)
     {
-      ValueEnforcer.notNull (aPayloadBytes, "PayloadBytes");
-      m_aPayloadBytes = aPayloadBytes;
+      return setPayload (aBuilder.build ());
+    }
+
+    /**
+     * Set the payload to be send out.
+     *
+     * @param aPayload
+     *        The payload to be used. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder setPayload (@Nonnull final Phase4OutgoingAttachment aPayload)
+    {
+      ValueEnforcer.notNull (aPayload, "Payload");
+      m_aPayload = aPayload;
+      return this;
+    }
+
+    /**
+     * Add an optional attachment
+     *
+     * @param a
+     *        The attachment to be added. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder addAttachment (@Nullable final Phase4OutgoingAttachment.Builder a)
+    {
+      return addAttachment (a == null ? null : a.build ());
+    }
+
+    /**
+     * Add an optional attachment
+     *
+     * @param a
+     *        The attachment to be added. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public Builder addAttachment (@Nullable final Phase4OutgoingAttachment a)
+    {
+      if (a != null)
+        m_aAttachments.add (a);
       return this;
     }
 
@@ -697,8 +689,11 @@ public final class Phase4CEFSender
       if (!super.isEveryRequiredFieldSet ())
         return false;
 
-      if (m_aPayloadBytes == null)
+      if (m_aPayload == null)
         return false;
+      // m_aAttachments may be empty
+      // m_aCertificateConsumer is optional
+      // m_aAPEndointURLConsumer is optional
 
       // All valid
       return true;
@@ -730,14 +725,6 @@ public final class Phase4CEFSender
       // Temporary file manager
       try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
       {
-        final ICommonsList <WSS4JAttachment> aPayloads = new CommonsArrayList <> ();
-        aPayloads.add (WSS4JAttachment.createOutgoingFileAttachment (m_aPayloadBytes,
-                                                                     null,
-                                                                     "document.xml",
-                                                                     m_aPayloadMimeType,
-                                                                     m_bCompressPayload ? EAS4CompressionMode.GZIP : null,
-                                                                     aResHelper));
-
         // Start building AS4 User Message
         final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
         aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
@@ -784,8 +771,11 @@ public final class Phase4CEFSender
         aUserMsg.setPayload (null);
 
         // Add main attachment
-        for (final WSS4JAttachment aAttachment : aPayloads)
-          aUserMsg.addAttachment (aAttachment);
+        aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper));
+
+        // Add other attachments
+        for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
+          aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
 
         // Main sending
         AS4BidirectionalClientHelper.sendAS4AndReceiveAS4 (m_aCryptoFactory,

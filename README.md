@@ -285,6 +285,8 @@ If you like the project, a star on GitHub is always appreciated.
     * Becoming more specific in thrown exceptions. Avoiding all "throws Exception"
     * Fixed a potential concurrency error in `IPModeManager` implementations when calling "createOrUpdatePMode"
     * Fixed a potential concurrency error in `AS4CryptoFactoryPropertiesFile.getDefaultInstance()`
+    * Added new class `Phase4OutgoingAttachment` for easier creation of outgoing attachments
+    * Extended the `Phase4CEFSender` to handle multiple attachments. 
 * v0.9.15 - 2020-05-19
     * Increased customizability of `AS4XServletHandler`
     * Added a new submodule `phase4-cef-client` for easy sending using the CEF profile
