@@ -18,7 +18,6 @@ package com.helger.phase4.crypto;
 
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,12 +27,11 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.engine.WSSConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
@@ -56,9 +54,8 @@ public class AS4CryptoFactoryPropertiesFile implements IAS4CryptoFactory
     WSSConfig.init ();
   }
 
-  private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptoFactoryPropertiesFile.class);
-  private static final AtomicBoolean DEFAULT_INSTANCE_INITED = new AtomicBoolean (false);
-  private static AS4CryptoFactoryPropertiesFile _DEFAULT_INSTANCE = null;
+  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
+  private static AS4CryptoFactoryPropertiesFile DEFAULT_INSTANCE = null;
 
   /**
    * @return The default instance, created by reading the default
@@ -68,17 +65,25 @@ public class AS4CryptoFactoryPropertiesFile implements IAS4CryptoFactory
   @Nullable
   public static AS4CryptoFactoryPropertiesFile getDefaultInstance ()
   {
-    AS4CryptoFactoryPropertiesFile ret = _DEFAULT_INSTANCE;
-    if (DEFAULT_INSTANCE_INITED.compareAndSet (false, true))
+    // Try in read lock first
+    AS4CryptoFactoryPropertiesFile ret = s_aRWLock.readLockedGet ( () -> DEFAULT_INSTANCE);
+
+    if (ret == null)
     {
+      s_aRWLock.writeLock ().lock ();
       try
       {
-        ret = _DEFAULT_INSTANCE = new AS4CryptoFactoryPropertiesFile ((String) null);
+        // Read again in write lock
+        ret = DEFAULT_INSTANCE;
+        if (ret == null)
+        {
+          // Create it
+          ret = DEFAULT_INSTANCE = new AS4CryptoFactoryPropertiesFile ((String) null);
+        }
       }
-      catch (final InitializationException ex)
+      finally
       {
-        // ret stays null
-        LOGGER.warn ("Failed to init default crypto factory: " + ex.getMessage ());
+        s_aRWLock.writeLock ().unlock ();
       }
     }
     return ret;
@@ -217,8 +222,7 @@ public class AS4CryptoFactoryPropertiesFile implements IAS4CryptoFactory
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
-                                                                          : sKeyPassword.toCharArray ())
+                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword.toCharArray ())
                                     .getKeyEntry ();
       }
     }

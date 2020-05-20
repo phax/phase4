@@ -283,7 +283,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v0.9.16 - work in progress
     * Becoming more specific in thrown exceptions. Avoiding all "throws Exception"
-    * Fixed a concurrency error in `IPModeManager` implementations when calling "createOrUpdatePMode"
+    * Fixed a potential concurrency error in `IPModeManager` implementations when calling "createOrUpdatePMode"
+    * Fixed a potential concurrency error in `AS4CryptoFactoryPropertiesFile.getDefaultInstance()`
 * v0.9.15 - 2020-05-19
     * Increased customizability of `AS4XServletHandler`
     * Added a new submodule `phase4-cef-client` for easy sending using the CEF profile
