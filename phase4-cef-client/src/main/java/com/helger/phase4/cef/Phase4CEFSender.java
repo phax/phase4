@@ -43,7 +43,6 @@ import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.response.ResponseHandlerHttpEntity;
-import com.helger.peppol.utils.PeppolCertificateHelper;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -203,9 +202,10 @@ public final class Phase4CEFSender
    *        The Document type ID to be used. May not be <code>null</code>
    * @param aProcessID
    *        The Process ID to be used. May not be <code>null</code>.
-   * @param sSenderPartyID
-   *        The sending party ID (the CN part of the senders certificate
-   *        subject). May not be <code>null</code>.
+   * @param aFromPartyID
+   *        The from party ID. May not be <code>null</code>.
+   * @param aToPartyID
+   *        The to party ID. May not be <code>null</code>.
    * @param sMessageID
    *        The AS4 message ID to be used. If none is provided, a random UUID is
    *        used. May be <code>null</code>.
@@ -254,7 +254,8 @@ public final class Phase4CEFSender
                                        @Nonnull final IParticipantIdentifier aReceiverID,
                                        @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                        @Nonnull final IProcessIdentifier aProcessID,
-                                       @Nonnull @Nonempty final String sSenderPartyID,
+                                       @Nonnull final IParticipantIdentifier aFromPartyID,
+                                       @Nonnull final IParticipantIdentifier aToPartyID,
                                        @Nullable final String sMessageID,
                                        @Nullable final String sConversationID,
                                        @Nonnull final X509Certificate aReceiverCert,
@@ -276,7 +277,8 @@ public final class Phase4CEFSender
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
     ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
     ValueEnforcer.notNull (aProcessID, "ProcID");
-    ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
+    ValueEnforcer.notNull (aFromPartyID, "FromPartyID");
+    ValueEnforcer.notNull (aToPartyID, "ToPartyID");
     ValueEnforcer.notNull (aReceiverCert, "ReceiverCert");
     ValueEnforcer.notEmpty (sReceiverEndpointURL, "ReceiverEndpointURL");
     ValueEnforcer.notNull (aPayloadBytes, "PayloadSBDBytes");
@@ -314,10 +316,10 @@ public final class Phase4CEFSender
       aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
 
       // Backend or gateway?
-      aUserMsg.setFromPartyIDType (null);
-      aUserMsg.setFromPartyID (sSenderPartyID);
-      aUserMsg.setToPartyIDType (null);
-      aUserMsg.setToPartyID (PeppolCertificateHelper.getSubjectCN (aReceiverCert));
+      aUserMsg.setFromPartyIDType (aFromPartyID.getScheme ());
+      aUserMsg.setFromPartyID (aFromPartyID.getValue ());
+      aUserMsg.setToPartyIDType (aToPartyID.getScheme ());
+      aUserMsg.setToPartyID (aToPartyID.getValue ());
 
       aUserMsg.ebms3Properties ()
               .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getScheme (), aSenderID.getValue ()));
@@ -390,7 +392,8 @@ public final class Phase4CEFSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
-    protected String m_sSenderPartyID;
+    protected IParticipantIdentifier m_aFromPartyID;
+    protected IParticipantIdentifier m_aToPartyID;
     protected String m_sMessageID;
     protected String m_sConversationID;
 
@@ -528,7 +531,8 @@ public final class Phase4CEFSender
 
     /**
      * Set the sender participant ID of the message. The participant ID must be
-     * provided prior to sending.
+     * provided prior to sending. This ends up in the "originalSender"
+     * UserMessage property.
      *
      * @param aSenderID
      *        The sender participant ID. May not be <code>null</code>.
@@ -544,7 +548,8 @@ public final class Phase4CEFSender
 
     /**
      * Set the receiver participant ID of the message. The participant ID must
-     * be provided prior to sending.
+     * be provided prior to sending. This ends up in the "finalRecipient"
+     * UserMessage property.
      *
      * @param aReceiverID
      *        The receiver participant ID. May not be <code>null</code>.
@@ -591,19 +596,32 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the "sender party ID" which is the CN part of the AP certificate. An
-     * example value is e.g. "POP000123" but it MUST match the certificate you
-     * are using. This must be provided prior to sending.
+     * Set the "from party ID". This is mandatory
      *
-     * @param sSenderPartyID
-     *        The sender party ID. May neither be <code>null</code> nor empty.
+     * @param aFromPartyID
+     *        The from party ID. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setSenderPartyID (@Nonnull @Nonempty final String sSenderPartyID)
+    public final IMPLTYPE setFromPartyID (@Nonnull @Nonempty final IParticipantIdentifier aFromPartyID)
     {
-      ValueEnforcer.notEmpty (sSenderPartyID, "SenderPartyID");
-      m_sSenderPartyID = sSenderPartyID;
+      ValueEnforcer.notNull (aFromPartyID, "FromPartyID");
+      m_aFromPartyID = aFromPartyID;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the "to party ID". This is mandatory
+     *
+     * @param aToPartyID
+     *        The to party ID. May not be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setToPartyID (@Nonnull @Nonempty final IParticipantIdentifier aToPartyID)
+    {
+      ValueEnforcer.notNull (aToPartyID, "ToPartyID");
+      m_aToPartyID = aToPartyID;
       return thisAsT ();
     }
 
@@ -822,7 +840,9 @@ public final class Phase4CEFSender
         return false;
       if (m_aProcessID == null)
         return false;
-      if (StringHelper.hasNoText (m_sSenderPartyID))
+      if (m_aFromPartyID == null)
+        return false;
+      if (m_aToPartyID == null)
         return false;
       // m_sMessageID is optional
       // m_sConversationID is optional
@@ -977,7 +997,8 @@ public final class Phase4CEFSender
                        m_aReceiverID,
                        m_aDocTypeID,
                        m_aProcessID,
-                       m_sSenderPartyID,
+                       m_aFromPartyID,
+                       m_aToPartyID,
                        m_sMessageID,
                        m_sConversationID,
                        aReceiverCert,

@@ -26,6 +26,7 @@ import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.peppolid.simple.participant.SimpleParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
@@ -90,7 +91,8 @@ public final class MainPhase4CEFSenderToop
                          .setSenderParticipantID (Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
                                                                                                   "9914:phase4-test-sender"))
                          .setReceiverParticipantID (aReceiverID)
-                         .setSenderPartyID ("POP000306")
+                         .setFromPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
+                         .setToPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
                          .setPayload (aPayloadBytes)
                          .setSMPClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
                          .setRawResponseConsumer (new ResponseConsumerWriteToFile ())
