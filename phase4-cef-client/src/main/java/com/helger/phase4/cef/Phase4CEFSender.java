@@ -18,7 +18,6 @@ package com.helger.phase4.cef;
 
 import java.security.cert.X509Certificate;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -810,7 +809,8 @@ public final class Phase4CEFSender
         }
         if (StringHelper.hasText (m_sMessageID))
           aUserMsg.setMessageID (m_sMessageID);
-        aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID : UUID.randomUUID ().toString ());
+        aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID
+                                                                             : MessageHelperMethods.createRandomConversationID ());
 
         // Backend or gateway?
         aUserMsg.setFromPartyIDType (m_aFromPartyID.getScheme ());

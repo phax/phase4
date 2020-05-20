@@ -368,7 +368,8 @@ public final class Phase4PeppolSender
       aUserMsg.setAction (aDocTypeID.getURIEncoded ());
       if (StringHelper.hasText (sMessageID))
         aUserMsg.setMessageID (sMessageID);
-      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
+      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID
+                                                                         : MessageHelperMethods.createRandomConversationID ());
 
       // Backend or gateway?
       aUserMsg.setFromPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
