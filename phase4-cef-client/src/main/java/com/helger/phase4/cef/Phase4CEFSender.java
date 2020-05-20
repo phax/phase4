@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
@@ -242,125 +244,106 @@ public final class Phase4CEFSender
    * @param aSignalMsgConsumer
    *        An optional consumer that will contain the parsed Ebms3 response
    *        signal message. May be <code>null</code>.
-   * @throws Phase4CEFException
+   * @throws Exception
    *         if something goes wrong
    */
-  private static void _sendAS4Message (@Nonnull final HttpClientFactory aHttpClientFactory,
+  private static void _sendAS4Message (@Nonnull final AS4ResourceHelper aResHelper,
+                                       @Nonnull final HttpClientFactory aHttpClientFactory,
                                        @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                        @Nonnull final IPModeResolver aPModeResolver,
                                        @Nonnull final IIncomingAttachmentFactory aIAF,
                                        @Nonnull final IPMode aSrcPMode,
                                        @Nonnull final IParticipantIdentifier aSenderID,
                                        @Nonnull final IParticipantIdentifier aReceiverID,
-                                       @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                       @Nonnull final IProcessIdentifier aProcessID,
+                                       @Nullable final String sServiceType,
+                                       @Nonnull final String sServiceValue,
+                                       @Nonnull final String sAction,
                                        @Nonnull final IParticipantIdentifier aFromPartyID,
                                        @Nonnull final IParticipantIdentifier aToPartyID,
                                        @Nullable final String sMessageID,
                                        @Nullable final String sConversationID,
                                        @Nonnull final X509Certificate aReceiverCert,
                                        @Nonnull @Nonempty final String sReceiverEndpointURL,
-                                       @Nonnull final byte [] aPayloadBytes,
-                                       @Nonnull final IMimeType aPayloadMimeType,
-                                       final boolean bCompressPayload,
+                                       @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aPayloads,
                                        @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
                                        @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable final IAS4IncomingDumper aIncomingDumper,
                                        @Nullable final IAS4RetryCallback aRetryCallback,
                                        @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Phase4CEFException
+                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Exception
   {
     ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
     ValueEnforcer.notNull (aSenderID, "SenderID");
     ValueEnforcer.notNull (aReceiverID, "ReceiverID");
-    ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
-    ValueEnforcer.notNull (aProcessID, "ProcID");
+    ValueEnforcer.notNull (sServiceValue, "ServiceValue");
+    ValueEnforcer.notNull (sAction, "Action");
     ValueEnforcer.notNull (aFromPartyID, "FromPartyID");
     ValueEnforcer.notNull (aToPartyID, "ToPartyID");
     ValueEnforcer.notNull (aReceiverCert, "ReceiverCert");
     ValueEnforcer.notEmpty (sReceiverEndpointURL, "ReceiverEndpointURL");
-    ValueEnforcer.notNull (aPayloadBytes, "PayloadSBDBytes");
-    ValueEnforcer.notNull (aPayloadMimeType, "PayloadMimeType");
+    ValueEnforcer.notEmptyNoNullValue (aPayloads, "Payloads");
 
-    // Temporary file manager
-    try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
-    {
-      // Start building AS4 User Message
-      final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-      aUserMsg.setHttpClientFactory (aHttpClientFactory);
+    // Start building AS4 User Message
+    final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
+    aUserMsg.setHttpClientFactory (aHttpClientFactory);
 
-      // Otherwise Oxalis dies
-      aUserMsg.setQuoteHttpHeaders (false);
-      aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
-      // Set the keystore/truststore parameters
-      aUserMsg.setAS4CryptoFactory (aCryptoFactory);
-      aUserMsg.setPMode (aSrcPMode, true);
+    // Otherwise Oxalis dies
+    aUserMsg.setQuoteHttpHeaders (false);
+    aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
+    // Set the keystore/truststore parameters
+    aUserMsg.setAS4CryptoFactory (aCryptoFactory);
+    aUserMsg.setPMode (aSrcPMode, true);
 
-      // Set after PMode
-      aUserMsg.cryptParams ().setCertificate (aReceiverCert);
+    // Set after PMode
+    aUserMsg.cryptParams ().setCertificate (aReceiverCert);
 
-      // Explicit parameters have precedence over PMode
-      aUserMsg.setAgreementRefValue (CEFPMode.DEFAULT_AGREEMENT_ID);
-      // The eb3:AgreementRef element also includes an optional attribute pmode
-      // which can be used to include the PMode.ID. This attribute MUST NOT be
-      // used as Access Points may use just one generic P-Mode for receiving
-      // messages.
-      aUserMsg.setPModeIDFactory (x -> null);
-      aUserMsg.setServiceType (aProcessID.getScheme ());
-      aUserMsg.setServiceValue (aProcessID.getValue ());
-      aUserMsg.setAction (aDocTypeID.getURIEncoded ());
-      if (StringHelper.hasText (sMessageID))
-        aUserMsg.setMessageID (sMessageID);
-      aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
+    // Explicit parameters have precedence over PMode
+    aUserMsg.setAgreementRefValue (CEFPMode.DEFAULT_AGREEMENT_ID);
+    // The eb3:AgreementRef element also includes an optional attribute pmode
+    // which can be used to include the PMode.ID. This attribute MUST NOT be
+    // used as Access Points may use just one generic P-Mode for receiving
+    // messages.
+    aUserMsg.setPModeIDFactory (x -> null);
+    aUserMsg.setServiceType (sServiceType);
+    aUserMsg.setServiceValue (sServiceValue);
+    aUserMsg.setAction (sAction);
+    if (StringHelper.hasText (sMessageID))
+      aUserMsg.setMessageID (sMessageID);
+    aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
 
-      // Backend or gateway?
-      aUserMsg.setFromPartyIDType (aFromPartyID.getScheme ());
-      aUserMsg.setFromPartyID (aFromPartyID.getValue ());
-      aUserMsg.setToPartyIDType (aToPartyID.getScheme ());
-      aUserMsg.setToPartyID (aToPartyID.getValue ());
+    // Backend or gateway?
+    aUserMsg.setFromPartyIDType (aFromPartyID.getScheme ());
+    aUserMsg.setFromPartyID (aFromPartyID.getValue ());
+    aUserMsg.setToPartyIDType (aToPartyID.getScheme ());
+    aUserMsg.setToPartyID (aToPartyID.getValue ());
 
-      aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getScheme (), aSenderID.getValue ()));
-      aUserMsg.ebms3Properties ()
-              .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aReceiverID.getScheme (), aReceiverID.getValue ()));
+    aUserMsg.ebms3Properties ()
+            .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getScheme (), aSenderID.getValue ()));
+    aUserMsg.ebms3Properties ()
+            .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aReceiverID.getScheme (), aReceiverID.getValue ()));
 
-      // No payload - only one attachment
-      aUserMsg.setPayload (null);
+    // No payload - only one attachment
+    aUserMsg.setPayload (null);
 
-      // Add SBDH as attachment only
-      aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aPayloadBytes,
-                                                                            null,
-                                                                            "document.xml",
-                                                                            aPayloadMimeType,
-                                                                            bCompressPayload ? EAS4CompressionMode.GZIP : null,
-                                                                            aResHelper));
+    // Add main attachment
+    for (final WSS4JAttachment aAttachment : aPayloads)
+      aUserMsg.addAttachment (aAttachment);
 
-      // Main sending
-      _sendHttp (aCryptoFactory,
-                 aPModeResolver,
-                 aIAF,
-                 aUserMsg,
-                 Locale.US,
-                 sReceiverEndpointURL,
-                 aBuildMessageCallback,
-                 aOutgoingDumper,
-                 aIncomingDumper,
-                 aRetryCallback,
-                 aResponseConsumer,
-                 aSignalMsgConsumer);
-    }
-    catch (final Phase4CEFException ex)
-    {
-      // Re-throw
-      throw ex;
-    }
-    catch (final Exception ex)
-    {
-      // wrap
-      throw new Phase4CEFException ("Wrapped Phase4CEFException", ex);
-    }
+    // Main sending
+    _sendHttp (aCryptoFactory,
+               aPModeResolver,
+               aIAF,
+               aUserMsg,
+               Locale.US,
+               sReceiverEndpointURL,
+               aBuildMessageCallback,
+               aOutgoingDumper,
+               aIncomingDumper,
+               aRetryCallback,
+               aResponseConsumer,
+               aSignalMsgConsumer);
   }
 
   /**
@@ -988,30 +971,52 @@ public final class Phase4CEFSender
       if (m_aAPEndointURLConsumer != null)
         m_aAPEndointURLConsumer.accept (sDestURL);
 
-      _sendAS4Message (m_aHttpClientFactory,
-                       m_aCryptoFactory,
-                       m_aPModeResolver,
-                       m_aIAF,
-                       m_aPMode,
-                       m_aSenderID,
-                       m_aReceiverID,
-                       m_aDocTypeID,
-                       m_aProcessID,
-                       m_aFromPartyID,
-                       m_aToPartyID,
-                       m_sMessageID,
-                       m_sConversationID,
-                       aReceiverCert,
-                       sDestURL,
-                       m_aPayloadBytes,
-                       m_aPayloadMimeType,
-                       m_bCompressPayload,
-                       m_aBuildMessageCallback,
-                       m_aOutgoingDumper,
-                       m_aIncomingDumper,
-                       m_aRetryCallback,
-                       m_aResponseConsumer,
-                       m_aSignalMsgConsumer);
+      // Temporary file manager
+      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
+      {
+        final ICommonsList <WSS4JAttachment> aPayloads = new CommonsArrayList <> ();
+        aPayloads.add (WSS4JAttachment.createOutgoingFileAttachment (m_aPayloadBytes,
+                                                                     null,
+                                                                     "document.xml",
+                                                                     m_aPayloadMimeType,
+                                                                     m_bCompressPayload ? EAS4CompressionMode.GZIP : null,
+                                                                     aResHelper));
+
+        _sendAS4Message (aResHelper,
+                         m_aHttpClientFactory,
+                         m_aCryptoFactory,
+                         m_aPModeResolver,
+                         m_aIAF,
+                         m_aPMode,
+                         m_aSenderID,
+                         m_aReceiverID,
+                         m_aProcessID.getScheme (),
+                         m_aProcessID.getValue (),
+                         m_aDocTypeID.getURIEncoded (),
+                         m_aFromPartyID,
+                         m_aToPartyID,
+                         m_sMessageID,
+                         m_sConversationID,
+                         aReceiverCert,
+                         sDestURL,
+                         aPayloads,
+                         m_aBuildMessageCallback,
+                         m_aOutgoingDumper,
+                         m_aIncomingDumper,
+                         m_aRetryCallback,
+                         m_aResponseConsumer,
+                         m_aSignalMsgConsumer);
+      }
+      catch (final Phase4CEFException ex)
+      {
+        // Re-throw
+        throw ex;
+      }
+      catch (final Exception ex)
+      {
+        // wrap
+        throw new Phase4CEFException ("Wrapped Phase4CEFException", ex);
+      }
       return ESuccess.SUCCESS;
     }
   }
