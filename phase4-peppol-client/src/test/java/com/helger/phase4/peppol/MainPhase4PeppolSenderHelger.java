@@ -48,17 +48,8 @@ public final class MainPhase4PeppolSenderHelger
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderHelger.class);
 
-  public static void main (final String [] args)
+  public static void send ()
   {
-    // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
-
-    WebScopeManager.onGlobalBegin (MockServletContext.create ());
-
-    // Dump (for debugging purpose only)
-    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
-
     try (final WebScoped w = new WebScoped ())
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
@@ -104,6 +95,23 @@ public final class MainPhase4PeppolSenderHelger
     catch (final Exception ex)
     {
       LOGGER.error ("Error sending Peppol message via AS4", ex);
+    }
+  }
+
+  public static void main (final String [] args)
+  {
+    // Enable in-memory managers
+    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+
+    WebScopeManager.onGlobalBegin (MockServletContext.create ());
+
+    // Dump (for debugging purpose only)
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
+
+    try
+    {
+      send ();
     }
     finally
     {
