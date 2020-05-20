@@ -26,10 +26,6 @@ import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +38,7 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
-import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -53,7 +47,6 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
@@ -63,17 +56,11 @@ import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.messaging.EAS4IncomingMessageMode;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
-import com.helger.phase4.profile.cef.CEFPMode;
-import com.helger.phase4.servlet.AS4IncomingHandler;
-import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.AS4BidirectionalClientHelper;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
@@ -98,253 +85,6 @@ public final class Phase4CEFSender
 
   private Phase4CEFSender ()
   {}
-
-  private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                 @Nonnull final IPModeResolver aPModeResolver,
-                                 @Nonnull final IIncomingAttachmentFactory aIAF,
-                                 @Nonnull final AS4ClientUserMessage aClientUserMsg,
-                                 @Nonnull final Locale aLocale,
-                                 @Nonnull final String sURL,
-                                 @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                 @Nullable final IAS4RetryCallback aRetryCallback,
-                                 @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                 @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Exception
-  {
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
-
-    if (LOGGER.isDebugEnabled ())
-    {
-      LOGGER.debug ("  ServiceType = '" + aClientUserMsg.getServiceType () + "'");
-      LOGGER.debug ("  Service = '" + aClientUserMsg.getServiceValue () + "'");
-      LOGGER.debug ("  Action = '" + aClientUserMsg.getAction () + "'");
-      LOGGER.debug ("  ConversationId = '" + aClientUserMsg.getConversationID () + "'");
-      LOGGER.debug ("  MessageProperties:");
-      for (final Ebms3Property p : aClientUserMsg.ebms3Properties ())
-        LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
-      LOGGER.debug ("  Attachments (" + aClientUserMsg.attachments ().size () + "):");
-      for (final WSS4JAttachment a : aClientUserMsg.attachments ())
-      {
-        LOGGER.debug ("    [" +
-                      a.getId () +
-                      "] with [" +
-                      a.getMimeType () +
-                      "] and [" +
-                      a.getCharsetOrDefault (null) +
-                      "] and [" +
-                      a.getCompressionMode () +
-                      "] and [" +
-                      a.getContentTransferEncoding () +
-                      "]");
-      }
-    }
-
-    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
-    final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
-      if (aEntity == null)
-        return null;
-      aWrappedResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aEntity);
-    };
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                                                  aResponseHdl,
-                                                                                                  aBuildMessageCallback,
-                                                                                                  aOutgoingDumper,
-                                                                                                  aRetryCallback);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 document with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
-
-    if (aResponseConsumer != null)
-      aResponseConsumer.handleResponse (aResponseEntity);
-
-    // Try interpret result as SignalMessage
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
-    {
-      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.RESPONSE);
-
-      // Read response as EBMS3 Signal Message
-      final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactory,
-                                                                                       aPModeResolver,
-                                                                                       aIAF,
-                                                                                       aClientUserMsg.getAS4ResourceHelper (),
-                                                                                       aClientUserMsg.getPMode (),
-                                                                                       aLocale,
-                                                                                       aMessageMetadata,
-                                                                                       aWrappedResponse.get (),
-                                                                                       aResponseEntity.getResponse (),
-                                                                                       aIncomingDumper);
-      if (aSignalMessage != null && aSignalMsgConsumer != null)
-        aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
-    }
-    else
-      LOGGER.info ("AS4 ResponseEntity is empty");
-  }
-
-  /**
-   * Send an AS4 message. It is highly recommend to use the {@link Builder}
-   * class, because it is very likely, that this API is NOT stable.
-   *
-   * @param aHttpClientFactory
-   *        The HTTP client factory to be used. May not be <code>null</code>.
-   * @param aCryptoFactory
-   *        The crypto factory to be used. May not be <code>null</code>.
-   * @param aPModeResolver
-   *        PMode resolver. May not be <code>null</code>.
-   * @param aSrcPMode
-   *        The source PMode to be used. May not be <code>null</code>.
-   * @param aSenderID
-   *        The Sending participant ID to be used. May not be <code>null</code>.
-   * @param aReceiverID
-   *        The Receiving participant ID to send to. May not be
-   *        <code>null</code>.
-   * @param aDocTypeID
-   *        The Document type ID to be used. May not be <code>null</code>
-   * @param aProcessID
-   *        The Process ID to be used. May not be <code>null</code>.
-   * @param aFromPartyID
-   *        The from party ID. May not be <code>null</code>.
-   * @param aToPartyID
-   *        The to party ID. May not be <code>null</code>.
-   * @param sMessageID
-   *        The AS4 message ID to be used. If none is provided, a random UUID is
-   *        used. May be <code>null</code>.
-   * @param sConversationID
-   *        The AS4 conversation ID to be used. If none is provided, a random
-   *        UUID is used. May be <code>null</code>.
-   * @param aEndpoint
-   *        The determined SMP endpoint. Never <code>null</code>.
-   * @param aCertificateConsumer
-   *        An optional consumer that is invoked with the received AP
-   *        certificate to be used for the transmission. The certification check
-   *        result must be considered when used. May be <code>null</code>.
-   * @param aPayloadBytes
-   *        The payload to be send. May not be <code>null</code>.
-   * @param aPayloadMimeType
-   *        The MIME type of the payload. Usually "application/xml". May not be
-   *        <code>null</code>.
-   * @param bCompressPayload
-   *        <code>true</code> to use AS4 compression on the payload,
-   *        <code>false</code> to not compress it.
-   * @param aBuildMessageCallback
-   *        An internal callback to do something with the build Ebms message.
-   *        May be <code>null</code>.
-   * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper is used.
-   * @param aIncomingDumper
-   *        An incoming dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global incoming dumper is used.
-   * @param aRetryCallback
-   * @param aResponseConsumer
-   *        An optional consumer for the AS4 message that was sent. May be
-   *        <code>null</code>.
-   * @param aSignalMsgConsumer
-   *        An optional consumer that will contain the parsed Ebms3 response
-   *        signal message. May be <code>null</code>.
-   * @throws Exception
-   *         if something goes wrong
-   */
-  private static void _sendAS4Message (@Nonnull final AS4ResourceHelper aResHelper,
-                                       @Nonnull final HttpClientFactory aHttpClientFactory,
-                                       @Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                       @Nonnull final IPModeResolver aPModeResolver,
-                                       @Nonnull final IIncomingAttachmentFactory aIAF,
-                                       @Nonnull final IPMode aSrcPMode,
-                                       @Nonnull final IParticipantIdentifier aSenderID,
-                                       @Nonnull final IParticipantIdentifier aReceiverID,
-                                       @Nullable final String sServiceType,
-                                       @Nonnull final String sServiceValue,
-                                       @Nonnull final String sAction,
-                                       @Nonnull final IParticipantIdentifier aFromPartyID,
-                                       @Nonnull final IParticipantIdentifier aToPartyID,
-                                       @Nullable final String sMessageID,
-                                       @Nullable final String sConversationID,
-                                       @Nonnull final X509Certificate aReceiverCert,
-                                       @Nonnull @Nonempty final String sReceiverEndpointURL,
-                                       @Nonnull @Nonempty final ICommonsList <WSS4JAttachment> aPayloads,
-                                       @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                       @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                       @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                       @Nullable final IAS4RetryCallback aRetryCallback,
-                                       @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                       @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Exception
-  {
-    ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    ValueEnforcer.notNull (aSrcPMode, "SrcPMode");
-    ValueEnforcer.notNull (aSenderID, "SenderID");
-    ValueEnforcer.notNull (aReceiverID, "ReceiverID");
-    ValueEnforcer.notNull (sServiceValue, "ServiceValue");
-    ValueEnforcer.notNull (sAction, "Action");
-    ValueEnforcer.notNull (aFromPartyID, "FromPartyID");
-    ValueEnforcer.notNull (aToPartyID, "ToPartyID");
-    ValueEnforcer.notNull (aReceiverCert, "ReceiverCert");
-    ValueEnforcer.notEmpty (sReceiverEndpointURL, "ReceiverEndpointURL");
-    ValueEnforcer.notEmptyNoNullValue (aPayloads, "Payloads");
-
-    // Start building AS4 User Message
-    final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-    aUserMsg.setHttpClientFactory (aHttpClientFactory);
-
-    // Otherwise Oxalis dies
-    aUserMsg.setQuoteHttpHeaders (false);
-    aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
-    // Set the keystore/truststore parameters
-    aUserMsg.setAS4CryptoFactory (aCryptoFactory);
-    aUserMsg.setPMode (aSrcPMode, true);
-
-    // Set after PMode
-    aUserMsg.cryptParams ().setCertificate (aReceiverCert);
-
-    // Explicit parameters have precedence over PMode
-    aUserMsg.setAgreementRefValue (CEFPMode.DEFAULT_AGREEMENT_ID);
-    // The eb3:AgreementRef element also includes an optional attribute pmode
-    // which can be used to include the PMode.ID. This attribute MUST NOT be
-    // used as Access Points may use just one generic P-Mode for receiving
-    // messages.
-    aUserMsg.setPModeIDFactory (x -> null);
-    aUserMsg.setServiceType (sServiceType);
-    aUserMsg.setServiceValue (sServiceValue);
-    aUserMsg.setAction (sAction);
-    if (StringHelper.hasText (sMessageID))
-      aUserMsg.setMessageID (sMessageID);
-    aUserMsg.setConversationID (StringHelper.hasText (sConversationID) ? sConversationID : UUID.randomUUID ().toString ());
-
-    // Backend or gateway?
-    aUserMsg.setFromPartyIDType (aFromPartyID.getScheme ());
-    aUserMsg.setFromPartyID (aFromPartyID.getValue ());
-    aUserMsg.setToPartyIDType (aToPartyID.getScheme ());
-    aUserMsg.setToPartyID (aToPartyID.getValue ());
-
-    aUserMsg.ebms3Properties ()
-            .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, aSenderID.getScheme (), aSenderID.getValue ()));
-    aUserMsg.ebms3Properties ()
-            .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, aReceiverID.getScheme (), aReceiverID.getValue ()));
-
-    // No payload - only one attachment
-    aUserMsg.setPayload (null);
-
-    // Add main attachment
-    for (final WSS4JAttachment aAttachment : aPayloads)
-      aUserMsg.addAttachment (aAttachment);
-
-    // Main sending
-    _sendHttp (aCryptoFactory,
-               aPModeResolver,
-               aIAF,
-               aUserMsg,
-               Locale.US,
-               sReceiverEndpointURL,
-               aBuildMessageCallback,
-               aOutgoingDumper,
-               aIncomingDumper,
-               aRetryCallback,
-               aResponseConsumer,
-               aSignalMsgConsumer);
-  }
 
   /**
    * @return Create a new Builder for AS4 messages if the payload is present and
@@ -375,6 +115,7 @@ public final class Phase4CEFSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
+    protected String m_sAgreementRef;
     protected IParticipantIdentifier m_aFromPartyID;
     protected IParticipantIdentifier m_aToPartyID;
     protected String m_sMessageID;
@@ -575,6 +316,21 @@ public final class Phase4CEFSender
     {
       ValueEnforcer.notNull (aProcessID, "ProcessID");
       m_aProcessID = aProcessID;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the "AgreementRef" value. It's optional.
+     * 
+     * @param sAgreementRef
+     *        Agreement reference. May be <code>null</code>.
+     * @return this for chaining.
+     */
+    @Nonnull
+    public final IMPLTYPE setAgreementRef (@Nullable final String sAgreementRef)
+    {
+      ValueEnforcer.notNull (sAgreementRef, "AgreementRef");
+      m_sAgreementRef = sAgreementRef;
       return thisAsT ();
     }
 
@@ -967,9 +723,9 @@ public final class Phase4CEFSender
         m_aCertificateConsumer.accept (aReceiverCert);
 
       // URL from e.g. SMP lookup (may throw an exception)
-      final String sDestURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
+      final String sReceiverEndpointURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
       if (m_aAPEndointURLConsumer != null)
-        m_aAPEndointURLConsumer.accept (sDestURL);
+        m_aAPEndointURLConsumer.accept (sReceiverEndpointURL);
 
       // Temporary file manager
       try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
@@ -982,30 +738,68 @@ public final class Phase4CEFSender
                                                                      m_bCompressPayload ? EAS4CompressionMode.GZIP : null,
                                                                      aResHelper));
 
-        _sendAS4Message (aResHelper,
-                         m_aHttpClientFactory,
-                         m_aCryptoFactory,
-                         m_aPModeResolver,
-                         m_aIAF,
-                         m_aPMode,
-                         m_aSenderID,
-                         m_aReceiverID,
-                         m_aProcessID.getScheme (),
-                         m_aProcessID.getValue (),
-                         m_aDocTypeID.getURIEncoded (),
-                         m_aFromPartyID,
-                         m_aToPartyID,
-                         m_sMessageID,
-                         m_sConversationID,
-                         aReceiverCert,
-                         sDestURL,
-                         aPayloads,
-                         m_aBuildMessageCallback,
-                         m_aOutgoingDumper,
-                         m_aIncomingDumper,
-                         m_aRetryCallback,
-                         m_aResponseConsumer,
-                         m_aSignalMsgConsumer);
+        // Start building AS4 User Message
+        final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
+        aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
+
+        // Otherwise Oxalis dies
+        aUserMsg.setQuoteHttpHeaders (false);
+        aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
+        // Set the keystore/truststore parameters
+        aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
+        aUserMsg.setPMode (m_aPMode, true);
+
+        // Set after PMode
+        aUserMsg.cryptParams ().setCertificate (aReceiverCert);
+
+        // Explicit parameters have precedence over PMode
+        aUserMsg.setAgreementRefValue (m_sAgreementRef);
+        // The eb3:AgreementRef element also includes an optional attribute
+        // pmode
+        // which can be used to include the PMode.ID. This attribute MUST NOT be
+        // used as Access Points may use just one generic P-Mode for receiving
+        // messages.
+        aUserMsg.setPModeIDFactory (x -> null);
+        aUserMsg.setServiceType (m_aProcessID.getScheme ());
+        aUserMsg.setServiceValue (m_aProcessID.getValue ());
+        aUserMsg.setAction (m_aDocTypeID.getURIEncoded ());
+        if (StringHelper.hasText (m_sMessageID))
+          aUserMsg.setMessageID (m_sMessageID);
+        aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID : UUID.randomUUID ().toString ());
+
+        // Backend or gateway?
+        aUserMsg.setFromPartyIDType (m_aFromPartyID.getScheme ());
+        aUserMsg.setFromPartyID (m_aFromPartyID.getValue ());
+        aUserMsg.setToPartyIDType (m_aToPartyID.getScheme ());
+        aUserMsg.setToPartyID (m_aToPartyID.getValue ());
+
+        aUserMsg.ebms3Properties ()
+                .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, m_aSenderID.getScheme (), m_aSenderID.getValue ()));
+        aUserMsg.ebms3Properties ()
+                .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
+                                                                m_aReceiverID.getScheme (),
+                                                                m_aReceiverID.getValue ()));
+
+        // No payload - only one attachment
+        aUserMsg.setPayload (null);
+
+        // Add main attachment
+        for (final WSS4JAttachment aAttachment : aPayloads)
+          aUserMsg.addAttachment (aAttachment);
+
+        // Main sending
+        AS4BidirectionalClientHelper.sendAS4AndReceiveAS4 (m_aCryptoFactory,
+                                                           m_aPModeResolver,
+                                                           m_aIAF,
+                                                           aUserMsg,
+                                                           Locale.US,
+                                                           sReceiverEndpointURL,
+                                                           m_aBuildMessageCallback,
+                                                           m_aOutgoingDumper,
+                                                           m_aIncomingDumper,
+                                                           m_aRetryCallback,
+                                                           m_aResponseConsumer,
+                                                           m_aSignalMsgConsumer);
       }
       catch (final Phase4CEFException ex)
       {

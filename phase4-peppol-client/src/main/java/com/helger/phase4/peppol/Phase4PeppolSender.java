@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -26,11 +27,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
+import javax.mail.MessagingException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.util.EntityUtils;
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
@@ -47,9 +46,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
-import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.response.ResponseHandlerHttpEntity;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
@@ -64,7 +61,6 @@ import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
@@ -74,19 +70,15 @@ import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.ebms3header.Ebms3Property;
-import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.messaging.EAS4IncomingMessageMode;
-import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.peppol.PeppolPMode;
-import com.helger.phase4.servlet.AS4IncomingHandler;
-import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.AS4BidirectionalClientHelper;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -111,90 +103,6 @@ public final class Phase4PeppolSender
 
   private Phase4PeppolSender ()
   {}
-
-  private static void _sendHttp (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                 @Nonnull final IPModeResolver aPModeResolver,
-                                 @Nonnull final IIncomingAttachmentFactory aIAF,
-                                 @Nonnull final AS4ClientUserMessage aClientUserMsg,
-                                 @Nonnull final Locale aLocale,
-                                 @Nonnull final String sURL,
-                                 @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                 @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                 @Nullable final IAS4RetryCallback aRetryCallback,
-                                 @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                 @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws Exception
-  {
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 message to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
-
-    if (LOGGER.isDebugEnabled ())
-    {
-      LOGGER.debug ("  ServiceType = '" + aClientUserMsg.getServiceType () + "'");
-      LOGGER.debug ("  Service = '" + aClientUserMsg.getServiceValue () + "'");
-      LOGGER.debug ("  Action = '" + aClientUserMsg.getAction () + "'");
-      LOGGER.debug ("  ConversationId = '" + aClientUserMsg.getConversationID () + "'");
-      LOGGER.debug ("  MessageProperties:");
-      for (final Ebms3Property p : aClientUserMsg.ebms3Properties ())
-        LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
-      LOGGER.debug ("  Attachments (" + aClientUserMsg.attachments ().size () + "):");
-      for (final WSS4JAttachment a : aClientUserMsg.attachments ())
-      {
-        LOGGER.debug ("    [" +
-                      a.getId () +
-                      "] with [" +
-                      a.getMimeType () +
-                      "] and [" +
-                      a.getCharsetOrDefault (null) +
-                      "] and [" +
-                      a.getCompressionMode () +
-                      "] and [" +
-                      a.getContentTransferEncoding () +
-                      "]");
-      }
-    }
-
-    final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
-    final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
-      final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
-      if (aEntity == null)
-        return null;
-      aWrappedResponse.set (aHttpResponse);
-      return EntityUtils.toByteArray (aEntity);
-    };
-    final AS4ClientSentMessage <byte []> aResponseEntity = aClientUserMsg.sendMessageWithRetries (sURL,
-                                                                                                  aResponseHdl,
-                                                                                                  aBuildMessageCallback,
-                                                                                                  aOutgoingDumper,
-                                                                                                  aRetryCallback);
-    if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 document with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
-
-    if (aResponseConsumer != null)
-      aResponseConsumer.handleResponse (aResponseEntity);
-
-    // Try interpret result as SignalMessage
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
-    {
-      final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.RESPONSE);
-
-      // Read response as EBMS3 Signal Message
-      final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactory,
-                                                                                       aPModeResolver,
-                                                                                       aIAF,
-                                                                                       aClientUserMsg.getAS4ResourceHelper (),
-                                                                                       aClientUserMsg.getPMode (),
-                                                                                       aLocale,
-                                                                                       aMessageMetadata,
-                                                                                       aWrappedResponse.get (),
-                                                                                       aResponseEntity.getResponse (),
-                                                                                       aIncomingDumper);
-      if (aSignalMessage != null && aSignalMsgConsumer != null)
-        aSignalMsgConsumer.handleSignalMessage (aSignalMessage);
-    }
-    else
-      LOGGER.info ("AS4 ResponseEntity is empty");
-  }
 
   @Nonnull
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
@@ -485,25 +393,25 @@ public final class Phase4PeppolSender
                                                                             aResHelper));
 
       // Main sending
-      _sendHttp (aCryptoFactory,
-                 aPModeResolver,
-                 aIAF,
-                 aUserMsg,
-                 Locale.US,
-                 sReceiverEndpointURL,
-                 aBuildMessageCallback,
-                 aOutgoingDumper,
-                 aIncomingDumper,
-                 aRetryCallback,
-                 aResponseConsumer,
-                 aSignalMsgConsumer);
+      AS4BidirectionalClientHelper.sendAS4AndReceiveAS4 (aCryptoFactory,
+                                                         aPModeResolver,
+                                                         aIAF,
+                                                         aUserMsg,
+                                                         Locale.US,
+                                                         sReceiverEndpointURL,
+                                                         aBuildMessageCallback,
+                                                         aOutgoingDumper,
+                                                         aIncomingDumper,
+                                                         aRetryCallback,
+                                                         aResponseConsumer,
+                                                         aSignalMsgConsumer);
     }
     catch (final Phase4PeppolException ex)
     {
       // Re-throw
       throw ex;
     }
-    catch (final Exception ex)
+    catch (final IOException | MessagingException | WSSecurityException | Phase4Exception ex)
     {
       // wrap
       throw new Phase4PeppolException ("Wrapped Phase4PeppolException", ex);

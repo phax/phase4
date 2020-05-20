@@ -118,6 +118,24 @@ public class PModeManagerInMemory implements IPModeManager
     return EChange.CHANGED;
   }
 
+  /**
+   * Create or update the provided PMode.
+   *
+   * @param aPMode
+   *        The PMode to be created or updated.
+   */
+  @Nonnull
+  public void createOrUpdatePMode (@Nonnull final PMode aPMode)
+  {
+    final IPMode aExisting = findFirst (IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ()));
+    if (aExisting == null)
+    {
+      createPMode (aPMode);
+    }
+    else
+      updatePMode (aPMode);
+  }
+
   @Nonnull
   public EChange markPModeDeleted (@Nullable final String sPModeID)
   {
