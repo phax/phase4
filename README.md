@@ -281,6 +281,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.9.16 - work in progress
+    * Becoming more specific in thrown exceptions. Avoiding all "throws Exception"
 * v0.9.15 - 2020-05-19
     * Increased customizability of `AS4XServletHandler`
     * Added a new submodule `phase4-cef-client` for easy sending using the CEF profile

@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -141,7 +142,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
   @Override
   public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();
 

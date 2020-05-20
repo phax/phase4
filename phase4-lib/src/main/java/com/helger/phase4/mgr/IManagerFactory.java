@@ -23,21 +23,22 @@ import javax.annotation.Nonnull;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Factory for global managers
- * 
+ *
  * @author Philip Helger
  * @since 0.9.6
  */
 public interface IManagerFactory extends Serializable
 {
   @Nonnull
-  IMPCManager createMPCManager () throws Exception;
+  IMPCManager createMPCManager () throws Phase4Exception;
 
   @Nonnull
-  IPModeManager createPModeManager () throws Exception;
+  IPModeManager createPModeManager () throws Phase4Exception;
 
   @Nonnull
-  IAS4DuplicateManager createDuplicateManager () throws Exception;
+  IAS4DuplicateManager createDuplicateManager () throws Phase4Exception;
 }

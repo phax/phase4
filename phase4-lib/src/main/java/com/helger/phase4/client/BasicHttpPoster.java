@@ -24,7 +24,6 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
-import javax.mail.MessagingException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -179,9 +178,6 @@ public class BasicHttpPoster
    *        The Http response handler that should be used to convert the HTTP
    *        response to a domain object.
    * @return The HTTP response. May be <code>null</code>.
-   * @throws MessagingException
-   *         In case moving HTTP headers from the Mime part to the HTTP message
-   *         fails
    * @throws IOException
    *         In case of IO error
    */
@@ -189,8 +185,7 @@ public class BasicHttpPoster
   public final <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
                                          @Nonnull final HttpEntity aHttpEntity,
                                          @Nullable final HttpHeaderMap aCustomHeaders,
-                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws MessagingException,
-                                                                                                        IOException
+                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -227,8 +222,7 @@ public class BasicHttpPoster
         }
         catch (final Exception ex)
         {
-          ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ())
-             .append (CHttp.EOL);
+          ret.append ("## Exception listing payload: " + ex.getClass ().getName () + " -- " + ex.getMessage ()).append (CHttp.EOL);
           ret.append ("## ").append (StackTraceHelper.getStackAsString (ex));
         }
         return ret.toString ();
@@ -280,28 +274,6 @@ public class BasicHttpPoster
     };
   }
 
-  @Deprecated
-  @Nonnull
-  public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
-                                                    @Nonnull final HttpEntity aHttpEntity,
-                                                    @Nonnull final String sMessageID,
-                                                    @Nonnull final String sURL,
-                                                    final int nMaxRetries,
-                                                    final long nRetryIntervalMS,
-                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper) throws Exception
-  {
-    return sendGenericMessageWithRetries (aHttpHeaders,
-                                          aHttpEntity,
-                                          sMessageID,
-                                          sURL,
-                                          nMaxRetries,
-                                          nRetryIntervalMS,
-                                          aResponseHandler,
-                                          aOutgoingDumper,
-                                          (IAS4RetryCallback) null);
-  }
-
   @Nonnull
   public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
                                                     @Nonnull final HttpEntity aHttpEntity,
@@ -311,10 +283,9 @@ public class BasicHttpPoster
                                                     final long nRetryIntervalMS,
                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws Exception
+                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {
-    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper
-                                                                           : AS4DumpManager.getOutgoingDumper ();
+    final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
     try
     {
@@ -424,11 +395,7 @@ public class BasicHttpPoster
         }
         catch (final Exception ex)
         {
-          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" +
-                        aRealOutgoingDumper +
-                        "; MessageID=" +
-                        sMessageID,
-                        ex);
+          LOGGER.error ("OutgoingDumper.onEndRequest failed. Dumper=" + aRealOutgoingDumper + "; MessageID=" + sMessageID, ex);
         }
     }
   }

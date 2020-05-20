@@ -125,10 +125,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
     }
   }
 
-  @Override
-  protected void onBeforeDestroy (@Nonnull final IScope aScopeToBeDestroyed) throws Exception
-  {}
-
   @Nonnull
   public static MetaAS4Manager getInstance ()
   {

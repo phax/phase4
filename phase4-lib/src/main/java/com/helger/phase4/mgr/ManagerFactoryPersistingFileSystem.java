@@ -25,6 +25,7 @@ import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Implementation of {@link IManagerFactory} creating managers that are
@@ -40,20 +41,41 @@ public class ManagerFactoryPersistingFileSystem implements IManagerFactory
   private static final String INCOMING_DUPLICATE_XML = "as4-duplicate-incoming.xml";
 
   @Nonnull
-  public IMPCManager createMPCManager () throws DAOException
+  public IMPCManager createMPCManager () throws Phase4Exception
   {
-    return new MPCManager (MPC_XML);
+    try
+    {
+      return new MPCManager (MPC_XML);
+    }
+    catch (final DAOException ex)
+    {
+      throw new Phase4Exception ("Error creating MPCManager", ex);
+    }
   }
 
   @Nonnull
-  public IPModeManager createPModeManager () throws DAOException
+  public IPModeManager createPModeManager () throws Phase4Exception
   {
-    return new PModeManager (PMODE_XML);
+    try
+    {
+      return new PModeManager (PMODE_XML);
+    }
+    catch (final DAOException ex)
+    {
+      throw new Phase4Exception ("Error creating PModeManager", ex);
+    }
   }
 
   @Nonnull
-  public IAS4DuplicateManager createDuplicateManager () throws DAOException
+  public IAS4DuplicateManager createDuplicateManager () throws Phase4Exception
   {
-    return new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
+    try
+    {
+      return new AS4DuplicateManager (INCOMING_DUPLICATE_XML);
+    }
+    catch (final DAOException ex)
+    {
+      throw new Phase4Exception ("Error creating AS4DuplicateManager", ex);
+    }
   }
 }

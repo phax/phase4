@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.client;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -83,12 +84,11 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 
   @Override
   public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws IOException
   {
     _checkMandatoryAttributes ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            getRefToMessageID ());
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSoapVersion (), aEbms3MessageInfo, m_aErrorMessages);
 

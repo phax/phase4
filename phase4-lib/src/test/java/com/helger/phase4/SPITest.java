@@ -16,6 +16,8 @@
  */
 package com.helger.phase4;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import com.helger.commons.mock.SPITestHelper;
@@ -28,7 +30,7 @@ import com.helger.commons.mock.SPITestHelper;
 public final class SPITest
 {
   @Test
-  public void testBasic () throws Exception
+  public void testBasic () throws IOException
   {
     SPITestHelper.testIfAllSPIImplementationsAreValid ();
   }

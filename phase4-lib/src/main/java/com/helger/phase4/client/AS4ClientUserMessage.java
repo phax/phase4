@@ -23,7 +23,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.mail.MessagingException;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -98,9 +100,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
-  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
-                                                                            "-" +
-                                                                            x.getToPartyID ();
+  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () + "-" + x.getToPartyID ();
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -600,7 +600,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   @Override
   @Nonnull
   public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException,
+                                                                                                       MessagingException
   {
     final String sAgreementRefPMode = m_aPModeIDFactory.apply (this);
 
@@ -611,10 +612,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final boolean bEncrypt = cryptParams ().isCryptEnabled (LOGGER::warn);
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            getRefToMessageID ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
-                                                                                            m_aAttachments);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,

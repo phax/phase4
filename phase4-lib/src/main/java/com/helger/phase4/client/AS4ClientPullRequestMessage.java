@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 
+import org.apache.wss4j.common.ext.WSSecurityException;
 import org.w3c.dom.Document;
 
 import com.helger.commons.annotation.Nonempty;
@@ -69,12 +70,11 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
 
   @Override
   public AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty final String sMessageID,
-                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws Exception
+                                             @Nullable final IAS4ClientBuildMessageCallback aCallback) throws WSSecurityException
   {
     _checkMandatoryAttributes ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            getRefToMessageID ());
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
 
     final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSoapVersion (),
                                                                              aEbms3MessageInfo,

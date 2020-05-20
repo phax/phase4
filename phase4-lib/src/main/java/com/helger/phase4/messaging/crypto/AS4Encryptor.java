@@ -55,8 +55,7 @@ public final class AS4Encryptor
   {}
 
   @Nonnull
-  private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader,
-                                              @Nonnull final AS4CryptParams aCryptParams)
+  private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader, @Nonnull final AS4CryptParams aCryptParams)
   {
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     // As the receiver MAY not have pre-configured the signing leaf certificate,

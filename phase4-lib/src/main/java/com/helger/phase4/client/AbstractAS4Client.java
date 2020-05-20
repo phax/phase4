@@ -16,13 +16,17 @@
  */
 package com.helger.phase4.client;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.mail.MessagingException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
+import org.apache.wss4j.common.ext.WSSecurityException;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -340,12 +344,18 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aCallback
    *        Optional callback for in-between states. May be <code>null</code>.
    * @return The HTTP entity to be sent. Never <code>null</code>.
-   * @throws Exception
-   *         in case something goes wrong
+   * @throws IOException
+   *         in case of an IO error
+   * @throws WSSecurityException
+   *         In case there is an issue with signing/encryption
+   * @throws MessagingException
+   *         in case something happens in MIME wrapping
    */
   @Nonnull
   public abstract AS4ClientBuiltMessage buildMessage (@Nonnull @Nonempty String sMessageID,
-                                                      @Nullable IAS4ClientBuildMessageCallback aCallback) throws Exception;
+                                                      @Nullable IAS4ClientBuildMessageCallback aCallback) throws IOException,
+                                                                                                          WSSecurityException,
+                                                                                                          MessagingException;
 
   /**
    * Send the AS4 client message created by
@@ -365,8 +375,12 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        <code>null</code> the global outgoing dumper from
    *        {@link AS4DumpManager} is used.
    * @return The sent message that contains
-   * @throws Exception
+   * @throws IOException
    *         in case of error when building or sending the message
+   * @throws WSSecurityException
+   *         In case there is an issue with signing/encryption
+   * @throws MessagingException
+   *         in case something happens in MIME wrapping
    * @since 0.9.14
    */
   @Nonnull
@@ -374,7 +388,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                                     @Nullable final IAS4ClientBuildMessageCallback aCallback,
                                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws Exception
+                                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException,
+                                                                                                                      WSSecurityException,
+                                                                                                                      MessagingException
   {
     // Create a new message ID for each build!
     final String sMessageID = createMessageID ();
@@ -401,7 +417,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   @Nullable
-  public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws Exception
+  public IMicroDocument sendMessageAndGetMicroDocument (@Nonnull final String sURL) throws WSSecurityException,
+                                                                                    IOException,
+                                                                                    MessagingException
   {
     final IAS4ClientBuildMessageCallback aCallback = null;
     final IAS4OutgoingDumper aOutgoingDumper = null;
