@@ -117,7 +117,9 @@ public final class Phase4CEFSender
     protected String m_sAction;
     protected String m_sAgreementRef;
     protected IParticipantIdentifier m_aFromPartyID;
+    protected String m_sFromRole;
     protected IParticipantIdentifier m_aToPartyID;
+    protected String m_sToRole;
     protected String m_sMessageID;
     protected String m_sConversationID;
 
@@ -377,6 +379,20 @@ public final class Phase4CEFSender
     }
 
     /**
+     * Set the "from party role". This is optional
+     *
+     * @param sFromRole
+     *        The from role. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setFromRole (@Nullable final String sFromRole)
+    {
+      m_sFromRole = sFromRole;
+      return thisAsT ();
+    }
+
+    /**
      * Set the "to party ID". This is mandatory
      *
      * @param aToPartyID
@@ -388,6 +404,20 @@ public final class Phase4CEFSender
     {
       ValueEnforcer.notNull (aToPartyID, "ToPartyID");
       m_aToPartyID = aToPartyID;
+      return thisAsT ();
+    }
+
+    /**
+     * Set the "to party role". This is optional
+     *
+     * @param sToRole
+     *        The to role. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE setToRole (@Nullable final String sToRole)
+    {
+      m_sToRole = sToRole;
       return thisAsT ();
     }
 
@@ -579,8 +609,10 @@ public final class Phase4CEFSender
 
       if (m_aFromPartyID == null)
         return false;
+      // m_sFromRole may be null
       if (m_aToPartyID == null)
         return false;
+      // m_sToRole may be null
       // m_sMessageID is optional
       // m_sConversationID is optional
       if (m_aEndpointDetailProvider == null)
@@ -812,11 +844,12 @@ public final class Phase4CEFSender
         aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID
                                                                              : MessageHelperMethods.createRandomConversationID ());
 
-        // Backend or gateway?
         aUserMsg.setFromPartyIDType (m_aFromPartyID.getScheme ());
         aUserMsg.setFromPartyID (m_aFromPartyID.getValue ());
+        aUserMsg.setFromRole (m_sFromRole);
         aUserMsg.setToPartyIDType (m_aToPartyID.getScheme ());
         aUserMsg.setToPartyID (m_aToPartyID.getValue ());
+        aUserMsg.setToRole (m_sToRole);
 
         aUserMsg.ebms3Properties ()
                 .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, m_aSenderID.getScheme (), m_aSenderID.getValue ()));
