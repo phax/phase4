@@ -24,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ELockType;
+import com.helger.commons.annotation.MustBeLocked;
+import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.dao.DAOException;
 import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
@@ -45,11 +48,8 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     super (PMode.class, sFilename);
   }
 
-  public void createPMode (@Nonnull final PMode aPMode)
+  private void _validatePMode (@Nonnull final IPMode aPMode)
   {
-    ValueEnforcer.notNull (aPMode, "PMode");
-
-    // If not valid throws IllegalStateException
     try
     {
       validatePMode (aPMode);
@@ -58,27 +58,39 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     {
       throw new IllegalArgumentException ("PMode is invalid", ex);
     }
+  }
 
-    m_aRWLock.writeLocked ( () -> {
-      internalCreateItem (aPMode);
-    });
+  @MustBeLocked (ELockType.WRITE)
+  private void _createPModeLocked (@Nonnull final PMode aPMode)
+  {
+    internalCreateItem (aPMode);
     AuditHelper.onAuditCreateSuccess (PMode.OT, aPMode.getID ());
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
   }
 
+  public void createPMode (@Nonnull final PMode aPMode)
+  {
+    ValueEnforcer.notNull (aPMode, "PMode");
+    _validatePMode (aPMode);
+
+    m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
+  }
+
   @Nonnull
   public EChange updatePMode (@Nonnull final IPMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
-    final PMode aRealPMode = getOfID (aPMode.getID ());
-    if (aRealPMode == null)
+    _validatePMode (aPMode);
+
+    final PMode aExistingPMode = getOfID (aPMode.getID ());
+    if (aExistingPMode == null)
     {
       AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "no-such-id");
       return EChange.UNCHANGED;
     }
-    if (aRealPMode.isDeleted ())
+    if (aExistingPMode.isDeleted ())
     {
       AuditHelper.onAuditModifyFailure (PMode.OT, aPMode.getID (), "already-deleted");
       return EChange.UNCHANGED;
@@ -88,31 +100,64 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     try
     {
       EChange eChange = EChange.UNCHANGED;
-      eChange = eChange.or (aRealPMode.setInitiator (aPMode.getInitiator ()));
-      eChange = eChange.or (aRealPMode.setResponder (aPMode.getResponder ()));
-      eChange = eChange.or (aRealPMode.setAgreement (aPMode.getAgreement ()));
-      eChange = eChange.or (aRealPMode.setMEP (aPMode.getMEP ()));
-      eChange = eChange.or (aRealPMode.setMEPBinding (aPMode.getMEPBinding ()));
-      eChange = eChange.or (aRealPMode.setLeg1 (aPMode.getLeg1 ()));
-      eChange = eChange.or (aRealPMode.setLeg2 (aPMode.getLeg2 ()));
-      eChange = eChange.or (aRealPMode.setPayloadService (aPMode.getPayloadService ()));
-      eChange = eChange.or (aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ()));
+      eChange = eChange.or (aExistingPMode.setInitiator (aPMode.getInitiator ()));
+      eChange = eChange.or (aExistingPMode.setResponder (aPMode.getResponder ()));
+      eChange = eChange.or (aExistingPMode.setAgreement (aPMode.getAgreement ()));
+      eChange = eChange.or (aExistingPMode.setMEP (aPMode.getMEP ()));
+      eChange = eChange.or (aExistingPMode.setMEPBinding (aPMode.getMEPBinding ()));
+      eChange = eChange.or (aExistingPMode.setLeg1 (aPMode.getLeg1 ()));
+      eChange = eChange.or (aExistingPMode.setLeg2 (aPMode.getLeg2 ()));
+      eChange = eChange.or (aExistingPMode.setPayloadService (aPMode.getPayloadService ()));
+      eChange = eChange.or (aExistingPMode.setReceptionAwareness (aPMode.getReceptionAwareness ()));
       if (eChange.isUnchanged ())
         return EChange.UNCHANGED;
 
-      BusinessObjectHelper.setLastModificationNow (aRealPMode);
-      internalUpdateItem (aRealPMode);
+      BusinessObjectHelper.setLastModificationNow (aExistingPMode);
+      internalUpdateItem (aExistingPMode);
     }
     finally
     {
       m_aRWLock.writeLock ().unlock ();
     }
-    AuditHelper.onAuditModifySuccess (PMode.OT, "all", aRealPMode.getID ());
+    AuditHelper.onAuditModifySuccess (PMode.OT, "all", aExistingPMode.getID ());
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Updated PMode with ID '" + aPMode.getID () + "'");
 
     return EChange.CHANGED;
+  }
+
+  @Nonnull
+  public void createOrUpdatePMode (@Nonnull final PMode aPMode)
+  {
+    ValueEnforcer.notNull (aPMode, "PMode");
+    _validatePMode (aPMode);
+
+    // Try in read-lock
+    final IPredicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
+    IPMode aExisting = findFirst (aFilter);
+    if (aExisting == null)
+    {
+      m_aRWLock.writeLock ().lock ();
+      try
+      {
+        // Try again in write lock
+        aExisting = findFirst (aFilter);
+        if (aExisting == null)
+        {
+          // Create a new one
+          // Ensure "existing" stays null
+          _createPModeLocked (aPMode);
+        }
+      }
+      finally
+      {
+        m_aRWLock.writeLock ().unlock ();
+      }
+    }
+
+    if (aExisting != null)
+      updatePMode (aExisting);
   }
 
   @Nonnull

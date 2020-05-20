@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ELockType;
+import com.helger.commons.annotation.MustBeLocked;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -35,6 +37,7 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
@@ -56,11 +59,8 @@ public class PModeManagerInMemory implements IPModeManager
   public PModeManagerInMemory ()
   {}
 
-  public void createPMode (@Nonnull final PMode aPMode)
+  private void _validatePMode (@Nonnull final IPMode aPMode)
   {
-    ValueEnforcer.notNull (aPMode, "PMode");
-
-    // If not valid throws IllegalStateException
     try
     {
       validatePMode (aPMode);
@@ -69,43 +69,55 @@ public class PModeManagerInMemory implements IPModeManager
     {
       throw new IllegalArgumentException ("PMode is invalid", ex);
     }
+  }
 
-    m_aRWLock.writeLocked ( () -> {
-      final String sID = aPMode.getID ();
-      if (m_aMap.containsKey (sID))
-        throw new IllegalArgumentException ("An object with ID '" + sID + "' is already contained!");
-      m_aMap.put (sID, aPMode);
-    });
+  @MustBeLocked (ELockType.WRITE)
+  private void _createPModeLocked (@Nonnull final PMode aPMode)
+  {
+    final String sID = aPMode.getID ();
+    if (m_aMap.containsKey (sID))
+      throw new IllegalArgumentException ("An object with ID '" + sID + "' is already contained!");
+    m_aMap.put (sID, aPMode);
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Created PMode with ID '" + aPMode.getID () + "'");
   }
 
-  @Nonnull
-  public EChange updatePMode (@Nonnull final IPMode aPMode)
+  public void createPMode (@Nonnull final PMode aPMode)
   {
     ValueEnforcer.notNull (aPMode, "PMode");
-    final PMode aRealPMode = getOfID (aPMode.getID ());
-    if (aRealPMode == null || aRealPMode.isDeleted ())
+    _validatePMode (aPMode);
+
+    m_aRWLock.writeLocked ( () -> _createPModeLocked (aPMode));
+  }
+
+  @Nonnull
+  public EChange updatePMode (@Nonnull final IPMode aNewPMode)
+  {
+    ValueEnforcer.notNull (aNewPMode, "PMode");
+    _validatePMode (aNewPMode);
+
+    final PMode aExistingPMode = getOfID (aNewPMode.getID ());
+    if (aExistingPMode == null || aExistingPMode.isDeleted ())
       return EChange.UNCHANGED;
 
     m_aRWLock.writeLock ().lock ();
     try
     {
       EChange eChange = EChange.UNCHANGED;
-      eChange = eChange.or (aRealPMode.setInitiator (aPMode.getInitiator ()));
-      eChange = eChange.or (aRealPMode.setResponder (aPMode.getResponder ()));
-      eChange = eChange.or (aRealPMode.setAgreement (aPMode.getAgreement ()));
-      eChange = eChange.or (aRealPMode.setMEP (aPMode.getMEP ()));
-      eChange = eChange.or (aRealPMode.setMEPBinding (aPMode.getMEPBinding ()));
-      eChange = eChange.or (aRealPMode.setLeg1 (aPMode.getLeg1 ()));
-      eChange = eChange.or (aRealPMode.setLeg2 (aPMode.getLeg2 ()));
-      eChange = eChange.or (aRealPMode.setPayloadService (aPMode.getPayloadService ()));
-      eChange = eChange.or (aRealPMode.setReceptionAwareness (aPMode.getReceptionAwareness ()));
+      eChange = eChange.or (aExistingPMode.setInitiator (aNewPMode.getInitiator ()));
+      eChange = eChange.or (aExistingPMode.setResponder (aNewPMode.getResponder ()));
+      eChange = eChange.or (aExistingPMode.setAgreement (aNewPMode.getAgreement ()));
+      eChange = eChange.or (aExistingPMode.setMEP (aNewPMode.getMEP ()));
+      eChange = eChange.or (aExistingPMode.setMEPBinding (aNewPMode.getMEPBinding ()));
+      eChange = eChange.or (aExistingPMode.setLeg1 (aNewPMode.getLeg1 ()));
+      eChange = eChange.or (aExistingPMode.setLeg2 (aNewPMode.getLeg2 ()));
+      eChange = eChange.or (aExistingPMode.setPayloadService (aNewPMode.getPayloadService ()));
+      eChange = eChange.or (aExistingPMode.setReceptionAwareness (aNewPMode.getReceptionAwareness ()));
       if (eChange.isUnchanged ())
         return EChange.UNCHANGED;
 
-      BusinessObjectHelper.setLastModificationNow (aRealPMode);
+      BusinessObjectHelper.setLastModificationNow (aExistingPMode);
     }
     finally
     {
@@ -113,27 +125,42 @@ public class PModeManagerInMemory implements IPModeManager
     }
 
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Updated PMode with ID '" + aPMode.getID () + "'");
+      LOGGER.debug ("Updated PMode with ID '" + aNewPMode.getID () + "'");
 
     return EChange.CHANGED;
   }
 
-  /**
-   * Create or update the provided PMode.
-   *
-   * @param aPMode
-   *        The PMode to be created or updated.
-   */
   @Nonnull
   public void createOrUpdatePMode (@Nonnull final PMode aPMode)
   {
-    final IPMode aExisting = findFirst (IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ()));
+    ValueEnforcer.notNull (aPMode, "PMode");
+    _validatePMode (aPMode);
+
+    // Try in read-lock
+    final IPredicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
+    IPMode aExisting = findFirst (aFilter);
     if (aExisting == null)
     {
-      createPMode (aPMode);
+      m_aRWLock.writeLock ().lock ();
+      try
+      {
+        // Try again in write lock
+        aExisting = findFirst (aFilter);
+        if (aExisting == null)
+        {
+          // Create a new one
+          // Ensure "existing" stays null
+          _createPModeLocked (aPMode);
+        }
+      }
+      finally
+      {
+        m_aRWLock.writeLock ().unlock ();
+      }
     }
-    else
-      updatePMode (aPMode);
+
+    if (aExisting != null)
+      updatePMode (aExisting);
   }
 
   @Nonnull

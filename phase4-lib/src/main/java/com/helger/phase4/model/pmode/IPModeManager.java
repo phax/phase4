@@ -64,16 +64,7 @@ public interface IPModeManager
    *        The PMode to be created or updated.
    */
   @Nonnull
-  default void createOrUpdatePMode (@Nonnull final PMode aPMode)
-  {
-    final IPMode aExisting = findFirst (getPModeFilter (aPMode.getID (),
-                                                        aPMode.getInitiatorID (),
-                                                        aPMode.getResponderID ()));
-    if (aExisting == null)
-      createPMode (aPMode);
-    else
-      updatePMode (aPMode);
-  }
+  void createOrUpdatePMode (@Nonnull PMode aPMode);
 
   /**
    * Mark the provided PMode as deleted.
