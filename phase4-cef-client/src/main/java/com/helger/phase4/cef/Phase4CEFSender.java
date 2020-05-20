@@ -847,6 +847,7 @@ public final class Phase4CEFSender
         aUserMsg.setFromPartyIDType (m_aFromPartyID.getScheme ());
         aUserMsg.setFromPartyID (m_aFromPartyID.getValue ());
         aUserMsg.setFromRole (m_sFromRole);
+
         aUserMsg.setToPartyIDType (m_aToPartyID.getScheme ());
         aUserMsg.setToPartyID (m_aToPartyID.getValue ());
         aUserMsg.setToRole (m_sToRole);
