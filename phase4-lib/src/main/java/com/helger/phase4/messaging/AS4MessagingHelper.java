@@ -76,7 +76,7 @@ public final class AS4MessagingHelper
         aArray.add (aCookieObj);
       }
       if (aArray.isNotEmpty ())
-        aMap.add ("Cookies", aArray);
+        aMap.addJson ("Cookies", aArray);
     }
     return aMap;
   }

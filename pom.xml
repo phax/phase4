@@ -69,7 +69,7 @@
   <properties>
     <xmlsec.version>2.1.5</xmlsec.version>
     <wss4j.version>2.2.5</wss4j.version>
-    <log4j.version>2.13.2</log4j.version>
+    <log4j.version>2.13.3</log4j.version>
     <peppol-commons.version>8.0.7</peppol-commons.version>
   </properties>
   
@@ -78,7 +78,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>9.4.2</version>
+        <version>9.4.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
