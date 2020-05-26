@@ -83,9 +83,9 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.xsd</groupId>
         <artifactId>ph-xsds-parent-pom</artifactId>
-        <version>2.2.6</version>
+        <version>2.3.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
