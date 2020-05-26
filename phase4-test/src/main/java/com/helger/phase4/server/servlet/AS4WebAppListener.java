@@ -31,7 +31,7 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
-import com.helger.photon.security.user.UserManager;
+import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTracker;
 
 public final class AS4WebAppListener extends WebAppListener
@@ -91,7 +91,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected void initSecurity ()
   {
     // Ensure user exists
-    final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
+    final IUserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
     if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
       aUserMgr.createPredefinedUser (CSecurity.USER_ADMINISTRATOR_ID,
                                      CSecurity.USER_ADMINISTRATOR_LOGIN,

@@ -58,7 +58,7 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
-import com.helger.photon.security.user.UserManager;
+import com.helger.photon.security.user.IUserManager;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.xservlet.requesttrack.RequestTracker;
 
@@ -127,7 +127,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   protected void initSecurity ()
   {
     // Ensure user exists
-    final UserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
+    final IUserManager aUserMgr = PhotonSecurityManager.getUserMgr ();
     if (!aUserMgr.containsWithID (CSecurity.USER_ADMINISTRATOR_ID))
     {
       aUserMgr.createPredefinedUser (CSecurity.USER_ADMINISTRATOR_ID,
@@ -168,10 +168,9 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID,
-                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                               nTry,
-                                                                                                               ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                                           nTry,
+                                                                                                                           ".as4out")));
   }
 
   private void _initPeppolAS4 ()
@@ -192,8 +191,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                           ETriState.FALSE,
                                                                                                           ETriState.UNDEFINED);
     if (eCheckResult.isInvalid ())
-      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " +
-                                         eCheckResult);
+      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " + eCheckResult);
     LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
 
     final String sSMPURL = AS4ServerConfiguration.getSettings ().getAsString ("smp.url");
