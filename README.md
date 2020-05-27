@@ -230,7 +230,7 @@ If you want to use phase4 with Maven I suggest the following way:
 ...
       <!-- step 1 -->
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-parent-pom</artifactId>
         <version>x.y.z</version>
         <type>pom</type>
@@ -244,11 +244,11 @@ If you want to use phase4 with Maven I suggest the following way:
 ...
     <!-- step 2 -->
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-lib</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-profile-peppol</artifactId>
     </dependency>
 ...
@@ -256,6 +256,8 @@ If you want to use phase4 with Maven I suggest the following way:
 ...
 </project>
 ```
+
+Note: prior to v0.9.17 the Maven groupId was `com.helger`.
 
 # Building from source
 
@@ -281,7 +283,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.9.17 - work in progress
+* v0.9.17 - 2020-05-27
+    * Changed Maven groupId to `com.helger.phase4`
     * Updated to ph-commons 9.4.4
 * v0.9.16 - 2020-05-20
     * Becoming more specific in thrown exceptions. Avoiding all "throws Exception"

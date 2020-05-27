@@ -21,7 +21,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.bdve.peppol.PeppolValidation390;
+import com.helger.bdve.peppol.PeppolValidation3_10_0;
 import com.helger.commons.id.factory.FileIntIDFactory;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.file.SimpleFileIO;
@@ -83,7 +83,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
                             .setSenderPartyID ("POP000306")
                             .setPayload (aPayloadBytes)
                             .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .setValidationConfiguration (PeppolValidation390.VID_OPENPEPPOL_INVOICE_V3,
+                            .setValidationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
                                                          new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
