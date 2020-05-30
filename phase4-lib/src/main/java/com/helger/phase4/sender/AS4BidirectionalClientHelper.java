@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.servlet;
+package com.helger.phase4.sender;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -49,6 +49,8 @@ import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.servlet.AS4IncomingHandler;
+import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
 import com.helger.phase4.util.Phase4Exception;
 
 /**

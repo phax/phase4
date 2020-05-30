@@ -75,7 +75,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.profile.peppol.PeppolPMode;
-import com.helger.phase4.servlet.AS4BidirectionalClientHelper;
+import com.helger.phase4.sender.AS4BidirectionalClientHelper;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.Phase4Exception;
