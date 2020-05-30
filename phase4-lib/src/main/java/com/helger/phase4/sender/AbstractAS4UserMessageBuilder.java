@@ -669,12 +669,16 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_sPModeID may be null
 
     // m_sFromPartyIDType may be null
-    // m_sFromPartyID may be null
-    // m_sFromRole may be null
+    if (StringHelper.hasNoText (m_sFromPartyID))
+      return false;
+    if (StringHelper.hasNoText (m_sFromRole))
+      return false;
 
     // m_sToPartyIDType may be null
-    // m_sToPartyID may be null
-    // m_sToRole may be null
+    if (StringHelper.hasNoText (m_sToPartyID))
+      return false;
+    if (StringHelper.hasNoText (m_sToRole))
+      return false;
 
     // m_sConversationID is optional
 

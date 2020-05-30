@@ -123,13 +123,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   @Nonnull
-  public final IMPLTYPE retryInterval (final TimeValue a)
+  public final IMPLTYPE retryInterval (@Nullable final TimeValue a)
   {
     return retryIntervalMilliseconds (a == null ? null : a.getAsMillis ());
   }
 
   @Nonnull
-  public final IMPLTYPE retryInterval (final Duration a)
+  public final IMPLTYPE retryInterval (@Nullable final Duration a)
   {
     return retryIntervalMilliseconds (a == null ? null : a.toMillis ());
   }
@@ -142,7 +142,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   @Nonnull
-  public final IMPLTYPE locale (final Locale a)
+  public final IMPLTYPE locale (@Nullable final Locale a)
   {
     m_aLocale = a;
     return thisAsT ();

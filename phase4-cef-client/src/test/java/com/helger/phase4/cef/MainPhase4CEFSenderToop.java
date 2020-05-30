@@ -86,19 +86,21 @@ public final class MainPhase4CEFSenderToop
         }
       };
       if (Phase4CEFSender.builder ()
-                         .setDocumentTypeID (Phase4CEFSender.IF.createDocumentTypeIdentifier ("toop-doctypeid-qns",
-                                                                                              "urn:eu:toop:ns:dataexchange-1p40::Response##urn:eu.toop.response.registeredorganization::1.40"))
-                         .setProcessID (Phase4CEFSender.IF.createProcessIdentifier ("toop-procid-agreement",
-                                                                                    "urn:eu.toop.process.datarequestresponse"))
-                         .setSenderParticipantID (Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
-                                                                                                  "9914:phase4-test-sender"))
-                         .setReceiverParticipantID (aReceiverID)
-                         .setFromPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
-                         .setToPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
-                         .setPayload (Phase4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
-                         .setSMPClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
-                         .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                         .setBuildMessageCallback (aBuildMessageCallback)
+                         .documentTypeID (Phase4CEFSender.IF.createDocumentTypeIdentifier ("toop-doctypeid-qns",
+                                                                                           "urn:eu:toop:ns:dataexchange-1p40::Response##urn:eu.toop.response.registeredorganization::1.40"))
+                         .processID (Phase4CEFSender.IF.createProcessIdentifier ("toop-procid-agreement",
+                                                                                 "urn:eu.toop.process.datarequestresponse"))
+                         .senderParticipantID (Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
+                                                                                               "9914:phase4-test-sender"))
+                         .receiverParticipantID (aReceiverID)
+                         .fromPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
+                         .fromRole ("http://www.toop.eu/edelivery/gateway")
+                         .toPartyID (new SimpleParticipantIdentifier ("type", "POP000306"))
+                         .toRole ("http://www.toop.eu/edelivery/gateway")
+                         .payload (Phase4OutgoingAttachment.builder ().data (aPayloadBytes).mimeTypeXML ())
+                         .smpClient (new BDXRClientReadOnly (Phase4CEFSender.URL_PROVIDER, aReceiverID, SML_TOOP))
+                         .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                         .buildMessageCallback (aBuildMessageCallback)
                          .sendMessage ()
                          .isSuccess ())
       {

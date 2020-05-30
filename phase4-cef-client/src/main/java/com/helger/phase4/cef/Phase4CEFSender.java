@@ -28,37 +28,20 @@ import javax.annotation.concurrent.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ESuccess;
-import com.helger.commons.string.StringHelper;
-import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RawResponseConsumer;
-import com.helger.phase4.client.IAS4RetryCallback;
-import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
-import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.dump.IAS4IncomingDumper;
-import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.sender.AS4BidirectionalClientHelper;
-import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
@@ -100,152 +83,26 @@ public final class Phase4CEFSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
-  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> implements IGenericImplTrait <IMPLTYPE>
+  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> extends
+                                                   AbstractAS4UserMessageBuilder <IMPLTYPE>
   {
-    protected HttpClientFactory m_aHttpClientFactory;
-    protected IAS4CryptoFactory m_aCryptoFactory;
-    protected IPModeResolver m_aPModeResolver;
-    protected IIncomingAttachmentFactory m_aIAF;
-    protected IPMode m_aPMode;
-
     protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
-    protected String m_sServiceType;
-    protected String m_sService;
-    protected String m_sAction;
-    protected String m_sAgreementRef;
-    protected IParticipantIdentifier m_aFromPartyID;
-    protected String m_sFromRole;
-    protected IParticipantIdentifier m_aToPartyID;
-    protected String m_sToRole;
-    protected String m_sMessageID;
-    protected String m_sConversationID;
-
     protected IPhase4CEFEndpointDetailProvider m_aEndpointDetailProvider;
 
-    protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
-    protected IAS4OutgoingDumper m_aOutgoingDumper;
-    protected IAS4IncomingDumper m_aIncomingDumper;
-    protected IAS4RetryCallback m_aRetryCallback;
-    protected IAS4RawResponseConsumer m_aResponseConsumer;
-    protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
-
-    /**
-     * Create a new builder, with the following fields already set:<br>
-     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
-     * {@link #setPModeResolver(IPModeResolver)}<br>
-     * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
-     * {@link #setPMode(IPMode)}<br>
-     */
     protected AbstractBaseBuilder ()
     {
-      // Set default values
+      // Override default values
       try
       {
-        setHttpClientFactory (new HttpClientFactory (new Phase4CEFHttpClientSettings ()));
-        setCryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
-        final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
-        setPModeResolver (aPModeResolver);
-        setIncomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
-        setPMode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", null));
+        httpClientFactory (new HttpClientFactory (new Phase4CEFHttpClientSettings ()));
       }
       catch (final Exception ex)
       {
         throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
       }
-    }
-
-    /**
-     * Set the HTTP client factory to be used. By default an instance of
-     * {@link HttpClientFactory} is used and there is no need to invoke this
-     * method.
-     *
-     * @param aHttpClientFactory
-     *        The new HTTP client factory to be used. May not be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
-    {
-      ValueEnforcer.notNull (aHttpClientFactory, "HttpClientFactory");
-      m_aHttpClientFactory = aHttpClientFactory;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the crypto factory to be used. The default crypto factory uses the
-     * properties from the file "crypto.properties".
-     *
-     * @param aCryptoFactory
-     *        The crypto factory to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setCryptoFactory (@Nonnull final IAS4CryptoFactory aCryptoFactory)
-    {
-      ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-      m_aCryptoFactory = aCryptoFactory;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the PMode resolver to be used.
-     *
-     * @param aPModeResolver
-     *        The PMode resolver to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setPModeResolver (@Nonnull final IPModeResolver aPModeResolver)
-    {
-      ValueEnforcer.notNull (aPModeResolver, "aPModeResolver");
-      m_aPModeResolver = aPModeResolver;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the incoming attachment factory to be used.
-     *
-     * @param aIAF
-     *        The incoming attachment factory to be used. May not be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setIncomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
-    {
-      ValueEnforcer.notNull (aIAF, "IAF");
-      m_aIAF = aIAF;
-      return thisAsT ();
-    }
-
-    /**
-     * @return The used P-Mode. Never <code>null</code>.
-     */
-    @Nonnull
-    public final IPMode getPMode ()
-    {
-      return m_aPMode;
-    }
-
-    /**
-     * Set the PMode to be used. By default a generic PMode for CEF purposes is
-     * used so there is no need to invoke this method.
-     *
-     * @param aPMode
-     *        The PMode to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setPMode (@Nonnull final IPMode aPMode)
-    {
-      ValueEnforcer.notNull (aPMode, "PMode");
-      m_aPMode = aPMode;
-      return thisAsT ();
     }
 
     /**
@@ -258,9 +115,8 @@ public final class Phase4CEFSender
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setSenderParticipantID (@Nonnull final IParticipantIdentifier aSenderID)
+    public final IMPLTYPE senderParticipantID (@Nullable final IParticipantIdentifier aSenderID)
     {
-      ValueEnforcer.notNull (aSenderID, "SenderID");
       m_aSenderID = aSenderID;
       return thisAsT ();
     }
@@ -270,15 +126,14 @@ public final class Phase4CEFSender
      * be provided prior to sending. This ends up in the "finalRecipient"
      * UserMessage property.
      *
-     * @param aReceiverID
+     * @param a
      *        The receiver participant ID. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setReceiverParticipantID (@Nonnull final IParticipantIdentifier aReceiverID)
+    public final IMPLTYPE receiverParticipantID (@Nullable final IParticipantIdentifier a)
     {
-      ValueEnforcer.notNull (aReceiverID, "ReceiverID");
-      m_aReceiverID = aReceiverID;
+      m_aReceiverID = a;
       return thisAsT ();
     }
 
@@ -286,170 +141,56 @@ public final class Phase4CEFSender
      * Set the document type ID to be send. The document type must be provided
      * prior to sending.
      *
-     * @param aDocTypeID
+     * @param a
      *        The document type ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setDocumentTypeID (@Nonnull final IDocumentTypeIdentifier aDocTypeID)
+    public final IMPLTYPE documentTypeID (@Nullable final IDocumentTypeIdentifier a)
     {
-      ValueEnforcer.notNull (aDocTypeID, "DocTypeID");
-      m_aDocTypeID = aDocTypeID;
-      return thisAsT ();
+      m_aDocTypeID = a;
+      return action (a == null ? null : a.getURIEncoded ());
     }
 
     /**
      * Set the process ID to be send. The process ID must be provided prior to
      * sending.
      *
-     * @param aProcessID
+     * @param a
      *        The process ID to be used. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setProcessID (@Nonnull final IProcessIdentifier aProcessID)
+    public final IMPLTYPE processID (@Nullable final IProcessIdentifier a)
     {
-      ValueEnforcer.notNull (aProcessID, "ProcessID");
-      m_aProcessID = aProcessID;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "Service" value consisting of type and value. It's optional. If
-     * the "Service" value is not set, it the "service type" defaults to the
-     * "process identifier scheme" and the "service value" defaults to the
-     * "process identifier value".
-     *
-     * @param sServiceType
-     *        Service type. May be <code>null</code>.
-     * @param sServiceValue
-     *        Service value. May be <code>null</code>.
-     * @return this for chaining.
-     */
-    @Nonnull
-    public final IMPLTYPE setService (@Nullable final String sServiceType, @Nullable final String sServiceValue)
-    {
-      m_sServiceType = sServiceType;
-      m_sService = sServiceValue;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "Action" value. It's optional. If the "Action" value is not set,
-     * it defaults to the "document type identifier value" (URI encoded).
-     *
-     * @param sAction
-     *        Action value. May be <code>null</code>.
-     * @return this for chaining.
-     */
-    @Nonnull
-    public final IMPLTYPE setAction (@Nullable final String sAction)
-    {
-      m_sAction = sAction;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "AgreementRef" value. It's optional.
-     *
-     * @param sAgreementRef
-     *        Agreement reference. May be <code>null</code>.
-     * @return this for chaining.
-     */
-    @Nonnull
-    public final IMPLTYPE setAgreementRef (@Nullable final String sAgreementRef)
-    {
-      m_sAgreementRef = sAgreementRef;
-      return thisAsT ();
+      m_aProcessID = a;
+      return service (a == null ? null : a.getScheme (), a == null ? null : a.getValue ());
     }
 
     /**
      * Set the "from party ID". This is mandatory
      *
-     * @param aFromPartyID
-     *        The from party ID. May not be <code>null</code>.
+     * @param a
+     *        The from party ID. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setFromPartyID (@Nonnull @Nonempty final IParticipantIdentifier aFromPartyID)
+    public final IMPLTYPE fromPartyID (@Nullable final IParticipantIdentifier a)
     {
-      ValueEnforcer.notNull (aFromPartyID, "FromPartyID");
-      m_aFromPartyID = aFromPartyID;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "from party role". This is optional
-     *
-     * @param sFromRole
-     *        The from role. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setFromRole (@Nullable final String sFromRole)
-    {
-      m_sFromRole = sFromRole;
-      return thisAsT ();
+      return fromPartyIDType (a == null ? null : a.getScheme ()).fromPartyID (a == null ? null : a.getValue ());
     }
 
     /**
      * Set the "to party ID". This is mandatory
      *
-     * @param aToPartyID
-     *        The to party ID. May not be <code>null</code>.
+     * @param a
+     *        The to party ID. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public final IMPLTYPE setToPartyID (@Nonnull @Nonempty final IParticipantIdentifier aToPartyID)
+    public final IMPLTYPE toPartyID (@Nullable final IParticipantIdentifier a)
     {
-      ValueEnforcer.notNull (aToPartyID, "ToPartyID");
-      m_aToPartyID = aToPartyID;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the "to party role". This is optional
-     *
-     * @param sToRole
-     *        The to role. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setToRole (@Nullable final String sToRole)
-    {
-      m_sToRole = sToRole;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the optional AS4 message ID. If this field is not set, a random
-     * message ID is created.
-     *
-     * @param sMessageID
-     *        The optional AS4 message ID to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setMessageID (@Nullable final String sMessageID)
-    {
-      m_sMessageID = sMessageID;
-      return thisAsT ();
-    }
-
-    /**
-     * Set the optional AS4 conversation ID. If this field is not set, a random
-     * conversation ID is created.
-     *
-     * @param sConversationID
-     *        The optional AS4 conversation ID to be used. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setConversationID (@Nullable final String sConversationID)
-    {
-      m_sConversationID = sConversationID;
-      return thisAsT ();
+      return toPartyIDType (a == null ? null : a.getScheme ()).toPartyID (a == null ? null : a.getValue ());
     }
 
     /**
@@ -458,15 +199,13 @@ public final class Phase4CEFSender
      * endpoint URL.
      *
      * @param aEndpointDetailProvider
-     *        The endpoint detail provider to be used. May not be
-     *        <code>null</code>.
+     *        The endpoint detail provider to be used. May be <code>null</code>.
      * @return this for chaining
-     * @see #setSMPClient(IBDXRServiceMetadataProvider)
+     * @see #smpClient(IBDXRServiceMetadataProvider)
      */
     @Nonnull
-    public final IMPLTYPE setEndpointDetailProvider (@Nonnull final IPhase4CEFEndpointDetailProvider aEndpointDetailProvider)
+    public final IMPLTYPE endpointDetailProvider (@Nullable final IPhase4CEFEndpointDetailProvider aEndpointDetailProvider)
     {
-      ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
       m_aEndpointDetailProvider = aEndpointDetailProvider;
       return thisAsT ();
     }
@@ -479,120 +218,40 @@ public final class Phase4CEFSender
      * @param aSMPClient
      *        The SMP client to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #setEndpointDetailProvider(IPhase4CEFEndpointDetailProvider)
+     * @see #endpointDetailProvider(IPhase4CEFEndpointDetailProvider)
      */
     @Nonnull
-    public final IMPLTYPE setSMPClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
+    public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
     {
-      return setEndpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR (aSMPClient));
+      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR (aSMPClient));
     }
 
     @Nonnull
-    public final IMPLTYPE setReceiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
-      return setEndpointDetailProvider (new Phase4CEFEndpointDetailProviderConstant (aCert, sDestURL));
+      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderConstant (aCert, sDestURL));
     }
 
-    /**
-     * Set a internal message callback. Usually this method is NOT needed. Use
-     * only when you know what you are doing.
-     *
-     * @param aBuildMessageCallback
-     *        An internal to be used for the created message. Maybe
-     *        <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setBuildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
+    protected final boolean isEndpointDetailProviderUsable ()
     {
-      m_aBuildMessageCallback = aBuildMessageCallback;
-      return thisAsT ();
+      // Sender ID doesn't matter here
+      if (m_aReceiverID == null)
+        return false;
+      if (m_aDocTypeID == null)
+        return false;
+      if (m_aProcessID == null)
+        return false;
+      if (m_aEndpointDetailProvider == null)
+        return false;
+
+      return true;
     }
 
-    /**
-     * Set a specific outgoing dumper for this builder.
-     *
-     * @param aOutgoingDumper
-     *        An outgoing dumper to be used. Maybe <code>null</code>. If
-     *        <code>null</code> the global outgoing dumper is used.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setOutgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
-    {
-      m_aOutgoingDumper = aOutgoingDumper;
-      return thisAsT ();
-    }
-
-    /**
-     * Set a specific incoming dumper for this builder.
-     *
-     * @param aIncomingDumper
-     *        An incoming dumper to be used. Maybe <code>null</code>. If
-     *        <code>null</code> the global incoming dumper is used.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setIncomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
-    {
-      m_aIncomingDumper = aIncomingDumper;
-      return thisAsT ();
-    }
-
-    /**
-     * Set an optional handler that is notified if an http sending will be
-     * retried. This method is optional and must not be called prior to sending.
-     *
-     * @param aRetryCallback
-     *        The optional retry callback. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setRetryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
-    {
-      m_aRetryCallback = aRetryCallback;
-      return thisAsT ();
-    }
-
-    /**
-     * Set an optional handler for the synchronous result message received from
-     * the other side. This method is optional and must not be called prior to
-     * sending.
-     *
-     * @param aResponseConsumer
-     *        The optional response consumer. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setRawResponseConsumer (@Nullable final IAS4RawResponseConsumer aResponseConsumer)
-    {
-      m_aResponseConsumer = aResponseConsumer;
-      return thisAsT ();
-    }
-
-    /**
-     * Set an optional Ebms3 Signal Message Consumer. If this consumer is set,
-     * the response is trying to be parsed as a Signal Message. This method is
-     * optional and must not be called prior to sending.
-     *
-     * @param aSignalMsgConsumer
-     *        The optional signal message consumer. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public final IMPLTYPE setSignalMsgConsumer (@Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer)
-    {
-      m_aSignalMsgConsumer = aSignalMsgConsumer;
-      return thisAsT ();
-    }
-
+    @Override
     @OverridingMethodsMustInvokeSuper
     public boolean isEveryRequiredFieldSet ()
     {
-      if (m_aHttpClientFactory == null)
-        return false;
-      // m_aCryptoFactory may be null
-      if (m_aPMode == null)
+      if (!super.isEveryRequiredFieldSet ())
         return false;
 
       if (m_aSenderID == null)
@@ -603,44 +262,11 @@ public final class Phase4CEFSender
         return false;
       if (m_aProcessID == null)
         return false;
-      // m_sServiceType may be null
-      // m_sService may be null
-      // m_sAction may be null
-
-      if (m_aFromPartyID == null)
-        return false;
-      // m_sFromRole may be null
-      if (m_aToPartyID == null)
-        return false;
-      // m_sToRole may be null
-      // m_sMessageID is optional
-      // m_sConversationID is optional
       if (m_aEndpointDetailProvider == null)
         return false;
 
-      // m_aBuildMessageCallback may be null
-      // m_aOutgoingDumper may be null
-      // m_aIncomingDumper may be null
-      // m_aResponseConsumer may be null
-      // m_aSignalMsgConsumer may be null
-
       return true;
     }
-
-    /**
-     * Synchronously send the AS4 message. Before sending,
-     * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
-     * elements are set.
-     *
-     * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set
-     *         or if sending failed, {@link ESuccess#SUCCESS} upon success.
-     *         Never <code>null</code>.
-     * @throws Phase4CEFException
-     *         In case of any error
-     * @see #isEveryRequiredFieldSet()
-     */
-    @Nonnull
-    public abstract ESuccess sendMessage () throws Phase4CEFException;
   }
 
   /**
@@ -654,102 +280,36 @@ public final class Phase4CEFSender
   public static class Builder extends AbstractBaseBuilder <Builder>
   {
     private Phase4OutgoingAttachment m_aPayload;
-    private final ICommonsList <Phase4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
     private Consumer <X509Certificate> m_aCertificateConsumer;
     private Consumer <String> m_aAPEndointURLConsumer;
 
-    /**
-     * Create a new builder, with the following fields already set:<br>
-     * {@link #setHttpClientFactory(HttpClientFactory)}<br>
-     * {@link #setCryptoFactory(IAS4CryptoFactory)}<br>
-     * {@link #setPModeResolver(IPModeResolver)}<br>
-     * {@link #setIncomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
-     * {@link #setPMode(IPMode)}<br>
-     */
     public Builder ()
     {}
 
     /**
      * Set the payload to be send out.
      *
-     * @param aBuilder
-     *        The payload builder to be used. May not be <code>null</code>.
+     * @param a
+     *        The payload builder to be used. May be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public Builder setPayload (@Nonnull final Phase4OutgoingAttachment.Builder aBuilder)
+    public Builder payload (@Nullable final Phase4OutgoingAttachment.Builder a)
     {
-      return setPayload (aBuilder.build ());
+      return payload (a == null ? null : a.build ());
     }
 
     /**
      * Set the payload to be send out.
      *
-     * @param aPayload
+     * @param a
      *        The payload to be used. May not be <code>null</code>.
      * @return this for chaining
      */
     @Nonnull
-    public Builder setPayload (@Nonnull final Phase4OutgoingAttachment aPayload)
+    public Builder payload (@Nullable final Phase4OutgoingAttachment a)
     {
-      ValueEnforcer.notNull (aPayload, "Payload");
-      m_aPayload = aPayload;
-      return this;
-    }
-
-    /**
-     * Add an optional attachment
-     *
-     * @param a
-     *        The attachment to be added. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder addAttachment (@Nullable final Phase4OutgoingAttachment.Builder a)
-    {
-      return addAttachment (a == null ? null : a.build ());
-    }
-
-    /**
-     * Add an optional attachment
-     *
-     * @param a
-     *        The attachment to be added. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder addAttachment (@Nullable final Phase4OutgoingAttachment a)
-    {
-      if (a != null)
-        m_aAttachments.add (a);
-      return this;
-    }
-
-    /**
-     * Set optional attachments. All existing attachments are overridden.
-     *
-     * @param a
-     *        The attachment to be set. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setAttachments (@Nullable final Phase4OutgoingAttachment... a)
-    {
-      m_aAttachments.setAll (a);
-      return this;
-    }
-
-    /**
-     * Set optional attachments. All existing attachments are overridden.
-     *
-     * @param a
-     *        The attachment to be set. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder setAttachments (@Nullable final Iterable <? extends Phase4OutgoingAttachment> a)
-    {
-      m_aAttachments.setAll (a);
+      m_aPayload = a;
       return this;
     }
 
@@ -762,7 +322,7 @@ public final class Phase4CEFSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setCertificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
+    public Builder certificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
     {
       m_aCertificateConsumer = aCertificateConsumer;
       return this;
@@ -777,7 +337,7 @@ public final class Phase4CEFSender
      * @return this for chaining
      */
     @Nonnull
-    public Builder setAPEndointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    public Builder endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
     {
       m_aAPEndointURLConsumer = aAPEndointURLConsumer;
       return this;
@@ -791,7 +351,6 @@ public final class Phase4CEFSender
 
       if (m_aPayload == null)
         return false;
-      // m_aAttachments may be empty
       // m_aCertificateConsumer is optional
       // m_aAPEndointURLConsumer is optional
 
@@ -803,9 +362,9 @@ public final class Phase4CEFSender
     @Nonnull
     public ESuccess sendMessage () throws Phase4CEFException
     {
-      if (!isEveryRequiredFieldSet ())
+      if (!isEndpointDetailProviderUsable ())
       {
-        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
+        LOGGER.error ("At least one mandatory field for endpoint discovery is not set and therefore the AS4 message cannot be send.");
         return ESuccess.FAILURE;
       }
 
@@ -816,76 +375,36 @@ public final class Phase4CEFSender
       final X509Certificate aReceiverCert = m_aEndpointDetailProvider.getReceiverAPCertificate ();
       if (m_aCertificateConsumer != null)
         m_aCertificateConsumer.accept (aReceiverCert);
+      receiverCertificate (aReceiverCert);
 
       // URL from e.g. SMP lookup (may throw an exception)
       final String sReceiverEndpointURL = m_aEndpointDetailProvider.getReceiverAPEndpointURL ();
       if (m_aAPEndointURLConsumer != null)
         m_aAPEndointURLConsumer.accept (sReceiverEndpointURL);
+      endpointURL (sReceiverEndpointURL);
+
+      if (!isEveryRequiredFieldSet ())
+      {
+        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
+        return ESuccess.FAILURE;
+      }
+
+      // Add mandatory properties
+      addMessageProperty (MessageProperty.builder ()
+                                         .name (CAS4.ORIGINAL_SENDER)
+                                         .type (m_aSenderID.getScheme ())
+                                         .value (m_aSenderID.getValue ()));
+      addMessageProperty (MessageProperty.builder ()
+                                         .name (CAS4.FINAL_RECIPIENT)
+                                         .type (m_aReceiverID.getScheme ())
+                                         .value (m_aReceiverID.getValue ()));
 
       // Temporary file manager
       try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
       {
         // Start building AS4 User Message
         final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-        aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
-
-        // Otherwise Oxalis dies
-        aUserMsg.setQuoteHttpHeaders (false);
-        aUserMsg.setSoapVersion (ESoapVersion.SOAP_12);
-        // Set the keystore/truststore parameters
-        aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
-        aUserMsg.setPMode (m_aPMode, true);
-
-        // Set after PMode
-        aUserMsg.cryptParams ().setCertificate (aReceiverCert);
-
-        // Explicit parameters have precedence over PMode
-        aUserMsg.setAgreementRefValue (m_sAgreementRef);
-        // The eb3:AgreementRef element also includes an optional attribute
-        // pmode
-        // which can be used to include the PMode.ID. This attribute MUST NOT be
-        // used as Access Points may use just one generic P-Mode for receiving
-        // messages.
-        aUserMsg.setPModeIDFactory (x -> null);
-        if (StringHelper.hasText (m_sService))
-        {
-          aUserMsg.setServiceType (m_sServiceType);
-          aUserMsg.setServiceValue (m_sService);
-        }
-        else
-        {
-          // Default: Process ID
-          aUserMsg.setServiceType (m_aProcessID.getScheme ());
-          aUserMsg.setServiceValue (m_aProcessID.getValue ());
-        }
-        if (StringHelper.hasText (m_sAction))
-        {
-          aUserMsg.setAction (m_sAction);
-        }
-        else
-        {
-          // Default: DocumentType ID
-          aUserMsg.setAction (m_aDocTypeID.getURIEncoded ());
-        }
-        if (StringHelper.hasText (m_sMessageID))
-          aUserMsg.setMessageID (m_sMessageID);
-        aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID
-                                                                             : MessageHelperMethods.createRandomConversationID ());
-
-        aUserMsg.setFromPartyIDType (m_aFromPartyID.getScheme ());
-        aUserMsg.setFromPartyID (m_aFromPartyID.getValue ());
-        aUserMsg.setFromRole (m_sFromRole);
-
-        aUserMsg.setToPartyIDType (m_aToPartyID.getScheme ());
-        aUserMsg.setToPartyID (m_aToPartyID.getValue ());
-        aUserMsg.setToRole (m_sToRole);
-
-        aUserMsg.ebms3Properties ()
-                .add (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, m_aSenderID.getScheme (), m_aSenderID.getValue ()));
-        aUserMsg.ebms3Properties ()
-                .add (MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT,
-                                                                m_aReceiverID.getScheme (),
-                                                                m_aReceiverID.getValue ()));
+        applyToUserMessage (aUserMsg);
 
         // No payload - only one attachment
         aUserMsg.setPayload (null);
