@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>0.9.18-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-lib</artifactId>
   <packaging>bundle</packaging>
@@ -109,8 +109,25 @@
       <artifactId>ph-oton-security</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-schedule</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.web</groupId>
+      <artifactId>ph-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.web</groupId>
+      <artifactId>ph-xservlet</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
     </dependency>
     
     <dependency>
@@ -163,7 +180,9 @@
             <Import-Package>!javax.annotation.*,*</Import-Package>
             <Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
 osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
-osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI)"; cardinality:=multiple; resolution:=optional,
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI)"; cardinality:=multiple; resolution:=optional,
+osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI)"; cardinality:=multiple; resolution:=optional</Require-Capability>
             <Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.commons.thirdparty.IThirdPartyModuleProviderSPI,
 osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTypeConverterRegistrarSPI</Provide-Capability>
             <!-- The latter one has precedence -->

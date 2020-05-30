@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>0.9.18-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-servlet</artifactId>
   <packaging>bundle</packaging>
@@ -43,23 +43,6 @@
     <dependency>
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-lib</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-schedule</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.web</groupId>
-      <artifactId>ph-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger.web</groupId>
-      <artifactId>ph-xservlet</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jul-to-slf4j</artifactId>
     </dependency>
 
     <dependency>

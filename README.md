@@ -283,6 +283,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.10.0 - work ion progress
+    * Merged `phase4-servlet` into `phase4-lib`; therefore dropped `phase4-servlet` submodule
 * v0.9.17 - 2020-05-27
     * Changed Maven groupId to `com.helger.phase4`
     * Updated to ph-commons 9.4.4

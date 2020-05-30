@@ -26,7 +26,7 @@
   </parent>
   <groupId>com.helger.phase4</groupId>
   <artifactId>phase4-parent-pom</artifactId>
-  <version>0.9.18-SNAPSHOT</version>
+  <version>0.10.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phase4-parent-pom</name>
   <description>Base POM to build the phase4 projects</description>
@@ -247,11 +247,6 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-servlet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-server-webapp</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -277,7 +272,6 @@
     <module>phase4-lib</module>
     <module>phase4-profile-cef</module>
     <module>phase4-profile-peppol</module>
-    <module>phase4-servlet</module>
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-peppol-client</module>
