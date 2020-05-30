@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.helger.phase4.client;
+package com.helger.phase4.http;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,9 +47,9 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientManager;
 import com.helger.httpclient.IHttpClientProvider;
+import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.util.MultiOutputStream;
 
 /**

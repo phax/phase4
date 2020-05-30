@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.sender;
 
-import java.util.Locale;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -64,13 +62,13 @@ public final class Phase4Sender
    *
    * @author Philip Helger
    */
-  public static class BuilderUserMessage extends AbstractPhase4UserMessageBuilder <BuilderUserMessage>
+  public static class BuilderUserMessage extends AbstractAS4UserMessageBuilder <BuilderUserMessage>
   {
     private Phase4OutgoingAttachment m_aPayload;
 
     /**
      * Create a new builder, with the some fields already set as outlined in
-     * {@link AbstractPhase4UserMessageBuilder#AbstractPhase4SenderBuilder()}
+     * {@link AbstractAS4UserMessageBuilder#AbstractPhase4SenderBuilder()}
      */
     public BuilderUserMessage ()
     {}
@@ -148,7 +146,7 @@ public final class Phase4Sender
                                                            m_aPModeResolver,
                                                            m_aIAF,
                                                            aUserMsg,
-                                                           Locale.US,
+                                                           m_aLocale,
                                                            m_sEndointURL,
                                                            m_aBuildMessageCallback,
                                                            m_aOutgoingDumper,

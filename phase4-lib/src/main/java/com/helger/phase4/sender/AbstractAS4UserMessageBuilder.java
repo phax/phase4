@@ -8,9 +8,7 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
-import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
@@ -20,8 +18,6 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
-import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -30,8 +26,6 @@ import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
-import com.helger.phase4.soap.ESoapVersion;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Abstract builder base class with the minimum requirements configuration
@@ -41,15 +35,13 @@ import com.helger.phase4.util.Phase4Exception;
  *        The implementation type
  * @since 0.10.0
  */
-public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends AbstractPhase4UserMessageBuilder <IMPLTYPE>> implements
-                                                       IGenericImplTrait <IMPLTYPE>
+public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
+                                                    AbstractAS4MessageBuilder <IMPLTYPE>
 {
   private HttpClientFactory m_aHttpClientFactory;
-  protected IAS4CryptoFactory m_aCryptoFactory;
   protected IPModeResolver m_aPModeResolver;
   protected IIncomingAttachmentFactory m_aIAF;
   private IPMode m_aPMode;
-  private ESoapVersion m_eSoapVersion;
 
   private String m_sServiceType;
   private String m_sService;
@@ -65,7 +57,6 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
   private String m_sToPartyID;
   private String m_sToRole;
 
-  private String m_sMessageID;
   private String m_sConversationID;
 
   private final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
@@ -85,28 +76,24 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
   /**
    * Create a new builder, with the following fields already set:<br>
    * {@link #httpClientFactory(HttpClientFactory)}<br>
-   * {@link #hryptoFactory(IAS4CryptoFactory)}<br>
    * {@link #pmodeResolver(IPModeResolver)}<br>
    * {@link #incomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
    * {@link #pmode(IPMode)}<br>
-   * {@link #soapVersion(ESoapVersion)}
    */
-  public AbstractPhase4UserMessageBuilder ()
+  public AbstractAS4UserMessageBuilder ()
   {
     // Set default values
     try
     {
       httpClientFactory (new HttpClientFactory ());
-      cryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
       final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
       pmodeResolver (aPModeResolver);
       incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
       pmode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", null));
-      soapVersion (ESoapVersion.SOAP_12);
     }
     catch (final Exception ex)
     {
-      throw new IllegalStateException ("Failed to init AS4 Client builder", ex);
+      throw new IllegalStateException ("Failed to init AbstractAS4UserMessageBuilder", ex);
     }
   }
 
@@ -147,31 +134,6 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
   public final IMPLTYPE httpClientFactory (@Nullable final HttpClientFactory aHttpClientFactory)
   {
     m_aHttpClientFactory = aHttpClientFactory;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The currently set {@link IAS4CryptoFactory}. May be
-   *         <code>null</code>.
-   */
-  @Nullable
-  public final IAS4CryptoFactory cryptoFactory ()
-  {
-    return m_aCryptoFactory;
-  }
-
-  /**
-   * Set the crypto factory to be used. The default crypto factory uses the
-   * properties from the file "crypto.properties".
-   *
-   * @param aCryptoFactory
-   *        The crypto factory to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE cryptoFactory (@Nullable final IAS4CryptoFactory aCryptoFactory)
-  {
-    m_aCryptoFactory = aCryptoFactory;
     return thisAsT ();
   }
 
@@ -243,29 +205,6 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
   public final IMPLTYPE pmode (@Nullable final IPMode aPMode)
   {
     m_aPMode = aPMode;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The SOAP version to be used. May be <code>null</code>.
-   */
-  @Nullable
-  public final ESoapVersion soapVersion ()
-  {
-    return m_eSoapVersion;
-  }
-
-  /**
-   * Set the SOAP version to be used. Default is SOAP 1.2
-   *
-   * @param eSoapVersion
-   *        The SOAP version to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE soapVersion (@Nullable final ESoapVersion eSoapVersion)
-  {
-    m_eSoapVersion = eSoapVersion;
     return thisAsT ();
   }
 
@@ -426,21 +365,6 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
   public final IMPLTYPE toRole (@Nullable final String sToRole)
   {
     m_sToRole = sToRole;
-    return thisAsT ();
-  }
-
-  /**
-   * Set the optional AS4 message ID. If this field is not set, a random message
-   * ID is created.
-   *
-   * @param sMessageID
-   *        The optional AS4 message ID to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE messageID (@Nullable final String sMessageID)
-  {
-    m_sMessageID = sMessageID;
     return thisAsT ();
   }
 
@@ -724,17 +648,18 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
     return thisAsT ();
   }
 
+  @Override
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
+    if (!super.isEveryRequiredFieldSet ())
+      return false;
+
     if (m_aHttpClientFactory == null)
       return false;
-    // m_aCryptoFactory may be null
     // m_aPModeResolver may be null
     // IIncomingAttachmentFactory may be null
     if (m_aPMode == null)
-      return false;
-    if (m_eSoapVersion == null)
       return false;
 
     // m_sServiceType may be null
@@ -751,7 +676,6 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
     // m_sToPartyID may be null
     // m_sToRole may be null
 
-    // m_sMessageID is optional
     // m_sConversationID is optional
 
     // m_aMessageProperties is final
@@ -779,6 +703,11 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
    */
   protected final void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
   {
+    if (m_nMaxRetries >= 0)
+      aUserMsg.setMaxRetries (m_nMaxRetries);
+    if (m_nRetryIntervalMS >= 0)
+      aUserMsg.setRetryIntervalMS (m_nRetryIntervalMS);
+
     aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
 
     // Otherwise Oxalis dies
@@ -816,19 +745,4 @@ public abstract class AbstractPhase4UserMessageBuilder <IMPLTYPE extends Abstrac
     for (final MessageProperty aItem : m_aMessageProperties)
       aUserMsg.ebms3Properties ().add (aItem.getAsEbms3Property ());
   }
-
-  /**
-   * Synchronously send the AS4 message. Before sending,
-   * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
-   * elements are set.
-   *
-   * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or
-   *         if sending failed, {@link ESuccess#SUCCESS} upon success. Never
-   *         <code>null</code>.
-   * @throws Phase4Exception
-   *         In case of any error
-   * @see #isEveryRequiredFieldSet()
-   */
-  @Nonnull
-  public abstract ESuccess sendMessage () throws Phase4Exception;
 }
