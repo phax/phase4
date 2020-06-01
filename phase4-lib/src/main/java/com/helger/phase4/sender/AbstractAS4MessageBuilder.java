@@ -161,6 +161,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     if (m_aLocale == null)
       return false;
 
+    // All valid
     return true;
   }
 

@@ -694,6 +694,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_aResponseConsumer may be null
     // m_aSignalMsgConsumer may be null
 
+    // All valid
     return true;
   }
 

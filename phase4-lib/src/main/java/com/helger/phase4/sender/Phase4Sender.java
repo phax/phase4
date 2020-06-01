@@ -108,7 +108,6 @@ public final class Phase4Sender
 
       if (m_aPayload == null)
         return false;
-      // m_aAttachments may be empty
 
       // All valid
       return true;
