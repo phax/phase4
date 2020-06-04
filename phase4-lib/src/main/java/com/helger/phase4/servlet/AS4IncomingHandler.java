@@ -649,14 +649,14 @@ public class AS4IncomingHandler
                                                                                                              aSendingPMode);
 
       // Parse AS4, verify signature etc
-      final IAS4MessageState aState = AS4IncomingHandler.processEbmsMessage (aResHelper,
-                                                                             aLocale,
-                                                                             aRegistry,
-                                                                             aHttpHeaders,
-                                                                             aSoapDocument,
-                                                                             eSoapVersion,
-                                                                             aIncomingAttachments,
-                                                                             aErrorMessages);
+      final IAS4MessageState aState = processEbmsMessage (aResHelper,
+                                                          aLocale,
+                                                          aRegistry,
+                                                          aHttpHeaders,
+                                                          aSoapDocument,
+                                                          eSoapVersion,
+                                                          aIncomingAttachments,
+                                                          aErrorMessages);
 
       if (aState.isSoapHeaderElementProcessingSuccessful ())
       {
@@ -677,7 +677,7 @@ public class AS4IncomingHandler
     // Parse incoming message
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
-      AS4IncomingHandler.parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
+      parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
     }
     catch (final Phase4Exception ex)
     {
