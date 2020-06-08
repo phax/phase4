@@ -49,7 +49,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 
   /**
    * Create a new builder, with the some fields already set as outlined in
-   * {@link AbstractAS4UserMessageBuilder#AbstractPhase4SenderBuilder()}
+   * {@link AbstractAS4UserMessageBuilder#AbstractAS4UserMessageBuilder()}
    */
   public AbstractAS4UserMessageBuilderMIMEPayload ()
   {}

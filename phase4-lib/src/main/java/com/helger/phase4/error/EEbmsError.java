@@ -128,12 +128,6 @@ public enum EEbmsError implements IEbmsError
                               EEbmsErrorText.DECOMPRESSION_FAILURE,
                               EEbmsErrorCategory.COMMUNICATION);
 
-  /**
-   * Legacy name. Deprecated since 0.9.14
-   */
-  @Deprecated
-  public static final EEbmsError EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENT = EBMS_FEATURE_NOT_SUPPORTED_INCONSISTENCY;
-
   private final String m_sErrorCode;
   private final EEbmsErrorSeverity m_eSeverity;
   private final String m_sShortDescription;

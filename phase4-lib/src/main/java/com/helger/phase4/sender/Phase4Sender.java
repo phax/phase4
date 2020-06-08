@@ -53,7 +53,7 @@ public final class Phase4Sender
   {
     /**
      * Create a new builder, with the some fields already set as outlined in
-     * {@link AbstractAS4UserMessageBuilder#AbstractPhase4SenderBuilder()}
+     * {@link AbstractAS4UserMessageBuilderMIMEPayload#AbstractAS4UserMessageBuilderMIMEPayload()}
      */
     public BuilderUserMessage ()
     {}
