@@ -81,17 +81,17 @@ public final class MainPhase4PeppolSenderQvalia
         }
       };
       if (Phase4PeppolSender.builder ()
-                            .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                            .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
-                            .setReceiverParticipantID (aReceiverID)
-                            .setSenderPartyID ("POP000306")
-                            .setPayload (aPayloadElement)
-                            .setSMPClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .setValidationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
-                                                         new Phase4PeppolValidatonResultHandler ())
-                            .setBuildMessageCallback (aBuildMessageCallback)
+                            .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                            .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                            .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
+                            .receiverParticipantID (aReceiverID)
+                            .senderPartyID ("POP000306")
+                            .payload (aPayloadElement)
+                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                            .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                            .validationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
+                                                      new Phase4PeppolValidatonResultHandler ())
+                            .buildMessageCallback (aBuildMessageCallback)
                             .sendMessage ()
                             .isSuccess ())
       {

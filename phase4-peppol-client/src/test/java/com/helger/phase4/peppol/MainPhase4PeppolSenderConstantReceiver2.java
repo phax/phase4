@@ -56,49 +56,49 @@ public final class MainPhase4PeppolSenderConstantReceiver2
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:sc998899889");
       if (Phase4PeppolSender.builder ()
-                            .setDocumentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                            .setProcessID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                            .setSenderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
-                            .setReceiverParticipantID (aReceiverID)
-                            .setSenderPartyID ("POP000306")
-                            .setPayload (aPayloadElement)
-                            .setReceiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\r\n" +
-                                                                                                      "MIIF0TCCA7mgAwIBAgIQbXAEkESKryKJazdxZUo39zANBgkqhkiG9w0BAQsFADBr\r\n" +
-                                                                                                      "MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UE\r\n" +
-                                                                                                      "CxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBU\r\n" +
-                                                                                                      "RVNUIENBIC0gRzIwHhcNMTgxMDE3MDAwMDAwWhcNMjAxMDA2MjM1OTU5WjBeMRIw\r\n" +
-                                                                                                      "EAYDVQQDDAlQTkwwMDAxNTExFzAVBgNVBAsMDlBFUFBPTCBURVNUIEFQMSIwIAYD\r\n" +
-                                                                                                      "VQQKDBlTdG9yZWNvdmUgKERhdGFqdXN0IEIuVi4pMQswCQYDVQQGEwJOTDCCASIw\r\n" +
-                                                                                                      "DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKj00j0ybln4DoN2dyDaLFzKztmr\r\n" +
-                                                                                                      "f772Oq1DuPuk/D590Duci1eQZYAGvm58s19aNS+lVwombpEA7luxjiX+UfAQ0EN7\r\n" +
-                                                                                                      "Ih3qaAZ5eZOPQh+1zr1dWArFYK/0yn0PwhGVXCLuyWTFxQrmitwSjuHIjUKDxuC8\r\n" +
-                                                                                                      "4vzvNyxZzADUqGQMoafDE9IZsRUMY7DAlqaFE3NLa8riCmWIalmwhDDmlxu09nqc\r\n" +
-                                                                                                      "ot1uk3n1sCF/vpvzkdjuVUn4oiHG1rkBpJVr7UjQx6nbIuVVENGrJ+HT0CG1exMS\r\n" +
-                                                                                                      "Yo+onqrRjWyad+S6HYcO6tIRx1pl7wyk8a9z2um/G9ipwNlxGXFf7KlSh58CAwEA\r\n" +
-                                                                                                      "AaOCAXwwggF4MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgOoMBYGA1UdJQEB\r\n" +
-                                                                                                      "/wQMMAoGCCsGAQUFBwMCMB0GA1UdDgQWBBR2wGGZLQlLSW5S2lwZEs0ydisI1zBd\r\n" +
-                                                                                                      "BgNVHR8EVjBUMFKgUKBOhkxodHRwOi8vcGtpLWNybC5zeW1hdXRoLmNvbS9jYV82\r\n" +
-                                                                                                      "YTkzNzczNGEzOTNhMDgwNWJmMzNjZGE4YjMzMTA5My9MYXRlc3RDUkwuY3JsMDcG\r\n" +
-                                                                                                      "CCsGAQUFBwEBBCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1\r\n" +
-                                                                                                      "dGguY29tMB8GA1UdIwQYMBaAFGtvS7bxN7orPH8Yzborsrl8KjfrMC0GCmCGSAGG\r\n" +
-                                                                                                      "+EUBEAMEHzAdBhNghkgBhvhFARABAgMBAYGpkOEDFgY5NTc2MDgwOQYKYIZIAYb4\r\n" +
-                                                                                                      "RQEQBQQrMCkCAQAWJGFIUjBjSE02THk5d2Eya3RjbUV1YzNsdFlYVjBhQzVqYjIw\r\n" +
-                                                                                                      "PTANBgkqhkiG9w0BAQsFAAOCAgEABsDkoUebHcy/cEeGYV3OR6iPIzGSjz2d3chY\r\n" +
-                                                                                                      "D30wtt5jPS1RAJ0/Mh2v7hoVMMVxj2vSC/SOirrk0zAf22R3oCmMBnLt/Q9bMaav\r\n" +
-                                                                                                      "L1XvFq2fUTZbcoa9zQHwITbtWY+YV/ArqutuTqloKYwNyieh3YmqiDMm99IjAYyk\r\n" +
-                                                                                                      "LB2TnlxSm5McNlmkOsvYu/VxUDqM4aejyiTFIbCGM+k2HpsNlOi67pUbg5wK/2PU\r\n" +
-                                                                                                      "AUcTv3PXbGlUSmjXDdmQw5EGn4CYt/+oRjMwzpg7DejCCnGuGnggwWCE/uh4+bpE\r\n" +
-                                                                                                      "HXfc2QE+SB9UlHNjyxpUWQMxWCGsGDr8Pm3Ncm88XmBd0v6+YytYiV8/hhn63KJt\r\n" +
-                                                                                                      "ycRoP7a79T3kILWm1CyCjDwVH9Pnkqot4lQZow1BfwoL/AMTbkKDsi/GiN3yq9NN\r\n" +
-                                                                                                      "LVjh2ww1kEs3ti5s01nuaTnywvCBf5fqFXZyVtevn7T+ye8df/LfrjXKeo3i45PY\r\n" +
-                                                                                                      "3DVW1F06BGHGQa9IMF4GNHX94BRgee8jmIbHmusxP3ynXi0zr7lmk3tyWXUIp581\r\n" +
-                                                                                                      "NP9BV7SyeG0ToBRiSoBUUUDP2Tqesqgj84+qRGC7uNMUOkU3gRNrJcBDaNr+cQMA\r\n" +
-                                                                                                      "GXjzBQuF1wdECMQAHNTrwzHziw4S/ZMf5KELc1ezYF61NAfCb8voMzFCJn4n1XK+\r\n" +
-                                                                                                      "hBQpCt8=\r\n" +
-                                                                                                      "-----END CERTIFICATE-----\r\n"),
-                                                         false ? "https://o96st7ob6h.execute-api.eu-west-1.amazonaws.com/prod/as4"
-                                                               : "https://accap.mypeppol.app/as4")
-                            .setRawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                            .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                            .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                            .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
+                            .receiverParticipantID (aReceiverID)
+                            .senderPartyID ("POP000306")
+                            .payload (aPayloadElement)
+                            .receiverEndpointDetails (CertificateHelper.convertStringToCertficate ("-----BEGIN CERTIFICATE-----\r\n" +
+                                                                                                   "MIIF0TCCA7mgAwIBAgIQbXAEkESKryKJazdxZUo39zANBgkqhkiG9w0BAQsFADBr\r\n" +
+                                                                                                   "MQswCQYDVQQGEwJCRTEZMBcGA1UEChMQT3BlblBFUFBPTCBBSVNCTDEWMBQGA1UE\r\n" +
+                                                                                                   "CxMNRk9SIFRFU1QgT05MWTEpMCcGA1UEAxMgUEVQUE9MIEFDQ0VTUyBQT0lOVCBU\r\n" +
+                                                                                                   "RVNUIENBIC0gRzIwHhcNMTgxMDE3MDAwMDAwWhcNMjAxMDA2MjM1OTU5WjBeMRIw\r\n" +
+                                                                                                   "EAYDVQQDDAlQTkwwMDAxNTExFzAVBgNVBAsMDlBFUFBPTCBURVNUIEFQMSIwIAYD\r\n" +
+                                                                                                   "VQQKDBlTdG9yZWNvdmUgKERhdGFqdXN0IEIuVi4pMQswCQYDVQQGEwJOTDCCASIw\r\n" +
+                                                                                                   "DQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKj00j0ybln4DoN2dyDaLFzKztmr\r\n" +
+                                                                                                   "f772Oq1DuPuk/D590Duci1eQZYAGvm58s19aNS+lVwombpEA7luxjiX+UfAQ0EN7\r\n" +
+                                                                                                   "Ih3qaAZ5eZOPQh+1zr1dWArFYK/0yn0PwhGVXCLuyWTFxQrmitwSjuHIjUKDxuC8\r\n" +
+                                                                                                   "4vzvNyxZzADUqGQMoafDE9IZsRUMY7DAlqaFE3NLa8riCmWIalmwhDDmlxu09nqc\r\n" +
+                                                                                                   "ot1uk3n1sCF/vpvzkdjuVUn4oiHG1rkBpJVr7UjQx6nbIuVVENGrJ+HT0CG1exMS\r\n" +
+                                                                                                   "Yo+onqrRjWyad+S6HYcO6tIRx1pl7wyk8a9z2um/G9ipwNlxGXFf7KlSh58CAwEA\r\n" +
+                                                                                                   "AaOCAXwwggF4MAwGA1UdEwEB/wQCMAAwDgYDVR0PAQH/BAQDAgOoMBYGA1UdJQEB\r\n" +
+                                                                                                   "/wQMMAoGCCsGAQUFBwMCMB0GA1UdDgQWBBR2wGGZLQlLSW5S2lwZEs0ydisI1zBd\r\n" +
+                                                                                                   "BgNVHR8EVjBUMFKgUKBOhkxodHRwOi8vcGtpLWNybC5zeW1hdXRoLmNvbS9jYV82\r\n" +
+                                                                                                   "YTkzNzczNGEzOTNhMDgwNWJmMzNjZGE4YjMzMTA5My9MYXRlc3RDUkwuY3JsMDcG\r\n" +
+                                                                                                   "CCsGAQUFBwEBBCswKTAnBggrBgEFBQcwAYYbaHR0cDovL3BraS1vY3NwLnN5bWF1\r\n" +
+                                                                                                   "dGguY29tMB8GA1UdIwQYMBaAFGtvS7bxN7orPH8Yzborsrl8KjfrMC0GCmCGSAGG\r\n" +
+                                                                                                   "+EUBEAMEHzAdBhNghkgBhvhFARABAgMBAYGpkOEDFgY5NTc2MDgwOQYKYIZIAYb4\r\n" +
+                                                                                                   "RQEQBQQrMCkCAQAWJGFIUjBjSE02THk5d2Eya3RjbUV1YzNsdFlYVjBhQzVqYjIw\r\n" +
+                                                                                                   "PTANBgkqhkiG9w0BAQsFAAOCAgEABsDkoUebHcy/cEeGYV3OR6iPIzGSjz2d3chY\r\n" +
+                                                                                                   "D30wtt5jPS1RAJ0/Mh2v7hoVMMVxj2vSC/SOirrk0zAf22R3oCmMBnLt/Q9bMaav\r\n" +
+                                                                                                   "L1XvFq2fUTZbcoa9zQHwITbtWY+YV/ArqutuTqloKYwNyieh3YmqiDMm99IjAYyk\r\n" +
+                                                                                                   "LB2TnlxSm5McNlmkOsvYu/VxUDqM4aejyiTFIbCGM+k2HpsNlOi67pUbg5wK/2PU\r\n" +
+                                                                                                   "AUcTv3PXbGlUSmjXDdmQw5EGn4CYt/+oRjMwzpg7DejCCnGuGnggwWCE/uh4+bpE\r\n" +
+                                                                                                   "HXfc2QE+SB9UlHNjyxpUWQMxWCGsGDr8Pm3Ncm88XmBd0v6+YytYiV8/hhn63KJt\r\n" +
+                                                                                                   "ycRoP7a79T3kILWm1CyCjDwVH9Pnkqot4lQZow1BfwoL/AMTbkKDsi/GiN3yq9NN\r\n" +
+                                                                                                   "LVjh2ww1kEs3ti5s01nuaTnywvCBf5fqFXZyVtevn7T+ye8df/LfrjXKeo3i45PY\r\n" +
+                                                                                                   "3DVW1F06BGHGQa9IMF4GNHX94BRgee8jmIbHmusxP3ynXi0zr7lmk3tyWXUIp581\r\n" +
+                                                                                                   "NP9BV7SyeG0ToBRiSoBUUUDP2Tqesqgj84+qRGC7uNMUOkU3gRNrJcBDaNr+cQMA\r\n" +
+                                                                                                   "GXjzBQuF1wdECMQAHNTrwzHziw4S/ZMf5KELc1ezYF61NAfCb8voMzFCJn4n1XK+\r\n" +
+                                                                                                   "hBQpCt8=\r\n" +
+                                                                                                   "-----END CERTIFICATE-----\r\n"),
+                                                      false ? "https://o96st7ob6h.execute-api.eu-west-1.amazonaws.com/prod/as4"
+                                                            : "https://accap.mypeppol.app/as4")
+                            .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .sendMessage ()
                             .isSuccess ())
       {

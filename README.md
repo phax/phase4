@@ -288,6 +288,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Merged `phase4-servlet` into `phase4-lib`; therefore dropped `phase4-servlet` submodule
     * Moved internal classes to new packages: `BasicHttpPoster`, `AS4BidirectionalClientHelper`
     * Added a new class `Phase4Sender` that does offer sending capabilities with the builder pattern
+    * All the client builders were unified - that creates incompatible name changes to `Phase4PeppolSender` (as in `setSenderPartyID` &rarr; `senderPartyID`)
 * v0.9.17 - 2020-05-27
     * Changed Maven groupId to `com.helger.phase4`
     * Updated to ph-commons 9.4.4
