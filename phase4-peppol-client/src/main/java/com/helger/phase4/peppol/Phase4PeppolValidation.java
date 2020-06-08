@@ -16,21 +16,20 @@
  */
 package com.helger.phase4.peppol;
 
-import java.util.Locale;
-
 import javax.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.execute.ValidationExecutionManager;
-import com.helger.bdve.executorset.IValidationExecutorSet;
-import com.helger.bdve.executorset.VESID;
-import com.helger.bdve.executorset.ValidationExecutorSetRegistry;
+import com.helger.bdve.api.execute.ValidationExecutionManager;
+import com.helger.bdve.api.executorset.IValidationExecutorSet;
+import com.helger.bdve.api.executorset.VESID;
+import com.helger.bdve.api.executorset.ValidationExecutorSetRegistry;
+import com.helger.bdve.api.result.ValidationResultList;
+import com.helger.bdve.engine.source.IValidationSourceXML;
+import com.helger.bdve.engine.source.ValidationSourceXML;
 import com.helger.bdve.peppol.PeppolValidation;
-import com.helger.bdve.result.ValidationResultList;
-import com.helger.bdve.source.ValidationSource;
 import com.helger.commons.ValueEnforcer;
 
 /**
@@ -42,7 +41,7 @@ import com.helger.commons.ValueEnforcer;
 public final class Phase4PeppolValidation
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolValidation.class);
-  private static final ValidationExecutorSetRegistry VES_REGISTRY = new ValidationExecutorSetRegistry ();
+  private static final ValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = new ValidationExecutorSetRegistry <> ();
 
   static
   {
@@ -61,15 +60,12 @@ public final class Phase4PeppolValidation
     ValueEnforcer.notNull (aVESID, "VESID");
     ValueEnforcer.notNull (aValidationResultHandler, "ValidationResultHandler");
 
-    final IValidationExecutorSet aVES = VES_REGISTRY.getOfID (aVESID);
+    final IValidationExecutorSet <IValidationSourceXML> aVES = VES_REGISTRY.getOfID (aVESID);
     if (aVES == null)
-      throw new Phase4PeppolException ("The validation executor set ID " +
-                                              aVESID.getAsSingleID () +
-                                              " is unknown!");
+      throw new Phase4PeppolException ("The validation executor set ID " + aVESID.getAsSingleID () + " is unknown!");
 
-    final ValidationExecutionManager aVEM = aVES.createExecutionManager ();
-    final ValidationResultList aValidationResult = aVEM.executeValidation (ValidationSource.create (null, aXML),
-                                                                           (Locale) null);
+    final ValidationResultList aValidationResult = ValidationExecutionManager.executeValidation (aVES,
+                                                                                                 ValidationSourceXML.create (null, aXML));
     if (aValidationResult.containsAtLeastOneError ())
     {
       aValidationResultHandler.onValidationErrors (aValidationResult);

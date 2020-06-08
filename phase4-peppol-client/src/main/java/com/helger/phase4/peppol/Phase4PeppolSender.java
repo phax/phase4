@@ -36,7 +36,7 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.executorset.VESID;
+import com.helger.bdve.api.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.datetime.PDTFactory;

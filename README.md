@@ -284,6 +284,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v0.10.0 - work ion progress
+    * Updated to ph-bdve 6.0.0
     * Merged `phase4-servlet` into `phase4-lib`; therefore dropped `phase4-servlet` submodule
     * Moved internal classes to new packages: `BasicHttpPoster`, `AS4BidirectionalClientHelper`
     * Added a new class `Phase4Sender` that does offer sending capabilities with the builder pattern

@@ -22,8 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.bdve.api.result.ValidationResultList;
 import com.helger.bdve.peppol.PeppolValidation3_10_0;
-import com.helger.bdve.result.ValidationResultList;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;

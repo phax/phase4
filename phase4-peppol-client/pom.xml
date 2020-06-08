@@ -65,8 +65,8 @@
       <artifactId>peppol-smp-client</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger.bdve</groupId>
-      <artifactId>ph-bdve-peppol</artifactId>
+      <groupId>com.helger.bdve.rules</groupId>
+      <artifactId>ph-bdve-rules-peppol</artifactId>
     </dependency>
 
     <dependency>
