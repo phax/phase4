@@ -28,7 +28,7 @@ import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 
 /**
- * Abstract builder base class with the minimum requirements configuration
+ * Abstract builder base class for a user message.
  *
  * @author Philip Helger
  * @param <IMPLTYPE>
@@ -687,6 +687,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_aReceiverCertificate is optional
     if (StringHelper.hasNoText (m_sEndointURL))
       return false;
+
+    // m_aAttachments may be null
 
     // m_aBuildMessageCallback may be null
     // m_aOutgoingDumper may be null

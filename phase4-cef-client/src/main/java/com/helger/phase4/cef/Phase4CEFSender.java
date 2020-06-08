@@ -17,7 +17,6 @@
 package com.helger.phase4.cef;
 
 import java.security.cert.X509Certificate;
-import java.util.Locale;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -36,13 +35,9 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
-import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.model.MessageProperty;
-import com.helger.phase4.sender.AS4BidirectionalClientHelper;
-import com.helger.phase4.sender.AbstractAS4UserMessageBuilder;
-import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
+import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
@@ -71,9 +66,9 @@ public final class Phase4CEFSender
    *         the SBDH should be created internally. Never <code>null</code>.
    */
   @Nonnull
-  public static Builder builder ()
+  public static CEFUserMessageBuilder builder ()
   {
-    return new Builder ();
+    return new CEFUserMessageBuilder ();
   }
 
   /**
@@ -83,16 +78,18 @@ public final class Phase4CEFSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
-  public static abstract class AbstractBaseBuilder <IMPLTYPE extends AbstractBaseBuilder <IMPLTYPE>> extends
-                                                   AbstractAS4UserMessageBuilder <IMPLTYPE>
+  public static abstract class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
+                                                             AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
     protected IPhase4CEFEndpointDetailProvider m_aEndpointDetailProvider;
+    protected Consumer <X509Certificate> m_aCertificateConsumer;
+    protected Consumer <String> m_aAPEndointURLConsumer;
 
-    protected AbstractBaseBuilder ()
+    protected AbstractCEFUserMessageBuilder ()
     {
       // Override default values
       try
@@ -232,6 +229,36 @@ public final class Phase4CEFSender
       return endpointDetailProvider (new Phase4CEFEndpointDetailProviderConstant (aCert, sDestURL));
     }
 
+    /**
+     * Set an optional Consumer for the retrieved certificate, independent of
+     * its usability.
+     *
+     * @param aCertificateConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE certificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
+    {
+      m_aCertificateConsumer = aCertificateConsumer;
+      return thisAsT ();
+    }
+
+    /**
+     * Set an optional Consumer for the destination AP address, independent of
+     * its usability.
+     *
+     * @param aAPEndointURLConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     */
+    @Nonnull
+    public final IMPLTYPE endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
+    {
+      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
+      return thisAsT ();
+    }
+
     protected final boolean isEndpointDetailProviderUsable ()
     {
       // Sender ID doesn't matter here
@@ -248,119 +275,7 @@ public final class Phase4CEFSender
     }
 
     @Override
-    @OverridingMethodsMustInvokeSuper
-    public boolean isEveryRequiredFieldSet ()
-    {
-      if (!super.isEveryRequiredFieldSet ())
-        return false;
-
-      if (m_aSenderID == null)
-        return false;
-      if (m_aReceiverID == null)
-        return false;
-      if (m_aDocTypeID == null)
-        return false;
-      if (m_aProcessID == null)
-        return false;
-      if (m_aEndpointDetailProvider == null)
-        return false;
-
-      return true;
-    }
-  }
-
-  /**
-   * The builder class for sending AS4 messages using CEF profile specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.<br>
-   * This builder class assumes, that only the payload (e.g. the Invoice) is
-   * present, and that both validation and SBDH creation happens inside.
-   *
-   * @author Philip Helger
-   */
-  public static class Builder extends AbstractBaseBuilder <Builder>
-  {
-    private Phase4OutgoingAttachment m_aPayload;
-    private Consumer <X509Certificate> m_aCertificateConsumer;
-    private Consumer <String> m_aAPEndointURLConsumer;
-
-    public Builder ()
-    {}
-
-    /**
-     * Set the payload to be send out.
-     *
-     * @param a
-     *        The payload builder to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder payload (@Nullable final Phase4OutgoingAttachment.Builder a)
-    {
-      return payload (a == null ? null : a.build ());
-    }
-
-    /**
-     * Set the payload to be send out.
-     *
-     * @param a
-     *        The payload to be used. May not be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder payload (@Nullable final Phase4OutgoingAttachment a)
-    {
-      m_aPayload = a;
-      return this;
-    }
-
-    /**
-     * Set an optional Consumer for the retrieved certificate, independent of
-     * its usability.
-     *
-     * @param aCertificateConsumer
-     *        The consumer to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder certificateConsumer (@Nullable final Consumer <X509Certificate> aCertificateConsumer)
-    {
-      m_aCertificateConsumer = aCertificateConsumer;
-      return this;
-    }
-
-    /**
-     * Set an optional Consumer for the destination AP address, independent of
-     * its usability.
-     *
-     * @param aAPEndointURLConsumer
-     *        The consumer to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public Builder endointURLConsumer (@Nullable final Consumer <String> aAPEndointURLConsumer)
-    {
-      m_aAPEndointURLConsumer = aAPEndointURLConsumer;
-      return this;
-    }
-
-    @Override
-    public boolean isEveryRequiredFieldSet ()
-    {
-      if (!super.isEveryRequiredFieldSet ())
-        return false;
-
-      if (m_aPayload == null)
-        return false;
-      // m_aCertificateConsumer is optional
-      // m_aAPEndointURLConsumer is optional
-
-      // All valid
-      return true;
-    }
-
-    @Override
-    @Nonnull
-    public ESuccess sendMessage () throws Phase4CEFException
+    protected ESuccess finishFields () throws Phase4Exception
     {
       if (!isEndpointDetailProviderUsable ())
       {
@@ -383,12 +298,35 @@ public final class Phase4CEFSender
         m_aAPEndointURLConsumer.accept (sReceiverEndpointURL);
       endpointURL (sReceiverEndpointURL);
 
-      if (!isEveryRequiredFieldSet ())
-      {
-        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
-        return ESuccess.FAILURE;
-      }
+      return ESuccess.SUCCESS;
+    }
 
+    @Override
+    @OverridingMethodsMustInvokeSuper
+    public boolean isEveryRequiredFieldSet ()
+    {
+      if (!super.isEveryRequiredFieldSet ())
+        return false;
+
+      if (m_aSenderID == null)
+        return false;
+      if (m_aReceiverID == null)
+        return false;
+      if (m_aDocTypeID == null)
+        return false;
+      if (m_aProcessID == null)
+        return false;
+      if (m_aEndpointDetailProvider == null)
+        return false;
+      // m_aCertificateConsumer is optional
+      // m_aAPEndointURLConsumer is optional
+
+      return true;
+    }
+
+    @Override
+    protected void customizeBeforeSending () throws Phase4Exception
+    {
       // Add mandatory properties
       addMessageProperty (MessageProperty.builder ()
                                          .name (CAS4.ORIGINAL_SENDER)
@@ -398,49 +336,18 @@ public final class Phase4CEFSender
                                          .name (CAS4.FINAL_RECIPIENT)
                                          .type (m_aReceiverID.getScheme ())
                                          .value (m_aReceiverID.getValue ()));
-
-      // Temporary file manager
-      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
-      {
-        // Start building AS4 User Message
-        final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-        applyToUserMessage (aUserMsg);
-
-        // No payload - only one attachment
-        aUserMsg.setPayload (null);
-
-        // Add main attachment
-        aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper));
-
-        // Add other attachments
-        for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
-          aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
-
-        // Main sending
-        AS4BidirectionalClientHelper.sendAS4AndReceiveAS4 (m_aCryptoFactory,
-                                                           m_aPModeResolver,
-                                                           m_aIAF,
-                                                           aUserMsg,
-                                                           Locale.US,
-                                                           sReceiverEndpointURL,
-                                                           m_aBuildMessageCallback,
-                                                           m_aOutgoingDumper,
-                                                           m_aIncomingDumper,
-                                                           m_aRetryCallback,
-                                                           m_aResponseConsumer,
-                                                           m_aSignalMsgConsumer);
-      }
-      catch (final Phase4CEFException ex)
-      {
-        // Re-throw
-        throw ex;
-      }
-      catch (final Exception ex)
-      {
-        // wrap
-        throw new Phase4CEFException ("Wrapped Phase4CEFException", ex);
-      }
-      return ESuccess.SUCCESS;
     }
+  }
+
+  /**
+   * The builder class for sending AS4 messages using CEF profile specifics. Use
+   * {@link #sendMessage()} to trigger the main transmission.
+   *
+   * @author Philip Helger
+   */
+  public static class CEFUserMessageBuilder extends AbstractCEFUserMessageBuilder <CEFUserMessageBuilder>
+  {
+    public CEFUserMessageBuilder ()
+    {}
   }
 }

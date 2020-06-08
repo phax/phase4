@@ -115,6 +115,13 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
+  /**
+   * Set the maximum number of retries.
+   *
+   * @param n
+   *        The maximum number of retries.
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE maxRetries (final int n)
   {
@@ -122,18 +129,42 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
+  /**
+   * Set the retry interval for retries. This is only relevant if at least 1
+   * retry happens.
+   *
+   * @param a
+   *        The retry interval
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final TimeValue a)
   {
     return retryIntervalMilliseconds (a == null ? null : a.getAsMillis ());
   }
 
+  /**
+   * Set the retry interval for retries. This is only relevant if at least 1
+   * retry happens.
+   *
+   * @param a
+   *        The retry interval
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final Duration a)
   {
     return retryIntervalMilliseconds (a == null ? null : a.toMillis ());
   }
 
+  /**
+   * Set the retry interval for retries. This is only relevant if at least 1
+   * retry happens.
+   *
+   * @param n
+   *        The retry interval in milliseconds
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE retryIntervalMilliseconds (final long n)
   {

@@ -17,18 +17,7 @@
 package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.helger.commons.state.ESuccess;
-import com.helger.phase4.attachment.Phase4OutgoingAttachment;
-import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.util.AS4ResourceHelper;
-import com.helger.phase4.util.Phase4Exception;
 
 /**
  * This class contains all the settings necessary to send AS4 messages using the
@@ -41,8 +30,6 @@ import com.helger.phase4.util.Phase4Exception;
 @Immutable
 public final class Phase4Sender
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4Sender.class);
-
   private Phase4Sender ()
   {}
 
@@ -62,109 +49,13 @@ public final class Phase4Sender
    *
    * @author Philip Helger
    */
-  public static class BuilderUserMessage extends AbstractAS4UserMessageBuilder <BuilderUserMessage>
+  public static class BuilderUserMessage extends AbstractAS4UserMessageBuilderMIMEPayload <BuilderUserMessage>
   {
-    private Phase4OutgoingAttachment m_aPayload;
-
     /**
      * Create a new builder, with the some fields already set as outlined in
      * {@link AbstractAS4UserMessageBuilder#AbstractPhase4SenderBuilder()}
      */
     public BuilderUserMessage ()
     {}
-
-    /**
-     * Set the payload to be send out.
-     *
-     * @param aBuilder
-     *        The payload builder to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public BuilderUserMessage payload (@Nullable final Phase4OutgoingAttachment.Builder aBuilder)
-    {
-      return payload (aBuilder == null ? null : aBuilder.build ());
-    }
-
-    /**
-     * Set the payload to be send out.
-     *
-     * @param aPayload
-     *        The payload to be used. May be <code>null</code>.
-     * @return this for chaining
-     */
-    @Nonnull
-    public BuilderUserMessage payload (@Nullable final Phase4OutgoingAttachment aPayload)
-    {
-      m_aPayload = aPayload;
-      return this;
-    }
-
-    @Override
-    public boolean isEveryRequiredFieldSet ()
-    {
-      if (!super.isEveryRequiredFieldSet ())
-        return false;
-
-      if (m_aPayload == null)
-        return false;
-
-      // All valid
-      return true;
-    }
-
-    @Override
-    @Nonnull
-    public ESuccess sendMessage () throws Phase4Exception
-    {
-      if (!isEveryRequiredFieldSet ())
-      {
-        LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
-        return ESuccess.FAILURE;
-      }
-
-      // Temporary file manager
-      try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
-      {
-        // Start building AS4 User Message
-        final AS4ClientUserMessage aUserMsg = new AS4ClientUserMessage (aResHelper);
-        applyToUserMessage (aUserMsg);
-
-        // No payload - only one attachment
-        aUserMsg.setPayload (null);
-
-        // Add main attachment
-        aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (m_aPayload, aResHelper));
-
-        // Add other attachments
-        for (final Phase4OutgoingAttachment aAttachment : m_aAttachments)
-          aUserMsg.addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment, aResHelper));
-
-        // Main sending
-        AS4BidirectionalClientHelper.sendAS4AndReceiveAS4 (m_aCryptoFactory,
-                                                           m_aPModeResolver,
-                                                           m_aIAF,
-                                                           aUserMsg,
-                                                           m_aLocale,
-                                                           m_sEndointURL,
-                                                           m_aBuildMessageCallback,
-                                                           m_aOutgoingDumper,
-                                                           m_aIncomingDumper,
-                                                           m_aRetryCallback,
-                                                           m_aResponseConsumer,
-                                                           m_aSignalMsgConsumer);
-      }
-      catch (final Phase4Exception ex)
-      {
-        // Re-throw
-        throw ex;
-      }
-      catch (final Exception ex)
-      {
-        // wrap
-        throw new Phase4Exception ("Wrapped Phase4Exception", ex);
-      }
-      return ESuccess.SUCCESS;
-    }
   }
 }
