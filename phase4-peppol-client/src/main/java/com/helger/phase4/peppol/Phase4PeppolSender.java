@@ -84,6 +84,25 @@ public final class Phase4PeppolSender
   private Phase4PeppolSender ()
   {}
 
+  /**
+   * @param aSenderID
+   *        Sender participant ID. May not be <code>null</code>.
+   * @param aReceiverID
+   *        Receiver participant ID. May not be <code>null</code>.
+   * @param aDocTypeID
+   *        Document type ID. May not be <code>null</code>.
+   * @param aProcID
+   *        Process ID. May not be <code>null</code>.
+   * @param sInstanceIdentifier
+   *        SBDH instance identifier. May be <code>null</code> to create a
+   *        random ID.
+   * @param sUBLVersion
+   *        SBDH UBL version ID. May be <code>null</code> to use the default.
+   * @param aPayloadElement
+   *        Payload element to be wrapped. May not be <code>null</code>.
+   * @return The byte array of the XML representation of the created SBDH. Never
+   *         <code>null</code>.
+   */
   @Nonnull
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
@@ -104,8 +123,7 @@ public final class Phase4PeppolSender
                                      StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier : UUID.randomUUID ().toString (),
                                      PDTFactory.getCurrentLocalDateTime ());
     aData.setBusinessMessage (aPayloadElement);
-    final StandardBusinessDocument aSBD = new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
-    return aSBD;
+    return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
   }
 
   /**
@@ -133,51 +151,6 @@ public final class Phase4PeppolSender
     else
       if (aValidationResultHandler != null)
         LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
-  }
-
-  /**
-   * @param aSenderID
-   *        Sender participant ID. May not be <code>null</code>.
-   * @param aReceiverID
-   *        Receiver participant ID. May not be <code>null</code>.
-   * @param aDocTypeID
-   *        Document type ID. May not be <code>null</code>.
-   * @param aProcID
-   *        Process ID. May not be <code>null</code>.
-   * @param sSBDHInstanceIdentifier
-   *        SBDH instance identifier. May be <code>null</code> to create a
-   *        random ID.
-   * @param sSBDHUBLVersionID
-   *        SBDH UBL version ID. May be <code>null</code> to use the default.
-   * @param aPayloadElement
-   *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The byte array of the XML representation of the created SBDH. Never
-   *         <code>null</code>.
-   */
-  @Nonnull
-  private static byte [] _createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
-                                      @Nonnull final IParticipantIdentifier aReceiverID,
-                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
-                                      @Nonnull final IProcessIdentifier aProcID,
-                                      @Nullable final String sSBDHInstanceIdentifier,
-                                      @Nullable final String sSBDHUBLVersionID,
-                                      @Nonnull final Element aPayloadElement)
-  {
-    ValueEnforcer.notNull (aPayloadElement, "PayloadElement");
-    ValueEnforcer.notNull (aPayloadElement.getNamespaceURI (), "PayloadElement.NamespaceURI");
-
-    if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Start creating SBDH for AS4 message");
-
-    final StandardBusinessDocument aSBD = createSBDH (aSenderID,
-                                                      aReceiverID,
-                                                      aDocTypeID,
-                                                      aProcID,
-                                                      sSBDHInstanceIdentifier,
-                                                      sSBDHUBLVersionID,
-                                                      aPayloadElement);
-    final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
-    return aSBDBytes;
   }
 
   /**
@@ -576,6 +549,7 @@ public final class Phase4PeppolSender
     private String m_sSBDHUBLVersion;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
+    private Consumer <StandardBusinessDocument> m_aSBDDocumentConsumer;
     private Consumer <byte []> m_aSBDBytesConsumer;
 
     private VESID m_aVESID;
@@ -659,6 +633,22 @@ public final class Phase4PeppolSender
 
     /**
      * Set an optional Consumer for the created StandardBusinessDocument (SBD).
+     *
+     * @param aSBDDocumentConsumer
+     *        The consumer to be used. May be <code>null</code>.
+     * @return this for chaining
+     * @since 0.10.0
+     */
+    @Nonnull
+    public Builder sbdDocumentConsumer (@Nullable final Consumer <StandardBusinessDocument> aSBDDocumentConsumer)
+    {
+      m_aSBDDocumentConsumer = aSBDDocumentConsumer;
+      return this;
+    }
+
+    /**
+     * Set an optional Consumer for the created StandardBusinessDocument (SBD)
+     * bytes.
      *
      * @param aSBDBytesConsumer
      *        The consumer to be used. May be <code>null</code>.
@@ -744,13 +734,20 @@ public final class Phase4PeppolSender
         return ESuccess.FAILURE;
 
       // Created SBDH
-      final byte [] aSBDBytes = _createSBDH (m_aSenderID,
-                                             m_aReceiverID,
-                                             m_aDocTypeID,
-                                             m_aProcessID,
-                                             m_sSBDHInstanceIdentifier,
-                                             m_sSBDHUBLVersion,
-                                             aPayloadElement);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Start creating SBDH for AS4 message");
+
+      final StandardBusinessDocument aSBD = createSBDH (m_aSenderID,
+                                                        m_aReceiverID,
+                                                        m_aDocTypeID,
+                                                        m_aProcessID,
+                                                        m_sSBDHInstanceIdentifier,
+                                                        m_sSBDHUBLVersion,
+                                                        aPayloadElement);
+      if (m_aSBDDocumentConsumer != null)
+        m_aSBDDocumentConsumer.accept (aSBD);
+
+      final byte [] aSBDBytes = SBDHWriter.standardBusinessDocument ().getAsBytes (aSBD);
       if (m_aSBDBytesConsumer != null)
         m_aSBDBytesConsumer.accept (aSBDBytes);
 
