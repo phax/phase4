@@ -6,10 +6,9 @@ A library to send and receive AS4 messages.
 Licensed under the Apache 2 License!
 
 It consists of the following sub-projects:
-  * **phase4-lib** - basic data structures for AS4 handling
+  * **phase4-lib** - basic data structures for AS4 handling, sending and receiving
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
   * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation (since v0.9.1)
-  * **phase4-servlet** - AS4 servlet for integration into existing
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
@@ -38,7 +37,7 @@ If you are a phase4 user and want to be listed here, write me an email to phase4
 
 The configuration of phase4 is based on 2 different files:
   * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
-  * `phase4.properties` - phase4-servlet specific configuration file (was called `as4.properties` before v0.9.0)
+  * `phase4.properties` - phase4 receiving specific configuration file (was called `as4.properties` before v0.9.0)
 
 Additionally some phase4 specific system properties are available.
   
@@ -67,7 +66,7 @@ Peppol users: the key store must contain the AccessPoint private key and the tru
 
 ### phase4.properties
 
-This property file must be provided, when the `phase4-servlet` submodule for receiving is used.
+This property file may be provided if `AS4CryptoFactoryPropertiesFile.getDefaultInstance ()` is used for retrieving.
 If you are only using `phase4-lib` for sending, than this file is not of interest.
 
 This file contains the following properties:
