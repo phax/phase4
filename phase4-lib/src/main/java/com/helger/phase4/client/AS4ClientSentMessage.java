@@ -16,11 +16,14 @@
  */
 package com.helger.phase4.client;
 
+import java.time.LocalDateTime;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -32,21 +35,42 @@ import com.helger.commons.string.ToStringGenerator;
  * @param <T>
  *        The response type
  */
-public final class AS4ClientSentMessage <T>
+public class AS4ClientSentMessage <T>
 {
   private final AS4ClientBuiltMessage m_aBuiltMsg;
   private final T m_aResponse;
+  private final LocalDateTime m_aSentDateTime;
 
   /**
    * @param aBuiltMsg
-   *        The built message with headers, payload and message ID.
+   *        The built message with headers, payload and message ID. May not be
+   *        <code>null</code>.
    * @param aResponse
    *        The response payload. May be <code>null</code>.
    */
   public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg, @Nullable final T aResponse)
   {
-    m_aBuiltMsg = ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
+    this (aBuiltMsg, aResponse, PDTFactory.getCurrentLocalDateTime ());
+  }
+
+  /**
+   * @param aBuiltMsg
+   *        The built message with headers, payload and message ID. May not be
+   *        <code>null</code>.
+   * @param aResponse
+   *        The response payload. May be <code>null</code>.
+   * @param aSentDateTime
+   *        The sending date time. May not be <code>null</code>.
+   */
+  protected AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg,
+                                  @Nullable final T aResponse,
+                                  @Nonnull final LocalDateTime aSentDateTime)
+  {
+    ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
+    ValueEnforcer.notNull (aSentDateTime, "SentDateTime");
+    m_aBuiltMsg = aBuiltMsg;
     m_aResponse = aResponse;
+    m_aSentDateTime = aSentDateTime;
   }
 
   /**
@@ -54,7 +78,7 @@ public final class AS4ClientSentMessage <T>
    *         <code>null</code>.
    */
   @Nonnull
-  public AS4ClientBuiltMessage getBuiltMessage ()
+  public final AS4ClientBuiltMessage getBuiltMessage ()
   {
     return m_aBuiltMsg;
   }
@@ -66,7 +90,7 @@ public final class AS4ClientSentMessage <T>
    */
   @Nonnull
   @Nonempty
-  public String getMessageID ()
+  public final String getMessageID ()
   {
     return m_aBuiltMsg.getMessageID ();
   }
@@ -75,7 +99,7 @@ public final class AS4ClientSentMessage <T>
    * @return The response payload. May be <code>null</code>.
    */
   @Nullable
-  public T getResponse ()
+  public final T getResponse ()
   {
     return m_aResponse;
   }
@@ -84,14 +108,27 @@ public final class AS4ClientSentMessage <T>
    * @return <code>true</code> if a response payload is present,
    *         <code>false</code> if not.
    */
-  public boolean hasResponse ()
+  public final boolean hasResponse ()
   {
     return m_aResponse != null;
+  }
+
+  /**
+   * @return The sent date time. Never <code>null</code>.
+   * @since 0.10.0
+   */
+  @Nonnull
+  public final LocalDateTime getSentDateTime ()
+  {
+    return m_aSentDateTime;
   }
 
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg).append ("Response", m_aResponse).getToString ();
+    return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
+                                       .append ("Response", m_aResponse)
+                                       .append ("SentDateTime", m_aSentDateTime)
+                                       .getToString ();
   }
 }
