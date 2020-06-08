@@ -549,7 +549,7 @@ public final class Phase4PeppolSender
     private String m_sSBDHUBLVersion;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
-    private Consumer <StandardBusinessDocument> m_aSBDDocumentConsumer;
+    private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
     private Consumer <byte []> m_aSBDBytesConsumer;
 
     private VESID m_aVESID;
@@ -640,7 +640,7 @@ public final class Phase4PeppolSender
      * @since 0.10.0
      */
     @Nonnull
-    public Builder sbdDocumentConsumer (@Nullable final Consumer <StandardBusinessDocument> aSBDDocumentConsumer)
+    public Builder sbdDocumentConsumer (@Nullable final Consumer <? super StandardBusinessDocument> aSBDDocumentConsumer)
     {
       m_aSBDDocumentConsumer = aSBDDocumentConsumer;
       return this;
