@@ -72,7 +72,7 @@ public final class Phase4CEFSender
   }
 
   /**
-   * Abstract builder base class with the minimum requirements configuration
+   * Abstract CEF UserMessage builder class with sanity methods
    *
    * @author Philip Helger
    * @param <IMPLTYPE>
