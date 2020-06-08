@@ -35,7 +35,6 @@ import org.w3c.dom.Element;
 import com.helger.bdve.api.executorset.VESID;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.mime.CMimeType;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
@@ -55,6 +54,7 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
@@ -121,7 +121,7 @@ public final class Phase4PeppolSender
                                      StringHelper.hasText (sUBLVersion) ? sUBLVersion : DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID,
                                      aPayloadElement.getLocalName (),
                                      StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier : UUID.randomUUID ().toString (),
-                                     PDTFactory.getCurrentLocalDateTime ());
+                                     MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
     aData.setBusinessMessage (aPayloadElement);
     return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
   }
@@ -172,7 +172,7 @@ public final class Phase4PeppolSender
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
-    final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+    final LocalDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                               aNow,
                                                                                                               ETriState.UNDEFINED,

@@ -41,4 +41,7 @@ public interface IManagerFactory extends Serializable
 
   @Nonnull
   IAS4DuplicateManager createDuplicateManager () throws Phase4Exception;
+
+  @Nonnull
+  IAS4TimestampManager createTimestampManager () throws Phase4Exception;
 }

@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.quartz.DisallowConcurrentExecution;
@@ -53,7 +52,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
                             @Nonnull final IJobExecutionContext aContext) throws JobExecutionException
   {
     final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);
-    final LocalDateTime aOldDT = PDTFactory.getCurrentLocalDateTime ().minusMinutes (nMins);
+    final LocalDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minusMinutes (nMins);
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())

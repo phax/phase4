@@ -28,7 +28,7 @@ import com.helger.phase4.model.pmode.PModeManagerInMemory;
 /**
  * Implementation of {@link IManagerFactory} creating managers that are
  * in-memory only.
- * 
+ *
  * @author Philip Helger
  * @since 0.9.6
  */
@@ -50,5 +50,11 @@ public class ManagerFactoryInMemory implements IManagerFactory
   public IAS4DuplicateManager createDuplicateManager ()
   {
     return new AS4DuplicateManagerInMemory ();
+  }
+
+  @Nonnull
+  public IAS4TimestampManager createTimestampManager ()
+  {
+    return IAS4TimestampManager.createDefaultInstance ();
   }
 }

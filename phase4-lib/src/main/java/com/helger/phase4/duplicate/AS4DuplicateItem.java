@@ -23,10 +23,10 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
  * This class represents a single "duplication check" item. It works for
@@ -42,17 +42,15 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   private final String m_sProfileID;
   private final String m_sPModeID;
 
-  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
-                           @Nullable final String sProfileID,
-                           @Nullable final String sPModeID)
+  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
   {
-    this (PDTFactory.getCurrentLocalDateTime (), sMessageID, sProfileID, sPModeID);
+    this (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID, sProfileID, sPModeID);
   }
 
-  AS4DuplicateItem (@Nonnull final LocalDateTime aDT,
-                    @Nonnull @Nonempty final String sMessageID,
-                    @Nullable final String sProfileID,
-                    @Nullable final String sPModeID)
+  protected AS4DuplicateItem (@Nonnull final LocalDateTime aDT,
+                              @Nonnull @Nonempty final String sMessageID,
+                              @Nullable final String sProfileID,
+                              @Nullable final String sPModeID)
   {
     m_aDT = ValueEnforcer.notNull (aDT, "DT");
     m_sMessageID = ValueEnforcer.notEmpty (sMessageID, "MessageID");

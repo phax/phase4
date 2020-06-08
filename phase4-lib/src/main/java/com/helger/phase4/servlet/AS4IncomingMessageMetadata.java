@@ -29,10 +29,10 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
  * This class holds optional metadata for a single incoming request. This is the
@@ -61,7 +61,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    */
   public AS4IncomingMessageMetadata (@Nonnull final EAS4IncomingMessageMode eMode)
   {
-    this (UUID.randomUUID ().toString (), PDTFactory.getCurrentLocalDateTime (), eMode);
+    this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
   }
 
   /**

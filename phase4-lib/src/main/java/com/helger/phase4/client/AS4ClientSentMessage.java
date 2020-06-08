@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
  * This class correlates the built source message
@@ -50,7 +50,7 @@ public class AS4ClientSentMessage <T>
    */
   public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg, @Nullable final T aResponse)
   {
-    this (aBuiltMsg, aResponse, PDTFactory.getCurrentLocalDateTime ());
+    this (aBuiltMsg, aResponse, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**

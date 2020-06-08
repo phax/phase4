@@ -25,8 +25,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
 import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
@@ -77,7 +77,7 @@ public final class AS4HttpDebug
   public static void debug (@Nonnull final Supplier <? super String> aMsg)
   {
     if (isEnabled ())
-      LOGGER.info ("$$$ AS4 HTTP [" + PDTFactory.getCurrentLocalTime ().toString () + "] " + aMsg.get ());
+      LOGGER.info ("$$$ AS4 HTTP [" + MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().toString () + "] " + aMsg.get ());
   }
 
   /**

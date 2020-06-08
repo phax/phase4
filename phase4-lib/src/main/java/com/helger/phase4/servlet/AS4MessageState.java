@@ -35,10 +35,10 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.attr.AttributeContainerAny;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.IMPC;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -88,7 +88,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
                           @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                           @Nonnull final Locale aLocale)
   {
-    m_aReceiptDT = PDTFactory.getCurrentLocalDateTime ();
+    m_aReceiptDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     m_eSoapVersion = ValueEnforcer.notNull (eSoapVersion, "SOAPVersion");
     m_aResHelper = ValueEnforcer.notNull (aResHelper, "ResHelper");
     m_aLocale = ValueEnforcer.notNull (aLocale, "Locale");

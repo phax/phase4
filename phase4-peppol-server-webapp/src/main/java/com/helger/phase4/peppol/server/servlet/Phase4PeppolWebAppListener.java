@@ -34,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.file.SimpleFileIO;
@@ -49,6 +48,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.AS4MessagingHelper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.peppol.server.storage.StorageHelper;
 import com.helger.phase4.peppol.servlet.Phase4PeppolServletConfiguration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
@@ -187,7 +187,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     // No OCSP check for performance
     final X509Certificate aAPCert = (X509Certificate) aPKE.getCertificate ();
     final EPeppolCertificateCheckResult eCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aAPCert,
-                                                                                                          PDTFactory.getCurrentLocalDateTime (),
+                                                                                                          MetaAS4Manager.getTimestampMgr ()
+                                                                                                                        .getCurrentDateTime (),
                                                                                                           ETriState.FALSE,
                                                                                                           ETriState.UNDEFINED);
     if (eCheckResult.isInvalid ())

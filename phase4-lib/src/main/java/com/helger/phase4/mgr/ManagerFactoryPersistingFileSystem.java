@@ -78,4 +78,10 @@ public class ManagerFactoryPersistingFileSystem implements IManagerFactory
       throw new Phase4Exception ("Error creating AS4DuplicateManager", ex);
     }
   }
+
+  @Nonnull
+  public IAS4TimestampManager createTimestampManager ()
+  {
+    return IAS4TimestampManager.createDefaultInstance ();
+  }
 }

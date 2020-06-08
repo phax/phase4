@@ -89,6 +89,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private IMPCManager m_aMPCMgr;
   private IPModeManager m_aPModeMgr;
   private IAS4DuplicateManager m_aIncomingDuplicateMgr;
+  private IAS4TimestampManager m_aTimestampMgr;
   private AS4ProfileManager m_aProfileMgr;
 
   @Deprecated
@@ -108,6 +109,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aMPCMgr = s_aFactory.createMPCManager ();
       m_aPModeMgr = s_aFactory.createPModeManager ();
       m_aIncomingDuplicateMgr = s_aFactory.createDuplicateManager ();
+      m_aTimestampMgr = s_aFactory.createTimestampManager ();
 
       // profile mgr is always in-memory
       m_aProfileMgr = new AS4ProfileManager ();
@@ -147,6 +149,12 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public static IAS4DuplicateManager getIncomingDuplicateMgr ()
   {
     return getInstance ().m_aIncomingDuplicateMgr;
+  }
+
+  @Nonnull
+  public static IAS4TimestampManager getTimestampMgr ()
+  {
+    return getInstance ().m_aTimestampMgr;
   }
 
   @Nonnull
