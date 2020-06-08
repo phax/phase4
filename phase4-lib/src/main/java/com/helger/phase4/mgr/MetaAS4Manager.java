@@ -47,6 +47,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private static IManagerFactory s_aFactory;
+  private static IAS4TimestampManager s_aTimestampMgr;
   static
   {
     final String sInMemory = SystemProperties.getPropertyValueOrNull (SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY);
@@ -60,6 +61,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       LOGGER.info ("MetaAS4Manager is using file system persistence");
       s_aFactory = new ManagerFactoryPersistingFileSystem ();
     }
+    s_aTimestampMgr = s_aFactory.createTimestampManager ();
   }
 
   /**
@@ -84,12 +86,12 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {
     ValueEnforcer.notNull (aFactory, "Factory");
     s_aFactory = aFactory;
+    s_aTimestampMgr = s_aFactory.createTimestampManager ();
   }
 
   private IMPCManager m_aMPCMgr;
   private IPModeManager m_aPModeMgr;
   private IAS4DuplicateManager m_aIncomingDuplicateMgr;
-  private IAS4TimestampManager m_aTimestampMgr;
   private AS4ProfileManager m_aProfileMgr;
 
   @Deprecated
@@ -109,7 +111,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aMPCMgr = s_aFactory.createMPCManager ();
       m_aPModeMgr = s_aFactory.createPModeManager ();
       m_aIncomingDuplicateMgr = s_aFactory.createDuplicateManager ();
-      m_aTimestampMgr = s_aFactory.createTimestampManager ();
 
       // profile mgr is always in-memory
       m_aProfileMgr = new AS4ProfileManager ();
@@ -152,14 +153,14 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public static IAS4TimestampManager getTimestampMgr ()
-  {
-    return getInstance ().m_aTimestampMgr;
-  }
-
-  @Nonnull
   public static AS4ProfileManager getProfileMgr ()
   {
     return getInstance ().m_aProfileMgr;
+  }
+
+  @Nonnull
+  public static IAS4TimestampManager getTimestampMgr ()
+  {
+    return s_aTimestampMgr;
   }
 }
