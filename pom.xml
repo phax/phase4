@@ -101,7 +101,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>6.1.5</version>
+        <version>6.1.6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -157,7 +157,7 @@
       <dependency>
         <groupId>com.helger.bdve.rules</groupId>
         <artifactId>ph-bdve-rules-parent-pom</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
