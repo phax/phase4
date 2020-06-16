@@ -43,6 +43,8 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 public final class Phase4PeppolValidation
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolValidation.class);
+  // Note to myself: don't create a getter for this registry to avoid outside
+  // modification
   private static final IValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = createDefaultRegistry ();
 
   private Phase4PeppolValidation ()

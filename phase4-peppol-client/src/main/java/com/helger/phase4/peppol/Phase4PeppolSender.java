@@ -32,7 +32,9 @@ import org.unece.cefact.namespaces.sbdh.StandardBusinessDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.helger.bdve.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.bdve.api.executorset.VESID;
+import com.helger.bdve.engine.source.IValidationSourceXML;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.mime.CMimeType;
@@ -129,6 +131,9 @@ public final class Phase4PeppolSender
   /**
    * @param aPayloadElement
    *        The payload element to be validated. May not be <code>null</code>.
+   * @param aRegistry
+   *        The validation registry to be used. May be <code>null</code> to
+   *        indicate to use the default one.
    * @param aVESID
    *        The VESID to validate against. May be <code>null</code>.
    * @param aValidationResultHandler
@@ -137,6 +142,7 @@ public final class Phase4PeppolSender
    *         If the validation result handler decides to do so....
    */
   private static void _validatePayload (@Nonnull final Element aPayloadElement,
+                                        @Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aRegistry,
                                         @Nullable final VESID aVESID,
                                         @Nullable final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
@@ -144,13 +150,26 @@ public final class Phase4PeppolSender
     if (aVESID != null)
     {
       if (aValidationResultHandler != null)
-        Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
+      {
+        if (aRegistry == null)
+        {
+          // Default registry
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aVESID, aValidationResultHandler);
+        }
+        else
+        {
+          // Custom registry
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
+        }
+      }
       else
         LOGGER.warn ("A VES ID is present but no ValidationResultHandler - therefore no validation is performed");
     }
     else
+    {
       if (aValidationResultHandler != null)
         LOGGER.warn ("A ValidationResultHandler is present but no VESID - therefore no validation is performed");
+    }
   }
 
   /**
@@ -552,6 +571,7 @@ public final class Phase4PeppolSender
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
     private Consumer <byte []> m_aSBDBytesConsumer;
 
+    private IValidationExecutorSetRegistry <IValidationSourceXML> m_aVESRegistry;
     private VESID m_aVESID;
     private IPhase4PeppolValidatonResultHandler m_aValidationResultHandler;
 
@@ -662,6 +682,26 @@ public final class Phase4PeppolSender
     }
 
     /**
+     * Set a custom validation registry to use in VESID lookup. This may be
+     * needed if other Peppol formats like XRechnung or SimplerInvoicing should
+     * be send through this client. The same registry instance should be used
+     * for all sending operations to ensure that validation artefact caching
+     * works best.
+     *
+     * @param aVESRegistry
+     *        The registry to use. May be <code>null</code> to indicate that the
+     *        default registry (official Peppol artefacts only) should be used.
+     * @return this for chaining
+     * @since 0.10.1
+     */
+    @Nonnull
+    public Builder validationRegistry (final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
+    {
+      m_aVESRegistry = aVESRegistry;
+      return this;
+    }
+
+    /**
      * Set the client side validation to be used. If this method is not invoked,
      * than it's the responsibility of the caller to validate the document prior
      * to sending it. This method uses a default "do nothing validation result
@@ -727,7 +767,7 @@ public final class Phase4PeppolSender
           throw new IllegalStateException ("Unexpected - neither element nor bytes are present");
 
       // Optional payload validation
-      _validatePayload (aPayloadElement, m_aVESID, m_aValidationResultHandler);
+      _validatePayload (aPayloadElement, m_aVESRegistry, m_aVESID, m_aValidationResultHandler);
 
       // Perform SMP lookup
       if (super.finishFields ().isFailure ())
