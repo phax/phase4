@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.api.execute.ValidationExecutionManager;
 import com.helger.bdve.api.executorset.IValidationExecutorSet;
+import com.helger.bdve.api.executorset.IValidationExecutorSetRegistry;
 import com.helger.bdve.api.executorset.VESID;
 import com.helger.bdve.api.executorset.ValidationExecutorSetRegistry;
 import com.helger.bdve.api.result.ValidationResultList;
@@ -31,6 +32,7 @@ import com.helger.bdve.engine.source.IValidationSourceXML;
 import com.helger.bdve.engine.source.ValidationSourceXML;
 import com.helger.bdve.peppol.PeppolValidation;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableCopy;
 
 /**
  * This class contains the client side validation required for outgoing Peppol
@@ -41,26 +43,83 @@ import com.helger.commons.ValueEnforcer;
 public final class Phase4PeppolValidation
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolValidation.class);
-  private static final ValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = new ValidationExecutorSetRegistry <> ();
-
-  static
-  {
-    PeppolValidation.initStandard (VES_REGISTRY);
-    PeppolValidation.initThirdParty (VES_REGISTRY);
-  }
+  private static final IValidationExecutorSetRegistry <IValidationSourceXML> VES_REGISTRY = createDefaultRegistry ();
 
   private Phase4PeppolValidation ()
   {}
 
+  /**
+   * @return A new {@link ValidationExecutorSetRegistry} initialized with the
+   *         Peppol rules only.
+   * @since 0.10.1
+   * @see PeppolValidation
+   */
+  @Nonnull
+  @ReturnsMutableCopy
+  public static ValidationExecutorSetRegistry <IValidationSourceXML> createDefaultRegistry ()
+  {
+    final ValidationExecutorSetRegistry <IValidationSourceXML> ret = new ValidationExecutorSetRegistry <> ();
+    PeppolValidation.initStandard (ret);
+    PeppolValidation.initThirdParty (ret);
+    return ret;
+  }
+
+  /**
+   * Validate the passed DOM element using the provided VESID using the default
+   * registry.
+   *
+   * @param aXML
+   *        The XML element to be validated. May not be <code>null</code>.
+   * @param aVESID
+   *        The {@link VESID} to be used. Must be contained in the default
+   *        registry. May not be <code>null</code>.
+   * @param aValidationResultHandler
+   *        The validation result handler to be used. May not be
+   *        <code>null</code>.
+   * @throws Phase4PeppolException
+   *         In case e.g. the validation failed. This usually implies, that the
+   *         document will NOT be send out.
+   * @see #validateOutgoingBusinessDocument(Element,
+   *      IValidationExecutorSetRegistry, VESID,
+   *      IPhase4PeppolValidatonResultHandler)
+   */
   public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
                                                        @Nonnull final VESID aVESID,
                                                        @Nonnull final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
   {
+    validateOutgoingBusinessDocument (aXML, VES_REGISTRY, aVESID, aValidationResultHandler);
+  }
+
+  /**
+   * Validate the passed DOM element using the provided VESID using the provided
+   * registry.
+   *
+   * @param aXML
+   *        The XML element to be validated. May not be <code>null</code>.
+   * @param aVESRegistry
+   *        The VES registry the VESID is looked up in.
+   * @param aVESID
+   *        The {@link VESID} to be used. Must be contained in the provided
+   *        registry. May not be <code>null</code>.
+   * @param aValidationResultHandler
+   *        The validation result handler to be used. May not be
+   *        <code>null</code>.
+   * @throws Phase4PeppolException
+   *         In case e.g. the validation failed. This usually implies, that the
+   *         document will NOT be send out.
+   * @since 0.10.1
+   */
+  public static void validateOutgoingBusinessDocument (@Nonnull final Element aXML,
+                                                       @Nonnull final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry,
+                                                       @Nonnull final VESID aVESID,
+                                                       @Nonnull final IPhase4PeppolValidatonResultHandler aValidationResultHandler) throws Phase4PeppolException
+  {
     ValueEnforcer.notNull (aXML, "XMLElement");
+    ValueEnforcer.notNull (aVESRegistry, "VESRegistry");
     ValueEnforcer.notNull (aVESID, "VESID");
     ValueEnforcer.notNull (aValidationResultHandler, "ValidationResultHandler");
 
-    final IValidationExecutorSet <IValidationSourceXML> aVES = VES_REGISTRY.getOfID (aVESID);
+    final IValidationExecutorSet <IValidationSourceXML> aVES = aVESRegistry.getOfID (aVESID);
     if (aVES == null)
       throw new Phase4PeppolException ("The validation executor set ID " + aVESID.getAsSingleID () + " is unknown!");
 
