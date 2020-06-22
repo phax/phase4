@@ -47,10 +47,10 @@ public enum ESoapVersion
   private final IMimeType m_aMimeType;
   private final String m_sVersion;
 
-  private ESoapVersion (@Nonnull @Nonempty final String sNamespaceURI,
-                        @Nonnull @Nonempty final String sNamespacePrefix,
-                        @Nonnull final IMimeType aMimeType,
-                        @Nonnull @Nonempty final String sVersion)
+  ESoapVersion (@Nonnull @Nonempty final String sNamespaceURI,
+                @Nonnull @Nonempty final String sNamespacePrefix,
+                @Nonnull final IMimeType aMimeType,
+                @Nonnull @Nonempty final String sVersion)
   {
     m_sNamespaceURI = sNamespaceURI;
     m_sNamespacePrefix = sNamespacePrefix;
@@ -164,8 +164,7 @@ public enum ESoapVersion
   }
 
   @Nullable
-  public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion,
-                                                      @Nullable final ESoapVersion eDefault)
+  public static ESoapVersion getFromVersionOrDefault (@Nullable final String sVersion, @Nullable final ESoapVersion eDefault)
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;

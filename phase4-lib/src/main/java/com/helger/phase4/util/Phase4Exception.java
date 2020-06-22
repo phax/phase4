@@ -20,7 +20,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * phase4 base exception
+ * phase4 base exception. It is just a in-between exception for easy catching of
+ * all phase4 related exception.
  *
  * @author Philip Helger
  * @since 0.9.7

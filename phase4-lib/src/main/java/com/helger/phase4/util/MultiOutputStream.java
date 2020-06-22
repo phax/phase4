@@ -24,6 +24,11 @@ import javax.annotation.Nonnull;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 
+/**
+ * An output stream that writes to multiple output streams.
+ * 
+ * @author Philip Helger
+ */
 public class MultiOutputStream extends OutputStream
 {
   private final OutputStream [] m_aOSs;

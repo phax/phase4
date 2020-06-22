@@ -48,6 +48,16 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   private final ICommonsList <WSS4JAttachment> m_aAttachments;
   private final String m_sAsyncResponseURL;
 
+  /**
+   * @param eSuccess
+   *        Success or failure. May not be <code>null</code>.
+   * @param sErrorMsg
+   *        The error message to use. May be <code>null</code>.
+   * @param aAttachments
+   *        The response attachments. May be <code>null</code>.
+   * @param sAsyncResponseURL
+   *        The asynchronous response URLs. May be <code>null</code>.
+   */
   protected AS4MessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                        @Nullable final String sErrorMsg,
                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
@@ -64,10 +74,18 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return m_eSuccess.isSuccess ();
   }
 
+  /**
+   * @return The error message. May be <code>null</code>.
+   */
   @Nullable
   public String getErrorMessage ()
   {
     return m_sErrorMsg;
+  }
+
+  public boolean hasErrorMessage ()
+  {
+    return StringHelper.hasText (m_sErrorMsg);
   }
 
   @Nonnull
@@ -82,18 +100,32 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
     return CollectionHelper.isNotEmpty (m_aAttachments);
   }
 
+  /**
+   * Add all attachments contained in this object onto the provided target
+   * collection.
+   *
+   * @param aTarget
+   *        The target collection. May not be <code>null</code>.
+   */
   public void addAllAttachmentsTo (@Nonnull final Collection <? super WSS4JAttachment> aTarget)
   {
     if (m_aAttachments != null)
       aTarget.addAll (m_aAttachments);
   }
 
+  /**
+   * @return The asynchronous response URL. May be <code>null</code>.
+   */
   @Nullable
   public String getAsyncResponseURL ()
   {
     return m_sAsyncResponseURL;
   }
 
+  /**
+   * @return <code>true</code> if an asynchronous response URL is present,
+   *         <code>false</code> otherwise.
+   */
   public boolean hasAsyncResponseURL ()
   {
     return StringHelper.hasText (m_sAsyncResponseURL);
@@ -110,7 +142,7 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   }
 
   /**
-   * @return A new success object.
+   * @return A new success object. No attachments, no nothing.
    */
   @Nonnull
   public static AS4MessageProcessorResult createSuccess ()
@@ -149,9 +181,6 @@ public class AS4MessageProcessorResult implements ISuccessIndicator
   public static AS4MessageProcessorResult createFailure (@Nonnull final String sErrorMsg)
   {
     ValueEnforcer.notNull (sErrorMsg, "ErrorMsg");
-    return new AS4MessageProcessorResult (ESuccess.FAILURE,
-                                          sErrorMsg,
-                                          (ICommonsList <WSS4JAttachment>) null,
-                                          (String) null);
+    return new AS4MessageProcessorResult (ESuccess.FAILURE, sErrorMsg, (ICommonsList <WSS4JAttachment>) null, (String) null);
   }
 }

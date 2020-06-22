@@ -40,9 +40,9 @@ public enum EWSSVersion
   private final String m_sNamespacePrefix;
   private final String m_sVersion;
 
-  private EWSSVersion (@Nonnull @Nonempty final String sNamespaceURI,
-                       @Nonnull @Nonempty final String sNamespacePrefix,
-                       @Nonnull @Nonempty final String sVersion)
+  EWSSVersion (@Nonnull @Nonempty final String sNamespaceURI,
+               @Nonnull @Nonempty final String sNamespacePrefix,
+               @Nonnull @Nonempty final String sVersion)
   {
     m_sNamespaceURI = sNamespaceURI;
     m_sNamespacePrefix = sNamespacePrefix;
@@ -77,8 +77,7 @@ public enum EWSSVersion
   }
 
   @Nullable
-  public static EWSSVersion getFromVersionOrDefault (@Nullable final String sVersion,
-                                                     @Nullable final EWSSVersion eDefault)
+  public static EWSSVersion getFromVersionOrDefault (@Nullable final String sVersion, @Nullable final EWSSVersion eDefault)
   {
     if (StringHelper.hasNoText (sVersion))
       return eDefault;

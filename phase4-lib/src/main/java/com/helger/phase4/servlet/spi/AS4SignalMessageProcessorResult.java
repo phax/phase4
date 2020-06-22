@@ -37,6 +37,18 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
 {
   private final Ebms3UserMessage m_aPullReturnUserMessage;
 
+  /**
+   * @param eSuccess
+   *        Success or failure. May not be <code>null</code>.
+   * @param sErrorMsg
+   *        The error message to use. May be <code>null</code>.
+   * @param aAttachments
+   *        The response attachments. May be <code>null</code>.
+   * @param sAsyncResponseURL
+   *        The asynchronous response URLs. May be <code>null</code>.
+   * @param aPullReturnUserMessage
+   *        The user message to return. May be <code>null</code>.
+   */
   protected AS4SignalMessageProcessorResult (@Nonnull final ESuccess eSuccess,
                                              @Nullable final String sErrorMsg,
                                              @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
@@ -60,9 +72,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ())
-                            .append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage)
-                            .getToString ();
+    return ToStringGenerator.getDerived (super.toString ()).append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage).getToString ();
   }
 
   @Nonnull
@@ -76,11 +86,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                                                                @Nullable final String sAsyncResponseURL,
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS,
-                                                null,
-                                                aAttachments,
-                                                sAsyncResponseURL,
-                                                aPullReturnUserMessage);
+    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, sAsyncResponseURL, aPullReturnUserMessage);
   }
 
   @Nonnull

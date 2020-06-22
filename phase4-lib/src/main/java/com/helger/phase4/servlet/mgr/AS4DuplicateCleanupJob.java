@@ -38,6 +38,11 @@ import com.helger.schedule.quartz.GlobalQuartzScheduler;
 import com.helger.schedule.quartz.trigger.JDK8TriggerBuilder;
 import com.helger.web.scope.util.AbstractScopeAwareJob;
 
+/**
+ * A special job, that removes all entries
+ * 
+ * @author Philip Helger
+ */
 @DisallowConcurrentExecution
 public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
 {
