@@ -19,10 +19,14 @@ package com.helger.phase4.messaging.crypto;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.mail.MessagingException;
 
 import org.apache.wss4j.common.WSEncryptionPart;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -104,7 +108,12 @@ public final class AS4Encryptor
                                            .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
-    return aBuilder.build (aCryptoFactory.getCrypto ());
+
+    // Generate a session key
+    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
+    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+
+    return aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
   }
 
   @Nonnull
@@ -143,8 +152,12 @@ public final class AS4Encryptor
     if (aMustUnderstand != null)
       aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
 
+    // Generate a session key
+    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
+    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+
     // Main sign and/or encrypt
-    final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
+    final Document aEncryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
 
     // The attachment callback handler contains the encrypted attachments
     // Important: read the attachment stream only once!

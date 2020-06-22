@@ -19,8 +19,12 @@ package com.helger.phase4.server.supplementary.test;
 import static org.junit.Assert.assertFalse;
 
 import javax.annotation.Nullable;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import org.apache.wss4j.common.WSEncryptionPart;
+import org.apache.wss4j.common.WSS4JConstants;
+import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.common.util.XMLUtils;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
@@ -71,7 +75,6 @@ public final class EncryptionTest
     final WSSecEncrypt aBuilder = new WSSecEncrypt (secHeader);
     aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
-    aBuilder.setSymmetricKey (null);
     aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
 
     // final WSEncryptionPart encP = new WSEncryptionPart ("Messaging",
@@ -80,8 +83,12 @@ public final class EncryptionTest
     final WSEncryptionPart encP = new WSEncryptionPart ("Body", ESoapVersion.SOAP_11.getNamespaceURI (), "Element");
     aBuilder.getParts ().add (encP);
 
+    // Generate a session key
+    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
+    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+
     LOGGER.info ("Before Encryption AES 128/RSA-15....");
-    final Document encryptedDoc = aBuilder.build (aCryptoFactory.getCrypto ());
+    final Document encryptedDoc = aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
     LOGGER.info ("After Encryption AES 128/RSA-15....");
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
 
@@ -102,7 +109,12 @@ public final class EncryptionTest
     builder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
-    final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto ());
+
+    // Generate a session key
+    final KeyGenerator aKeyGen = KeyUtils.getKeyGenerator (WSS4JConstants.AES_128);
+    final SecretKey aSymmetricKey = aKeyGen.generateKey ();
+
+    final Document encryptedDoc = builder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
 
     final String outputString = XMLUtils.prettyDocumentToString (encryptedDoc);
     // System.out.println (outputString);

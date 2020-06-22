@@ -75,15 +75,10 @@ public final class SignatureTest
 
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
-    WSHandlerResult aResults;
-    {
-      final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
-      aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCryptoFactory.getCrypto ());
-    }
+    final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
+    final WSHandlerResult aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCryptoFactory.getCrypto ());
 
-    final WSSecurityEngineResult actionResult = aResults.getActionResults ()
-                                                        .get (Integer.valueOf (WSConstants.SIGN))
-                                                        .get (0);
+    final WSSecurityEngineResult actionResult = aResults.getActionResults ().get (Integer.valueOf (WSConstants.SIGN)).get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);

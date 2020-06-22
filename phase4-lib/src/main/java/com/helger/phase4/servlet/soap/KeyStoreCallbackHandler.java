@@ -42,7 +42,6 @@ final class KeyStoreCallbackHandler implements CallbackHandler
     m_aCryptoFactory = aCryptoFactory;
   }
 
-  @SuppressWarnings ("deprecation")
   @Nonnull
   @Nonempty
   private static String _getUsage (final int nUsage)
@@ -57,16 +56,10 @@ final class KeyStoreCallbackHandler implements CallbackHandler
         return "USERNAME_TOKEN";
       case WSPasswordCallback.SIGNATURE:
         return "SIGNATURE";
-      case WSPasswordCallback.KEY_NAME:
-        return "KEY_NAME (deprecated)";
-      case WSPasswordCallback.USERNAME_TOKEN_UNKNOWN:
-        return "USERNAME_TOKEN_UNKNOWN (deprecated)";
       case WSPasswordCallback.SECURITY_CONTEXT_TOKEN:
         return "SECURITY_CONTEXT_TOKEN";
       case WSPasswordCallback.CUSTOM_TOKEN:
         return "CUSTOM_TOKEN";
-      case WSPasswordCallback.ENCRYPTED_KEY_TOKEN:
-        return "ENCRYPTED_KEY_TOKEN (deprecated)";
       case WSPasswordCallback.SECRET_KEY:
         return "SECRET_KEY";
       case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD:
