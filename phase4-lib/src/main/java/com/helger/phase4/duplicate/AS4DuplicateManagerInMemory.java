@@ -50,9 +50,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {}
 
   @Nonnull
-  public EContinue registerAndCheck (@Nullable final String sMessageID,
-                                     @Nullable final String sProfileID,
-                                     @Nullable final String sPModeID)
+  public EContinue registerAndCheck (@Nullable final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
   {
     if (StringHelper.hasNoText (sMessageID))
     {
@@ -91,8 +89,7 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = new CommonsArrayList <> ();
-    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT),
-                                                      x -> aEvictItems.add (x.getMessageID ())));
+    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT), x -> aEvictItems.add (x.getMessageID ())));
     if (aEvictItems.isNotEmpty ())
     {
       // Bulk erase all
@@ -124,6 +121,15 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   public IAS4DuplicateItem findFirst (@Nonnull final Predicate <? super IAS4DuplicateItem> aFilter)
   {
     return m_aRWLock.readLockedGet ( () -> CollectionHelper.findFirst (m_aMap.values (), aFilter));
+  }
+
+  @Nullable
+  public IAS4DuplicateItem getItemOfMessageID (@Nullable final String sMessageID)
+  {
+    if (StringHelper.hasNoText (sMessageID))
+      return null;
+
+    return findFirst (x -> x.getMessageID ().equals (sMessageID));
   }
 
   @Nonnull

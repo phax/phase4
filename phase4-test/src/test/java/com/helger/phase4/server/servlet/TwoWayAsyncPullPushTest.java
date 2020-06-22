@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpEntity;
@@ -144,14 +146,14 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
+    final String sID = nList.item (0).getTextContent ();
 
     // Step one assertion for final the sync part
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
+    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + sID));
 
-    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (sID));
     // Pull => First UserMsg, Push part second UserMsg
-    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
+    assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
   }
 }

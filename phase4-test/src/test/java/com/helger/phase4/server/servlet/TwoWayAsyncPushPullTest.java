@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpEntity;
@@ -124,11 +126,11 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
+    final String sID = nList.item (0).getTextContent ();
 
-    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (aIncomingDuplicateMgr.size () == 1);
-    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + aID));
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (sID));
+    assertEquals (1, aIncomingDuplicateMgr.size ());
+    assertTrue (sResponse.contains ("<eb:RefToMessageId>" + sID));
 
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI
@@ -140,7 +142,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     // add the ID from the usermessage since its still one async message
     // transfer
     aDoc = AS4PullRequestMessage.create (m_eSoapVersion,
-                                         MessageHelperMethods.createEbms3MessageInfo (aID),
+                                         MessageHelperMethods.createEbms3MessageInfo (sID),
                                          AS4TestConstants.DEFAULT_MPC,
                                          aAny)
                                 .getAsSoapDocument ();

@@ -17,7 +17,6 @@
 package com.helger.phase4.duplicate;
 
 import java.time.LocalDateTime;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -36,14 +35,32 @@ import com.helger.commons.state.EContinue;
  */
 public interface IAS4DuplicateManager
 {
+  /**
+   * @return <code>true</code> if there are no entries contained,
+   *         <code>false</code> otherwise.
+   */
   boolean isEmpty ();
 
+  /**
+   * @return The number contained entries. Always &ge; 0.
+   */
   @Nonnegative
   int size ();
 
+  /**
+   * Find the first item with the provided message ID.
+   *
+   * @param sMessageID
+   *        The message ID to be searched. May be <code>null</code>.
+   * @return <code>null</code> if no matching entry is contained.
+   * @since 0.10.1
+   */
   @Nullable
-  IAS4DuplicateItem findFirst (@Nullable Predicate <? super IAS4DuplicateItem> aFilter);
+  IAS4DuplicateItem getItemOfMessageID (@Nullable String sMessageID);
 
+  /**
+   * @return All entries contained in the list.
+   */
   @Nonnull
   @ReturnsMutableCopy
   ICommonsList <IAS4DuplicateItem> getAll ();

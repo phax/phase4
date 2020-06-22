@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.CEF;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -78,8 +80,8 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     // Should only be called once
     final String aID = nList.item (0).getTextContent ();
 
-    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));
+    assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
   }
 
   /**
@@ -120,7 +122,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     final String aID = nList.item (0).getTextContent ();
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
-    assertTrue (aIncomingDuplicateMgr.findFirst (x -> x.getMessageID ().equals (aID)) != null);
-    assertTrue (aIncomingDuplicateMgr.getAll ().size () == 2);
+    assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));
+    assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
   }
 }
