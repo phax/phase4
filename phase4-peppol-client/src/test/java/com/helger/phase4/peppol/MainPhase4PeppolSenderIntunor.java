@@ -22,10 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.peppol.PeppolValidation3_10_0;
+import com.helger.bdve.peppol.PeppolValidation3_10_1;
 import com.helger.commons.system.SystemProperties;
-import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.HttpClientSettings;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -82,9 +80,7 @@ public final class MainPhase4PeppolSenderIntunor
                        "'");
         }
       };
-      final HttpClientSettings aHCS = new Phase4PeppolHttpClientSettings ().setHostnameVerifierVerifyAll ();
       if (Phase4PeppolSender.builder ()
-                            .httpClientFactory (new HttpClientFactory (aHCS))
                             .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                             .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
@@ -93,7 +89,7 @@ public final class MainPhase4PeppolSenderIntunor
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
+                            .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)
                             .sendMessage ()
