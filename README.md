@@ -286,6 +286,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added the possibility to provide a custom VESRegistry to the Peppol client to provide additional validation rules
     * Changed the method `IAS4DuplicateManager` method `findFirst` to `getItemOfMessageID` to be implementable in different ways
     * Updated to WSS4J 2.3.0 and XMLSec 2.2.0
+    * Using `ph-xsds-xlink` and `ph-xsds-xml` for a shared "XLink" JAXB artefact
 * v0.10.0 - 2020-06-08
     * Updated to ph-bdve 6.0.0
     * Merged `phase4-servlet` into `phase4-lib`; therefore dropped `phase4-servlet` submodule

@@ -93,6 +93,10 @@
       <artifactId>ph-xsds-xmldsig</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger.xsd</groupId>
+      <artifactId>ph-xsds-xlink</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-tenancy</artifactId>
     </dependency>
@@ -240,11 +244,20 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
           <episodes>
             <episode>
               <groupId>com.helger.xsd</groupId>
+              <artifactId>ph-xsds-xlink</artifactId>
+            </episode>
+            <episode>
+              <groupId>com.helger.xsd</groupId>
               <artifactId>ph-xsds-xmldsig</artifactId>
             </episode>
           </episodes>
         </configuration>
         <dependencies>
+          <dependency>
+            <groupId>com.helger.xsd</groupId>
+            <artifactId>ph-xsds-xlink</artifactId>
+            <version>${ph-xsds.version}</version>
+          </dependency>
           <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-jaxb22-plugin</artifactId>

@@ -74,6 +74,7 @@
     <wss4j.version>2.3.0</wss4j.version>
     <log4j.version>2.13.3</log4j.version>
     <peppol-commons.version>8.1.1</peppol-commons.version>
+    <ph-xsds.version>2.3.0</ph-xsds.version>
   </properties>
   
   <dependencyManagement>
@@ -88,7 +89,7 @@
       <dependency>
         <groupId>com.helger.xsd</groupId>
         <artifactId>ph-xsds-parent-pom</artifactId>
-        <version>2.3.0</version>
+        <version>${ph-xsds.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

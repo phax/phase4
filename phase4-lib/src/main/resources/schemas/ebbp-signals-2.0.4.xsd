@@ -19,7 +19,7 @@ This document and translations of it may be copied and furnished to others, and 
 The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns. 
 This document and the information contained herein is provided on an "AS IS" basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.-->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bpssignal="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" targetNamespace="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
-	<xsd:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+	<xsd:import namespace="http://www.w3.org/1999/xlink" />
 	<xsd:annotation>
 		<xsd:documentation> The version of digital signature specification supported is identified
                                     using the namespace and schemalocation denoted below </xsd:documentation>
