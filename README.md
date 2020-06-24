@@ -282,7 +282,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.10.1 - work in progress
+* v0.10.1 - 2020-06-24
     * Added the possibility to provide a custom VESRegistry to the Peppol client to provide additional validation rules
     * Changed the method `IAS4DuplicateManager` method `findFirst` to `getItemOfMessageID` to be implementable in different ways
     * Updated to WSS4J 2.3.0 and XMLSec 2.2.0
