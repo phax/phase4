@@ -201,9 +201,18 @@
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-xacml-saml-impl</artifactId>
           </exclusion>
+          <!-- See https://issues.apache.org/jira/browse/WSS-675 -->
+          <exclusion>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>com.fasterxml.woodstox</groupId>
             <artifactId>woodstox-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -287,16 +296,6 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.javamail</groupId>
-          <artifactId>geronimo-javamail_1.4_mail</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sf.ehcache</groupId>
-          <artifactId>ehcache</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
   
