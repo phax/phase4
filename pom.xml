@@ -211,7 +211,7 @@
             <artifactId>woodstox-core</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>net.sf.ehcache</groupId>
+            <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
           </exclusion>
         </exclusions>
@@ -291,13 +291,6 @@
     <module>phase4-peppol-server-webapp</module>
     <module>phase4-cef-client</module>
   </modules>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.wss4j</groupId>
-      <artifactId>wss4j-ws-security-dom</artifactId>
-    </dependency>
-  </dependencies>
   
   <build>
     <plugins>
