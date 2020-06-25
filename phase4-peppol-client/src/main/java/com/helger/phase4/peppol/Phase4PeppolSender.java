@@ -695,7 +695,7 @@ public final class Phase4PeppolSender
      * @since 0.10.1
      */
     @Nonnull
-    public Builder validationRegistry (final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
+    public Builder validationRegistry (@Nullable final IValidationExecutorSetRegistry <IValidationSourceXML> aVESRegistry)
     {
       m_aVESRegistry = aVESRegistry;
       return this;
