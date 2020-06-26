@@ -61,6 +61,7 @@ import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.sbdh.SBDMarshaller;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.url.IPeppolURLProvider;
@@ -834,6 +835,30 @@ public final class Phase4PeppolSender
       ValueEnforcer.notNull (aSBDHBytes, "SBDHBytes");
       m_aPayloadBytes = aSBDHBytes;
       return this;
+    }
+
+    /**
+     * Set the payload, the sender participant ID, the receiver participant ID,
+     * the document type ID and the process ID.
+     *
+     * @param aSBDH
+     *        The SBDH to use. May not be <code>null</code>.
+     * @return this for chaining
+     * @since 0.10.2
+     * @see #payload(byte[])
+     * @see #senderParticipantID(IParticipantIdentifier)
+     * @see #receiverParticipantID(IParticipantIdentifier)
+     * @see #documentTypeID(IDocumentTypeIdentifier)
+     * @see #processID(IProcessIdentifier)
+     */
+    @Nonnull
+    public SBDHBuilder payloadAndMetadata (@Nonnull final PeppolSBDHDocument aSBDH)
+    {
+      ValueEnforcer.notNull (aSBDH, "SBDH");
+      return senderParticipantID (aSBDH.getSenderAsIdentifier ()).receiverParticipantID (aSBDH.getReceiverAsIdentifier ())
+                                                                 .documentTypeID (aSBDH.getDocumentTypeAsIdentifier ())
+                                                                 .processID (aSBDH.getProcessAsIdentifier ())
+                                                                 .payload (new SBDMarshaller ().getAsBytes (new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aSBDH)));
     }
 
     @Override
