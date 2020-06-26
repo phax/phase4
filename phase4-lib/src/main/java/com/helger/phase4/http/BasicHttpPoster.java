@@ -17,7 +17,6 @@
 package com.helger.phase4.http;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.annotation.Nonnegative;
@@ -253,18 +252,17 @@ public class BasicHttpPoster
       return aSrcEntity;
     }
 
+    // Otherwise multiple calls to writeTo and getContent would crash
+    if (!aSrcEntity.isRepeatable ())
+      throw new IllegalStateException ("This should only be called for repeatable entities");
+
     aDumpOSHolder.set (aDumpOS);
     return new HttpEntityWrapper (aSrcEntity)
     {
       @Override
-      public InputStream getContent () throws IOException
-      {
-        throw new UnsupportedOperationException ();
-      }
-
-      @Override
       public void writeTo (@Nonnull @WillNotClose final OutputStream aHttpOS) throws IOException
       {
+        // Write to multiple output streams
         final MultiOutputStream aMultiOS = new MultiOutputStream (aHttpOS, aDumpOS);
         // write to both streams
         super.writeTo (aMultiOS);
