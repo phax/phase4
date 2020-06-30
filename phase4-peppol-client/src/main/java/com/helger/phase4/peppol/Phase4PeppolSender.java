@@ -42,7 +42,6 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
-import com.helger.httpclient.HttpClientFactory;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
@@ -265,7 +264,7 @@ public final class Phase4PeppolSender
       // Override default values
       try
       {
-        httpClientFactory (new HttpClientFactory (new Phase4PeppolHttpClientSettings ()));
+        httpClientFactory (new Phase4PeppolHttpClientSettings ());
         agreementRef (PeppolPMode.DEFAULT_AGREEMENT_ID);
         fromPartyIDType (PeppolPMode.DEFAULT_PARTY_TYPE_ID);
         fromRole (CAS4.DEFAULT_INITIATOR_URL);

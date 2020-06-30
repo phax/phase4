@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.state.ESuccess;
-import com.helger.httpclient.HttpClientFactory;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
@@ -94,7 +93,7 @@ public final class Phase4CEFSender
       // Override default values
       try
       {
-        httpClientFactory (new HttpClientFactory (new Phase4CEFHttpClientSettings ()));
+        httpClientFactory (new Phase4CEFHttpClientSettings ());
       }
       catch (final Exception ex)
       {
