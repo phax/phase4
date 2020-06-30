@@ -39,8 +39,10 @@ import com.helger.xml.serialize.write.XMLWriterSettings;
 @ThreadSafe
 public final class AS4HttpDebug
 {
+  public static final boolean DEFAULT_DEBUG = false;
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4HttpDebug.class);
-  private static final AtomicBoolean s_aEnabled = new AtomicBoolean (false);
+  private static final AtomicBoolean s_aEnabled = new AtomicBoolean (DEFAULT_DEBUG);
   private static final XMLWriterSettings s_aXWS = new XMLWriterSettings ().setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN)
                                                                           .setNamespaceContext (new Ebms3NamespaceHandler ());
 
