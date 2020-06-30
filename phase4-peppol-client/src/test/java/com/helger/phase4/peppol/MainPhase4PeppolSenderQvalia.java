@@ -25,8 +25,12 @@ import org.w3c.dom.Element;
 import com.helger.bdve.peppol.PeppolValidation3_10_0;
 import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
+import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
+import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
@@ -34,6 +38,8 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
+import com.helger.security.keystore.EKeyStoreType;
+import com.helger.security.keystore.KeyStoreHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -80,7 +86,21 @@ public final class MainPhase4PeppolSenderQvalia
                        "'");
         }
       };
+
+      // Invalid certificate is valid until 2029
+      final IAS4CryptoFactory cf = false ? AS4CryptoFactoryPropertiesFile.getDefaultInstance ()
+                                         : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
+                                                                                                                    "invalid-keystore-pw-peppol.jks",
+                                                                                                                    "peppol"),
+                                                                                 "1",
+                                                                                 "peppol",
+                                                                                 KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
+                                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PRODUCTION_CLASSPATH,
+                                                                                                              PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                               .getKeyStore ());
       if (Phase4PeppolSender.builder ()
+                            .maxRetries (0)
+                            .cryptoFactory (cf)
                             .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
                             .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9914:phase4-test-sender"))
