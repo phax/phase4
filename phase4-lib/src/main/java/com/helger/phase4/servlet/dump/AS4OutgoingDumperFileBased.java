@@ -49,26 +49,46 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   {
     @Nonnull
     File getFile (@Nonnull @Nonempty String sMessageID, @Nonnegative int nTry);
+
+    @Nonnull
+    static String getFilename (@Nonnull @Nonempty final String sMessageID, @Nonnegative final int nTry)
+    {
+      return PDTIOHelper.getCurrentLocalDateTimeForFilename () +
+             "-" +
+             FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
+             "-" +
+             nTry +
+             ".as4out";
+    }
   }
 
+  /**
+   * The default relative path for outgoing messages.
+   */
   public static final String DEFAULT_BASE_PATH = "outgoing/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4OutgoingDumperFileBased.class);
 
   private final IFileProvider m_aFileProvider;
 
+  /**
+   * Default constructor. Writes the files to the AS4 configured data path +
+   * {@link #DEFAULT_BASE_PATH}.
+   *
+   * @see AS4ServerConfiguration#getDataPath()
+   */
   public AS4OutgoingDumperFileBased ()
   {
-    this ( (sMessageID,
-            nTry) -> new File (AS4ServerConfiguration.getDataPath (),
-                               DEFAULT_BASE_PATH +
-                                                                      PDTIOHelper.getCurrentLocalDateTimeForFilename () +
-                                                                      "-" +
-                                                                      FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
-                                                                      "-" +
-                                                                      nTry +
-                                                                      ".as4out"));
+    this ( (sMessageID, nTry) -> new File (AS4ServerConfiguration.getDataPath (),
+                                           DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID, nTry)));
   }
 
+  /**
+   * Constructor with a custom file provider.
+   *
+   * @param aFileProvider
+   *        The file provider that defines where to store the files. May not be
+   *        <code>null</code>.
+   */
   public AS4OutgoingDumperFileBased (@Nonnull final IFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
@@ -83,5 +103,20 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     final File aResponseFile = m_aFileProvider.getFile (sMessageID, nTry);
     LOGGER.info ("Logging outgoing AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
+  }
+
+  /**
+   * Create a new instance for the provided directory.
+   *
+   * @param aBaseDirectory
+   *        The absolute directory to be used. May not be <code>null</code>.
+   * @return The created dumper. Never <code>null</code>.
+   * @since 0.10.2
+   */
+  @Nonnull
+  public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
+  {
+    ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
+    return new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID, nTry)));
   }
 }

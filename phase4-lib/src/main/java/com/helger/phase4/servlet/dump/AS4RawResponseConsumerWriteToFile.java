@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.datetime.util.PDTIOHelper;
@@ -40,25 +41,84 @@ import com.helger.phase4.util.Phase4Exception;
  */
 public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsumer
 {
+  /**
+   * Callback interface to create a file based on the provided metadata.
+   *
+   * @author Philip Helger
+   * @since 0.10.2
+   */
+  @FunctionalInterface
+  public static interface IFileProvider
+  {
+    @Nonnull
+    File createFile (@Nonnull String sMessageID);
+
+    @Nonnull
+    static String getFilename (@Nonnull final String sMessageID)
+    {
+      return PDTIOHelper.getCurrentLocalDateTimeForFilename () +
+             "-" +
+             FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
+             "-response.xml";
+    }
+  }
+
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4RawResponseConsumerWriteToFile.class);
+
+  private final IFileProvider m_aFileProvider;
+
+  /**
+   * Default constructor. Writes the files to the AS4 configured data path +
+   * {@link AS4OutgoingDumperFileBased#DEFAULT_BASE_PATH}.
+   *
+   * @see AS4ServerConfiguration#getDataPath()
+   */
+  public AS4RawResponseConsumerWriteToFile ()
+  {
+    this (sMessageID -> new File (AS4ServerConfiguration.getDataPath (),
+                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
+  }
+
+  /**
+   * Constructor with a custom file provider.
+   *
+   * @param aFileProvider
+   *        The file provider to be used. May not be <code>null</code>.
+   * @since 0.10.2
+   */
+  public AS4RawResponseConsumerWriteToFile (@Nonnull final IFileProvider aFileProvider)
+  {
+    ValueEnforcer.notNull (aFileProvider, "FileProvider");
+    m_aFileProvider = aFileProvider;
+  }
 
   public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
   {
     if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
     {
       final String sMessageID = aResponseEntity.getMessageID ();
-      final String sFilename = AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
-                               PDTIOHelper.getCurrentLocalDateTimeForFilename () +
-                               "-" +
-                               FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
-                               "-response.xml";
 
       // Use the configured data path as the base
-      final File aResponseFile = new File (AS4ServerConfiguration.getDataPath (), sFilename);
-      if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isSuccess ())
-        LOGGER.info ("Response file was written to '" + aResponseFile.getAbsolutePath () + "'");
-      else
-        LOGGER.error ("Error writing response file to '" + aResponseFile.getAbsolutePath () + "'");
+      final File aResponseFile = m_aFileProvider.createFile (sMessageID);
+      LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
+
+      if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isFailure ())
+        LOGGER.error ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'");
     }
+  }
+
+  /**
+   * Create a new instance for the provided directory.
+   *
+   * @param aBaseDirectory
+   *        The absolute directory to be used. May not be <code>null</code>.
+   * @return The created instance. Never <code>null</code>.
+   * @since 0.10.2
+   */
+  @Nonnull
+  public static AS4RawResponseConsumerWriteToFile createForDirectory (@Nonnull final File aBaseDirectory)
+  {
+    ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
+    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID)));
   }
 }

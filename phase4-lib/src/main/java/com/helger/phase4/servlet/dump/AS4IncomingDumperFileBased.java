@@ -54,22 +54,41 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   {
     @Nonnull
     File createFile (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull HttpHeaderMap aHttpHeaderMap);
+
+    @Nonnull
+    static String getFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+    {
+      return PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) + ".as4in";
+    }
   }
 
+  /**
+   * The default relative path for incoming messages.
+   */
   public static final String DEFAULT_BASE_PATH = "incoming/";
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4IncomingDumperFileBased.class);
 
   private final IFileProvider m_aFileProvider;
 
+  /**
+   * Default constructor. Writes the files to the AS4 configured data path +
+   * {@link #DEFAULT_BASE_PATH}.
+   *
+   * @see AS4ServerConfiguration#getDataPath()
+   */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata,
-            aHttpHeaderMap) -> new File (AS4ServerConfiguration.getDataPath (),
-                                         DEFAULT_BASE_PATH +
-                                                                                PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) +
-                                                                                ".as4in"));
+    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4ServerConfiguration.getDataPath (),
+                                                           DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
   }
 
+  /**
+   * Constructor with a custom file provider.
+   *
+   * @param aFileProvider
+   *        The file provider that defines where to store the files. May not be
+   *        <code>null</code>.
+   */
   public AS4IncomingDumperFileBased (@Nonnull final IFileProvider aFileProvider)
   {
     ValueEnforcer.notNull (aFileProvider, "FileProvider");
@@ -84,5 +103,21 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
     final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
     LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
+  }
+
+  /**
+   * Create a new instance for the provided directory.
+   *
+   * @param aBaseDirectory
+   *        The absolute directory to be used. May not be <code>null</code>.
+   * @return The created dumper. Never <code>null</code>.
+   * @since 0.10.2
+   */
+  @Nonnull
+  public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
+  {
+    ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                                            IFileProvider.getFilename (aMessageMetadata)));
   }
 }
