@@ -88,16 +88,16 @@ public final class MainPhase4PeppolSenderQvalia
       };
 
       // Invalid certificate is valid until 2029
-      final IAS4CryptoFactory cf = false ? AS4CryptoFactoryPropertiesFile.getDefaultInstance ()
-                                         : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
-                                                                                                                    "invalid-keystore-pw-peppol.jks",
-                                                                                                                    "peppol"),
-                                                                                 "1",
-                                                                                 "peppol",
-                                                                                 KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
-                                                                                                              PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PRODUCTION_CLASSPATH,
-                                                                                                              PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
-                                                                                               .getKeyStore ());
+      final IAS4CryptoFactory cf = true ? AS4CryptoFactoryPropertiesFile.getDefaultInstance ()
+                                        : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
+                                                                                                                   "invalid-keystore-pw-peppol.jks",
+                                                                                                                   "peppol"),
+                                                                                "1",
+                                                                                "peppol",
+                                                                                KeyStoreHelper.loadKeyStore (PeppolKeyStoreHelper.TRUSTSTORE_TYPE,
+                                                                                                             PeppolKeyStoreHelper.Config2018.TRUSTSTORE_PRODUCTION_CLASSPATH,
+                                                                                                             PeppolKeyStoreHelper.TRUSTSTORE_PASSWORD)
+                                                                                              .getKeyStore ());
       if (Phase4PeppolSender.builder ()
                             .maxRetries (0)
                             .cryptoFactory (cf)
