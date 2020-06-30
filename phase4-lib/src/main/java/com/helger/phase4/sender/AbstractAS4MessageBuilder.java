@@ -26,6 +26,8 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.commons.lang.TimeValue;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESoapVersion;
@@ -42,6 +44,7 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4MessageBuilder <IMPLTYPE>> implements
                                                 IGenericImplTrait <IMPLTYPE>
 {
+  protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
   protected ESoapVersion m_eSoapVersion;
@@ -51,6 +54,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   /**
    * Create a new builder, with the following fields already set:<br>
+   * {@link #httpClientFactory(HttpClientFactory)}<br>
    * {@link #cryptoFactory(IAS4CryptoFactory)}<br>
    * {@link #soapVersion(ESoapVersion)}
    */
@@ -59,6 +63,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     // Set default values
     try
     {
+      httpClientFactory (new HttpClientFactory ());
       cryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
     }
@@ -66,6 +71,46 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     {
       throw new IllegalStateException ("Failed to init AbstractAS4MessageBuilder", ex);
     }
+  }
+
+  /**
+   * @return The currently set {@link HttpClientFactory}. May be
+   *         <code>null</code>.
+   */
+  @Nullable
+  public final HttpClientFactory httpClientFactory ()
+  {
+    return m_aHttpClientFactory;
+  }
+
+  /**
+   * Set the HTTP client factory to be used. If the passed settings are
+   * provided, a new {@link HttpClientFactory} is created with them.
+   *
+   * @param aHttpClientSettings
+   *        The new HTTP client settings to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE httpClientFactory (@Nullable final HttpClientSettings aHttpClientSettings)
+  {
+    return httpClientFactory (aHttpClientSettings == null ? null : new HttpClientFactory (aHttpClientSettings));
+  }
+
+  /**
+   * Set the HTTP client factory to be used. By default an instance of
+   * {@link HttpClientFactory} is used and there is no need to invoke this
+   * method.
+   *
+   * @param aHttpClientFactory
+   *        The new HTTP client factory to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE httpClientFactory (@Nullable final HttpClientFactory aHttpClientFactory)
+  {
+    m_aHttpClientFactory = aHttpClientFactory;
+    return thisAsT ();
   }
 
   /**
@@ -198,6 +243,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @OverridingMethodsMustInvokeSuper
   public boolean isEveryRequiredFieldSet ()
   {
+    if (m_aHttpClientFactory == null)
+      return false;
     // m_aCryptoFactory may be null
     // m_sMessageID is optional
     if (m_eSoapVersion == null)

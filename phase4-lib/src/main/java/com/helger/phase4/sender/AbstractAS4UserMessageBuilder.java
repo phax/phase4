@@ -25,8 +25,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.StringHelper;
-import com.helger.httpclient.HttpClientFactory;
-import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -54,7 +52,6 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
-  private HttpClientFactory m_aHttpClientFactory;
   protected IPModeResolver m_aPModeResolver;
   protected IIncomingAttachmentFactory m_aIAF;
   private IPMode m_aPMode;
@@ -91,7 +88,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   /**
    * Create a new builder, with the following fields already set:<br>
-   * {@link #httpClientFactory(HttpClientFactory)}<br>
    * {@link #pmodeResolver(IPModeResolver)}<br>
    * {@link #incomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
    * {@link #pmode(IPMode)}<br>
@@ -101,7 +97,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Set default values
     try
     {
-      httpClientFactory (new HttpClientFactory ());
       final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
       pmodeResolver (aPModeResolver);
       incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
@@ -111,46 +106,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     {
       throw new IllegalStateException ("Failed to init AbstractAS4UserMessageBuilder", ex);
     }
-  }
-
-  /**
-   * @return The currently set {@link HttpClientFactory}. May be
-   *         <code>null</code>.
-   */
-  @Nullable
-  public final HttpClientFactory httpClientFactory ()
-  {
-    return m_aHttpClientFactory;
-  }
-
-  /**
-   * Set the HTTP client factory to be used. If the passed settings are
-   * provided, a new {@link HttpClientFactory} is created with them.
-   *
-   * @param aHttpClientSettings
-   *        The new HTTP client settings to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE httpClientFactory (@Nullable final HttpClientSettings aHttpClientSettings)
-  {
-    return httpClientFactory (aHttpClientSettings == null ? null : new HttpClientFactory (aHttpClientSettings));
-  }
-
-  /**
-   * Set the HTTP client factory to be used. By default an instance of
-   * {@link HttpClientFactory} is used and there is no need to invoke this
-   * method.
-   *
-   * @param aHttpClientFactory
-   *        The new HTTP client factory to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE httpClientFactory (@Nullable final HttpClientFactory aHttpClientFactory)
-  {
-    m_aHttpClientFactory = aHttpClientFactory;
-    return thisAsT ();
   }
 
   /**
@@ -671,8 +626,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (!super.isEveryRequiredFieldSet ())
       return false;
 
-    if (m_aHttpClientFactory == null)
-      return false;
     // m_aPModeResolver may be null
     // IIncomingAttachmentFactory may be null
     if (m_aPMode == null)
