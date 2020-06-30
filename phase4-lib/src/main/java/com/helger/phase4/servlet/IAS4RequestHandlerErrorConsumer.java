@@ -37,14 +37,14 @@ public interface IAS4RequestHandlerErrorConsumer
    *
    * @param aState
    *        The current message processing state. Never <code>null</code>.
-   * @param aErrors
+   * @param aEbmsErrors
    *        The list of errors that occurred. Neither <code>null</code> nor
-   *        empty.
+   *        empty. Never modify that list.
    * @param aAS4ErrorMsg
    *        The filled AS4 error message to be returned. Don't touch. Never
    *        <code>null</code>.
    */
   void onAS4ErrorMessage (@Nonnull IAS4MessageState aState,
-                          @Nonnull @Nonempty ICommonsList <Ebms3Error> aErrors,
+                          @Nonnull @Nonempty ICommonsList <Ebms3Error> aEbmsErrors,
                           @Nonnull AS4ErrorMessage aAS4ErrorMsg);
 }
