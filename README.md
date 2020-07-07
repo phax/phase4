@@ -282,11 +282,11 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.10.2 - work in progress
+* v0.10.2 - 2020-07-07
     * Fixed an UnsupportedOperationException when AS4 HTTP Debugging was enabled AND an outgoing dumper was registered (see [issue #39](https://github.com/phax/phase4/issues/39))
     * Extended Peppol SBDH based builder to set the identifiers from the SBDH (see [issue #22](https://github.com/phax/phase4/issues/22))
     * Moved the `HttpClientFactory` setting one class up from `AbstractAS4UserMessageBuilder` to `AbstractAS4MessageBuilder`
-    * Improved the configurability of the dumpers    
+    * Improved the configurability of the dumpers   
 * v0.10.1 - 2020-06-24
     * Added the possibility to provide a custom VESRegistry to the Peppol client to provide additional validation rules
     * Changed the method `IAS4DuplicateManager` method `findFirst` to `getItemOfMessageID` to be implementable in different ways
