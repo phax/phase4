@@ -108,7 +108,7 @@ public final class MainPhase4PeppolSenderConstantReceiverSG
                                                                                                    "-----END CERTIFICATE-----"),
                                                       "https://peppol-dev.strands.com/api-hub/as4")
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidationSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_102,
+                            .validationConfiguration (PeppolValidationSG.VID_OPENPEPPOL_BIS3_SG_UBL_INVOICE_103,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())

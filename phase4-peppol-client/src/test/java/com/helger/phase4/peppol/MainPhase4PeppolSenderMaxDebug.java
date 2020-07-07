@@ -81,7 +81,7 @@ public final class MainPhase4PeppolSenderMaxDebug
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_102,
+                            .validationConfiguration (PeppolValidationAUNZ.VID_OPENPEPPOL_BIS3_AUNZ_UBL_INVOICE_103,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .rawResponseConsumer (aResponseMsg -> LOGGER.info ("Received response:\n" +
                                                                                new String (aResponseMsg.getResponse ())))

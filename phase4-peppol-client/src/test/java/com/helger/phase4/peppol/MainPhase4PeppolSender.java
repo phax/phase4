@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.api.result.ValidationResultList;
-import com.helger.bdve.peppol.PeppolValidation3_10_0;
+import com.helger.bdve.peppol.PeppolValidation3_10_1;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -82,7 +82,7 @@ public final class MainPhase4PeppolSender
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidation3_10_0.VID_OPENPEPPOL_INVOICE_V3,
+                            .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ()
                                                       {
                                                         @Override
