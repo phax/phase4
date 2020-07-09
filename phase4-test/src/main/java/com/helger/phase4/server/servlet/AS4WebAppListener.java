@@ -110,4 +110,10 @@ public final class AS4WebAppListener extends WebAppListener
   {
     AS4ServerInitializer.initAS4Server ();
   }
+
+  @Override
+  protected void beforeContextDestroyed (final ServletContext aSC)
+  {
+    AS4ServerInitializer.shutdownAS4Server ();
+  }
 }

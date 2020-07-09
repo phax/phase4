@@ -221,5 +221,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
 
   @Override
   protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
-  {}
+  {
+    AS4ServerInitializer.shutdownAS4Server ();
+  }
 }

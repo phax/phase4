@@ -132,5 +132,6 @@ public final class AS4WebAppListener extends WebAppListener
   protected void beforeContextDestroyed (@Nonnull final ServletContext aSC)
   {
     DropFolderUserMessage.destroy ();
+    AS4ServerInitializer.shutdownAS4Server ();
   }
 }

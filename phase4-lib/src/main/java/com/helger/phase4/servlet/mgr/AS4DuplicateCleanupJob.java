@@ -40,7 +40,7 @@ import com.helger.web.scope.util.AbstractScopeAwareJob;
 
 /**
  * A special job, that removes all entries
- * 
+ *
  * @author Philip Helger
  */
 @DisallowConcurrentExecution
@@ -109,5 +109,15 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
       LOGGER.warn ("Incoming duplicate message cleaning is disabled!");
     }
     return aTriggerKey;
+  }
+
+  public static void unschedule (@Nullable final TriggerKey aTriggerKey)
+  {
+    if (aTriggerKey != null)
+    {
+      // Was the job scheduled?
+      if (s_aScheduled.getAndSet (false))
+        GlobalQuartzScheduler.getInstance ().unscheduleJob (aTriggerKey);
+    }
   }
 }

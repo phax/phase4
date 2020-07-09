@@ -16,11 +16,14 @@
  */
 package com.helger.phase4.servlet;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
 import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.quartz.TriggerKey;
 
 /**
  * This class contains the init method for the server:
@@ -32,9 +35,13 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
  * @author bayerlma
  * @author Philip Helger
  */
-@Immutable
+@ThreadSafe
 public final class AS4ServerInitializer
 {
+  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
+  @GuardedBy ("s_aRWLock")
+  private static TriggerKey s_aTriggerKey;
+
   private AS4ServerInitializer ()
   {}
 
@@ -48,6 +55,26 @@ public final class AS4ServerInitializer
     MetaAS4Manager.getInstance ();
 
     // Schedule jobs
-    AS4DuplicateCleanupJob.scheduleMe (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes ());
+    s_aRWLock.writeLocked ( () -> {
+      // Consecutive calls return null
+      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes ());
+      if (aTriggerKey != null)
+      {
+        if (s_aTriggerKey != null)
+          throw new IllegalStateException ("Failed to schedule AS4DuplicateCleanupJob - seems like some cleanup is missing");
+        s_aTriggerKey = aTriggerKey;
+      }
+    });
+  }
+
+  /**
+   * Call this method to shutdown the AS4 server. This unschedules the jobs.
+   */
+  public static void shutdownAS4Server ()
+  {
+    s_aRWLock.writeLocked ( () -> {
+      AS4DuplicateCleanupJob.unschedule (s_aTriggerKey);
+      s_aTriggerKey = null;
+    });
   }
 }
