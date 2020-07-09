@@ -117,7 +117,14 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
     {
       // Was the job scheduled?
       if (s_aScheduled.getAndSet (false))
+      {
         GlobalQuartzScheduler.getInstance ().unscheduleJob (aTriggerKey);
+      }
+      else
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("AS4DuplicateCleanupJob is not scheduled");
+      }
     }
   }
 }
