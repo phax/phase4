@@ -69,6 +69,8 @@ public final class AS4ServerInitializer
 
   /**
    * Call this method to shutdown the AS4 server. This unschedules the jobs.
+   * 
+   * @since 0.10.3
    */
   public static void shutdownAS4Server ()
   {
