@@ -80,6 +80,8 @@ public final class Phase4CEFSender
   public static abstract class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
+    public static final boolean DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR = true;
+
     protected IParticipantIdentifier m_aSenderID;
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
@@ -87,6 +89,7 @@ public final class Phase4CEFSender
     protected IPhase4CEFEndpointDetailProvider m_aEndpointDetailProvider;
     protected Consumer <X509Certificate> m_aCertificateConsumer;
     protected Consumer <String> m_aAPEndointURLConsumer;
+    protected boolean m_bUseOriginalSenderFinalRecipientTypeAttr = DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR;
 
     protected AbstractCEFUserMessageBuilder ()
     {
@@ -258,6 +261,23 @@ public final class Phase4CEFSender
       return thisAsT ();
     }
 
+    /**
+     * Define if the <code>type</code> attribute for the message properties of
+     * "originalSender" and "finalRecipient" should be emitted or not. By
+     * default it is enabled.
+     *
+     * @param b
+     *        <code>true</code> to enabled it, <code>false</code> to disable it.
+     * @return this for chaining
+     * @since 0.10.3
+     */
+    @Nonnull
+    public final IMPLTYPE useOriginalSenderFinalRecipientTypeAttr (final boolean b)
+    {
+      m_bUseOriginalSenderFinalRecipientTypeAttr = b;
+      return thisAsT ();
+    }
+
     protected final boolean isEndpointDetailProviderUsable ()
     {
       // Sender ID doesn't matter here
@@ -327,14 +347,22 @@ public final class Phase4CEFSender
     protected void customizeBeforeSending () throws Phase4Exception
     {
       // Add mandatory properties
-      addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.ORIGINAL_SENDER)
-                                         .type (m_aSenderID.getScheme ())
-                                         .value (m_aSenderID.getValue ()));
-      addMessageProperty (MessageProperty.builder ()
-                                         .name (CAS4.FINAL_RECIPIENT)
-                                         .type (m_aReceiverID.getScheme ())
-                                         .value (m_aReceiverID.getValue ()));
+      if (m_bUseOriginalSenderFinalRecipientTypeAttr)
+      {
+        addMessageProperty (MessageProperty.builder ()
+                                           .name (CAS4.ORIGINAL_SENDER)
+                                           .type (m_aSenderID.getScheme ())
+                                           .value (m_aSenderID.getValue ()));
+        addMessageProperty (MessageProperty.builder ()
+                                           .name (CAS4.FINAL_RECIPIENT)
+                                           .type (m_aReceiverID.getScheme ())
+                                           .value (m_aReceiverID.getValue ()));
+      }
+      else
+      {
+        addMessageProperty (MessageProperty.builder ().name (CAS4.ORIGINAL_SENDER).value (m_aSenderID.getURIEncoded ()));
+        addMessageProperty (MessageProperty.builder ().name (CAS4.FINAL_RECIPIENT).value (m_aReceiverID.getURIEncoded ()));
+      }
     }
   }
 

@@ -284,6 +284,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v0.10.3 - work in progress
     * Added `AS4ServerInitializer.shutdownAS4Server` to gracefully unschedule all jobs
+    * Improved customizability of the `Phase4CEFSender` to define if the `@type` attribute should be emitted or not 
 * v0.10.2 - 2020-07-07
     * Fixed an UnsupportedOperationException when AS4 HTTP Debugging was enabled AND an outgoing dumper was registered (see [issue #39](https://github.com/phax/phase4/issues/39))
     * Extended Peppol SBDH based builder to set the identifiers from the SBDH (see [issue #22](https://github.com/phax/phase4/issues/22))
