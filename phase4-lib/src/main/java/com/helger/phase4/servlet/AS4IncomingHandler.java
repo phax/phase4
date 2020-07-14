@@ -55,7 +55,6 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
-import com.helger.http.AcceptMimeTypeHandler;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IIncomingAttachmentFactory;
@@ -157,7 +156,7 @@ public class AS4IncomingHandler
     if (StringHelper.hasNoText (sContentType))
       throw new Phase4Exception ("Content-Type header is missing");
 
-    final IMimeType aContentType = AcceptMimeTypeHandler.safeParseMimeType (sContentType);
+    final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Received Content-Type: " + aContentType);
     if (aContentType == null)
