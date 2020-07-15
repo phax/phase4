@@ -486,7 +486,6 @@ public final class AS4ClientUserMessageTest
     aClient.setMessageIDFactory ( () -> sMessageIDPrefix + MessageHelperMethods.createRandomMessageID ());
     final String sMessageID = aClient.createMessageID ();
 
-    assertTrue (EntityUtils.toString (aClient.buildMessage (sMessageID, null).getHttpEntity ())
-                           .contains (sMessageIDPrefix));
+    assertTrue (EntityUtils.toString (aClient.buildMessage (sMessageID, null).getHttpEntity ()).contains (sMessageIDPrefix));
   }
 }

@@ -44,15 +44,9 @@ public class PModeLegMicroTypeConverter extends AbstractPModeMicroTypeConverter 
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getProtocol (), sNamespaceURI, ELEMENT_PROTOCOL));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getBusinessInfo (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_BUSINESS_INFORMATION));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getErrorHandling (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_ERROR_HANDLING));
-    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReliability (),
-                                                               sNamespaceURI,
-                                                               ELEMENT_RELIABILITY));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getBusinessInfo (), sNamespaceURI, ELEMENT_BUSINESS_INFORMATION));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getErrorHandling (), sNamespaceURI, ELEMENT_ERROR_HANDLING));
+    ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReliability (), sNamespaceURI, ELEMENT_RELIABILITY));
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getSecurity (), sNamespaceURI, ELEMENT_SECURITY));
     return ret;
   }

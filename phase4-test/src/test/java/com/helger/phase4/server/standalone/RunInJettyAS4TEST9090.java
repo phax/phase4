@@ -36,8 +36,7 @@ public final class RunInJettyAS4TEST9090
   public static void startNinetyServer () throws Exception
   {
     SystemProperties.setPropertyValue ("phase4.server.configfile",
-                                       new ClassPathResource ("test-phase4-9090.properties").getAsFile ()
-                                                                                            .getAbsolutePath ());
+                                       new ClassPathResource ("test-phase4-9090.properties").getAsFile ().getAbsolutePath ());
     final JettyRunner aJetty = new JettyRunner ();
     aJetty.setPort (PORT).setStopPort (STOP_PORT).setAllowAnnotationBasedConfig (false);
     aJetty.startServer ();

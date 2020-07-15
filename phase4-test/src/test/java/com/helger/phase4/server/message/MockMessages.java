@@ -86,8 +86,7 @@ public final class MockMessages
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
-    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList)
-                                                     .setMustUnderstand (true);
+    final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList).setMustUnderstand (true);
     final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSOAPVersion,
@@ -103,11 +102,7 @@ public final class MockMessages
                                                       @Nullable final Ebms3UserMessage aEbms3UserMessage,
                                                       @Nullable final Document aUserMessage) throws DOMException
   {
-    return AS4ReceiptMessage.create (eSOAPVersion,
-                                     MessageHelperMethods.createRandomMessageID (),
-                                     aEbms3UserMessage,
-                                     aUserMessage,
-                                     true)
+    return AS4ReceiptMessage.create (eSOAPVersion, MessageHelperMethods.createRandomMessageID (), aEbms3UserMessage, aUserMessage, true)
                             .setMustUnderstand (true);
   }
 
@@ -121,8 +116,7 @@ public final class MockMessages
     final String sPModeID;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
-                                                                                            aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
 
     final Ebms3CollaborationInfo aEbms3CollaborationInfo;
     final Ebms3PartyInfo aEbms3PartyInfo;
@@ -178,10 +172,8 @@ public final class MockMessages
     final String sPModeID = CAS4.DEFAULT_INITIATOR_URL + "-" + CAS4.DEFAULT_RESPONDER_URL;
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
-                                                                                            aAttachments);
-    final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID +
-                                                                                                              "x",
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID + "x",
                                                                                                               DEFAULT_AGREEMENT,
                                                                                                               AS4TestConstants.TEST_SERVICE_TYPE,
                                                                                                               AS4TestConstants.TEST_SERVICE,
@@ -216,8 +208,7 @@ public final class MockMessages
 
     // Use an empty message info by purpose
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo ();
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null,
-                                                                                            aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (null,
                                                                                                               null,
                                                                                                               null,

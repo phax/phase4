@@ -49,9 +49,7 @@ public class AS4SingleSOAPHeader
    *        <code>true</code> if this is a must understand header,
    *        <code>false</code> otherwise.
    */
-  public AS4SingleSOAPHeader (@Nonnull final Element aNode,
-                              @Nonnull final QName aQName,
-                              final boolean bIsMustUnderstand)
+  public AS4SingleSOAPHeader (@Nonnull final Element aNode, @Nonnull final QName aQName, final boolean bIsMustUnderstand)
   {
     m_aNode = ValueEnforcer.notNull (aNode, "Node");
     m_aQName = ValueEnforcer.notNull (aQName, "QName");

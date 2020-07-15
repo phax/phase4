@@ -59,14 +59,12 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (StoringServletMessageProcessorSPI.class);
 
-  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                 @Nonnull final IAS4MessageState aState)
+  private static void _dumpSoap (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull final IAS4MessageState aState)
   {
     // Write formatted SOAP
     {
       final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".soap");
-      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument ()
-                                                                   : aState.getOriginalSoapDocument ();
+      final Document aSoapDoc = aState.hasDecryptedSoapDocument () ? aState.getDecryptedSoapDocument () : aState.getOriginalSoapDocument ();
       final byte [] aBytes = XMLWriter.getNodeAsBytes (aSoapDoc,
                                                        new XMLWriterSettings ().setNamespaceContext (new Ebms3NamespaceHandler ())
                                                                                .setIndent (EXMLSerializeIndent.INDENT_AND_ALIGN));

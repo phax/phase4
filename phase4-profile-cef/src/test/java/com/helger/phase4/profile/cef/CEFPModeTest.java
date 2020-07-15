@@ -35,20 +35,12 @@ public final class CEFPModeTest
   @Test
   public void testCEFPMode ()
   {
-    CEFPMode.createCEFPMode ("TestInitiator",
-                             "TestResponder",
-                             "https://test.example.org",
-                             IPModeIDProvider.DEFAULT_DYNAMIC,
-                             false);
+    CEFPMode.createCEFPMode ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
   }
 
   @Test
   public void testCEFPModeTwoWay ()
   {
-    CEFPMode.createCEFPModeTwoWay ("TestInitiator",
-                                   "TestResponder",
-                                   "https://test.example.org",
-                                   IPModeIDProvider.DEFAULT_DYNAMIC,
-                                   false);
+    CEFPMode.createCEFPModeTwoWay ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
   }
 }

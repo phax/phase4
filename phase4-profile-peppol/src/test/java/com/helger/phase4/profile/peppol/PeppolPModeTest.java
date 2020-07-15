@@ -35,10 +35,6 @@ public final class PeppolPModeTest
   @Test
   public void testCEFPMode ()
   {
-    PeppolPMode.createPeppolPMode ("TestInitiator",
-                                   "TestResponder",
-                                   "https://test.example.org",
-                                   IPModeIDProvider.DEFAULT_DYNAMIC,
-                                   false);
+    PeppolPMode.createPeppolPMode ("TestInitiator", "TestResponder", "https://test.example.org", IPModeIDProvider.DEFAULT_DYNAMIC, false);
   }
 }

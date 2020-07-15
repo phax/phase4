@@ -74,9 +74,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  private void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
-                                   @Nonnull final ErrorList aErrorList,
-                                   @Nonnull final PModeLeg aPModeLeg)
+  private void _checkIfLegIsValid (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList, @Nonnull final PModeLeg aPModeLeg)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
@@ -130,9 +128,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       else
         if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.RSA_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
-                                        ECryptoAlgorithmSign.RSA_SHA_256.getID () +
-                                        " as signing algorithm"));
+          aErrorList.add (_createError ("AS4 Profile only allows " + ECryptoAlgorithmSign.RSA_SHA_256.getID () + " as signing algorithm"));
         }
 
       // Check Hash Function
@@ -339,13 +335,9 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
             }
 
             if (StringHelper.hasNoText (sOriginalSenderC1))
-              aErrorList.add (_createError ("'" +
-                                            CAS4.ORIGINAL_SENDER +
-                                            "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" + CAS4.ORIGINAL_SENDER + "' property is empty or not existant but mandatory"));
             if (StringHelper.hasNoText (sFinalRecipientC4))
-              aErrorList.add (_createError ("'" +
-                                            CAS4.FINAL_RECIPIENT +
-                                            "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" + CAS4.FINAL_RECIPIENT + "' property is empty or not existant but mandatory"));
           }
         }
       }
@@ -371,9 +363,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
           {
             if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aTo.getPartyIdAtIndex (0).getType ()))
             {
-              aErrorList.add (_createError ("The PartyInfo/To - part needs to have the type '" +
-                                            PeppolPMode.DEFAULT_PARTY_TYPE_ID +
-                                            "'"));
+              aErrorList.add (_createError ("The PartyInfo/To - part needs to have the type '" + PeppolPMode.DEFAULT_PARTY_TYPE_ID + "'"));
             }
           }
       }

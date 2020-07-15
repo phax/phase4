@@ -130,11 +130,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolAddressIsNotHttp ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"),
-                                    null,
-                                    null,
-                                    null,
-                                    null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
   }
@@ -142,12 +138,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com",
-                                                          ESoapVersion.SOAP_11),
-                                    null,
-                                    null,
-                                    null,
-                                    null));
+    m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
   }
@@ -194,8 +185,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
 
   @Test
@@ -223,8 +213,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
 
   @Test
@@ -252,8 +241,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
 
   @SuppressWarnings ("deprecation")
@@ -276,8 +264,7 @@ public final class PeppolCompatibilityValidatorTest
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue ("Errors: " + m_aErrorList.toString (),
-                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
+    assertTrue ("Errors: " + m_aErrorList.toString (), m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
   @Test
@@ -306,8 +293,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("Only response is allowed as pattern")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
   }
 
   // Error Handling
@@ -315,11 +301,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingMandatory ()
   {
-    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
-                                    null,
-                                    null,
-                                    null,
-                                    null));
+    m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
 
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
@@ -341,8 +323,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     null));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ReportAsResponse is a mandatory PMode parameter")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ReportAsResponse is a mandatory PMode parameter")));
   }
 
   @Test
@@ -361,8 +342,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     null));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode ReportAsResponse has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportAsResponse has to be True")));
   }
 
   @Test
@@ -400,8 +380,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     null));
     m_aCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
   }
 
   @Test

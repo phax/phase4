@@ -38,9 +38,7 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
   private static final IMicroQName ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = new MicroQName ("ReportProcessErrorNotifyProducer");
   private static final IMicroQName ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = new MicroQName ("ReportDeliveryFailuresNotifyProducer");
 
-  public IMicroElement convertToMicroElement (final PModeLegErrorHandling aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegErrorHandling aValue, final String sNamespaceURI, final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReportReceiverErrorsTo (),

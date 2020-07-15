@@ -126,8 +126,7 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator,
-                                                           @Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator, @Nonnull final ESoapVersion eSOAPVersion)
   {
     String sPartyID;
     if (eSOAPVersion.equals (ESoapVersion.SOAP_11))

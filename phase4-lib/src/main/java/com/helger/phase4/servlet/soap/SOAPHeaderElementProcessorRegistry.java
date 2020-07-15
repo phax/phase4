@@ -48,8 +48,7 @@ public class SOAPHeaderElementProcessorRegistry
   public SOAPHeaderElementProcessorRegistry ()
   {}
 
-  public void registerHeaderElementProcessor (@Nonnull final QName aQName,
-                                              @Nonnull final ISOAPHeaderElementProcessor aProcessor)
+  public void registerHeaderElementProcessor (@Nonnull final QName aQName, @Nonnull final ISOAPHeaderElementProcessor aProcessor)
   {
     ValueEnforcer.notNull (aQName, "QName");
     ValueEnforcer.notNull (aProcessor, "Processor");

@@ -33,8 +33,7 @@ import com.helger.phase4.soap.ESoapVersion;
  */
 public class SoapMimeMultipart extends MimeMultipart
 {
-  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion,
-                            @Nonnull final Charset aCharset) throws ParseException
+  public SoapMimeMultipart (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Charset aCharset) throws ParseException
   {
     super ("related");
 

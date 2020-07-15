@@ -58,8 +58,7 @@ public class AS4UserMessage extends AbstractAS4Message <AS4UserMessage>
   }
 
   @Nonnull
-  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion,
-                                       @Nonnull final Ebms3UserMessage aUserMessage)
+  public static AS4UserMessage create (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3UserMessage aUserMessage)
   {
     return new AS4UserMessage (eSoapVersion, aUserMessage);
   }

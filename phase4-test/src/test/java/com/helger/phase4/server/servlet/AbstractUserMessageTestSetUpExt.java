@@ -77,10 +77,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
                                          @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
-    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID
-                                                                                : sAnotherOrWrongPartyIdInitiator;
-    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID
-                                                                                : sAnotherOrWrongPartyIdResponder;
+    final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
+    final String sSetPartyIDResponder = sAnotherOrWrongPartyIdResponder == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdResponder;
     Ebms3PayloadInfo aEbms3PayloadInfo;
     Node aPayload = null;
     if (aAttachments == null)

@@ -91,8 +91,7 @@ public final class DropFolderUserMessage
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
       // Read generic SBD
-      final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ()
-                                                      .read (Files.newInputStream (aSendFile));
+      final StandardBusinessDocument aSBD = SBDHReader.standardBusinessDocument ().read (Files.newInputStream (aSendFile));
       if (aSBD == null)
       {
         LOGGER.error ("Failed to read " + aSendFile.toString () + " as SBDH document!");
@@ -101,9 +100,7 @@ public final class DropFolderUserMessage
       {
         // Extract PEPPOL specific data
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
-        final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP,
-                                                                      aSBDH.getReceiverAsIdentifier (),
-                                                                      ESML.DIGIT_TEST);
+        final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
         final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),
                                                                aSBDH.getDocumentTypeAsIdentifier (),
                                                                aSBDH.getProcessAsIdentifier (),
@@ -192,8 +189,7 @@ public final class DropFolderUserMessage
     // After the exception handler!
     {
       // Move to done or error directory?
-      final Path aDest = aSendFile.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR)
-                                  .resolve (aSendFile.getFileName ());
+      final Path aDest = aSendFile.resolveSibling (bSuccess ? PATH_DONE : PATH_ERROR).resolve (aSendFile.getFileName ());
       try
       {
         Files.move (aSendFile, aDest);
@@ -239,9 +235,7 @@ public final class DropFolderUserMessage
       try (final DirectoryStream <Path> aStream = Files.newDirectoryStream (aOutgoingDir,
                                                                             x -> x.toFile ().isFile () &&
                                                                                  x.getFileName () != null &&
-                                                                                 x.getFileName ()
-                                                                                  .toString ()
-                                                                                  .endsWith (".xml")))
+                                                                                 x.getFileName ().toString ().endsWith (".xml")))
       {
         for (final Path aCur : aStream)
           _send (aCryptoFactory, aCur, aIncomingDir);

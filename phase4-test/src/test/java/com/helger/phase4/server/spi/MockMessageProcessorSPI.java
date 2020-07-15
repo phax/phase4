@@ -77,8 +77,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
       // Passing the incoming attachments as response attachments is ONLY
       // contained for testing and SHOULD NOT be copy pasted
       return AS4MessageProcessorResult.createSuccessExt (aIncomingAttachments,
-                                                         true ? "http://localhost:9090/as4"
-                                                              : AS4ServerConfiguration.getServerAddress ());
+                                                         true ? "http://localhost:9090/as4" : AS4ServerConfiguration.getServerAddress ());
     }
 
     return AS4MessageProcessorResult.createSuccessExt (aIncomingAttachments, null);

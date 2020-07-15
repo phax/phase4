@@ -77,9 +77,7 @@ public final class UserMessageOneAttachmentTest extends AbstractUserMessageTestS
                                                                     aResMgr));
 
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
-    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                            aMsg.getAsSoapDocument (),
-                                                                            aAttachments);
+    final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion, aMsg.getAsSoapDocument (), aAttachments);
 
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
 

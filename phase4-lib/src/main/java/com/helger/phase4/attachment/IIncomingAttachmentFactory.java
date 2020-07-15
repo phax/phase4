@@ -48,8 +48,8 @@ public interface IIncomingAttachmentFactory extends Serializable
    *         In case MIME part reading fails.
    */
   @Nonnull
-  WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart,
-                                    @Nonnull AS4ResourceHelper aResHelper) throws IOException, MessagingException;
+  WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart, @Nonnull AS4ResourceHelper aResHelper) throws IOException,
+                                                                                                            MessagingException;
 
   @Nonnull
   static IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;

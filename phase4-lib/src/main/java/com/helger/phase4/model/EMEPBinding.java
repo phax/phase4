@@ -76,9 +76,7 @@ public enum EMEPBinding implements IHasID <String>
   private final String m_sURI;
   private final int m_nRequiredLegs;
 
-  EMEPBinding (@Nonnull @Nonempty final String sID,
-               @Nonnull @Nonempty final String sURI,
-               @Nonnull final int nRequiredLegs)
+  EMEPBinding (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sURI, @Nonnull final int nRequiredLegs)
   {
     m_sID = sID;
     m_sURI = sURI;

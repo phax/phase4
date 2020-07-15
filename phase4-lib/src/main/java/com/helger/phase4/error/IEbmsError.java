@@ -86,8 +86,7 @@ public interface IEbmsError extends Serializable
                       .setErrorText ("[" +
                                      getCategory ().getDisplayName () +
                                      "] " +
-                                     StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
-                                                              getShortDescription ()))
+                                     StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale), getShortDescription ()))
                       .build ();
   }
 
@@ -115,8 +114,7 @@ public interface IEbmsError extends Serializable
                             sRefToMessageInError,
                             sOrigin,
                             sErrorDescription == null ? null
-                                                      : MessageHelperMethods.createEbms3Description (aContentLocale,
-                                                                                                     sErrorDescription));
+                                                      : MessageHelperMethods.createEbms3Description (aContentLocale, sErrorDescription));
   }
 
   @Nonnull

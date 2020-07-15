@@ -59,9 +59,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
   private static final IMicroQName ATTR_SEND_RECEIPT_REPLY_PATTERN = new MicroQName ("SendReceiptReplyPattern");
   private static final IMicroQName ATTR_SEND_RECEIPT_NON_REPUDIATION = new MicroQName ("SendReceiptNonRepudiation");
 
-  public IMicroElement convertToMicroElement (final PModeLegSecurity aValue,
-                                              final String sNamespaceURI,
-                                              final String sTagName)
+  public IMicroElement convertToMicroElement (final PModeLegSecurity aValue, final String sNamespaceURI, final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
@@ -75,8 +73,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN_ATTACHMENT).appendText (sSign);
     }
     if (StringHelper.hasText (aValue.getX509SignatureCertificate ()))
-      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGNATURE_CERTIFICATE)
-         .appendText (aValue.getX509SignatureCertificate ());
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGNATURE_CERTIFICATE).appendText (aValue.getX509SignatureCertificate ());
     ret.setAttribute (ATTR_X509_SIGNATURE_HASH_FUNCTION, aValue.getX509SignatureHashFunctionID ());
     ret.setAttribute (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithmID ());
     for (final String sEncrypt : aValue.getX509EncryptionEncryptElement ())
@@ -88,8 +85,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
       ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT).appendText (sEncrypt);
     }
     if (StringHelper.hasText (aValue.getX509EncryptionCertificate ()))
-      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_CERTIFICATE)
-         .appendText (aValue.getX509EncryptionCertificate ());
+      ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_CERTIFICATE).appendText (aValue.getX509EncryptionCertificate ());
     ret.setAttribute (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithmID ());
     if (aValue.hasX509EncryptionMinimumStrength ())
       ret.setAttribute (ATTR_X509_ENCRYPTION_MINIMUM_STRENGTH, aValue.getX509EncryptionMinimumStrength ().intValue ());
@@ -130,8 +126,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     {
       aX509SignAttachment.add (aSignElement.getTextContentTrimmed ());
     }
-    final String sX509SignatureCertificate = MicroHelper.getChildTextContentTrimmed (aElement,
-                                                                                     ELEMENT_X509_SIGNATURE_CERTIFICATE);
+    final String sX509SignatureCertificate = MicroHelper.getChildTextContentTrimmed (aElement, ELEMENT_X509_SIGNATURE_CERTIFICATE);
     final String sX509SignatureHashFunction = aElement.getAttributeValue (ATTR_X509_SIGNATURE_HASH_FUNCTION);
     final ECryptoAlgorithmSignDigest eX509SignatureHashFunction = ECryptoAlgorithmSignDigest.getFromIDOrNull (sX509SignatureHashFunction);
     if (eX509SignatureHashFunction == null && sX509SignatureHashFunction != null)
@@ -156,8 +151,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     {
       aX509EncryptionEncryptAttachment.add (aEncryptElement.getTextContentTrimmed ());
     }
-    final String sX509EncryptionCertificate = MicroHelper.getChildTextContentTrimmed (aElement,
-                                                                                      ELEMENT_X509_ENCRYPTION_CERTIFICATE);
+    final String sX509EncryptionCertificate = MicroHelper.getChildTextContentTrimmed (aElement, ELEMENT_X509_ENCRYPTION_CERTIFICATE);
     final String sX509EncryptionAlgorithm = aElement.getAttributeValue (ATTR_X509_ENCRYPTION_ALGORITHM);
     final ECryptoAlgorithmCrypt eX509EncryptionAlgorithm = ECryptoAlgorithmCrypt.getFromIDOrNull (sX509EncryptionAlgorithm);
     if (eX509EncryptionAlgorithm == null && sX509EncryptionAlgorithm != null)
@@ -177,8 +171,7 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
                                                          PModeLegSecurity.DEFAULT_USERNAME_TOKEN_CREATED);
     final ETriState ePModeAuthorize = getTriState (aElement.getAttributeValue (ATTR_PMODE_AUTHORIZE),
                                                    PModeLegSecurity.DEFAULT_PMODE_AUTHORIZE);
-    final ETriState eSendReceipt = getTriState (aElement.getAttributeValue (ATTR_SEND_RECEIPT),
-                                                PModeLegSecurity.DEFAULT_SEND_RECEIPT);
+    final ETriState eSendReceipt = getTriState (aElement.getAttributeValue (ATTR_SEND_RECEIPT), PModeLegSecurity.DEFAULT_SEND_RECEIPT);
     final String sSendReceiptReplyPattern = aElement.getAttributeValue (ATTR_SEND_RECEIPT_REPLY_PATTERN);
     final EPModeSendReceiptReplyPattern eSendReceiptReplyPattern = EPModeSendReceiptReplyPattern.getFromIDOrNull (sSendReceiptReplyPattern);
     if (eSendReceiptReplyPattern == null && sSendReceiptReplyPattern != null)

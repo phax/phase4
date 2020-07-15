@@ -56,9 +56,7 @@ public class AS4WorkerPool extends AbstractGlobalSingleton
   public AS4WorkerPool (@Nonnegative final int nThreadPoolSize)
   {
     this (Executors.newFixedThreadPool (nThreadPoolSize,
-                                        new BasicThreadFactory.Builder ().setDaemon (true)
-                                                                         .setNamingPattern ("as4-worker-%d")
-                                                                         .build ()));
+                                        new BasicThreadFactory.Builder ().setDaemon (true).setNamingPattern ("as4-worker-%d").build ()));
   }
 
   public AS4WorkerPool (@Nonnull final ExecutorService aES)

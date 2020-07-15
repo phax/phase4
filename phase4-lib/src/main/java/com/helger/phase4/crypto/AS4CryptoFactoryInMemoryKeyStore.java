@@ -118,10 +118,7 @@ public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
     KeyStore.PrivateKeyEntry ret = m_aPK;
     if (ret == null)
     {
-      ret = m_aPK = KeyStoreHelper.loadPrivateKey (m_aKeyStore,
-                                                   "in-memory KeyStore",
-                                                   m_sKeyAlias,
-                                                   m_sKeyPassword.toCharArray ())
+      ret = m_aPK = KeyStoreHelper.loadPrivateKey (m_aKeyStore, "in-memory KeyStore", m_sKeyAlias, m_sKeyPassword.toCharArray ())
                                   .getKeyEntry ();
     }
     return ret;

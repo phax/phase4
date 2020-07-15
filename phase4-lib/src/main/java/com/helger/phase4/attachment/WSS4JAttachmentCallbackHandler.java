@@ -129,8 +129,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
             throw new IllegalStateException ("Failed to resolve source attachment with ID '" + sAttachmentID + "'");
 
           // Convert
-          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper,
-                                                                                     aResultAttachment.getMimeType ());
+          final WSS4JAttachment aEffectiveDecryptedAttachment = new WSS4JAttachment (m_aResHelper, aResultAttachment.getMimeType ());
           aEffectiveDecryptedAttachment.setId (sAttachmentID);
           aEffectiveDecryptedAttachment.addHeaders (aResultAttachment.getHeaders ());
           aEffectiveDecryptedAttachment.setCharset (aSrcAttachment.getCharsetOrDefault (null));
@@ -141,8 +140,7 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
         }
         else
         {
-          throw new UnsupportedCallbackException (aCallback,
-                                                  "Unrecognized Callback of class " + aCallback.getClass ().getName ());
+          throw new UnsupportedCallbackException (aCallback, "Unrecognized Callback of class " + aCallback.getClass ().getName ());
         }
     }
   }

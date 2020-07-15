@@ -133,12 +133,9 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
-                  sTrackerIdentifier);
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                                               true,
-                                               null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
@@ -238,8 +235,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
-                  "CompressionType");
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), "CompressionType");
     assertEquals (nList.item (0).getLastChild ().getTextContent (), "application/gzip");
   }
 
@@ -444,9 +440,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                             aMsg.getAsSoapDocument (m_aPayload),
                                                                             aAttachments);
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg),
-                     false,
-                     EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_DECOMPRESSION_FAILURE.getErrorCode ());
   }
 
   /**
@@ -662,15 +656,13 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     // Compression
     final NonBlockingByteArrayOutputStream aCompressedOS = new NonBlockingByteArrayOutputStream ();
     try (final InputStream aIS = new NonBlockingByteArrayInputStream (aSrc);
-        final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
+         final OutputStream aOS = EAS4CompressionMode.GZIP.getCompressStream (aCompressedOS))
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
     nList.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   /**

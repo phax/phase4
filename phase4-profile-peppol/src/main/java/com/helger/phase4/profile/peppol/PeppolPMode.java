@@ -129,11 +129,7 @@ public final class PeppolPMode
     final int nMaxRetries = 1;
     final int nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness,
-                                        eRetry,
-                                        nMaxRetries,
-                                        nRetryIntervalMS,
-                                        eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
   }
 
   @Nonnull

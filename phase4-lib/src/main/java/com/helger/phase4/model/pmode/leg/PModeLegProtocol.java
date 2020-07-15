@@ -122,9 +122,7 @@ public class PModeLegProtocol implements Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Address", m_sAddress)
-                                       .append ("SoapVersion", m_eSoapVersion)
-                                       .getToString ();
+    return new ToStringGenerator (this).append ("Address", m_sAddress).append ("SoapVersion", m_eSoapVersion).getToString ();
   }
 
   @Nonnull

@@ -55,9 +55,7 @@ public interface IAS4Profile extends IHasID <String>, IHasDisplayName, Serializa
    *         responder, URLs, certificates.
    */
   @Nonnull
-  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID,
-                             @Nonnull @Nonempty String sResponderID,
-                             @Nullable String sAddress);
+  PMode createPModeTemplate (@Nonnull @Nonempty String sInitiatorID, @Nonnull @Nonempty String sResponderID, @Nullable String sAddress);
 
   @Nonnull
   IPModeIDProvider getPModeIDProvider ();

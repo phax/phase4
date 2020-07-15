@@ -75,8 +75,7 @@ public enum ECryptoAlgorithmSign implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoAlgorithmSign getFromIDOrDefault (@Nullable final String sID,
-                                                         @Nullable final ECryptoAlgorithmSign eDefault)
+  public static ECryptoAlgorithmSign getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoAlgorithmSign eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmSign.class, sID, eDefault);
   }

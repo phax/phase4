@@ -56,10 +56,7 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
-                                            CAS4.DEFAULT_ACTION_URL,
-                                            null,
-                                            CAS4.DEFAULT_MPC_ID);
+    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull

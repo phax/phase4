@@ -174,8 +174,7 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   @Nonnull
-  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue,
-                                         @Nonnull @Nonempty final String sRole)
+  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue, @Nonnull @Nonempty final String sRole)
   {
     return new PModeParty ((String) null, sIDValue, sRole, (String) null, (String) null);
   }

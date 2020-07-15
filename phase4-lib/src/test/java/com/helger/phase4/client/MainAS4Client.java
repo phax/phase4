@@ -116,9 +116,7 @@ public final class MainAS4Client
       {
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion,
-                                                                                     aPayload,
-                                                                                     aAttachments);
+        final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
         final Document aDoc = aMsg.getAsSoapDocument (aPayload);
         aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
       }
@@ -126,19 +124,14 @@ public final class MainAS4Client
         // BodyPayload SIGNED
         if (false)
         {
-          final Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion,
-                                                                          aPayload,
-                                                                          aAttachments,
-                                                                          aResHelper);
+          final Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
           aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
         }
         // BodyPayload ENCRYPTED
         else
           if (false)
           {
-            final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion,
-                                                                                         aPayload,
-                                                                                         aAttachments);
+            final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
             Document aDoc = aMsg.getAsSoapDocument (aPayload);
             aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                         eSoapVersion,
@@ -155,9 +148,7 @@ public final class MainAS4Client
                                                                               CMimeType.APPLICATION_GZIP,
                                                                               null,
                                                                               aResHelper));
-              final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion,
-                                                                                           null,
-                                                                                           aAttachments);
+              final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, null, aAttachments);
               final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
                                                                                       AS4Signer.createSignedMessage (aCryptoFactory,
                                                                                                                      aMsg.getAsSoapDocument (null),
@@ -176,10 +167,7 @@ public final class MainAS4Client
             else
               if (false)
               {
-                Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion,
-                                                                          aPayload,
-                                                                          aAttachments,
-                                                                          aResHelper);
+                Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
                 aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                             eSoapVersion,
                                                             aDoc,

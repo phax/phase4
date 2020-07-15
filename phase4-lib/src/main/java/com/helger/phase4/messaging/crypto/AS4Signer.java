@@ -116,8 +116,7 @@ public final class AS4Signer
       // "cid:Attachments" is a predefined ID used inside WSSecSignatureBase
       aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
-      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
-                                                                                                            aResHelper);
+      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 

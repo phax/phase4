@@ -78,8 +78,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPMode m_aFallbackPMode;
 
-  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                          @Nullable final IPMode aFallbackPMode)
+  public SOAPHeaderElementProcessorWSS4J (@Nonnull final IAS4CryptoFactory aCryptoFactory, @Nullable final IPMode aFallbackPMode)
   {
     ValueEnforcer.notNull (aCryptoFactory, "aCryptoFactory");
     m_aCryptoFactory = aCryptoFactory;
@@ -119,9 +118,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       {
         // Go through the security nodes to find the algorithm attribute
         aSignedNode = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignedInfo");
-        final Element aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode,
-                                                                                  CAS4.DS_NS,
-                                                                                  "SignatureMethod");
+        final Element aSignatureAlgorithm = XMLHelper.getFirstChildElementOfName (aSignedNode, CAS4.DS_NS, "SignatureMethod");
         String sAlgorithm = aSignatureAlgorithm == null ? null : aSignatureAlgorithm.getAttribute ("Algorithm");
         final ECryptoAlgorithmSign eSignAlgo = ECryptoAlgorithmSign.getFromURIOrNull (sAlgorithm);
         if (eSignAlgo == null)
@@ -196,13 +193,10 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
           }
           // Strip prefix and suffix
           sAttachmentID = sAttachmentID.substring (WSS4JAttachment.CONTENT_ID_PREFIX.length (),
-                                                   sAttachmentID.length () -
-                                                                                                WSS4JAttachment.CONTENT_ID_SUFFIX.length ());
+                                                   sAttachmentID.length () - WSS4JAttachment.CONTENT_ID_SUFFIX.length ());
 
           // Add +1 because the payload has index 0
-          final String sHref = aUserMessage.getPayloadInfo ()
-                                           .getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i)
-                                           .getHref ();
+          final String sHref = aUserMessage.getPayloadInfo ().getPartInfoAtIndex ((bBodyPayloadPresent ? 1 : 0) + i).getHref ();
           if (!sHref.contains (sAttachmentID))
           {
             LOGGER.error ("The usermessage part information '" +

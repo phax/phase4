@@ -210,8 +210,6 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Map", m_aMap)
-                                       .append ("DefaultProfile", m_aDefaultProfile)
-                                       .getToString ();
+    return new ToStringGenerator (this).append ("Map", m_aMap).append ("DefaultProfile", m_aDefaultProfile).getToString ();
   }
 }

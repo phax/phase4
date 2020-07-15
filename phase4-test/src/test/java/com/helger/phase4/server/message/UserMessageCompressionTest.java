@@ -115,8 +115,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments)
-                                      .getAsSoapDocument ();
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments).getAsSoapDocument ();
 
     final AS4MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                  aDoc,

@@ -56,8 +56,7 @@ public class DataContentHandlerSoap12 extends text_plain
 
   @Override
   @Nonnull
-  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor,
-                            @Nonnull final DataSource ds) throws IOException
+  protected Object getData (@Nonnull final ActivationDataFlavor aFlavor, @Nonnull final DataSource ds) throws IOException
   {
     if (aFlavor.getRepresentationClass () == StreamSource.class)
       return new StreamSource (ds.getInputStream ());

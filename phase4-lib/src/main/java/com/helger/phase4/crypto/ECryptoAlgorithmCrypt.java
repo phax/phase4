@@ -94,8 +94,7 @@ public enum ECryptoAlgorithmCrypt implements IHasID <String>
   }
 
   @Nullable
-  public static ECryptoAlgorithmCrypt getFromIDOrDefault (@Nullable final String sID,
-                                                          @Nullable final ECryptoAlgorithmCrypt eDefault)
+  public static ECryptoAlgorithmCrypt getFromIDOrDefault (@Nullable final String sID, @Nullable final ECryptoAlgorithmCrypt eDefault)
   {
     return EnumHelper.getFromIDOrDefault (ECryptoAlgorithmCrypt.class, sID, eDefault);
   }

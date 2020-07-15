@@ -54,17 +54,7 @@ public final class PModeTest
     }
     try
     {
-      new PMode ( (i,
-                   r) -> null,
-                  PModeParty.createSimple ("id", "Role"),
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null);
+      new PMode ( (i, r) -> null, PModeParty.createSimple ("id", "Role"), null, null, null, null, null, null, null, null);
       fail ();
     }
     catch (final NullPointerException ex)

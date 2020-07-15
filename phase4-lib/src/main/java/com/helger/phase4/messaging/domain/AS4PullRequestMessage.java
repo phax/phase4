@@ -37,8 +37,7 @@ public class AS4PullRequestMessage extends AbstractAS4Message <AS4PullRequestMes
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                @Nonnull final Ebms3SignalMessage aSignalMessage)
+  public AS4PullRequestMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSoapVersion, EAS4MessageType.PULL_REQUEST);
 

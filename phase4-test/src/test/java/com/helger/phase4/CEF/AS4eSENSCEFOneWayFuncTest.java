@@ -162,9 +162,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSoapDocument (m_aPayload);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                      false,
-                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -415,13 +413,11 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        final int nIndex = m_nFilterCount++;
                                                                        if (nIndex < nResponsesToIntercept)
                                                                        {
-                                                                         LOGGER.error ("Proxy purposely intercepted call " +
-                                                                                       nIndex);
+                                                                         LOGGER.error ("Proxy purposely intercepted call " + nIndex);
                                                                          return null;
                                                                        }
 
-                                                                       LOGGER.info ("Proxy purposely passes on call " +
-                                                                                    nIndex);
+                                                                       LOGGER.info ("Proxy purposely passes on call " + nIndex);
                                                                        return httpObject;
                                                                      }
                                                                    };
@@ -655,10 +651,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (),
-                  "originalSender");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
-                  "finalRecipient");
+    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (), "originalSender");
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), "finalRecipient");
   }
 
   /**
@@ -817,12 +811,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
-                  sTrackerIdentifier);
+    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
-                                               true,
-                                               null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
