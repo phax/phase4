@@ -13,10 +13,7 @@
     <cbc:BuyerReference>0150abc</cbc:BuyerReference>
     <cac:AccountingSupplierParty>
         <cac:Party>
-            <cbc:EndpointID schemeID="0088">9482348239847239874</cbc:EndpointID>
-            <cac:PartyIdentification>
-                <cbc:ID>99887766</cbc:ID>
-            </cac:PartyIdentification>
+            <cbc:EndpointID schemeID="9915">phase4-test-sender</cbc:EndpointID>
             <cac:PartyName>
                 <cbc:Name>SupplierTradingName Ltd.</cbc:Name>
             </cac:PartyName>
@@ -43,10 +40,7 @@
     </cac:AccountingSupplierParty>
     <cac:AccountingCustomerParty>
         <cac:Party>
-            <cbc:EndpointID schemeID="0002">FR23342</cbc:EndpointID>
-            <cac:PartyIdentification>
-                <cbc:ID schemeID="0002">FR23342</cbc:ID>
-            </cac:PartyIdentification>
+            <cbc:EndpointID schemeID="0002">test-receiver</cbc:EndpointID>
             <cac:PartyName>
                 <cbc:Name>BuyerTradingName AS</cbc:Name>
             </cac:PartyName>
