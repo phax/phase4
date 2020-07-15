@@ -156,9 +156,11 @@ public class AS4IncomingHandler
     if (StringHelper.hasNoText (sContentType))
       throw new Phase4Exception ("Content-Type header is missing");
 
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Received Content-Type string: '" + sContentType + "'");
     final IMimeType aContentType = MimeTypeParser.safeParseMimeType (sContentType);
     if (LOGGER.isDebugEnabled ())
-      LOGGER.debug ("Received Content-Type: " + aContentType);
+      LOGGER.debug ("Received Content-Type object: " + aContentType);
     if (aContentType == null)
       throw new Phase4Exception ("Failed to parse Content-Type '" + sContentType + "'");
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();

@@ -283,6 +283,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v0.10.3 - work in progress
+    * Updated to ph-commons 9.4.6
     * Added `AS4ServerInitializer.shutdownAS4Server` to gracefully unschedule all jobs
     * Improved customizability of the `Phase4CEFSender` to define if the `@type` attribute should be emitted or not
     * Fixed an invalid `Content-Type` parsing
