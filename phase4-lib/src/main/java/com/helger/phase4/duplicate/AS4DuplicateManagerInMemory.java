@@ -23,6 +23,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.CollectionHelper;
@@ -40,6 +41,7 @@ import com.helger.commons.string.StringHelper;
  *
  * @author Philip Helger
  */
+@ThreadSafe
 public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
 {
   private final SimpleReadWriteLock m_aRWLock = new SimpleReadWriteLock ();

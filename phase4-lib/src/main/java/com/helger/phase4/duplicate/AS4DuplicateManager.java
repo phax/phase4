@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -34,6 +35,7 @@ import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
  *
  * @author Philip Helger
  */
+@ThreadSafe
 public class AS4DuplicateManager extends AbstractPhotonMapBasedWALDAO <IAS4DuplicateItem, AS4DuplicateItem> implements IAS4DuplicateManager
 {
   public AS4DuplicateManager (@Nullable final String sFilename) throws DAOException
