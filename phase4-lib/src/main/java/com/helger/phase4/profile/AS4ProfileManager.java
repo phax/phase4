@@ -58,7 +58,10 @@ public class AS4ProfileManager implements IAS4ProfileManager, Serializable
 
   private void _registerAll ()
   {
-    m_aRWLock.writeLocked ( () -> m_aMap.clear ());
+    m_aRWLock.writeLocked ( () -> {
+      m_aMap.clear ();
+      m_aDefaultProfile = null;
+    });
     for (final IAS4ProfileRegistrarSPI aSPI : ServiceLoaderHelper.getAllSPIImplementations (IAS4ProfileRegistrarSPI.class))
       aSPI.registerAS4Profile (this);
 
@@ -173,6 +176,11 @@ public class AS4ProfileManager implements IAS4ProfileManager, Serializable
                      aAS4Profile.getID () +
                      "'" +
                      (aAS4Profile.isDeprecated () ? " which is deprecated" : ""));
+  }
+
+  public void reloadAll ()
+  {
+    _registerAll ();
   }
 
   @Override
