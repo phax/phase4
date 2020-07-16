@@ -24,7 +24,6 @@ import org.w3c.dom.Element;
 
 import com.helger.bdve.api.result.ValidationResultList;
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.debug.GlobalDebug;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -36,7 +35,6 @@ import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -52,7 +50,6 @@ public final class MainPhase4PeppolSender
   public static void main (final String [] args)
   {
     // Provide context
-    GlobalDebug.setDebugModeDirect (false);
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
@@ -62,12 +59,12 @@ public final class MainPhase4PeppolSender
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
     AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
 
-    try (final WebScoped w = new WebScoped ())
+    try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
-        throw new IllegalStateException ();
+        throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
       IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");

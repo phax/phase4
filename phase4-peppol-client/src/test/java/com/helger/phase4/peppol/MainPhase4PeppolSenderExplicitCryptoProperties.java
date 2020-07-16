@@ -35,7 +35,6 @@ import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.web.scope.mgr.WebScoped;
 
 /**
  * Example class that provides the configuration items "inline" to avoid the
@@ -56,11 +55,11 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
     if (false)
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
-    try (final WebScoped w = new WebScoped ())
+    try
     {
       final byte [] aPayloadBytes = SimpleFileIO.getAllFileBytes (new File ("src/test/resources/examples/base-example.xml"));
       if (aPayloadBytes == null)
-        throw new IllegalStateException ();
+        throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Manual information - don't use crypto.properties
       final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStoreType (EKeyStoreType.PKCS12)

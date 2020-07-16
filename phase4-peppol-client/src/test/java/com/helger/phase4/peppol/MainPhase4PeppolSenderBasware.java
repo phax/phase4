@@ -37,7 +37,6 @@ import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -60,12 +59,12 @@ public final class MainPhase4PeppolSenderBasware
     AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ());
     AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ());
 
-    try (final WebScoped w = new WebScoped ())
+    try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
-        throw new IllegalStateException ();
+        throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0007:baswareAPAs4TestEndpoint");

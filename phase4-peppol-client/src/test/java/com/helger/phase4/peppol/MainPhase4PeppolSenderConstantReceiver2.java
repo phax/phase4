@@ -32,7 +32,6 @@ import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.web.scope.mgr.WebScopeManager;
-import com.helger.web.scope.mgr.WebScoped;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -46,12 +45,12 @@ public final class MainPhase4PeppolSenderConstantReceiver2
 
   public static void send ()
   {
-    try (final WebScoped w = new WebScoped ())
+    try
     {
       final Element aPayloadElement = DOMReader.readXMLDOM (new File ("src/test/resources/examples/base-example.xml"))
                                                .getDocumentElement ();
       if (aPayloadElement == null)
-        throw new IllegalStateException ();
+        throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:sc998899889");
