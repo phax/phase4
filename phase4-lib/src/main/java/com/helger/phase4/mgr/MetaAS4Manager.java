@@ -99,9 +99,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   public MetaAS4Manager ()
   {}
 
-  private void _initCallbacks ()
-  {}
-
   @Override
   protected void onAfterInstantiation (@Nonnull final IScope aScope)
   {
@@ -112,8 +109,6 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aPModeMgr = s_aFactory.createPModeManager ();
       m_aIncomingDuplicateMgr = s_aFactory.createDuplicateManager ();
       m_aProfileMgr = s_aFactory.createProfileManager ();
-
-      _initCallbacks ();
 
       // Validate content
       m_aPModeMgr.validateAllPModes ();
