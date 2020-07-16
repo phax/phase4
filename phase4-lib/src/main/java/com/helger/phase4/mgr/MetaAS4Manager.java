@@ -30,7 +30,7 @@ import com.helger.commons.system.SystemProperties;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
-import com.helger.phase4.profile.AS4ProfileManager;
+import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.scope.IScope;
 import com.helger.scope.singleton.AbstractGlobalSingleton;
 
@@ -92,7 +92,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private IMPCManager m_aMPCMgr;
   private IPModeManager m_aPModeMgr;
   private IAS4DuplicateManager m_aIncomingDuplicateMgr;
-  private AS4ProfileManager m_aProfileMgr;
+  private IAS4ProfileManager m_aProfileMgr;
 
   @Deprecated
   @UsedViaReflection
@@ -111,9 +111,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
       m_aMPCMgr = s_aFactory.createMPCManager ();
       m_aPModeMgr = s_aFactory.createPModeManager ();
       m_aIncomingDuplicateMgr = s_aFactory.createDuplicateManager ();
-
-      // profile mgr is always in-memory
-      m_aProfileMgr = new AS4ProfileManager ();
+      m_aProfileMgr = s_aFactory.createProfileManager ();
 
       _initCallbacks ();
 
@@ -153,7 +151,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   }
 
   @Nonnull
-  public static AS4ProfileManager getProfileMgr ()
+  public static IAS4ProfileManager getProfileMgr ()
   {
     return getInstance ().m_aProfileMgr;
   }

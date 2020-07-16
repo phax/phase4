@@ -24,6 +24,8 @@ import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPCManagerInMemory;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.model.pmode.PModeManagerInMemory;
+import com.helger.phase4.profile.AS4ProfileManager;
+import com.helger.phase4.profile.IAS4ProfileManager;
 
 /**
  * Implementation of {@link IManagerFactory} creating managers that are
@@ -50,6 +52,12 @@ public class ManagerFactoryInMemory implements IManagerFactory
   public IAS4DuplicateManager createDuplicateManager ()
   {
     return new AS4DuplicateManagerInMemory ();
+  }
+
+  @Nonnull
+  public IAS4ProfileManager createProfileManager ()
+  {
+    return new AS4ProfileManager ();
   }
 
   @Nonnull

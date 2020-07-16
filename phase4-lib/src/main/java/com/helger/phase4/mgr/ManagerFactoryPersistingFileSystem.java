@@ -25,6 +25,8 @@ import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.mpc.MPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
 import com.helger.phase4.model.pmode.PModeManager;
+import com.helger.phase4.profile.AS4ProfileManager;
+import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -77,6 +79,13 @@ public class ManagerFactoryPersistingFileSystem implements IManagerFactory
     {
       throw new Phase4Exception ("Error creating AS4DuplicateManager", ex);
     }
+  }
+
+  @Nonnull
+  public IAS4ProfileManager createProfileManager ()
+  {
+    // Always in memory
+    return new AS4ProfileManager ();
   }
 
   @Nonnull

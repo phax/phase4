@@ -46,7 +46,7 @@ import com.helger.commons.string.ToStringGenerator;
  * @author Philip Helger
  */
 @ThreadSafe
-public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
+public class AS4ProfileManager implements IAS4ProfileManager, Serializable
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ProfileManager.class);
 
@@ -115,20 +115,11 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       LOGGER.debug ("Registered" + (aAS4Profile.isDeprecated () ? " deprecated" : "") + " AS4 profile '" + sID + "'");
   }
 
-  /**
-   * @return <code>true</code> if an explicit default profile is present,
-   *         <code>false</code> if not.
-   */
   public boolean hasDefaultProfile ()
   {
     return m_aRWLock.readLockedBoolean ( () -> m_aDefaultProfile != null);
   }
 
-  /**
-   * @return The default profile. If none is set, and exactly one profile is
-   *         present, it is used. <code>null</code> if no default is present and
-   *         more than one profile is registered
-   */
   @Nullable
   public IAS4Profile getDefaultProfileOrNull ()
   {
@@ -144,13 +135,6 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
     });
   }
 
-  /**
-   * @return The default profile. If none is set, and exactly one profile is
-   *         present, it is used. If no default profile is present and more than
-   *         one profile is present an Exception is thrown.
-   * @throws IllegalStateException
-   *         If no default is present and more than one profile is registered
-   */
   @Nonnull
   public IAS4Profile getDefaultProfile ()
   {
@@ -170,22 +154,6 @@ public class AS4ProfileManager implements IAS4ProfileRegistrar, Serializable
       }
       return ret;
     });
-  }
-
-  /**
-   * Set the default profile to be used.
-   *
-   * @param sDefaultProfileID
-   *        The ID of the default profile. May be <code>null</code>.
-   * @return <code>null</code> if no such profile is registered, the resolve
-   *         profile otherwise.
-   */
-  @Nullable
-  public IAS4Profile setDefaultProfileID (@Nullable final String sDefaultProfileID)
-  {
-    final IAS4Profile aDefault = getProfileOfID (sDefaultProfileID);
-    setDefaultProfile (aDefault);
-    return aDefault;
   }
 
   public void setDefaultProfile (@Nullable final IAS4Profile aAS4Profile)

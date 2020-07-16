@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
+import com.helger.phase4.profile.IAS4ProfileManager;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -33,15 +34,44 @@ import com.helger.phase4.util.Phase4Exception;
  */
 public interface IManagerFactory extends Serializable
 {
+  /**
+   * @return A new {@link IMPCManager} instance
+   * @throws Phase4Exception
+   *         on error
+   */
   @Nonnull
   IMPCManager createMPCManager () throws Phase4Exception;
 
+  /**
+   * @return A new {@link IPModeManager} instance
+   * @throws Phase4Exception
+   *         on error
+   */
   @Nonnull
   IPModeManager createPModeManager () throws Phase4Exception;
 
+  /**
+   * @return A new {@link IAS4DuplicateManager} instance
+   * @throws Phase4Exception
+   *         on error
+   */
   @Nonnull
   IAS4DuplicateManager createDuplicateManager () throws Phase4Exception;
 
+  /**
+   * @return A new {@link IAS4ProfileManager} instance
+   * @throws Phase4Exception
+   *         on error
+   * @since 0.10.4
+   */
+  @Nonnull
+  IAS4ProfileManager createProfileManager () throws Phase4Exception;
+
+  /**
+   * @return A new {@link IAS4TimestampManager} instance
+   * @throws Phase4Exception
+   *         on error
+   */
   @Nonnull
   IAS4TimestampManager createTimestampManager ();
 }
