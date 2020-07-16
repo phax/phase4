@@ -16,7 +16,9 @@
  */
 package com.helger.phase4.mgr;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +37,26 @@ public interface IAS4TimestampManager
    */
   @Nonnull
   LocalDateTime getCurrentDateTime ();
+
+  /**
+   * @return The current date in the current time zone.
+   * @since 0.10.4
+   */
+  @Nonnull
+  default LocalDate getCurrentDate ()
+  {
+    return getCurrentDateTime ().toLocalDate ();
+  }
+
+  /**
+   * @return The current time in the current time zone.
+   * @since 0.10.4
+   */
+  @Nonnull
+  default LocalTime getCurrentTime ()
+  {
+    return getCurrentDateTime ().toLocalTime ();
+  }
 
   @Nonnull
   static IAS4TimestampManager createDefaultInstance ()
