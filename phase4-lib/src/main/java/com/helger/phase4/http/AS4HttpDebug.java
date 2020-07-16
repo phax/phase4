@@ -32,7 +32,8 @@ import com.helger.xml.serialize.write.IXMLWriterSettings;
 import com.helger.xml.serialize.write.XMLWriterSettings;
 
 /**
- * Turn on/off AS4 HTTP debug logging
+ * Turn on/off AS4 HTTP debug logging.<br>
+ * Note: this class will be replaced with something smarter in the future
  *
  * @author Philip Helger
  */
