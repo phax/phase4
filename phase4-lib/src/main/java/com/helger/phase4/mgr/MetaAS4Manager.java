@@ -58,7 +58,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
     }
     else
     {
-      LOGGER.info ("MetaAS4Manager is using file system persistence");
+      LOGGER.info ("MetaAS4Manager is initialized using file system persistence");
       s_aFactory = new ManagerFactoryPersistingFileSystem ();
     }
     s_aTimestampMgr = s_aFactory.createTimestampManager ();
@@ -154,6 +154,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   @Nonnull
   public static IAS4TimestampManager getTimestampMgr ()
   {
+    // The timestamp manager may be needed during initialization of a singleton,
+    // as such it must be static
     return s_aTimestampMgr;
   }
 }
