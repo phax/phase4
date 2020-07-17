@@ -40,7 +40,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
- * Example for sending something to the Basware test endpoint.
+ * Example for sending something to the my test endpoint.
  *
  * @author Philip Helger
  */
@@ -78,10 +78,10 @@ public final class MainPhase4PeppolSenderHelger
                             .senderPartyID ("POP000306")
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)
+                            .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
                             .sendMessage ()
                             .isSuccess ())
       {
