@@ -19,6 +19,7 @@ package com.helger.phase4.CEF;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.WillNotClose;
 
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.junit.AfterClass;
@@ -102,7 +103,7 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
   protected Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                            @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+                                            @Nonnull @WillNotClose final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
     final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,

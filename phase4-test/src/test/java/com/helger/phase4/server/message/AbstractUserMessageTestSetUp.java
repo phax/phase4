@@ -103,6 +103,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @AfterClass
   public static void shutDownServer () throws Exception
   {
+    // s_aResMgr is closed by MockJettySetup
     s_aResMgr = null;
     MockJettySetup.shutDownServer ();
   }
