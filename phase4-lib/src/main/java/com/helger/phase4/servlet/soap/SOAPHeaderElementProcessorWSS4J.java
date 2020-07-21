@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.AttachmentUtils;
 import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.dom.engine.WSSConfig;
 import org.apache.wss4j.dom.engine.WSSecurityEngine;
 import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -60,6 +61,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.servlet.AS4MessageState;
+import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.xml.XMLHelper;
 
 /**
@@ -219,17 +221,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
                                                                                                               aState.getResourceHelper ());
 
         // Configure RequestData needed for the check / decrypt process!
+        final WSSConfig aWSSConfig = WSSConfigManager.getInstance ().createWSSConfig ();
         final RequestData aRequestData = new RequestData ();
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())
           aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
         aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
         aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
-        aRequestData.setWssConfig (m_aCryptoFactory.createWSSConfig ());
+        aRequestData.setWssConfig (aWSSConfig);
 
         // Upon success, the SOAP document contains the decrypted content
         // afterwards!
         final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
+        aSecurityEngine.setWssConfig (aWSSConfig);
         final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
         final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
 

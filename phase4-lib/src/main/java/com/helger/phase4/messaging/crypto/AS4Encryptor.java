@@ -47,6 +47,7 @@ import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.wss.WSSConfigManager;
 
 /**
  * Encryption helper
@@ -61,6 +62,9 @@ public final class AS4Encryptor
   @Nonnull
   private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader, @Nonnull final AS4CryptParams aCryptParams)
   {
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
+
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the

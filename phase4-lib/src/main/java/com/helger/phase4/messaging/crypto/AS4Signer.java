@@ -39,6 +39,7 @@ import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.phase4.wss.WSSConfigManager;
 
 /**
  * Message singing helper.
@@ -90,6 +91,9 @@ public final class AS4Signer
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
+
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
 
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);

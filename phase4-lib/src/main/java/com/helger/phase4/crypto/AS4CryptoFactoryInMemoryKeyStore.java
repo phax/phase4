@@ -24,7 +24,6 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.Merlin;
-import org.apache.wss4j.dom.engine.WSSConfig;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -41,12 +40,6 @@ import com.helger.security.keystore.KeyStoreHelper;
 @Immutable
 public class AS4CryptoFactoryInMemoryKeyStore implements IAS4CryptoFactory
 {
-  static
-  {
-    // Init once - must be present!
-    WSSConfig.init ();
-  }
-
   private final KeyStore m_aKeyStore;
   private final String m_sKeyAlias;
   private final String m_sKeyPassword;

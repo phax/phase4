@@ -26,7 +26,6 @@ import javax.annotation.concurrent.Immutable;
 import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.dom.engine.WSSConfig;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -48,12 +47,6 @@ import com.helger.security.keystore.KeyStoreHelper;
 @Immutable
 public class AS4CryptoFactoryPropertiesFile implements IAS4CryptoFactory
 {
-  static
-  {
-    // Init once - must be present!
-    WSSConfig.init ();
-  }
-
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   private static AS4CryptoFactoryPropertiesFile DEFAULT_INSTANCE = null;
 

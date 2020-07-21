@@ -285,6 +285,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.10.4 - work in progress
     * Extracted `IAS4ProfileManager` interface
     * Added profile manager to the `IManagerFactory` interface
+    * Reworked the WSS4J initialization code to try to avoid the WSS-660 issue
 * v0.10.3 - 2020-07-15
     * Updated to ph-commons 9.4.6
     * Added `AS4ServerInitializer.shutdownAS4Server` to gracefully unschedule all jobs

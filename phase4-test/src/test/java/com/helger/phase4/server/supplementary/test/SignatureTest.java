@@ -28,6 +28,7 @@ import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.apache.wss4j.dom.str.STRParser.REFERENCE_TYPE;
+import org.junit.Rule;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -36,6 +37,8 @@ import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
+import com.helger.phase4.wss.WSSConfigManager;
+import com.helger.scope.mock.ScopeTestRule;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -43,6 +46,9 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class SignatureTest
 {
+  @Rule
+  public final ScopeTestRule m_aRule = new ScopeTestRule ();
+
   @Nullable
   private static Document _getSoapEnvelope11 ()
   {
@@ -76,6 +82,7 @@ public final class SignatureTest
     // final String outputString = XMLUtils.prettyDocumentToString (signedDoc);
 
     final WSSecurityEngine aSecEngine = new WSSecurityEngine ();
+    aSecEngine.setWssConfig (WSSConfigManager.getInstance ().createWSSConfig ());
     final WSHandlerResult aResults = aSecEngine.processSecurityHeader (signedDoc, null, null, aCryptoFactory.getCrypto ());
 
     final WSSecurityEngineResult actionResult = aResults.getActionResults ().get (Integer.valueOf (WSConstants.SIGN)).get (0);
