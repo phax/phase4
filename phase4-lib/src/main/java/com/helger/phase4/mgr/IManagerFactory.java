@@ -69,8 +69,6 @@ public interface IManagerFactory extends Serializable
 
   /**
    * @return A new {@link IAS4TimestampManager} instance
-   * @throws Phase4Exception
-   *         on error
    */
   @Nonnull
   IAS4TimestampManager createTimestampManager ();
