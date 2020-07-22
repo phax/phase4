@@ -282,7 +282,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.10.4 - work in progress
+* v0.10.4 - 2020-07-22
     * Extracted `IAS4ProfileManager` interface
     * Added profile manager to the `IManagerFactory` interface
     * Reworked the WSS4J initialization code to try to avoid the WSS-660 issue
