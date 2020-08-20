@@ -20,9 +20,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
@@ -34,6 +31,7 @@ import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.ebms3header.Ebms3AgreementRef;
 import com.helger.phase4.ebms3header.Ebms3From;
 import com.helger.phase4.ebms3header.Ebms3MessageProperties;
 import com.helger.phase4.ebms3header.Ebms3Property;
@@ -62,9 +60,6 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class PeppolCompatibilityValidator implements IAS4ProfileValidator
 {
-  @SuppressWarnings ("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger (PeppolCompatibilityValidator.class);
-
   public PeppolCompatibilityValidator ()
   {}
 
@@ -304,7 +299,11 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
-    if (aUserMsg.getMessageInfo () != null)
+    if (aUserMsg.getMessageInfo () == null)
+    {
+      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
+    }
+    else
     {
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
@@ -341,10 +340,6 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
           }
         }
       }
-    }
-    else
-    {
-      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
     }
 
     if (aUserMsg.getPartyInfo () == null)
@@ -383,6 +378,31 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
                                             "'"));
             }
           }
+      }
+    }
+
+    if (aUserMsg.getCollaborationInfo () == null)
+    {
+      aErrorList.add (_createError ("CollaborationInfo is missing but is mandatory!"));
+    }
+    else
+    {
+      final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
+      if (aAgreementRef == null)
+      {
+        aErrorList.add (_createError ("CollaborationInfo/AgreementRef is missing but is mandatory!"));
+      }
+      else
+      {
+        if (!PeppolPMode.DEFAULT_AGREEMENT_ID.equals (aAgreementRef.getValue ()))
+          aErrorList.add (_createError ("The CollaborationInfo/AgreementRef value '" +
+                                        aAgreementRef.getValue () +
+                                        "' is incorrect. It MUST be '" +
+                                        PeppolPMode.DEFAULT_AGREEMENT_ID +
+                                        "'"));
+
+        if (StringHelper.hasText (aAgreementRef.getType ()))
+          aErrorList.add (_createError ("The CollaborationInfo/AgreementRef/@type attribute MUST NOT be provided."));
       }
     }
   }
