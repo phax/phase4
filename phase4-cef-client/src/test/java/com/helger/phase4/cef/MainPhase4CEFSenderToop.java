@@ -73,13 +73,16 @@ public final class MainPhase4CEFSenderToop
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis", "9915:tooptest");
+      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
+                                                                                                 "9915:tooptest");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
         {
           final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-          LOGGER.info ("Sending out AS4 message with message ID '" + aUserMsg.getMessagingID () + "'");
+          LOGGER.info ("Sending out AS4 message with message ID '" +
+                       aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
+                       "'");
           LOGGER.info ("Sending out AS4 message with conversation ID '" +
                        aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
                        "'");

@@ -49,7 +49,7 @@ public interface IAS4Message extends Serializable
 
   /**
    * @return The ID of the "Messaging" element for referencing in signing.
-   *         Should not be <code>null</code>.
+   *         Should not be <code>null</code>. This is NOT the AS4 Message ID.
    */
   @Nonnull
   @Nonempty

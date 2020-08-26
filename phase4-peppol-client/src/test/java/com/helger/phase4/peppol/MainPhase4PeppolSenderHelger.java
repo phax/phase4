@@ -64,7 +64,9 @@ public final class MainPhase4PeppolSenderHelger
         public void onAS4Message (final AbstractAS4Message <?> aMsg)
         {
           final AS4UserMessage aUserMsg = (AS4UserMessage) aMsg;
-          LOGGER.info ("Sending out AS4 message with message ID '" + aUserMsg.getMessagingID () + "'");
+          LOGGER.info ("Sending out AS4 message with message ID '" +
+                       aUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId () +
+                       "'");
           LOGGER.info ("Sending out AS4 message with conversation ID '" +
                        aUserMsg.getEbms3UserMessage ().getCollaborationInfo ().getConversationId () +
                        "'");
@@ -78,7 +80,9 @@ public final class MainPhase4PeppolSenderHelger
                             .senderPartyID ("POP000306")
                             .payload (aPayloadElement)
                             .messageID ("TestMsgPhilip")
-                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
+                                                               aReceiverID,
+                                                               ESML.DIGIT_TEST))
                             .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)

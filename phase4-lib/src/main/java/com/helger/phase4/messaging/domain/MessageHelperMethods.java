@@ -154,7 +154,8 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
 
@@ -313,10 +314,12 @@ public final class MessageHelperMethods
       return null;
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
     }
     if (aAttachment.hasCompressionMode ())
     {
@@ -374,7 +377,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message
