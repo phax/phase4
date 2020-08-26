@@ -104,6 +104,7 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.util.AS4XMLHelper;
 import com.helger.phase4.util.Phase4Exception;
+import com.helger.photon.app.PhotonWorkerPool;
 import com.helger.web.scope.IRequestWebScopeWithoutResponse;
 import com.helger.xml.serialize.write.XMLWriter;
 
@@ -1186,7 +1187,7 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // Call asynchronous
         // Only leg1 can be async!
-        AS4WorkerPool.getInstance ().run ( () -> {
+        PhotonWorkerPool.getInstance ().runThrowing ("phase4", () -> {
           // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();

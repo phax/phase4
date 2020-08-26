@@ -282,6 +282,10 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.10.5 - work in progress
+    * Updated to ph-oton 8.2.6
+    * Replaced `AS4WorkerPool` with `PhotonWorkerPool`
+    * Improved validation of Peppol requirements for incoming messages, if the correct profile "peppol" is selected
 * v0.10.4 - 2020-07-22
     * Extracted `IAS4ProfileManager` interface
     * Added profile manager to the `IManagerFactory` interface
