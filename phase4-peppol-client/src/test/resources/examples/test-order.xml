@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Order xmlns="urn:oasis:names:specification:ubl:schema:xsd:Order-2"
+     xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+     xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:CustomizationID>urn:fdc:peppol.eu:poacc:trns:order:3</cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:poacc:bis:order_only:3</cbc:ProfileID>
+  <cbc:ID>34</cbc:ID>
+  <cbc:SalesOrderID>112233</cbc:SalesOrderID>
+  <cbc:IssueDate>2018-09-01</cbc:IssueDate>
+  <cbc:IssueTime>12:30:00</cbc:IssueTime>
+  <cbc:OrderTypeCode>220</cbc:OrderTypeCode>
+  <cbc:Note>Information text for the whole order</cbc:Note>
+  <cbc:DocumentCurrencyCode>NOK</cbc:DocumentCurrencyCode>
+  <cbc:CustomerReference>9000012345</cbc:CustomerReference>
+  <cbc:AccountingCost>Project123</cbc:AccountingCost>
+  <cac:ValidityPeriod>
+    <cbc:EndDate>2013-01-31</cbc:EndDate>
+  </cac:ValidityPeriod>
+  <cac:QuotationDocumentReference>
+    <cbc:ID>QuoteID123</cbc:ID>
+  </cac:QuotationDocumentReference>
+  <cac:OrderDocumentReference>
+    <cbc:ID>RjectedOrderID123</cbc:ID>
+  </cac:OrderDocumentReference>
+  <cac:OriginatorDocumentReference>
+    <cbc:ID>MAFO</cbc:ID>
+  </cac:OriginatorDocumentReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>Doc1</cbc:ID>
+    <cbc:DocumentType>Timesheet</cbc:DocumentType>
+    <cac:Attachment>
+      <cac:ExternalReference>
+        <cbc:URI>http://www.suppliersite.eu/sheet001.html</cbc:URI>
+      </cac:ExternalReference>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>Doc2</cbc:ID>
+    <cbc:DocumentType>Drawing</cbc:DocumentType>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="application/pdf" filename="Hours-spend.csv">UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi
+            </cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:Contract>
+    <cbc:ID>34322</cbc:ID>
+  </cac:Contract>
+  <cac:BuyerCustomerParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="0192">987654325</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0088">7300010000001</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Helseforetak</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Sinsenveien 40</cbc:StreetName>
+        <cbc:AdditionalStreetName>Oppgang B</cbc:AdditionalStreetName>
+        <cbc:CityName>Oslo</cbc:CityName>
+        <cbc:PostalZone>0501</cbc:PostalZone>
+        <cbc:CountrySubentity>Region</cbc:CountrySubentity>
+        <cac:AddressLine>
+          <cbc:Line>Address Line 3</cbc:Line>
+        </cac:AddressLine>
+        <cac:Country>
+          <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>NO9311867455MVA</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Helseforetak AS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0082">931186755</cbc:CompanyID>
+        <cac:RegistrationAddress>
+          <cbc:CityName>Oslo</cbc:CityName>
+          <cac:Country>
+            <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:RegistrationAddress>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>Ole Olsen</cbc:Name>
+        <cbc:Telephone>23055000</cbc:Telephone>
+        <cbc:ElectronicMail>post@helseforetak.no</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:BuyerCustomerParty>
+  <cac:SellerSupplierParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="0192">123456785</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0088">7300010000001</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Medical</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Storgt. 12</cbc:StreetName>
+        <cbc:AdditionalStreetName>4. etasje</cbc:AdditionalStreetName>
+        <cbc:CityName>Oslo</cbc:CityName>
+        <cbc:PostalZone>0585</cbc:PostalZone>
+        <cbc:CountrySubentity>Region</cbc:CountrySubentity>
+        <cac:AddressLine>
+          <cbc:Line>Address Line 3</cbc:Line>
+        </cac:AddressLine>
+        <cac:Country>
+          <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Medical AS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0082">123456789</cbc:CompanyID>
+        <cac:RegistrationAddress>
+          <cbc:CityName>Oslo</cbc:CityName>
+          <cac:Country>
+            <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:RegistrationAddress>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>Nils Nilsen</cbc:Name>
+        <cbc:Telephone>22150510</cbc:Telephone>
+        <cbc:ElectronicMail>post@medical.no</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:SellerSupplierParty>
+  <cac:OriginatorCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0088">7300010000001</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Helseavdeling</cbc:Name>
+      </cac:PartyName>
+      <cac:Contact>
+        <cbc:Name>Julie Jensen</cbc:Name>
+        <cbc:Telephone>67915012</cbc:Telephone>
+        <cbc:ElectronicMail>post@helse.no</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:OriginatorCustomerParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="0192">987654325</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0088">7300010000001</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Accounting</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Sinsenveien 42</cbc:StreetName>
+        <cbc:AdditionalStreetName>Oppgang A</cbc:AdditionalStreetName>
+        <cbc:CityName>Oslo</cbc:CityName>
+        <cbc:PostalZone>0501</cbc:PostalZone>
+        <cbc:CountrySubentity>Region</cbc:CountrySubentity>
+        <cac:AddressLine>
+          <cbc:Line>Address Line 3</cbc:Line>
+        </cac:AddressLine>
+        <cac:Country>
+          <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>NO9311867455MVA</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Helseforetak AS</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0082">931186723</cbc:CompanyID>
+        <cac:RegistrationAddress>
+          <cbc:CityName>Oslo</cbc:CityName>
+          <cac:Country>
+            <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:RegistrationAddress>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:Delivery>
+    <cac:DeliveryLocation>
+      <cbc:ID schemeID="0088">7300010000001</cbc:ID>
+      <cac:Address>
+        <cbc:StreetName>Solheimsveien 10</cbc:StreetName>
+        <cbc:AdditionalStreetName>Add</cbc:AdditionalStreetName>
+        <cbc:CityName>Lørenskog</cbc:CityName>
+        <cbc:PostalZone>1473</cbc:PostalZone>
+        <cbc:CountrySubentity>Region</cbc:CountrySubentity>
+        <cac:AddressLine>
+          <cbc:Line>3rd Address line</cbc:Line>
+        </cac:AddressLine>
+        <cac:Country>
+          <cbc:IdentificationCode>NO</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:Address>
+    </cac:DeliveryLocation>
+    <cac:RequestedDeliveryPeriod>
+      <cbc:StartDate>2012-10-10</cbc:StartDate>
+      <cbc:EndDate>2012-10-20</cbc:EndDate>
+    </cac:RequestedDeliveryPeriod>
+    <cac:DeliveryParty>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0082">13691234</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName>
+        <cbc:Name>Helseavdeling</cbc:Name>
+      </cac:PartyName>
+      <cac:Contact>
+        <cbc:Name>Ole</cbc:Name>
+        <cbc:Telephone>987098709</cbc:Telephone>
+        <cbc:ElectronicMail>ole@helseforetak.no</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:DeliveryParty>
+  </cac:Delivery>
+  <cac:DeliveryTerms>
+    <cbc:ID>FOB</cbc:ID>
+    <cbc:SpecialTerms>CAD</cbc:SpecialTerms>
+    <cac:DeliveryLocation>
+      <cbc:ID>FOB Oslo</cbc:ID>
+    </cac:DeliveryLocation>
+  </cac:DeliveryTerms>
+  <cac:PaymentTerms>
+    <cbc:Note>Payment terms description</cbc:Note>
+    </cac:PaymentTerms>
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReasonCode>ABK</cbc:AllowanceChargeReasonCode>
+    <cbc:AllowanceChargeReason>Miscellaneous services</cbc:AllowanceChargeReason>
+    <cbc:Amount currencyID="NOK">400.00</cbc:Amount>
+    <cac:TaxCategory>
+      <cbc:ID>Z</cbc:ID>
+      <cbc:Percent>0</cbc:Percent>
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:TaxCategory>
+  </cac:AllowanceCharge>
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+    <cbc:AllowanceChargeReasonCode>95</cbc:AllowanceChargeReasonCode>
+    <cbc:AllowanceChargeReason>Discount</cbc:AllowanceChargeReason>
+    <cbc:MultiplierFactorNumeric>10</cbc:MultiplierFactorNumeric>
+    <cbc:Amount currencyID="NOK">652.50</cbc:Amount>
+    <cbc:BaseAmount currencyID="NOK">6525.00</cbc:BaseAmount>
+    <cac:TaxCategory>
+      <cbc:ID>S</cbc:ID>
+      <cbc:Percent>25</cbc:Percent>
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:TaxCategory>
+  </cac:AllowanceCharge>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="NOK">100.00</cbc:TaxAmount>
+  </cac:TaxTotal>
+  <cac:AnticipatedMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="NOK">6525.00</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="NOK">6272.50</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="NOK">6372.50</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="NOK">652.50</cbc:AllowanceTotalAmount>
+    <cbc:ChargeTotalAmount currencyID="NOK">400.00</cbc:ChargeTotalAmount>
+    <cbc:PrepaidAmount currencyID="NOK">10.00</cbc:PrepaidAmount>
+    <cbc:PayableRoundingAmount currencyID="NOK">0.50</cbc:PayableRoundingAmount>
+    <cbc:PayableAmount currencyID="NOK">6363</cbc:PayableAmount>
+  </cac:AnticipatedMonetaryTotal>
+  <cac:OrderLine>
+    <cbc:Note>Freetext note on line 1</cbc:Note>
+    <cac:LineItem>
+      <cbc:ID>1</cbc:ID>
+      <cbc:Quantity unitCode="EA">120</cbc:Quantity>
+      <cbc:LineExtensionAmount currencyID="NOK">6300.00</cbc:LineExtensionAmount>
+      <cbc:PartialDeliveryIndicator>false</cbc:PartialDeliveryIndicator>
+      <cbc:AccountingCost>12345678</cbc:AccountingCost>
+      <cac:Delivery>
+        <cac:RequestedDeliveryPeriod>
+          <cbc:StartDate>2010-02-10</cbc:StartDate>
+          <cbc:EndDate>2010-02-25</cbc:EndDate>
+        </cac:RequestedDeliveryPeriod>
+      </cac:Delivery>
+      <cac:OriginatorParty>
+        <cac:PartyIdentification>
+          <cbc:ID schemeID="0082">1234567890</cbc:ID>
+        </cac:PartyIdentification>
+        <cac:PartyName>
+          <cbc:Name>Josef K.</cbc:Name>
+        </cac:PartyName>
+      </cac:OriginatorParty>
+      <cac:AllowanceCharge>
+        <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+        <cbc:AllowanceChargeReasonCode>ABK</cbc:AllowanceChargeReasonCode>
+        <cbc:AllowanceChargeReason>Miscellaneous services</cbc:AllowanceChargeReason>
+        <cbc:Amount currencyID="NOK">600.00</cbc:Amount>
+      </cac:AllowanceCharge>
+      <cac:AllowanceCharge>
+        <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+        <cbc:AllowanceChargeReasonCode>95</cbc:AllowanceChargeReasonCode>
+        <cbc:AllowanceChargeReason>Discount</cbc:AllowanceChargeReason>
+        <cbc:MultiplierFactorNumeric>5</cbc:MultiplierFactorNumeric>
+        <cbc:Amount currencyID="NOK">300.00</cbc:Amount>
+        <cbc:BaseAmount currencyID="NOK">6000.00</cbc:BaseAmount>
+      </cac:AllowanceCharge>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="NOK">50.000</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        <cac:AllowanceCharge>
+          <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+          <cbc:Amount currencyID="NOK">10.00</cbc:Amount>
+          <cbc:BaseAmount currencyID="NOK">60.00</cbc:BaseAmount>
+        </cac:AllowanceCharge>
+      </cac:Price>
+      <cac:Item>
+        <cbc:Description>Needle 4mm</cbc:Description>
+        <cbc:Name>Needle 4mm</cbc:Name>
+        <cac:BuyersItemIdentification>
+          <cbc:ID>123456</cbc:ID>
+        </cac:BuyersItemIdentification>
+        <cac:SellersItemIdentification>
+          <cbc:ID>121212</cbc:ID>
+        </cac:SellersItemIdentification>
+        <cac:StandardItemIdentification>
+          <cbc:ID schemeID="0160">7560000012345</cbc:ID>
+        </cac:StandardItemIdentification>
+        <cac:ItemSpecificationDocumentReference>
+          <cbc:ID>12345678</cbc:ID>
+        </cac:ItemSpecificationDocumentReference>
+        <cac:CommodityClassification>
+          <cbc:ItemClassificationCode listID="MP" listVersionID="19.0501">12345678</cbc:ItemClassificationCode>
+        </cac:CommodityClassification>
+
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>25</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+        <cac:AdditionalItemProperty>
+          <cbc:Name>Length</cbc:Name>
+          <cbc:Value>30 mm</cbc:Value>
+          <cbc:ValueQuantity unitCode="C62">30</cbc:ValueQuantity>
+          <cbc:ValueQualifier>descr</cbc:ValueQualifier>
+        </cac:AdditionalItemProperty>
+        <cac:ItemInstance>
+          <cbc:SerialID>SE-123456</cbc:SerialID>
+          <cac:LotIdentification>
+            <cbc:LotNumberID>LO-123456</cbc:LotNumberID>
+          </cac:LotIdentification>
+        </cac:ItemInstance>
+      </cac:Item>
+    </cac:LineItem>
+  </cac:OrderLine>
+  <cac:OrderLine>
+    <cbc:Note>Freetext note on line 2</cbc:Note>
+    <cac:LineItem>
+      <cbc:ID>2</cbc:ID>
+      <cbc:Quantity unitCode="EA">15</cbc:Quantity>
+      <cbc:LineExtensionAmount currencyID="NOK">225.00</cbc:LineExtensionAmount>
+      <cbc:PartialDeliveryIndicator>true</cbc:PartialDeliveryIndicator>
+      <cbc:AccountingCost>ProjectID123</cbc:AccountingCost>
+      <cac:Delivery>
+        <cac:RequestedDeliveryPeriod>
+          <cbc:StartDate>2012-10-15</cbc:StartDate>
+          <cbc:EndDate>2012-10-31</cbc:EndDate>
+        </cac:RequestedDeliveryPeriod>
+      </cac:Delivery>
+      <cac:OriginatorParty>
+        <cac:PartyIdentification>
+          <cbc:ID schemeID="0082">1234567890</cbc:ID>
+        </cac:PartyIdentification>
+        <cac:PartyName>
+          <cbc:Name>Josef K.</cbc:Name>
+        </cac:PartyName>
+      </cac:OriginatorParty>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="NOK">15.000</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        <cac:AllowanceCharge>
+          <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+          <cbc:Amount currencyID="NOK">100.0000</cbc:Amount>
+          <cbc:BaseAmount currencyID="NOK">115.0000</cbc:BaseAmount>
+        </cac:AllowanceCharge>
+      </cac:Price>
+      <cac:Item>
+        <cbc:Description>Wet tissues for children</cbc:Description>
+        <cbc:Name>Wet tissues</cbc:Name>
+        <cac:SellersItemIdentification>
+          <cbc:ID>SItemNo011</cbc:ID>
+        </cac:SellersItemIdentification>
+        <cac:CommodityClassification>
+          <cbc:ItemClassificationCode listID="MP" listVersionID="19.0501">56789123</cbc:ItemClassificationCode>
+        </cac:CommodityClassification>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>25</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+        <cac:AdditionalItemProperty>
+          <cbc:Name>Weight</cbc:Name>
+          <cbc:Value>100 g</cbc:Value>
+        </cac:AdditionalItemProperty>
+      </cac:Item>
+    </cac:LineItem>
+  </cac:OrderLine>
+</Order>
