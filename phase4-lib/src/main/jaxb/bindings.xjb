@@ -17,32 +17,37 @@
     limitations under the License.
 
 -->
-<bindings xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+<bindings version="2.1" 
+          xmlns="http://java.sun.com/xml/ns/jaxb"
+          xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" 
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd" 
-          version="2.1" 
-          xmlns="http://java.sun.com/xml/ns/jaxb"
           xmlns:S11="http://schemas.xmlsoap.org/soap/envelope/"
           xmlns:S12="http://www.w3.org/2003/05/soap-envelope">
   <globalBindings typesafeEnumMaxMembers="2000" typesafeEnumMemberName="generateError">
+    <xjc:javaType name="java.time.LocalDateTime" xmlType="xsd:dateTime" adapter="com.helger.jaxb.adapter.AdapterLocalDateTime" />
+    <xjc:javaType name="java.time.LocalDate" xmlType="xsd:date" adapter="com.helger.jaxb.adapter.AdapterLocalDate" />
+    <xjc:javaType name="java.time.LocalTime" xmlType="xsd:time" adapter="com.helger.jaxb.adapter.AdapterLocalTime" />
+    <xjc:javaType name="java.time.Duration" xmlType="xsd:duration" adapter="com.helger.jaxb.adapter.AdapterDuration" />
   </globalBindings>
-  <bindings schemaLocation="../resources/schemas/ebms-header-3_0-200704.xsd" node="/xs:schema">
+  <bindings schemaLocation="../resources/schemas/ebms-header-3_0-200704.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>
         <typeName prefix="Ebms3"/>
       </nameXmlTransform>
     </schemaBindings>
-    <bindings node="//xs:attributeGroup[@name='headerExtension']">
-      <bindings node=".//xs:attribute[@ref='S11:mustUnderstand']">
+    <bindings node="//xsd:attributeGroup[@name='headerExtension']">
+      <bindings node=".//xsd:attribute[@ref='S11:mustUnderstand']">
         <property name="S11MustUnderstand"/>
       </bindings>
-      <bindings node=".//xs:attribute[@ref='S12:mustUnderstand']">
+      <bindings node=".//xsd:attribute[@ref='S12:mustUnderstand']">
         <property name="S12MustUnderstand"/>
       </bindings>
     </bindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/soap11.xsd" node="/xs:schema">
+  <bindings schemaLocation="../resources/schemas/soap11.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.soap11" />
       <nameXmlTransform>
@@ -50,7 +55,7 @@
       </nameXmlTransform>
     </schemaBindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/soap12.xsd" node="/xs:schema">
+  <bindings schemaLocation="../resources/schemas/soap12.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.soap12" />
       <nameXmlTransform>
@@ -58,7 +63,7 @@
       </nameXmlTransform>
     </schemaBindings>
   </bindings>
-  <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd" node="/xs:schema">
+  <bindings schemaLocation="../resources/schemas/ebbp-signals-2.0.4.xsd">
     <schemaBindings>
       <package name="com.helger.phase4.ebms3header" />
       <nameXmlTransform>
