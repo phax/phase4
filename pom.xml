@@ -73,8 +73,8 @@
     <xmlsec.version>2.2.0</xmlsec.version>
     <wss4j.version>2.3.0</wss4j.version>
     <log4j.version>2.13.3</log4j.version>
-    <peppol-commons.version>8.1.6</peppol-commons.version>
-    <ph-xsds.version>2.3.0</ph-xsds.version>
+    <peppol-commons.version>8.1.7</peppol-commons.version>
+    <ph-xsds.version>2.4.0</ph-xsds.version>
   </properties>
   
   <dependencyManagement>
@@ -82,7 +82,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>9.4.7-SNAPSHOT</version>
+        <version>9.4.7</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -117,7 +117,7 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.3.2</version>
+        <version>9.3.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -138,7 +138,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>5.6.0</version>
+        <version>5.6.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -152,7 +152,7 @@
       <dependency>
         <groupId>com.helger.bdve.rules</groupId>
         <artifactId>ph-bdve-rules-parent-pom</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
