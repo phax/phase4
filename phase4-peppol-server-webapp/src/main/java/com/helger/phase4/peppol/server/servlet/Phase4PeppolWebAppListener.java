@@ -163,7 +163,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
         final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");
         if (SimpleFileIO.writeFile (aFile,
                                     AS4MessagingHelper.getIncomingMetadataAsJson (aMessageMetadata)
-                                                      .getAsJsonString (new JsonWriterSettings ().setIndentEnabled (true)),
+                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
                                     StandardCharsets.UTF_8)
                         .isFailure ())
           LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
