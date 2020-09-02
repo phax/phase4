@@ -55,6 +55,9 @@ import com.helger.peppolid.factory.PeppolIdentifierFactory;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderPeppol;
+import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.profile.peppol.PeppolPMode;
@@ -251,7 +254,7 @@ public final class Phase4PeppolSender
     protected IMimeType m_aPayloadMimeType;
     protected boolean m_bCompressPayload;
 
-    protected IPhase4PeppolEndpointDetailProvider m_aEndpointDetailProvider;
+    protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     private IPhase4PeppolCertificateCheckResultHandler m_aCertificateConsumer;
     private Consumer <String> m_aAPEndointURLConsumer;
 
@@ -404,7 +407,7 @@ public final class Phase4PeppolSender
      * @see #smpClient(ISMPServiceMetadataProvider)
      */
     @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nonnull final IPhase4PeppolEndpointDetailProvider aEndpointDetailProvider)
+    public final IMPLTYPE endpointDetailProvider (@Nonnull final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       ValueEnforcer.notNull (aEndpointDetailProvider, "EndpointDetailProvider");
       m_aEndpointDetailProvider = aEndpointDetailProvider;
@@ -419,18 +422,18 @@ public final class Phase4PeppolSender
      * @param aSMPClient
      *        The SMP client to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #endpointDetailProvider(IPhase4PeppolEndpointDetailProvider)
+     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final ISMPServiceMetadataProvider aSMPClient)
     {
-      return endpointDetailProvider (new Phase4PeppolEndpointDetailProviderSMP (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderPeppol (aSMPClient));
     }
 
     @Nonnull
     public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
-      return endpointDetailProvider (new Phase4PeppolEndpointDetailProviderConstant (aCert, sDestURL));
+      return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
 
     /**

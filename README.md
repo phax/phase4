@@ -11,6 +11,7 @@ It consists of the following sub-projects:
   * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation (since v0.9.1)
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
+  * **phase4-dynamic-discovery** - a shared library that contains common stuff for dynamic discovery using SML and SMP (since 0.10.6)
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
   * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
   * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9) 
@@ -286,6 +287,8 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.10.6 - work in progress
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized
+    * Created new submodule `phase4-dynamic-discovery` that contains the shared parts used for dynamic discovery with SML and SMP
+    * `phase4-peppol-client` and `phase4-cef-client` use the classes from `phase4-dynamic-discovery` - backwards incompatible change
 * v0.10.5 - 2020-08-30
     * Updated to ph-commons 9.4.7
     * Updated to ph-oton 8.2.6

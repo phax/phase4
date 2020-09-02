@@ -49,6 +49,10 @@
       <artifactId>phase4-profile-cef</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.helger.phase4</groupId>
+      <artifactId>phase4-dynamic-discovery</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.helger.peppol</groupId>
       <artifactId>peppol-commons</artifactId>
     </dependency>

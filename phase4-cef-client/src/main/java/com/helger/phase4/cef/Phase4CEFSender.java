@@ -34,6 +34,10 @@ import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderBDXR2;
+import com.helger.phase4.dynamicdiscovery.AS4EndpointDetailProviderConstant;
+import com.helger.phase4.dynamicdiscovery.IAS4EndpointDetailProvider;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
@@ -87,7 +91,7 @@ public final class Phase4CEFSender
     protected IParticipantIdentifier m_aReceiverID;
     protected IDocumentTypeIdentifier m_aDocTypeID;
     protected IProcessIdentifier m_aProcessID;
-    protected IPhase4CEFEndpointDetailProvider m_aEndpointDetailProvider;
+    protected IAS4EndpointDetailProvider m_aEndpointDetailProvider;
     protected Consumer <X509Certificate> m_aCertificateConsumer;
     protected Consumer <String> m_aAPEndointURLConsumer;
     protected boolean m_bUseOriginalSenderFinalRecipientTypeAttr = DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR;
@@ -204,7 +208,7 @@ public final class Phase4CEFSender
      * @see #smpClient(IBDXRServiceMetadataProvider)
      */
     @Nonnull
-    public final IMPLTYPE endpointDetailProvider (@Nullable final IPhase4CEFEndpointDetailProvider aEndpointDetailProvider)
+    public final IMPLTYPE endpointDetailProvider (@Nullable final IAS4EndpointDetailProvider aEndpointDetailProvider)
     {
       m_aEndpointDetailProvider = aEndpointDetailProvider;
       return thisAsT ();
@@ -218,12 +222,12 @@ public final class Phase4CEFSender
      * @param aSMPClient
      *        The SMP v1 client to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #endpointDetailProvider(IPhase4CEFEndpointDetailProvider)
+     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      */
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
     {
-      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR (aSMPClient));
     }
 
     /**
@@ -234,19 +238,19 @@ public final class Phase4CEFSender
      * @param aSMPClient
      *        The SMP v2 client to be used. May not be <code>null</code>.
      * @return this for chaining
-     * @see #endpointDetailProvider(IPhase4CEFEndpointDetailProvider)
+     * @see #endpointDetailProvider(IAS4EndpointDetailProvider)
      * @since 0.10.6
      */
     @Nonnull
     public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
     {
-      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR2 (aSMPClient));
+      return endpointDetailProvider (new AS4EndpointDetailProviderBDXR2 (aSMPClient));
     }
 
     @Nonnull
     public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
     {
-      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderConstant (aCert, sDestURL));
+      return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
 
     /**
