@@ -40,7 +40,7 @@ import com.helger.xsds.bdxr.smp1.EndpointType;
 
 /**
  * The default implementation of {@link IPhase4CEFEndpointDetailProvider} using
- * an OASIS BDXR SMP Client to determine this information from an endpoint.
+ * an OASIS BDXR SMP v1 Client to determine this information from an endpoint.
  *
  * @author Philip Helger
  * @since 0.9.15
