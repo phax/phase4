@@ -264,6 +264,11 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-dynamic-discovery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-peppol-client</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -286,6 +291,7 @@
     <module>phase4-profile-peppol</module>
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
+    <module>phase4-dynamic-discovery</module>
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
