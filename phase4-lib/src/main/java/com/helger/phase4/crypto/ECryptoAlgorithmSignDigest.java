@@ -42,7 +42,7 @@ public enum ECryptoAlgorithmSignDigest implements IHasID <String>
   private final String m_sID;
   private final String m_sAlgorithmURI;
 
-  private ECryptoAlgorithmSignDigest (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
+  ECryptoAlgorithmSignDigest (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sAlgorithmURI)
   {
     m_sID = sID;
     m_sAlgorithmURI = sAlgorithmURI;
