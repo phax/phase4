@@ -283,6 +283,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.10.6 - work in progress
+    * The CEF client now has support for OASIS BDXR SMP v2
 * v0.10.5 - 2020-08-30
     * Updated to ph-commons 9.4.7
     * Updated to ph-oton 8.2.6
