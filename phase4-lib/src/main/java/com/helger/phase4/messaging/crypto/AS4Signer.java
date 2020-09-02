@@ -106,6 +106,7 @@ public final class AS4Signer
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
     // PMode indicates the DigestAlgorithm as Hash Function
     aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
+    aBuilder.setSigCanonicalization (aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
 
     // Sign the messaging element itself
     aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));

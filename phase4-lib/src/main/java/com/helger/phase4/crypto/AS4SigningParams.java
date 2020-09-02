@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.lang.ICloneable;
@@ -39,6 +40,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
 {
   private ECryptoAlgorithmSign m_eAlgorithmSign;
   private ECryptoAlgorithmSignDigest m_eAlgorithmSignDigest;
+  private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
 
   public AS4SigningParams ()
   {}
@@ -98,9 +100,41 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
     return this;
   }
 
+  /**
+   * @return The canonicalization algorithm to use. Never <code>null</code>.
+   * @since 0.10.6
+   */
+  @Nonnull
+  public final ECryptoAlgorithmC14N getAlgorithmC14N ()
+  {
+    return m_eAlgorithmC14N;
+  }
+
+  /**
+   * Set the canonicalization algorithm to be used. By default "Exclusive
+   * without comments" is used as suggested by the WS Security SOAP Message
+   * Security Version 1.1.1 spec, chapter 8.1.<br>
+   * Source:
+   * http://docs.oasis-open.org/wss-m/wss/v1.1.1/wss-SOAPMessageSecurity-v1.1.1.doc
+   *
+   * @param eAlgorithmC14N
+   *        the canonicalization algorithm that should be set. May not be
+   *        <code>null</code>.
+   * @return this for chaining
+   * @since 0.10.6
+   */
+  @Nonnull
+  public final AS4SigningParams setAlgorithmC14N (@Nonnull final ECryptoAlgorithmC14N eAlgorithmC14N)
+  {
+    ValueEnforcer.notNull (eAlgorithmC14N, "AlgorithmC14N");
+    m_eAlgorithmC14N = eAlgorithmC14N;
+    return this;
+  }
+
   @Nonnull
   public final AS4SigningParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
+    // Note: The canonicalization algorithm is not part of the PMode!
     if (aSecurity == null)
     {
       setAlgorithmSign (null);
@@ -118,7 +152,9 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   @ReturnsMutableCopy
   public AS4SigningParams getClone ()
   {
-    return new AS4SigningParams ().setAlgorithmSign (m_eAlgorithmSign).setAlgorithmSignDigest (m_eAlgorithmSignDigest);
+    return new AS4SigningParams ().setAlgorithmSign (m_eAlgorithmSign)
+                                  .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
+                                  .setAlgorithmC14N (m_eAlgorithmC14N);
   }
 
   @Override
@@ -126,6 +162,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   {
     return new ToStringGenerator (null).append ("AlgorithmSign", m_eAlgorithmSign)
                                        .append ("AlgorithmSignDigest", m_eAlgorithmSignDigest)
+                                       .append ("AlgorithmC14N", m_eAlgorithmC14N)
                                        .getToString ();
   }
 
@@ -134,6 +171,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   public static AS4SigningParams createDefault ()
   {
     return new AS4SigningParams ().setAlgorithmSign (ECryptoAlgorithmSign.SIGN_ALGORITHM_DEFAULT)
-                                  .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT);
+                                  .setAlgorithmSignDigest (ECryptoAlgorithmSignDigest.SIGN_DIGEST_ALGORITHM_DEFAULT)
+                                  .setAlgorithmC14N (ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT);
   }
 }
