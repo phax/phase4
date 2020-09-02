@@ -19,6 +19,7 @@ package com.helger.phase4.messaging.crypto;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.Immutable;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.mail.MessagingException;
@@ -54,6 +55,7 @@ import com.helger.phase4.wss.WSSConfigManager;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class AS4Encryptor
 {
   private AS4Encryptor ()

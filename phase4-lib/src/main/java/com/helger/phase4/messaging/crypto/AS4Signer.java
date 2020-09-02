@@ -19,6 +19,7 @@ package com.helger.phase4.messaging.crypto;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
+import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
@@ -46,6 +47,7 @@ import com.helger.phase4.wss.WSSConfigManager;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class AS4Signer
 {
   private AS4Signer ()
