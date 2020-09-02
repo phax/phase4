@@ -38,6 +38,7 @@ import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.sender.AbstractAS4UserMessageBuilderMIMEPayload;
 import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.bdxr1.IBDXRServiceMetadataProvider;
+import com.helger.smpclient.bdxr2.IBDXR2ServiceMetadataProvider;
 import com.helger.smpclient.url.BDXLURLProvider;
 import com.helger.smpclient.url.IBDXLURLProvider;
 
@@ -61,8 +62,8 @@ public final class Phase4CEFSender
   {}
 
   /**
-   * @return Create a new Builder for AS4 messages if the payload is present and
-   *         the SBDH should be created internally. Never <code>null</code>.
+   * @return Create a new Builder for AS4 messages if the payload is present.
+   *         Never <code>null</code>.
    */
   @Nonnull
   public static CEFUserMessageBuilder builder ()
@@ -210,12 +211,12 @@ public final class Phase4CEFSender
     }
 
     /**
-     * Set the SMP client to be used. This is the point where e.g. the
+     * Set the SMP v1 client to be used. This is the point where e.g. the
      * differentiation between SMK and SML can be done. This must be set prior
      * to sending.
      *
      * @param aSMPClient
-     *        The SMP client to be used. May not be <code>null</code>.
+     *        The SMP v1 client to be used. May not be <code>null</code>.
      * @return this for chaining
      * @see #endpointDetailProvider(IPhase4CEFEndpointDetailProvider)
      */
@@ -223,6 +224,23 @@ public final class Phase4CEFSender
     public final IMPLTYPE smpClient (@Nonnull final IBDXRServiceMetadataProvider aSMPClient)
     {
       return endpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR (aSMPClient));
+    }
+
+    /**
+     * Set the SMP v2 client to be used. This is the point where e.g. the
+     * differentiation between SMK and SML can be done. This must be set prior
+     * to sending.
+     *
+     * @param aSMPClient
+     *        The SMP v2 client to be used. May not be <code>null</code>.
+     * @return this for chaining
+     * @see #endpointDetailProvider(IPhase4CEFEndpointDetailProvider)
+     * @since 0.10.6
+     */
+    @Nonnull
+    public final IMPLTYPE smpClient (@Nonnull final IBDXR2ServiceMetadataProvider aSMPClient)
+    {
+      return endpointDetailProvider (new Phase4CEFEndpointDetailProviderBDXR2 (aSMPClient));
     }
 
     @Nonnull
