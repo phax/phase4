@@ -284,7 +284,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.10.6 - work in progress
+* v0.10.6 - 2020-09-03
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized
     * Created new submodule `phase4-dynamic-discovery` that contains the shared parts used for dynamic discovery with SML and SMP

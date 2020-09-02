@@ -422,6 +422,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *        Optional content ID or <code>null</code> to create a random one.
    *        Filename of the attachment. May be <code>null</code> in which case
    *        no `Content-Disposition` header is created.
+   * @param sFilename
+   *        Optional filename to use in the "Content-Disposition" headers. May
+   *        be <code>null</code>.
    * @param aMimeType
    *        Original mime type of the file. May not be <code>null</code>.
    * @param eCompressionMode
