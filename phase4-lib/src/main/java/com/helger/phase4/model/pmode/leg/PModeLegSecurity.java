@@ -663,6 +663,15 @@ public class PModeLegSecurity implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * Set all field that affect signing to "no signing".
+   *
+   * @see #setX509SignElement(ICommonsList)
+   * @see #setX509SignAttachment(ICommonsList)
+   * @see #setX509SignatureCertificate(String)
+   * @see #setX509SignatureHashFunction(ECryptoAlgorithmSignDigest)
+   * @see #setX509SignatureAlgorithm(ECryptoAlgorithmSign)
+   */
   public final void disableSigning ()
   {
     setX509SignElement (null);
@@ -672,6 +681,15 @@ public class PModeLegSecurity implements Serializable
     setX509SignatureAlgorithm (null);
   }
 
+  /**
+   * Set all field that affect encryption to "no encryption".
+   *
+   * @see #setX509EncryptionEncryptElement(ICommonsList)
+   * @see #setX509EncryptionEncryptAttachment(ICommonsList)
+   * @see #setX509EncryptionCertificate(String)
+   * @see #setX509EncryptionAlgorithm(ECryptoAlgorithmCrypt)
+   * @see #setX509EncryptionMinimumStrength(Integer)
+   */
   public final void disableEncryption ()
   {
     setX509EncryptionEncryptElement (null);
