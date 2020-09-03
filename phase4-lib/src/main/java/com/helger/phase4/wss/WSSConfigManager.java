@@ -16,9 +16,6 @@
  */
 package com.helger.phase4.wss;
 
-import java.security.Provider;
-import java.security.Security;
-
 import javax.annotation.Nonnull;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
@@ -52,20 +49,15 @@ public class WSSConfigManager extends AbstractGlobalSingleton
     return getGlobalSingleton (WSSConfigManager.class);
   }
 
-  @Nonnull
-  private static IPrivilegedAction <Provider> _securityGetProvider (@Nonnull final String sName)
-  {
-    // TODO replace in ph-commons 9.4.7
-    return () -> Security.getProvider (sName);
-  }
-
   @Override
   protected void onAfterInstantiation (@Nonnull final IScope aScope)
   {
     // init WSSConfig
-    final boolean bContainsSTRTransform = _securityGetProvider ("STRTransform").invokeSafe () != null;
-    final boolean bContainsAttachmentContentSignatureTransform = _securityGetProvider ("AttachmentContentSignatureTransform").invokeSafe () != null;
-    final boolean bContainsAttachmentCompleteSignatureTransform = _securityGetProvider ("AttachmentCompleteSignatureTransform").invokeSafe () != null;
+    final boolean bContainsSTRTransform = IPrivilegedAction.securityGetProvider ("STRTransform").invokeSafe () != null;
+    final boolean bContainsAttachmentContentSignatureTransform = IPrivilegedAction.securityGetProvider ("AttachmentContentSignatureTransform")
+                                                                                  .invokeSafe () != null;
+    final boolean bContainsAttachmentCompleteSignatureTransform = IPrivilegedAction.securityGetProvider ("AttachmentCompleteSignatureTransform")
+                                                                                   .invokeSafe () != null;
     final boolean bAddJCEProviders;
     if (bContainsSTRTransform && bContainsAttachmentContentSignatureTransform && bContainsAttachmentCompleteSignatureTransform)
     {
