@@ -81,6 +81,22 @@ public final class AS4Configuration
 
     IReadableResource aRes;
 
+    // Remove for 1.0
+    aRes = aResourceProvider.getReadableResourceIf ("private-crypto.properties", IReadableResource::exists);
+    if (aRes != null)
+    {
+      LOGGER.warn ("The support for the properties file 'private-crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 6);
+    }
+
+    aRes = aResourceProvider.getReadableResourceIf ("crypto.properties", IReadableResource::exists);
+    if (aRes != null)
+    {
+      LOGGER.warn ("The support for the properties file 'crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 5);
+    }
+
+    // Phase 4 files
     aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
     if (aRes != null)
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 4);
@@ -93,7 +109,7 @@ public final class AS4Configuration
     aRes = aResourceProvider.getReadableResourceIf ("private-as4.properties", IReadableResource::exists);
     if (aRes != null)
     {
-      LOGGER.warn ("The support for the properties file 'private-as4.properties' is deprecated and will be removed for the 1.0 release. Use 'phase4.properties' or 'application.properties' instead.");
+      LOGGER.warn ("The support for the properties file 'private-as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 2);
     }
 
@@ -101,7 +117,7 @@ public final class AS4Configuration
     aRes = aResourceProvider.getReadableResourceIf ("as4.properties", IReadableResource::exists);
     if (aRes != null)
     {
-      LOGGER.warn ("The support for the properties file 'as4.properties' is deprecated and will be removed for the 1.0 release. Use 'phase4.properties' or 'application.properties' instead.");
+      LOGGER.warn ("The support for the properties file 'as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 1);
     }
 
@@ -117,7 +133,7 @@ public final class AS4Configuration
   {}
 
   /**
-   * @return The current configuration. Never <code>null</code>.
+   * @return The current global configuration. Never <code>null</code>.
    */
   @Nonnull
   public static IConfig getConfig ()
@@ -160,42 +176,57 @@ public final class AS4Configuration
     return ret;
   }
 
+  /**
+   * @return <code>true</code> to enable the global debugging mode.
+   */
+  @Phase4V1Tasks
   public static boolean isGlobalDebug ()
   {
     final Boolean ret = getConfig ().getAsBooleanObj ("server.debug");
     if (ret != null)
     {
-      LOGGER.warn ("Please change the configuration property 'server.debug' to 'global.debug'");
+      LOGGER.warn ("Please rename the configuration property 'server.debug' to 'global.debug'. Support for the old version will be removed in v1.0.");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.debug", false);
   }
 
+  /**
+   * @return <code>true</code> to enable the global production mode.
+   */
+  @Phase4V1Tasks
   public static boolean isGlobalProduction ()
   {
     final Boolean ret = getConfig ().getAsBooleanObj ("server.production");
     if (ret != null)
     {
-      LOGGER.warn ("Please change the configuration property 'server.production' to 'global.production'");
+      LOGGER.warn ("Please rename the configuration property 'server.production' to 'global.production'. Support for the old version will be removed in v1.0.");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.production", false);
   }
 
+  /**
+   * @return <code>true</code> if no startup info should be logged.
+   */
+  @Phase4V1Tasks
   public static boolean isNoStartupInfo ()
   {
     final Boolean ret = getConfig ().getAsBooleanObj ("server.nostartupinfo");
     if (ret != null)
     {
-      LOGGER.warn ("Please change the configuration property 'server.nostartupinfo' to 'global.nostartupinfo'");
+      LOGGER.warn ("Please rename the configuration property 'server.nostartupinfo' to 'global.nostartupinfo'. Support for the old version will be removed in v1.0.");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.nostartupinfo", true);
   }
 
+  /**
+   * @return Use in-memory managers? Defaults to <code>true</code> since 0.11.0.
+   */
   public static boolean isUseInMemoryManagers ()
   {
-    return getConfig ().getAsBoolean ("phase4.manager.inmemory", false);
+    return getConfig ().getAsBoolean ("phase4.manager.inmemory", true);
   }
 
   public static boolean isWSS4JSynchronizedSecurity ()

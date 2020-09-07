@@ -33,6 +33,8 @@ import com.helger.commons.lang.NonBlockingProperties;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringParser;
 import com.helger.commons.string.ToStringGenerator;
+import com.helger.config.IConfig;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.security.keystore.EKeyStoreType;
 
 /**
@@ -325,5 +327,35 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
   {
     // May contain a password property
     return new ToStringGenerator (this).append ("Props", m_aProps).getToString ();
+  }
+
+  /**
+   * @return A new {@link AS4CryptoProperties} object filled with all values
+   *         from the global configuration file. Values not present in the
+   *         configuration are not set and stay with their default values.
+   * @since 0.11.0
+   */
+  @Nonnull
+  public static AS4CryptoProperties createFromConfig ()
+  {
+    final IConfig aConfig = AS4Configuration.getConfig ();
+    final AS4CryptoProperties ret = new AS4CryptoProperties ();
+    for (final String sKey : new String [] { CRYPTO_PROVIDER,
+                                             KEYSTORE_TYPE,
+                                             KEYSTORE_FILE,
+                                             KEYSTORE_PASSWORD,
+                                             KEY_ALIAS,
+                                             KEY_PASSWORD,
+                                             LOAD_CACERTS,
+                                             TRUSTSTORE_PROVIDER,
+                                             TRUSTSTORE_TYPE,
+                                             TRUSTSTORE_FILE,
+                                             TRUSTSTORE_PASSWORD })
+    {
+      final String sConfigValue = aConfig.getAsString (sKey);
+      if (sConfigValue != null)
+        ret.m_aProps.put (sKey, sConfigValue);
+    }
+    return ret;
   }
 }

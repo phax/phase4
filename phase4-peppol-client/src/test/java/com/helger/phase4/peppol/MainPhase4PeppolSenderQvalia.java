@@ -28,7 +28,7 @@ import com.helger.peppol.utils.PeppolKeyStoreHelper;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
@@ -84,7 +84,7 @@ public final class MainPhase4PeppolSenderQvalia
       };
 
       // Invalid certificate is valid until 2029
-      final IAS4CryptoFactory cf = true ? AS4CryptoFactoryPropertiesFile.getDefaultInstance ()
+      final IAS4CryptoFactory cf = true ? AS4CryptoFactoryProperties.getDefaultInstance ()
                                         : new AS4CryptoFactoryInMemoryKeyStore (KeyStoreHelper.loadKeyStoreDirect (EKeyStoreType.JKS,
                                                                                                                    "invalid-keystore-pw-peppol.jks",
                                                                                                                    "peppol"),

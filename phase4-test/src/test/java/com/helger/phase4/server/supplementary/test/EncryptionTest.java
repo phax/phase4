@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -79,7 +79,7 @@ public final class EncryptionTest
   @Test
   public void testEncryptionDecryptionAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryPropertiesFile.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);
@@ -111,7 +111,7 @@ public final class EncryptionTest
   @Test
   public void testAES128GCM () throws Exception
   {
-    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryPropertiesFile.getDefaultInstance ();
+    final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
 
     final Document doc = _getSoapEnvelope11 ();
     final WSSecHeader secHeader = new WSSecHeader (doc);

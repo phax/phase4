@@ -32,7 +32,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
@@ -125,7 +125,7 @@ public final class AS4WebAppListener extends WebAppListener
   protected void initManagers ()
   {
     AS4ServerInitializer.initAS4Server ();
-    DropFolderUserMessage.init (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
+    DropFolderUserMessage.init (AS4CryptoFactoryProperties.getDefaultInstance ());
   }
 
   @Override

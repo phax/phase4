@@ -45,7 +45,7 @@ import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.AS4MessagingHelper;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
@@ -181,11 +181,11 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   private void _initPeppolAS4 ()
   {
     // Check if crypto properties are okay
-    final KeyStore aKS = AS4CryptoFactoryPropertiesFile.getDefaultInstance ().getKeyStore ();
+    final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();
     if (aKS == null)
       throw new InitializationException ("Failed to load configured Keystore");
 
-    final PrivateKeyEntry aPKE = AS4CryptoFactoryPropertiesFile.getDefaultInstance ().getPrivateKeyEntry ();
+    final PrivateKeyEntry aPKE = AS4CryptoFactoryProperties.getDefaultInstance ().getPrivateKeyEntry ();
     if (aPKE == null)
       throw new InitializationException ("Failed to load configured private key");
 

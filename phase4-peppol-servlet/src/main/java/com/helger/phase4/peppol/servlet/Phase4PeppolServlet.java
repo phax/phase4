@@ -17,7 +17,6 @@
 package com.helger.phase4.peppol.servlet;
 
 import com.helger.commons.http.EHttpMethod;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.servlet.AS4XServletHandler;
 import com.helger.xservlet.AbstractXServlet;
 
@@ -42,7 +41,7 @@ import com.helger.xservlet.AbstractXServlet;
 public class Phase4PeppolServlet extends AbstractXServlet
 {
   /**
-   * Default constructor using {@link AS4CryptoFactoryPropertiesFile}.
+   * Default constructor using default crypto factory.
    */
   public Phase4PeppolServlet ()
   {

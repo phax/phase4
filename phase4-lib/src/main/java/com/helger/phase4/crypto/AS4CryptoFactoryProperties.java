@@ -30,6 +30,7 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -41,6 +42,41 @@ import com.helger.security.keystore.KeyStoreHelper;
 @Immutable
 public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
 {
+  private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
+  private static AS4CryptoFactoryProperties DEFAULT_INSTANCE = null;
+
+  /**
+   * @return The default instance, created by reading the properties from the
+   *         configuration sources.
+   * @since 0.11.0
+   */
+  @Nonnull
+  public static AS4CryptoFactoryProperties getDefaultInstance ()
+  {
+    // Try in read lock first
+    AS4CryptoFactoryProperties ret = s_aRWLock.readLockedGet ( () -> DEFAULT_INSTANCE);
+
+    if (ret == null)
+    {
+      s_aRWLock.writeLock ().lock ();
+      try
+      {
+        // Read again in write lock
+        ret = DEFAULT_INSTANCE;
+        if (ret == null)
+        {
+          // Create it
+          ret = DEFAULT_INSTANCE = new AS4CryptoFactoryProperties (AS4CryptoProperties.createFromConfig ());
+        }
+      }
+      finally
+      {
+        s_aRWLock.writeLock ().unlock ();
+      }
+    }
+    return ret;
+  }
+
   private final AS4CryptoProperties m_aCryptoProps;
   // Lazy initialized
   private Crypto m_aCrypto;

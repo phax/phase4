@@ -56,7 +56,7 @@ import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.HttpMimeMessageEntity;
@@ -79,7 +79,7 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 
   protected static AS4ResourceHelper s_aResMgr;
 
-  protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryPropertiesFile.getDefaultInstance ();
+  protected final IAS4CryptoFactory m_aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
   protected final AS4CryptParams m_aCryptParams = AS4CryptParams.createDefault ().setAlias ("ph-as4");
   private CloseableHttpClient m_aHttpClient;
   private final int m_nRetries;

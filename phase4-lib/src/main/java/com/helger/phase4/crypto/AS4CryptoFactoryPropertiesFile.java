@@ -24,6 +24,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.string.StringHelper;
+import com.helger.phase4.config.AS4Configuration;
 
 /**
  * The phase4 crypto settings. By default the properties are read from the files
@@ -32,8 +33,11 @@ import com.helger.commons.string.StringHelper;
  * the list of supported property names.
  *
  * @author Philip Helger
+ * @deprecated Since 0.11.0; use {@link AS4CryptoFactoryProperties} with
+ *             initialization from {@link AS4Configuration} instead.
  */
 @Immutable
+@Deprecated
 public class AS4CryptoFactoryPropertiesFile extends AS4CryptoFactoryProperties
 {
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
@@ -43,8 +47,11 @@ public class AS4CryptoFactoryPropertiesFile extends AS4CryptoFactoryProperties
    * @return The default instance, created by reading the default
    *         "crypto.properties" file. If this file is not present, than this
    *         method returns <code>null</code>.
+   * @deprecated Use {@link AS4CryptoFactoryProperties#getDefaultInstance()}
+   *             instead.
    */
-  @Nullable
+  @Deprecated
+  @Nonnull
   public static AS4CryptoFactoryPropertiesFile getDefaultInstance ()
   {
     // Try in read lock first

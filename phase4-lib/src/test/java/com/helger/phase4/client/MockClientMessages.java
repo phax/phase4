@@ -31,7 +31,7 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
@@ -70,7 +70,7 @@ final class MockClientMessages
                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
                                                                aMsg.getAsSoapDocument (aPayload),
                                                                eSoapVersion,
                                                                aMsg.getMessagingID (),
@@ -88,7 +88,7 @@ final class MockClientMessages
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSoapVersion, "srcmsgid", aEbms3ErrorList).setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
                                                                aErrorMsg.getAsSoapDocument (),
                                                                eSoapVersion,
                                                                aErrorMsg.getMessagingID (),
@@ -115,7 +115,7 @@ final class MockClientMessages
                                                            .setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryPropertiesFile.getDefaultInstance (),
+    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
                                                                aDoc,
                                                                eSoapVersion,
                                                                aReceiptMsg.getMessagingID (),

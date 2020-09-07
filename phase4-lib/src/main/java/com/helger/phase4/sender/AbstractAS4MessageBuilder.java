@@ -28,7 +28,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.Phase4Exception;
@@ -64,7 +64,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     try
     {
       httpClientFactory (new HttpClientFactory ());
-      cryptoFactory (AS4CryptoFactoryPropertiesFile.getDefaultInstance ());
+      cryptoFactory (AS4CryptoFactoryProperties.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
     }
     catch (final Exception ex)
