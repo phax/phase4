@@ -89,6 +89,9 @@ public class WSSConfigManager extends AbstractGlobalSingleton
     }
     WSSConfig.setAddJceProviders (bAddJCEProviders);
     WSSConfig.init ();
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Finished initializing WSSConfig Security Providers");
   }
 
   @Override
@@ -100,6 +103,9 @@ public class WSSConfigManager extends AbstractGlobalSingleton
                    (WSSConfig.isAddJceProviders () ? " Security Providers will also be removed."
                                                    : " Security Providers were not installed by us."));
     WSSConfig.cleanUp ();
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Finished cleaning up WSSConfig");
   }
 
   @Nonnull
