@@ -267,6 +267,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Deprecated class `AS4CryptoFactoryPropertiesFile` in favour of `AS4CryptoFactoryProperties`
     * The file `crypto.properties` is considered deprecated. All values should be placed now in `phase4.properties`.
     * By default the "in memory" managers are enabled. To disable this, add `phase4.manager.inmemory=false` in your configuration.
+    * Dumping interfaces no longer implement `Serializable`
 * v0.10.6 - 2020-09-03
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized

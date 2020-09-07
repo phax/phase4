@@ -18,7 +18,6 @@ package com.helger.phase4.dump;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -33,7 +32,7 @@ import com.helger.commons.http.HttpHeaderMap;
  * @author Philip Helger
  * @since 0.9.0
  */
-public interface IAS4OutgoingDumper extends Serializable
+public interface IAS4OutgoingDumper
 {
   /**
    * Called for new requests.
