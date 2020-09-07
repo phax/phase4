@@ -89,6 +89,7 @@ public final class AS4Configuration
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 6);
     }
 
+    // Remove for 1.0
     aRes = aResourceProvider.getReadableResourceIf ("crypto.properties", IReadableResource::exists);
     if (aRes != null)
     {
@@ -176,6 +177,15 @@ public final class AS4Configuration
     return ret;
   }
 
+  private static void _logRenamedConfig (@Nonnull final String sOld, @Nonnull final String sNew)
+  {
+    LOGGER.warn ("Please rename the configuration property '" +
+                 sOld +
+                 "' to '" +
+                 sNew +
+                 "'. Support for the old property name will be removed in v1.0.");
+  }
+
   /**
    * @return <code>true</code> to enable the global debugging mode.
    */
@@ -185,7 +195,7 @@ public final class AS4Configuration
     final Boolean ret = getConfig ().getAsBooleanObj ("server.debug");
     if (ret != null)
     {
-      LOGGER.warn ("Please rename the configuration property 'server.debug' to 'global.debug'. Support for the old version will be removed in v1.0.");
+      _logRenamedConfig ("server.debug", "global.debug");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.debug", false);
@@ -200,7 +210,7 @@ public final class AS4Configuration
     final Boolean ret = getConfig ().getAsBooleanObj ("server.production");
     if (ret != null)
     {
-      LOGGER.warn ("Please rename the configuration property 'server.production' to 'global.production'. Support for the old version will be removed in v1.0.");
+      _logRenamedConfig ("server.production", "global.production");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.production", false);
@@ -215,10 +225,23 @@ public final class AS4Configuration
     final Boolean ret = getConfig ().getAsBooleanObj ("server.nostartupinfo");
     if (ret != null)
     {
-      LOGGER.warn ("Please rename the configuration property 'server.nostartupinfo' to 'global.nostartupinfo'. Support for the old version will be removed in v1.0.");
+      _logRenamedConfig ("server.nostartupinfo", "global.nostartupinfo");
       return ret.booleanValue ();
     }
     return getConfig ().getAsBoolean ("gobal.nostartupinfo", true);
+  }
+
+  @Nonnull
+  public static String getDataPath ()
+  {
+    final String ret = getConfig ().getAsString ("server.datapath");
+    if (StringHelper.hasText (ret))
+    {
+      _logRenamedConfig ("server.datapath", "global.datapath");
+      return ret;
+    }
+    // "phase4-data" relative to application startup directory
+    return getConfig ().getAsString ("global.datapath", "phase4-data");
   }
 
   /**
@@ -235,29 +258,16 @@ public final class AS4Configuration
   }
 
   @Nullable
+  @Phase4V1Tasks
   public static String getAS4ProfileID ()
   {
-    return getConfig ().getAsString ("server.profile");
-  }
-
-  @Nonnull
-  public static String getDataPath ()
-  {
-    // "conf" relative to application startup directory
-    return getConfig ().getAsString ("server.datapath", "conf");
-  }
-
-  @Nonnull
-  public static String getDumpBasePath ()
-  {
-    // "conf" relative to application startup directory
-    return getConfig ().getAsString ("server.datapath", "conf");
-  }
-
-  @Nonnull
-  public static File getDumpBasePathFile ()
-  {
-    return new File (getDumpBasePath ()).getAbsoluteFile ();
+    final String ret = getConfig ().getAsString ("server.profile");
+    if (StringHelper.hasText (ret))
+    {
+      _logRenamedConfig ("server.profile", "phase4.profile");
+      return ret;
+    }
+    return getConfig ().getAsString ("phase4.profile");
   }
 
   /**
@@ -265,9 +275,40 @@ public final class AS4Configuration
    *         stored for duplication check. By default this is
    *         {@value #DEFAULT_RESET_MINUTES} minutes.
    */
+  @Phase4V1Tasks
   public static long getIncomingDuplicateDisposalMinutes ()
   {
-    return getConfig ().getAsLong ("server.incoming.duplicatedisposal.minutes", DEFAULT_RESET_MINUTES);
+    final Long ret = getConfig ().getAsLongObj ("server.incoming.duplicatedisposal.minutes");
+    if (ret != null)
+    {
+      _logRenamedConfig ("server.incoming.duplicatedisposal.minutes", "phase4.incoming.duplicatedisposal.minutes");
+      return ret.longValue ();
+    }
+    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_RESET_MINUTES);
+  }
+
+  @Nonnull
+  public static String getDumpBasePath ()
+  {
+    String ret = getConfig ().getAsString ("phase4.dump.path");
+    if (StringHelper.hasNoText (ret))
+    {
+      // Check without default here
+      ret = getConfig ().getAsString ("server.datapath");
+      if (StringHelper.hasText (ret))
+        LOGGER.warn ("Since 0.11.0 the base path to dump files can be configured globally via the property 'phase4.dump.path'." +
+                     " For backwards compatibility this value is currently taken from the property 'server.datapath'." +
+                     " This fallback mechanism will be removed for the 1.0 release.");
+    }
+    if (StringHelper.hasNoText (ret))
+      ret = "phase4-dumps";
+    return ret;
+  }
+
+  @Nonnull
+  public static File getDumpBasePathFile ()
+  {
+    return new File (getDumpBasePath ()).getAbsoluteFile ();
   }
 
   @Nullable

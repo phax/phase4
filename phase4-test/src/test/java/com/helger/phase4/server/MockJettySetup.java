@@ -62,7 +62,7 @@ public final class MockJettySetup extends AbstractAS4TestSetUp
 
   private static int _getJettyPort ()
   {
-    return URLHelper.getAsURL (AS4Configuration.getThisEndpointAddress ()).getPort ();
+    return URLHelper.getAsURL (AS4Configuration.getConfig ().getAsString (SETTINGS_SERVER_ADDRESS)).getPort ();
   }
 
   @BeforeClass

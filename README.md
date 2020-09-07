@@ -37,71 +37,49 @@ If you are a phase4 user and want to be listed here, write me an email to phase4
     
 # Configuration
 
-The configuration of phase4 is based on 2 different files:
-  * `crypto.properties` - the WSS4J configuration file - https://ws.apache.org/wss4j/config.html
-  * `phase4.properties` - phase4 receiving specific configuration file (was called `as4.properties` before v0.9.0)
+The configuration part was reworked for 0.11.0 version.
 
-Additionally some phase4 specific system properties are available.
-  
-### crypto.properties
+The primary configuration file for phase4 is called `phase4.properties`.
+It contains both the phase4 specific configuration items as well as the WSS4J ones (see https://ws.apache.org/wss4j/config.html).
+The resolution of the configuration properties is not bound to the configuration file - system properties and environment variables can also be used. See https://github.com/phax/ph-commons#ph-config for details.
+Upon resolution of configuration values, Java system properties have the highest priority (400), before environment variables (300), the file `phase4.properties` (203), the file `private-application.json` (195), the file `private-application.properties` (190), the file `application.json` (185), the file `application.properties` (180) and finally the file `reference.properties` (1).
 
-Use the following file as a template and fill in your key structure:
+Note: prior to v0.11.0 a file called `crypto.properties` may have contained the keystore and truststore parameters used by phase4. Since v0.11.0 all these parameters are now exclusively read from `phase4.properties`.
 
-```ini
-org.apache.wss4j.crypto.provider=org.apache.wss4j.common.crypto.Merlin
-org.apache.wss4j.crypto.merlin.keystore.file=keys/dummy-pw-test.jks
-org.apache.wss4j.crypto.merlin.keystore.password=test
-org.apache.wss4j.crypto.merlin.keystore.type=jks
-org.apache.wss4j.crypto.merlin.keystore.alias=ph-as4
-org.apache.wss4j.crypto.merlin.keystore.private.password=test
-```
+Note: programmatic access to the configuration is solely achieved via class `com.helger.phase4.config.AS4Configuration`.
 
-The file is a classpath relative path like `keys/dummy-pw-test.jks`. 
+## WSS4J properties
 
-Peppol users: the key store must contain the AccessPoint private key and the truststore must contain the Peppol truststore.
+Note: the descriptions and the default values are taken from [WSS4J](https://ws.apache.org/wss4j/config.html).
 
-**Note:** since v0.9.6 the configuration of the keystore and truststore can be done in the code (using `AS4CryptoProperties`) and this configuration file becomes optional.
+* **`org.apache.wss4j.crypto.provider`**: WSS4J specific provider used to create Crypto instances. Defaults to `org.apache.wss4j.common.crypto.Merlin`.
+* **`org.apache.wss4j.crypto.merlin.keystore.type`**: the keystore type. Usually one of `JKS` or `PKCS12`. Defaults to `java.security.KeyStore.getDefaultType()`.
+* **`org.apache.wss4j.crypto.merlin.keystore.file`**: the path to the keystore. Can be an entry in the class path, a URL or an absolute file path.
+* **`org.apache.wss4j.crypto.merlin.keystore.password`**: the password to the whole keystore.
+* **`org.apache.wss4j.crypto.merlin.keystore.alias`**: the alias of the key to be used inside the keystore. **Hint** case sensitivity may be important here.
+* **`org.apache.wss4j.crypto.merlin.keystore.private.password`**: the password to access the key only. May be different from the keystore password.
 
-**Note:** since v0.9.7 the whole crypto configuration can be done in-memory when using `AS4CryptoFactoryInMemoryKeyStore`.
+* **`org.apache.wss4j.crypto.merlin.load.cacerts`**: Whether or not to load the CA certificates in `${java.home}/lib/security/cacerts` (default is `false`).
+* **`org.apache.wss4j.crypto.merlin.truststore.provider`**: The provider used to load truststores. By default it’s the same as the keystore provider. Set to an empty value to force use of the JRE’s default provider.
+* **`org.apache.wss4j.crypto.merlin.truststore.type`**: The truststore type. Usually one of `JKS` or `PKCS12`. Defaults to `java.security.KeyStore.getDefaultType()`.
+* **`org.apache.wss4j.crypto.merlin.truststore.file`**: The location of the truststore. Can be an entry in the class path, a URL or an absolute file path.
+* **`org.apache.wss4j.crypto.merlin.truststore.password`**: The truststore password. Defaults to `changeit`.
 
-**Note:** since v0.9.8 the crypto factory reading from a file was renamed from `AS4CryptoFactory` to `AS4CryptoFactoryPropertiesFile`
+Note: for Peppol users the key store must contain the AccessPoint private key and the truststore must contain the Peppol truststore.
 
-### phase4.properties
-
-This property file may be provided if `AS4CryptoFactoryPropertiesFile.getDefaultInstance ()` is used for retrieving.
-If you are only using `phase4-lib` for sending, than this file is not of interest.
-
-This file contains the following properties:
-
-```ini
-#server.profile=peppol
-server.debug=false
-server.production=false
-server.nostartupinfo=true
-server.datapath=/var/www/as4/data
-#server.incoming.duplicatedisposal.minutes=10
-#server.address=
-```
-
-The file is searched in the locations specified as follows:
-* A path denoted by the system property `phase4.server.configfile`
-* A path denoted by the system property `as4.server.configfile` (for legacy reasons)
-* A path denoted by the environment variable `PHASE4_SERVER_CONFIG`
-* A file named `private-phase4.properties` within your classpath
-* A file named `phase4.properties` within your classpath
-* A file named `private-as4.properties` within your classpath (for legacy reasons)
-* A file named `as4.properties` within your classpath (for legacy reasons)
+## phase4 properties
 
 The properties have the following meaning
-* **`server.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
-* **`server.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false`.
-* **`server.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false`.
-* **`server.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
-* **`server.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
-* **`server.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`. 
-* **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional.
-
-**Note:** since v0.9.8 the existence of this file is optional. If this file is not present, ensure to set the system property `phase4.manager.inmemory` to `true` (see below).
+* **`global.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.debug`).
+* **`global.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.production`).
+* **`global.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.nostartupinfo`).
+* **`global.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf` (prior 0.11.0 this property was called `server.datapath`).
+* **`phase4.manager.inmemory`** (since 0.11.0): if this property is set to `true` than phase4 will not create persistent data for PModes ands other domain objects. Since 0.11.0 the default value is `true` (prior versions used `false` as the default)
+* **`phase4.wss4j.syncsecurity`** (since 0.11.0): if this property is set to `true` all signing, encryption, signature verification and decryption is linearized in an artificial lock. This should help working around the https://issues.apache.org/jira/browse/WSS-660 bug if one Java runtime needs to contain multiple instances of phase4. Note: this flag is still experimental. Note: this is only a work-around if only phase4 based applications run in the same Java runtime - if other WSS4J applications (like e.g. Oxalis) are also run, this switch does not solve the issue. Defaults to `false`.
+* **`phase4.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default (prior 0.11.0 this property was called `server.profile`).
+* **`phase4.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10` (prior 0.11.0 this property was called `server.incoming.duplicatedisposal.minutes`).
+* **`phase4.dump.path`** (since 0.11.0): the base path where dumps of incoming and outgoing files should be created, if the respective dumpers are activated. The default value is `phase4-dumps` relative to the current working directory.
+* **`server.address`**: the public URL of this AS4 server to send responses to. This value is optional. (prior 0.11.0 this property was called `server.address`).
 
 ### System properties
 
@@ -159,7 +137,7 @@ This subproject is your entry point for **sending** messages into the Peppol eDe
 
 The contained project contains a class called `Phase4PeppolSender.Builder` (accessible via factory method `Phase4PeppolSender.builder()`) - it contains all the parameters with some example values so that you can start easily. Alternatively the class `Phase4PeppolSender.SBDHBuilder` (accessible via factory method `Phase4PeppolSender.sbdhBuilder()`) offers a build class where you can add your pre-build StandardBusinessDocument, which implies that no implicit validation of the business document takes place. This class contains utility methods to explicitly validate the payload.
 
-As a prerequisite, the files `phase4.properties` and `crypto.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
+As a prerequisite, the file `phase4.properties` must be filled out correctly and your Peppol AP certificate must be provided (the default configured name is `test-ap.p12`).
 
 See the folder https://github.com/phax/phase4/tree/master/phase4-peppol-client/src/test/java/com/helger/phase4/peppol for different examples on how to send messages via the Peppol AS4 client.
 
@@ -209,7 +187,7 @@ It stores all incoming requests on disk based on the incoming date time.
 * The (decrypted) Peppol payload (SBD Document) is stored with extension `.sbd`
 * The returned receipt is stored with extension `.response`
 
-To configure your certificate, modify the file `crypto.properties`. Usually there is no need to alter the truststore - it's the Peppol default truststore and considered to be constant.
+To configure your certificate, modify the file `phase4.properties`. Usually there is no need to alter the truststore - it's the Peppol default truststore and considered to be constant.
 
 Note: this application uses the property `smp.url` in configuration file `phase4.properties` to locate it's home SMP for cross checking if the incoming request is targeted for itself.
 
@@ -271,8 +249,8 @@ If you are importing this into your IDE and you get build errors, it maybe neces
 # Known limitations
 
 Per now the following known limitations exist:
-* Multi-hop does not work
 * phase4 is not a standalone project but a library that you need to manually integrate into your system 
+* Multi-hop does not work
 
 # How to help
 
@@ -290,6 +268,9 @@ If you like the project, a star on GitHub is always appreciated.
     * The class `AS4Configuration` is now the primary source for configuration stuff
     * Class `AS4ServerConfiguration` was deleted
     * Extracted the class `AS4CryptoFactoryProperties` as the base class for `AS4CryptoFactoryPropertiesFile`
+    * Deprecated class `AS4CryptoFactoryPropertiesFile` in favour of `AS4CryptoFactoryProperties`
+    * The file `crypto.properties` is considered deprecated. All values should be placed now in `phase4.properties`.
+    * By default the "in memory" managers are enabled. To disable this, add `phase4.manager.inmemory=false` in your configuration.
 * v0.10.6 - 2020-09-03
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized

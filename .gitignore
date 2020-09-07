@@ -11,16 +11,22 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-target/
-.pmd
-*.iml
-.settings/ 
-.project 
-.classpath
-zz 
-private-*.properties*
+# Word backup files
+~*
 
-as4-data/
-as4-test-data/
-phase4-peppol-client/phase4-peppol-client/
-phase4-cef-client/phase4-cef-client/
+.settings/ 
+target/
+phase4-data/
+phase4-dumps/
+
+.classpath
+.pmd
+.project 
+zz
+
+*.b64
+*.iml
+*.cer
+*.jks
+*.p12
+private-*.properties*

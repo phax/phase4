@@ -74,11 +74,11 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * Default constructor. Writes the files to the AS4 configured data path +
    * {@link #DEFAULT_BASE_PATH}.
    *
-   * @see AS4Configuration#getDumpBasePath()
+   * @see AS4Configuration#getDumpBasePathFile()
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePath (),
+    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
                                                            DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
   }
 
@@ -101,7 +101,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
-    LOGGER.info ("Logging incoming AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Logging incoming AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
   }
 

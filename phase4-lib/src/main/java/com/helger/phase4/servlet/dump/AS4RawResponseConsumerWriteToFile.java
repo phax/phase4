@@ -34,9 +34,7 @@ import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
- * The base directory is determined by
- * {@link AS4Configuration#getDumpBasePath()}.
- *
+ **
  * @author Philip Helger
  */
 public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsumer
@@ -71,11 +69,11 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
    * Default constructor. Writes the files to the AS4 configured data path +
    * {@link AS4OutgoingDumperFileBased#DEFAULT_BASE_PATH}.
    *
-   * @see AS4Configuration#getDumpBasePath()
+   * @see AS4Configuration#getDumpBasePathFile()
    */
   public AS4RawResponseConsumerWriteToFile ()
   {
-    this (sMessageID -> new File (AS4Configuration.getDumpBasePath (),
+    this (sMessageID -> new File (AS4Configuration.getDumpBasePathFile (),
                                   AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
   }
 
@@ -100,7 +98,8 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
 
       // Use the configured data path as the base
       final File aResponseFile = m_aFileProvider.createFile (sMessageID);
-      LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
+      if (LOGGER.isInfoEnabled ())
+        LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
 
       if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isFailure ())
         LOGGER.error ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'");
