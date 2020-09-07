@@ -58,7 +58,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA01 () throws Exception
+  public void testAS4_TA01 () throws Exception
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager
@@ -102,7 +102,7 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA02 () throws Exception
+  public void testAS4_TA02 () throws Exception
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager

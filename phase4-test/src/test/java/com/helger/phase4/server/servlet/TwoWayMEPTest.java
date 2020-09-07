@@ -59,7 +59,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   private PMode m_aPMode;
 
   @Before
-  public void createTwoWayPMode ()
+  public void before ()
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
@@ -89,7 +89,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void receiveUserMessageAsResponseSuccess () throws Exception
+  public void testReceiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
     final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
@@ -99,7 +99,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void receiveUserMessageWithMimeAsResponseSuccessWithoutEncryption () throws Exception
+  public void testReceiveUserMessageWithMimeAsResponseSuccessWithoutEncryption () throws Exception
   {
     m_aPMode.getLeg2 ().getSecurity ().setX509EncryptionAlgorithm (null);
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
@@ -123,7 +123,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void receiveUserMessageWithMimeAsResponseSuccess () throws Exception
+  public void testReceiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceHelper aResMgr = s_aResMgr;

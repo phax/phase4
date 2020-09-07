@@ -174,7 +174,7 @@ public final class CEFCompatibilityValidatorTest
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_384);
-    assertNotSame (aSecurityLeg.getX509SignatureAlgorithm (), ECryptoAlgorithmSign.RSA_SHA_256);
+    assertNotSame (ECryptoAlgorithmSign.RSA_SHA_256, aSecurityLeg.getX509SignatureAlgorithm ());
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     null,

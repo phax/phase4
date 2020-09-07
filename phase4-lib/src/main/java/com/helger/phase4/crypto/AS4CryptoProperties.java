@@ -104,9 +104,9 @@ public class AS4CryptoProperties implements Serializable, ICloneable <AS4CryptoP
           m_aProps.load (aIS);
         }
       }
-      catch (final Throwable t)
+      catch (final Exception ex)
       {
-        throw new InitializationException ("Failed to init CryptoProperties from resource " + aRes + "!", t);
+        throw new InitializationException ("Failed to init CryptoProperties from resource " + aRes + "!", ex);
       }
   }
 

@@ -100,7 +100,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA01 () throws Exception
+  public void testEsens_TA01 () throws Exception
   {
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
                                                                         testSignedUserMessage (m_eSoapVersion,
@@ -130,7 +130,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA03 () throws Exception
+  public void testEsens_TA03 () throws Exception
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
@@ -183,7 +183,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA04 () throws Exception
+  public void testEsens_TA04 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -224,7 +224,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA05 () throws Exception
+  public void testEsens_TA05 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -261,7 +261,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA06 () throws Exception
+  public void testEsens_TA06 () throws Exception
   {
     // same stuff as TA05 only one step further
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
@@ -306,7 +306,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA07 () throws Exception
+  public void testEsens_TA07 () throws Exception
   {
     // same stuff as TA05 only one step further
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
@@ -352,7 +352,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    */
   @Test
   @Ignore
-  public void eSENS_TA08 ()
+  public void testEsens_TA08 ()
   {
 
   }
@@ -370,7 +370,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA09 () throws Exception
+  public void testEsens_TA09 () throws Exception
   {
     // Would throw an error in our implementation since the user would have said
     // there is a payload (With the hyperlink reference) but nothing is
@@ -442,7 +442,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA10 () throws Exception
+  public void testEsens_TA10 () throws Exception
   {
     final int nProxyPort = 8001;
     final Settings aSettings = new Settings ("dummy");
@@ -487,7 +487,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA11 () throws Exception
+  public void testEsens_TA11 () throws Exception
   {
     final int nProxyPort = 8001;
     final Settings aSettings = new Settings ("dummy");
@@ -557,7 +557,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    */
   @Ignore
   @Test
-  public void eSENS_TA12 ()
+  public void testEsens_TA12 ()
   {
 
   }
@@ -580,7 +580,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA13 () throws Exception
+  public void testEsens_TA13 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
@@ -613,7 +613,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA14 () throws Exception
+  public void testEsens_TA14 () throws Exception
   {
     Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, true, m_aCryptParams);
@@ -648,7 +648,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA15 () throws Exception
+  public void testEsens_TA15 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
@@ -668,7 +668,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test (expected = NoHttpResponseException.class)
-  public void eSENS_TA17 () throws Exception
+  public void testEsens_TA17 () throws Exception
   {
     final int nProxyPort = 8001;
     final Settings aSettings = new Settings ("dummy");
@@ -737,7 +737,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test
    */
   @Test
-  public void eSENS_TA18 ()
+  public void testEsens_TA18 ()
   {
     // See com.helger.as4.server.servlet.PModePingTest;
   }
@@ -751,7 +751,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * status code 2XX and the consumer doesn't receive any message.
    */
   @Test
-  public void eSENS_TA19 ()
+  public void testEsens_TA19 ()
   {
     // See com.helger.as4.server.servlet.PModePingTest;
   }
@@ -771,7 +771,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA20 () throws Exception
+  public void testEsens_TA20 () throws Exception
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();

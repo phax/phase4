@@ -28,6 +28,7 @@ import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.xml.transform.dom.DOMSource;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.ValueEnforcer;
@@ -65,10 +66,12 @@ public final class MimeMessageCreator
      */
     if (false)
     {
+      final StringBuilder aSB = new StringBuilder ();
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
       for (final String m : aCommandMap.getMimeTypes ())
         for (final CommandInfo i : aCommandMap.getAllCommands (m))
-          System.out.println (m + "; " + i.getCommandName () + "; " + i.getCommandClass ());
+          aSB.append (m).append ("; ").append (i.getCommandName ()).append ("; ").append (i.getCommandClass ()).append ('\n');
+      LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
     {

@@ -96,25 +96,25 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nonnull
-  public final LocalDateTime getReceiptDT ()
+  public LocalDateTime getReceiptDT ()
   {
     return m_aReceiptDT;
   }
 
   @Nonnull
-  public final ESoapVersion getSoapVersion ()
+  public ESoapVersion getSoapVersion ()
   {
     return m_eSoapVersion;
   }
 
   @Nonnull
-  public final AS4ResourceHelper getResourceHelper ()
+  public AS4ResourceHelper getResourceHelper ()
   {
     return m_aResHelper;
   }
 
   @Nonnull
-  public final Locale getLocale ()
+  public Locale getLocale ()
   {
     return m_aLocale;
   }

@@ -37,7 +37,7 @@ public enum EAS4MessageType implements IHasID <String>
 
   private final String m_sID;
 
-  private EAS4MessageType (@Nonnull @Nonempty final String sID)
+  EAS4MessageType (@Nonnull @Nonempty final String sID)
   {
     m_sID = sID;
   }

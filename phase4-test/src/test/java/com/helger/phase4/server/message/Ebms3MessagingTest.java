@@ -70,7 +70,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void moreThenOneSignalMessageTest () throws Exception
+  public void testMoreThenOneSignalMessage () throws Exception
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
     final List <Ebms3SignalMessage> aSignalMsgList = new ArrayList <> ();
@@ -97,7 +97,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void onlyEbmsMessagingTest () throws Exception
+  public void testOnlyEbmsMessaging () throws Exception
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
 
@@ -106,7 +106,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void userMessageWithTooMuchPartyIdsTest () throws Exception
+  public void testUserMessageWithTooMuchPartyIds () throws Exception
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
@@ -158,7 +158,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 
   // @Ignore
   @Test
-  public void sendReceiptTest () throws Exception
+  public void testSendReceipt () throws Exception
   {
     // Fake an incoming message
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();

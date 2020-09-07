@@ -25,7 +25,7 @@ import com.helger.commons.error.level.IHasErrorLevelComparable;
 
 /**
  * EBMS error severity with mapping to {@link IErrorLevel}.
- * 
+ *
  * @author Philip Helger
  */
 public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSeverity>
@@ -36,7 +36,7 @@ public enum EEbmsErrorSeverity implements IHasErrorLevelComparable <EEbmsErrorSe
   private final String m_sSeverity;
   private final IErrorLevel m_aErrorLevel;
 
-  private EEbmsErrorSeverity (@Nonnull @Nonempty final String sSeverity, @Nonnull final IErrorLevel aErrorLevel)
+  EEbmsErrorSeverity (@Nonnull @Nonempty final String sSeverity, @Nonnull final IErrorLevel aErrorLevel)
   {
     m_sSeverity = sSeverity;
     m_aErrorLevel = aErrorLevel;

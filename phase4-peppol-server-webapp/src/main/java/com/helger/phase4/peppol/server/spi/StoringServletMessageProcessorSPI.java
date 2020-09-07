@@ -141,6 +141,7 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
     return AS4SignalMessageProcessorResult.createSuccess ();
   }
 
+  @Override
   public void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                          @Nonnull final IAS4MessageState aState,
                                          @Nullable final byte [] aResponseBytes,

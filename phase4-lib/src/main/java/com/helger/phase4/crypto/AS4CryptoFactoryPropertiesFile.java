@@ -41,7 +41,7 @@ import com.helger.phase4.config.AS4Configuration;
 public class AS4CryptoFactoryPropertiesFile extends AS4CryptoFactoryProperties
 {
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
-  private static AS4CryptoFactoryPropertiesFile DEFAULT_INSTANCE = null;
+  private static AS4CryptoFactoryPropertiesFile s_aDefaultInstance = null;
 
   /**
    * @return The default instance, created by reading the default
@@ -55,7 +55,7 @@ public class AS4CryptoFactoryPropertiesFile extends AS4CryptoFactoryProperties
   public static AS4CryptoFactoryPropertiesFile getDefaultInstance ()
   {
     // Try in read lock first
-    AS4CryptoFactoryPropertiesFile ret = s_aRWLock.readLockedGet ( () -> DEFAULT_INSTANCE);
+    AS4CryptoFactoryPropertiesFile ret = s_aRWLock.readLockedGet ( () -> s_aDefaultInstance);
 
     if (ret == null)
     {
@@ -63,11 +63,11 @@ public class AS4CryptoFactoryPropertiesFile extends AS4CryptoFactoryProperties
       try
       {
         // Read again in write lock
-        ret = DEFAULT_INSTANCE;
+        ret = s_aDefaultInstance;
         if (ret == null)
         {
           // Create it
-          ret = DEFAULT_INSTANCE = new AS4CryptoFactoryPropertiesFile ((String) null);
+          ret = s_aDefaultInstance = new AS4CryptoFactoryPropertiesFile ((String) null);
         }
       }
       finally

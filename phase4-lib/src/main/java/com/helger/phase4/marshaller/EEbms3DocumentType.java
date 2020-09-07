@@ -60,7 +60,7 @@ public enum EEbms3DocumentType implements IJAXBDocumentType
 
   private final JAXBDocumentType m_aDocType;
 
-  private EEbms3DocumentType (@Nonnull final Class <?> aClass, @Nonnull final List <? extends ClassPathResource> aXSDPaths)
+  EEbms3DocumentType (@Nonnull final Class <?> aClass, @Nonnull final List <? extends ClassPathResource> aXSDPaths)
   {
     m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, null);
   }

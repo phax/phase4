@@ -80,7 +80,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   }
 
   @Test
-  public void sendToAS4_NET () throws Exception
+  public void testSendToAS4_NET () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),

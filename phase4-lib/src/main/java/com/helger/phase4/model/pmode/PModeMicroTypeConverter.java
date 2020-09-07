@@ -92,16 +92,15 @@ public final class PModeMicroTypeConverter extends AbstractBusinessObjectMicroTy
                                                                                     PModePayloadService.class);
     final PModeReceptionAwareness aReceptionAwareness = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_RECEPETIONAWARENESS),
                                                                                             PModeReceptionAwareness.class);
-    final PMode ret = new PMode (getStubObject (aElement),
-                                 aInitiator,
-                                 aResponder,
-                                 sAgreement,
-                                 eMEP,
-                                 eMEPBinding,
-                                 aLeg1,
-                                 aLeg2,
-                                 aPayloadService,
-                                 aReceptionAwareness);
-    return ret;
+    return new PMode (getStubObject (aElement),
+                      aInitiator,
+                      aResponder,
+                      sAgreement,
+                      eMEP,
+                      eMEPBinding,
+                      aLeg1,
+                      aLeg2,
+                      aPayloadService,
+                      aReceptionAwareness);
   }
 }

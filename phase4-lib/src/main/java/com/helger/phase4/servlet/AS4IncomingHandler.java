@@ -148,8 +148,7 @@ public class AS4IncomingHandler
                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception,
                                                                                           IOException,
                                                                                           MessagingException,
-                                                                                          WSSecurityException,
-                                                                                          Phase4Exception
+                                                                                          WSSecurityException
   {
     // Determine content type
     final String sContentType = aHttpHeaders.getFirstHeaderValue (CHttpHeader.CONTENT_TYPE);

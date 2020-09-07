@@ -119,7 +119,7 @@ public final class Ebms3ReaderBuilderTest
   }
 
   @Test
-  public void expectSoap11ButFileIsSoap12 ()
+  public void testExpectSoap11ButFileIsSoap12 ()
   {
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
     final Soap11Envelope aEnv = Ebms3ReaderBuilder.soap11 ()

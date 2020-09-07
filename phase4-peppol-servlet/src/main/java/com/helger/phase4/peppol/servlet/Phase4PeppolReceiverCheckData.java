@@ -35,9 +35,9 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 @NotThreadSafe
 public class Phase4PeppolReceiverCheckData
 {
-  private final ISMPServiceMetadataProvider s_aSMPClient;
-  private final String s_sAS4EndpointURL;
-  private final X509Certificate s_aAPCertificate;
+  private final ISMPServiceMetadataProvider m_aSMPClient;
+  private final String m_sAS4EndpointURL;
+  private final X509Certificate m_aAPCertificate;
 
   /**
    * Constructor
@@ -58,9 +58,9 @@ public class Phase4PeppolReceiverCheckData
     ValueEnforcer.notNull (aSMPClient, "SMPClient");
     ValueEnforcer.notEmpty (sAS4EndpointURL, "AS4EndpointURL");
     ValueEnforcer.notNull (aAPCertificate, "APCertificate");
-    s_aSMPClient = aSMPClient;
-    s_sAS4EndpointURL = sAS4EndpointURL;
-    s_aAPCertificate = aAPCertificate;
+    m_aSMPClient = aSMPClient;
+    m_sAS4EndpointURL = sAS4EndpointURL;
+    m_aAPCertificate = aAPCertificate;
   }
 
   /**
@@ -71,7 +71,7 @@ public class Phase4PeppolReceiverCheckData
   @Nonnull
   public ISMPServiceMetadataProvider getSMPClient ()
   {
-    return s_aSMPClient;
+    return m_aSMPClient;
   }
 
   /**
@@ -82,7 +82,7 @@ public class Phase4PeppolReceiverCheckData
   @Nonempty
   public String getAS4EndpointURL ()
   {
-    return s_sAS4EndpointURL;
+    return m_sAS4EndpointURL;
   }
 
   /**
@@ -92,6 +92,6 @@ public class Phase4PeppolReceiverCheckData
   @Nonnull
   public X509Certificate getAPCertificate ()
   {
-    return s_aAPCertificate;
+    return m_aAPCertificate;
   }
 }

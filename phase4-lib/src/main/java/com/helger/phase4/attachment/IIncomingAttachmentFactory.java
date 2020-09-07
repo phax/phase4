@@ -52,5 +52,5 @@ public interface IIncomingAttachmentFactory extends Serializable
                                                                                                             MessagingException;
 
   @Nonnull
-  static IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
+  IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
 }

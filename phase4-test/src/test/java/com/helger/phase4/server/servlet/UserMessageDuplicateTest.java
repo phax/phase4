@@ -36,7 +36,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   @Test
-  public void sendDuplicateMessageOnlyGetOneReceipt () throws Exception
+  public void testSendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
@@ -51,7 +51,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   // Only use if you need to test the feature, takes a long time
   @Ignore
   @Test
-  public void sendDuplicateMessageTestDisposalFeature () throws Exception
+  public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);

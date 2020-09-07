@@ -83,7 +83,7 @@ public final class AS4ClientErrorMessageTest extends AbstractAS4TestSetUp
   }
 
   @Test
-  public void buildMessageMandatoryCheckFailure () throws Exception
+  public void testBuildMessageMandatoryCheckFailure () throws Exception
   {
     final AS4ClientErrorMessage aClient = new AS4ClientErrorMessage (s_aResMgr);
     _ensureInvalidState (aClient);

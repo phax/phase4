@@ -82,7 +82,7 @@ public final class Phase4CEFSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
-  public static abstract class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     public static final boolean DEFAULT_USE_ORIGINAL_SENDER_FINAL_RECIPIENT_TYPE_ATTR = true;

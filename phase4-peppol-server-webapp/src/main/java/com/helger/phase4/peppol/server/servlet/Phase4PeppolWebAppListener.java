@@ -148,7 +148,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     }
   }
 
-  private void _initAS4 ()
+  private static void _initAS4 ()
   {
     AS4ServerInitializer.initAS4Server ();
 
@@ -157,6 +157,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                         aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
                                                                                                                          ".as4in"))
     {
+      @Override
       public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
       {
         // Save the metadata also to a file
@@ -178,7 +179,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                                            ".as4out")));
   }
 
-  private void _initPeppolAS4 ()
+  private static void _initPeppolAS4 ()
   {
     // Check if crypto properties are okay
     final KeyStore aKS = AS4CryptoFactoryProperties.getDefaultInstance ().getKeyStore ();

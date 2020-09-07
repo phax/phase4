@@ -85,7 +85,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA03 () throws Exception
+  public void testAS4_TA03 () throws Exception
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
@@ -153,7 +153,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA04 () throws Exception
+  public void testAS4_TA04 () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
@@ -172,7 +172,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    */
   @Ignore
   @Test
-  public void AS4_TA05 ()
+  public void testAS4_TA05 ()
   {
     // Is specified in the SPI, so everyone can configure that how it is
     // preferred
@@ -191,7 +191,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA06 () throws Exception
+  public void testAS4_TA06 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -224,7 +224,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA07 () throws Exception
+  public void testAS4_TA07 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -254,7 +254,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA08 () throws Exception
+  public void testAS4_TA08 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -282,7 +282,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA09 () throws Exception
+  public void testAS4_TA09 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -304,7 +304,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * SMSH and RMSH are configured to exchange AS4 messages according to the
    * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
    * with xml (UTF-16) payload and metadata information including payload
-   * characterset info.<br>
+   * character set info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -314,7 +314,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA10 () throws Exception
+  public void testAS4_TA10 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -348,7 +348,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * SMSH and RMSH are configured to exchange AS4 messages according to the
    * e-SENS profile (One-Way/Push MEP). Producer submits a message to the SMSH
    * with xml (UTF-8) payload and metadata information including payload
-   * characterset info.<br>
+   * character set info.<br>
    * <br>
    * Predicate: <br>
    * The SMSH generates an AS4 message with the property "CharacterSet" present
@@ -358,7 +358,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA11 () throws Exception
+  public void testAS4_TA11 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -402,7 +402,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * The RMSH returns a synchronous ebMS error message.
    */
   @Test
-  public void AS4_TA12 ()
+  public void testAS4_TA12 ()
   {
     // XXX
   }
@@ -423,7 +423,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA13 () throws Exception
+  public void testAS4_TA13 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final WSS4JAttachment aAttachment = WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -456,7 +456,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * consumer of the message.
    */
   @Test
-  public void AS4_TA14 ()
+  public void testAS4_TA14 ()
   {
     // SAME as TA13 and SPI has to send message to the consumer
   }
@@ -474,7 +474,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA15 () throws Exception
+  public void testAS4_TA15 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -502,7 +502,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA16 () throws Exception
+  public void testAS4_TA16 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -537,7 +537,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA17 () throws Exception
+  public void testAS4_TA17 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -565,7 +565,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA18 () throws Exception
+  public void testAS4_TA18 () throws Exception
   {
     // signed then compressed
     // Should return an error because the uncompressed attachment was signed and
@@ -601,7 +601,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA19 () throws Exception
+  public void testAS4_TA19 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -635,7 +635,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA20 () throws Exception
+  public void testAS4_TA20 () throws Exception
   {
     final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, m_aPayload, null);
     final Document aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
@@ -678,7 +678,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA21 () throws Exception
+  public void testAS4_TA21 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
@@ -715,7 +715,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    */
   @Ignore
   @Test
-  public void AS4_TA22 ()
+  public void testAS4_TA22 ()
   {
 
   }
@@ -734,7 +734,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA27 () throws Exception
+  public void testAS4_TA27 () throws Exception
   {
     final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null).getAsSoapDocument (m_aPayload);
 
@@ -763,7 +763,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    *         In case of error
    */
   @Test
-  public void AS4_TA28 () throws Exception
+  public void testAS4_TA28 () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     final AS4ResourceHelper aResMgr = s_aResMgr;
@@ -801,7 +801,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * status code 2XX.
    */
   @Test
-  public void AS4_TA29 ()
+  public void testAS4_TA29 ()
   {
     // Same like AS4_TA03 just in Part Properties instead of Message Properties
   }

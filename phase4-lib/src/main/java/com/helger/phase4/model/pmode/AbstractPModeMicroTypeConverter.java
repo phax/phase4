@@ -25,13 +25,16 @@ import com.helger.xml.microdom.convert.IMicroTypeConverter;
 
 /**
  * Abstract base class with utility methods.
- * 
+ *
  * @author Philip Helger
  * @param <T>
  *        Type to be converted from and to XML
  */
 public abstract class AbstractPModeMicroTypeConverter <T> implements IMicroTypeConverter <T>
 {
+  protected AbstractPModeMicroTypeConverter ()
+  {}
+
   @Nonnull
   protected static ETriState getTriState (@Nullable final String sAttrValue, final boolean bDefault)
   {

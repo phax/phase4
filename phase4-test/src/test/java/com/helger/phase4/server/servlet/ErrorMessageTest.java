@@ -29,7 +29,7 @@ import com.helger.xml.serialize.read.DOMReader;
 public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
 {
   @Test
-  public void sendErrorMessage () throws Exception
+  public void testSendErrorMessage () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessage.xml"));
 
@@ -38,7 +38,7 @@ public final class ErrorMessageTest extends AbstractUserMessageTestSetUpExt
 
   @Test
   @Ignore ("Allowed since 0.9.14")
-  public void sendErrorMessageNoRefToMessageID () throws Exception
+  public void testSendErrorMessageNoRefToMessageID () throws Exception
   {
     final Document aDoc = DOMReader.readXMLDOM (new ClassPathResource ("testfiles/ErrorMessageNoRefToMessageID.xml"));
 

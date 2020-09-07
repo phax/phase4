@@ -243,7 +243,7 @@ public final class Phase4PeppolSender
    *        The implementation type
    * @since 0.9.6
    */
-  public static abstract class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;

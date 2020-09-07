@@ -63,14 +63,14 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
   private PMode m_aPMode;
 
   @BeforeClass
-  public static void startServerNinety () throws Exception
+  public static void beforeClass () throws Exception
   {
     WebAppListener.setOnlyOneInstanceAllowed (false);
     RunInJettyAS4TEST9090.startNinetyServer ();
   }
 
   @AfterClass
-  public static void shutDownServerNinety () throws Exception
+  public static void afterClass () throws Exception
   {
     // reset
     RunInJettyAS4TEST9090.stopNinetyServer ();
@@ -78,7 +78,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
   }
 
   @Before
-  public void createTwoWayPMode ()
+  public void before ()
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
@@ -109,7 +109,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
   }
 
   @Test
-  public void pullPushSuccess () throws Exception
+  public void testPullPushSuccess () throws Exception
   {
     // Needs to be cleared so we can exactly see if two messages are contained
     // in the duplicate manager

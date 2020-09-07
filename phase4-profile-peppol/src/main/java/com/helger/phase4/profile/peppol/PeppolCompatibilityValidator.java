@@ -69,7 +69,9 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  private void _checkIfLegIsValid (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList, @Nonnull final PModeLeg aPModeLeg)
+  private static void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
+                                          @Nonnull final ErrorList aErrorList,
+                                          @Nonnull final PModeLeg aPModeLeg)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
@@ -295,6 +297,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
+  @Override
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
@@ -407,6 +410,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
+  @Override
   public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");

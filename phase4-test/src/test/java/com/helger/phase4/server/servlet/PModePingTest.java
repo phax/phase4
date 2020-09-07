@@ -26,7 +26,7 @@ public final class PModePingTest extends AbstractUserMessageTestSetUpExt
 {
   // Can only check success, since we cannot check if SPIs got called or not
   @Test
-  public void usePModePingSuccessful () throws Exception
+  public void testUsePModePingSuccessful () throws Exception
   {
     final Document aDoc = _modifyUserMessage (null, null, null, _defaultProperties (), null, null, null);
 

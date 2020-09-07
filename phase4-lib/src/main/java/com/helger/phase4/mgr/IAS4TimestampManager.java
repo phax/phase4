@@ -61,6 +61,6 @@ public interface IAS4TimestampManager
   @Nonnull
   static IAS4TimestampManager createDefaultInstance ()
   {
-    return () -> PDTFactory.getCurrentLocalDateTime ();
+    return PDTFactory::getCurrentLocalDateTime;
   }
 }

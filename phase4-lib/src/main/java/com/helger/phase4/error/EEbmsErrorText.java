@@ -26,7 +26,7 @@ import com.helger.commons.text.display.IHasDisplayText;
 
 /**
  * Translatable error texts for EBMS error messages
- * 
+ *
  * @author Philip Helger
  */
 public enum EEbmsErrorText implements IHasDisplayText
@@ -53,7 +53,7 @@ public enum EEbmsErrorText implements IHasDisplayText
 
   private final String m_sErrorText;
 
-  private EEbmsErrorText (@Nonnull @Nonempty final String sErrorText)
+  EEbmsErrorText (@Nonnull @Nonempty final String sErrorText)
   {
     m_sErrorText = sErrorText;
   }

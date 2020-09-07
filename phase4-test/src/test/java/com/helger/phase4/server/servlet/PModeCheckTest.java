@@ -68,7 +68,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   private Node m_aPayload;
 
   @Before
-  public void setupMessage ()
+  public void before ()
   {
     m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
     m_aEbms3UserMessage = new Ebms3UserMessage ();

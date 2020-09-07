@@ -36,7 +36,7 @@ import com.helger.xml.serialize.read.DOMReader;
 public final class ERBTest extends AbstractUserMessageTestSetUp
 {
   @Test
-  public void duplicateSignedMessage () throws Exception
+  public void testDuplicateSignedMessage () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final ESoapVersion eSOAPVersion = ESoapVersion.AS4_DEFAULT;

@@ -61,9 +61,9 @@ public enum EAS4CompressionMode implements IHasID <String>
   private final IMimeType m_aMimeType;
   private final String m_sFileExtension;
 
-  private EAS4CompressionMode (@Nonnull @Nonempty final String sID,
-                               @Nonnull final IMimeType aMimeType,
-                               @Nonnull @Nonempty final String sFileExtension)
+  EAS4CompressionMode (@Nonnull @Nonempty final String sID,
+                       @Nonnull final IMimeType aMimeType,
+                       @Nonnull @Nonempty final String sFileExtension)
   {
     m_sID = sID;
     m_aMimeType = aMimeType;

@@ -41,8 +41,7 @@ public class AS4ErrorMessage extends AbstractAS4Message <AS4ErrorMessage>
 {
   private final Ebms3SignalMessage m_aSignalMessage;
 
-  public AS4ErrorMessage (@Nonnull final ESoapVersion eSoapVersion,
-                          @Nonnull final Ebms3SignalMessage aSignalMessage) throws IllegalArgumentException
+  public AS4ErrorMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
   {
     super (eSoapVersion, EAS4MessageType.ERROR_MESSAGE);
 

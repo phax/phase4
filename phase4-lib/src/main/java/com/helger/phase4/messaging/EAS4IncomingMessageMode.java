@@ -36,7 +36,7 @@ public enum EAS4IncomingMessageMode implements IHasID <String>
 
   private final String m_sID;
 
-  private EAS4IncomingMessageMode (@Nonnull @Nonempty final String sID)
+  EAS4IncomingMessageMode (@Nonnull @Nonempty final String sID)
   {
     m_sID = sID;
   }

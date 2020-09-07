@@ -44,7 +44,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   @Test
-  public void sendPullRequestSuccess () throws Exception
+  public void testSendPullRequestSuccess () throws Exception
   {
     final AS4PullRequestMessage aPullReqMsg = AS4PullRequestMessage.create (m_eSoapVersion,
                                                                             MessageHelperMethods.createEbms3MessageInfo (),
@@ -69,7 +69,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestEmpty () throws Exception
+  public void testSendPullRequestEmpty () throws Exception
   {
     // Special MPC name handled in MockMessageProcessorSPI
     final String sFailure = MockMessageProcessorSPI.MPC_EMPTY;
@@ -85,7 +85,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestFailure () throws Exception
+  public void testSendPullRequestFailure () throws Exception
   {
     // Special MPC name handled in MockMessageProcessorSPI
     final String sFailure = MockMessageProcessorSPI.MPC_FAILURE;
@@ -100,7 +100,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestTwoSPIsFailure () throws Exception
+  public void testSendPullRequestTwoSPIsFailure () throws Exception
   {
     final String sMPC = "TWO-SPI";
     final MPC aMPC = new MPC (sMPC);
@@ -114,7 +114,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestSuccessTwoWayPushPull () throws Exception
+  public void testSendPullRequestSuccessTwoWayPushPull () throws Exception
   {
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI
@@ -135,7 +135,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestSuccessTwoWayPullPush () throws Exception
+  public void testSendPullRequestSuccessTwoWayPullPush () throws Exception
   {
     // Depending on the payload a different EMEPBinding get chosen by
     // @MockPullRequestProcessorSPI
@@ -156,7 +156,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
   }
 
   @Test
-  public void sendPullRequestWithNoMPC () throws Exception
+  public void testSendPullRequestWithNoMPC () throws Exception
   {
     final Document aDoc = AS4PullRequestMessage.create (m_eSoapVersion, MessageHelperMethods.createEbms3MessageInfo (), null, null)
                                                .getAsSoapDocument ();

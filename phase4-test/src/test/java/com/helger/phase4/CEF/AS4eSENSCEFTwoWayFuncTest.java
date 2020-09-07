@@ -51,7 +51,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA02_PushPush () throws Exception
+  public void testEsens_TA02_PushPush () throws Exception
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
 
@@ -84,7 +84,7 @@ public final class AS4eSENSCEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
    *         In case of error
    */
   @Test
-  public void eSENS_TA16_PushPush () throws Exception
+  public void testEsens_TA16_PushPush () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
     aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),

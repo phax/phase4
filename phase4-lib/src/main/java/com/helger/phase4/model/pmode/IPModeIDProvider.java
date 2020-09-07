@@ -35,11 +35,11 @@ public interface IPModeIDProvider extends Serializable
    * The default implementation combines initiator ID and responder ID with a
    * minus sign
    */
-  static IPModeIDProvider DEFAULT_DYNAMIC = (i, r) -> i + "-" + r;
+  IPModeIDProvider DEFAULT_DYNAMIC = (i, r) -> i + "-" + r;
 
   /**
    * Create a PMode ID from initiator ID and responder ID.
-   * 
+   *
    * @param sInitiatorID
    *        Non-<code>null</code> and non-empty initiator ID.
    * @param sResponderID

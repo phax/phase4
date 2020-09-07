@@ -81,7 +81,7 @@ public final class AS4ClientPullRequestMessageTest extends AbstractAS4TestSetUp
   }
 
   @Test
-  public void buildMessageMandatoryCheckFailure () throws Exception
+  public void testBuildMessageMandatoryCheckFailure () throws Exception
   {
     final AS4ClientPullRequestMessage aClient = new AS4ClientPullRequestMessage (s_aResMgr);
     _ensureInvalidState (aClient);

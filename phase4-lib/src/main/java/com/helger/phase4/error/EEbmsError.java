@@ -134,11 +134,11 @@ public enum EEbmsError implements IEbmsError
   private final IHasDisplayText m_aErrorDetail;
   private final EEbmsErrorCategory m_eCategory;
 
-  private EEbmsError (@Nonnull final String sErrorCode,
-                      @Nonnull final EEbmsErrorSeverity eSeverity,
-                      @Nonnull final String sShortDescription,
-                      @Nonnull final IHasDisplayText aErrorDetail,
-                      @Nonnull final EEbmsErrorCategory eCategory)
+  EEbmsError (@Nonnull final String sErrorCode,
+              @Nonnull final EEbmsErrorSeverity eSeverity,
+              @Nonnull final String sShortDescription,
+              @Nonnull final IHasDisplayText aErrorDetail,
+              @Nonnull final EEbmsErrorCategory eCategory)
   {
     m_sErrorCode = sErrorCode;
     m_eSeverity = eSeverity;

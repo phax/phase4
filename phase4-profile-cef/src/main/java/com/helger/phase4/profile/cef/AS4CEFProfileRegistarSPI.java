@@ -41,7 +41,7 @@ public final class AS4CEFProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = () -> new CEFCompatibilityValidator ();
+    final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = CEFCompatibilityValidator::new;
     final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> CEFPMode.createCEFPMode (i, r, a, PMODE_ID_PROVIDER, true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,

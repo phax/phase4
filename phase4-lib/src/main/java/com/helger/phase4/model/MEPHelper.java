@@ -71,9 +71,6 @@ public final class MEPHelper
           case SYNC:
             return eMsgType.isUserMessage ();
           case PUSH_PUSH:
-            if (bLeg1)
-              return eMsgType.isReceiptOrError ();
-            return eMsgType.isUserMessage ();
           case PUSH_PULL:
             if (bLeg1)
               return eMsgType.isReceiptOrError ();

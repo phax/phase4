@@ -90,7 +90,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
   }
 
   @Test
-  public void buildMessageMandatoryCheckFailure () throws Exception
+  public void testBuildMessageMandatoryCheckFailure () throws Exception
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     _ensureInvalidState (aClient);
@@ -105,7 +105,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
   }
 
   @Test
-  public void buildMessageSignedChecks () throws Exception
+  public void testBuildMessageSignedChecks () throws Exception
   {
     final AS4ClientReceiptMessage aClient = new AS4ClientReceiptMessage (s_aResMgr);
     aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);

@@ -33,7 +33,7 @@ import com.helger.xsds.xmldsig.ReferenceType;
 
 /**
  * XMLDSig document type enumeration.
- * 
+ *
  * @author Philip Helger
  */
 public enum EXMLDSigDocumentType implements IJAXBDocumentType
@@ -42,7 +42,7 @@ public enum EXMLDSigDocumentType implements IJAXBDocumentType
 
   private final JAXBDocumentType m_aDocType;
 
-  private EXMLDSigDocumentType (@Nonnull final Class <?> aClass, @Nonnull final List <? extends ClassPathResource> aXSDPaths)
+  EXMLDSigDocumentType (@Nonnull final Class <?> aClass, @Nonnull final List <? extends ClassPathResource> aXSDPaths)
   {
     m_aDocType = new JAXBDocumentType (aClass, aXSDPaths, null);
   }

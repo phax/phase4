@@ -23,7 +23,7 @@ import com.helger.commons.name.IHasDisplayName;
 
 /**
  * EBMS error category enumeration
- * 
+ *
  * @author Philip Helger
  */
 public enum EEbmsErrorCategory implements IHasDisplayName
@@ -35,7 +35,7 @@ public enum EEbmsErrorCategory implements IHasDisplayName
 
   private final String m_sContent;
 
-  private EEbmsErrorCategory (@Nonnull @Nonempty final String sContent)
+  EEbmsErrorCategory (@Nonnull @Nonempty final String sContent)
   {
     m_sContent = sContent;
   }

@@ -843,13 +843,12 @@ public class AS4RequestHandler implements AutoCloseable
       aEbms3MessageProperties.addProperty (aOriginalSender);
     }
 
-    final AS4UserMessage aResponseUserMessage = AS4UserMessage.create (aEbms3MessageInfo,
-                                                                       aEbms3PayloadInfo,
-                                                                       aEbms3CollaborationInfo,
-                                                                       aEbms3PartyInfo,
-                                                                       aEbms3MessageProperties,
-                                                                       eSoapVersion);
-    return aResponseUserMessage;
+    return AS4UserMessage.create (aEbms3MessageInfo,
+                                  aEbms3PayloadInfo,
+                                  aEbms3CollaborationInfo,
+                                  aEbms3PartyInfo,
+                                  aEbms3MessageProperties,
+                                  eSoapVersion);
   }
 
   /**
