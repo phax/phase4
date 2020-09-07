@@ -53,6 +53,62 @@ public final class AS4Signer
   private AS4Signer ()
   {}
 
+  @Nonnull
+  private static Document _createSignedMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                @Nonnull final Document aPreSigningMessage,
+                                                @Nonnull final ESoapVersion eSoapVersion,
+                                                @Nonnull @Nonempty final String sMessagingID,
+                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                final boolean bMustUnderstand,
+                                                @Nonnull final AS4SigningParams aSigningParams) throws WSSecurityException
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (aPreSigningMessage, "PreSigningMessage");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    ValueEnforcer.notNull (aSigningParams, "SigningParams");
+
+    // Start signing the document
+    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
+    aSecHeader.insertSecurityHeader ();
+
+    final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
+    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    // Set keystore alias and key password
+    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
+    aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
+    // PMode indicates the DigestAlgorithm as Hash Function
+    aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
+    aBuilder.setSigCanonicalization (aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
+
+    // Sign the Ebms3 Messaging element itself
+    aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));
+
+    // Sign the SOAP body
+    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), "Content"));
+
+    if (CollectionHelper.isNotEmpty (aAttachments))
+    {
+      // Modify builder for attachments
+
+      // "cid:Attachments" is a predefined ID used inside WSSecSignatureBase
+      aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
+
+      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
+      aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
+    }
+
+    // Set the mustUnderstand header of the wsse:Security element as well
+    final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
+                                           .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
+    if (aMustUnderstand != null)
+      aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
+
+    return aBuilder.build (aCryptoFactory.getCrypto ());
+  }
+
   /**
    * This method must be used if the message does not contain attachments, that
    * should be in a additional mime message part.
@@ -97,42 +153,13 @@ public final class AS4Signer
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();
 
-    // Start signing the document
-    final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);
-    aSecHeader.insertSecurityHeader ();
-
-    final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
-    // Set keystore alias and key password
-    aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
-    aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());
-    // PMode indicates the DigestAlgorithm as Hash Function
-    aBuilder.setDigestAlgo (aSigningParams.getAlgorithmSignDigest ().getAlgorithmURI ());
-    aBuilder.setSigCanonicalization (aSigningParams.getAlgorithmC14N ().getAlgorithmURI ());
-
-    // Sign the messaging element itself
-    aBuilder.getParts ().add (new WSEncryptionPart (sMessagingID, "Content"));
-
-    // Sign the SOAP body
-    aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), "Content"));
-
-    if (CollectionHelper.isNotEmpty (aAttachments))
-    {
-      // Modify builder for attachments
-
-      // "cid:Attachments" is a predefined ID used inside WSSecSignatureBase
-      aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
-
-      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments, aResHelper);
-      aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-    }
-
-    // Set the mustUnderstand header of the wsse:Security element as well
-    final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
-                                           .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
-    if (aMustUnderstand != null)
-      aMustUnderstand.setValue (eSoapVersion.getMustUnderstandValue (bMustUnderstand));
-
-    return aBuilder.build (aCryptoFactory.getCrypto ());
+    return _createSignedMessage (aCryptoFactory,
+                                 aPreSigningMessage,
+                                 eSoapVersion,
+                                 sMessagingID,
+                                 aAttachments,
+                                 aResHelper,
+                                 bMustUnderstand,
+                                 aSigningParams);
   }
 }

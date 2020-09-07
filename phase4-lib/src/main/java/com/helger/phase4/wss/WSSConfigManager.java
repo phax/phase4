@@ -104,12 +104,19 @@ public class WSSConfigManager extends AbstractGlobalSingleton
 
   @Nonnull
   @ReturnsMutableCopy
-  public WSSConfig createWSSConfig ()
+  public static WSSConfig createStaticWSSConfig ()
   {
     // This should be the only place that creates a new WSSConfig
     // Never call WSSConfig.getNewInstance() in your code manually
     final WSSConfig ret = WSSConfig.getNewInstance ();
     ret.setIdAllocator (new AS4WsuIdAllocator ());
     return ret;
+  }
+
+  @Nonnull
+  @ReturnsMutableCopy
+  public WSSConfig createWSSConfig ()
+  {
+    return createStaticWSSConfig ();
   }
 }

@@ -64,9 +64,6 @@ public final class AS4Encryptor
   @Nonnull
   private static WSSecEncrypt _createEncrypt (@Nonnull final WSSecHeader aSecHeader, @Nonnull final AS4CryptParams aCryptParams)
   {
-    // Ensure WSSConfig is initialized
-    WSSConfigManager.getInstance ();
-
     final WSSecEncrypt aBuilder = new WSSecEncrypt (aSecHeader);
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
@@ -93,23 +90,19 @@ public final class AS4Encryptor
   }
 
   @Nonnull
-  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                 @Nonnull final ESoapVersion eSoapVersion,
-                                                 @Nonnull final Document aDoc,
-                                                 final boolean bMustUnderstand,
-                                                 @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
+  private static Document _encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                   @Nonnull final ESoapVersion eSoapVersion,
+                                                   @Nonnull final Document aDoc,
+                                                   final boolean bMustUnderstand,
+                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
-    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
-    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
-    ValueEnforcer.notNull (aDoc, "XMLDoc");
-    ValueEnforcer.notNull (aCryptParams, "CryptParams");
-
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
     final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, aCryptParams);
-
     aBuilder.getParts ().add (new WSEncryptionPart ("Body", eSoapVersion.getNamespaceURI (), "Content"));
+
+    // Ensure mustUnderstand value
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
                                            .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
@@ -122,28 +115,57 @@ public final class AS4Encryptor
     return aBuilder.build (aCryptoFactory.getCrypto (), aSymmetricKey);
   }
 
+  /**
+   * Encrypt the SOAP "Body" content.
+   *
+   * @param aCryptoFactory
+   *        Crypto factory to use. May not be <code>null</code>.
+   * @param eSoapVersion
+   *        The SOAP version to use. May not be <code>null</code>.
+   * @param aDoc
+   *        The SOAP XML document to be encrypted. May not be <code>null</code>.
+   * @param bMustUnderstand
+   *        must understand indicator.
+   * @param aCryptParams
+   *        Encryption parameter settings. May not be <code>null</code>.
+   * @return The XML document with the encrypted SOAP "Body".
+   * @throws WSSecurityException
+   *         in case of error
+   */
   @Nonnull
-  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                   @Nonnull final Document aDoc,
-                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                   final boolean bMustUnderstand,
-                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                               MessagingException
+  public static Document encryptSoapBodyPayload (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                 @Nonnull final ESoapVersion eSoapVersion,
+                                                 @Nonnull final Document aDoc,
+                                                 final boolean bMustUnderstand,
+                                                 @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
-    ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
+
+    return _encryptSoapBodyPayload (aCryptoFactory, eSoapVersion, aDoc, bMustUnderstand, aCryptParams);
+  }
+
+  @Nonnull
+  private static AS4MimeMessage _encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                     @Nonnull final Document aDoc,
+                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                     final boolean bMustUnderstand,
+                                                     @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                                 MessagingException
+  {
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
     final WSSecEncrypt aBuilder = _createEncrypt (aSecHeader, aCryptParams);
 
-    // "cid:Attachments" is a predefined constant
+    // "cid:Attachments" is a predefined ID
     aBuilder.getParts ().add (new WSEncryptionPart (MessageHelperMethods.PREFIX_CID + "Attachments", "Content"));
 
     WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = null;
@@ -153,6 +175,7 @@ public final class AS4Encryptor
       aBuilder.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
     }
 
+    // Ensure mustUnderstand value
     final Attr aMustUnderstand = aSecHeader.getSecurityHeaderElement ()
                                            .getAttributeNodeNS (eSoapVersion.getNamespaceURI (), "mustUnderstand");
     if (aMustUnderstand != null)
@@ -181,5 +204,27 @@ public final class AS4Encryptor
 
     // Use the encrypted attachments!
     return MimeMessageCreator.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
+  }
+
+  @Nonnull
+  public static AS4MimeMessage encryptMimeMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                   @Nonnull final Document aDoc,
+                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                   @Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                   final boolean bMustUnderstand,
+                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
+                                                                                               MessagingException
+  {
+    ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
+    ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
+    ValueEnforcer.notNull (aDoc, "XMLDoc");
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    ValueEnforcer.notNull (aCryptParams, "CryptParams");
+
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
+
+    return _encryptMimeMessage (eSoapVersion, aDoc, aAttachments, aCryptoFactory, bMustUnderstand, aResHelper, aCryptParams);
   }
 }
