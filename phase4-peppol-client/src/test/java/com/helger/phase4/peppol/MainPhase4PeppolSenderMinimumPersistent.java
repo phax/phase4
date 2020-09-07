@@ -23,9 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
+import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -39,12 +41,15 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderMinimum
+public final class MainPhase4PeppolSenderMinimumPersistent
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderMinimum.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderMinimumPersistent.class);
 
   public static void main (final String [] args)
   {
+    // Enable persistent managers
+    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, false);
+
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Set data IO base directory
@@ -59,7 +64,7 @@ public final class MainPhase4PeppolSenderMinimum
         throw new IllegalStateException ("Failed to read XML file to be send");
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9958:peppol-development-governikus-01");
+      final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:test");
       if (Phase4PeppolSender.builder ()
                             .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))

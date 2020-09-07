@@ -42,7 +42,9 @@ import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
 
 /**
- * This class contains the central phase4 configuration.
+ * This class contains the central phase4 configuration. <br>
+ * Note: this class should not depend on any other phase4 class to avoid startup
+ * issues, and cyclic dependencies.
  *
  * @author Philip Helger
  * @since 0.11.0
@@ -158,25 +160,42 @@ public final class AS4Configuration
     return ret;
   }
 
-  @Nullable
-  public static String getAS4ProfileID ()
-  {
-    return getConfig ().getAsString ("server.profile");
-  }
-
   public static boolean isGlobalDebug ()
   {
-    return getConfig ().getAsBoolean ("server.debug", false);
+    final Boolean ret = getConfig ().getAsBooleanObj ("server.debug");
+    if (ret != null)
+    {
+      LOGGER.warn ("Please change the configuration property 'server.debug' to 'global.debug'");
+      return ret.booleanValue ();
+    }
+    return getConfig ().getAsBoolean ("gobal.debug", false);
   }
 
   public static boolean isGlobalProduction ()
   {
-    return getConfig ().getAsBoolean ("server.production", false);
+    final Boolean ret = getConfig ().getAsBooleanObj ("server.production");
+    if (ret != null)
+    {
+      LOGGER.warn ("Please change the configuration property 'server.production' to 'global.production'");
+      return ret.booleanValue ();
+    }
+    return getConfig ().getAsBoolean ("gobal.production", false);
   }
 
   public static boolean isNoStartupInfo ()
   {
     return getConfig ().getAsBoolean ("server.nostartupinfo", true);
+  }
+
+  public static boolean isUseInMemoryManagers ()
+  {
+    return getConfig ().getAsBoolean ("phase4.manager.inmemory", false);
+  }
+
+  @Nullable
+  public static String getAS4ProfileID ()
+  {
+    return getConfig ().getAsString ("server.profile");
   }
 
   @Nonnull

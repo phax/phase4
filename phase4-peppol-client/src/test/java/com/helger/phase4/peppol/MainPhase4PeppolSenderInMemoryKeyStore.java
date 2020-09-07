@@ -24,12 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.security.keystore.KeyStoreHelper;
@@ -50,9 +48,6 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
 
   public static void main (final String [] args)
   {
-    // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
-
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     try

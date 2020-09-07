@@ -23,14 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
@@ -81,9 +79,7 @@ public final class MainPhase4PeppolSenderHelger
                             .payload (aPayloadElement)
                             .messageID ("TestMsgPhilip")
                             // .agreementRef ("BlaaFoo")
-                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER,
-                                                               aReceiverID,
-                                                               ESML.DIGIT_TEST))
+                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)
@@ -107,7 +103,8 @@ public final class MainPhase4PeppolSenderHelger
   public static void main (final String [] args)
   {
     // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+    // SystemProperties.setPropertyValue
+    // (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 

@@ -22,15 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.id.factory.FileIntIDFactory;
-import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.AS4CryptoProperties;
-import com.helger.photon.app.io.WebFileIO;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -49,11 +45,6 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
   public static void main (final String [] args)
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
-
-    final File aSCPath = AS4Configuration.getDumpBasePathFile ();
-    WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
-    if (false)
-      GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));
 
     try
     {

@@ -25,8 +25,7 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
-import com.helger.commons.string.StringParser;
-import com.helger.commons.system.SystemProperties;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
@@ -50,8 +49,7 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   private static IAS4TimestampManager s_aTimestampMgr;
   static
   {
-    final String sInMemory = SystemProperties.getPropertyValueOrNull (SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY);
-    if (StringParser.parseBool (sInMemory, false))
+    if (AS4Configuration.isUseInMemoryManagers ())
     {
       LOGGER.info ("MetaAS4Manager is initialized with in-memory data structures");
       s_aFactory = new ManagerFactoryInMemory ();

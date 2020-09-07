@@ -23,10 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
 import com.helger.web.scope.mgr.WebScopeManager;
@@ -45,9 +43,6 @@ public final class MainPhase4PeppolSenderMinimumInMemory
 
   public static void main (final String [] args)
   {
-    // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
-
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     try

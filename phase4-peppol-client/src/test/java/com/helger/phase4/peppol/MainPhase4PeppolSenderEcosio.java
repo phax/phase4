@@ -23,11 +23,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
-import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
@@ -47,9 +45,6 @@ public final class MainPhase4PeppolSenderEcosio
 
   public static void main (final String [] args)
   {
-    // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
-
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Dump (for debugging purpose only)

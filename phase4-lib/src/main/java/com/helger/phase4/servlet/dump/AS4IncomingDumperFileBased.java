@@ -101,7 +101,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);
-    LOGGER.info ("Logging incoming AS4 request to '" + aResponseFile.getAbsolutePath () + "'");
+    LOGGER.info ("Logging incoming AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
   }
 
