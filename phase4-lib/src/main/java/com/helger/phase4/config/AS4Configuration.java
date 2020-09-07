@@ -184,12 +184,23 @@ public final class AS4Configuration
 
   public static boolean isNoStartupInfo ()
   {
-    return getConfig ().getAsBoolean ("server.nostartupinfo", true);
+    final Boolean ret = getConfig ().getAsBooleanObj ("server.nostartupinfo");
+    if (ret != null)
+    {
+      LOGGER.warn ("Please change the configuration property 'server.nostartupinfo' to 'global.nostartupinfo'");
+      return ret.booleanValue ();
+    }
+    return getConfig ().getAsBoolean ("gobal.nostartupinfo", true);
   }
 
   public static boolean isUseInMemoryManagers ()
   {
     return getConfig ().getAsBoolean ("phase4.manager.inmemory", false);
+  }
+
+  public static boolean isWSS4JSynchronizedSecurity ()
+  {
+    return getConfig ().getAsBoolean ("phase4.wss4j.syncsecurity", false);
   }
 
   @Nullable

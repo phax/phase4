@@ -49,6 +49,10 @@ public enum EWSSVersion
     m_sVersion = sVersion;
   }
 
+  /**
+   * @return The namespace URI of the specification. Neither <code>null</code>
+   *         nor empty.
+   */
   @Nonnull
   @Nonempty
   public String getNamespaceURI ()
@@ -56,6 +60,10 @@ public enum EWSSVersion
     return m_sNamespaceURI;
   }
 
+  /**
+   * @return The intended namespace prefix to be used. Neither <code>null</code>
+   *         nor empty.
+   */
   @Nonnull
   @Nonempty
   public String getNamespacePrefix ()
@@ -63,6 +71,10 @@ public enum EWSSVersion
     return m_sNamespacePrefix;
   }
 
+  /**
+   * @return The specification version number. Neither <code>null</code> nor
+   *         empty.
+   */
   @Nonnull
   @Nonempty
   public String getVersion ()

@@ -27,6 +27,7 @@ import javax.mail.MessagingException;
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
+import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
@@ -40,6 +41,7 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
@@ -48,6 +50,7 @@ import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
+import com.helger.phase4.wss.WSSSynchronizer;
 
 /**
  * Encryption helper
@@ -143,6 +146,12 @@ public final class AS4Encryptor
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
 
+    if (AS4Configuration.isWSS4JSynchronizedSecurity ())
+    {
+      // Synchronize
+      return WSSSynchronizer.call ( () -> _encryptSoapBodyPayload (aCryptoFactory, eSoapVersion, aDoc, bMustUnderstand, aCryptParams));
+    }
+
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();
 
@@ -156,8 +165,7 @@ public final class AS4Encryptor
                                                      @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                      final boolean bMustUnderstand,
                                                      @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                                 MessagingException
+                                                     @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
@@ -202,7 +210,14 @@ public final class AS4Encryptor
     }
 
     // Use the encrypted attachments!
-    return MimeMessageCreator.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
+    try
+    {
+      return MimeMessageCreator.generateMimeMessage (eSoapVersion, aEncryptedDoc, aEncryptedAttachments);
+    }
+    catch (final MessagingException ex)
+    {
+      throw new WSSecurityException (ErrorCode.FAILURE, ex, "Failed to generate MIME message");
+    }
   }
 
   @Nonnull
@@ -212,14 +227,25 @@ public final class AS4Encryptor
                                                    @Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                    final boolean bMustUnderstand,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException,
-                                                                                               MessagingException
+                                                   @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aDoc, "XMLDoc");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aCryptParams, "CryptParams");
+
+    if (AS4Configuration.isWSS4JSynchronizedSecurity ())
+    {
+      // Synchronize
+      return WSSSynchronizer.call ( () -> _encryptMimeMessage (eSoapVersion,
+                                                               aDoc,
+                                                               aAttachments,
+                                                               aCryptoFactory,
+                                                               bMustUnderstand,
+                                                               aResHelper,
+                                                               aCryptParams));
+    }
 
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();

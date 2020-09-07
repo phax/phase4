@@ -34,12 +34,14 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.phase4.wss.WSSConfigManager;
+import com.helger.phase4.wss.WSSSynchronizer;
 
 /**
  * Message singing helper.
@@ -148,6 +150,19 @@ public final class AS4Signer
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
+
+    if (AS4Configuration.isWSS4JSynchronizedSecurity ())
+    {
+      // Synchronize
+      return WSSSynchronizer.call ( () -> _createSignedMessage (aCryptoFactory,
+                                                                aPreSigningMessage,
+                                                                eSoapVersion,
+                                                                sMessagingID,
+                                                                aAttachments,
+                                                                aResHelper,
+                                                                bMustUnderstand,
+                                                                aSigningParams));
+    }
 
     // Ensure WSSConfig is initialized
     WSSConfigManager.getInstance ();

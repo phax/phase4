@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,6 +54,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.attachment.WSS4JAttachmentCallbackHandler;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -88,6 +90,130 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
   }
 
   @Nonnull
+  private ESuccess _verifyAndDecrypt (@Nonnull final Document aSOAPDoc,
+                                      @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
+                                      @Nonnull final AS4MessageState aState,
+                                      @Nonnull final ErrorList aErrorList,
+                                      @Nonnull final Supplier <WSSConfig> aWSSConfigSupplier)
+  {
+    // Default is Leg 1, gets overwritten when a reference to a message id
+    // exists and then uses leg2
+    final Locale aLocale = aState.getLocale ();
+
+    // Signing verification and Decryption
+    try
+    {
+      // Convert to WSS4J attachments
+      final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory);
+      final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
+                                                                                                            aState.getResourceHelper ());
+
+      // Resolve the WSS config here to ensure the context matches
+      final WSSConfig aWSSConfig = aWSSConfigSupplier.get ();
+
+      // Configure RequestData needed for the check / decrypt process!
+      final RequestData aRequestData = new RequestData ();
+      aRequestData.setCallbackHandler (aKeyStoreCallback);
+      if (aAttachments.isNotEmpty ())
+        aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
+      aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
+      aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
+      aRequestData.setWssConfig (aWSSConfig);
+
+      // Upon success, the SOAP document contains the decrypted content
+      // afterwards!
+      final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
+      aSecurityEngine.setWssConfig (aWSSConfig);
+      final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
+      final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
+
+      // Collect all unique used certificates
+      final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
+      // Preferred certificate from BinarySecurityToken
+      X509Certificate aPreferredCert = null;
+      int nWSS4JSecurityActions = 0;
+      for (final WSSecurityEngineResult aResult : aResults)
+      {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("WSSecurityEngineResult: " + aResult);
+
+        final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
+        final int nAction = aAction != null ? aAction.intValue () : 0;
+        nWSS4JSecurityActions |= nAction;
+
+        final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
+        if (aCert != null)
+        {
+          aCertSet.add (aCert);
+          if (nAction == WSConstants.BST && aPreferredCert == null)
+            aPreferredCert = aCert;
+        }
+      }
+      // this determines if a signature check or a decryption happened
+      aState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
+
+      final X509Certificate aUsedCert;
+      if (aCertSet.size () > 1)
+      {
+        if (aPreferredCert == null)
+        {
+          LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("All gathered certificates: " + aCertSet);
+          aUsedCert = aCertSet.getAtIndex (0);
+        }
+        else
+          aUsedCert = aPreferredCert;
+      }
+      else
+        if (aCertSet.size () == 1)
+          aUsedCert = aCertSet.getAtIndex (0);
+        else
+          aUsedCert = null;
+
+      // Remember in State
+      aState.setUsedCertificate (aUsedCert);
+      aState.setDecryptedSoapDocument (aSOAPDoc);
+
+      // Decrypting the Attachments
+      final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
+      for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
+      {
+        // Always copy to a temporary file, so that decrypted content can be
+        // read more than once. By default the stream can only be read once
+        // Not nice, but working :)
+        final File aTempFile = aState.getResourceHelper ().createTempFile ();
+        StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aResponseAttachment.getSourceStream (),
+                                                              FileHelper.getBufferedOutputStream (aTempFile));
+        aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
+      }
+
+      // Remember in State
+      aState.setDecryptedAttachments (aResponseAttachments);
+      return ESuccess.SUCCESS;
+    }
+    catch (final WSSecurityException ex)
+    {
+      // Decryption or Signature check failed
+      LOGGER.error ("Error processing the WSSSecurity Header", ex);
+
+      // TODO we need a way to distinct
+      // signature and decrypt WSSecurityException provides no such thing
+      aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
+      aState.setSoapWSS4JException (ex);
+      return ESuccess.FAILURE;
+    }
+    catch (final IOException ex)
+    {
+      // Decryption or Signature check failed
+      LOGGER.error ("IO error processing the WSSSecurity Header", ex);
+      aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
+      aState.setSoapWSS4JException (ex);
+      return ESuccess.FAILURE;
+    }
+  }
+
+  @Nonnull
   public ESuccess processHeaderElement (@Nonnull final Document aSOAPDoc,
                                         @Nonnull final Element aSecurityNode,
                                         @Nonnull final ICommonsList <WSS4JAttachment> aAttachments,
@@ -111,7 +237,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     if (aUserMessage != null && StringHelper.hasText (aUserMessage.getMessageInfo ().getRefToMessageId ()))
       aPModeLeg = aPMode.getLeg2 ();
 
-    // Does security - legpart checks if not <code>null</code>
+    // Does security - leg part checks if not <code>null</code>
     if (aPModeLeg.getSecurity () != null)
     {
       // Get Signature Algorithm
@@ -212,115 +338,19 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         }
       }
 
-      // Signing verification and Decryption
-      try
+      final ESuccess eSuccess;
+      if (AS4Configuration.isWSS4JSynchronizedSecurity ())
       {
-        // Convert to WSS4J attachments
-        final KeyStoreCallbackHandler aKeyStoreCallback = new KeyStoreCallbackHandler (m_aCryptoFactory);
-        final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
-                                                                                                              aState.getResourceHelper ());
-
-        final WSSConfig aWSSConfig = WSSConfigManager.getInstance ().createWSSConfig ();
-
-        // Configure RequestData needed for the check / decrypt process!
-        final RequestData aRequestData = new RequestData ();
-        aRequestData.setCallbackHandler (aKeyStoreCallback);
-        if (aAttachments.isNotEmpty ())
-          aRequestData.setAttachmentCallbackHandler (aAttachmentCallbackHandler);
-        aRequestData.setSigVerCrypto (m_aCryptoFactory.getCrypto ());
-        aRequestData.setDecCrypto (m_aCryptoFactory.getCrypto ());
-        aRequestData.setWssConfig (aWSSConfig);
-
-        // Upon success, the SOAP document contains the decrypted content
-        // afterwards!
-        final WSSecurityEngine aSecurityEngine = new WSSecurityEngine ();
-        aSecurityEngine.setWssConfig (aWSSConfig);
-        final WSHandlerResult aHdlRes = aSecurityEngine.processSecurityHeader (aSOAPDoc, aRequestData);
-        final List <WSSecurityEngineResult> aResults = aHdlRes.getResults ();
-
-        // Collect all unique used certificates
-        final ICommonsSet <X509Certificate> aCertSet = new CommonsHashSet <> ();
-        // Preferred certificate from BinarySecurityToken
-        X509Certificate aPreferredCert = null;
-        int nWSS4JSecurityActions = 0;
-        for (final WSSecurityEngineResult aResult : aResults)
-        {
-          if (LOGGER.isDebugEnabled ())
-            LOGGER.debug ("WSSecurityEngineResult: " + aResult);
-
-          final Integer aAction = (Integer) aResult.get (WSSecurityEngineResult.TAG_ACTION);
-          final int nAction = aAction != null ? aAction.intValue () : 0;
-          nWSS4JSecurityActions |= nAction;
-
-          final X509Certificate aCert = (X509Certificate) aResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE);
-          if (aCert != null)
-          {
-            aCertSet.add (aCert);
-            if (nAction == WSConstants.BST && aPreferredCert == null)
-              aPreferredCert = aCert;
-          }
-        }
-        // this determines if a signature check or a decryption happened
-        aState.setSoapWSS4JSecurityActions (nWSS4JSecurityActions);
-
-        final X509Certificate aUsedCert;
-        if (aCertSet.size () > 1)
-        {
-          if (aPreferredCert == null)
-          {
-            LOGGER.warn ("Found " + aCertSet.size () + " different certificates in message. Using the first one.");
-            if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("All gathered certificates: " + aCertSet);
-            aUsedCert = aCertSet.getAtIndex (0);
-          }
-          else
-            aUsedCert = aPreferredCert;
-        }
-        else
-          if (aCertSet.size () == 1)
-            aUsedCert = aCertSet.getAtIndex (0);
-          else
-            aUsedCert = null;
-
-        // Remember in State
-        aState.setUsedCertificate (aUsedCert);
-        aState.setDecryptedSoapDocument (aSOAPDoc);
-
-        // Decrypting the Attachments
-        final ICommonsList <WSS4JAttachment> aResponseAttachments = aAttachmentCallbackHandler.getAllResponseAttachments ();
-        for (final WSS4JAttachment aResponseAttachment : aResponseAttachments)
-        {
-          // Always copy to a temporary file, so that decrypted content can be
-          // read more than once. By default the stream can only be read once
-          // Not nice, but working :)
-          final File aTempFile = aState.getResourceHelper ().createTempFile ();
-          StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aResponseAttachment.getSourceStream (),
-                                                                FileHelper.getBufferedOutputStream (aTempFile));
-          aResponseAttachment.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aTempFile)));
-        }
-
-        // Remember in State
-        aState.setDecryptedAttachments (aResponseAttachments);
+        // Use static WSSConfig creation
+        eSuccess = _verifyAndDecrypt (aSOAPDoc, aAttachments, aState, aErrorList, WSSConfigManager::createStaticWSSConfig);
       }
-      catch (final WSSecurityException ex)
+      else
       {
-        // Decryption or Signature check failed
-        LOGGER.error ("Error processing the WSSSecurity Header", ex);
-
-        // TODO we need a way to distinct
-        // signature and decrypt WSSecurityException provides no such thing
-        aErrorList.add (EEbmsError.EBMS_FAILED_DECRYPTION.getAsError (aLocale));
-        aState.setSoapWSS4JException (ex);
+        // Use instance WSSConfig creation
+        eSuccess = _verifyAndDecrypt (aSOAPDoc, aAttachments, aState, aErrorList, WSSConfigManager.getInstance ()::createWSSConfig);
+      }
+      if (eSuccess.isFailure ())
         return ESuccess.FAILURE;
-      }
-      catch (final IOException ex)
-      {
-        // Decryption or Signature check failed
-        LOGGER.error ("IO error processing the WSSSecurity Header", ex);
-        aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
-        aState.setSoapWSS4JException (ex);
-        return ESuccess.FAILURE;
-      }
     }
 
     return ESuccess.SUCCESS;
