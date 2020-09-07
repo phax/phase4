@@ -49,6 +49,7 @@ import com.helger.config.source.res.ConfigurationSourceProperties;
  * @author Philip Helger
  * @since 0.11.0
  */
+@Phase4V1Tasks
 public final class AS4Configuration
 {
   public static final long DEFAULT_RESET_MINUTES = 10;
@@ -57,6 +58,7 @@ public final class AS4Configuration
 
   static
   {
+    // Since 0.11.0 - remove in 1.0
     if (StringHelper.hasText (SystemProperties.getPropertyValueOrNull ("phase4.server.configfile")))
       LOGGER.error ("The system property 'phase4.server.configfile' is no longer supported. See https://github.com/phax/ph-commons#ph-config for alternatives.");
     if (StringHelper.hasText (SystemProperties.getPropertyValueOrNull ("as4.server.configfile")))
@@ -314,6 +316,12 @@ public final class AS4Configuration
   @Nullable
   public static String getThisEndpointAddress ()
   {
-    return getConfig ().getAsString ("server.address");
+    final String ret = getConfig ().getAsString ("server.address");
+    if (StringHelper.hasText (ret))
+    {
+      _logRenamedConfig ("server.address", "phase4.endpoint.address");
+      return ret;
+    }
+    return getConfig ().getAsString ("phase4.endpoint.address");
   }
 }

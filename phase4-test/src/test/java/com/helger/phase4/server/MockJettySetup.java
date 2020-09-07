@@ -40,7 +40,7 @@ import com.helger.xservlet.requesttrack.RequestTracker;
 public final class MockJettySetup extends AbstractAS4TestSetUp
 {
   public static final String SETTINGS_SERVER_JETTY_ENABLED = "server.jetty.enabled";
-  public static final String SETTINGS_SERVER_ADDRESS = "server.address";
+  public static final String SETTINGS_SERVER_ADDRESS = "server.jetty.address";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (MockJettySetup.class);
 

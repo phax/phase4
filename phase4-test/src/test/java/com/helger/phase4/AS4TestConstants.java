@@ -17,6 +17,7 @@
 package com.helger.phase4;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
@@ -24,11 +25,12 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 
+@Immutable
 public final class AS4TestConstants
 {
   // Default values
   public static final String DEFAULT_SERVER_ADDRESS = "http://localhost:8080/as4";
-  public static final String DEFAULT_MPC = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
+  public static final String DEFAULT_MPC = CAS4.DEFAULT_MPC_ID;
 
   // Test value that can be used
   public static final String TEST_RESPONDER = "TestResponder";
