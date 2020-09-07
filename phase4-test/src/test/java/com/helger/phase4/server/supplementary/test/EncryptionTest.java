@@ -26,17 +26,23 @@ import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.common.util.XMLUtils;
-import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
+import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.wss.WSSConfigManager;
+import com.helger.scope.mock.ScopeTestRule;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -44,10 +50,17 @@ import com.helger.xml.serialize.read.DOMReader;
  */
 public final class EncryptionTest
 {
-  private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger (EncryptionTest.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (EncryptionTest.class);
 
-  public EncryptionTest ()
-  {}
+  @Rule
+  public final ScopeTestRule m_aRule = new ScopeTestRule ();
+
+  @Before
+  public void before ()
+  {
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
+  }
 
   @Nullable
   private static Document _getSoapEnvelope11 ()
@@ -73,7 +86,7 @@ public final class EncryptionTest
     secHeader.insertSecurityHeader ();
 
     final WSSecEncrypt aBuilder = new WSSecEncrypt (secHeader);
-    aBuilder.setKeyIdentifierType (WSConstants.ISSUER_SERIAL);
+    aBuilder.setKeyIdentifierType (ECryptoKeyIdentifierType.ISSUER_SERIAL.getTypeID ());
     aBuilder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
     aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
 
@@ -107,7 +120,7 @@ public final class EncryptionTest
     final WSSecEncrypt builder = new WSSecEncrypt (secHeader);
     // builder.setUserInfo ("wss40");
     builder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
-    builder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    builder.setKeyIdentifierType (ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE.getTypeID ());
     builder.setSymmetricEncAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
 
     // Generate a session key

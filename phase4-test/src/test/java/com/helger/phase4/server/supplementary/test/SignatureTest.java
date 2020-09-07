@@ -28,6 +28,7 @@ import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.apache.wss4j.dom.str.STRParser.REFERENCE_TYPE;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -36,6 +37,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.crypto.ECryptoKeyIdentifierType;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.wss.WSSConfigManager;
 import com.helger.scope.mock.ScopeTestRule;
@@ -48,6 +50,13 @@ public final class SignatureTest
 {
   @Rule
   public final ScopeTestRule m_aRule = new ScopeTestRule ();
+
+  @Before
+  public void before ()
+  {
+    // Ensure WSSConfig is initialized
+    WSSConfigManager.getInstance ();
+  }
 
   @Nullable
   private static Document _getSoapEnvelope11 ()
@@ -73,7 +82,7 @@ public final class SignatureTest
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
     aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setKeyIdentifierType (ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE.getTypeID ());
     aBuilder.setSignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
     // PMode indicates the DigestAlgorithmen as Hash Function
     aBuilder.setDigestAlgo (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
