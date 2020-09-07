@@ -287,6 +287,8 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.11.0 - work in progress
     * Extracted new enum `ECryptoKeyIdentifierType` to make the key information type customizable
     * Reworked the configuration so that system properties and environment variables can also be used
+    * The class `AS4Configuration` is now the primary source for configuration stuff
+    * Class `AS4ServerConfiguration` was deleted
 * v0.10.6 - 2020-09-03
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized
