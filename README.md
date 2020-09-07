@@ -82,12 +82,7 @@ The properties have the following meaning
 * **`phase4.dump.path`** (since 0.11.0): the base path where dumps of incoming and outgoing files should be created, if the respective dumpers are activated. The default value is `phase4-dumps` relative to the current working directory.
 * **`phase4.endpoint.address`**: the public URL of this AS4 server to send responses to. This value is optional. (prior 0.11.0 this property was called `server.address`).
 
-### System properties
-
-The following special system properties are supported:
-* **`phase4.manager.inmemory`** (since v0.9.6): if set to `true` the system will not try to store data in the file system. By default this is `false`.
-
-# Different configurations
+# Profiles vs. PModes
 
 To handle common parts of AS4 PModes this project uses so called "profiles". Currently two default profiles are available:
 

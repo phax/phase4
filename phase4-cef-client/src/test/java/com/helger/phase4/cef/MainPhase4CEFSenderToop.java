@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.io.file.SimpleFileIO;
-import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ISMLInfo;
 import com.helger.peppol.sml.SMLInfo;
 import com.helger.peppolid.IParticipantIdentifier;
@@ -32,7 +31,6 @@ import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
@@ -57,9 +55,6 @@ public final class MainPhase4CEFSenderToop
 
   public static void main (final String [] args)
   {
-    // Enable in-memory managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, true);
-
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Dump (for debugging purpose only)
@@ -73,8 +68,7 @@ public final class MainPhase4CEFSenderToop
         throw new IllegalStateException ();
 
       // Start configuring here
-      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis",
-                                                                                                 "9915:tooptest");
+      final IParticipantIdentifier aReceiverID = Phase4CEFSender.IF.createParticipantIdentifier ("iso6523-actorid-upis", "9915:tooptest");
       final IAS4ClientBuildMessageCallback aBuildMessageCallback = new IAS4ClientBuildMessageCallback ()
       {
         public void onAS4Message (final AbstractAS4Message <?> aMsg)

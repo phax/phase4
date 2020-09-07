@@ -22,12 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.peppol.PeppolValidation3_10_1;
 import com.helger.commons.system.SystemProperties;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -48,12 +46,12 @@ public final class MainPhase4PeppolSenderMinimumPersistent
   public static void main (final String [] args)
   {
     // Enable persistent managers
-    SystemProperties.setPropertyValue (MetaAS4Manager.SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY, false);
+    SystemProperties.setPropertyValue (AS4Configuration.PROPERTY_PHASE4_MANAGER_INMEMORY, false);
 
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Set data IO base directory
-    final File aSCPath = AS4Configuration.getDumpBasePathFile ();
+    final File aSCPath = new File (AS4Configuration.getDataPath ()).getAbsoluteFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
 
     try
@@ -73,8 +71,6 @@ public final class MainPhase4PeppolSenderMinimumPersistent
                             .senderPartyID ("POP000306")
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
-                                                      new Phase4PeppolValidatonResultHandler ())
                             .sendMessage ()
                             .isSuccess ())
       {

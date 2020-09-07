@@ -52,7 +52,17 @@ import com.helger.config.source.res.ConfigurationSourceProperties;
 @Phase4V1Tasks
 public final class AS4Configuration
 {
-  public static final long DEFAULT_RESET_MINUTES = 10;
+  /**
+   * The boolean property to enable in-memory managers.
+   */
+  public static final String PROPERTY_PHASE4_MANAGER_INMEMORY = "phase4.manager.inmemory";
+  /**
+   * The boolean property to enable synchronization of sign/verify and
+   * encrypt/decrypt.
+   */
+  public static final String PROPERTY_PHASE4_WSS4J_SYNCSECURITY = "phase4.wss4j.syncsecurity";
+
+  public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4Configuration.class);
 
@@ -251,12 +261,12 @@ public final class AS4Configuration
    */
   public static boolean isUseInMemoryManagers ()
   {
-    return getConfig ().getAsBoolean ("phase4.manager.inmemory", true);
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_MANAGER_INMEMORY, true);
   }
 
   public static boolean isWSS4JSynchronizedSecurity ()
   {
-    return getConfig ().getAsBoolean ("phase4.wss4j.syncsecurity", false);
+    return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
   }
 
   @Nullable
@@ -275,7 +285,8 @@ public final class AS4Configuration
   /**
    * @return the number of minutes, the message IDs of incoming messages are
    *         stored for duplication check. By default this is
-   *         {@value #DEFAULT_RESET_MINUTES} minutes.
+   *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
+   *         minutes.
    */
   @Phase4V1Tasks
   public static long getIncomingDuplicateDisposalMinutes ()
@@ -286,7 +297,7 @@ public final class AS4Configuration
       _logRenamedConfig ("server.incoming.duplicatedisposal.minutes", "phase4.incoming.duplicatedisposal.minutes");
       return ret.longValue ();
     }
-    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_RESET_MINUTES);
+    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
   }
 
   @Nonnull
