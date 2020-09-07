@@ -64,6 +64,7 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.servlet.AS4MessageState;
 import com.helger.phase4.wss.WSSConfigManager;
+import com.helger.phase4.wss.WSSSynchronizer;
 import com.helger.xml.XMLHelper;
 
 /**
@@ -342,7 +343,11 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       if (AS4Configuration.isWSS4JSynchronizedSecurity ())
       {
         // Use static WSSConfig creation
-        eSuccess = _verifyAndDecrypt (aSOAPDoc, aAttachments, aState, aErrorList, WSSConfigManager::createStaticWSSConfig);
+        eSuccess = WSSSynchronizer.call ( () -> _verifyAndDecrypt (aSOAPDoc,
+                                                                   aAttachments,
+                                                                   aState,
+                                                                   aErrorList,
+                                                                   WSSConfigManager::createStaticWSSConfig));
       }
       else
       {

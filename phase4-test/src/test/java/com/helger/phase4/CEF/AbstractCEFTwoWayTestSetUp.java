@@ -100,23 +100,24 @@ public abstract class AbstractCEFTwoWayTestSetUp extends AbstractUserMessageTest
     m_aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
   }
 
+  @Nonnull
   protected Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
                                             @Nullable final Node aPayload,
                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
                                             @Nonnull @WillNotClose final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final AS4UserMessage aMsg = testUserMessageSoapNotSigned (aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
-                                                               aMsg.getAsSoapDocument (aPayload),
-                                                               eSOAPVersion,
-                                                               aMsg.getMessagingID (),
-                                                               aAttachments,
-                                                               aResMgr,
-                                                               true,
-                                                               AS4SigningParams.createDefault ());
-    return aSignedDoc;
+    return AS4Signer.createSignedMessage (m_aCryptoFactory,
+                                          aMsg.getAsSoapDocument (aPayload),
+                                          eSOAPVersion,
+                                          aMsg.getMessagingID (),
+                                          aAttachments,
+                                          aResMgr,
+                                          true,
+                                          AS4SigningParams.createDefault ());
   }
 
+  @Nonnull
   protected AS4UserMessage testUserMessageSoapNotSigned (@Nullable final Node aPayload,
                                                          @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {

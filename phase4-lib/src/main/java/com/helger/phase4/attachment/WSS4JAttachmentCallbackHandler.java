@@ -88,12 +88,16 @@ public class WSS4JAttachmentCallbackHandler implements CallbackHandler
   @ReturnsMutableCopy
   private ICommonsList <Attachment> _getAttachmentsToAdd (@Nullable final String sID)
   {
+    // Check for direct match
     final WSS4JAttachment aAttachment = m_aAttachmentMap.get (sID);
     if (aAttachment != null)
       return new CommonsArrayList <> (aAttachment);
 
-    // Use all
-    return new CommonsArrayList <> (m_aAttachmentMap.values ());
+    // Use all (stripped from cid:Attachments)
+    if ("Attachments".equals (sID))
+      return new CommonsArrayList <> (m_aAttachmentMap.values ());
+
+    throw new IllegalStateException ("Failed to resolve attachment with ID '" + sID + "'");
   }
 
   public void handle (@Nonnull final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
