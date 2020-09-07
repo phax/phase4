@@ -12,8 +12,20 @@ WR0yz61TQpebBbjE/7CxlUKM01X901GScmqNI5K+kmLLCHhygbSNh3l5P7OLiCdAHTVPEZXWIy1ifeq+
 S0T1+dWofRI4SObpxaW6ZrEW/+7RbYmYduzfPIQ+QV9MBAQs2AyeYZeYSsGfLpor4WrbL7bf5w7P3vHTVs6PD4b08ytW3bndwmAUlQN9dvLgJoL9ifGGpK7P
 9EQxJMVhBpJ+pauvbRL45pCYRhOda8GPHQ6S7m1M6zkKVDF69phGJN5YuoZKfuoPcsXwQyt9Au136CAZnKN5eKAngSdkVA="
 
+addons:
+  sonarcloud:
+    organization: "phax-github"
+    token:
+      secure: "dCDevCLLAcZz2WaLpjTgVH/gG38o1r1lX5hwugSd7S+CuAEEqBJ7cuEGDW9Dz2kCBmD5nxwuosNJUD9Z9UaO8vlciAsTub/uCEsK6c+wy9TRw+h9wVIvpxlwJdAmKNb
+G0SzA98EF8XaEWDn75WLpU6o5hETbVvefQAjuTc9VtjIoAlI5d1uP3dUperjfWb4KCeUZ1+oumU+OBUydp/Mj1CD7lY6ma73j4a1SFyoRn1kfAHf5gf8SACtOe9PREioBSSO//Z0L/
+Fpi8c7SVHCCZK3L8W4dKp70XAG/le5u3rHgXQ/FK60PVx1YFI4Hqjr5ST/j2TiTKCYYhLpYaz6GBLZl4x8IJ+/Q99XK54B5tDU2yCsEtL6UGORkstk5U+L3w6R1+5bEiMweH/EgQDL
+bgZATue9UlLlJ3XIbtFaQYkn4sdEyerL93r2UK6oUFUk4YlLQNq+qfgXkwClvHn5wTvXElOd1vb330m+GvaU8We+5K80NiGA4IW3tGL9S5dUC0FSc3ke4gVZ8aP8i087wSZ1cp5uhx
+zjDzjzyluWKLE3jwKPceIg4G5CqbI1fp+nNwTBdt/jJ4GkJBGjmvJbYO1dPahsWpbA+/M5Cu8fbB323S7TVn0lWb9p4cfefKnU8yhVq1uya0a1jYK1b7cvJUGI5QHjZ9POAZXb0X2l
+OES8="
+
 install:
-  - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
+#  - travis_wait 20 mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -U
   
 cache:
   directories:
@@ -28,14 +40,15 @@ jobs:
     - stage: test
       jdk: openjdk8
       script:
-        - mvn test -B -P coverage
+        - mvn test -B
       after_success:
         - mvn deploy --settings travis-settings.xml -DskipTests=true -B -P travis-deploy
-        - bash <(curl -s https://codecov.io/bash)
     - stage: test
       jdk: openjdk11
       script:
-        - mvn test -B
+        - mvn test -B -P coverage sonar:sonar
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
     - stage: test
       jdk: openjdk14
       script:
