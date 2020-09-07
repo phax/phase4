@@ -23,7 +23,6 @@ import javax.annotation.concurrent.Immutable;
 
 import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
-import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
 import org.w3c.dom.Attr;
@@ -75,7 +74,7 @@ public final class AS4Signer
     aSecHeader.insertSecurityHeader ();
 
     final WSSecSignature aBuilder = new WSSecSignature (aSecHeader);
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setKeyIdentifierType (aSigningParams.getKeyIdentifierType ().getTypeID ());
     // Set keystore alias and key password
     aBuilder.setUserInfo (aCryptoFactory.getKeyAlias (), aCryptoFactory.getKeyPassword ());
     aBuilder.setSignatureAlgorithm (aSigningParams.getAlgorithmSign ().getAlgorithmURI ());

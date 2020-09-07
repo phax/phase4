@@ -38,6 +38,10 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 @NotThreadSafe
 public class AS4SigningParams implements Serializable, ICloneable <AS4SigningParams>
 {
+  public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
+
+  // The key identifier type to use
+  private ECryptoKeyIdentifierType m_eKeyIdentifierType = DEFAULT_KEY_IDENTIFIER_TYPE;
   private ECryptoAlgorithmSign m_eAlgorithmSign;
   private ECryptoAlgorithmSignDigest m_eAlgorithmSignDigest;
   private ECryptoAlgorithmC14N m_eAlgorithmC14N = ECryptoAlgorithmC14N.C14N_ALGORITHM_DEFAULT;
@@ -48,6 +52,33 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   public boolean isSigningEnabled ()
   {
     return m_eAlgorithmSign != null && m_eAlgorithmSignDigest != null;
+  }
+
+  /**
+   * @return The key identifier type. May not be <code>null</code>.
+   * @since 0.10.7
+   */
+  @Nonnull
+  public final ECryptoKeyIdentifierType getKeyIdentifierType ()
+  {
+    return m_eKeyIdentifierType;
+  }
+
+  /**
+   * Set the key identifier type to use. That defines how the information about
+   * the signing certificate is transmitted.
+   *
+   * @param eKeyIdentifierType
+   *        The key identifier type to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.10.7
+   */
+  @Nonnull
+  public final AS4SigningParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)
+  {
+    ValueEnforcer.notNull (eKeyIdentifierType, "KeyIdentifierType");
+    m_eKeyIdentifierType = eKeyIdentifierType;
+    return this;
   }
 
   /**
@@ -152,7 +183,8 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   @ReturnsMutableCopy
   public AS4SigningParams getClone ()
   {
-    return new AS4SigningParams ().setAlgorithmSign (m_eAlgorithmSign)
+    return new AS4SigningParams ().setKeyIdentifierType (m_eKeyIdentifierType)
+                                  .setAlgorithmSign (m_eAlgorithmSign)
                                   .setAlgorithmSignDigest (m_eAlgorithmSignDigest)
                                   .setAlgorithmC14N (m_eAlgorithmC14N);
   }
@@ -160,7 +192,8 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("AlgorithmSign", m_eAlgorithmSign)
+    return new ToStringGenerator (null).append ("KeyIdentifierType", m_eKeyIdentifierType)
+                                       .append ("AlgorithmSign", m_eAlgorithmSign)
                                        .append ("AlgorithmSignDigest", m_eAlgorithmSignDigest)
                                        .append ("AlgorithmC14N", m_eAlgorithmC14N)
                                        .getToString ();

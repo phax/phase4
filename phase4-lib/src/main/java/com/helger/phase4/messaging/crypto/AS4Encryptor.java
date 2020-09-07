@@ -28,7 +28,6 @@ import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.common.util.KeyUtils;
-import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.w3c.dom.Attr;
@@ -68,7 +67,7 @@ public final class AS4Encryptor
     // As the receiver MAY not have pre-configured the signing leaf certificate,
     // a BinarySecurityToken token reference MUST be used to reference the
     // signing certificate.
-    aBuilder.setKeyIdentifierType (WSConstants.BST_DIRECT_REFERENCE);
+    aBuilder.setKeyIdentifierType (aCryptParams.getKeyIdentifierType ().getTypeID ());
     aBuilder.setSymmetricEncAlgorithm (aCryptParams.getAlgorithmCrypt ().getAlgorithmURI ());
     aBuilder.setKeyEncAlgo (aCryptParams.getKeyEncAlgorithm ());
     aBuilder.setMGFAlgorithm (aCryptParams.getMGFAlgorithm ());

@@ -30,6 +30,7 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.annotation.ReturnsMutableObject;
@@ -47,12 +48,15 @@ import com.helger.phase4.model.pmode.leg.PModeLegSecurity;
 @NotThreadSafe
 public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 {
+  public static final ECryptoKeyIdentifierType DEFAULT_KEY_IDENTIFIER_TYPE = ECryptoKeyIdentifierType.BST_DIRECT_REFERENCE;
   public static final String DEFAULT_KEY_ENC_ALGORITHM = WSS4JConstants.KEYTRANSPORT_RSAOAEP_XENC11;
   public static final String DEFAULT_MGF_ALGORITHM = WSS4JConstants.MGF_SHA256;
   public static final String DEFAULT_DIGEST_ALGORITHM = WSS4JConstants.SHA256;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4CryptParams.class);
 
+  // The key identifier type to use
+  private ECryptoKeyIdentifierType m_eKeyIdentifierType = DEFAULT_KEY_IDENTIFIER_TYPE;
   // The algorithm to use
   private ECryptoAlgorithmCrypt m_eAlgorithmCrypt;
   // The key encryption algorithm
@@ -83,6 +87,33 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     }
 
     return true;
+  }
+
+  /**
+   * @return The key identifier type. May not be <code>null</code>.
+   * @since 0.10.7
+   */
+  @Nonnull
+  public final ECryptoKeyIdentifierType getKeyIdentifierType ()
+  {
+    return m_eKeyIdentifierType;
+  }
+
+  /**
+   * Set the key identifier type to use. That defines how the information about
+   * the signing certificate is transmitted.
+   *
+   * @param eKeyIdentifierType
+   *        The key identifier type to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.10.7
+   */
+  @Nonnull
+  public final AS4CryptParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)
+  {
+    ValueEnforcer.notNull (eKeyIdentifierType, "KeyIdentifierType");
+    m_eKeyIdentifierType = eKeyIdentifierType;
+    return this;
   }
 
   /**
@@ -228,7 +259,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   @ReturnsMutableCopy
   public AS4CryptParams getClone ()
   {
-    return new AS4CryptParams ().setAlgorithmCrypt (m_eAlgorithmCrypt)
+    return new AS4CryptParams ().setKeyIdentifierType (m_eKeyIdentifierType)
+                                .setAlgorithmCrypt (m_eAlgorithmCrypt)
                                 .setKeyEncAlgorithm (m_sKeyEncAlgorithm)
                                 .setMGFAlgorithm (m_sMGFAlgorithm)
                                 .setDigestAlgorithm (m_sDigestAlgorithm)
@@ -239,7 +271,8 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (null).append ("AlgorithmCrypt", m_eAlgorithmCrypt)
+    return new ToStringGenerator (null).append ("KeyIdentifierType", m_eKeyIdentifierType)
+                                       .append ("AlgorithmCrypt", m_eAlgorithmCrypt)
                                        .append ("KeyEncAlgorithm", m_sKeyEncAlgorithm)
                                        .append ("MGFAlgorithm", m_sMGFAlgorithm)
                                        .append ("DigestAlgorithm", m_sDigestAlgorithm)
