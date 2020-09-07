@@ -34,7 +34,7 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
+import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
@@ -129,7 +129,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
                                                               .setKeyStorePassword ("test")
                                                               .setKeyAlias ("ph-as4")
                                                               .setKeyPassword ("test");
-    aClient.setAS4CryptoFactory (new AS4CryptoFactoryPropertiesFile (aCP));
+    aClient.setAS4CryptoFactory (new AS4CryptoFactoryProperties (aCP));
     aClient.cryptParams ().setAlias (aCP.getKeyAlias ());
     return aClient;
   }
@@ -200,7 +200,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     // No Keystore attributes set
     _ensureInvalidState (aClient);
     final AS4CryptoProperties aCP = new AS4CryptoProperties ().setKeyStorePath ("keys/dummy-pw-test.jks");
-    final AS4CryptoFactoryPropertiesFile aCF = new AS4CryptoFactoryPropertiesFile (aCP);
+    final AS4CryptoFactoryProperties aCF = new AS4CryptoFactoryProperties (aCP);
     aClient.setAS4CryptoFactory (aCF);
     _ensureInvalidState (aClient);
     aCF.cryptoProperties ().setKeyStorePassword ("test");
