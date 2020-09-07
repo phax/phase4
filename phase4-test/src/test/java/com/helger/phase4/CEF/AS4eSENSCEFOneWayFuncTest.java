@@ -39,12 +39,12 @@ import org.w3c.dom.NodeList;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.ScopedConfig;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -70,6 +70,7 @@ import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.settings.Settings;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -443,29 +444,29 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA10 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
     final int nProxyPort = 8001;
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
-
-    final HttpProxyServer aProxyServer = _startProxyServer (nProxyPort);
-    try
+    final Settings aSettings = new Settings ("dummy");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
+    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
     {
-      // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                          testSignedUserMessage (m_eSoapVersion,
-                                                                                                 m_aPayload,
-                                                                                                 null,
-                                                                                                 new AS4ResourceHelper ()),
-                                                                          null);
-      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
-    }
-    finally
-    {
-      aProxyServer.stop ();
-      // Restore original properties
-      m_aSettings.setAll (aOldSettings);
+      final HttpProxyServer aProxyServer = _startProxyServer (nProxyPort);
+      try
+      {
+        // send message
+        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                                                   m_aPayload,
+                                                                                                   null,
+                                                                                                   new AS4ResourceHelper ()),
+                                                                            null);
+        sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+      }
+      finally
+      {
+        aProxyServer.stop ();
+      }
     }
   }
 
@@ -488,57 +489,58 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void eSENS_TA11 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
     final int nProxyPort = 8001;
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
+    final Settings aSettings = new Settings ("dummy");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
-    // Simulating a timeout with Thread.sleep but before it entirely triggers
-    // let the program continue as if the Connection is back up again
-    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
-                                                               .withPort (nProxyPort)
-                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
-                                                               {
-                                                                 @Override
-                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
-                                                                                                   final ChannelHandlerContext ctx)
+    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
+    {
+      // Simulating a timeout with Thread.sleep but before it entirely triggers
+      // let the program continue as if the Connection is back up again
+      final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                                 .withPort (nProxyPort)
+                                                                 .withFiltersSource (new HttpFiltersSourceAdapter ()
                                                                  {
-                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   @Override
+                                                                   public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                     final ChannelHandlerContext ctx)
                                                                    {
-                                                                     @Override
-                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     return new HttpFiltersAdapter (originalRequest)
                                                                      {
-                                                                       ThreadHelper.sleep (500);
-                                                                       return null;
-                                                                     }
+                                                                       @Override
+                                                                       public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                       {
+                                                                         ThreadHelper.sleep (500);
+                                                                         return null;
+                                                                       }
 
-                                                                     @Override
-                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
-                                                                     {
-                                                                       LOGGER.error ("Forcing a timeout from retryhandler ");
-                                                                       return httpObject;
-                                                                     }
-                                                                   };
-                                                                 }
-                                                               })
-                                                               .start ();
-    try
-    {
-      // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                          testSignedUserMessage (m_eSoapVersion,
-                                                                                                 m_aPayload,
-                                                                                                 null,
-                                                                                                 new AS4ResourceHelper ()),
-                                                                          null);
-      sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
-    }
-    finally
-    {
-      aProxyServer.stop ();
-      // Restore original properties
-      m_aSettings.setAll (aOldSettings);
+                                                                       @Override
+                                                                       public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                       {
+                                                                         LOGGER.error ("Forcing a timeout from retryhandler ");
+                                                                         return httpObject;
+                                                                       }
+                                                                     };
+                                                                   }
+                                                                 })
+                                                                 .start ();
+      try
+      {
+        // send message
+        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                                                   m_aPayload,
+                                                                                                   null,
+                                                                                                   new AS4ResourceHelper ()),
+                                                                            null);
+        sendMimeMessage (new HttpMimeMessageEntity (aMsg), true, null);
+      }
+      finally
+      {
+        aProxyServer.stop ();
+      }
     }
   }
 
@@ -668,55 +670,56 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test (expected = NoHttpResponseException.class)
   public void eSENS_TA17 () throws Exception
   {
-    final ICommonsMap <String, Object> aOldSettings = m_aSettings.getClone ();
     final int nProxyPort = 8001;
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
-    m_aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
+    final Settings aSettings = new Settings ("dummy");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
+    aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
+    aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
 
-    // Forcing a Timeout from the retry handler
-    final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
-                                                               .withPort (nProxyPort)
-                                                               .withFiltersSource (new HttpFiltersSourceAdapter ()
-                                                               {
-                                                                 @Override
-                                                                 public HttpFilters filterRequest (final HttpRequest originalRequest,
-                                                                                                   final ChannelHandlerContext ctx)
+    try (final ScopedConfig aSC = ScopedConfig.createTestConfig (aSettings))
+    {
+      // Forcing a Timeout from the retry handler
+      final HttpProxyServer aProxyServer = DefaultHttpProxyServer.bootstrap ()
+                                                                 .withPort (nProxyPort)
+                                                                 .withFiltersSource (new HttpFiltersSourceAdapter ()
                                                                  {
-                                                                   return new HttpFiltersAdapter (originalRequest)
+                                                                   @Override
+                                                                   public HttpFilters filterRequest (final HttpRequest originalRequest,
+                                                                                                     final ChannelHandlerContext ctx)
                                                                    {
-                                                                     @Override
-                                                                     public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                     return new HttpFiltersAdapter (originalRequest)
                                                                      {
-                                                                       return null;
-                                                                     }
+                                                                       @Override
+                                                                       public HttpResponse clientToProxyRequest (final HttpObject httpObject)
+                                                                       {
+                                                                         return null;
+                                                                       }
 
-                                                                     @Override
-                                                                     public HttpObject serverToProxyResponse (final HttpObject httpObject)
-                                                                     {
-                                                                       LOGGER.error ("Forcing a timeout from retryhandler ");
-                                                                       return null;
-                                                                     }
-                                                                   };
-                                                                 }
-                                                               })
-                                                               .start ();
-    try
-    {
-      // send message
-      final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                          testSignedUserMessage (m_eSoapVersion,
-                                                                                                 m_aPayload,
-                                                                                                 null,
-                                                                                                 new AS4ResourceHelper ()),
-                                                                          null);
-      sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
-    }
-    finally
-    {
-      aProxyServer.stop ();
-      // Restore original properties
-      m_aSettings.setAll (aOldSettings);
+                                                                       @Override
+                                                                       public HttpObject serverToProxyResponse (final HttpObject httpObject)
+                                                                       {
+                                                                         LOGGER.error ("Forcing a timeout from retryhandler ");
+                                                                         return null;
+                                                                       }
+                                                                     };
+                                                                   }
+                                                                 })
+                                                                 .start ();
+      try
+      {
+        // send message
+        final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
+                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                                                   m_aPayload,
+                                                                                                   null,
+                                                                                                   new AS4ResourceHelper ()),
+                                                                            null);
+        sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_OTHER.getErrorCode ());
+      }
+      finally
+      {
+        aProxyServer.stop ();
+      }
     }
   }
 
@@ -817,5 +820,4 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }
-
 }

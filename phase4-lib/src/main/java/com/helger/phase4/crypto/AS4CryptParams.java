@@ -91,7 +91,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
 
   /**
    * @return The key identifier type. May not be <code>null</code>.
-   * @since 0.10.7
+   * @since 0.11.0
    */
   @Nonnull
   public final ECryptoKeyIdentifierType getKeyIdentifierType ()
@@ -106,7 +106,7 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
    * @param eKeyIdentifierType
    *        The key identifier type to use. May not be <code>null</code>.
    * @return this for chaining
-   * @since 0.10.7
+   * @since 0.11.0
    */
   @Nonnull
   public final AS4CryptParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)

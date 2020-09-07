@@ -26,8 +26,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -45,27 +45,27 @@ public final class AS4WebAppListener extends WebAppListener
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isGlobalDebug ());
+    return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isGlobalProduction ());
+    return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isNoStartupInfo ());
+    return Boolean.toString (AS4Configuration.isNoStartupInfo ());
   }
 
   @Override
   protected String getDataPath (@Nonnull final ServletContext aSC)
   {
-    return AS4ServerConfiguration.getDataPath ();
+    return AS4Configuration.getDataPath ();
   }
 
   @Override

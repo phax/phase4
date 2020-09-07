@@ -27,9 +27,9 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.AS4CryptoProperties;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.security.keystore.EKeyStoreType;
 import com.helger.servlet.mock.MockServletContext;
@@ -50,7 +50,7 @@ public final class MainPhase4PeppolSenderExplicitCryptoProperties
   {
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
-    final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
+    final File aSCPath = AS4Configuration.getDumpBasePathFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
     if (false)
       GlobalIDFactory.setPersistentIntIDFactory (new FileIntIDFactory (WebFileIO.getDataIO ().getFile ("ids.dat")));

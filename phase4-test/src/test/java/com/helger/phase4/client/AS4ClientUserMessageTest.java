@@ -42,9 +42,8 @@ import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
+import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
@@ -58,7 +57,7 @@ import com.helger.xml.serialize.read.DOMReader;
  * @author Martin Bayerl
  * @author Philip Helger
  */
-public final class AS4ClientUserMessageTest
+public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4ClientUserMessageTest.class);
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
@@ -70,11 +69,9 @@ public final class AS4ClientUserMessageTest
   @BeforeClass
   public static void startServer () throws Exception
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID);
-    MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass

@@ -26,9 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.helger.phase4.AS4TestConstants;
+import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.server.MockPModeGenerator;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -37,7 +36,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  *
  * @author Philip Helger
  */
-public final class AS4ClientPullRequestMessageTest
+public final class AS4ClientPullRequestMessageTest extends AbstractAS4TestSetUp
 {
   @WillNotClose
   private static AS4ResourceHelper s_aResMgr;
@@ -45,10 +44,8 @@ public final class AS4ClientPullRequestMessageTest
   @BeforeClass
   public static void startServer () throws Exception
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass

@@ -44,6 +44,7 @@ import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.messaging.AS4MessagingHelper;
@@ -56,7 +57,6 @@ import com.helger.phase4.servlet.AS4ServerInitializer;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -73,27 +73,27 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
   @Nullable
   protected String getInitParameterDebug (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isGlobalDebug ());
+    return Boolean.toString (AS4Configuration.isGlobalDebug ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterProduction (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isGlobalProduction ());
+    return Boolean.toString (AS4Configuration.isGlobalProduction ());
   }
 
   @Override
   @Nullable
   protected String getInitParameterNoStartupInfo (@Nonnull final ServletContext aSC)
   {
-    return Boolean.toString (AS4ServerConfiguration.isNoStartupInfo ());
+    return Boolean.toString (AS4Configuration.isNoStartupInfo ());
   }
 
   @Override
   protected String getDataPath (@Nonnull final ServletContext aSC)
   {
-    return AS4ServerConfiguration.getDataPath ();
+    return AS4Configuration.getDataPath ();
   }
 
   @Override
@@ -200,8 +200,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " + eCheckResult);
     LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
 
-    final String sSMPURL = AS4ServerConfiguration.getSettings ().getAsString ("smp.url");
-    final String sAPURL = AS4ServerConfiguration.getServerAddress ();
+    final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");
+    final String sAPURL = AS4Configuration.getThisEndpointAddress ();
     if (StringHelper.hasText (sSMPURL) && StringHelper.hasText (sAPURL))
     {
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (true);

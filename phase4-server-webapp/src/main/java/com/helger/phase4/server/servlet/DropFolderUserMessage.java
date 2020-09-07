@@ -39,6 +39,7 @@ import com.helger.commons.io.watchdir.EWatchDirAction;
 import com.helger.commons.io.watchdir.IWatchDirCallback;
 import com.helger.commons.io.watchdir.WatchDir;
 import com.helger.commons.timing.StopWatch;
+import com.helger.config.IConfig;
 import com.helger.httpclient.response.ResponseHandlerByteArray;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
@@ -52,18 +53,17 @@ import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RetryCallback;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.sbdh.builder.SBDHReader;
 import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
-import com.helger.settings.ISettings;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClient;
 import com.helger.smpclient.peppol.jaxb.EndpointType;
@@ -206,9 +206,9 @@ public final class DropFolderUserMessage
     if (s_aWatch != null)
       throw new IllegalStateException ("Already inited!");
 
-    final ISettings aSettings = AS4ServerConfiguration.getSettings ();
-    final Path aOutgoingDir = Paths.get (aSettings.getAsString ("server.directory.outgoing", "out"));
-    final Path aIncomingDir = Paths.get (aSettings.getAsString ("server.directory.incoming", "in"));
+    final IConfig aConfig = AS4Configuration.getConfig ();
+    final Path aOutgoingDir = Paths.get (aConfig.getAsString ("server.directory.outgoing", "out"));
+    final Path aIncomingDir = Paths.get (aConfig.getAsString ("server.directory.incoming", "in"));
 
     try
     {

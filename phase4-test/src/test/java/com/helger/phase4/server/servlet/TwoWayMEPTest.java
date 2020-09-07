@@ -31,6 +31,7 @@ import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpMimeMessageEntity;
@@ -47,7 +48,7 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.cef.CEFPMode;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
@@ -62,9 +63,9 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
-                                                  AS4ServerConfiguration.getSettings ()
-                                                                        .getAsString ("server.address",
-                                                                                      AS4TestConstants.DEFAULT_SERVER_ADDRESS),
+                                                  AS4Configuration.getConfig ()
+                                                                  .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
+                                                                                AS4TestConstants.DEFAULT_SERVER_ADDRESS),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
                                                   false);
     // Setting second leg to the same as first
@@ -178,8 +179,8 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     m_aPMode.getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
 
-    final IPMode aPModeID = MetaAS4Manager.getPModeMgr ().findFirst (_getFirstPModeWithID (m_aPMode.getID ()));
-    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPModeID.getID ());
+    final IPMode aPMode = MetaAS4Manager.getPModeMgr ().getPModeOfID (m_aPMode.getID ());
+    aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode (aPMode.getID ());
 
     final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, aEbms3UserMessage)
                                               .setMustUnderstand (true)

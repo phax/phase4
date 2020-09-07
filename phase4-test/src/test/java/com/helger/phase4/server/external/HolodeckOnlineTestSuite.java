@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.server.external;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.experimental.categories.Categories;
@@ -23,11 +24,12 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.helger.phase4.ScopedConfig;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.message.ReceiptMessageTest;
 import com.helger.phase4.server.message.UserMessageOneAttachmentTest;
 import com.helger.phase4.server.message.UserMessageSoapBodyPayloadTest;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.settings.Settings;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)
@@ -39,11 +41,21 @@ public final class HolodeckOnlineTestSuite
   // TODO will be changed soon
   public static final String DEFAULT_HOLODECK_URI = "http://localhost:8080/msh";
 
+  private static ScopedConfig s_aSC;
+
   @BeforeClass
   public static void init ()
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
-    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
-    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_HOLODECK_URI);
+    final Settings aSettings = new Settings ("dummy");
+    aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
+    aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_HOLODECK_URI);
+    s_aSC = ScopedConfig.create (aSettings);
+  }
+
+  @AfterClass
+  public static void clean ()
+  {
+    if (s_aSC != null)
+      s_aSC.close ();
   }
 }

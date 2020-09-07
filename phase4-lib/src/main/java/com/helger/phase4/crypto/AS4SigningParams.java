@@ -56,7 +56,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
 
   /**
    * @return The key identifier type. May not be <code>null</code>.
-   * @since 0.10.7
+   * @since 0.11.0
    */
   @Nonnull
   public final ECryptoKeyIdentifierType getKeyIdentifierType ()
@@ -71,7 +71,7 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
    * @param eKeyIdentifierType
    *        The key identifier type to use. May not be <code>null</code>.
    * @return this for chaining
-   * @since 0.10.7
+   * @since 0.11.0
    */
   @Nonnull
   public final AS4SigningParams setKeyIdentifierType (@Nonnull final ECryptoKeyIdentifierType eKeyIdentifierType)

@@ -49,10 +49,12 @@ import com.helger.commons.collection.ArrayHelper;
 import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.lang.StackTraceHelper;
+import com.helger.config.IConfig;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientRetryHandler.ERetryMode;
 import com.helger.httpclient.HttpClientSettings;
 import com.helger.phase4.AS4TestConstants;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
@@ -61,16 +63,17 @@ import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.profile.cef.AS4CEFProfileRegistarSPI;
-import com.helger.phase4.server.AbstractClientSetUp;
+import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
 
-public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
+public abstract class AbstractUserMessageTestSetUp extends AbstractAS4TestSetUp
 {
   public static final String SETTINGS_SERVER_PROXY_ENABLED = "server.proxy.enabled";
   public static final String SETTINGS_SERVER_PROXY_ADDRESS = "server.proxy.address";
   public static final String SETTINGS_SERVER_PROXY_PORT = "server.proxy.port";
+
+  protected static final String DEFAULT_PARTY_ID = "APP_MOCK_DUMMY_001";
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractUserMessageTestSetUp.class);
 
@@ -94,7 +97,6 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @BeforeClass
   public static void startServer () throws Exception
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
     MetaAS4Manager.getProfileMgr ().setDefaultProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID);
@@ -132,18 +134,19 @@ public abstract class AbstractUserMessageTestSetUp extends AbstractClientSetUp
   @Nonnull
   private HttpPost _createPost ()
   {
-    final String sURL = m_aSettings.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
+    final IConfig aConfig = AS4Configuration.getConfig ();
+    final String sURL = aConfig.getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS, AS4TestConstants.DEFAULT_SERVER_ADDRESS);
 
     LOGGER.info ("The following test case will only work if there is a local AS4 server running @ " + sURL);
     final HttpPost aPost = new HttpPost (sURL);
 
-    if (m_aSettings.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
+    if (aConfig.getAsBoolean (SETTINGS_SERVER_PROXY_ENABLED, false))
     {
       // E.g. using little proxy for faking "no response"
-      aPost.setConfig (RequestConfig.custom ()
-                                    .setProxy (new HttpHost (m_aSettings.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
-                                                             m_aSettings.getAsInt (SETTINGS_SERVER_PROXY_PORT)))
-                                    .build ());
+      final HttpHost aProxyHost = new HttpHost (aConfig.getAsString (SETTINGS_SERVER_PROXY_ADDRESS),
+                                                aConfig.getAsInt (SETTINGS_SERVER_PROXY_PORT));
+      LOGGER.info ("Using proxy host " + aProxyHost.toString ());
+      aPost.setConfig (RequestConfig.custom ().setProxy (aProxyHost).build ());
     }
     return aPost;
   }

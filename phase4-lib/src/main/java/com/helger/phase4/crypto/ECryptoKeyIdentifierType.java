@@ -31,7 +31,7 @@ import com.helger.commons.lang.EnumHelper;
  * deprecated.
  *
  * @author Philip Helger
- * @since 0.10.7
+ * @since 0.11.0
  */
 public enum ECryptoKeyIdentifierType implements IHasID <String>
 {

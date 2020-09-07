@@ -37,6 +37,7 @@ import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
@@ -48,8 +49,8 @@ import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.model.pmode.PModeParty;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.cef.CEFPMode;
+import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.standalone.RunInJettyAS4TEST9090;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.xml.serialize.read.DOMReader;
@@ -81,9 +82,9 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
   {
     final PMode aPMode = CEFPMode.createCEFPMode (AS4TestConstants.TEST_INITIATOR,
                                                   AS4TestConstants.TEST_RESPONDER,
-                                                  AS4ServerConfiguration.getSettings ()
-                                                                        .getAsString ("server.address",
-                                                                                      AS4TestConstants.DEFAULT_SERVER_ADDRESS),
+                                                  AS4Configuration.getConfig ()
+                                                                  .getAsString (MockJettySetup.SETTINGS_SERVER_ADDRESS,
+                                                                                AS4TestConstants.DEFAULT_SERVER_ADDRESS),
                                                   (i, r) -> "pmode" + GlobalIDFactory.getNewPersistentLongID (),
                                                   false);
     // Setting second leg to the same as first

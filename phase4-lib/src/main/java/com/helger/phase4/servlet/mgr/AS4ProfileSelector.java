@@ -20,6 +20,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.phase4.config.AS4Configuration;
 
 /**
  * Static helper class to make the AS4 profile selection more deterministic and
@@ -65,7 +66,7 @@ public final class AS4ProfileSelector
     {
       // Fall back to the configuration file
       // The profile ID from the configuration file is optional
-      ret = AS4ServerConfiguration.getAS4ProfileID ();
+      ret = AS4Configuration.getAS4ProfileID ();
     }
     return ret;
   }

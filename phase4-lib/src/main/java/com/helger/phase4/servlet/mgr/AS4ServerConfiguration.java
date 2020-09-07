@@ -42,9 +42,12 @@ import com.helger.settings.exchange.configfile.ConfigFileBuilder;
  * <li>as4.properties</li>
  * </ol>
  *
+ * @deprecated Since 0.11.0. Use
+ *             {@link com.helger.phase4.config.AS4Configuration} instead.
  * @author Philip Helger
  */
 @NotThreadSafe
+@Deprecated
 public final class AS4ServerConfiguration
 {
   public static final long DEFAULT_RESET_MINUTES = 10;

@@ -19,10 +19,13 @@ package com.helger.phase4.servlet;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.concurrent.SimpleReadWriteLock;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.mgr.AS4DuplicateCleanupJob;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.quartz.TriggerKey;
 
 /**
@@ -38,6 +41,8 @@ import com.helger.quartz.TriggerKey;
 @ThreadSafe
 public final class AS4ServerInitializer
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ServerInitializer.class);
+
   private static final SimpleReadWriteLock s_aRWLock = new SimpleReadWriteLock ();
   @GuardedBy ("s_aRWLock")
   private static TriggerKey s_aTriggerKey;
@@ -54,10 +59,14 @@ public final class AS4ServerInitializer
     // Ensure all managers are initialized
     MetaAS4Manager.getInstance ();
 
+    final long nDisposalMinutes = AS4Configuration.getIncomingDuplicateDisposalMinutes ();
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Scheduling AS4DuplicateCleanupJob to dispose incoming metadata that is older than " + nDisposalMinutes + " minutes");
+
     // Schedule jobs
     s_aRWLock.writeLocked ( () -> {
       // Consecutive calls return null
-      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes ());
+      final TriggerKey aTriggerKey = AS4DuplicateCleanupJob.scheduleMe (nDisposalMinutes);
       if (aTriggerKey != null)
       {
         if (s_aTriggerKey != null)
@@ -69,7 +78,7 @@ public final class AS4ServerInitializer
 
   /**
    * Call this method to shutdown the AS4 server. This unschedules the jobs.
-   * 
+   *
    * @since 0.10.3
    */
   public static void shutdownAS4Server ()

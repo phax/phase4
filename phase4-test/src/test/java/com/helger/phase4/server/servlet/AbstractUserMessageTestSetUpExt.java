@@ -17,7 +17,6 @@
 package com.helger.phase4.server.servlet;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,14 +36,13 @@ import com.helger.phase4.ebms3header.Ebms3PartyInfo;
 import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
-import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.message.AbstractUserMessageTestSetUp;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
- * Since alle these classes need the same setup and a helpermethod, this class
+ * Since all these classes need the same setup and a helper method, this class
  * was created. Also with the help of Parameterized.class, each test will be
  * done for both SOAP Versions.
  *
@@ -68,13 +66,13 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    */
   @Nonnull
-  protected Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
-                                         @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                         @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                         @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                         @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                         @Nullable final String sReferenceToMessageID,
-                                         @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
+  protected static Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
+                                                @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                                @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                                @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                @Nullable final String sReferenceToMessageID,
+                                                @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
@@ -115,12 +113,6 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
       aMessagingIDConsumer.accept (aMsg.getMessagingID ());
 
     return aAttachments != null ? aMsg.getAsSoapDocument (null) : aMsg.getAsSoapDocument (aPayload);
-  }
-
-  @Nonnull
-  protected static Predicate <IPMode> _getFirstPModeWithID (@Nonnull final String sID)
-  {
-    return p -> p.getID ().equals (sID);
   }
 
   @Nonnull

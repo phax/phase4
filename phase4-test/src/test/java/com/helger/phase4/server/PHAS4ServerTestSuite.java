@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.server;
 
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -31,7 +30,6 @@ import com.helger.phase4.server.message.UserMessageSoapBodyPayloadTest;
 import com.helger.phase4.server.servlet.PModeCheckTest;
 import com.helger.phase4.server.supplementary.test.EncryptionTest;
 import com.helger.phase4.server.supplementary.test.SignatureTest;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 @RunWith (Suite.class)
 @SuiteClasses ({ SPITest.class,
@@ -47,11 +45,4 @@ import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
                  ReceiptMessageTest.class })
 @Ignore
 public final class PHAS4ServerTestSuite
-{
-  @BeforeClass
-  public static void init ()
-  {
-    // Force re-init
-    AS4ServerConfiguration.reinit (true);
-  }
-}
+{}

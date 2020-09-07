@@ -26,11 +26,11 @@ import com.helger.bdve.api.result.ValidationResultList;
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -52,7 +52,7 @@ public final class MainPhase4PeppolSender
     // Provide context
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
-    final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
+    final File aSCPath = AS4Configuration.getDumpBasePathFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
 
     // Dump (for debugging purpose only)

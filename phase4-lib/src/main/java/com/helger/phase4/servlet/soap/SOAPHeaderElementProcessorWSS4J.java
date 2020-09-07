@@ -212,7 +212,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         }
       }
 
-      // Signing Verification and Decryption
+      // Signing verification and Decryption
       try
       {
         // Convert to WSS4J attachments
@@ -220,8 +220,9 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
         final WSS4JAttachmentCallbackHandler aAttachmentCallbackHandler = new WSS4JAttachmentCallbackHandler (aAttachments,
                                                                                                               aState.getResourceHelper ());
 
-        // Configure RequestData needed for the check / decrypt process!
         final WSSConfig aWSSConfig = WSSConfigManager.getInstance ().createWSSConfig ();
+
+        // Configure RequestData needed for the check / decrypt process!
         final RequestData aRequestData = new RequestData ();
         aRequestData.setCallbackHandler (aKeyStoreCallback);
         if (aAttachments.isNotEmpty ())

@@ -18,6 +18,8 @@ target/
 .project 
 .classpath
 zz 
+
+as4-data/
 as4-test-data/
 phase4-peppol-client/phase4-peppol-client/
 phase4-cef-client/phase4-cef-client/

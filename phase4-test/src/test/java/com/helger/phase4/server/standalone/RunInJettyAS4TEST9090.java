@@ -18,8 +18,8 @@ package com.helger.phase4.server.standalone;
 
 import java.io.IOException;
 
-import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.system.SystemProperties;
+import com.helger.commons.io.resource.FileSystemResource;
+import com.helger.phase4.ScopedConfig;
 import com.helger.photon.jetty.JettyRunner;
 import com.helger.photon.jetty.JettyStopper;
 
@@ -33,10 +33,11 @@ public final class RunInJettyAS4TEST9090
   private static final int PORT = 9090;
   private static final int STOP_PORT = PORT + 1000;
 
+  private static ScopedConfig s_aSC;
+
   public static void startNinetyServer () throws Exception
   {
-    SystemProperties.setPropertyValue ("phase4.server.configfile",
-                                       new ClassPathResource ("test-phase4-9090.properties").getAsFile ().getAbsolutePath ());
+    s_aSC = ScopedConfig.create (new FileSystemResource ("src/test/resources/test-phase4-9090.properties"));
     final JettyRunner aJetty = new JettyRunner ();
     aJetty.setPort (PORT).setStopPort (STOP_PORT).setAllowAnnotationBasedConfig (false);
     aJetty.startServer ();
@@ -45,6 +46,8 @@ public final class RunInJettyAS4TEST9090
   public static void stopNinetyServer () throws IOException
   {
     new JettyStopper ().setStopPort (STOP_PORT).run ();
+    if (s_aSC != null)
+      s_aSC.close ();
   }
 
   public static void main (final String [] args) throws Exception

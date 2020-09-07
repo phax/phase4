@@ -29,13 +29,13 @@ import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Example implementation of {@link IAS4RawResponseConsumer} writing to a file.
  * The base directory is determined by
- * {@link AS4ServerConfiguration#getDataPath()}.
+ * {@link AS4Configuration#getDumpBasePath()}.
  *
  * @author Philip Helger
  */
@@ -71,11 +71,11 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
    * Default constructor. Writes the files to the AS4 configured data path +
    * {@link AS4OutgoingDumperFileBased#DEFAULT_BASE_PATH}.
    *
-   * @see AS4ServerConfiguration#getDataPath()
+   * @see AS4Configuration#getDumpBasePath()
    */
   public AS4RawResponseConsumerWriteToFile ()
   {
-    this (sMessageID -> new File (AS4ServerConfiguration.getDataPath (),
+    this (sMessageID -> new File (AS4Configuration.getDumpBasePath (),
                                   AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
   }
 

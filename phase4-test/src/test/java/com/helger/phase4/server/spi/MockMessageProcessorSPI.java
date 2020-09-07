@@ -44,7 +44,6 @@ import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.servlet.IAS4MessageState;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.spi.AS4MessageProcessorResult;
 import com.helger.phase4.servlet.spi.AS4SignalMessageProcessorResult;
 import com.helger.phase4.servlet.spi.IAS4ServletMessageProcessorSPI;
@@ -76,8 +75,7 @@ public class MockMessageProcessorSPI implements IAS4ServletMessageProcessorSPI
     {
       // Passing the incoming attachments as response attachments is ONLY
       // contained for testing and SHOULD NOT be copy pasted
-      return AS4MessageProcessorResult.createSuccessExt (aIncomingAttachments,
-                                                         true ? "http://localhost:9090/as4" : AS4ServerConfiguration.getServerAddress ());
+      return AS4MessageProcessorResult.createSuccessExt (aIncomingAttachments, "http://localhost:9090/as4");
     }
 
     return AS4MessageProcessorResult.createSuccessExt (aIncomingAttachments, null);

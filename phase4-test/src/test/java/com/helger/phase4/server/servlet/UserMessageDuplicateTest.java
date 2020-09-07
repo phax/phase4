@@ -24,10 +24,10 @@ import org.w3c.dom.Node;
 
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.message.MockMessages;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
@@ -64,7 +64,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
     // test file is configured for 1 minute can take LONGER if configured
     // differently
-    Thread.sleep (AS4ServerConfiguration.getIncomingDuplicateDisposalMinutes () * 60000 * 2 + 10000);
+    Thread.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * 60000 * 2 + 10000);
 
     sendPlainMessageAndWait (aEntity, true, null);
   }

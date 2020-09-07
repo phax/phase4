@@ -16,11 +16,12 @@
  */
 package com.helger.phase4.server;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.ScopedConfig;
 import com.helger.scope.ScopeHelper;
-import com.helger.settings.Settings;
 
 /**
  * The test classes for the usermessage, are split up for a better overview.
@@ -29,21 +30,30 @@ import com.helger.settings.Settings;
  * done for both SOAP Versions.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
-public abstract class AbstractClientSetUp
+public abstract class AbstractAS4TestSetUp
 {
-  protected static final String DEFAULT_PARTY_ID = "APP_MOCK_DUMMY_001";
+  private static ScopedConfig s_aSC;
 
-  protected Settings m_aSettings;
+  @BeforeClass
+  public static void startTest () throws Exception
+  {
+    s_aSC = ScopedConfig.createTestConfig ();
+  }
+
+  @AfterClass
+  public static void endTest () throws Exception
+  {
+    if (s_aSC != null)
+      s_aSC.close ();
+  }
 
   @Before
   public void setUp ()
   {
     if (false)
       ScopeHelper.setLifeCycleDebuggingEnabled (true);
-    AS4ServerConfiguration.internalReinitForTestOnly ();
-
-    m_aSettings = AS4ServerConfiguration.getMutableSettings ();
 
     // Create the mock PModes
     MockPModeGenerator.ensureMockPModesArePresent ();

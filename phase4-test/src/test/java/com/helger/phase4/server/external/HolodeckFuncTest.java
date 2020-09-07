@@ -28,6 +28,7 @@ import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.ScopedConfig;
 import com.helger.phase4.CEF.AbstractCEFTestSetUp;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -45,8 +46,8 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.util.AS4ResourceHelper;
+import com.helger.settings.Settings;
 
 @Ignore ("Axis2 bug in Holodeck! Requires external proxy and PEPPOL pilot certificate!")
 public final class HolodeckFuncTest extends AbstractCEFTestSetUp
@@ -57,19 +58,23 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
   private static final String COLLABORATION_INFO_SERVICE_TYPE = null;
   private static final String COLLABORATION_INFO_ACTION = "ACT_SIMPLE_ONEWAY_DYN";
   private static final String TO_PARTY_ID = "holodeck-c3";
+  private static ScopedConfig s_aSC;
 
   @BeforeClass
   public static void noJetty ()
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
-    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
-    AS4ServerConfiguration.getMutableSettings ().putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
-    AS4HttpDebug.setEnabled (true);
+    final Settings aSettings = new Settings ("dummy");
+    aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
+    aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
+    s_aSC = ScopedConfig.create (aSettings);
+    AS4HttpDebug.setEnabled (false);
   }
 
   @AfterClass
   public static void disableDebug ()
   {
+    if (s_aSC != null)
+      s_aSC.close ();
     AS4HttpDebug.setEnabled (false);
   }
 

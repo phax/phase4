@@ -21,11 +21,11 @@ import javax.annotation.Nonnull;
 import org.w3c.dom.Element;
 
 import com.helger.commons.annotation.IsSPIImplementation;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.PMode;
 import com.helger.phase4.profile.cef.CEFPMode;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 
 @IsSPIImplementation
@@ -35,7 +35,7 @@ public class MockPullRequestProcessorSPI implements IAS4ServletPullRequestProces
   {
     final PMode aPMode = CEFPMode.createCEFPMode ("pullinitiator",
                                                   "pullresponder",
-                                                  AS4ServerConfiguration.getServerAddress (),
+                                                  AS4Configuration.getThisEndpointAddress (),
                                                   (i, r) -> "PullPMode",
                                                   false);
     if (aSignalMessage.getPullRequest () != null)

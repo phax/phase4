@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>0.10.7-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-lib</artifactId>
   <packaging>bundle</packaging>
@@ -103,6 +103,10 @@
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-tenancy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-config</artifactId>
     </dependency>
     <dependency>
       <groupId>com.helger.photon</groupId>

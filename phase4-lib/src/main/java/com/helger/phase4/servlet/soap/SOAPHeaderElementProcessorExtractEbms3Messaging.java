@@ -44,6 +44,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.WSS4JAttachment;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
@@ -65,7 +66,6 @@ import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4MessageState;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.servlet.mgr.AS4ServletPullRequestProcessorManager;
 import com.helger.phase4.servlet.spi.IAS4ServletPullRequestProcessorSPI;
 import com.helger.xml.XMLHelper;
@@ -276,7 +276,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
 
         // Get responder address from properties file (may be null)
-        final String sResponderAddress = AS4ServerConfiguration.getServerAddress ();
+        final String sResponderAddress = AS4Configuration.getThisEndpointAddress ();
 
         aPMode = m_aPModeResolver.getPModeOfID (sPModeID,
                                                 aCollaborationInfo.getService ().getValue (),

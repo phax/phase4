@@ -32,10 +32,9 @@ import com.helger.phase4.crypto.AS4CryptoFactoryPropertiesFile;
 import com.helger.phase4.crypto.AS4CryptoProperties;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
+import com.helger.phase4.server.AbstractAS4TestSetUp;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.server.message.MockMessages;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.security.keystore.EKeyStoreType;
@@ -46,7 +45,7 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class AS4ClientReceiptMessageTest
+public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
 {
   @WillNotClose
   private static AS4ResourceHelper s_aResMgr;
@@ -54,10 +53,8 @@ public final class AS4ClientReceiptMessageTest
   @BeforeClass
   public static void startServer () throws Exception
   {
-    AS4ServerConfiguration.internalReinitForTestOnly ();
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
-    MockPModeGenerator.ensureMockPModesArePresent ();
   }
 
   @AfterClass

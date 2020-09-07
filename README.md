@@ -284,8 +284,9 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.10.7 - work in progress
+* v0.11.0 - work in progress
     * Extracted new enum `ECryptoKeyIdentifierType` to make the key information type customizable
+    * Reworked the configuration so that system properties and environment variables can also be used
 * v0.10.6 - 2020-09-03
     * The CEF client now has support for OASIS BDXR SMP v2
     * The signature canonicalization method can now be customized

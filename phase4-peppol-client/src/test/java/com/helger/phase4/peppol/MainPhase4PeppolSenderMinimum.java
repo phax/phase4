@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 import com.helger.bdve.peppol.PeppolValidation3_10_1;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.photon.app.io.WebFileIO;
 import com.helger.servlet.mock.MockServletContext;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
@@ -48,7 +48,7 @@ public final class MainPhase4PeppolSenderMinimum
     WebScopeManager.onGlobalBegin (MockServletContext.create ());
 
     // Set data IO base directory
-    final File aSCPath = new File (AS4ServerConfiguration.getDataPath ()).getAbsoluteFile ();
+    final File aSCPath = AS4Configuration.getDumpBasePathFile ();
     WebFileIO.initPaths (aSCPath, aSCPath.getAbsolutePath (), false);
 
     try

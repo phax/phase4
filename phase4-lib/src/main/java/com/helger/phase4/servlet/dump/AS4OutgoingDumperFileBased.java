@@ -33,9 +33,9 @@ import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.datetime.util.PDTIOHelper;
+import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
-import com.helger.phase4.servlet.mgr.AS4ServerConfiguration;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}
@@ -74,11 +74,11 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    * Default constructor. Writes the files to the AS4 configured data path +
    * {@link #DEFAULT_BASE_PATH}.
    *
-   * @see AS4ServerConfiguration#getDataPath()
+   * @see AS4Configuration#getDumpBasePath()
    */
   public AS4OutgoingDumperFileBased ()
   {
-    this ( (sMessageID, nTry) -> new File (AS4ServerConfiguration.getDataPath (),
+    this ( (sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePath (),
                                            DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID, nTry)));
   }
 
