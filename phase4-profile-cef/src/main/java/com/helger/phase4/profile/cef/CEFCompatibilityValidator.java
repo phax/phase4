@@ -107,7 +107,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       else
       {
         // Empty address protocol
-        aErrorList.add (_createError ("PMode Leg1 is missing the AddressProtocol"));
+        if (false)
+          aErrorList.add (_createError ("PMode Leg1 is missing the AddressProtocol"));
       }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();

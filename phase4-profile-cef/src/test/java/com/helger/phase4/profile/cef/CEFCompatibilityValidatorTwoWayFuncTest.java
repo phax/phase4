@@ -125,6 +125,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   }
 
   @Test
+  @Ignore ("The response address is most of the time not set")
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
