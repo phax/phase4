@@ -36,7 +36,7 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 public final class AS4PeppolProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
   public static final String AS4_PROFILE_ID = "peppol";
-  public static final String AS4_PROFILE_NAME = "PEPPOL";
+  public static final String AS4_PROFILE_NAME = "Peppol";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
