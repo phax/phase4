@@ -256,7 +256,10 @@ public class BasicHttpPoster
     if (!aSrcEntity.isRepeatable ())
       throw new IllegalStateException ("This should only be called for repeatable entities");
 
+    // Remember the output stream used for dumping (to be able to close it
+    // later)
     aDumpOSHolder.set (aDumpOS);
+
     return new HttpEntityWrapper (aSrcEntity)
     {
       @Override

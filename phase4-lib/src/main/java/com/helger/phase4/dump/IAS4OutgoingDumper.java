@@ -35,7 +35,8 @@ import com.helger.commons.http.HttpHeaderMap;
 public interface IAS4OutgoingDumper
 {
   /**
-   * Called for new requests.
+   * Called for new requests. It's the responsibility of the caller to close the
+   * created output stream.
    *
    * @param sMessageID
    *        The message ID of the outgoing message. Neither <code>null</code>

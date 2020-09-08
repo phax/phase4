@@ -34,7 +34,8 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 public interface IAS4IncomingDumper
 {
   /**
-   * Called for new requests.
+   * Called for new requests. It's the responsibility of the caller to close the
+   * created output stream.
    *
    * @param aMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
