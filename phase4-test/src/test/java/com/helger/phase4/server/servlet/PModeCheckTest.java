@@ -63,14 +63,14 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeCheckTest.class);
 
-  private ESoapVersion m_eSoapVersion;
+  private static final ESoapVersion SOAP_VERSION = ESoapVersion.AS4_DEFAULT;
+
   private Ebms3UserMessage m_aEbms3UserMessage;
   private Node m_aPayload;
 
   @Before
   public void before ()
   {
-    m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
     m_aEbms3UserMessage = new Ebms3UserMessage ();
 
     // Default Payload for testing
@@ -105,8 +105,8 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
 
   // Can not do that anymore since everything gets accepted with default profile
   // pmode
-  @Ignore
   @Test
+  @Ignore ("The PMode resolution is not done based on PMode ID - therefore this cannot fail")
   public void testWrongPModeID () throws Exception
   {
     m_aEbms3UserMessage.getCollaborationInfo ().getAgreementRef ().setPmode ("this-is-a-wrong-id");
@@ -116,12 +116,10 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aService.setValue ("Random Value");
     m_aEbms3UserMessage.getCollaborationInfo ().setService (aService);
 
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true).getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()),
                              false,
                              EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
   }
@@ -139,18 +137,16 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     m_aEbms3UserMessage.getCollaborationInfo ()
                        .setAction ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:www.cenbii.eu:transaction:biitrns010:ver2.0:extended:urn:www.peppol.eu:bis:peppol4a:ver2.0::2.1");
 
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true).getAsSoapDocument (m_aPayload);
     assertNotNull (aDoc);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), true, null);
   }
 
   @Test
   public void testPModeLegNullReject () throws Exception
   {
-    final PMode aPMode = MockPModeGenerator.getTestPMode (m_eSoapVersion);
+    final PMode aPMode = MockPModeGenerator.getTestPMode (SOAP_VERSION);
     aPMode.setLeg1 (null);
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
@@ -173,17 +169,17 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       assertTrue (aPModeMgr.getAllIDs ().isEmpty ());
       aPModeMgr.createOrUpdatePMode (aPMode);
 
-      final AS4UserMessage aMsg = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage).setMustUnderstand (true);
+      final AS4UserMessage aMsg = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true);
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                  aMsg.getAsSoapDocument (m_aPayload),
-                                                                 m_eSoapVersion,
+                                                                 SOAP_VERSION,
                                                                  aMsg.getMessagingID (),
                                                                  null,
                                                                  s_aResMgr,
                                                                  false,
                                                                  AS4SigningParams.createDefault ());
 
-      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, SOAP_VERSION.getMimeType ()),
                                false,
                                EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
@@ -198,7 +194,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testPModeWrongMPC () throws Exception
   {
-    final PMode aPMode = MockPModeGenerator.getTestPMode (m_eSoapVersion);
+    final PMode aPMode = MockPModeGenerator.getTestPMode (SOAP_VERSION);
     aPMode.getLeg1 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
 
@@ -222,11 +218,11 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                                    CAS4.DEFAULT_ACTION_URL,
                                                                                                    AS4TestConstants.TEST_CONVERSATION_ID));
 
-      final Document aSignedDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
+      final Document aSignedDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage)
                                                 .setMustUnderstand (true)
                                                 .getAsSoapDocument (m_aPayload);
 
-      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, SOAP_VERSION.getMimeType ()),
                                false,
                                EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }
@@ -243,11 +239,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testWrongMPCShouldReturnFailure () throws Exception
   {
     m_aEbms3UserMessage.setMpc ("http://random.com/testmpc");
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true).getAsSoapDocument (m_aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()),
                              false,
                              EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
@@ -256,11 +250,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
   public void testUserMessageMissingProperties () throws Exception
   {
     m_aEbms3UserMessage.setMessageProperties (null);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true).getAsSoapDocument (m_aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, "");
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, "");
   }
 
   @Test
@@ -273,11 +265,9 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     aEbms3MessageProperties.setProperty (aEbms3Properties);
 
     m_aEbms3UserMessage.setMessageProperties (aEbms3MessageProperties);
-    final Document aDoc = AS4UserMessage.create (m_eSoapVersion, m_aEbms3UserMessage)
-                                        .setMustUnderstand (true)
-                                        .getAsSoapDocument (m_aPayload);
+    final Document aDoc = AS4UserMessage.create (SOAP_VERSION, m_aEbms3UserMessage).setMustUnderstand (true).getAsSoapDocument (m_aPayload);
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, "");
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, "");
   }
 
   @Test
@@ -288,9 +278,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
     final DocumentBuilder builder = domFactory.newDocumentBuilder ();
     final Document aDoc = builder.parse (new ClassPathResource ("testfiles/NoResponder.xml").getInputStream ());
 
-    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                             false,
-                             EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
+    sendPlainMessageAndWait (new HttpXMLEntity (aDoc, SOAP_VERSION.getMimeType ()), false, EEbmsError.EBMS_INVALID_HEADER.getErrorCode ());
   }
 
   /**
@@ -301,30 +289,32 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
    * @throws Exception
    *         In case of an error
    */
-  @Ignore
   @Test
+  @Ignore ("The PMode leg protocol address is curently not used, therefore the wrong address never pops up")
   public void testPModeLegProtocolAddressReject () throws Exception
   {
-    final String sPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
-    final PMode aPMode = MockPModeGenerator.getTestPMode (m_eSoapVersion);
+    final String sInvalidPModeID = "pmode-" + GlobalIDFactory.getNewPersistentIntID ();
+
+    final PMode aPMode = MockPModeGenerator.getTestPMode (SOAP_VERSION);
     aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("TestsimulationAddressWrong"), null, null, null, null));
+
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();
     try
     {
-      aPModeMgr.createPMode (aPMode);
+      aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Wrapper <String> aMsgID = new Wrapper <> ();
-      final Document aDoc = _modifyUserMessage (sPModeID, null, null, _defaultProperties (), null, null, x -> aMsgID.set (x));
+      final Document aDoc = _modifyUserMessage (sInvalidPModeID, null, null, _defaultProperties (), null, null, x -> aMsgID.set (x));
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                  aDoc,
-                                                                 m_eSoapVersion,
+                                                                 SOAP_VERSION,
                                                                  aMsgID.get (),
                                                                  null,
                                                                  s_aResMgr,
                                                                  false,
                                                                  AS4SigningParams.createDefault ());
 
-      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+      sendPlainMessageAndWait (new HttpXMLEntity (aSignedDoc, SOAP_VERSION.getMimeType ()),
                                false,
                                EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
     }

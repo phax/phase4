@@ -18,6 +18,7 @@ package com.helger.phase4.CEF;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
@@ -30,7 +31,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -132,8 +132,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                false,
                                                                AS4SigningParams.createDefault ());
 
-    final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
+    final NodeList aNL = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
+    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
 
@@ -170,7 +170,6 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * Predicate: <br>
    * The SMSH sends a success notification to the producer.
    */
-  @Ignore
   @Test
   public void testAS4_TA05 ()
   {
@@ -234,9 +233,11 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), "CompressionType");
-    assertEquals (nList.item (0).getLastChild ().getTextContent (), "application/gzip");
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
+    assertNotNull (aNL);
+    assertEquals (1, aNL.getLength ());
+    assertEquals ("CompressionType", aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("application/gzip", aNL.item (0).getLastChild ().getTextContent ());
   }
 
   /**
@@ -264,9 +265,11 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (), "MimeType");
-    assertEquals (nList.item (0).getFirstChild ().getTextContent (), "application/xml");
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
+    assertNotNull (aNL);
+    assertEquals (1, aNL.getLength ());
+    assertEquals ("MimeType", aNL.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("application/xml", aNL.item (0).getFirstChild ().getTextContent ());
   }
 
   /**
@@ -292,8 +295,8 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    nList.item (0).removeChild (nList.item (0).getFirstChild ());
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
+    aNL.item (0).removeChild (aNL.item (0).getFirstChild ());
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     sendMimeMessage (new HttpMimeMessageEntity (aMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
@@ -326,20 +329,17 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
-    NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    nList = nList.item (0).getChildNodes ();
+    NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
+    aNL = aNL.item (0).getChildNodes ();
 
     boolean bHasCharset = false;
-
-    for (int i = 0; i < nList.getLength (); i++)
-    {
-      if (nList.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
-      {
-        if (nList.item (i).getTextContent ().equals ("UTF-16"))
+    for (int i = 0; i < aNL.getLength (); i++)
+      if (aNL.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
+        if (aNL.item (i).getTextContent ().equals ("UTF-16"))
+        {
           bHasCharset = true;
-      }
-    }
-
+          break;
+        }
     assertTrue (bHasCharset);
   }
 
@@ -370,16 +370,16 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
 
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, aAttachments, new AS4ResourceHelper ());
 
-    NodeList nList = aDoc.getElementsByTagName ("eb:PartProperties");
-    nList = nList.item (0).getChildNodes ();
+    NodeList aNL = aDoc.getElementsByTagName ("eb:PartProperties");
+    aNL = aNL.item (0).getChildNodes ();
 
     boolean bHasCharset = false;
 
-    for (int i = 0; i < nList.getLength (); i++)
+    for (int i = 0; i < aNL.getLength (); i++)
     {
-      if (nList.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
+      if (aNL.item (i).getAttributes ().getNamedItem ("name").getTextContent ().equals ("CharacterSet"))
       {
-        if (nList.item (i).getTextContent ().equals ("UTF-8"))
+        if (aNL.item (i).getTextContent ().equals ("UTF-8"))
           bHasCharset = true;
       }
     }
@@ -644,10 +644,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                true,
                                                                m_aCryptParams);
 
-    final NodeList nList = aDoc.getElementsByTagName ("S12:Body");
+    final NodeList aNL = aDoc.getElementsByTagName ("S12:Body");
 
     final NonBlockingByteArrayOutputStream outputStream = new NonBlockingByteArrayOutputStream ();
-    final Source xmlSource = new DOMSource (nList.item (0));
+    final Source xmlSource = new DOMSource (aNL.item (0));
     final Result outputTarget = new StreamResult (outputStream);
     TransformerFactory.newInstance ().newTransformer ().transform (xmlSource, outputTarget);
 
@@ -660,7 +660,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
     {
       StreamHelper.copyInputStreamToOutputStream (aIS, aOS);
     }
-    nList.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
+    aNL.item (0).setTextContent (AS4XMLHelper.serializeXML (aDoc));
 
     sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
@@ -713,11 +713,10 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
    * Note: This test assertion is only valid in case TLS is handled by the AS4
    * message handler. AS4_TA22 - AS4_TA26 all TLS tests
    */
-  @Ignore
   @Test
   public void testAS4_TA22 ()
   {
-
+    // empty
   }
 
   /**
@@ -738,11 +737,11 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = testUserMessageSoapNotSigned (m_aPayload, null).getAsSoapDocument (m_aPayload);
 
-    NodeList nList = aDoc.getElementsByTagName ("eb:PartyId");
-    final String sPartyID = nList.item (0).getTextContent ();
+    NodeList aNL = aDoc.getElementsByTagName ("eb:PartyId");
+    final String sPartyID = aNL.item (0).getTextContent ();
 
-    nList = aDoc.getElementsByTagName ("eb:Property");
-    final String sOriginalSender = nList.item (0).getTextContent ();
+    aNL = aDoc.getElementsByTagName ("eb:Property");
+    final String sOriginalSender = aNL.item (0).getTextContent ();
 
     assertFalse (sPartyID.equals (sOriginalSender));
   }

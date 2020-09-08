@@ -25,7 +25,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.NoHttpResponseException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.littleshoot.proxy.HttpFilters;
 import org.littleshoot.proxy.HttpFiltersAdapter;
@@ -351,10 +350,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * The RMSH sends back a synchronous error response.
    */
   @Test
-  @Ignore
   public void testEsens_TA08 ()
   {
-
+    // empty
   }
 
   /**
@@ -555,11 +553,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
    * Predicate: <br>
    * PMode parameter " PMode[1].ErrorHandling.Report.SenderErrors" is not set.
    */
-  @Ignore
   @Test
   public void testEsens_TA12 ()
   {
-
+    // Empty
   }
 
   /**
@@ -584,14 +581,14 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
-    NodeList nList = aDoc.getElementsByTagName ("ds:SignatureMethod");
-    String sAlgorithmToCheck = nList.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+    NodeList aNL = aDoc.getElementsByTagName ("ds:SignatureMethod");
+    String sAlgorithmToCheck = aNL.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
 
     // Checking Signature Algorithm
     assertEquals (sAlgorithmToCheck, ECryptoAlgorithmSign.RSA_SHA_256.getAlgorithmURI ());
 
-    nList = aDoc.getElementsByTagName ("ds:DigestMethod");
-    sAlgorithmToCheck = nList.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+    aNL = aDoc.getElementsByTagName ("ds:DigestMethod");
+    sAlgorithmToCheck = aNL.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
 
     // Checking Digest Algorithm
     assertEquals (sAlgorithmToCheck, ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getAlgorithmURI ());
@@ -618,13 +615,13 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, true, m_aCryptParams);
 
-    final NodeList nList = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
+    final NodeList aNL = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
     // Needs to be the second item in the message, since first would be
     // <xenc:EncryptionMethod
     // Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
     // for the key encryption => real encryption algorithm occurs in the soap
     // body
-    final String sAlgorithmToCheck = nList.item (1).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
+    final String sAlgorithmToCheck = aNL.item (1).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
 
     // Checking Signature Algorithm
     assertEquals (sAlgorithmToCheck, ECryptoAlgorithmCrypt.AES_128_GCM.getAlgorithmURI ());
@@ -652,9 +649,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   {
     final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent (), "originalSender");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), "finalRecipient");
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageProperties");
+    assertEquals ("originalSender", aNL.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("finalRecipient", aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
   }
 
   /**
@@ -698,7 +695,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        @Override
                                                                        public HttpObject serverToProxyResponse (final HttpObject httpObject)
                                                                        {
-                                                                         LOGGER.error ("Forcing a timeout from retryhandler ");
+                                                                         LOGGER.warn ("Forcing a timeout from retryhandler for testing purposes.");
                                                                          return null;
                                                                        }
                                                                      };
@@ -813,8 +810,8 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                false,
                                                                AS4SigningParams.createDefault ());
 
-    final NodeList nList = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (nList.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
+    final NodeList aNL = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
+    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
 

@@ -27,7 +27,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.http.entity.StringEntity;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -184,7 +183,7 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
   // Encryption
   // Cannot be tested easily, since the error gets only thrown if the SPI tries
   // to read the stream of the attachment
-  @Ignore
+  // @Ignore
   @Test
   public void testUserMessageEncryptedMimeAttachmentForged () throws Exception
   {
@@ -209,11 +208,10 @@ public final class UserMessageFailureForgeryTest extends AbstractUserMessageTest
     final SoapMimeMultipart aMultipart = (SoapMimeMultipart) aMimeMsg.getContent ();
     // Since we want to change the attachment
     final MimeBodyPart aMimeBodyPart = (MimeBodyPart) aMultipart.getBodyPart (1);
-    if (true)
-      aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1), CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
+    aMimeBodyPart.setContent ("Crappy text".getBytes (StandardCharsets.ISO_8859_1), CMimeType.APPLICATION_OCTET_STREAM.getAsString ());
 
     aMimeMsg.saveChanges ();
-    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), false, EEbmsError.EBMS_FAILED_DECRYPTION.getErrorCode ());
   }
 
   @Test

@@ -193,10 +193,38 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       aState.setDecryptedAttachments (aResponseAttachments);
       return ESuccess.SUCCESS;
     }
-    catch (final WSSecurityException ex)
+    catch (final WSSecurityException | IndexOutOfBoundsException ex)
     {
       // Decryption or Signature check failed
       LOGGER.error ("Error processing the WSSSecurity Header", ex);
+
+      /**
+       * Error processing the WSSSecurity Header
+       *
+       * <pre>
+       * java.lang.IndexOutOfBoundsException: null
+      at java.io.ByteArrayInputStream.read(ByteArrayInputStream.java:180) ~[?:1.8.0_242]
+      at org.apache.wss4j.common.util.AttachmentUtils$1.initCipher(AttachmentUtils.java:501) ~[wss4j-ws-security-common-2.3.0.jar:2.3.0]
+      at org.apache.wss4j.common.util.AttachmentUtils$1.read(AttachmentUtils.java:535) ~[wss4j-ws-security-common-2.3.0.jar:2.3.0]
+      at com.helger.commons.io.stream.StreamHelper._copyInputStreamToOutputStream(StreamHelper.java:218) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStream(StreamHelper.java:312) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStreamAndCloseOS(StreamHelper.java:429) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:187) ~[classes/:?]
+       * </pre>
+       *
+       * Failed to close object org.apache.wss4j.common.util.AttachmentUtils$1
+       *
+       * <pre>
+       * java.lang.IllegalStateException: Cipher not initialized
+      at javax.crypto.Cipher.checkCipherState(Cipher.java:1749) ~[?:1.8.0_242]
+      at javax.crypto.Cipher.doFinal(Cipher.java:2044) ~[?:1.8.0_242]
+      at javax.crypto.CipherInputStream.close(CipherInputStream.java:330) ~[?:1.8.0_242]
+      at com.helger.commons.io.stream.StreamHelper.close(StreamHelper.java:163) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStream(StreamHelper.java:337) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStreamAndCloseOS(StreamHelper.java:429) ~[ph-commons-9.4.7.jar:9.4.7]
+      at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:187) ~[classes/:?]
+       * </pre>
+       */
 
       // TODO we need a way to distinct
       // signature and decrypt WSSecurityException provides no such thing
@@ -207,6 +235,7 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
     catch (final IOException ex)
     {
       // Decryption or Signature check failed
+
       LOGGER.error ("IO error processing the WSSSecurity Header", ex);
       aErrorList.add (EEbmsError.EBMS_OTHER.getAsError (aLocale));
       aState.setSoapWSS4JException (ex);

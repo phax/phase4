@@ -76,9 +76,9 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     // Step one assertion for the sync part
     assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
+    final String aID = aNL.item (0).getTextContent ();
 
     assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));
     assertEquals (2, aIncomingDuplicateMgr.getAll ().size ());
@@ -117,9 +117,9 @@ public final class AS4CEFTwoWayFuncTest extends AbstractCEFTwoWayTestSetUp
     LOGGER.info ("Waiting for 1 second");
     ThreadHelper.sleepSeconds (1);
 
-    final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");
+    final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageId");
     // Should only be called once
-    final String aID = nList.item (0).getTextContent ();
+    final String aID = aNL.item (0).getTextContent ();
     assertTrue (sResponse.contains ("eb:RefToMessageId"));
     assertTrue (sResponse.contains (aID));
     assertNotNull (aIncomingDuplicateMgr.getItemOfMessageID (aID));

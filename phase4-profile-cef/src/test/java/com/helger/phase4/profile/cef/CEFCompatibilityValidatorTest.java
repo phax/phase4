@@ -65,13 +65,13 @@ public final class CEFCompatibilityValidatorTest
   public static final PhotonAppWebTestRule s_aRule = new PhotonAppWebTestRule ();
 
   private static final Locale LOCALE = Locale.US;
+  private static final CEFCompatibilityValidator VALIDATOR = new CEFCompatibilityValidator ();
 
-  private final CEFCompatibilityValidator m_aCEFCompatibilityValidator = new CEFCompatibilityValidator ();
   private PMode m_aPMode;
   private ErrorList m_aErrorList;
 
   @Before
-  public void setUp ()
+  public void before ()
   {
     m_aErrorList = new ErrorList ();
     m_aPMode = CEFPMode.createCEFPMode ("TestInitiator", "TestResponder", "http://localhost:8080", IPModeIDProvider.DEFAULT_DYNAMIC, true);
@@ -83,7 +83,7 @@ public final class CEFCompatibilityValidatorTest
     m_aPMode.setMEP (EMEP.TWO_WAY);
     // Only 2-way push-push allowed
     m_aPMode.setMEPBinding (EMEPBinding.PULL);
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP")));
   }
@@ -93,7 +93,7 @@ public final class CEFCompatibilityValidatorTest
   {
     // SYNC not allowed
     m_aPMode.setMEPBinding (EMEPBinding.SYNC);
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
 
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MEP binding")));
   }
@@ -102,7 +102,7 @@ public final class CEFCompatibilityValidatorTest
   public void testValidatePModeNoLeg ()
   {
     m_aPMode.setLeg1 (null);
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
   }
 
@@ -110,24 +110,23 @@ public final class CEFCompatibilityValidatorTest
   public void testValidatePModeNoProtocol ()
   {
     m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
   }
 
   @Test
-  @Ignore
   public void testValidatePModeNoProtocolAddress ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol")));
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("missing the AddressProtocol")));
   }
 
   @Test
   public void testValidatePModeProtocolAddressIsNotHttp ()
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
   }
 
@@ -135,23 +134,22 @@ public final class CEFCompatibilityValidatorTest
   public void testValidatePModeProtocolSOAP11NotAllowed ()
   {
     m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
   }
 
   @Test
-  // TODO re-enable if we know what we want
-  @Ignore ("Certificate check was a TODO")
+  @Ignore ("The X509 certificate is always null, as it is received from the SMP")
   public void testValidatePModeSecurityNoX509SignatureCertificate ()
   {
     final PModeLegSecurity aSecurityLeg = m_aPMode.getLeg1 ().getSecurity ();
     aSecurityLeg.setX509SignatureCertificate (null);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
-                                    null,
+                                    PModeLegErrorHandling.createUndefined (),
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
   }
 
@@ -162,10 +160,10 @@ public final class CEFCompatibilityValidatorTest
     aSecurityLeg.setX509SignatureAlgorithm (null);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
-                                    null,
+                                    PModeLegErrorHandling.createUndefined (),
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
   }
 
@@ -180,7 +178,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSign.RSA_SHA_256.getID ())));
   }
 
@@ -194,7 +192,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
   }
 
@@ -208,7 +206,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID ())));
   }
 
@@ -222,7 +220,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
   }
 
@@ -236,7 +234,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains (ECryptoAlgorithmCrypt.AES_128_GCM.getID ())));
   }
 
@@ -251,7 +249,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
   }
 
@@ -259,7 +257,7 @@ public final class CEFCompatibilityValidatorTest
   public void testValidatePModeSecurityPModeAuthorizeMandatory ()
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue ("Errors: " + m_aErrorList.toString (), m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
   }
 
@@ -273,7 +271,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("false")));
   }
 
@@ -288,7 +286,7 @@ public final class CEFCompatibilityValidatorTest
                                     null,
                                     null,
                                     aSecurityLeg));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
   }
 
@@ -299,7 +297,7 @@ public final class CEFCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
 
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("No ErrorHandling Parameter present but they are mandatory")));
   }
@@ -318,7 +316,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ReportAsResponse is a mandatory PMode parameter")));
   }
 
@@ -337,7 +335,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportAsResponse has to be True")));
   }
 
@@ -355,7 +353,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
   }
@@ -375,7 +373,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
   }
 
@@ -393,7 +391,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
   }
@@ -413,7 +411,7 @@ public final class CEFCompatibilityValidatorTest
                                     aErrorHandler,
                                     null,
                                     null));
-    m_aCEFCompatibilityValidator.validatePMode (m_aPMode, m_aErrorList);
+    VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
                                                 .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
   }
@@ -423,7 +421,7 @@ public final class CEFCompatibilityValidatorTest
   {
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
-    m_aCEFCompatibilityValidator.validateUserMessage (aUserMessage, m_aErrorList);
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
   }
 
@@ -446,7 +444,7 @@ public final class CEFCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setPartyInfo (aPartyInfo);
 
-    m_aCEFCompatibilityValidator.validateUserMessage (aUserMessage, m_aErrorList);
+    VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only 1 PartyID is allowed")));
   }
 
@@ -455,7 +453,7 @@ public final class CEFCompatibilityValidatorTest
   {
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
     aSignalMessage.setMessageInfo (new Ebms3MessageInfo ());
-    m_aCEFCompatibilityValidator.validateSignalMessage (aSignalMessage, m_aErrorList);
+    VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
   }
 

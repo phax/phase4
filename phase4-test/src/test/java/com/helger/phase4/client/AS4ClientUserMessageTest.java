@@ -67,7 +67,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   private static AS4ResourceHelper s_aResMgr;
 
   @BeforeClass
-  public static void startServer () throws Exception
+  public static void beforeClass () throws Exception
   {
     MockJettySetup.startServer ();
     s_aResMgr = MockJettySetup.getResourceManagerInstance ();
@@ -75,7 +75,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   }
 
   @AfterClass
-  public static void shutDownServer () throws Exception
+  public static void afterClass () throws Exception
   {
     s_aResMgr = null;
     MockJettySetup.shutDownServer ();
@@ -160,7 +160,7 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
   }
 
   @Test
-  public void buildMessageMandatoryCheckFailure () throws Exception
+  public void testBuildMessageMandatoryCheckFailure () throws Exception
   {
     final AS4ClientUserMessage aClient = new AS4ClientUserMessage (s_aResMgr);
     _ensureInvalidState (aClient);

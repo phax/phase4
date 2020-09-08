@@ -48,9 +48,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     sendPlainMessageAndWait (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
-  // Only use if you need to test the feature, takes a long time
-  @Ignore
   @Test
+  @Ignore ("Only use if you need to test the feature, takes a long time")
   public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));

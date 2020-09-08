@@ -82,7 +82,8 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
-      if (sAddressProtocol != null)
+      if (StringHelper.hasText (sAddressProtocol))
+      {
         if (sAddressProtocol.equalsIgnoreCase ("https"))
         {
           // Always okay
@@ -97,6 +98,12 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
             // Other protocol
             aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
           }
+      }
+      else
+      {
+        // Empty address protocol
+        aErrorList.add (_createError ("PMode Leg1 is missing the AddressProtocol"));
+      }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
@@ -193,6 +200,10 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
         }
       }
     }
+    else
+    {
+      aErrorList.add (_createError ("No Security Parameter present but they are mandatory"));
+    }
 
     // Error Handling
     final PModeLegErrorHandling aErrorHandling = aPModeLeg.getErrorHandling ();
@@ -251,9 +262,10 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     }
   }
 
+  @Override
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
-    assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
+    ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList.toString ());
 
     try
     {

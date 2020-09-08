@@ -358,4 +358,18 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   {
     putIn (KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL, bSuccess);
   }
+
+  @Override
+  public boolean equals (final Object o)
+  {
+    // New fields, no change
+    return super.equals (o);
+  }
+
+  @Override
+  public int hashCode ()
+  {
+    // New fields, no change
+    return super.hashCode ();
+  }
 }

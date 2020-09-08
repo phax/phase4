@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.util.Phase4Exception;
@@ -29,7 +27,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @since 0.9.14
  */
 @FunctionalInterface
-public interface IAS4RawResponseConsumer extends Serializable
+public interface IAS4RawResponseConsumer
 {
   /**
    * Handling a HTTP response

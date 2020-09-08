@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -30,7 +28,7 @@ import com.helger.phase4.util.Phase4Exception;
  * @since 0.9.14
  */
 @FunctionalInterface
-public interface IAS4SignalMessageConsumer extends Serializable
+public interface IAS4SignalMessageConsumer
 {
   /**
    * Handling an EBMS 3 Signal Message

@@ -16,8 +16,6 @@
  */
 package com.helger.phase4.client;
 
-import java.io.Serializable;
-
 import javax.annotation.Nonnull;
 
 import org.w3c.dom.Document;
@@ -30,7 +28,7 @@ import com.helger.phase4.messaging.mime.AS4MimeMessage;
  *
  * @author Philip Helger
  */
-public interface IAS4ClientBuildMessageCallback extends Serializable
+public interface IAS4ClientBuildMessageCallback
 {
   /**
    * Called for the created domain object. That usually also contains the

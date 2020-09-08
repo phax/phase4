@@ -98,6 +98,6 @@ public final class SignatureTest
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
     final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
-    assertSame (referenceType, REFERENCE_TYPE.DIRECT_REF);
+    assertSame (REFERENCE_TYPE.DIRECT_REF, referenceType);
   }
 }
