@@ -35,7 +35,7 @@ public class MainSendInParallel
       final ExecutorService aES = Executors.newFixedThreadPool (10);
 
       for (int i = 0; i < 500; ++i)
-        aES.submit (MainPhase4PeppolSenderConstantReceiver2::send);
+        aES.submit (MainPhase4PeppolSenderStorecoveConstantReceiver::send);
 
       aES.shutdown ();
       ExecutorServiceHelper.waitUntilAllTasksAreFinished (aES);

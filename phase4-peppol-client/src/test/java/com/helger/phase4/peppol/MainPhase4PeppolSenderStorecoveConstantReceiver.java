@@ -37,9 +37,9 @@ import com.helger.xml.serialize.read.DOMReader;
  *
  * @author Philip Helger
  */
-public final class MainPhase4PeppolSenderConstantReceiver2
+public final class MainPhase4PeppolSenderStorecoveConstantReceiver
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderConstantReceiver2.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainPhase4PeppolSenderStorecoveConstantReceiver.class);
 
   public static void send ()
   {
