@@ -36,44 +36,38 @@ import com.helger.commons.lang.EnumHelper;
 public enum ECryptoKeyIdentifierType implements IHasID <String>
 {
   /**
-   * Send the signing certificate as a <code>BinarySecurityToken</code>.
-   * <p/>
+   * Send the signing certificate as a <code>BinarySecurityToken</code>. <br>
    * The signing method takes the signing certificate, converts it to a
    * <code>BinarySecurityToken</code>, puts it in the security header, and
    * inserts a <code>Reference</code> to the binary security token into the
    * <code>wsse:SecurityReferenceToken</code>. Thus the whole signing
    * certificate is transfered to the receiver. The X509 profile recommends to
-   * use {@link #ISSUER_SERIAL} instead of sending the whole certificate.
-   * <p/>
+   * use {@link #ISSUER_SERIAL} instead of sending the whole certificate. <br>
    * Please refer to WS Security specification X509 1.1 profile, chapter 3.3.2
    * and to WS Security SOAP Message security 1.1 specification, chapter 7.2
-   * <p/>
+   * <br>
    * Note: only local references to BinarySecurityToken are supported
    */
   BST_DIRECT_REFERENCE ("bst", WSConstants.BST_DIRECT_REFERENCE),
   /**
    * Send the issuer name and the serial number of a certificate to the
-   * receiver.
-   * <p/>
+   * receiver. <br>
    * In contrast to {@link #BST_DIRECT_REFERENCE} only the issuer name and the
    * serial number of the signing certificate are sent to the receiver. This
    * reduces the amount of data being sent. The encryption method uses the
    * public key associated with this certificate to encrypt the symmetric key
-   * used to encrypt data.
-   * <p/>
+   * used to encrypt data. <br>
    * Please refer to WS Security specification X509 1.1 profile, chapter 3.3.3
    */
   ISSUER_SERIAL ("issuer-serial", WSConstants.ISSUER_SERIAL),
   /**
-   * Send the certificate used to encrypt the symmetric key.
-   * <p/>
+   * Send the certificate used to encrypt the symmetric key. <br>
    * The encryption method uses the public key associated with this certificate
    * to encrypt the symmetric key used to encrypt data. The certificate is
    * converted into a <code>KeyIdentifier</code> token and sent to the receiver.
    * Thus the complete certificate data is transfered to receiver. The X509
    * profile recommends to use {@link #ISSUER_SERIAL} instead of sending the
-   * whole certificate.
-   * <p/>
+   * whole certificate. <br>
    * Please refer to WS Security SOAP Message security 1.1 specification,
    * chapter 7.3. Note that this is a NON-STANDARD method. The standard way to
    * refer to an X.509 Certificate via a KeyIdentifier is to use
@@ -82,8 +76,7 @@ public enum ECryptoKeyIdentifierType implements IHasID <String>
   X509_KEY_IDENTIFIER ("x509-key-id", WSConstants.X509_KEY_IDENTIFIER),
   /**
    * Send a <code>SubjectKeyIdentifier</code> to identify the signing
-   * certificate.
-   * <p/>
+   * certificate. <br>
    * Refer to WS Security specification X509 1.1 profile, chapter 3.3.1
    */
   SKI_KEY_IDENTIFIER ("ski-key-id", WSConstants.SKI_KEY_IDENTIFIER),

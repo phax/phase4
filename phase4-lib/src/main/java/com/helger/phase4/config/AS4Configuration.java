@@ -166,6 +166,8 @@ public final class AS4Configuration
   /**
    * Overwrite the global configuration. This is only needed for testing.
    *
+   * @param aNewConfig
+   *        The configuration to use globally. May not be <code>null</code>.
    * @return The old value of {@link IConfig}. Never <code>null</code>.
    */
   @Nonnull

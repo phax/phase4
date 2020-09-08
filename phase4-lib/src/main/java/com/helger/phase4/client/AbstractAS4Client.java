@@ -371,10 +371,16 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aResponseHandler
    *        The response handler that converts the HTTP response to a domain
    *        object. May not be <code>null</code>.
+   * @param aCallback
+   *        An optional callback for the different stages of building the
+   *        document. May be <code>null</code>.
    * @param aOutgoingDumper
    *        An outgoing dumper to be used. Maybe <code>null</code>. If
    *        <code>null</code> the global outgoing dumper from
    *        {@link AS4DumpManager} is used.
+   * @param aRetryCallback
+   *        An optional callback to be invoked if a retry happens on HTTP level.
+   *        May be <code>null</code>.
    * @return The sent message that contains
    * @throws IOException
    *         in case of error when building or sending the message
