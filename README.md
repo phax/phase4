@@ -258,7 +258,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.11.0 - work in progress
+* v0.11.0 - 2020-09-08
     * Extracted new enum `ECryptoKeyIdentifierType` to make the key information type customizable
     * Reworked the configuration so that system properties and environment variables can also be used
     * The class `AS4Configuration` is now the primary source for configuration stuff
