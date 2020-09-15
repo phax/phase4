@@ -124,7 +124,7 @@
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.2.6</version>
+        <version>8.2.7</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -239,7 +239,7 @@
       <dependency>
         <groupId>commons-codec</groupId>
         <artifactId>commons-codec</artifactId>
-        <version>1.14</version>
+        <version>1.15</version>
       </dependency>
       
       <dependency>
