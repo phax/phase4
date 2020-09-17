@@ -258,6 +258,10 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.11.1 - 2020-09-17
+    * Updated to Jakarta JAXB 2.3.3
+    * Updated to ph-sbdh 4.1.1
+    * Updated to peppol-commons 8.2.2
 * v0.11.0 - 2020-09-08
     * Extracted new enum `ECryptoKeyIdentifierType` to make the key information type customizable
     * Reworked the configuration so that system properties and environment variables can also be used

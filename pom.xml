@@ -73,8 +73,8 @@
     <xmlsec.version>2.2.0</xmlsec.version>
     <wss4j.version>2.3.0</wss4j.version>
     <log4j.version>2.13.3</log4j.version>
-    <peppol-commons.version>8.2.1</peppol-commons.version>
-    <ph-xsds.version>2.4.0</ph-xsds.version>
+    <peppol-commons.version>8.2.2</peppol-commons.version>
+    <ph-xsds.version>2.4.1</ph-xsds.version>
   </properties>
   
   <dependencyManagement>
@@ -82,7 +82,7 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>9.4.8</version>
+        <version>9.5.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -96,14 +96,14 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>4.1.0</version>
+        <version>4.1.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>6.1.7</version>
+        <version>6.1.8</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -117,14 +117,14 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.3.3</version>
+        <version>9.3.4</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.2.7</version>
+        <version>8.2.8</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -138,14 +138,14 @@
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>5.6.1</version>
+        <version>5.6.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.bdve</groupId>
         <artifactId>ph-bdve-parent-pom</artifactId>
-        <version>6.0.2</version>
+        <version>6.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -310,6 +310,13 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <source>8</source>
+        </configuration>
+      </plugin> 
     </plugins>
   </build>
 </project>
