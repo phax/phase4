@@ -100,7 +100,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
       pmodeResolver (aPModeResolver);
       incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
-      pmode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", null));
+      pmode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", "a", null));
     }
     catch (final Exception ex)
     {

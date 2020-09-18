@@ -272,8 +272,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         // Find PMode
         String sPModeID = null;
+        String sAgreementRef = null;
         if (aCollaborationInfo.getAgreementRef () != null)
+        {
           sPModeID = aCollaborationInfo.getAgreementRef ().getPmode ();
+          sAgreementRef = aCollaborationInfo.getAgreementRef ().getValue ();
+        }
 
         // Get responder address from properties file (may be null)
         final String sResponderAddress = AS4Configuration.getThisEndpointAddress ();
@@ -283,6 +287,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                                 aCollaborationInfo.getAction (),
                                                 sInitiatorID,
                                                 sResponderID,
+                                                sAgreementRef,
                                                 sResponderAddress);
 
         // Should be screened by the xsd conversion already

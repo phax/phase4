@@ -56,6 +56,7 @@ public class DefaultPModeResolver implements IPModeResolver
                               @Nonnull final String sAction,
                               @Nonnull @Nonempty final String sInitiatorID,
                               @Nonnull @Nonempty final String sResponderID,
+                              @Nullable final String sAgreementRef,
                               @Nullable final String sAddress)
   {
     final IPModeManager aPModeMgr = MetaAS4Manager.getPModeMgr ();

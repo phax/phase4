@@ -45,6 +45,9 @@ public interface IPModeResolver
    *        Initiator ID from user message
    * @param sResponderID
    *        Responder ID from user message
+   * @param sAgreementRef
+   *        The agreement reference from the user message. May be
+   *        <code>null</code>.
    * @param sAddress
    *        Endpoint address
    * @return <code>null</code> if resolution failed.
@@ -55,5 +58,6 @@ public interface IPModeResolver
                        @Nonnull String sAction,
                        @Nonnull @Nonempty String sInitiatorID,
                        @Nonnull @Nonempty String sResponderID,
+                       @Nullable String sAgreementRef,
                        @Nullable String sAddress);
 }
