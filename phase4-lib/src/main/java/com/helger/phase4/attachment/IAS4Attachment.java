@@ -67,6 +67,10 @@ public interface IAS4Attachment
   @Nullable
   IHasInputStream getInputStreamProvider ();
 
+  /**
+   * @return <code>true</code> if the input stream backing this attachment can
+   *         be read multiple times, <code>false</code> if not.
+   */
   default boolean isRepeatable ()
   {
     final IHasInputStream aISP = getInputStreamProvider ();
@@ -87,19 +91,40 @@ public interface IAS4Attachment
   @Nullable
   EAS4CompressionMode getCompressionMode ();
 
+  /**
+   * @return <code>true</code> if a compression mode is set, <code>false</code>
+   *         if not.
+   */
   default boolean hasCompressionMode ()
   {
     return getCompressionMode () != null;
   }
 
+  /**
+   * @return The defined character set, falling back to ISO-8859-1 if none is
+   *         defined.
+   */
   @Nonnull
   default Charset getCharset ()
   {
     return getCharsetOrDefault (StandardCharsets.ISO_8859_1);
   }
 
+  /**
+   * Get the specified character set or the provided default value.
+   *
+   * @param aDefault
+   *        The default value to be returned, if no character set is provided.
+   *        May be <code>null</code>.
+   * @return Only <code>null</code> if no character set is defined and the
+   *         provided default value is <code>null</code>.
+   */
   @Nullable
-  Charset getCharsetOrDefault (@Nullable final Charset aDefault);
+  Charset getCharsetOrDefault (@Nullable Charset aDefault);
 
+  /**
+   * @return <code>true</code> if a character set is defined, <code>false</code>
+   *         if not.
+   */
   boolean hasCharset ();
 }
