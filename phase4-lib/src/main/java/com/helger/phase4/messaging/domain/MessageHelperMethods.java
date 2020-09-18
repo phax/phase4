@@ -18,6 +18,7 @@ package com.helger.phase4.messaging.domain;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
@@ -33,7 +34,9 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.CollectionHelper;
+import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
@@ -312,17 +315,28 @@ public final class MessageHelperMethods
     if (aAttachment == null)
       return null;
 
+    final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
+
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
     aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
+
     if (aAttachment.hasCharset ())
     {
       aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
     {
       aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_COMPRESSION_TYPE,
                                                              aAttachment.getCompressionMode ().getMimeTypeAsString ()));
+      aUsedPropertyNames.add (PART_PROPERTY_COMPRESSION_TYPE);
     }
+
+    // Add all custom part properties (since 0.12.0)
+    for (final Map.Entry <String, String> aEntry : aAttachment.customPartProperties ().entrySet ())
+      if (aUsedPropertyNames.add (aEntry.getKey ()))
+        aEbms3PartProperties.addProperty (createEbms3Property (aEntry.getKey (), aEntry.getValue ()));
 
     final Ebms3PartInfo aEbms3PartInfo = new Ebms3PartInfo ();
     aEbms3PartInfo.setHref (PREFIX_CID + aAttachment.getId ());

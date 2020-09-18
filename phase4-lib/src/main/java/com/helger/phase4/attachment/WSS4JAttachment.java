@@ -42,7 +42,10 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.annotation.UnsupportedOperation;
+import com.helger.commons.collection.impl.CommonsLinkedHashMap;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
@@ -82,6 +85,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   private EAS4CompressionMode m_eCompressionMode;
   private Charset m_aCharset;
   private String m_sUncompressedMimeType;
+  private final ICommonsOrderedMap <String, String> m_aCustomPartProps = new CommonsLinkedHashMap <> ();
 
   public WSS4JAttachment (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper, @Nullable final String sMimeType)
   {
@@ -283,6 +287,13 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     aMimeBodyPart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, getContentTransferEncoding ().getID ());
 
     aMimeMultipart.addBodyPart (aMimeBodyPart);
+  }
+
+  @Nonnull
+  @ReturnsMutableObject
+  public ICommonsOrderedMap <String, String> customPartProperties ()
+  {
+    return m_aCustomPartProps;
   }
 
   @Override

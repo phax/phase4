@@ -23,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.annotation.ReturnsMutableObject;
+import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.phase4.util.AS4ResourceHelper;
@@ -34,8 +36,14 @@ import com.helger.phase4.util.AS4ResourceHelper;
  */
 public interface IAS4Attachment
 {
+  /**
+   * @return The attachment Content ID. Must NOT contain any "cid" prefix.
+   */
   String getId ();
 
+  /**
+   * @return The MIME type in a string representation
+   */
   String getMimeType ();
 
   /**
@@ -127,4 +135,13 @@ public interface IAS4Attachment
    *         if not.
    */
   boolean hasCharset ();
+
+  /**
+   * @return A non-<code>null</code> but maybe empty map of custom part
+   *         properties for the UserMessage.
+   * @since 0.12.0
+   */
+  @Nonnull
+  @ReturnsMutableObject
+  ICommonsOrderedMap <String, String> customPartProperties ();
 }
