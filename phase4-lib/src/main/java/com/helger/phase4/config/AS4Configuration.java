@@ -219,7 +219,7 @@ public final class AS4Configuration
       _logRenamedConfig ("server.debug", "global.debug");
       return ret.booleanValue ();
     }
-    return getConfig ().getAsBoolean ("gobal.debug", false);
+    return getConfig ().getAsBoolean ("global.debug", false);
   }
 
   /**
@@ -234,7 +234,7 @@ public final class AS4Configuration
       _logRenamedConfig ("server.production", "global.production");
       return ret.booleanValue ();
     }
-    return getConfig ().getAsBoolean ("gobal.production", false);
+    return getConfig ().getAsBoolean ("global.production", false);
   }
 
   /**
@@ -249,7 +249,7 @@ public final class AS4Configuration
       _logRenamedConfig ("server.nostartupinfo", "global.nostartupinfo");
       return ret.booleanValue ();
     }
-    return getConfig ().getAsBoolean ("gobal.nostartupinfo", true);
+    return getConfig ().getAsBoolean ("global.nostartupinfo", true);
   }
 
   @Nonnull
