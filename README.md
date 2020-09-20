@@ -263,6 +263,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added support for custom "Part properties" in `IAS4Attachment` (for ENTSOG)
     * Added new enumeration `EAS4MessageType` to differentiate the type of message more easily
     * The sending date and time of the AS4 message can now be configured in the client
+    * Made class `PMode` more static (see [issue #41](https://github.com/phax/phase4/issues/41))
 * v0.11.1 - 2020-09-17
     * Updated to Jakarta JAXB 2.3.3
     * Updated to ph-sbdh 4.1.1
