@@ -25,6 +25,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -359,9 +360,16 @@ public class PModeLegReliability implements Serializable
     return EChange.CHANGED;
   }
 
-  @Nullable
+  @Nonnull
+  @ReturnsMutableObject
+  public final ICommonsList <String> correlations ()
+  {
+    return m_aCorrelation;
+  }
+
+  @Nonnull
   @ReturnsMutableCopy
-  public final ICommonsList <String> getCorrelation ()
+  public final ICommonsList <String> getAllCorrelations ()
   {
     return m_aCorrelation.getClone ();
   }

@@ -67,7 +67,7 @@ public class PModeLegReliabilityMicroTypeConverter extends AbstractPModeMicroTyp
       ret.setAttribute (ATTR_IN_ORDER_CONTRACT, aValue.isInOrderContract ());
     if (aValue.isStartGroupDefined ())
       ret.setAttribute (ATTR_START_GROUP, aValue.isStartGroup ());
-    for (final String sCorrelation : aValue.getCorrelation ())
+    for (final String sCorrelation : aValue.getAllCorrelations ())
       ret.appendElement (sNamespaceURI, ELEMENT_CORRELATION).appendText (sCorrelation);
     if (aValue.isTerminateGroupDefined ())
       ret.setAttribute (ATTR_TERMINATE_GROUP, aValue.isTerminateGroup ());
