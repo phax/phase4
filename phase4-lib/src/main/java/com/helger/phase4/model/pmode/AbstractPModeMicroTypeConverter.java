@@ -36,7 +36,7 @@ public abstract class AbstractPModeMicroTypeConverter <T> implements IMicroTypeC
   {}
 
   @Nonnull
-  protected static ETriState getTriState (@Nullable final String sAttrValue, final boolean bDefault)
+  public static ETriState getTriState (@Nullable final String sAttrValue, final boolean bDefault)
   {
     return sAttrValue == null ? ETriState.UNDEFINED : ETriState.valueOf (StringParser.parseBool (sAttrValue, bDefault));
   }
