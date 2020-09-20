@@ -201,6 +201,20 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
     return EChange.CHANGED;
   }
 
+  /**
+   * Set the property mandatory or optional.
+   *
+   * @param bMandatory
+   *        <code>true</code> for mandatory, <code>false</code> for optional.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMandatory (final boolean bMandatory)
+  {
+    return setMandatory (EMandatory.valueOf (bMandatory));
+  }
+
   @Override
   public boolean equals (final Object o)
   {

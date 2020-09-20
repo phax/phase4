@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
@@ -29,6 +29,7 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.name.IHasName;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
 import com.helger.commons.string.StringHelper;
@@ -45,17 +46,17 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Philip Helger
  */
-@Immutable
+@NotThreadSafe
 @MustImplementEqualsAndHashcode
 public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Serializable
 {
   public static final boolean DEFAULT_MANDATORY = false;
 
-  private final String m_sName;
-  private final IMimeType m_aMimeType;
-  private final String m_sXSDFilename;
-  private final Integer m_aMaxSizeKB;
-  private final EMandatory m_eMandatory;
+  private String m_sName;
+  private IMimeType m_aMimeType;
+  private String m_sXSDFilename;
+  private Integer m_aMaxSizeKB;
+  private EMandatory m_eMandatory;
 
   public PModePayloadProfile (@Nonnull @Nonempty final String sName,
                               @Nonnull final IMimeType aMimeType,
@@ -63,11 +64,11 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
                               @Nullable final Integer aMaxSizeKB,
                               @Nonnull final EMandatory eMandatory)
   {
-    m_sName = ValueEnforcer.notEmpty (sName, "Name");
-    m_aMimeType = ValueEnforcer.notNull (aMimeType, "MimeType");
-    m_sXSDFilename = sXSDFilename;
-    m_aMaxSizeKB = aMaxSizeKB;
-    m_eMandatory = ValueEnforcer.notNull (eMandatory, "Mandatory");
+    setName (sName);
+    setMimeType (aMimeType);
+    setXSDFilename (sXSDFilename);
+    setMaxSizeKB (aMaxSizeKB);
+    setMandatory (eMandatory);
   }
 
   /**
@@ -81,12 +82,48 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
+   * Set the name.
+   *
+   * @param sName
+   *        The new name. May neither be <code>null</code> nor empty.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setName (@Nonnull @Nonempty final String sName)
+  {
+    ValueEnforcer.notEmpty (sName, "Name");
+    if (sName.equals (m_sName))
+      return EChange.UNCHANGED;
+    m_sName = sName;
+    return EChange.CHANGED;
+  }
+
+  /**
    * @return The MIME type. Never <code>null</code>.
    */
   @Nonnull
   public final IMimeType getMimeType ()
   {
     return m_aMimeType;
+  }
+
+  /**
+   * Set the MIME type.
+   *
+   * @param aMimeType
+   *        The new MIME type. May not be <code>null</code>.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMimeType (@Nonnull final IMimeType aMimeType)
+  {
+    ValueEnforcer.notNull (aMimeType, "MimeType");
+    if (aMimeType.equals (m_aMimeType))
+      return EChange.UNCHANGED;
+    m_aMimeType = aMimeType;
+    return EChange.CHANGED;
   }
 
   /**
@@ -109,6 +146,23 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   }
 
   /**
+   * Set the XML Schema filename.
+   *
+   * @param sXSDFilename
+   *        The new XML Schema filename. May be <code>null</code>.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setXSDFilename (@Nullable final String sXSDFilename)
+  {
+    if (EqualsHelper.equals (sXSDFilename, m_sXSDFilename))
+      return EChange.UNCHANGED;
+    m_sXSDFilename = sXSDFilename;
+    return EChange.CHANGED;
+  }
+
+  /**
    * @return The maximum size in kilobyte or <code>null</code>.
    */
   @Nullable
@@ -124,6 +178,37 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   public final boolean hasMaxSizeKB ()
   {
     return m_aMaxSizeKB != null;
+  }
+
+  /**
+   * Set the maximum size in kilobytes.
+   *
+   * @param aMaxSizeKB
+   *        The maximum size in kilobytes. May be <code>null</code>.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMaxSizeKB (@Nullable final Integer aMaxSizeKB)
+  {
+    if (EqualsHelper.equals (aMaxSizeKB, m_aMaxSizeKB))
+      return EChange.UNCHANGED;
+    m_aMaxSizeKB = aMaxSizeKB;
+    return EChange.CHANGED;
+  }
+
+  /**
+   * Set the maximum size in kilobytes.
+   *
+   * @param nMaxSizeKB
+   *        The maximum size in kilobytes.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMaxSizeKB (@Nullable final int nMaxSizeKB)
+  {
+    return setMaxSizeKB (Integer.valueOf (nMaxSizeKB));
   }
 
   /**
@@ -143,6 +228,38 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   public final boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
+  }
+
+  /**
+   * Set the payload mandatory or optional.
+   *
+   * @param eMandatory
+   *        Payload mandatory state. May not be <code>null</code>.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMandatory (@Nonnull final EMandatory eMandatory)
+  {
+    ValueEnforcer.notNull (eMandatory, "Mandatory");
+    if (eMandatory.equals (m_eMandatory))
+      return EChange.UNCHANGED;
+    m_eMandatory = eMandatory;
+    return EChange.CHANGED;
+  }
+
+  /**
+   * Set the payload mandatory or optional.
+   *
+   * @param bMandatory
+   *        <code>true</code> for mandatory, <code>false</code> for optional.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMandatory (final boolean bMandatory)
+  {
+    return setMandatory (EMandatory.valueOf (bMandatory));
   }
 
   @Override
