@@ -70,6 +70,9 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
     m_eMandatory = ValueEnforcer.notNull (eMandatory, "Mandatory");
   }
 
+  /**
+   * The PMode payload profile name.
+   */
   @Nonnull
   @Nonempty
   public final String getName ()
@@ -77,39 +80,65 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
     return m_sName;
   }
 
+  /**
+   * @return The MIME type. Never <code>null</code>.
+   */
   @Nonnull
   public final IMimeType getMimeType ()
   {
     return m_aMimeType;
   }
 
+  /**
+   * @return The name of the XML Schema filename to apply. May be
+   *         <code>null</code>.
+   */
   @Nullable
   public final String getXSDFilename ()
   {
     return m_sXSDFilename;
   }
 
+  /**
+   * @return <code>true</code> if an XML Schema filename is present,
+   *         <code>false</code> if not.
+   */
   public final boolean hasXSDFilename ()
   {
     return StringHelper.hasText (m_sXSDFilename);
   }
 
+  /**
+   * @return The maximum size in kilobyte or <code>null</code>.
+   */
   @Nullable
   public final Integer getMaxSizeKB ()
   {
     return m_aMaxSizeKB;
   }
 
+  /**
+   * @return <code>true</code> if a maximum size in kilobyte is present,
+   *         <code>false</code> if not.
+   */
   public final boolean hasMaxSizeKB ()
   {
     return m_aMaxSizeKB != null;
   }
 
+  /**
+   * @return <code>true</code> if the part is mandatory, <code>false</code> if
+   *         it is optional.
+   */
   public final boolean isMandatory ()
   {
     return m_eMandatory.isMandatory ();
   }
 
+  /**
+   * @return <code>true</code> if the part is optional, <code>false</code> if it
+   *         is mandatory.
+   */
   @Override
   public final boolean isOptional ()
   {
