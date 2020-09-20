@@ -221,6 +221,12 @@ public class PModeLegBusinessInformation implements Serializable
     return EChange.CHANGED;
   }
 
+  @Nonnull
+  public final EChange setPayloadProfileMaxKB (final long nPayloadProfileMaxKB)
+  {
+    return setPayloadProfileMaxKB (Long.valueOf (nPayloadProfileMaxKB));
+  }
+
   @Nullable
   public final String getMPCID ()
   {
