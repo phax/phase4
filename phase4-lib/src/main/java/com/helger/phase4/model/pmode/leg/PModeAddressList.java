@@ -17,22 +17,18 @@
 package com.helger.phase4.model.pmode.leg;
 
 import java.io.Serializable;
-import java.util.Collection;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
-import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
-import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.lang.ICloneable;
-import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
@@ -55,32 +51,20 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   public PModeAddressList (@Nullable final String... aAddresses)
   {
     if (aAddresses != null)
-      for (final String sAddress : aAddresses)
-        addAddress (sAddress);
+      addresses ().addAll (aAddresses);
   }
 
-  public PModeAddressList (@Nullable final Collection <String> aAddresses)
+  public PModeAddressList (@Nullable final Iterable <? extends String> aAddresses)
   {
     if (aAddresses != null)
-      m_aAddresses.addAll (aAddresses);
-  }
-
-  public final void addAddress (@Nonnull @Nonempty final String sAddress)
-  {
-    ValueEnforcer.notEmpty (sAddress, "Address");
-    m_aAddresses.add (sAddress);
+      addresses ().addAll (aAddresses);
   }
 
   @Nonnull
-  public final EChange removeAddress (@Nullable final String sAddress)
+  @ReturnsMutableObject
+  public final ICommonsList <String> addresses ()
   {
-    return m_aAddresses.removeObject (sAddress);
-  }
-
-  @Nonnull
-  public final EChange removeAllAddresses ()
-  {
-    return m_aAddresses.removeAll ();
+    return m_aAddresses;
   }
 
   @Nonnull
@@ -88,17 +72,6 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
   public final ICommonsList <String> getAllAddresses ()
   {
     return m_aAddresses.getClone ();
-  }
-
-  @Nonnegative
-  public final int getAddressCount ()
-  {
-    return m_aAddresses.size ();
-  }
-
-  public final boolean isEmpty ()
-  {
-    return m_aAddresses.isEmpty ();
   }
 
   /**

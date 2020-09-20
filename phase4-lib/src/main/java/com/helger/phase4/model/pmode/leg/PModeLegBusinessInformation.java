@@ -87,13 +87,8 @@ public class PModeLegBusinessInformation implements Serializable
    */
   private String m_sMPCID;
 
-  public PModeLegBusinessInformation (@Nullable final String sServiceValue,
-                                      @Nullable final String sAction,
-                                      @Nullable final Long nPayloadProfileMaxKB,
-                                      @Nullable final String sMPCID)
-  {
-    this (sServiceValue, null, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
-  }
+  public PModeLegBusinessInformation ()
+  {}
 
   public PModeLegBusinessInformation (@Nullable final String sServiceValue,
                                       @Nullable final String sServiceType,
@@ -107,9 +102,9 @@ public class PModeLegBusinessInformation implements Serializable
     setServiceType (sServiceType);
     setAction (sAction);
     if (aProperties != null)
-      m_aProperties.putAll (aProperties);
+      properties ().putAll (aProperties);
     if (aPayloadProfiles != null)
-      m_aPayloadProfiles.putAll (aPayloadProfiles);
+      payloadProfiles ().putAll (aPayloadProfiles);
     setPayloadProfileMaxKB (nPayloadProfileMaxKB);
     setMPCID (sMPCID);
   }
@@ -287,5 +282,14 @@ public class PModeLegBusinessInformation implements Serializable
                                        .appendIfNotNull ("PayloadProfileMaxMB", m_aPayloadProfileMaxKB)
                                        .appendIfNotNull ("MPCID", m_sMPCID)
                                        .getToString ();
+  }
+
+  @Nonnull
+  public static PModeLegBusinessInformation create (@Nullable final String sServiceValue,
+                                                    @Nullable final String sAction,
+                                                    @Nullable final Long nPayloadProfileMaxKB,
+                                                    @Nullable final String sMPCID)
+  {
+    return new PModeLegBusinessInformation (sServiceValue, null, sAction, null, null, nPayloadProfileMaxKB, sMPCID);
   }
 }

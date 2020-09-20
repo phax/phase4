@@ -147,6 +147,9 @@ public class PModeLegReliability implements Serializable
    */
   private ETriState m_eTerminateGroup = ETriState.UNDEFINED;
 
+  public PModeLegReliability ()
+  {}
+
   public PModeLegReliability (@Nonnull final ETriState eAtLeastOnceContract,
                               @Nonnull final ETriState eAtLeastOnceAckOnDelivery,
                               @Nullable final String sAtLeastOnceContractAcksTo,

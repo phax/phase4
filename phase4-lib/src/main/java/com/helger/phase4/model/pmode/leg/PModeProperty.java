@@ -70,6 +70,9 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
         LOGGER.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
   }
 
+  public PModeProperty ()
+  {}
+
   public PModeProperty (@Nonnull @Nonempty final String sName,
                         @Nullable final String sDescription,
                         @Nonnull @Nonempty final String sDataType,

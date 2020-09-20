@@ -58,6 +58,9 @@ public class PModePayloadProfile implements IHasName, IMandatoryIndicator, Seria
   private Integer m_aMaxSizeKB;
   private EMandatory m_eMandatory;
 
+  public PModePayloadProfile ()
+  {}
+
   public PModePayloadProfile (@Nonnull @Nonempty final String sName,
                               @Nonnull final IMimeType aMimeType,
                               @Nullable final String sXSDFilename,

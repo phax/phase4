@@ -71,7 +71,7 @@ public final class CEFPMode
     final String sAction = CAS4.DEFAULT_ACTION_URL;
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
-    return new PModeLegBusinessInformation (sService, sAction, nPayloadProfileMaxKB, sMPCID);
+    return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
   @Nonnull

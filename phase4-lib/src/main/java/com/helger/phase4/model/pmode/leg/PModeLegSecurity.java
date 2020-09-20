@@ -219,23 +219,41 @@ public class PModeLegSecurity implements Serializable
     setSendReceiptNonRepudiation (eSendReceiptNonRepudiation);
   }
 
+  /**
+   * @return The version of WS Security to use. May be <code>null</code>.
+   */
   @Nullable
   public final EWSSVersion getWSSVersion ()
   {
     return m_eWSSVersion;
   }
 
+  /**
+   * @return <code>true</code> if a WS Security version is defined,
+   *         <code>false</code> if not.
+   */
   public final boolean hasWSSVersion ()
   {
     return m_eWSSVersion != null;
   }
 
+  /**
+   * @return The WS Security version string to use or <code>null</code> if none
+   *         is defined.
+   */
   @Nullable
   public final String getWSSVersionAsString ()
   {
     return m_eWSSVersion == null ? null : m_eWSSVersion.getVersion ();
   }
 
+  /**
+   * Set the WS Security version to use.
+   *
+   * @param eWSSVersion
+   *        The version to use. May be <code>null</code>.
+   * @return {@link EChange}.
+   */
   @Nonnull
   public final EChange setWSSVersion (@Nullable final EWSSVersion eWSSVersion)
   {

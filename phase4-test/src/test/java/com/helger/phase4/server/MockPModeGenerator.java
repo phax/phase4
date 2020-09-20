@@ -116,8 +116,8 @@ public final class MockPModeGenerator
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
   {
     if (eSOAPVersion.equals (ESoapVersion.SOAP_11))
-      return new PModeLegBusinessInformation (SOAP11_SERVICE, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
-    return new PModeLegBusinessInformation (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+      return PModeLegBusinessInformation.create (SOAP11_SERVICE, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+    return PModeLegBusinessInformation.create (null, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull

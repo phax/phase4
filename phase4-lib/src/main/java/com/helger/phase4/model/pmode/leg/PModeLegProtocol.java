@@ -58,6 +58,9 @@ public class PModeLegProtocol implements Serializable
    */
   private ESoapVersion m_eSoapVersion;
 
+  public PModeLegProtocol ()
+  {}
+
   public PModeLegProtocol (@Nullable final String sAddress, @Nonnull final ESoapVersion eSoapVersion)
   {
     setAddress (sAddress);
@@ -122,7 +125,9 @@ public class PModeLegProtocol implements Serializable
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Address", m_sAddress).append ("SoapVersion", m_eSoapVersion).getToString ();
+    return new ToStringGenerator (this).append ("Address", m_sAddress)
+                                       .append ("SoapVersion", m_eSoapVersion)
+                                       .getToString ();
   }
 
   @Nonnull

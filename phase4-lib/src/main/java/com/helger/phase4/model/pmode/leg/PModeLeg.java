@@ -43,6 +43,9 @@ public class PModeLeg implements Serializable
   private PModeLegReliability m_aReliability;
   private PModeLegSecurity m_aSecurity;
 
+  public PModeLeg ()
+  {}
+
   public PModeLeg (@Nullable final PModeLegProtocol aProtocol,
                    @Nullable final PModeLegBusinessInformation aBusinessInfo,
                    @Nullable final PModeLegErrorHandling aErrorHandling,
