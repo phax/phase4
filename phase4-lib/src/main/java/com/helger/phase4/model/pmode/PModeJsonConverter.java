@@ -134,7 +134,7 @@ public final class PModeJsonConverter
   }
 
   @Nonnull
-  public static IJsonObject convertToJson (@Nonnull final PMode aValue)
+  public static IJsonObject convertToJson (@Nonnull final IPMode aValue)
   {
     final IJsonObject ret = new JsonObject ();
     setObjectFields (aValue, ret);

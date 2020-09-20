@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.string.StringHelper;
+import com.helger.json.IJsonObject;
 import com.helger.phase4.model.EMEP;
 import com.helger.phase4.model.EMEPBinding;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -132,5 +133,15 @@ public interface IPMode extends IBusinessObject
   default boolean hasReceptionAwareness ()
   {
     return getReceptionAwareness () != null;
+  }
+
+  /**
+   * @return The JSON representation of the PMode. Never <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  default IJsonObject getAsJson ()
+  {
+    return PModeJsonConverter.convertToJson (this);
   }
 }

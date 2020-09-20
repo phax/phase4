@@ -25,7 +25,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
-import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
 import com.helger.phase4.model.EMEP;
@@ -175,11 +174,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aInitiator;
   }
 
-  public final boolean hasInitiator ()
-  {
-    return m_aInitiator != null;
-  }
-
   @Nonnull
   public final EChange setInitiator (@Nullable final PModeParty aInitiator)
   {
@@ -195,11 +189,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aResponder;
   }
 
-  public final boolean hasResponder ()
-  {
-    return m_aResponder != null;
-  }
-
   @Nonnull
   public final EChange setResponder (@Nullable final PModeParty aResponder)
   {
@@ -213,11 +202,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
   public final String getAgreement ()
   {
     return m_sAgreement;
-  }
-
-  public final boolean hasAgreement ()
-  {
-    return StringHelper.hasText (m_sAgreement);
   }
 
   @Nonnull
@@ -267,11 +251,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aLeg1;
   }
 
-  public final boolean hasLeg1 ()
-  {
-    return m_aLeg1 != null;
-  }
-
   @Nonnull
   public final EChange setLeg1 (@Nullable final PModeLeg aLeg1)
   {
@@ -285,11 +264,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
   public final PModeLeg getLeg2 ()
   {
     return m_aLeg2;
-  }
-
-  public final boolean hasLeg2 ()
-  {
-    return m_aLeg2 != null;
   }
 
   @Nonnull
@@ -307,11 +281,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
     return m_aPayloadService;
   }
 
-  public final boolean hasPayloadService ()
-  {
-    return m_aPayloadService != null;
-  }
-
   @Nonnull
   public final EChange setPayloadService (@Nullable final PModePayloadService aPayloadService)
   {
@@ -325,11 +294,6 @@ public class PMode extends AbstractBusinessObject implements IPMode
   public final PModeReceptionAwareness getReceptionAwareness ()
   {
     return m_aPModeReceptionAwareness;
-  }
-
-  public final boolean hasReceptionAwareness ()
-  {
-    return m_aPModeReceptionAwareness != null;
   }
 
   @Nonnull

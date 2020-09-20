@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode;
 
+import static org.junit.Assert.assertNotNull;
+
 import javax.annotation.Nonnull;
 
 import org.junit.Rule;
@@ -81,8 +83,10 @@ public final class PModeMicroTypeConverterTest
     if (aPMode.hasReceptionAwareness ())
       XMLTestHelper.testMicroTypeConversion (aPMode.getReceptionAwareness ());
 
-    final IJsonObject o = PModeJsonConverter.convertToJson (aPMode);
+    final IJsonObject o = aPMode.getAsJson ();
+    assertNotNull (o);
     final PMode aPMode2 = PModeJsonConverter.convertToNative (o);
+    assertNotNull (aPMode2);
     CommonsTestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
   }
 
