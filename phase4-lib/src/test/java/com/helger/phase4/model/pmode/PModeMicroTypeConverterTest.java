@@ -65,34 +65,53 @@ public final class PModeMicroTypeConverterTest
   @Rule
   public final TestRule m_aTestRule = new AS4TestRule ();
 
+  private static void _testPMode (@Nonnull final PMode aPMode)
+  {
+    XMLTestHelper.testMicroTypeConversion (aPMode);
+    if (aPMode.hasInitiator ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
+    if (aPMode.hasResponder ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
+    if (aPMode.hasLeg1 ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getLeg1 ());
+    if (aPMode.hasLeg2 ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
+    if (aPMode.hasPayloadService ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getPayloadService ());
+    if (aPMode.hasReceptionAwareness ())
+      XMLTestHelper.testMicroTypeConversion (aPMode.getReceptionAwareness ());
+
+    final IJsonObject o = PModeJsonConverter.convertToJson (aPMode);
+    final PMode aPMode2 = PModeJsonConverter.convertToNative (o);
+    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
+  }
+
   @Test
   public void testNativToMicroElementConversion ()
   {
     final PModeParty aInitiator = _generateInitiatorOrResponder (true);
     final PModeParty aResponder = _generateInitiatorOrResponder (false);
 
-    final PMode aPMode = new PMode (aInitiator.getID () + "-" + aResponder.getID (),
-                                    aInitiator,
-                                    aResponder,
-                                    "Agreement",
-                                    EMEP.TWO_WAY,
-                                    EMEPBinding.SYNC,
-                                    _generatePModeLeg (),
-                                    _generatePModeLeg (),
-                                    _generatePayloadService (),
-                                    _generatePModeReceptionAwareness ());
-    XMLTestHelper.testMicroTypeConversion (aPMode);
-    XMLTestHelper.testMicroTypeConversion (aPMode.getInitiator ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getResponder ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg1 ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getPayloadService ());
-    XMLTestHelper.testMicroTypeConversion (aPMode.getReceptionAwareness ());
-
-    final IJsonObject o = PModeJsonConverter.convertToJson (aPMode);
-    final PMode aPMode2 = PModeJsonConverter.convertToNative (o);
-    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
-
+    _testPMode (new PMode (aInitiator.getID () + "-" + aResponder.getID (),
+                           aInitiator,
+                           aResponder,
+                           "Agreement",
+                           EMEP.TWO_WAY,
+                           EMEPBinding.SYNC,
+                           _generatePModeLeg (),
+                           _generatePModeLeg (),
+                           _generatePayloadService (),
+                           _generatePModeReceptionAwareness ()));
+    _testPMode (new PMode (aInitiator.getID () + "-" + aResponder.getID (),
+                           null,
+                           null,
+                           "Agreement",
+                           EMEP.TWO_WAY,
+                           EMEPBinding.SYNC,
+                           null,
+                           null,
+                           null,
+                           null));
   }
 
   @Nonnull
