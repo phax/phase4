@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
@@ -28,6 +28,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.id.IHasID;
+import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
@@ -36,27 +37,24 @@ import com.helger.commons.string.ToStringGenerator;
  *
  * @author Philip Helger
  */
-@Immutable
+@NotThreadSafe
 @MustImplementEqualsAndHashcode
 public class PModeParty implements IHasID <String>, Serializable
 {
   /** Optional ID type */
-  private final String m_sIDType;
+  private String m_sIDType;
 
   /** Required ID value */
-  private final String m_sIDValue;
-
-  /** ID type and value combined */
-  private String m_sID;
+  private String m_sIDValue;
 
   /** Required role */
-  private final String m_sRole;
+  private String m_sRole;
 
   /** Authorization user name */
-  private final String m_sUserName;
+  private String m_sUserName;
 
   /** Authorization password */
-  private final String m_sPassword;
+  private String m_sPassword;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -64,17 +62,11 @@ public class PModeParty implements IHasID <String>, Serializable
                      @Nullable final String sUserName,
                      @Nullable final String sPassword)
   {
-    m_sIDType = sIDType;
-    m_sIDValue = ValueEnforcer.notEmpty (sIDValue, "IDValue");
-    m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
-    m_sUserName = sUserName;
-    m_sPassword = sPassword;
-
-    // Combine once for performance
-    if (StringHelper.hasText (m_sIDType))
-      m_sID = m_sIDType + ':' + m_sIDValue;
-    else
-      m_sID = m_sIDValue;
+    setIDType (sIDType);
+    setIDValue (sIDValue);
+    setRole (sRole);
+    setUserName (sUserName);
+    setPassword (sPassword);
   }
 
   /**
@@ -96,6 +88,23 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
+   * Set the ID type to use.
+   *
+   * @param sIDType
+   *        ID type to use. May be <code>null</code>.
+   * @return {@link EChange}.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setIDType (@Nullable final String sIDType)
+  {
+    if (EqualsHelper.equals (sIDType, m_sIDType))
+      return EChange.UNCHANGED;
+    m_sIDType = sIDType;
+    return EChange.CHANGED;
+  }
+
+  /**
    * @return The ID value. Neither <code>null</code> nor empty.
    */
   @Nonnull
@@ -106,6 +115,24 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
+   * Set the ID value to use.
+   *
+   * @param sIDValue
+   *        ID value to use. May neither be <code>null</code> nor empty.
+   * @return {@link EChange}.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setIDValue (@Nonnull @Nonempty final String sIDValue)
+  {
+    ValueEnforcer.notEmpty (sIDValue, "IDValue");
+    if (sIDValue.equals (m_sIDValue))
+      return EChange.UNCHANGED;
+    m_sIDValue = sIDValue;
+    return EChange.CHANGED;
+  }
+
+  /**
    * Either <code>id-type:id-value</code> or just <code>id-value</code> if not
    * id-type is present.
    */
@@ -113,7 +140,9 @@ public class PModeParty implements IHasID <String>, Serializable
   @Nonempty
   public final String getID ()
   {
-    return m_sID;
+    if (StringHelper.hasText (m_sIDType))
+      return m_sIDType + ':' + m_sIDValue;
+    return m_sIDValue;
   }
 
   /**
@@ -124,6 +153,24 @@ public class PModeParty implements IHasID <String>, Serializable
   public final String getRole ()
   {
     return m_sRole;
+  }
+
+  /**
+   * Set the role to use.
+   *
+   * @param sRole
+   *        Role to use. May neither be <code>null</code> nor empty.
+   * @return {@link EChange}.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setRole (@Nonnull @Nonempty final String sRole)
+  {
+    ValueEnforcer.notEmpty (sRole, "Role");
+    if (sRole.equals (m_sRole))
+      return EChange.UNCHANGED;
+    m_sRole = sRole;
+    return EChange.CHANGED;
   }
 
   /**
@@ -145,6 +192,23 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   /**
+   * Set the user name to use.
+   *
+   * @param sUserName
+   *        User name to use. May be <code>null</code>.
+   * @return {@link EChange}.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setUserName (@Nullable final String sUserName)
+  {
+    if (EqualsHelper.equals (sUserName, m_sUserName))
+      return EChange.UNCHANGED;
+    m_sUserName = sUserName;
+    return EChange.CHANGED;
+  }
+
+  /**
    * @return The password in plain text. May be <code>null</code>.
    */
   @Nullable
@@ -160,6 +224,23 @@ public class PModeParty implements IHasID <String>, Serializable
   public final boolean hasPassword ()
   {
     return StringHelper.hasText (m_sPassword);
+  }
+
+  /**
+   * Set the password to use.
+   *
+   * @param sPassword
+   *        Password to use. May be <code>null</code>.
+   * @return {@link EChange}.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setPassword (@Nullable final String sPassword)
+  {
+    if (EqualsHelper.equals (sPassword, m_sPassword))
+      return EChange.UNCHANGED;
+    m_sPassword = sPassword;
+    return EChange.CHANGED;
   }
 
   @Override
