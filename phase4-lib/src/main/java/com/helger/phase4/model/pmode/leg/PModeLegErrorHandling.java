@@ -121,6 +121,11 @@ public class PModeLegErrorHandling implements Serializable
     return m_aReportSenderErrorsTo;
   }
 
+  public final boolean hasReportSenderErrorsTo ()
+  {
+    return m_aReportSenderErrorsTo != null;
+  }
+
   @Nonnull
   public final EChange setReportSenderErrorsTo (@Nullable final PModeAddressList aReportSenderErrorsTo)
   {
@@ -134,6 +139,11 @@ public class PModeLegErrorHandling implements Serializable
   public final PModeAddressList getReportReceiverErrorsTo ()
   {
     return m_aReportReceiverErrorsTo;
+  }
+
+  public final boolean hasReportReceiverErrorsTo ()
+  {
+    return m_aReportReceiverErrorsTo != null;
   }
 
   @Nonnull
