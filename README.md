@@ -261,7 +261,6 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.12.0 - work in progress
     * Extended the `IPModeResolver` to also contain the agreementRef value (for ENTSOG) - backwards incompatible change
     * Added support for custom "Part properties" in `IAS4Attachment` (for ENTSOG)
-    * Added new enumeration `EAS4MessageType` to differentiate the type of message more easily
     * The sending date and time of the AS4 message can now be configured in the client
     * Made class `PMode` more static (see [issue #41](https://github.com/phax/phase4/issues/41))
     * `PModeValidationException` is now a subclass of `Phase4Exception`
