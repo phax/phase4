@@ -16,6 +16,9 @@
  */
 package com.helger.phase4.model.pmode.leg;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.helger.commons.state.ETriState;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
@@ -38,7 +41,10 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
   private static final IMicroQName ATTR_REPORT_PROCESS_ERROR_NOTFIY_PRODUCER = new MicroQName ("ReportProcessErrorNotifyProducer");
   private static final IMicroQName ATTR_REPORT_DELIVERY_FAILURE_NOTFIY_PRODUCER = new MicroQName ("ReportDeliveryFailuresNotifyProducer");
 
-  public IMicroElement convertToMicroElement (final PModeLegErrorHandling aValue, final String sNamespaceURI, final String sTagName)
+  @Nonnull
+  public IMicroElement convertToMicroElement (@Nonnull final PModeLegErrorHandling aValue,
+                                              @Nullable final String sNamespaceURI,
+                                              @Nonnull final String sTagName)
   {
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
     ret.appendChild (MicroTypeConverter.convertToMicroElement (aValue.getReportReceiverErrorsTo (),
@@ -58,7 +64,8 @@ public class PModeLegErrorHandlingMicroTypeConverter extends AbstractPModeMicroT
     return ret;
   }
 
-  public PModeLegErrorHandling convertToNative (final IMicroElement aElement)
+  @Nonnull
+  public PModeLegErrorHandling convertToNative (@Nonnull final IMicroElement aElement)
   {
     final PModeAddressList aReceiverAddresses = MicroTypeConverter.convertToNative (aElement.getFirstChildElement (ELEMENT_REPORT_RECEIVER_ERRORS_TO),
                                                                                     PModeAddressList.class);
