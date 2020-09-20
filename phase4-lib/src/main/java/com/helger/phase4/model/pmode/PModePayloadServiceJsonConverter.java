@@ -40,7 +40,10 @@ public final class PModePayloadServiceJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModePayloadService aValue)
   {
-    return new JsonObject ().add (COMPRESSION_MODE, aValue.getCompressionModeID ());
+    final IJsonObject ret = new JsonObject ();
+    if (aValue.hasCompressionMode ())
+      ret.add (COMPRESSION_MODE, aValue.getCompressionModeID ());
+    return ret;
   }
 
   @Nonnull

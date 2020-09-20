@@ -50,6 +50,15 @@ public class PModePayloadService implements Serializable
   }
 
   /**
+   * @return <code>true</code> if a compression mode is set, <code>false</code>
+   *         if not.
+   */
+  public final boolean hasCompressionMode ()
+  {
+    return m_eCompressionMode != null;
+  }
+
+  /**
    * @return The ID of the used compression mode or <code>null</code> if no
    *         compression mode is set.
    */

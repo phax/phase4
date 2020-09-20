@@ -31,11 +31,11 @@ import com.helger.json.JsonObject;
 @Immutable
 public final class PModeLegJsonConverter
 {
-  private static final String ELEMENT_PROTOCOL = "Protocol";
-  private static final String ELEMENT_BUSINESS_INFORMATION = "BusinessInfo";
-  private static final String ELEMENT_ERROR_HANDLING = "ErrorHandling";
-  private static final String ELEMENT_RELIABILITY = "Reliability";
-  private static final String ELEMENT_SECURITY = "Security";
+  private static final String PROTOCOL = "Protocol";
+  private static final String BUSINESS_INFORMATION = "BusinessInfo";
+  private static final String ERROR_HANDLING = "ErrorHandling";
+  private static final String RELIABILITY = "Reliability";
+  private static final String SECURITY = "Security";
 
   private PModeLegJsonConverter ()
   {}
@@ -45,38 +45,37 @@ public final class PModeLegJsonConverter
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasProtocol ())
-      ret.addJson (ELEMENT_PROTOCOL, PModeLegProtocolJsonConverter.convertToJson (aValue.getProtocol ()));
+      ret.addJson (PROTOCOL, PModeLegProtocolJsonConverter.convertToJson (aValue.getProtocol ()));
     if (aValue.hasBusinessInfo ())
-      ret.addJson (ELEMENT_BUSINESS_INFORMATION,
+      ret.addJson (BUSINESS_INFORMATION,
                    PModeLegBusinessInformationJsonConverter.convertToJson (aValue.getBusinessInfo ()));
     if (aValue.hasErrorHandling ())
-      ret.addJson (ELEMENT_ERROR_HANDLING,
-                   PModeLegErrorHandlingJsonConverter.convertToJson (aValue.getErrorHandling ()));
+      ret.addJson (ERROR_HANDLING, PModeLegErrorHandlingJsonConverter.convertToJson (aValue.getErrorHandling ()));
     if (aValue.hasReliability ())
-      ret.addJson (ELEMENT_RELIABILITY, PModeLegReliabilityJsonConverter.convertToJson (aValue.getReliability ()));
+      ret.addJson (RELIABILITY, PModeLegReliabilityJsonConverter.convertToJson (aValue.getReliability ()));
     if (aValue.hasSecurity ())
-      ret.addJson (ELEMENT_SECURITY, PModeLegSecurityJsonConverter.convertToJson (aValue.getSecurity ()));
+      ret.addJson (SECURITY, PModeLegSecurityJsonConverter.convertToJson (aValue.getSecurity ()));
     return ret;
   }
 
   @Nonnull
   public static PModeLeg convertToNative (@Nonnull final IJsonObject aElement)
   {
-    final IJsonObject aProt = aElement.getAsObject (ELEMENT_PROTOCOL);
+    final IJsonObject aProt = aElement.getAsObject (PROTOCOL);
     final PModeLegProtocol aProtocol = aProt == null ? null : PModeLegProtocolJsonConverter.convertToNative (aProt);
 
-    final IJsonObject aBI = aElement.getAsObject (ELEMENT_BUSINESS_INFORMATION);
+    final IJsonObject aBI = aElement.getAsObject (BUSINESS_INFORMATION);
     final PModeLegBusinessInformation aBusinessInformation = aBI == null ? null
                                                                          : PModeLegBusinessInformationJsonConverter.convertToNative (aBI);
 
-    final IJsonObject aEH = aElement.getAsObject (ELEMENT_ERROR_HANDLING);
+    final IJsonObject aEH = aElement.getAsObject (ERROR_HANDLING);
     final PModeLegErrorHandling aErrorHandling = aEH == null ? null
                                                              : PModeLegErrorHandlingJsonConverter.convertToNative (aEH);
 
-    final IJsonObject aR = aElement.getAsObject (ELEMENT_RELIABILITY);
+    final IJsonObject aR = aElement.getAsObject (RELIABILITY);
     final PModeLegReliability aReliability = aR == null ? null : PModeLegReliabilityJsonConverter.convertToNative (aR);
 
-    final IJsonObject aS = aElement.getAsObject (ELEMENT_SECURITY);
+    final IJsonObject aS = aElement.getAsObject (SECURITY);
     final PModeLegSecurity aSecurity = aS == null ? null : PModeLegSecurityJsonConverter.convertToNative (aS);
 
     return new PModeLeg (aProtocol, aBusinessInformation, aErrorHandling, aReliability, aSecurity);

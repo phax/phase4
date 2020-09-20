@@ -43,11 +43,16 @@ public final class PModePartyJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeParty aValue)
   {
-    return new JsonObject ().add (ID_TYPE, aValue.getIDType ())
-                            .add (ID_VALUE, aValue.getIDValue ())
-                            .add (ROLE, aValue.getRole ())
-                            .add (USER_NAME, aValue.getUserName ())
-                            .add (PASSWORD, aValue.getPassword ());
+    final IJsonObject ret = new JsonObject ();
+    if (aValue.hasIDType ())
+      ret.add (ID_TYPE, aValue.getIDType ());
+    ret.add (ID_VALUE, aValue.getIDValue ());
+    ret.add (ROLE, aValue.getRole ());
+    if (aValue.hasUserName ())
+      ret.add (USER_NAME, aValue.getUserName ());
+    if (aValue.hasPassword ())
+      ret.add (PASSWORD, aValue.getPassword ());
+    return ret;
   }
 
   @Nonnull
