@@ -58,22 +58,45 @@ public class PModeReceptionAwareness implements Serializable
     setDuplicateDetection (eDuplicateDetection);
   }
 
+  /**
+   * @return <code>true</code> if reception awareness is defined,
+   *         <code>false</code> if it is undefined. If it is undefined, the
+   *         default value ({@link #DEFAULT_RECEPTION_AWARENESS}) will be used.
+   */
   public final boolean isReceptionAwarenessDefined ()
   {
     return m_eReceptionAwareness.isDefined ();
   }
 
+  /**
+   * @return <code>true</code> if reception awareness is enabled,
+   *         <code>false</code> of not.
+   */
   public final boolean isReceptionAwareness ()
   {
     return m_eReceptionAwareness.getAsBooleanValue (DEFAULT_RECEPTION_AWARENESS);
   }
 
+  /**
+   * Set the reception awareness
+   *
+   * @param bReceptionAwareness
+   *        <code>true</code> to enable it, <code>false</code> to disable it.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setReceptionAwareness (final boolean bReceptionAwareness)
   {
     return setReceptionAwareness (ETriState.valueOf (bReceptionAwareness));
   }
 
+  /**
+   * Set the reception awareness
+   *
+   * @param eReceptionAwareness
+   *        Value to use. May not be <code>null</code>.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setReceptionAwareness (@Nonnull final ETriState eReceptionAwareness)
   {
@@ -84,22 +107,44 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * @return <code>true</code> if retry is defined, <code>false</code> if it is
+   *         undefined. If it is undefined, the default value
+   *         ({@link #DEFAULT_RETRY}) will be used.
+   */
   public final boolean isRetryDefined ()
   {
     return m_eRetry.isDefined ();
   }
 
+  /**
+   * @return <code>true</code> if retry is enabled, <code>false</code> of not.
+   */
   public final boolean isRetry ()
   {
     return m_eRetry.getAsBooleanValue (DEFAULT_RETRY);
   }
 
+  /**
+   * Set enable retry
+   *
+   * @param bRetry
+   *        <code>true</code> to enable it, <code>false</code> to disable it.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setRetry (final boolean bRetry)
   {
     return setRetry (ETriState.valueOf (bRetry));
   }
 
+  /**
+   * Set enable retry
+   *
+   * @param eRetry
+   *        Value to use. May not be <code>null</code>.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setRetry (@Nonnull final ETriState eRetry)
   {
@@ -110,12 +155,23 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * @return The maximum number of retries. Always &ge; 0.
+   */
   @Nonnegative
   public final int getMaxRetries ()
   {
     return m_nMaxRetries;
   }
 
+  /**
+   * Set the maximum number of retries. This value does not include the original
+   * try.
+   *
+   * @param nMaxRetries
+   *        The maximum number of retries to use. Must be &ge; 0.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setMaxRetries (@Nonnegative final int nMaxRetries)
   {
@@ -126,12 +182,23 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * @return The milliseconds to wait between retries. Must be &ge; 0.
+   */
   @Nonnegative
   public final int getRetryIntervalMS ()
   {
     return m_nRetryIntervalMS;
   }
 
+  /**
+   * Set the milliseconds to wait between retries. This should also be used to
+   * define the interval between the original try and the first retry.
+   *
+   * @param nRetryIntervalMS
+   *        Milliseconds to wait. Must be &ge; 0.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setRetryIntervalMS (@Nonnegative final int nRetryIntervalMS)
   {
@@ -142,22 +209,45 @@ public class PModeReceptionAwareness implements Serializable
     return EChange.CHANGED;
   }
 
+  /**
+   * @return <code>true</code> if duplication detection is defined,
+   *         <code>false</code> if it is undefined. If it is undefined, the
+   *         default value ({@link #DEFAULT_DUPLICATE_DETECTION}) will be used.
+   */
   public final boolean isDuplicateDetectionDefined ()
   {
     return m_eDuplicateDetection.isDefined ();
   }
 
+  /**
+   * @return <code>true</code> if duplicate detection is enabled,
+   *         <code>false</code> of not.
+   */
   public final boolean isDuplicateDetection ()
   {
     return m_eDuplicateDetection.getAsBooleanValue (DEFAULT_DUPLICATE_DETECTION);
   }
 
+  /**
+   * Set duplicate detection
+   *
+   * @param bDuplicateDetection
+   *        <code>true</code> to enable it, <code>false</code> to disable it.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setDuplicateDetection (final boolean bDuplicateDetection)
   {
     return setDuplicateDetection (ETriState.valueOf (bDuplicateDetection));
   }
 
+  /**
+   * Set duplicate detection
+   *
+   * @param eDuplicateDetection
+   *        Value to use. May not be <code>null</code>.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setDuplicateDetection (@Nonnull final ETriState eDuplicateDetection)
   {

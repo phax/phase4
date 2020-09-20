@@ -40,18 +40,32 @@ public class PModePayloadService implements Serializable
     setCompressionMode (eCompressionMode);
   }
 
+  /**
+   * @return The compression mode to use. May be <code>null</code>.
+   */
   @Nullable
   public final EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;
   }
 
+  /**
+   * @return The ID of the used compression mode or <code>null</code> if no
+   *         compression mode is set.
+   */
   @Nullable
   public final String getCompressionModeID ()
   {
     return m_eCompressionMode == null ? null : m_eCompressionMode.getID ();
   }
 
+  /**
+   * Set the compression mode to use.
+   *
+   * @param eCompressionMode
+   *        Compression mode to use. May be <code>null</code>.
+   * @return {@link EChange}
+   */
   @Nonnull
   public final EChange setCompressionMode (@Nullable final EAS4CompressionMode eCompressionMode)
   {
