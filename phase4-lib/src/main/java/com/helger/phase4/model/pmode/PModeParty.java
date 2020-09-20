@@ -46,6 +46,9 @@ public class PModeParty implements IHasID <String>, Serializable
   /** Required ID value */
   private final String m_sIDValue;
 
+  /** ID type and value combined */
+  private String m_sID;
+
   /** Required role */
   private final String m_sRole;
 
@@ -54,11 +57,6 @@ public class PModeParty implements IHasID <String>, Serializable
 
   /** Authorization password */
   private final String m_sPassword;
-
-  // Status vars
-
-  /** ID type and value combined */
-  private transient String m_sStatusID;
 
   public PModeParty (@Nullable final String sIDType,
                      @Nonnull @Nonempty final String sIDValue,
@@ -71,67 +69,95 @@ public class PModeParty implements IHasID <String>, Serializable
     m_sRole = ValueEnforcer.notEmpty (sRole, "Role");
     m_sUserName = sUserName;
     m_sPassword = sPassword;
+
+    // Combine once for performance
+    if (StringHelper.hasText (m_sIDType))
+      m_sID = m_sIDType + ':' + m_sIDValue;
+    else
+      m_sID = m_sIDValue;
   }
 
+  /**
+   * @return The ID type as passed in the constructor. May be <code>null</code>.
+   */
   @Nullable
-  public String getIDType ()
+  public final String getIDType ()
   {
     return m_sIDType;
   }
 
-  public boolean hasIDType ()
+  /**
+   * @return <code>true</code> if an ID type is present, <code>false</code> if
+   *         not.
+   */
+  public final boolean hasIDType ()
   {
     return StringHelper.hasText (m_sIDType);
   }
 
+  /**
+   * @return The ID value. Neither <code>null</code> nor empty.
+   */
   @Nonnull
   @Nonempty
-  public String getIDValue ()
+  public final String getIDValue ()
   {
     return m_sIDValue;
   }
 
+  /**
+   * Either <code>id-type:id-value</code> or just <code>id-value</code> if not
+   * id-type is present.
+   */
   @Nonnull
   @Nonempty
-  public String getID ()
+  public final String getID ()
   {
-    String ret = m_sStatusID;
-    if (ret == null)
-    {
-      if (StringHelper.hasText (m_sIDType))
-        ret = m_sIDType + ':' + m_sIDValue;
-      else
-        ret = m_sIDValue;
-      m_sStatusID = ret;
-    }
-    return ret;
+    return m_sID;
   }
 
+  /**
+   * @return The party role. Never <code>null</code> nor empty.
+   */
   @Nonnull
   @Nonempty
-  public String getRole ()
+  public final String getRole ()
   {
     return m_sRole;
   }
 
+  /**
+   * @return The user name. May be <code>null</code>.
+   */
   @Nullable
-  public String getUserName ()
+  public final String getUserName ()
   {
     return m_sUserName;
   }
 
-  public boolean hasUserName ()
+  /**
+   * @return <code>true</code> if a user name is present, <code>false</code> if
+   *         not.
+   */
+  public final boolean hasUserName ()
   {
     return StringHelper.hasText (m_sUserName);
   }
 
+  /**
+   * @return The password in plain text. May be <code>null</code>.
+   */
   @Nullable
-  public String getPassword ()
+  public final String getPassword ()
   {
     return m_sPassword;
   }
 
-  public boolean hasPassword ()
+  /**
+   * @return <code>true</code> if a password is present, <code>false</code> if
+   *         not.
+   */
+  public final boolean hasPassword ()
   {
     return StringHelper.hasText (m_sPassword);
   }
