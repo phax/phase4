@@ -81,6 +81,9 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
     _checkDataType (sDataType);
   }
 
+  /**
+   * The PMode property name.
+   */
   @Nonnull
   @Nonempty
   public final String getName ()
@@ -88,12 +91,19 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
     return m_sName;
   }
 
+  /**
+   * The PMode property description.
+   */
   @Nullable
   public final String getDescription ()
   {
     return m_sDescription;
   }
 
+  /**
+   * @return The PMode property data type. May neither be <code>null</code> nor
+   *         empty.
+   */
   @Nonnull
   @Nonempty
   public final String getDataType ()
@@ -101,11 +111,19 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
     return m_sDataType;
   }
 
+  /**
+   * @return <code>true</code> if the PMode property is mandatory,
+   *         <code>false</code> if it is optional.
+   */
   public final boolean isMandatory ()
   {
     return m_eMandatory.isMandatory ();
   }
 
+  /**
+   * @return <code>true</code> if the PMode property is optional,
+   *         <code>false</code> if it is mandatory.
+   */
   @Override
   public final boolean isOptional ()
   {
@@ -129,7 +147,11 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sName).append (m_sDescription).append (m_sDataType).append (m_eMandatory).getHashCode ();
+    return new HashCodeGenerator (this).append (m_sName)
+                                       .append (m_sDescription)
+                                       .append (m_sDataType)
+                                       .append (m_eMandatory)
+                                       .getHashCode ();
   }
 
   @Override
