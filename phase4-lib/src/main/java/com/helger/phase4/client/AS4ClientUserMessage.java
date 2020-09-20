@@ -616,7 +616,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            getRefToMessageID ());
+                                                                                            getRefToMessageID (),
+                                                                                            getSendingDateTimeOrNow ());
     final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
                                                                                             m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,

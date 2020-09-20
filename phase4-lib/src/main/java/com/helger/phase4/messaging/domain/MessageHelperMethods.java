@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.messaging.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,7 +38,6 @@ import com.helger.commons.collection.CollectionHelper;
 import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.EURLProtocol;
@@ -57,6 +57,7 @@ import com.helger.phase4.ebms3header.Ebms3PayloadInfo;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.ebms3header.Ebms3Service;
 import com.helger.phase4.ebms3header.Ebms3To;
+import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
  * This class contains every method, static variables which are used by more
@@ -157,9 +158,34 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID)
+  {
+    return createEbms3MessageInfo (sMessageID,
+                                   sRefToMessageID,
+                                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+  }
+
+  /**
+   * Create a new message info.
+   *
+   * @param sMessageID
+   *        The message ID. May neither be <code>null</code> nor empty.
+   * @param sRefToMessageID
+   *        to set the reference to the previous message needed for two way
+   *        exchanges
+   * @param aDateTime
+   *        Date and time. May not be <code>null</code>.
+   * @return Never <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID,
+                                                         @Nonnull final LocalDateTime aDateTime)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
+    ValueEnforcer.notNull (aDateTime, "DateTime");
 
     final Ebms3MessageInfo aMessageInfo = new Ebms3MessageInfo ();
 
@@ -167,7 +193,7 @@ public final class MessageHelperMethods
     if (StringHelper.hasText (sRefToMessageID))
       aMessageInfo.setRefToMessageId (sRefToMessageID);
 
-    aMessageInfo.setTimestamp (PDTFactory.getCurrentLocalDateTime ());
+    aMessageInfo.setTimestamp (aDateTime);
     return aMessageInfo;
   }
 
@@ -318,12 +344,14 @@ public final class MessageHelperMethods
     final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
     aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
 
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
       aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
@@ -388,7 +416,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message

@@ -90,7 +90,8 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
     _checkMandatoryAttributes ();
 
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
-                                                                                            getRefToMessageID ());
+                                                                                            getRefToMessageID (),
+                                                                                            getSendingDateTimeOrNow ());
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSoapVersion (), aEbms3MessageInfo, m_aErrorMessages);
 

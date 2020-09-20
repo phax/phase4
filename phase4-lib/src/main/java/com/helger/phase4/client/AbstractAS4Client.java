@@ -17,6 +17,7 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -45,6 +46,7 @@ import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -87,6 +89,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
+  private LocalDateTime m_aSendingDateTime;
   private ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
@@ -220,21 +223,73 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return ret;
   }
 
+  /**
+   * @return The AS4 reference to the original message. My be <code>null</code>.
+   */
   @Nullable
   public final String getRefToMessageID ()
   {
     return m_sRefToMessageID;
   }
 
+  /**
+   * @return <code>true</code> if an AS4 reference to the original message
+   *         exists.
+   */
   public final boolean hasRefToMessageID ()
   {
     return StringHelper.hasText (m_sRefToMessageID);
   }
 
+  /**
+   * Set the reference to the original AS4 message.
+   *
+   * @param sRefToMessageID
+   *        The Message ID of the original AS4 message. May be
+   *        <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE setRefToMessageID (@Nullable final String sRefToMessageID)
   {
     m_sRefToMessageID = sRefToMessageID;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The sending time stamp of the message. If this is <code>null</code>
+   *         the current time should be used in the EBMS messages.
+   * @since 0.12.0
+   */
+  @Nullable
+  public final LocalDateTime getSendingDateTime ()
+  {
+    return m_aSendingDateTime;
+  }
+
+  /**
+   * @return The sending date time if configured, or the current timestamp.
+   *         Never <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final LocalDateTime getSendingDateTimeOrNow ()
+  {
+    return m_aSendingDateTime != null ? m_aSendingDateTime : MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+  }
+
+  /**
+   * Set the sending date time of the AS4 message. If not set, the current point
+   * in time will be used.
+   *
+   * @param aSendingDateTime
+   *        The sending date time to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE setSendingDateTimeOrNow (@Nullable final LocalDateTime aSendingDateTime)
+  {
+    m_aSendingDateTime = aSendingDateTime;
     return thisAsT ();
   }
 

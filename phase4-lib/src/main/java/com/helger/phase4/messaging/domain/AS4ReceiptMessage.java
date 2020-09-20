@@ -89,7 +89,8 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
             aNext = XMLHelper.getFirstChildElementOfName (aNext, CAS4.DS_NS, "SignedInfo");
             if (aNext != null)
             {
-              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS, "Reference"),
+              new ChildElementIterator (aNext).findAll (XMLHelper.filterElementWithNamespaceAndLocalName (CAS4.DS_NS,
+                                                                                                          "Reference"),
                                                         aDSRefs::add);
             }
           }
@@ -129,9 +130,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 
     // Message Info
     {
-      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, null);
-      if (aEbms3UserMessage != null)
-        aEbms3MessageInfo.setRefToMessageId (aEbms3UserMessage.getMessageInfo ().getMessageId ());
+      // Always use "now" as date time
+      final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                              aEbms3UserMessage != null ? aEbms3UserMessage.getMessageInfo ()
+                                                                                                                                           .getMessageId ()
+                                                                                                                        : null);
       aSignalMessage.setMessageInfo (aEbms3MessageInfo);
     }
 
@@ -158,7 +161,9 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     {
       // If the original usermessage is not signed, the receipt will contain the
       // original message part without wss4j security
-      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage).getAsSoapDocument ().getDocumentElement ());
+      aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage)
+                                          .getAsSoapDocument ()
+                                          .getDocumentElement ());
     }
     aSignalMessage.setReceipt (aEbms3Receipt);
 
