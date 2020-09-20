@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.name.IHasName;
+import com.helger.commons.state.EChange;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.IMandatoryIndicator;
 import com.helger.commons.string.ToStringGenerator;
@@ -48,7 +49,7 @@ import com.helger.commons.text.IHasDescription;
  *
  * @author Philip Helger
  */
-@Immutable
+@NotThreadSafe
 @MustImplementEqualsAndHashcode
 public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndicator, Serializable
 {
@@ -57,10 +58,10 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
 
   private static final Logger LOGGER = LoggerFactory.getLogger (PModeProperty.class);
 
-  private final String m_sName;
-  private final String m_sDescription;
-  private final String m_sDataType;
-  private final EMandatory m_eMandatory;
+  private String m_sName;
+  private String m_sDescription;
+  private String m_sDataType;
+  private EMandatory m_eMandatory;
 
   private static void _checkDataType (@Nonnull final String sDataType)
   {
@@ -74,11 +75,10 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
                         @Nonnull @Nonempty final String sDataType,
                         @Nonnull final EMandatory eMandatory)
   {
-    m_sName = ValueEnforcer.notEmpty (sName, "Name");
-    m_sDescription = sDescription;
-    m_sDataType = ValueEnforcer.notEmpty (sDataType, "DataType");
-    m_eMandatory = ValueEnforcer.notNull (eMandatory, "Mandatory");
-    _checkDataType (sDataType);
+    setName (sName);
+    setDescription (sDescription);
+    setDataType (sDataType);
+    setMandatory (eMandatory);
   }
 
   /**
@@ -92,12 +92,46 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   }
 
   /**
+   * Set the property name.
+   *
+   * @param sName
+   *        Property name. May neither be <code>null</code> nor empty.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setName (@Nonnull @Nonempty final String sName)
+  {
+    ValueEnforcer.notEmpty (sName, "Name");
+    if (sName.equals (m_sName))
+      return EChange.UNCHANGED;
+    m_sName = sName;
+    return EChange.CHANGED;
+  }
+
+  /**
    * The PMode property description.
    */
   @Nullable
   public final String getDescription ()
   {
     return m_sDescription;
+  }
+
+  /**
+   * Set the description.
+   *
+   * @param sDescription
+   *        The description. May be <code>null</code>.
+   * @return {@link EChange}
+   */
+  @Nonnull
+  public final EChange setDescription (@Nullable final String sDescription)
+  {
+    if (EqualsHelper.equals (sDescription, m_sDescription))
+      return EChange.UNCHANGED;
+    m_sDescription = sDescription;
+    return EChange.CHANGED;
   }
 
   /**
@@ -109,6 +143,25 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   public final String getDataType ()
   {
     return m_sDataType;
+  }
+
+  /**
+   * Set the property data type.
+   *
+   * @param sDataType
+   *        Property data type. May neither be <code>null</code> nor empty.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setDataType (@Nonnull @Nonempty final String sDataType)
+  {
+    ValueEnforcer.notEmpty (sDataType, "DataType");
+    if (sDataType.equals (m_sDataType))
+      return EChange.UNCHANGED;
+    m_sDataType = sDataType;
+    _checkDataType (sDataType);
+    return EChange.CHANGED;
   }
 
   /**
@@ -128,6 +181,24 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   public final boolean isOptional ()
   {
     return m_eMandatory.isOptional ();
+  }
+
+  /**
+   * Set the property mandatory or optional.
+   *
+   * @param eMandatory
+   *        Property mandatory state. May not be <code>null</code>.
+   * @return {@link EChange}
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EChange setMandatory (@Nonnull final EMandatory eMandatory)
+  {
+    ValueEnforcer.notNull (eMandatory, "Mandatory");
+    if (eMandatory.equals (m_eMandatory))
+      return EChange.UNCHANGED;
+    m_eMandatory = eMandatory;
+    return EChange.CHANGED;
   }
 
   @Override
