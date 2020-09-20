@@ -43,6 +43,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.pmode.IPMode;
 import com.helger.phase4.model.pmode.PModeReceptionAwareness;
@@ -59,7 +60,8 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster implements
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster
+                                        implements
                                         IGenericImplTrait <IMPLTYPE>
 {
   public static final int DEFAULT_MAX_RETRIES = 0;
@@ -75,6 +77,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     return MessageHelperMethods::createRandomMessageID;
   }
 
+  private final EAS4MessageType m_eMessageType;
   private final AS4ResourceHelper m_aResHelper;
 
   private IAS4CryptoFactory m_aCryptoFactory;
@@ -90,10 +93,23 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
   private long m_nRetryIntervalMS = DEFAULT_RETRY_INTERVAL_MS;
 
-  protected AbstractAS4Client (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType,
+                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
+    ValueEnforcer.notNull (eMessageType, "MessageType");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
+    m_eMessageType = eMessageType;
     m_aResHelper = aResHelper;
+  }
+
+  /**
+   * @return The message type handled by this client. Never <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final EAS4MessageType getMessageType ()
+  {
+    return m_eMessageType;
   }
 
   /**
@@ -436,7 +452,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
+                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
   }
 }

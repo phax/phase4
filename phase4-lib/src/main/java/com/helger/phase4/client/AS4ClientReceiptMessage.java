@@ -30,6 +30,7 @@ import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4ReceiptMessage;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -46,7 +47,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
 
   public AS4ClientReceiptMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    super (aResHelper);
+    super (EAS4MessageType.RECEIPT, aResHelper);
   }
 
   /**

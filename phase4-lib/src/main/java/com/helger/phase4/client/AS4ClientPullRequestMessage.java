@@ -30,6 +30,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4PullRequestMessage;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -44,7 +45,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
 
   public AS4ClientPullRequestMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    super (aResHelper);
+    super (EAS4MessageType.PULL_REQUEST, aResHelper);
   }
 
   @Nullable
@@ -65,7 +66,7 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
     if (getSoapVersion () == null)
       throw new IllegalStateException ("A SOAP version must be set.");
     if (StringHelper.hasNoText (m_sMPC))
-      throw new IllegalStateException ("A MPC has to be present");
+      throw new IllegalStateException ("An MPC has to be present");
   }
 
   @Override
@@ -74,7 +75,8 @@ public class AS4ClientPullRequestMessage extends AbstractAS4ClientSignalMessage 
   {
     _checkMandatoryAttributes ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                            getRefToMessageID ());
 
     final AS4PullRequestMessage aPullRequest = AS4PullRequestMessage.create (getSoapVersion (),
                                                                              aEbms3MessageInfo,

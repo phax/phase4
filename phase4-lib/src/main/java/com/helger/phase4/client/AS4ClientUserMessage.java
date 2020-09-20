@@ -55,6 +55,7 @@ import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
@@ -100,11 +101,13 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
-  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () + "-" + x.getToPartyID ();
+  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
+                                                                            "-" +
+                                                                            x.getToPartyID ();
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    super (aResHelper);
+    super (EAS4MessageType.USER_MESSAGE, aResHelper);
   }
 
   @Nullable
@@ -612,8 +615,10 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final boolean bEncrypt = cryptParams ().isCryptEnabled (LOGGER::warn);
     final boolean bAttachmentsPresent = m_aAttachments.isNotEmpty ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, m_aAttachments);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                            getRefToMessageID ());
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
+                                                                                            m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,

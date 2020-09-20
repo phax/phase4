@@ -22,6 +22,7 @@ import javax.annotation.WillNotClose;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.util.AS4ResourceHelper;
 
 /**
@@ -31,14 +32,16 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractAS4ClientSignalMessage <IMPLTYPE>> extends
+public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractAS4ClientSignalMessage <IMPLTYPE>>
+                                                     extends
                                                      AbstractAS4Client <IMPLTYPE>
 {
   private final ICommonsList <Object> m_aAny = new CommonsArrayList <> ();
 
-  public AbstractAS4ClientSignalMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  public AbstractAS4ClientSignalMessage (@Nonnull final EAS4MessageType eMessageType,
+                                         @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    super (aResHelper);
+    super (eMessageType, aResHelper);
   }
 
   @Nonnull

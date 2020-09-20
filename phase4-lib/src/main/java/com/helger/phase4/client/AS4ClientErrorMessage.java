@@ -36,6 +36,7 @@ import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.error.IEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.domain.AS4ErrorMessage;
+import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -50,7 +51,7 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
 
   public AS4ClientErrorMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
-    super (aResHelper);
+    super (EAS4MessageType.ERROR_MESSAGE, aResHelper);
   }
 
   public final void addErrorMessage (@Nonnull final IEbmsError aError, @Nonnull final Locale aLocale)
@@ -88,7 +89,8 @@ public class AS4ClientErrorMessage extends AbstractAS4ClientSignalMessage <AS4Cl
   {
     _checkMandatoryAttributes ();
 
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID, getRefToMessageID ());
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
+                                                                                            getRefToMessageID ());
 
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (getSoapVersion (), aEbms3MessageInfo, m_aErrorMessages);
 

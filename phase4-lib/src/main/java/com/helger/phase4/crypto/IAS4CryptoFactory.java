@@ -26,7 +26,7 @@ import org.apache.wss4j.common.crypto.Crypto;
 /**
  * The basic phase4 crypto interface.
  * <ul>
- * <li>See {@link AS4CryptoFactoryPropertiesFile} for an implementation of this
+ * <li>See {@link AS4CryptoFactoryProperties} for an implementation of this
  * interface using a properties based approach</li>
  * </ul>
  *
