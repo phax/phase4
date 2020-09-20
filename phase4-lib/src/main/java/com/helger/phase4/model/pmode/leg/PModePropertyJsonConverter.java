@@ -43,10 +43,13 @@ public final class PModePropertyJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeProperty aValue)
   {
-    return new JsonObject ().add (NAME, aValue.getName ())
-                            .add (DESCRIPTION, aValue.getDescription ())
-                            .add (DATA_TYPE, aValue.getDataType ())
-                            .add (MANDATORY, aValue.isMandatory ());
+    final IJsonObject ret = new JsonObject ();
+    ret.add (NAME, aValue.getName ());
+    if (aValue.hasDescription ())
+      ret.add (DESCRIPTION, aValue.getDescription ());
+    ret.add (DATA_TYPE, aValue.getDataType ());
+    ret.add (MANDATORY, aValue.isMandatory ());
+    return ret;
   }
 
   @Nonnull

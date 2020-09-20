@@ -49,7 +49,8 @@ public final class PModePayloadProfileJsonConverter
     final IJsonObject ret = new JsonObject ();
     ret.add (NAME, aValue.getName ());
     ret.add (MIME_TYPE, aValue.getMimeType ().getAsString ());
-    ret.add (XSD_FILENAME, aValue.getXSDFilename ());
+    if (aValue.hasXSDFilename ())
+      ret.add (XSD_FILENAME, aValue.getXSDFilename ());
     if (aValue.hasMaxSizeKB ())
       ret.add (MAX_SIZE_KB, aValue.getMaxSizeKB ().intValue ());
     ret.add (MANDATORY, aValue.isMandatory ());

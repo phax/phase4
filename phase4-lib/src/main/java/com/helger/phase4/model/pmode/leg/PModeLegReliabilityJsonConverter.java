@@ -61,10 +61,12 @@ public final class PModeLegReliabilityJsonConverter
       ret.add (AT_LEAST_ONCE_CONTRACT, aValue.isAtLeastOnceContract ());
     if (aValue.isAtLeastOnceAckOnDeliveryDefined ())
       ret.add (AT_LEAST_ONCE_ACK_ON_DELIVERY, aValue.isAtLeastOnceAckOnDelivery ());
-    ret.add (AT_LEAST_ONCE_CONTRACT_ACK_TO, aValue.getAtLeastOnceContractAcksTo ());
+    if (aValue.hasAtLeastOnceContractAcksTo ())
+      ret.add (AT_LEAST_ONCE_CONTRACT_ACK_TO, aValue.getAtLeastOnceContractAcksTo ());
     if (aValue.isAtLeastOnceContractAckResponseDefined ())
       ret.add (AT_LEAST_ONCE_CONTRACT_ACK_RESPONSE, aValue.isAtLeastOnceContractAckResponse ());
-    ret.add (AT_LEAST_ONCE_REPLY_PATTERN, aValue.getAtLeastOnceReplyPattern ());
+    if (aValue.hasAtLeastOnceReplyPattern ())
+      ret.add (AT_LEAST_ONCE_REPLY_PATTERN, aValue.getAtLeastOnceReplyPattern ());
     if (aValue.isAtMostOnceContractDefined ())
       ret.add (AT_MOST_ONCE_CONTRACT, aValue.isAtMostOnceContract ());
     if (aValue.isInOrderContractDefined ())
@@ -95,8 +97,8 @@ public final class PModeLegReliabilityJsonConverter
                                                                                     PModeLegReliability.DEFAULT_IN_ORDER_CONTACT);
     final ETriState eStartGroup = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (START_GROUP),
                                                                                PModeLegReliability.DEFAULT_START_GROUP);
-    final IJsonArray aCorrelation = aElement.getAsArray (CORRELATION);
     final ICommonsList <String> aCorrelationStrings = new CommonsArrayList <> ();
+    final IJsonArray aCorrelation = aElement.getAsArray (CORRELATION);
     if (aCorrelation != null)
       for (final IJsonValue aCorrelationElement : aCorrelation.iteratorValues ())
         aCorrelationStrings.add (aCorrelationElement.getAsString ());

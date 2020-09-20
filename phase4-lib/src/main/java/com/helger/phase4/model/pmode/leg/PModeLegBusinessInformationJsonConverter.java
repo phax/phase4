@@ -50,18 +50,24 @@ public final class PModeLegBusinessInformationJsonConverter
   public static IJsonObject convertToJson (@Nonnull final PModeLegBusinessInformation aValue)
   {
     final IJsonObject ret = new JsonObject ();
-    ret.add (SERVICE, aValue.getService ());
-    ret.add (SERVICE_TYPE, aValue.getServiceType ());
-    ret.add (ACTION, aValue.getAction ());
-    ret.addJson (PROPERTIES,
-                 new JsonArray ().addAllMapped (aValue.properties ().values (),
-                                                PModePropertyJsonConverter::convertToJson));
-    ret.addJson (PAYLOAD_PROFILE,
-                 new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
-                                                PModePayloadProfileJsonConverter::convertToJson));
+    if (aValue.hasService ())
+      ret.add (SERVICE, aValue.getService ());
+    if (aValue.hasServiceType ())
+      ret.add (SERVICE_TYPE, aValue.getServiceType ());
+    if (aValue.hasAction ())
+      ret.add (ACTION, aValue.getAction ());
+    if (aValue.properties ().isNotEmpty ())
+      ret.addJson (PROPERTIES,
+                   new JsonArray ().addAllMapped (aValue.properties ().values (),
+                                                  PModePropertyJsonConverter::convertToJson));
+    if (aValue.payloadProfiles ().isNotEmpty ())
+      ret.addJson (PAYLOAD_PROFILE,
+                   new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
+                                                  PModePayloadProfileJsonConverter::convertToJson));
     if (aValue.hasPayloadProfileMaxKB ())
       ret.add (PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
-    ret.add (MPCID, aValue.getMPCID ());
+    if (aValue.hasMPCID ())
+      ret.add (MPCID, aValue.getMPCID ());
     return ret;
   }
 

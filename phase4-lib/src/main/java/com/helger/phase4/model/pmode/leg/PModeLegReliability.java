@@ -32,6 +32,7 @@ import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
 import com.helger.commons.state.ETriState;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
@@ -232,6 +233,11 @@ public class PModeLegReliability implements Serializable
     return m_sAtLeastOnceContractAcksTo;
   }
 
+  public final boolean hasAtLeastOnceContractAcksTo ()
+  {
+    return StringHelper.hasText (m_sAtLeastOnceContractAcksTo);
+  }
+
   @Nonnull
   public final EChange setAtLeastOnceContractAcksTo (@Nullable final String sAtLeastOnceContractAcksTo)
   {
@@ -271,6 +277,11 @@ public class PModeLegReliability implements Serializable
   public final String getAtLeastOnceReplyPattern ()
   {
     return m_sAtLeastOnceReplyPattern;
+  }
+
+  public final boolean hasAtLeastOnceReplyPattern ()
+  {
+    return StringHelper.hasText (m_sAtLeastOnceReplyPattern);
   }
 
   @Nonnull

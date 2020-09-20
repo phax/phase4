@@ -41,8 +41,11 @@ public final class PModeLegProtocolJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeLegProtocol aValue)
   {
-    return new JsonObject ().add (ADDRESS, aValue.getAddress ())
-                            .add (SOAP_VERSION, aValue.getSoapVersion ().getVersion ());
+    final IJsonObject ret = new JsonObject ();
+    if (aValue.hasAddress ())
+      ret.add (ADDRESS, aValue.getAddress ());
+    ret.add (SOAP_VERSION, aValue.getSoapVersion ().getVersion ());
+    return ret;
   }
 
   @Nonnull

@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.state.ETriState;
-import com.helger.commons.string.StringHelper;
 import com.helger.phase4.crypto.ECryptoAlgorithmCrypt;
 import com.helger.phase4.crypto.ECryptoAlgorithmSign;
 import com.helger.phase4.crypto.ECryptoAlgorithmSignDigest;
@@ -70,28 +69,28 @@ public class PModeLegSecurityMicroTypeConverter extends AbstractPModeMicroTypeCo
     final IMicroElement ret = new MicroElement (sNamespaceURI, sTagName);
 
     ret.setAttribute (ATTR_WSS_VERSION, aValue.getWSSVersionAsString ());
-    for (final String sSign : aValue.getX509SignElement ())
+    for (final String sSign : aValue.getAllX509SignElements ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN_ELEMENT).appendText (sSign);
     }
-    for (final String sSign : aValue.getX509SignAttachment ())
+    for (final String sSign : aValue.getAllX509SignAttachments ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGN_ATTACHMENT).appendText (sSign);
     }
-    if (StringHelper.hasText (aValue.getX509SignatureCertificate ()))
+    if (aValue.hasX509SignatureCertificate ())
       ret.appendElement (sNamespaceURI, ELEMENT_X509_SIGNATURE_CERTIFICATE)
          .appendText (aValue.getX509SignatureCertificate ());
     ret.setAttribute (ATTR_X509_SIGNATURE_HASH_FUNCTION, aValue.getX509SignatureHashFunctionID ());
     ret.setAttribute (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithmID ());
-    for (final String sEncrypt : aValue.getX509EncryptionEncryptElement ())
+    for (final String sEncrypt : aValue.getAllX509EncryptionEncryptElements ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT).appendText (sEncrypt);
     }
-    for (final String sEncrypt : aValue.getX509EncryptionEncryptAttachment ())
+    for (final String sEncrypt : aValue.getAllX509EncryptionEncryptAttachments ())
     {
       ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT).appendText (sEncrypt);
     }
-    if (StringHelper.hasText (aValue.getX509EncryptionCertificate ()))
+    if (aValue.hasX509EncryptionCertificate ())
       ret.appendElement (sNamespaceURI, ELEMENT_X509_ENCRYPTION_CERTIFICATE)
          .appendText (aValue.getX509EncryptionCertificate ());
     ret.setAttribute (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithmID ());

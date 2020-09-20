@@ -28,6 +28,7 @@ import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.url.URLHelper;
 import com.helger.phase4.soap.ESoapVersion;
@@ -71,6 +72,11 @@ public class PModeLegProtocol implements Serializable
   public final String getAddress ()
   {
     return m_sAddress;
+  }
+
+  public final boolean hasAddress ()
+  {
+    return StringHelper.hasText (m_sAddress);
   }
 
   @Nullable

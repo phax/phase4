@@ -25,6 +25,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.equals.EqualsHelper;
@@ -71,8 +72,8 @@ public class PModeLegSecurity implements Serializable
    * belongs). An element within the Attachment[] list is identified by the
    * Content-Id.
    */
-  private final ICommonsList <String> m_aX509SignElement = new CommonsArrayList <> ();
-  private final ICommonsList <String> m_aX509SignAttachment = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509SignElements = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509SignAttachments = new CommonsArrayList <> ();
   /**
    * The value of this parameter identifies the public certificate to use when
    * verifying signed data.
@@ -98,8 +99,8 @@ public class PModeLegSecurity implements Serializable
    * Encrypt.Attachment[]. An element within these lists is identified as in
    * Security.X509.Sign lists.
    */
-  private final ICommonsList <String> m_aX509EncryptionEncryptElement = new CommonsArrayList <> ();
-  private final ICommonsList <String> m_aX509EncryptionEncryptAttachment = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509EncryptionEncryptElements = new CommonsArrayList <> ();
+  private final ICommonsList <String> m_aX509EncryptionEncryptAttachments = new CommonsArrayList <> ();
 
   /**
    * The value of this parameter identifies the public certificate to use when
@@ -198,13 +199,13 @@ public class PModeLegSecurity implements Serializable
                            @Nonnull final ETriState eSendReceiptNonRepudiation)
   {
     setWSSVersion (eWSSVersion);
-    setX509SignElement (aX509SignElement);
-    setX509SignAttachment (aX509SignAttachment);
+    setX509SignElements (aX509SignElement);
+    setX509SignAttachments (aX509SignAttachment);
     setX509SignatureCertificate (sX509SignatureCertificate);
     setX509SignatureHashFunction (eX509SignatureHashFunction);
     setX509SignatureAlgorithm (sX509SignatureAlgorithm);
-    setX509EncryptionEncryptElement (aX509EncryptionEncryptElement);
-    setX509EncryptionEncryptAttachment (aX509EncryptionEncryptAttachment);
+    setX509EncryptionEncryptElements (aX509EncryptionEncryptElement);
+    setX509EncryptionEncryptAttachments (aX509EncryptionEncryptAttachment);
     setX509EncryptionCertificate (sX509EncryptionCertificate);
     setX509EncryptionAlgorithm (sX509EncryptionAlgorithm);
     setX509EncryptionMinimumStrength (aX509EncryptionMinimumStrength);
@@ -264,34 +265,48 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public final ICommonsList <String> getX509SignElement ()
+  @ReturnsMutableObject
+  public final ICommonsList <String> x509SignElements ()
   {
-    return m_aX509SignElement.getClone ();
+    return m_aX509SignElements;
   }
 
   @Nonnull
-  public final EChange setX509SignElement (@Nullable final ICommonsList <String> aX509SignElement)
+  @ReturnsMutableCopy
+  public final ICommonsList <String> getAllX509SignElements ()
   {
-    if (EqualsHelper.equals (aX509SignElement, m_aX509SignElement))
+    return m_aX509SignElements.getClone ();
+  }
+
+  @Nonnull
+  public final EChange setX509SignElements (@Nullable final ICommonsList <String> aX509SignElement)
+  {
+    if (EqualsHelper.equals (aX509SignElement, m_aX509SignElements))
       return EChange.UNCHANGED;
-    m_aX509SignElement.setAll (aX509SignElement);
+    m_aX509SignElements.setAll (aX509SignElement);
     return EChange.CHANGED;
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public final ICommonsList <String> getX509SignAttachment ()
+  @ReturnsMutableObject
+  public final ICommonsList <String> x509SignAttachments ()
   {
-    return m_aX509SignAttachment.getClone ();
+    return m_aX509SignAttachments;
   }
 
   @Nonnull
-  public final EChange setX509SignAttachment (@Nullable final ICommonsList <String> aX509SignAttachment)
+  @ReturnsMutableCopy
+  public final ICommonsList <String> getAllX509SignAttachments ()
   {
-    if (EqualsHelper.equals (aX509SignAttachment, m_aX509SignAttachment))
+    return m_aX509SignAttachments.getClone ();
+  }
+
+  @Nonnull
+  public final EChange setX509SignAttachments (@Nullable final ICommonsList <String> aX509SignAttachment)
+  {
+    if (EqualsHelper.equals (aX509SignAttachment, m_aX509SignAttachments))
       return EChange.UNCHANGED;
-    m_aX509SignAttachment.setAll (aX509SignAttachment);
+    m_aX509SignAttachments.setAll (aX509SignAttachment);
     return EChange.CHANGED;
   }
 
@@ -368,34 +383,48 @@ public class PModeLegSecurity implements Serializable
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public final ICommonsList <String> getX509EncryptionEncryptElement ()
+  @ReturnsMutableObject
+  public final ICommonsList <String> x509EncryptionEncryptElements ()
   {
-    return m_aX509EncryptionEncryptElement.getClone ();
+    return m_aX509EncryptionEncryptElements;
   }
 
   @Nonnull
-  public final EChange setX509EncryptionEncryptElement (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
+  @ReturnsMutableCopy
+  public final ICommonsList <String> getAllX509EncryptionEncryptElements ()
   {
-    if (EqualsHelper.equals (aX509EncryptionEncryptElement, m_aX509EncryptionEncryptElement))
+    return m_aX509EncryptionEncryptElements.getClone ();
+  }
+
+  @Nonnull
+  public final EChange setX509EncryptionEncryptElements (@Nullable final ICommonsList <String> aX509EncryptionEncryptElement)
+  {
+    if (EqualsHelper.equals (aX509EncryptionEncryptElement, m_aX509EncryptionEncryptElements))
       return EChange.UNCHANGED;
-    m_aX509EncryptionEncryptElement.setAll (aX509EncryptionEncryptElement);
+    m_aX509EncryptionEncryptElements.setAll (aX509EncryptionEncryptElement);
     return EChange.CHANGED;
   }
 
   @Nonnull
-  @ReturnsMutableCopy
-  public final ICommonsList <String> getX509EncryptionEncryptAttachment ()
+  @ReturnsMutableObject
+  public final ICommonsList <String> x509EncryptionEncryptAttachments ()
   {
-    return m_aX509EncryptionEncryptAttachment.getClone ();
+    return m_aX509EncryptionEncryptAttachments;
   }
 
   @Nonnull
-  public final EChange setX509EncryptionEncryptAttachment (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
+  @ReturnsMutableCopy
+  public final ICommonsList <String> getAllX509EncryptionEncryptAttachments ()
   {
-    if (EqualsHelper.equals (aX509EncryptionEncryptAttachment, m_aX509EncryptionEncryptAttachment))
+    return m_aX509EncryptionEncryptAttachments.getClone ();
+  }
+
+  @Nonnull
+  public final EChange setX509EncryptionEncryptAttachments (@Nullable final ICommonsList <String> aX509EncryptionEncryptAttachment)
+  {
+    if (EqualsHelper.equals (aX509EncryptionEncryptAttachment, m_aX509EncryptionEncryptAttachments))
       return EChange.UNCHANGED;
-    m_aX509EncryptionEncryptAttachment.setAll (aX509EncryptionEncryptAttachment);
+    m_aX509EncryptionEncryptAttachments.setAll (aX509EncryptionEncryptAttachment);
     return EChange.CHANGED;
   }
 
@@ -641,9 +670,15 @@ public class PModeLegSecurity implements Serializable
     return m_eSendReceiptReplyPattern;
   }
 
+  @Nullable
   public final String getSendReceiptReplyPatternID ()
   {
     return m_eSendReceiptReplyPattern == null ? null : m_eSendReceiptReplyPattern.getID ();
+  }
+
+  public final boolean hasSendReceiptReplyPattern ()
+  {
+    return m_eSendReceiptReplyPattern != null;
   }
 
   @Nonnull
@@ -684,16 +719,16 @@ public class PModeLegSecurity implements Serializable
   /**
    * Set all field that affect signing to "no signing".
    *
-   * @see #setX509SignElement(ICommonsList)
-   * @see #setX509SignAttachment(ICommonsList)
+   * @see #setX509SignElements(ICommonsList)
+   * @see #setX509SignAttachments(ICommonsList)
    * @see #setX509SignatureCertificate(String)
    * @see #setX509SignatureHashFunction(ECryptoAlgorithmSignDigest)
    * @see #setX509SignatureAlgorithm(ECryptoAlgorithmSign)
    */
   public final void disableSigning ()
   {
-    setX509SignElement (null);
-    setX509SignAttachment (null);
+    setX509SignElements (null);
+    setX509SignAttachments (null);
     setX509SignatureCertificate (null);
     setX509SignatureHashFunction (null);
     setX509SignatureAlgorithm (null);
@@ -702,16 +737,16 @@ public class PModeLegSecurity implements Serializable
   /**
    * Set all field that affect encryption to "no encryption".
    *
-   * @see #setX509EncryptionEncryptElement(ICommonsList)
-   * @see #setX509EncryptionEncryptAttachment(ICommonsList)
+   * @see #setX509EncryptionEncryptElements(ICommonsList)
+   * @see #setX509EncryptionEncryptAttachments(ICommonsList)
    * @see #setX509EncryptionCertificate(String)
    * @see #setX509EncryptionAlgorithm(ECryptoAlgorithmCrypt)
    * @see #setX509EncryptionMinimumStrength(Integer)
    */
   public final void disableEncryption ()
   {
-    setX509EncryptionEncryptElement (null);
-    setX509EncryptionEncryptAttachment (null);
+    setX509EncryptionEncryptElements (null);
+    setX509EncryptionEncryptAttachments (null);
     setX509EncryptionCertificate (null);
     setX509EncryptionAlgorithm (null);
     setX509EncryptionMinimumStrength (null);
@@ -726,13 +761,13 @@ public class PModeLegSecurity implements Serializable
       return false;
     final PModeLegSecurity rhs = (PModeLegSecurity) o;
     return EqualsHelper.equals (m_eWSSVersion, rhs.m_eWSSVersion) &&
-           EqualsHelper.equals (m_aX509SignElement, rhs.m_aX509SignElement) &&
-           EqualsHelper.equals (m_aX509SignAttachment, rhs.m_aX509SignAttachment) &&
+           EqualsHelper.equals (m_aX509SignElements, rhs.m_aX509SignElements) &&
+           EqualsHelper.equals (m_aX509SignAttachments, rhs.m_aX509SignAttachments) &&
            EqualsHelper.equals (m_sX509SignatureCertificate, rhs.m_sX509SignatureCertificate) &&
            EqualsHelper.equals (m_eX509SignatureHashFunction, rhs.m_eX509SignatureHashFunction) &&
            EqualsHelper.equals (m_eX509SignatureAlgorithm, rhs.m_eX509SignatureAlgorithm) &&
-           EqualsHelper.equals (m_aX509EncryptionEncryptElement, rhs.m_aX509EncryptionEncryptElement) &&
-           EqualsHelper.equals (m_aX509EncryptionEncryptAttachment, rhs.m_aX509EncryptionEncryptAttachment) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptElements, rhs.m_aX509EncryptionEncryptElements) &&
+           EqualsHelper.equals (m_aX509EncryptionEncryptAttachments, rhs.m_aX509EncryptionEncryptAttachments) &&
            EqualsHelper.equals (m_sX509EncryptionCertificate, rhs.m_sX509EncryptionCertificate) &&
            EqualsHelper.equals (m_eX509EncryptionAlgorithm, rhs.m_eX509EncryptionAlgorithm) &&
            EqualsHelper.equals (m_aX509EncryptionMinimumStrength, rhs.m_aX509EncryptionMinimumStrength) &&
@@ -751,13 +786,13 @@ public class PModeLegSecurity implements Serializable
   public int hashCode ()
   {
     return new HashCodeGenerator (this).append (m_eWSSVersion)
-                                       .append (m_aX509SignElement)
-                                       .append (m_aX509SignAttachment)
+                                       .append (m_aX509SignElements)
+                                       .append (m_aX509SignAttachments)
                                        .append (m_sX509SignatureCertificate)
                                        .append (m_eX509SignatureHashFunction)
                                        .append (m_eX509SignatureAlgorithm)
-                                       .append (m_aX509EncryptionEncryptElement)
-                                       .append (m_aX509EncryptionEncryptAttachment)
+                                       .append (m_aX509EncryptionEncryptElements)
+                                       .append (m_aX509EncryptionEncryptAttachments)
                                        .append (m_sX509EncryptionCertificate)
                                        .append (m_eX509EncryptionAlgorithm)
                                        .append (m_aX509EncryptionMinimumStrength)
@@ -777,13 +812,13 @@ public class PModeLegSecurity implements Serializable
   public String toString ()
   {
     return new ToStringGenerator (this).append ("WSSVersion", m_eWSSVersion)
-                                       .append ("X509SignElement", m_aX509SignElement)
-                                       .append ("X509SignAttachment", m_aX509SignAttachment)
+                                       .append ("X509SignElement", m_aX509SignElements)
+                                       .append ("X509SignAttachment", m_aX509SignAttachments)
                                        .append ("X509SignatureCertificate", m_sX509SignatureCertificate)
                                        .append ("X509SignatureHashFunction", m_eX509SignatureHashFunction)
                                        .append ("X509SignatureAlgorithm", m_eX509SignatureAlgorithm)
-                                       .append ("X509EncryptionEncryptElement", m_aX509EncryptionEncryptElement)
-                                       .append ("X509EncryptionEncryptAttachment", m_aX509EncryptionEncryptAttachment)
+                                       .append ("X509EncryptionEncryptElement", m_aX509EncryptionEncryptElements)
+                                       .append ("X509EncryptionEncryptAttachment", m_aX509EncryptionEncryptAttachments)
                                        .append ("X509EncryptionCertificate", m_sX509EncryptionCertificate)
                                        .append ("X509EncryptionAlgorithm", m_eX509EncryptionAlgorithm)
                                        .append ("X509EncryptionMinimumStrength", m_aX509EncryptionMinimumStrength)
