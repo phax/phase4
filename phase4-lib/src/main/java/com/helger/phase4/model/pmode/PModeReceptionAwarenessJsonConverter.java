@@ -32,11 +32,11 @@ import com.helger.json.JsonObject;
 @Immutable
 public class PModeReceptionAwarenessJsonConverter
 {
-  private static final String ATTR_RECEPTION_AWARENESS = "ReceptionAwareness";
-  private static final String ATTR_RETRY = "Retry";
-  private static final String ATTR_MAX_RETRIES = "MaxRetries";
-  private static final String ATTR_RETRY_INTERVAL_MS = "RetryIntervalMS";
-  private static final String ATTR_DUPLICATE_DETECTION = "DuplicateDetection";
+  private static final String RECEPTION_AWARENESS = "ReceptionAwareness";
+  private static final String RETRY = "Retry";
+  private static final String MAX_RETRIES = "MaxRetries";
+  private static final String RETRY_INTERVAL_MS = "RetryIntervalMS";
+  private static final String DUPLICATE_DETECTION = "DuplicateDetection";
 
   private PModeReceptionAwarenessJsonConverter ()
   {}
@@ -46,27 +46,27 @@ public class PModeReceptionAwarenessJsonConverter
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.isReceptionAwarenessDefined ())
-      ret.add (ATTR_RECEPTION_AWARENESS, aValue.isReceptionAwareness ());
+      ret.add (RECEPTION_AWARENESS, aValue.isReceptionAwareness ());
     if (aValue.isRetryDefined ())
-      ret.add (ATTR_RETRY, aValue.isRetry ());
-    ret.add (ATTR_MAX_RETRIES, aValue.getMaxRetries ());
-    ret.add (ATTR_RETRY_INTERVAL_MS, aValue.getRetryIntervalMS ());
+      ret.add (RETRY, aValue.isRetry ());
+    ret.add (MAX_RETRIES, aValue.getMaxRetries ());
+    ret.add (RETRY_INTERVAL_MS, aValue.getRetryIntervalMS ());
     if (aValue.isDuplicateDetectionDefined ())
-      ret.add (ATTR_DUPLICATE_DETECTION, aValue.isDuplicateDetection ());
+      ret.add (DUPLICATE_DETECTION, aValue.isDuplicateDetection ());
     return ret;
   }
 
   @Nonnull
   public static PModeReceptionAwareness convertToNative (final IJsonObject aElement)
   {
-    final ETriState eReceptionAwareness = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (ATTR_RECEPTION_AWARENESS),
+    final ETriState eReceptionAwareness = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (RECEPTION_AWARENESS),
                                                                                        PModeReceptionAwareness.DEFAULT_RECEPTION_AWARENESS);
-    final ETriState eRetry = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (ATTR_RETRY),
+    final ETriState eRetry = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (RETRY),
                                                                           PModeReceptionAwareness.DEFAULT_RETRY);
-    final int nMaxRetries = aElement.getAsInt (ATTR_MAX_RETRIES, PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
-    final int nRetryIntervalMS = aElement.getAsInt (ATTR_RETRY_INTERVAL_MS,
+    final int nMaxRetries = aElement.getAsInt (MAX_RETRIES, PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
+    final int nRetryIntervalMS = aElement.getAsInt (RETRY_INTERVAL_MS,
                                                     PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS);
-    final ETriState eDuplicateDetection = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (ATTR_DUPLICATE_DETECTION),
+    final ETriState eDuplicateDetection = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (DUPLICATE_DETECTION),
                                                                                        PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
     return new PModeReceptionAwareness (eReceptionAwareness,
                                         eRetry,

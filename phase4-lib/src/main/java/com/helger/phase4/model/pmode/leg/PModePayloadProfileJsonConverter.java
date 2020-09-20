@@ -34,11 +34,11 @@ import com.helger.json.JsonObject;
 @Immutable
 public final class PModePayloadProfileJsonConverter
 {
-  private static final String ATTR_NAME = "Name";
-  private static final String ATTR_MIME_TYPE = "MimeType";
-  private static final String ATTR_XSD_FILENAME = "XSDFilename";
-  private static final String ATTR_MAX_SIZE_KB = "MaxSizeKB";
-  private static final String ATTR_MANDATORY = "Mandatory";
+  private static final String NAME = "Name";
+  private static final String MIME_TYPE = "MimeType";
+  private static final String XSD_FILENAME = "XSDFilename";
+  private static final String MAX_SIZE_KB = "MaxSizeKB";
+  private static final String MANDATORY = "Mandatory";
 
   private PModePayloadProfileJsonConverter ()
   {}
@@ -47,23 +47,23 @@ public final class PModePayloadProfileJsonConverter
   public static IJsonObject convertToJson (@Nonnull final PModePayloadProfile aValue)
   {
     final IJsonObject ret = new JsonObject ();
-    ret.add (ATTR_NAME, aValue.getName ());
-    ret.add (ATTR_MIME_TYPE, aValue.getMimeType ().getAsString ());
-    ret.add (ATTR_XSD_FILENAME, aValue.getXSDFilename ());
+    ret.add (NAME, aValue.getName ());
+    ret.add (MIME_TYPE, aValue.getMimeType ().getAsString ());
+    ret.add (XSD_FILENAME, aValue.getXSDFilename ());
     if (aValue.hasMaxSizeKB ())
-      ret.add (ATTR_MAX_SIZE_KB, aValue.getMaxSizeKB ().intValue ());
-    ret.add (ATTR_MANDATORY, aValue.isMandatory ());
+      ret.add (MAX_SIZE_KB, aValue.getMaxSizeKB ().intValue ());
+    ret.add (MANDATORY, aValue.isMandatory ());
     return ret;
   }
 
   @Nonnull
   public static PModePayloadProfile convertToNative (final IJsonObject aElement)
   {
-    final String sName = aElement.getAsString (ATTR_NAME);
-    final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAsString (ATTR_MIME_TYPE));
-    final String sXSDFilename = aElement.getAsString (ATTR_XSD_FILENAME);
-    final Integer aMaxSizeKB = aElement.getAsIntObj (ATTR_MAX_SIZE_KB);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (ATTR_MANDATORY,
+    final String sName = aElement.getAsString (NAME);
+    final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAsString (MIME_TYPE));
+    final String sXSDFilename = aElement.getAsString (XSD_FILENAME);
+    final Integer aMaxSizeKB = aElement.getAsIntObj (MAX_SIZE_KB);
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY,
                                                                              PModePayloadProfile.DEFAULT_MANDATORY));
 
     return new PModePayloadProfile (sName, aMimeType, sXSDFilename, aMaxSizeKB, eMandatory);

@@ -32,7 +32,7 @@ import com.helger.phase4.attachment.EAS4CompressionMode;
 @Immutable
 public final class PModePayloadServiceJsonConverter
 {
-  private static final String ATTR_COMPRESSION_MODE = "CompressionMode";
+  private static final String COMPRESSION_MODE = "CompressionMode";
 
   private PModePayloadServiceJsonConverter ()
   {}
@@ -40,13 +40,13 @@ public final class PModePayloadServiceJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModePayloadService aValue)
   {
-    return new JsonObject ().add (ATTR_COMPRESSION_MODE, aValue.getCompressionModeID ());
+    return new JsonObject ().add (COMPRESSION_MODE, aValue.getCompressionModeID ());
   }
 
   @Nonnull
   public static PModePayloadService convertToNative (@Nonnull final IJsonObject aElement)
   {
-    final String sCompressionModeID = aElement.getAsString (ATTR_COMPRESSION_MODE);
+    final String sCompressionModeID = aElement.getAsString (COMPRESSION_MODE);
     final EAS4CompressionMode eCompressionMode = EAS4CompressionMode.getFromIDOrNull (sCompressionModeID);
     if (sCompressionModeID != null && eCompressionMode == null)
       throw new IllegalStateException ("Invalid compression mode ID '" + sCompressionModeID + "' provided!");

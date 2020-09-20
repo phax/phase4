@@ -35,13 +35,13 @@ import com.helger.json.JsonObject;
 @Immutable
 public final class PModeLegBusinessInformationJsonConverter
 {
-  private static final String ATTR_SERVICE = "Service";
-  private static final String ATTR_SERVICE_TYPE = "ServiceType";
-  private static final String ATTR_ACTION = "Action";
-  private static final String ELEMENT_PROPERTIES = "Properties";
-  private static final String ELEMENT_PAYLOAD_PROFILE = "PayloadProfile";
-  private static final String ATTR_PAYLOAD_PROFILE_MAX_KB = "PayloadProfileMaxKB";
-  private static final String ATTR_MPCID = "MPCID";
+  private static final String SERVICE = "Service";
+  private static final String SERVICE_TYPE = "ServiceType";
+  private static final String ACTION = "Action";
+  private static final String PROPERTIES = "Properties";
+  private static final String PAYLOAD_PROFILE = "PayloadProfile";
+  private static final String PAYLOAD_PROFILE_MAX_KB = "PayloadProfileMaxKB";
+  private static final String MPCID = "MPCID";
 
   private PModeLegBusinessInformationJsonConverter ()
   {}
@@ -50,30 +50,30 @@ public final class PModeLegBusinessInformationJsonConverter
   public static IJsonObject convertToJson (@Nonnull final PModeLegBusinessInformation aValue)
   {
     final IJsonObject ret = new JsonObject ();
-    ret.add (ATTR_SERVICE, aValue.getService ());
-    ret.add (ATTR_SERVICE_TYPE, aValue.getServiceType ());
-    ret.add (ATTR_ACTION, aValue.getAction ());
-    ret.addJson (ELEMENT_PROPERTIES,
+    ret.add (SERVICE, aValue.getService ());
+    ret.add (SERVICE_TYPE, aValue.getServiceType ());
+    ret.add (ACTION, aValue.getAction ());
+    ret.addJson (PROPERTIES,
                  new JsonArray ().addAllMapped (aValue.properties ().values (),
                                                 PModePropertyJsonConverter::convertToJson));
-    ret.addJson (ELEMENT_PAYLOAD_PROFILE,
+    ret.addJson (PAYLOAD_PROFILE,
                  new JsonArray ().addAllMapped (aValue.payloadProfiles ().values (),
                                                 PModePayloadProfileJsonConverter::convertToJson));
     if (aValue.hasPayloadProfileMaxKB ())
-      ret.add (ATTR_PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
-    ret.add (ATTR_MPCID, aValue.getMPCID ());
+      ret.add (PAYLOAD_PROFILE_MAX_KB, aValue.getPayloadProfileMaxKB ().longValue ());
+    ret.add (MPCID, aValue.getMPCID ());
     return ret;
   }
 
   @Nonnull
   public static PModeLegBusinessInformation convertToNative (@Nonnull final IJsonObject aElement)
   {
-    final String sService = aElement.getAsString (ATTR_SERVICE);
-    final String sServiceType = aElement.getAsString (ATTR_SERVICE_TYPE);
-    final String sAction = aElement.getAsString (ATTR_ACTION);
+    final String sService = aElement.getAsString (SERVICE);
+    final String sServiceType = aElement.getAsString (SERVICE_TYPE);
+    final String sAction = aElement.getAsString (ACTION);
 
     final ICommonsOrderedMap <String, PModeProperty> aProperties = new CommonsLinkedHashMap <> ();
-    final IJsonArray aProps = aElement.getAsArray (ELEMENT_PROPERTIES);
+    final IJsonArray aProps = aElement.getAsArray (PROPERTIES);
     if (aProps != null)
       for (final IJsonObject aPropertyElement : aProps.iteratorObjects ())
       {
@@ -82,7 +82,7 @@ public final class PModeLegBusinessInformationJsonConverter
       }
 
     final ICommonsOrderedMap <String, PModePayloadProfile> aPayloadProfiles = new CommonsLinkedHashMap <> ();
-    final IJsonArray aPayloadProfs = aElement.getAsArray (ELEMENT_PAYLOAD_PROFILE);
+    final IJsonArray aPayloadProfs = aElement.getAsArray (PAYLOAD_PROFILE);
     if (aPayloadProfs != null)
       for (final IJsonObject aPayloadElement : aPayloadProfs.iteratorObjects ())
       {
@@ -90,8 +90,8 @@ public final class PModeLegBusinessInformationJsonConverter
         aPayloadProfiles.put (aPayloadProfile.getName (), aPayloadProfile);
       }
 
-    final Long aPayloadProfileMaxKB = aElement.getAsLongObj (ATTR_PAYLOAD_PROFILE_MAX_KB);
-    final String sMPCID = aElement.getAsString (ATTR_MPCID);
+    final Long aPayloadProfileMaxKB = aElement.getAsLongObj (PAYLOAD_PROFILE_MAX_KB);
+    final String sMPCID = aElement.getAsString (MPCID);
 
     return new PModeLegBusinessInformation (sService,
                                             sServiceType,

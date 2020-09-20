@@ -31,11 +31,11 @@ import com.helger.json.JsonObject;
 @Immutable
 public final class PModePartyJsonConverter
 {
-  private static final String ATTR_ID_TYPE = "IDType";
-  private static final String ATTR_ID_VALUE = "IDValue";
-  private static final String ATTR_ROLE = "Role";
-  private static final String ATTR_USER_NAME = "Username";
-  private static final String ATTR_PASSWORD = "Password";
+  private static final String ID_TYPE = "IDType";
+  private static final String ID_VALUE = "IDValue";
+  private static final String ROLE = "Role";
+  private static final String USER_NAME = "Username";
+  private static final String PASSWORD = "Password";
 
   private PModePartyJsonConverter ()
   {}
@@ -43,21 +43,21 @@ public final class PModePartyJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeParty aValue)
   {
-    return new JsonObject ().add (ATTR_ID_TYPE, aValue.getIDType ())
-                            .add (ATTR_ID_VALUE, aValue.getIDValue ())
-                            .add (ATTR_ROLE, aValue.getRole ())
-                            .add (ATTR_USER_NAME, aValue.getUserName ())
-                            .add (ATTR_PASSWORD, aValue.getPassword ());
+    return new JsonObject ().add (ID_TYPE, aValue.getIDType ())
+                            .add (ID_VALUE, aValue.getIDValue ())
+                            .add (ROLE, aValue.getRole ())
+                            .add (USER_NAME, aValue.getUserName ())
+                            .add (PASSWORD, aValue.getPassword ());
   }
 
   @Nonnull
   public static PModeParty convertToNative (@Nonnull final IJsonObject aElement)
   {
-    final String sIDType = aElement.getAsString (ATTR_ID_TYPE);
-    final String sIDValue = aElement.getAsString (ATTR_ID_VALUE);
-    final String sRole = aElement.getAsString (ATTR_ROLE);
-    final String sUserName = aElement.getAsString (ATTR_USER_NAME);
-    final String sPassword = aElement.getAsString (ATTR_PASSWORD);
+    final String sIDType = aElement.getAsString (ID_TYPE);
+    final String sIDValue = aElement.getAsString (ID_VALUE);
+    final String sRole = aElement.getAsString (ROLE);
+    final String sUserName = aElement.getAsString (USER_NAME);
+    final String sPassword = aElement.getAsString (PASSWORD);
     return new PModeParty (sIDType, sIDValue, sRole, sUserName, sPassword);
   }
 }

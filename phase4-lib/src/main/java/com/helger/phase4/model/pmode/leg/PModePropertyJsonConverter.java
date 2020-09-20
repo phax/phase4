@@ -32,10 +32,10 @@ import com.helger.json.JsonObject;
 @Immutable
 public final class PModePropertyJsonConverter
 {
-  private static final String ATTR_NAME = "Name";
-  private static final String ATTR_DESCRIPTION = "Description";
-  private static final String ATTR_DATA_TYPE = "DataType";
-  private static final String ATTR_MANDATORY = "Mandatory";
+  private static final String NAME = "Name";
+  private static final String DESCRIPTION = "Description";
+  private static final String DATA_TYPE = "DataType";
+  private static final String MANDATORY = "Mandatory";
 
   private PModePropertyJsonConverter ()
   {}
@@ -43,19 +43,19 @@ public final class PModePropertyJsonConverter
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeProperty aValue)
   {
-    return new JsonObject ().add (ATTR_NAME, aValue.getName ())
-                            .add (ATTR_DESCRIPTION, aValue.getDescription ())
-                            .add (ATTR_DATA_TYPE, aValue.getDataType ())
-                            .add (ATTR_MANDATORY, aValue.isMandatory ());
+    return new JsonObject ().add (NAME, aValue.getName ())
+                            .add (DESCRIPTION, aValue.getDescription ())
+                            .add (DATA_TYPE, aValue.getDataType ())
+                            .add (MANDATORY, aValue.isMandatory ());
   }
 
   @Nonnull
   public static PModeProperty convertToNative (@Nonnull final IJsonObject aElement)
   {
-    final String sName = aElement.getAsString (ATTR_NAME);
-    final String sDescription = aElement.getAsString (ATTR_DESCRIPTION);
-    final String sDataType = aElement.getAsString (ATTR_DATA_TYPE);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (ATTR_MANDATORY,
+    final String sName = aElement.getAsString (NAME);
+    final String sDescription = aElement.getAsString (DESCRIPTION);
+    final String sDataType = aElement.getAsString (DATA_TYPE);
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY,
                                                                              PModeProperty.DEFAULT_MANDATORY));
 
     return new PModeProperty (sName, sDescription, sDataType, eMandatory);
