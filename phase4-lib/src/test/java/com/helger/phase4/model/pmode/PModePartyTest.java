@@ -23,6 +23,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.helger.commons.mock.CommonsTestHelper;
+import com.helger.json.IJsonObject;
+import com.helger.xml.mock.XMLTestHelper;
+
 /**
  * Test class for class {@link PModeParty}
  *
@@ -30,6 +34,13 @@ import org.junit.Test;
  */
 public final class PModePartyTest
 {
+  private static void _testJson (final PModeParty p)
+  {
+    final IJsonObject o = PModePartyJsonConverter.convertToJson (p);
+    final PModeParty p2 = PModePartyJsonConverter.convertToNative (o);
+    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (p, p2);
+  }
+
   @Test
   public void testBasic ()
   {
@@ -43,7 +54,10 @@ public final class PModePartyTest
     assertTrue (p.hasUserName ());
     assertEquals ("e", p.getPassword ());
     assertTrue (p.hasPassword ());
-    assertEquals (p, new PModeParty ("a", "b", "c", "d", "e"));
+
+    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (p, new PModeParty ("a", "b", "c", "d", "e"));
+    XMLTestHelper.testMicroTypeConversion (p);
+    _testJson (p);
   }
 
   @Test
@@ -59,6 +73,9 @@ public final class PModePartyTest
     assertFalse (p.hasUserName ());
     assertNull (p.getPassword ());
     assertFalse (p.hasPassword ());
-    assertEquals (p, PModeParty.createSimple ("b", "c"));
+
+    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (p, PModeParty.createSimple ("b", "c"));
+    XMLTestHelper.testMicroTypeConversion (p);
+    _testJson (p);
   }
 }

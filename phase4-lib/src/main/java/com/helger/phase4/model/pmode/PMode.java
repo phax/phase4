@@ -25,6 +25,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
+import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.commons.type.ObjectType;
 import com.helger.phase4.model.EMEP;
@@ -163,15 +164,20 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nonnull
-  public ObjectType getObjectType ()
+  public final ObjectType getObjectType ()
   {
     return OT;
   }
 
   @Nullable
-  public PModeParty getInitiator ()
+  public final PModeParty getInitiator ()
   {
     return m_aInitiator;
+  }
+
+  public final boolean hasInitiator ()
+  {
+    return m_aInitiator != null;
   }
 
   @Nonnull
@@ -184,9 +190,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public PModeParty getResponder ()
+  public final PModeParty getResponder ()
   {
     return m_aResponder;
+  }
+
+  public final boolean hasResponder ()
+  {
+    return m_aResponder != null;
   }
 
   @Nonnull
@@ -199,9 +210,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public String getAgreement ()
+  public final String getAgreement ()
   {
     return m_sAgreement;
+  }
+
+  public final boolean hasAgreement ()
+  {
+    return StringHelper.hasText (m_sAgreement);
   }
 
   @Nonnull
@@ -214,7 +230,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nonnull
-  public EMEP getMEP ()
+  public final EMEP getMEP ()
   {
     return m_eMEP;
   }
@@ -230,7 +246,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nonnull
-  public EMEPBinding getMEPBinding ()
+  public final EMEPBinding getMEPBinding ()
   {
     return m_eMEPBinding;
   }
@@ -246,9 +262,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public PModeLeg getLeg1 ()
+  public final PModeLeg getLeg1 ()
   {
     return m_aLeg1;
+  }
+
+  public final boolean hasLeg1 ()
+  {
+    return m_aLeg1 != null;
   }
 
   @Nonnull
@@ -261,9 +282,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public PModeLeg getLeg2 ()
+  public final PModeLeg getLeg2 ()
   {
     return m_aLeg2;
+  }
+
+  public final boolean hasLeg2 ()
+  {
+    return m_aLeg2 != null;
   }
 
   @Nonnull
@@ -276,9 +302,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public PModePayloadService getPayloadService ()
+  public final PModePayloadService getPayloadService ()
   {
     return m_aPayloadService;
+  }
+
+  public final boolean hasPayloadService ()
+  {
+    return m_aPayloadService != null;
   }
 
   @Nonnull
@@ -291,9 +322,14 @@ public class PMode extends AbstractBusinessObject implements IPMode
   }
 
   @Nullable
-  public PModeReceptionAwareness getReceptionAwareness ()
+  public final PModeReceptionAwareness getReceptionAwareness ()
   {
     return m_aPModeReceptionAwareness;
+  }
+
+  public final boolean hasReceptionAwareness ()
+  {
+    return m_aPModeReceptionAwareness != null;
   }
 
   @Nonnull

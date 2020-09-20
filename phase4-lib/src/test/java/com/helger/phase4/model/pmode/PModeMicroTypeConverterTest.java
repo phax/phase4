@@ -29,8 +29,10 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.mime.EMimeContentType;
 import com.helger.commons.mime.MimeType;
+import com.helger.commons.mock.CommonsTestHelper;
 import com.helger.commons.state.EMandatory;
 import com.helger.commons.state.ETriState;
+import com.helger.json.IJsonObject;
 import com.helger.phase4.AS4TestRule;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
@@ -86,6 +88,11 @@ public final class PModeMicroTypeConverterTest
     XMLTestHelper.testMicroTypeConversion (aPMode.getLeg2 ());
     XMLTestHelper.testMicroTypeConversion (aPMode.getPayloadService ());
     XMLTestHelper.testMicroTypeConversion (aPMode.getReceptionAwareness ());
+
+    final IJsonObject o = PModeJsonConverter.convertToJson (aPMode);
+    final PMode aPMode2 = PModeJsonConverter.convertToNative (o);
+    CommonsTestHelper.testDefaultImplementationWithEqualContentObject (aPMode, aPMode2);
+
   }
 
   @Nonnull
