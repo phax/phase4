@@ -129,7 +129,11 @@ public final class PeppolPMode
     final int nMaxRetries = 1;
     final int nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness,
+                                        eRetry,
+                                        nMaxRetries,
+                                        nRetryIntervalMS,
+                                        eDuplicateDetection);
   }
 
   @Nonnull
@@ -165,7 +169,7 @@ public final class PeppolPMode
     final PModeParty aInitiator = createParty (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL);
     final PModeParty aResponder = createParty (sResponderID, CAS4.DEFAULT_RESPONDER_URL);
 
-    final PMode aPMode = new PMode (aPModeIDProvider,
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
                                     aInitiator,
                                     aResponder,
                                     DEFAULT_AGREEMENT_ID,

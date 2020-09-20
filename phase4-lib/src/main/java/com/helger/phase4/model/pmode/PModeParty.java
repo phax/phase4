@@ -99,7 +99,7 @@ public class PModeParty implements IHasID <String>, Serializable
     if (ret == null)
     {
       if (StringHelper.hasText (m_sIDType))
-        ret = m_sIDType + ":" + m_sIDValue;
+        ret = m_sIDType + ':' + m_sIDValue;
       else
         ret = m_sIDValue;
       m_sStatusID = ret;
@@ -174,7 +174,8 @@ public class PModeParty implements IHasID <String>, Serializable
   }
 
   @Nonnull
-  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue, @Nonnull @Nonempty final String sRole)
+  public static PModeParty createSimple (@Nonnull @Nonempty final String sIDValue,
+                                         @Nonnull @Nonempty final String sRole)
   {
     return new PModeParty ((String) null, sIDValue, sRole, (String) null, (String) null);
   }

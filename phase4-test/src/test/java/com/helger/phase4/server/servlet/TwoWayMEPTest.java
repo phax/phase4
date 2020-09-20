@@ -72,16 +72,16 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
     // ESENS PMode is One Way on default settings need to change to two way
-    m_aPMode = new PMode ( (i, r) -> aPMode.getID (),
-                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
-                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
-                           aPMode.getAgreement (),
-                           EMEP.TWO_WAY,
-                           EMEPBinding.SYNC,
-                           aPMode.getLeg1 (),
-                           aLeg2,
-                           aPMode.getPayloadService (),
-                           aPMode.getReceptionAwareness ());
+    m_aPMode = new PMode (aPMode.getID (),
+                          PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
+                          PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
+                          aPMode.getAgreement (),
+                          EMEP.TWO_WAY,
+                          EMEPBinding.SYNC,
+                          aPMode.getLeg1 (),
+                          aLeg2,
+                          aPMode.getPayloadService (),
+                          aPMode.getReceptionAwareness ());
 
     // Delete old PMode since it is getting created in the ESENS createPMode
     MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());
@@ -92,10 +92,15 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void testReceiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
-    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                                                      true,
+                                                      null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
   }
 
   @Test
@@ -110,12 +115,21 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     s_aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), aAttachments, null, null);
+    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
+                                              null,
+                                              null,
+                                              _defaultProperties (),
+                                              aAttachments,
+                                              null,
+                                              null);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
@@ -144,11 +158,17 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509SignatureAlgorithm ()
+                                            .getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
+                                            .getSecurity ()
+                                            .getX509EncryptionAlgorithm ()
+                                            .getAlgorithmURI ()));
   }
 
   @Test

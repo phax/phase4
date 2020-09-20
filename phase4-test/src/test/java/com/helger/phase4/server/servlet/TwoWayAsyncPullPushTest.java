@@ -91,16 +91,16 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     final PModeLeg aLeg2 = aPMode.getLeg1 ();
 
     // ESENS PMode is One Way on default settings need to change to two way
-    m_aPMode = new PMode ( (i, r) -> aPMode.getID (),
-                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
-                           PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
-                           aPMode.getAgreement (),
-                           EMEP.TWO_WAY,
-                           EMEPBinding.PULL_PUSH,
-                           aPMode.getLeg1 (),
-                           aLeg2,
-                           aPMode.getPayloadService (),
-                           aPMode.getReceptionAwareness ());
+    m_aPMode = new PMode (aPMode.getID (),
+                          PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
+                          PModeParty.createSimple (DEFAULT_PARTY_ID + "1", CAS4.DEFAULT_ROLE),
+                          aPMode.getAgreement (),
+                          EMEP.TWO_WAY,
+                          EMEPBinding.PULL_PUSH,
+                          aPMode.getLeg1 (),
+                          aLeg2,
+                          aPMode.getPayloadService (),
+                          aPMode.getReceptionAwareness ());
 
     // Delete old PMode since it is getting created in the ESENS createPMode
     MetaAS4Manager.getPModeMgr ().deletePMode (aPMode.getID ());

@@ -56,7 +56,10 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
   {
-    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
+    return new PModeLegBusinessInformation (CAS4.DEFAULT_SERVICE_URL,
+                                            CAS4.DEFAULT_ACTION_URL,
+                                            null,
+                                            CAS4.DEFAULT_MPC_ID);
   }
 
   @Nonnull
@@ -89,16 +92,16 @@ public final class DefaultPMode
   {
     // Add "default-" prefix to easily identify "default" PModes
     // Leg 2 stays null, because we only use one-way
-    final PMode aDefaultPMode = new PMode ( (i, r) -> "default-" + IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (i, r),
-                                            PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL),
-                                            PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
-                                            "urn:as4:agreement",
-                                            EMEP.ONE_WAY,
-                                            EMEPBinding.PUSH,
-                                            _generatePModeLeg (sAddress),
-                                            (PModeLeg) null,
-                                            (PModePayloadService) null,
-                                            (PModeReceptionAwareness) null);
+    final PMode aDefaultPMode = new PMode ("default-" + sInitiatorID + "-" + sResponderID,
+                                           PModeParty.createSimple (sInitiatorID, CAS4.DEFAULT_INITIATOR_URL),
+                                           PModeParty.createSimple (sResponderID, CAS4.DEFAULT_RESPONDER_URL),
+                                           "urn:as4:agreement",
+                                           EMEP.ONE_WAY,
+                                           EMEPBinding.PUSH,
+                                           _generatePModeLeg (sAddress),
+                                           (PModeLeg) null,
+                                           (PModePayloadService) null,
+                                           (PModeReceptionAwareness) null);
     if (bPersist)
     {
       // Create or update

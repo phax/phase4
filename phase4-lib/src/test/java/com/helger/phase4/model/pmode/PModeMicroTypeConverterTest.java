@@ -69,7 +69,7 @@ public final class PModeMicroTypeConverterTest
     final PModeParty aInitiator = _generateInitiatorOrResponder (true);
     final PModeParty aResponder = _generateInitiatorOrResponder (false);
 
-    final PMode aPMode = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC,
+    final PMode aPMode = new PMode (aInitiator.getID () + "-" + aResponder.getID (),
                                     aInitiator,
                                     aResponder,
                                     "Agreement",
@@ -135,7 +135,8 @@ public final class PModeMicroTypeConverterTest
   private ICommonsOrderedMap <String, PModePayloadProfile> _generatePModePayloadProfile ()
   {
     final PModePayloadProfile aPModePayloadProfile = new PModePayloadProfile ("name",
-                                                                              new MimeType (EMimeContentType.EXAMPLE, "example"),
+                                                                              new MimeType (EMimeContentType.EXAMPLE,
+                                                                                            "example"),
                                                                               "xsdfilename",
                                                                               Integer.valueOf (20001),
                                                                               EMandatory.MANDATORY);
@@ -148,7 +149,10 @@ public final class PModeMicroTypeConverterTest
   @ReturnsMutableCopy
   private ICommonsOrderedMap <String, PModeProperty> _generatePModeProperties ()
   {
-    final PModeProperty aPModeProperty = new PModeProperty ("name", "description", PModeProperty.DATA_TYPE_STRING, EMandatory.MANDATORY);
+    final PModeProperty aPModeProperty = new PModeProperty ("name",
+                                                            "description",
+                                                            PModeProperty.DATA_TYPE_STRING,
+                                                            EMandatory.MANDATORY);
     final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
@@ -197,7 +201,8 @@ public final class PModeMicroTypeConverterTest
   @Nonnull
   private PModeLegSecurity _generatePModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt", "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
+                                                                                  "X509EncryptionEncrypt2");
     final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,

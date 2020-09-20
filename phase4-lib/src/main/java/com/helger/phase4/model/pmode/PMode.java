@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.MustImplementEqualsAndHashcode;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.equals.EqualsHelper;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.state.EChange;
@@ -34,7 +35,7 @@ import com.helger.tenancy.AbstractBusinessObject;
 
 /**
  * Default implementation of {@link IPMode}
- * 
+ *
  * @author Philip Helger
  */
 @Nonnull
@@ -115,7 +116,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
 
   private PModeReceptionAwareness m_aPModeReceptionAwareness;
 
-  public PMode (@Nonnull final IPModeIDProvider aIDFactory,
+  public PMode (@Nonnull @Nonempty final String sPModeID,
                 @Nonnull final PModeParty aInitiator,
                 @Nonnull final PModeParty aResponder,
                 @Nonnull final String sAgreement,
@@ -126,7 +127,7 @@ public class PMode extends AbstractBusinessObject implements IPMode
                 @Nullable final PModePayloadService aPayloadService,
                 @Nullable final PModeReceptionAwareness aReceptionAwareness)
   {
-    this (StubObject.createForCurrentUserAndID (aIDFactory.getPModeID (aInitiator.getID (), aResponder.getID ())),
+    this (StubObject.createForCurrentUserAndID (sPModeID),
           aInitiator,
           aResponder,
           sAgreement,
