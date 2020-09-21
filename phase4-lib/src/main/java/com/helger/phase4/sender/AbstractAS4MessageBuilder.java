@@ -17,6 +17,7 @@
 package com.helger.phase4.sender;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -44,13 +45,16 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4MessageBuilder <IMPLTYPE>> implements
                                                 IGenericImplTrait <IMPLTYPE>
 {
+  public static final Locale DEFAULT_LOCALE = Locale.US;
+
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
+  protected LocalDateTime m_aSendingDateTime;
   protected ESoapVersion m_eSoapVersion;
   protected int m_nMaxRetries = -1;
   protected long m_nRetryIntervalMS = -1;
-  protected Locale m_aLocale = Locale.US;
+  protected Locale m_aLocale = DEFAULT_LOCALE;
 
   /**
    * Create a new builder, with the following fields already set:<br>
@@ -154,6 +158,22 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * Set the optional sending date time. If no time is specified, the current
+   * date time is used.
+   *
+   * @param aSendingDateTime
+   *        The sending date time to set. May be <code>null</code>.
+   * @return this for chaining
+   * @since 0.12.0
+   */
+  @Nonnull
+  public final IMPLTYPE sendingDateTime (@Nullable final LocalDateTime aSendingDateTime)
+  {
+    m_aSendingDateTime = aSendingDateTime;
+    return thisAsT ();
+  }
+
+  /**
    * @return The SOAP version to be used. May be <code>null</code>.
    */
   @Nullable
@@ -233,6 +253,15 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
     return thisAsT ();
   }
 
+  /**
+   * Set the locale to use. The main purpose is to use the correct language for
+   * processing error message in response messages. This field must be set. The
+   * default value is {@link #DEFAULT_LOCALE}.
+   *
+   * @param a
+   *        The locale to use. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final IMPLTYPE locale (@Nullable final Locale a)
   {
@@ -247,6 +276,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       return false;
     // m_aCryptoFactory may be null
     // m_sMessageID is optional
+    // m_aSendingDateTime may be null
     if (m_eSoapVersion == null)
       return false;
 

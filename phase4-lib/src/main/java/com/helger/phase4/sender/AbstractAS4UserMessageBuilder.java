@@ -689,6 +689,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Otherwise Oxalis dies
     aUserMsg.setQuoteHttpHeaders (false);
     aUserMsg.setSoapVersion (m_eSoapVersion);
+    aUserMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
     aUserMsg.setAS4CryptoFactory (m_aCryptoFactory);
     aUserMsg.setPMode (m_aPMode, true);
