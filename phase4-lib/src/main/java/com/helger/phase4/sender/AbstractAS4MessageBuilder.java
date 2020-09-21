@@ -296,7 +296,10 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *
    * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or
    *         if sending failed, {@link ESuccess#SUCCESS} upon success. Never
-   *         <code>null</code>.
+   *         <code>null</code>. This result code does not reflect the semantics
+   *         of a semantically correct message exchange or not. It just states,
+   *         if the message was sent or nor. The rest needs to be determined
+   *         separately.
    * @throws Phase4Exception
    *         In case of any error
    * @see #isEveryRequiredFieldSet()
