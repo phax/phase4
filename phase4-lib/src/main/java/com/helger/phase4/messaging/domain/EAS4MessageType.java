@@ -22,24 +22,27 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
+import com.helger.commons.name.IHasDisplayName;
 
 /**
  * Defines the meta message types.
  *
  * @author Philip Helger
  */
-public enum EAS4MessageType implements IHasID <String>
+public enum EAS4MessageType implements IHasID <String>, IHasDisplayName
 {
-  ERROR_MESSAGE ("errormsg"),
-  PULL_REQUEST ("pullreq"),
-  RECEIPT ("receipt"),
-  USER_MESSAGE ("usermsg");
+  ERROR_MESSAGE ("errormsg", "Error Message"),
+  PULL_REQUEST ("pullreq", "Pull Request"),
+  RECEIPT ("receipt", "Receipt"),
+  USER_MESSAGE ("usermsg", "User Message");
 
   private final String m_sID;
+  private final String m_sDisplayName;
 
-  EAS4MessageType (@Nonnull @Nonempty final String sID)
+  EAS4MessageType (@Nonnull @Nonempty final String sID, @Nonnull @Nonempty final String sDisplayName)
   {
     m_sID = sID;
+    m_sDisplayName = sDisplayName;
   }
 
   @Nonnull
@@ -47,6 +50,13 @@ public enum EAS4MessageType implements IHasID <String>
   public String getID ()
   {
     return m_sID;
+  }
+
+  @Nonnull
+  @Nonempty
+  public String getDisplayName ()
+  {
+    return m_sDisplayName;
   }
 
   public boolean isUserMessage ()
