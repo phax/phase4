@@ -138,7 +138,9 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       else
         if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.RSA_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " + ECryptoAlgorithmSign.RSA_SHA_256.getID () + " as signing algorithm"));
+          aErrorList.add (_createError ("AS4 Profile only allows " +
+                                        ECryptoAlgorithmSign.RSA_SHA_256.getID () +
+                                        " as signing algorithm"));
         }
 
       // Check Hash Function
@@ -285,7 +287,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
-    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) || (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }
@@ -343,7 +346,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
         {
           final List <Ebms3Property> aProps = aMessageProperties.getProperty ();
           if (aProps.isEmpty ())
-            aErrorList.add (_createError ("Message Property element present but no properties"));
+            aErrorList.add (_createError ("Message Property element present but no properties found"));
           else
           {
             String sOriginalSenderC1 = null;
@@ -359,9 +362,13 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
             }
 
             if (StringHelper.hasNoText (sOriginalSenderC1))
-              aErrorList.add (_createError ("'" + CAS4.ORIGINAL_SENDER + "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" +
+                                            CAS4.ORIGINAL_SENDER +
+                                            "' property is empty or not existant but mandatory"));
             if (StringHelper.hasNoText (sFinalRecipientC4))
-              aErrorList.add (_createError ("'" + CAS4.FINAL_RECIPIENT + "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" +
+                                            CAS4.FINAL_RECIPIENT +
+                                            "' property is empty or not existant but mandatory"));
           }
         }
       }

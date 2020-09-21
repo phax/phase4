@@ -839,6 +839,7 @@ public class AS4RequestHandler implements AutoCloseable
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = aUserMessage.getCollaborationInfo ();
 
     // Need to switch C1 and C4 around from the original usermessage
+    // TODO make customizable via profile
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     {
       Ebms3Property aFinalRecipient = null;
@@ -990,6 +991,7 @@ public class AS4RequestHandler implements AutoCloseable
    *        that should be sent back if needed. Can be <code>null</code>.
    * @throws WSSecurityException
    */
+  @Nonnull
   private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSoapDocument,
                                                              @Nonnull final ESoapVersion eSoapVersion,
                                                              @Nonnull final PModeLeg aEffectiveLeg,
@@ -1245,11 +1247,14 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                 aEbmsUserMessage,
                                                                                 aLocalResponseAttachments);
 
-            // Send UserMessage or receipt
+            // Send UserMessage
             final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
+            // Use the original receiver ID as the alias into the keystore for
+            // encrypting the response message
             final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
             final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
                                                                      .setAlias (sEncryptionAlias);
+
             aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSoapVersion (),
                                                                 aResponseUserMsg,
                                                                 aResponseAttachments,
@@ -1266,6 +1271,7 @@ public class AS4RequestHandler implements AutoCloseable
                                                                               aState.getMessageID (),
                                                                               aLocalErrorMessages);
 
+            // Pass error messages to the outside
             if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
               m_aErrorConsumer.onAS4ErrorMessage (aState, aLocalErrorMessages, aResponseErrorMsg);
 
@@ -1379,8 +1385,10 @@ public class AS4RequestHandler implements AutoCloseable
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PULL_PUSH) && aSPIResult.hasPullReturnUserMsg ()) ||
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
+              // TODO would be nice to have attachments here I guess
               final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
                                                                           aSPIResult.getPullReturnUserMsg ());
+
               final String sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ()
                                                                 .getMessageInfo ()
                                                                 .getMessageId ();
@@ -1405,7 +1413,7 @@ public class AS4RequestHandler implements AutoCloseable
                 else
                 {
                   // TODO what shall we send back here?
-                  LOGGER.info ("Not sending back the receipt response, because sending receipt response is prohibited in PMode");
+                  LOGGER.info ("Not sending back the Receipt response, because sending Receipt response is prohibited in PMode");
                   ret = null;
                 }
               }

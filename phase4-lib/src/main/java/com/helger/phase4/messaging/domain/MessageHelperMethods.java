@@ -250,6 +250,7 @@ public final class MessageHelperMethods
   {
     ValueEnforcer.notNull (aOrigPartyInfo, "OriginalPartyInfo");
 
+    // Swap from and to
     return createEbms3PartyInfo (aOrigPartyInfo.getTo ().getRole (),
                                  aOrigPartyInfo.getTo ().getPartyIdAtIndex (0).getValue (),
                                  aOrigPartyInfo.getFrom ().getRole (),
