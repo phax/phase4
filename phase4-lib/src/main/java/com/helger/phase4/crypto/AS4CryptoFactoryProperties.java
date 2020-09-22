@@ -59,6 +59,7 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
   private Crypto m_aCrypto;
   private KeyStore m_aKeyStore;
   private KeyStore.PrivateKeyEntry m_aPK;
+  private KeyStore m_aTrustStore;
 
   /**
    * This constructor takes the crypto properties directly. See the
@@ -151,7 +152,8 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
         ret = m_aPK = KeyStoreHelper.loadPrivateKey (aKeyStore,
                                                      m_aCryptoProps.getKeyStorePath (),
                                                      m_aCryptoProps.getKeyAlias (),
-                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY : sKeyPassword.toCharArray ())
+                                                     sKeyPassword == null ? ArrayHelper.EMPTY_CHAR_ARRAY
+                                                                          : sKeyPassword.toCharArray ())
                                     .getKeyEntry ();
       }
     }
@@ -180,5 +182,19 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
   {
     final KeyStore.PrivateKeyEntry aPK = getPrivateKeyEntry ();
     return aPK == null ? null : (X509Certificate) aPK.getCertificate ();
+  }
+
+  @Nullable
+  public final KeyStore getTrustStore ()
+  {
+    KeyStore ret = m_aTrustStore;
+    if (ret == null)
+    {
+      ret = m_aTrustStore = KeyStoreHelper.loadKeyStore (m_aCryptoProps.getTrustStoreType (),
+                                                         m_aCryptoProps.getTrustStorePath (),
+                                                         m_aCryptoProps.getTrustStorePassword ())
+                                          .getKeyStore ();
+    }
+    return ret;
   }
 }

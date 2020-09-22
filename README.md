@@ -268,6 +268,7 @@ If you like the project, a star on GitHub is always appreciated.
     * A default serialization of the PMode objects as JSON is available (see [issue #40](https://github.com/phax/phase4/issues/40))
     * The internal interface `IAS4MessageState` is now standalone
     * Made the incoming message metadata in class `AS4XServletHandler` easily customizable.
+    * Made truststore accessible through `IAS4CryptoFactory`
 * v0.11.1 - 2020-09-17
     * Updated to Jakarta JAXB 2.3.3
     * Updated to ph-sbdh 4.1.1
