@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import javax.activation.CommandInfo;
 import javax.activation.CommandMap;
+import javax.activation.DataHandler;
 import javax.activation.MailcapCommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,9 +69,14 @@ public final class MimeMessageCreator
     {
       final StringBuilder aSB = new StringBuilder ();
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
-      for (final String m : aCommandMap.getMimeTypes ())
-        for (final CommandInfo i : aCommandMap.getAllCommands (m))
-          aSB.append (m).append ("; ").append (i.getCommandName ()).append ("; ").append (i.getCommandClass ()).append ('\n');
+      for (final String sMimeType : aCommandMap.getMimeTypes ())
+        for (final CommandInfo aCI : aCommandMap.getAllCommands (sMimeType))
+          aSB.append (sMimeType)
+             .append ("; ")
+             .append (aCI.getCommandName ())
+             .append ("; ")
+             .append (aCI.getCommandClass ())
+             .append ('\n');
       LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
@@ -102,7 +108,7 @@ public final class MimeMessageCreator
     {
       // Message Itself (repeatable)
       final MimeBodyPart aMessagePart = new MimeBodyPart ();
-      aMessagePart.setContent (new DOMSource (aSoapEnvelope), sContentType);
+      aMessagePart.setDataHandler (new DataHandler (new DOMSource (aSoapEnvelope), sContentType));
       aMessagePart.setHeader (CHttpHeader.CONTENT_TRANSFER_ENCODING, eCTE.getID ());
       aMimeMultipart.addBodyPart (aMessagePart);
     }
