@@ -551,7 +551,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           aPMode = aProcessor.findPMode (aSignalMessage);
           if (aPMode != null)
           {
-            LOGGER.info ("Found P-Mode '" +
+            LOGGER.info ("Found PMode '" +
                          aPMode.getID () +
                          "' for MPC '" +
                          sMPC +
