@@ -26,7 +26,7 @@ import com.helger.phase4.AS4TestRule;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
 /**
- * Test class for class {@link PModeManager}.
+ * Test class for class {@link IPModeManager}.
  *
  * @author bayerlma
  */

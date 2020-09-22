@@ -17,28 +17,30 @@
 package com.helger.phase4.servlet.spi;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.helger.commons.annotation.IsSPIInterface;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
-import com.helger.phase4.model.pmode.PMode;
+import com.helger.phase4.model.pmode.IPMode;
 
 /**
  * Implement this SPI interface to handle incoming pull request appropriately
- * and give the servlet the right pmode back.
+ * and give the servlet the right PMode back.
  *
  * @author bayerlma
+ * @author Philip Helger
  */
 @IsSPIInterface
 public interface IAS4ServletPullRequestProcessorSPI
 {
   /**
-   * Process incoming AS4 user message
+   * Process incoming AS4 signal message and determine the PMode to be used.
    *
    * @param aSignalMessage
    *        The received signal message. May not be <code>null</code>. Contains
    *        the pull request AND the message info!
-   * @return A non-<code>null</code> result object.
+   * @return The resolved PMode. May be <code>null</code>.
    */
-  @Nonnull
-  PMode processAS4UserMessage (@Nonnull Ebms3SignalMessage aSignalMessage);
+  @Nullable
+  IPMode findPMode (@Nonnull Ebms3SignalMessage aSignalMessage);
 }

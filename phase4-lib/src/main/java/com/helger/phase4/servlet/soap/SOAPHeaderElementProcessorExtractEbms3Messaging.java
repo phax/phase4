@@ -548,7 +548,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // Create SPI which returns a PMode
         for (final IAS4ServletPullRequestProcessorSPI aProcessor : AS4ServletPullRequestProcessorManager.getAllProcessors ())
         {
-          aPMode = aProcessor.processAS4UserMessage (aSignalMessage);
+          aPMode = aProcessor.findPMode (aSignalMessage);
           if (aPMode != null)
           {
             LOGGER.info ("Found P-Mode '" + aPMode.getID () + "' for signal message " + aSignalMessage);

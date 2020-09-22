@@ -273,6 +273,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Extended API to make PullRequest sending simpler
     * Moved shared fields from `AbstractAS4UserMessageBuilder` to `AbstractAS4MessageBuilder`
     * Added new sanity builder for AS4 Pull Requests using `Phase4Sender.builderPullRequest()`
+    * Changed `PMode IAS4ServletPullRequestProcessorSPI.processAS4UserMessage` to `IPMode IAS4ServletPullRequestProcessorSPI.findPMode`
 * v0.11.1 - 2020-09-17
     * Updated to Jakarta JAXB 2.3.3
     * Updated to ph-sbdh 4.1.1
