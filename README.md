@@ -271,6 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Made truststore accessible through `IAS4CryptoFactory`
     * Added new interface `IAS4UserMessageConsumer`
     * Extended API to make PullRequest sending simpler
+    * Moved shared fields from `AbstractAS4UserMessageBuilder` to `AbstractAS4MessageBuilder`
     * Added new sanity builder for AS4 Pull Requests using `Phase4Sender.builderPullRequest()`
 * v0.11.1 - 2020-09-17
     * Updated to Jakarta JAXB 2.3.3
