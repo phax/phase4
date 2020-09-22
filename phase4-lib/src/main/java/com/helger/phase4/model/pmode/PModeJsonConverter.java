@@ -69,7 +69,7 @@ public final class PModeJsonConverter
   private PModeJsonConverter ()
   {}
 
-  public static final void setObjectFields (@Nonnull final IBusinessObject aValue, @Nonnull final IJsonObject aElement)
+  public static void setObjectFields (@Nonnull final IBusinessObject aValue, @Nonnull final IJsonObject aElement)
   {
     aElement.add (ATTR_ID, aValue.getID ());
     if (aValue.hasCreationDateTime ())
@@ -100,7 +100,7 @@ public final class PModeJsonConverter
   }
 
   @Nonnull
-  public static final StubObject getStubObject (@Nonnull final IJsonObject aElement)
+  public static StubObject getStubObject (@Nonnull final IJsonObject aElement)
   {
     // ID
     final String sID = aElement.getAsString (ATTR_ID);
