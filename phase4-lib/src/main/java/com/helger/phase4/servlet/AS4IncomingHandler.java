@@ -165,7 +165,8 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
+                                                                           : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -218,7 +219,8 @@ public class AS4IncomingHandler
               // Read SOAP document
               aSoapDocument = DOMReader.readXMLDOM (aBodyPart.getInputStream ());
 
-              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ()).getCopyWithoutParameters ();
+              final IMimeType aPlainPartMT = MimeTypeParser.parseMimeType (aBodyPart.getContentType ())
+                                                           .getCopyWithoutParameters ();
 
               // Determine SOAP version from MIME part content type
               eSoapVersion = ESoapVersion.getFromMimeTypeOrNull (aPlainPartMT);
@@ -292,14 +294,20 @@ public class AS4IncomingHandler
       }
       catch (final Exception ex)
       {
-        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
+        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
+                      aRealIncomingDumper +
+                      "; MessageMetadata=" +
+                      aMessageMetadata,
+                      ex);
       }
 
     if (aSoapDocument == null)
     {
       // We don't have a SOAP document
       throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                      : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
+                                                      : "Failed to parse incoming SOAP " +
+                                                        eSoapVersion.getVersion () +
+                                                        " document!");
     }
 
     if (eSoapVersion == null)
@@ -365,7 +373,8 @@ public class AS4IncomingHandler
 
       // Process element
       final ErrorList aErrorList = new ErrorList ();
-      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
+      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
+                    .isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
         aHeader.setProcessed (true);
@@ -412,7 +421,8 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Error processing required SOAP header element " + aHeader.getQName ().toString ());
+          throw new Phase4Exception ("Error processing required SOAP header element " +
+                                     aHeader.getQName ().toString ());
     }
   }
 
@@ -420,6 +430,7 @@ public class AS4IncomingHandler
                                               @Nonnull final Ebms3UserMessage aUserMessage,
                                               @Nonnull final IAS4MessageState aState)
   {
+    // For all incoming attachments
     for (final WSS4JAttachment aIncomingAttachment : aIncomingDecryptedAttachments.getClone ())
     {
       final EAS4CompressionMode eCompressionMode = aState.getAttachmentCompressionMode (aIncomingAttachment.getId ());
@@ -614,7 +625,8 @@ public class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") + " SOAP document is missing a Body element");
+        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
+                                   " SOAP document is missing a Body element");
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       aState.setPingMessage (AS4Helper.isPingMessage (aPMode));
@@ -674,9 +686,9 @@ public class AS4IncomingHandler
     for (final Header aHeader : aHttpResponse.getAllHeaders ())
       aHttpHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
 
-    // Parse incoming message
     try (final NonBlockingByteArrayInputStream aPayloadIS = new NonBlockingByteArrayInputStream (aResponsePayload))
     {
+      // Parse incoming message
       parseAS4Message (aIAF, aResHelper, aMessageMetadata, aPayloadIS, aHttpHeaders, aCallback, aIncomingDumper);
     }
     catch (final Phase4Exception ex)

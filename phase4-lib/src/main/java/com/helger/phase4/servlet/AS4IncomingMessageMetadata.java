@@ -113,6 +113,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return m_sRemoteAddr;
   }
 
+  /**
+   * Set the remote address to be used.
+   *
+   * @param sRemoteAddr
+   *        The remote address. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public AS4IncomingMessageMetadata setRemoteAddr (@Nullable final String sRemoteAddr)
   {
@@ -126,6 +133,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return m_sRemoteHost;
   }
 
+  /**
+   * Set the remote host to be used.
+   *
+   * @param sRemoteHost
+   *        The remote host. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public AS4IncomingMessageMetadata setRemoteHost (@Nullable final String sRemoteHost)
   {
@@ -139,6 +153,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return m_nRemotePort;
   }
 
+  /**
+   * Set the remote port to be used.
+   *
+   * @param nRemotePort
+   *        The remote port.
+   * @return this for chaining
+   */
   @Nonnull
   public AS4IncomingMessageMetadata setRemotePort (final int nRemotePort)
   {
@@ -152,6 +173,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return m_sRemoteUser;
   }
 
+  /**
+   * Set the remote user to be used.
+   *
+   * @param sRemoteUser
+   *        The remote user. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public AS4IncomingMessageMetadata setRemoteUser (@Nullable final String sRemoteUser)
   {
@@ -166,6 +194,13 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
     return m_aCookies;
   }
 
+  /**
+   * Set the cookies to be used.
+   *
+   * @param aCookies
+   *        The cookie array. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public AS4IncomingMessageMetadata setCookies (@Nullable final Cookie [] aCookies)
   {

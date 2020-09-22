@@ -28,7 +28,6 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.helger.commons.collection.attr.IAttributeContainer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.string.StringHelper;
@@ -51,7 +50,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  *
  * @author Philip Helger
  */
-public interface IAS4MessageState extends IAttributeContainer <String, Object>
+public interface IAS4MessageState
 {
   /**
    * @return Date and time when the receipt started. This must be set in the
@@ -118,7 +117,8 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
   }
 
   /**
@@ -159,6 +159,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   Document getOriginalSoapDocument ();
 
+  /**
+   * @return <code>true</code> if an original SOAP document is present,
+   *         <code>false</code> if not.
+   * @see #getOriginalSoapDocument()
+   */
   default boolean hasOriginalSoapDocument ()
   {
     return getOriginalSoapDocument () != null;
@@ -166,15 +171,22 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   /**
    * @return has saved the original attachment, can be encrypted or not depends
-   *         if encryption is used or not
+   *         if encryption is used or not.
+   * @see #hasDecryptedAttachments()
+   * @see #getDecryptedAttachments()
    */
   @Nullable
   ICommonsList <WSS4JAttachment> getOriginalAttachments ();
 
+  /**
+   * @return <code>true</code> if original attachments are present,
+   *         <code>false</code> if not.
+   * @see #getOriginalAttachments()
+   */
   default boolean hasOriginalAttachments ()
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = getOriginalAttachments ();
-    return aAttachments != null && aAttachments.isNotEmpty ();
+    final ICommonsList <WSS4JAttachment> aMap = getOriginalAttachments ();
+    return aMap != null && aMap.isNotEmpty ();
   }
 
   /**
@@ -187,40 +199,52 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   Document getDecryptedSoapDocument ();
 
+  /**
+   * @return <code>true</code> of a decrypted SOAP document is present,
+   *         <code>false</code> if not.
+   * @see #getDecryptedSoapDocument()
+   */
   default boolean hasDecryptedSoapDocument ()
   {
     return getDecryptedSoapDocument () != null;
   }
 
   /**
-   * @return getting decrypted attachment, if there were encrypted attachments
-   *         to begin with
+   * @return Getting decrypted attachment, if there were encrypted attachments
+   *         to begin with. May be <code>null</code>.
+   * @see #getOriginalAttachments()
    */
   @Nullable
   ICommonsList <WSS4JAttachment> getDecryptedAttachments ();
 
+  /**
+   * @return <code>true</code> if a decrypted attachments are present,
+   *         <code>false</code> if not.
+   */
   default boolean hasDecryptedAttachments ()
   {
-    final ICommonsList <WSS4JAttachment> aAttachments = getDecryptedAttachments ();
-    return aAttachments != null && aAttachments.isNotEmpty ();
+    final ICommonsList <WSS4JAttachment> aList = getDecryptedAttachments ();
+    return aList != null && aList.isNotEmpty ();
   }
 
   /**
-   * @return IDs from all compressed attachments and/or payload
+   * @return IDs from all compressed attachments and/or payload. May be
+   *         <code>null</code>.
    */
   @Nullable
   ICommonsMap <String, EAS4CompressionMode> getCompressedAttachmentIDs ();
 
   default boolean hasCompressedAttachmentIDs ()
   {
-    return getCompressedAttachmentIDs () != null;
+    final ICommonsMap <String, EAS4CompressionMode> aMap = getCompressedAttachmentIDs ();
+    return aMap != null && aMap.isNotEmpty ();
   }
 
   /**
    * @param sID
-   *        id to look up
+   *        id to look up´. May be <code>null</code>.
    * @return Looks up if a compression mode with the id sID exists and returns
-   *         the mode else null
+   *         the mode else <code>null</code>
    */
   @Nullable
   default EAS4CompressionMode getAttachmentCompressionMode (@Nullable final String sID)
@@ -231,7 +255,7 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   /**
    * @param sID
-   *        the id to look up
+   *        the id to look up. May be <code>null</code>.
    * @return looks up if the compressed attachment contain the given ID
    */
   default boolean containsCompressedAttachmentID (@Nullable final String sID)
@@ -241,11 +265,16 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   }
 
   /**
-   * @return the MPC that is used in the current message exchange
+   * @return the MPC that is used in the current message exchange. May be
+   *         <code>null</code>.
    */
   @Nullable
   IMPC getMPC ();
 
+  /**
+   * @return <code>true</code> if an MPC is set, <code>false</code> if not.
+   * @see #getMPC()
+   */
   default boolean hasMPC ()
   {
     return getMPC () != null;
@@ -260,11 +289,16 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   /**
    * @return initiator set in the usermessage if the incoming message is a
-   *         usermessage
+   *         usermessage. May be <code>null</code>.
    */
   @Nullable
   String getInitiatorID ();
 
+  /**
+   * @return <code>true</code> if an initiator ID was part of the UserMessage,
+   *         <code>false</code> if not.
+   * @see #getInitiatorID()
+   */
   default boolean hasInitiatorID ()
   {
     return StringHelper.hasText (getInitiatorID ());
@@ -272,11 +306,16 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
 
   /**
    * @return responder set in the usermessage if the incoming message is a
-   *         usermessage
+   *         usermessage. May be <code>null</code>.
    */
   @Nullable
   String getResponderID ();
 
+  /**
+   * @return <code>true</code> if a responder ID was part of the UserMessage,
+   *         <code>false</code> if not.
+   * @see #getResponderID()
+   */
   default boolean hasResponderID ()
   {
     return StringHelper.hasText (getResponderID ());
@@ -290,6 +329,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   X509Certificate getUsedCertificate ();
 
+  /**
+   * @return <code>true</code> if a certificate is provided, <code>false</code>
+   *         if not.
+   * @see #getUsedCertificate()
+   */
   default boolean hasUsedCertificate ()
   {
     return getUsedCertificate () != null;
@@ -340,6 +384,11 @@ public interface IAS4MessageState extends IAttributeContainer <String, Object>
   @Nullable
   Exception getSoapWSS4JException ();
 
+  /**
+   * @return <code>true</code> if a SOAP WSS4J exception is present,
+   *         <code>false</code> if not.
+   * @see #getSoapWSS4JException()
+   */
   default boolean hasSoapWSS4JException ()
   {
     return getSoapWSS4JException () != null;
