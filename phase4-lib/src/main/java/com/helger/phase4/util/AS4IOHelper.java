@@ -31,10 +31,10 @@ import com.helger.commons.io.file.LoggingFileOperationCallback;
 @Immutable
 public final class AS4IOHelper
 {
-  private static final FileOperationManager s_aFOM = new FileOperationManager ();
+  private static final FileOperationManager FOM = new FileOperationManager ();
   static
   {
-    s_aFOM.callbacks ().add (new LoggingFileOperationCallback ());
+    FOM.callbacks ().add (new LoggingFileOperationCallback ());
   }
 
   private AS4IOHelper ()
@@ -43,7 +43,7 @@ public final class AS4IOHelper
   @Nonnull
   public static FileOperationManager getFileOperationManager ()
   {
-    return s_aFOM;
+    return FOM;
   }
 
   @Nonnull
