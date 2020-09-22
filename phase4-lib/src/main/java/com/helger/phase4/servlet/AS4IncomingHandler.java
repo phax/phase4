@@ -552,6 +552,16 @@ public class AS4IncomingHandler
                              (aEbmsError != null ? 1 : 0);
       if (nCountData != 1)
       {
+        LOGGER.error ("Expected a UserMessage(" +
+                      (aEbmsUserMessage != null ? 1 : 0) +
+                      "), a PullRequest(" +
+                      (aEbmsPullRequest != null ? 1 : 0) +
+                      "), a Receipt(" +
+                      (aEbmsReceipt != null ? 1 : 0) +
+                      ") or an Error(" +
+                      (aEbmsError != null ? 1 : 0) +
+                      ")");
+
         // send EBMS:0001 error back
         aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, sMessageID));
       }
