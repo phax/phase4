@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
@@ -244,6 +245,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @since 0.12.0
    */
   @Nonnull
+  @OverrideOnDemand
   protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
   {
     return new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
