@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.helger.commons.CGlobal;
+import com.helger.commons.concurrent.ThreadHelper;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.config.AS4Configuration;
@@ -39,7 +41,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
@@ -53,7 +56,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
+                                      .getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
@@ -63,7 +67,8 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
     // 60 000 = 1 minute, *2 and + 10000 are a buffer
     // test file is configured for 1 minute can take LONGER if configured
     // differently
-    Thread.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * 60000 * 2 + 10000);
+    ThreadHelper.sleep (AS4Configuration.getIncomingDuplicateDisposalMinutes () * CGlobal.MILLISECONDS_PER_MINUTE * 2 +
+                        10 * CGlobal.MILLISECONDS_PER_SECOND);
 
     sendPlainMessageAndWait (aEntity, true, null);
   }
