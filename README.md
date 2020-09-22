@@ -258,7 +258,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.12.0 - work in progress
+* v0.12.0 - 2020-09-22
     * Extended the `IPModeResolver` to also contain the agreementRef value (for ENTSOG) - backwards incompatible change
     * Added support for custom "Part properties" in `IAS4Attachment` (for ENTSOG)
     * The sending date and time of the AS4 message can now be configured in the client
