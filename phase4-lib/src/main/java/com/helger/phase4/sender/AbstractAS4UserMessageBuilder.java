@@ -25,21 +25,13 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.StringHelper;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
-import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
-import com.helger.phase4.client.IAS4RawResponseConsumer;
-import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
-import com.helger.phase4.dump.IAS4IncomingDumper;
-import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
-import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
-import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 
 /**
  * Abstract builder base class for a user message.
@@ -52,44 +44,35 @@ import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
-  protected IPModeResolver m_aPModeResolver;
-  protected IIncomingAttachmentFactory m_aIAF;
-  private IPMode m_aPMode;
+  protected IPMode m_aPMode;
 
-  private String m_sServiceType;
-  private String m_sService;
-  private String m_sAction;
-  private String m_sAgreementRef;
-  private String m_sPModeID;
+  protected String m_sServiceType;
+  protected String m_sService;
+  protected String m_sAction;
+  protected String m_sAgreementRef;
+  protected String m_sPModeID;
 
-  private String m_sFromPartyIDType;
-  private String m_sFromPartyID;
-  private String m_sFromRole;
+  protected String m_sFromPartyIDType;
+  protected String m_sFromPartyID;
+  protected String m_sFromRole;
 
-  private String m_sToPartyIDType;
-  private String m_sToPartyID;
-  private String m_sToRole;
+  protected String m_sToPartyIDType;
+  protected String m_sToPartyID;
+  protected String m_sToRole;
 
-  private String m_sConversationID;
+  protected String m_sConversationID;
 
-  private final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
+  protected final ICommonsList <MessageProperty> m_aMessageProperties = new CommonsArrayList <> ();
 
-  private X509Certificate m_aReceiverCertificate;
-  protected String m_sEndointURL;
+  protected X509Certificate m_aReceiverCertificate;
+  protected String m_sEndpointURL;
 
   protected final ICommonsList <Phase4OutgoingAttachment> m_aAttachments = new CommonsArrayList <> ();
 
-  protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
-  protected IAS4OutgoingDumper m_aOutgoingDumper;
-  protected IAS4IncomingDumper m_aIncomingDumper;
-  protected IAS4RetryCallback m_aRetryCallback;
-  protected IAS4RawResponseConsumer m_aResponseConsumer;
   protected IAS4SignalMessageConsumer m_aSignalMsgConsumer;
 
   /**
    * Create a new builder, with the following fields already set:<br>
-   * {@link #pmodeResolver(IPModeResolver)}<br>
-   * {@link #incomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
    * {@link #pmode(IPMode)}<br>
    */
   public AbstractAS4UserMessageBuilder ()
@@ -97,63 +80,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // Set default values
     try
     {
-      final IPModeResolver aPModeResolver = DefaultPModeResolver.DEFAULT_PMODE_RESOLVER;
-      pmodeResolver (aPModeResolver);
-      incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
-      pmode (aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", "a", null));
+      pmode (m_aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", "a", null));
     }
     catch (final Exception ex)
     {
       throw new IllegalStateException ("Failed to init AbstractAS4UserMessageBuilder", ex);
     }
-  }
-
-  /**
-   * @return The currently set {@link IPModeResolver}. May be <code>null</code>.
-   */
-  @Nullable
-  public final IPModeResolver pmodeResolver ()
-  {
-    return m_aPModeResolver;
-  }
-
-  /**
-   * Set the PMode resolver to be used.
-   *
-   * @param aPModeResolver
-   *        The PMode resolver to be used. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE pmodeResolver (@Nullable final IPModeResolver aPModeResolver)
-  {
-    m_aPModeResolver = aPModeResolver;
-    return thisAsT ();
-  }
-
-  /**
-   * @return The currently set {@link IIncomingAttachmentFactory}. May be
-   *         <code>null</code>.
-   */
-  @Nullable
-  public final IIncomingAttachmentFactory incomingAttachmentFactory ()
-  {
-    return m_aIAF;
-  }
-
-  /**
-   * Set the incoming attachment factory to be used.
-   *
-   * @param aIAF
-   *        The incoming attachment factory to be used. May be
-   *        <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE incomingAttachmentFactory (@Nullable final IIncomingAttachmentFactory aIAF)
-  {
-    m_aIAF = aIAF;
-    return thisAsT ();
   }
 
   /**
@@ -436,7 +368,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final IMPLTYPE endpointURL (@Nullable final String sEndointURL)
   {
-    m_sEndointURL = sEndointURL;
+    m_sEndpointURL = sEndointURL;
     return thisAsT ();
   }
 
@@ -527,83 +459,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   }
 
   /**
-   * Set a internal message callback. Usually this method is NOT needed. Use
-   * only when you know what you are doing.
-   *
-   * @param aBuildMessageCallback
-   *        An internal to be used for the created message. May be
-   *        <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE buildMessageCallback (@Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback)
-  {
-    m_aBuildMessageCallback = aBuildMessageCallback;
-    return thisAsT ();
-  }
-
-  /**
-   * Set a specific outgoing dumper for this builder.
-   *
-   * @param aOutgoingDumper
-   *        An outgoing dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global outgoing dumper is used.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE outgoingDumper (@Nullable final IAS4OutgoingDumper aOutgoingDumper)
-  {
-    m_aOutgoingDumper = aOutgoingDumper;
-    return thisAsT ();
-  }
-
-  /**
-   * Set a specific incoming dumper for this builder.
-   *
-   * @param aIncomingDumper
-   *        An incoming dumper to be used. Maybe <code>null</code>. If
-   *        <code>null</code> the global incoming dumper is used.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE incomingDumper (@Nullable final IAS4IncomingDumper aIncomingDumper)
-  {
-    m_aIncomingDumper = aIncomingDumper;
-    return thisAsT ();
-  }
-
-  /**
-   * Set an optional handler that is notified if an http sending will be
-   * retried. This method is optional and must not be called prior to sending.
-   *
-   * @param aRetryCallback
-   *        The optional retry callback. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE retryCallback (@Nullable final IAS4RetryCallback aRetryCallback)
-  {
-    m_aRetryCallback = aRetryCallback;
-    return thisAsT ();
-  }
-
-  /**
-   * Set an optional handler for the synchronous result message received from
-   * the other side. This method is optional and must not be called prior to
-   * sending.
-   *
-   * @param aResponseConsumer
-   *        The optional response consumer. May be <code>null</code>.
-   * @return this for chaining
-   */
-  @Nonnull
-  public final IMPLTYPE rawResponseConsumer (@Nullable final IAS4RawResponseConsumer aResponseConsumer)
-  {
-    m_aResponseConsumer = aResponseConsumer;
-    return thisAsT ();
-  }
-
-  /**
    * Set an optional Ebms3 Signal Message Consumer. If this consumer is set, the
    * response is trying to be parsed as a Signal Message. This method is
    * optional and must not be called prior to sending.
@@ -626,8 +481,6 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     if (!super.isEveryRequiredFieldSet ())
       return false;
 
-    // m_aPModeResolver may be null
-    // IIncomingAttachmentFactory may be null
     if (m_aPMode == null)
       return false;
 
@@ -654,15 +507,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     // m_aMessageProperties is final
 
     // m_aReceiverCertificate is optional
-    if (StringHelper.hasNoText (m_sEndointURL))
+    if (StringHelper.hasNoText (m_sEndpointURL))
       return false;
 
     // m_aAttachments may be null
 
-    // m_aBuildMessageCallback may be null
-    // m_aOutgoingDumper may be null
-    // m_aIncomingDumper may be null
-    // m_aResponseConsumer may be null
     // m_aSignalMsgConsumer may be null
 
     // All valid

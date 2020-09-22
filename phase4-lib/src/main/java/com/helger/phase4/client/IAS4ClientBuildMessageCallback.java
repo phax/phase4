@@ -32,7 +32,7 @@ public interface IAS4ClientBuildMessageCallback
 {
   /**
    * Called for the created domain object. That usually also contains the
-   * underlying Ebms 3 data model. This method is called for all types.
+   * underlying EBMS 3 data model. This method is called for all types.
    *
    * @param aMsg
    *        The created message
@@ -62,7 +62,7 @@ public interface IAS4ClientBuildMessageCallback
 
   /**
    * This method is only called if encryption is enabled and no attachments are
-   * present. Only called for user messages.
+   * present. Only called for User Messages.
    *
    * @param aDoc
    *        The encrypted SOAP document
@@ -72,7 +72,7 @@ public interface IAS4ClientBuildMessageCallback
 
   /**
    * This method is only called if encryption is enabled and at least one
-   * attachments is present. Only called for user messages.
+   * attachments is present. Only called for User Messages.
    *
    * @param aMimeMsg
    *        The encrypted MIME message

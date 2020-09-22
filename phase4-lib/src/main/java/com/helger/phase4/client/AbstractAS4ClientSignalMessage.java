@@ -46,7 +46,7 @@ public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractA
 
   @Nonnull
   @ReturnsMutableObject
-  public ICommonsList <Object> any ()
+  public final ICommonsList <Object> any ()
   {
     return m_aAny;
   }

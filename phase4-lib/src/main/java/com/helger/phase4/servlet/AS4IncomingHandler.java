@@ -646,19 +646,19 @@ public class AS4IncomingHandler
   }
 
   @Nullable
-  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                                       @Nonnull final IPModeResolver aPModeResolver,
-                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
-                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
-                                                       @Nullable final IPMode aSendingPMode,
-                                                       @Nonnull final Locale aLocale,
-                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
-                                                       @Nonnull final HttpResponse aHttpResponse,
-                                                       @Nonnull final byte [] aResponsePayload,
-                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+  private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                 @Nonnull final IPModeResolver aPModeResolver,
+                                                 @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                 @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                 @Nullable final IPMode aSendingPMode,
+                                                 @Nonnull final Locale aLocale,
+                                                 @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                 @Nonnull final HttpResponse aHttpResponse,
+                                                 @Nonnull final byte [] aResponsePayload,
+                                                 @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
   {
     // This wrapper will take the result
-    final Wrapper <Ebms3SignalMessage> aRetWrapper = new Wrapper <> ();
+    final Wrapper <IAS4MessageState> aRetWrapper = new Wrapper <> ();
 
     // Handler for the parsed message
     final IAS4ParsedMessageCallback aCallback = (aHttpHeaders, aSoapDocument, eSoapVersion, aIncomingAttachments) -> {
@@ -683,11 +683,11 @@ public class AS4IncomingHandler
       if (aState.isSoapHeaderElementProcessingSuccessful ())
       {
         // Remember the parsed signal message
-        aRetWrapper.set (aState.getEbmsSignalMessage ());
+        aRetWrapper.set (aState);
       }
       else
       {
-        throw new Phase4Exception ("Error processing AS4 signal message", aState.getSoapWSS4JException ());
+        throw new Phase4Exception ("Error processing AS4 message", aState.getSoapWSS4JException ());
       }
     };
 
@@ -707,10 +707,88 @@ public class AS4IncomingHandler
     }
     catch (final Exception ex)
     {
-      throw new Phase4Exception ("Error parsing signal message", ex);
+      throw new Phase4Exception ("Error parsing AS4 message", ex);
     }
 
     // This one contains the result
     return aRetWrapper.get ();
+  }
+
+  @Nullable
+  public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                       @Nonnull final IPModeResolver aPModeResolver,
+                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                       @Nullable final IPMode aSendingPMode,
+                                                       @Nonnull final Locale aLocale,
+                                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                       @Nonnull final HttpResponse aHttpResponse,
+                                                       @Nonnull final byte [] aResponsePayload,
+                                                       @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+  {
+    final IAS4MessageState aState = _parseMessage (aCryptoFactory,
+                                                   aPModeResolver,
+                                                   aIAF,
+                                                   aResHelper,
+                                                   aSendingPMode,
+                                                   aLocale,
+                                                   aMessageMetadata,
+                                                   aHttpResponse,
+                                                   aResponsePayload,
+                                                   aIncomingDumper);
+    if (aState == null)
+    {
+      // Error message was already logged
+      return null;
+    }
+
+    final Ebms3SignalMessage ret = aState.getEbmsSignalMessage ();
+    if (ret == null)
+    {
+      if (aState.getEbmsUserMessage () != null)
+        LOGGER.warn ("A Message state is present, but it contains a UserMessage instead of a SignalMessage.");
+      else
+        LOGGER.warn ("A Message state is present, but it contains neither a UserMessage nor a SignalMessage.");
+    }
+    return ret;
+  }
+
+  @Nullable
+  public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
+                                                   @Nonnull final IPModeResolver aPModeResolver,
+                                                   @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
+                                                   @Nullable final IPMode aSendingPMode,
+                                                   @Nonnull final Locale aLocale,
+                                                   @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                                   @Nonnull final HttpResponse aHttpResponse,
+                                                   @Nonnull final byte [] aResponsePayload,
+                                                   @Nullable final IAS4IncomingDumper aIncomingDumper) throws Phase4Exception
+  {
+    final IAS4MessageState aState = _parseMessage (aCryptoFactory,
+                                                   aPModeResolver,
+                                                   aIAF,
+                                                   aResHelper,
+                                                   aSendingPMode,
+                                                   aLocale,
+                                                   aMessageMetadata,
+                                                   aHttpResponse,
+                                                   aResponsePayload,
+                                                   aIncomingDumper);
+    if (aState == null)
+    {
+      // Error message was already logged
+      return null;
+    }
+
+    final Ebms3UserMessage ret = aState.getEbmsUserMessage ();
+    if (ret == null)
+    {
+      if (aState.getEbmsSignalMessage () != null)
+        LOGGER.warn ("A Message state is present, but it contains a SignalMessage instead of a UserMessage.");
+      else
+        LOGGER.warn ("A Message state is present, but it contains neither a SignalMessage nor a UserMessage.");
+    }
+    return ret;
   }
 }

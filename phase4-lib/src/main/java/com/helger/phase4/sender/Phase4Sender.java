@@ -34,13 +34,24 @@ public final class Phase4Sender
   {}
 
   /**
-   * @return Create a new Builder for generic AS4 user messages. Never
+   * @return Create a new Builder for generic AS4 User Messages. Never
    *         <code>null</code>.
    */
   @Nonnull
   public static BuilderUserMessage builderUserMessage ()
   {
     return new BuilderUserMessage ();
+  }
+
+  /**
+   * @return Create a new Builder for generic AS4 Pull Requests. Never
+   *         <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  public static BuilderPullRequest builderPullRequest ()
+  {
+    return new BuilderPullRequest ();
   }
 
   /**
@@ -56,6 +67,22 @@ public final class Phase4Sender
      * {@link AbstractAS4UserMessageBuilderMIMEPayload#AbstractAS4UserMessageBuilderMIMEPayload()}
      */
     public BuilderUserMessage ()
+    {}
+  }
+
+  /**
+   * The default PullRequest builder.
+   *
+   * @author Philip Helger
+   * @since 0.12.0
+   */
+  public static class BuilderPullRequest extends AbstractAS4PullRequestBuilder <BuilderPullRequest>
+  {
+    /**
+     * Create a new builder, with the some fields already set as outlined in
+     * {@link AbstractAS4PullRequestBuilder#AbstractAS4PullRequestBuilder()}
+     */
+    public BuilderPullRequest ()
     {}
   }
 }
