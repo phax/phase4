@@ -233,6 +233,26 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     return new AS4UnifiedResponse (eHTTPVersion, eHTTPMethod, aHttpRequest);
   }
 
+  /**
+   * Create the incoming message metadata based on the provided request. This
+   * method may be overridden by sub-classes to customize the header generation
+   * e.g. when sitting behind a proxy or the like.
+   *
+   * @param aRequestScope
+   *        The request scope to use.
+   * @return New {@link AS4IncomingMessageMetadata} and never <code>null</code>.
+   * @since 0.12.0
+   */
+  @Nonnull
+  protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
+  {
+    return new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
+                                                                           .setRemoteHost (aRequestScope.getRemoteHost ())
+                                                                           .setRemotePort (aRequestScope.getRemotePort ())
+                                                                           .setRemoteUser (aRequestScope.getRemoteUser ())
+                                                                           .setCookies (aRequestScope.getCookies ());
+  }
+
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,
                              @Nonnull final UnifiedResponse aUnifiedResponse) throws Exception
   {
@@ -240,11 +260,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
     final AS4UnifiedResponse aHttpResponse = GenericReflection.uncheckedCast (aUnifiedResponse);
 
     // Start metadata
-    final IAS4IncomingMessageMetadata aMessageMetadata = new AS4IncomingMessageMetadata (EAS4IncomingMessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
-                                                                                                                         .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                                                                         .setRemotePort (aRequestScope.getRemotePort ())
-                                                                                                                         .setRemoteUser (aRequestScope.getRemoteUser ())
-                                                                                                                         .setCookies (aRequestScope.getCookies ());
+    final IAS4IncomingMessageMetadata aMessageMetadata = createIncomingMessageMetadata (aRequestScope);
 
     // Resolved once per request
     final IAS4CryptoFactory aCF = m_aCryptoFactorySupplier.get ();
