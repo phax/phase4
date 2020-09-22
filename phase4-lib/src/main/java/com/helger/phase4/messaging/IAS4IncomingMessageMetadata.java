@@ -69,6 +69,11 @@ public interface IAS4IncomingMessageMetadata
   @Nullable
   String getRemoteAddr ();
 
+  /**
+   * @return <code>true</code> if the remote address is present,
+   *         <code>false</code> if not.
+   * @see #getRemoteAddr()
+   */
   default boolean hasRemoteAddr ()
   {
     return StringHelper.hasText (getRemoteAddr ());
@@ -86,6 +91,11 @@ public interface IAS4IncomingMessageMetadata
   @Nullable
   String getRemoteHost ();
 
+  /**
+   * @return <code>true</code> if the remote host is present, <code>false</code>
+   *         if not.
+   * @see #getRemoteHost()
+   */
   default boolean hasRemoteHost ()
   {
     return StringHelper.hasText (getRemoteHost ());
@@ -101,6 +111,11 @@ public interface IAS4IncomingMessageMetadata
   @CheckForSigned
   int getRemotePort ();
 
+  /**
+   * @return <code>true</code> if the remote port is present, <code>false</code>
+   *         if not.
+   * @see #getRemotePort()
+   */
   default boolean hasRemotePort ()
   {
     return getRemotePort () > 0;
@@ -119,6 +134,11 @@ public interface IAS4IncomingMessageMetadata
   @Nullable
   String getRemoteUser ();
 
+  /**
+   * @return <code>true</code> if the remote user is present, <code>false</code>
+   *         if not.
+   * @see #getRemoteUser()
+   */
   default boolean hasRemoteUser ()
   {
     return StringHelper.hasText (getRemoteUser ());
