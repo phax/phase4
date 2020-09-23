@@ -279,13 +279,31 @@ public final class AS4Configuration
    */
   public static boolean isUseInMemoryManagers ()
   {
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+    if (false)
+    {
+      // This should work, but doesn't
+      return getConfig ().getAsBoolean (PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+    }
+
+    // Parse manually
+    final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_MANAGER_INMEMORY);
+    return StringParser.parseBool (sValue, true);
   }
 
   public static boolean isWSS4JSynchronizedSecurity ()
   {
-    if (true)
+    if (false)
+    {
+      // This should work, but doesn't in all cases
       return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+    }
+
+    if (true)
+    {
+      // Parse manually
+      final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
+      return StringParser.parseBool (sValue, false);
+    }
 
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     LOGGER.info ("Configuration[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = '" + sValue + "'");
@@ -308,6 +326,13 @@ public final class AS4Configuration
                  getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, true));
     LOGGER.info ("  Returning = " + b);
     return b;
+  }
+
+  public static boolean isWSS4JSynchronizedSecurity2 ()
+  {
+    // This should work, but doesn't in all cases
+    // Inline string
+    return getConfig ().getAsBoolean ("phase4.wss4j.syncsecurity", false);
   }
 
   @Nullable
