@@ -21,7 +21,11 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.string.StringHelper;
+import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 
 /**
@@ -35,11 +39,13 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 public final class Phase4PeppolServletConfiguration
 {
   public static final boolean DEFAULT_RECEIVER_CHECK_ENABLED = true;
+  private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolServletConfiguration.class);
 
   private static boolean s_bReceiverCheckEnabled = DEFAULT_RECEIVER_CHECK_ENABLED;
   private static ISMPServiceMetadataProvider s_aSMPClient;
   private static String s_sAS4EndpointURL;
   private static X509Certificate s_aAPCertificate;
+  private static boolean s_bPerformSBDHValueChecks = PeppolSBDHDocumentReader.DEFAULT_PERFORM_VALUE_CHECKS;
 
   private Phase4PeppolServletConfiguration ()
   {}
@@ -159,5 +165,36 @@ public final class Phase4PeppolServletConfiguration
       return null;
 
     return new Phase4PeppolReceiverCheckData (aSMPClient, sAS4EndpointURL, aAPCertificate);
+  }
+
+  /**
+   * @return <code>true</code> if SBDH value checks are enabled,
+   *         <code>false</code> if they are disabled.
+   * @since 0.12.1
+   */
+  public static boolean isPerformSBDHValueChecks ()
+  {
+    return s_bPerformSBDHValueChecks;
+  }
+
+  /**
+   * Enable or disable the SBDH value checks. By default checks are enabled.
+   *
+   * @param bPerformSBDHValueChecks
+   *        <code>true</code> to enable the checks, <code>false</code> to
+   *        disable them
+   * @since 0.12.1
+   */
+  public static void setPerformSBDHValueChecks (final boolean bPerformSBDHValueChecks)
+  {
+    final boolean bChange = bPerformSBDHValueChecks != s_bPerformSBDHValueChecks;
+    s_bPerformSBDHValueChecks = bPerformSBDHValueChecks;
+    if (bChange)
+    {
+      if (bPerformSBDHValueChecks)
+        LOGGER.info ("phase4 Peppol SBDH value checks are now enabled");
+      else
+        LOGGER.warn ("phase4 Peppol SBDH value checks are now disabled");
+    }
   }
 }

@@ -258,6 +258,9 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.12.1 - work in progress
+    * Updated to peppol-commons 8.2.3
+    * Made the value checks when reading Peppol SBDH documents customizable via `Phase4PeppolServletConfiguration.setPerformSBDHValueChecks`
 * v0.12.0 - 2020-09-22
     * Extended the `IPModeResolver` to also contain the agreementRef value (for ENTSOG) - backwards incompatible change
     * Added support for custom "Part properties" in `IAS4Attachment` (for ENTSOG)

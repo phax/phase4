@@ -52,6 +52,7 @@ import com.helger.peppol.smp.ISMPTransportProfile;
 import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.IAS4Attachment;
@@ -433,7 +434,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (), aState.getMessageID ());
+          final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (),
+                                                                                               aState.getMessageID ());
           aProcessingErrorMessages.add (aEbmsError);
           return AS4MessageProcessorResult.createFailure ("Processing errors occurred");
         }
@@ -485,7 +487,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final PeppolSBDHDocument aPeppolSBD;
     try
     {
-      aPeppolSBD = new PeppolSBDHDocumentReader ().extractData (aReadAttachment.standardBusinessDocument ());
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Now evaluating the SBDH against Peppol rules");
+
+      final boolean bPerfomrValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
+      aPeppolSBD = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerfomrValueChecks)
+                                                                                  .extractData (aReadAttachment.standardBusinessDocument ());
+
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("The provided SBDH is valid according to Peppol rules, with value checks being " +
+                      (bPerfomrValueChecks ? "enabled" : "disabled"));
     }
     catch (final PeppolSBDHDocumentReadException ex)
     {
@@ -522,11 +533,14 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
                                                             "Failed to resolve SMP endpoint for provided receiver ID (" +
-                                                            (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
+                                                            (aReceiverID == null ? "null"
+                                                                                 : aReceiverID.getURIEncoded ()) +
                                                             ")/documentType ID (" +
-                                                            (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
+                                                            (aDocTypeID == null ? "null"
+                                                                                : aDocTypeID.getURIEncoded ()) +
                                                             ")/process ID (" +
-                                                            (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
+                                                            (aProcessID == null ? "null"
+                                                                                : aProcessID.getURIEncoded ()) +
                                                             ")/transport profile (" +
                                                             m_aTransportProfile.getID () +
                                                             ") - not handling incoming AS4 document");
