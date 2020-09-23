@@ -288,7 +288,8 @@ public final class AS4Configuration
     LOGGER.info ("Configuration[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = '" + sValue + "'");
     final ConfiguredValue aCV = getConfig ().getConfiguredValue (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     LOGGER.info ("  ConfiguredValue[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = " + aCV);
-    LOGGER.info ("  ConfiguredValue.value = '" + aCV.getValue () + "'");
+    if (aCV != null)
+      LOGGER.info ("  ConfiguredValue.value = '" + aCV.getValue () + "'");
     LOGGER.info ("  StringParser.parseBoolObj(" + sValue + ") = " + StringParser.parseBoolObj (sValue, (Boolean) null));
     LOGGER.info ("  TypeConverter.convertToBoolean(" +
                  sValue +
