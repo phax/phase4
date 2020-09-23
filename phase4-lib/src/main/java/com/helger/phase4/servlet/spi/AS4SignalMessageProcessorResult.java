@@ -61,7 +61,7 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
 
   /**
    * @return Optional response user message for all "pull" based SPI
-   *         invocations.
+   *         invocations. May be <code>null</code>.
    */
   @Nullable
   public Ebms3UserMessage getPullReturnUserMessage ()
@@ -72,7 +72,9 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
   @Override
   public String toString ()
   {
-    return ToStringGenerator.getDerived (super.toString ()).append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage).getToString ();
+    return ToStringGenerator.getDerived (super.toString ())
+                            .append ("m_aPullReturnUserMessage", m_aPullReturnUserMessage)
+                            .getToString ();
   }
 
   @Nonnull
@@ -86,7 +88,11 @@ public class AS4SignalMessageProcessorResult extends AS4MessageProcessorResult
                                                                @Nullable final String sAsyncResponseURL,
                                                                @Nullable final Ebms3UserMessage aPullReturnUserMessage)
   {
-    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS, null, aAttachments, sAsyncResponseURL, aPullReturnUserMessage);
+    return new AS4SignalMessageProcessorResult (ESuccess.SUCCESS,
+                                                null,
+                                                aAttachments,
+                                                sAsyncResponseURL,
+                                                aPullReturnUserMessage);
   }
 
   @Nonnull

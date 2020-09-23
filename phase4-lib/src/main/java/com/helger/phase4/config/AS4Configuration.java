@@ -284,6 +284,9 @@ public final class AS4Configuration
 
   public static boolean isWSS4JSynchronizedSecurity ()
   {
+    if (true)
+      return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
     LOGGER.info ("Configuration[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = '" + sValue + "'");
     final ConfiguredValue aCV = getConfig ().getConfiguredValue (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
