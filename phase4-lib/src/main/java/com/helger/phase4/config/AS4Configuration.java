@@ -34,13 +34,16 @@ import com.helger.commons.io.resourceprovider.ClassPathResourceProvider;
 import com.helger.commons.io.resourceprovider.FileSystemResourceProvider;
 import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.string.StringParser;
 import com.helger.commons.system.SystemProperties;
+import com.helger.commons.typeconvert.TypeConverter;
 import com.helger.config.Config;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
+import com.helger.config.value.ConfiguredValue;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -105,7 +108,8 @@ public final class AS4Configuration
     if (aRes != null)
     {
       LOGGER.warn ("The support for the properties file 'private-crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 6);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 6);
     }
 
     // Remove for 1.0
@@ -113,24 +117,28 @@ public final class AS4Configuration
     if (aRes != null)
     {
       LOGGER.warn ("The support for the properties file 'crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 5);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 5);
     }
 
     // Phase 4 files
     aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
     if (aRes != null)
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 4);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 4);
 
     aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
     if (aRes != null)
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 3);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 3);
 
     // Remove for 1.0
     aRes = aResourceProvider.getReadableResourceIf ("private-as4.properties", IReadableResource::exists);
     if (aRes != null)
     {
       LOGGER.warn ("The support for the properties file 'private-as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 2);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 2);
     }
 
     // Remove for 1.0
@@ -138,7 +146,8 @@ public final class AS4Configuration
     if (aRes != null)
     {
       LOGGER.warn ("The support for the properties file 'as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 1);
+      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8),
+                                  nResourceDefaultPrio + 1);
     }
 
     return ret;
@@ -275,7 +284,26 @@ public final class AS4Configuration
 
   public static boolean isWSS4JSynchronizedSecurity ()
   {
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+    final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
+    LOGGER.info ("Configuration[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = '" + sValue + "'");
+    final ConfiguredValue aCV = getConfig ().getConfiguredValue (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
+    LOGGER.info ("  ConfiguredValue[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = " + aCV);
+    LOGGER.info ("  ConfiguredValue.value = '" + aCV.getValue () + "'");
+    LOGGER.info ("  StringParser.parseBoolObj(" + sValue + ") = " + StringParser.parseBoolObj (sValue, (Boolean) null));
+    LOGGER.info ("  TypeConverter.convertToBoolean(" +
+                 sValue +
+                 ",true) = " +
+                 TypeConverter.convertToBoolean (sValue, true));
+    LOGGER.info ("  TypeConverter.convertToBoolean(" +
+                 sValue +
+                 ",false) = " +
+                 TypeConverter.convertToBoolean (sValue, true));
+    final boolean b = getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+    LOGGER.info ("  config.getAsBoolean(, false) = " + b);
+    LOGGER.info ("  config.getAsBoolean(, true) = " +
+                 getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, true));
+    LOGGER.info ("  Returning = " + b);
+    return b;
   }
 
   @Nullable
@@ -306,7 +334,8 @@ public final class AS4Configuration
       _logRenamedConfig ("server.incoming.duplicatedisposal.minutes", "phase4.incoming.duplicatedisposal.minutes");
       return ret.longValue ();
     }
-    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
+    return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes",
+                                   DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
   }
 
   @Nonnull
