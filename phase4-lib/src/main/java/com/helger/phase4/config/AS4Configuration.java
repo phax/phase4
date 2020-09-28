@@ -36,14 +36,12 @@ import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.StringParser;
 import com.helger.commons.system.SystemProperties;
-import com.helger.commons.typeconvert.TypeConverter;
 import com.helger.config.Config;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
 import com.helger.config.source.EConfigSourceType;
 import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.res.ConfigurationSourceProperties;
-import com.helger.config.value.ConfiguredValue;
 
 /**
  * This class contains the central phase4 configuration. <br>
@@ -292,33 +290,9 @@ public final class AS4Configuration
       return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
     }
 
-    if (true)
-    {
-      // Parse manually
-      final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
-      return StringParser.parseBool (sValue, false);
-    }
-
+    // Parse manually
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
-    LOGGER.info ("Configuration[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = '" + sValue + "'");
-    final ConfiguredValue aCV = getConfig ().getConfiguredValue (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
-    LOGGER.info ("  ConfiguredValue[" + PROPERTY_PHASE4_WSS4J_SYNCSECURITY + "] = " + aCV);
-    if (aCV != null)
-      LOGGER.info ("  ConfiguredValue.value = '" + aCV.getValue () + "'");
-    LOGGER.info ("  StringParser.parseBoolObj(" + sValue + ") = " + StringParser.parseBoolObj (sValue, (Boolean) null));
-    LOGGER.info ("  TypeConverter.convertToBoolean(" + sValue + ",true) = " + TypeConverter.convertToBoolean (sValue, true));
-    LOGGER.info ("  TypeConverter.convertToBoolean(" + sValue + ",false) = " + TypeConverter.convertToBoolean (sValue, true));
-    final boolean b = getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
-    LOGGER.info ("  config.getAsBoolean(, false) = " + b);
-    LOGGER.info ("  config.getAsBoolean(, true) = " + getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, true));
-    LOGGER.info ("  Returning = " + b);
-    return b;
-  }
-
-  public static boolean isWSS4JSynchronizedSecurity2 ()
-  {
-    // This should work, but doesn't in all cases
-    return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+    return StringParser.parseBool (sValue, false);
   }
 
   @Nullable
@@ -353,6 +327,7 @@ public final class AS4Configuration
   }
 
   @Nonnull
+  @Phase4V1Tasks
   public static String getDumpBasePath ()
   {
     String ret = getConfig ().getAsString ("phase4.dump.path");
@@ -377,6 +352,7 @@ public final class AS4Configuration
   }
 
   @Nullable
+  @Phase4V1Tasks
   public static String getThisEndpointAddress ()
   {
     final String ret = getConfig ().getAsString ("server.address");
