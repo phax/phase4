@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.peppol;
 
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,6 +45,9 @@ import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
+import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadWriter;
+import com.helger.peppol.sbdh.spec12.BinaryContentType;
+import com.helger.peppol.sbdh.spec12.TextContentType;
 import com.helger.peppol.sbdh.write.PeppolSBDHDocumentWriter;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
@@ -652,6 +656,66 @@ public final class Phase4PeppolSender
       m_aPayloadBytes = aPayloadBytes;
       m_aPayloadElement = null;
       return this;
+    }
+
+    /**
+     * Use the provided byte array as the binary content of the Peppol SBDH
+     * message. Internally the data will be wrapped in a predefined
+     * "BinaryContent" element.
+     *
+     * @param aBinaryPayload
+     *        The bytes to be wrapped. May not be <code>null</code>.
+     * @param aMimeType
+     *        The MIME type to use. May not be <code>null</code>.
+     * @param aCharset
+     *        The character set to be used, if the MIME type is text based. May
+     *        be <code>null</code>.
+     * @return this for chaining
+     * @since 0.12.1
+     */
+    @Nonnull
+    public Builder payloadBinaryContent (@Nonnull final byte [] aBinaryPayload,
+                                         @Nonnull final IMimeType aMimeType,
+                                         @Nullable final Charset aCharset)
+    {
+      ValueEnforcer.notNull (aBinaryPayload, "BinaryPayload");
+      ValueEnforcer.notNull (aMimeType, "MimeType");
+
+      final BinaryContentType aBC = new BinaryContentType ();
+      aBC.setValue (aBinaryPayload);
+      aBC.setMimeType (aMimeType.getAsString ());
+      aBC.setEncoding (aCharset == null ? null : aCharset.name ());
+      final Document aDoc = PeppolSBDHPayloadWriter.binaryContent ().getAsDocument (aBC);
+      if (aDoc == null)
+        throw new IllegalStateException ("Failed to create 'BinaryContent' element.");
+      return payload (aDoc.getDocumentElement ());
+    }
+
+    /**
+     * Use the provided byte array as the binary content of the Peppol SBDH
+     * message. Internally the data will be wrapped in a predefined
+     * "BinaryContent" element.
+     *
+     * @param sTextPayload
+     *        The text to be wrapped. May not be <code>null</code>.
+     * @param aMimeType
+     *        The MIME type to use. May not be <code>null</code>.
+     * @return this for chaining
+     * @since 0.12.1
+     */
+    @Nonnull
+    public Builder payloadTextContent (@Nonnull final String sTextPayload, @Nonnull final IMimeType aMimeType)
+    {
+      ValueEnforcer.notNull (sTextPayload, "TextPayload");
+      ValueEnforcer.notNull (aMimeType, "MimeType");
+
+      final TextContentType aTC = new TextContentType ();
+      aTC.setValue (sTextPayload);
+      aTC.setMimeType (aMimeType.getAsString ());
+      final Document aDoc = PeppolSBDHPayloadWriter.textContent ().getAsDocument (aTC);
+      if (aDoc == null)
+        throw new IllegalStateException ("Failed to create 'TextContent' element.");
+      return payload (aDoc.getDocumentElement ());
     }
 
     /**
