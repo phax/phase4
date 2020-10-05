@@ -69,4 +69,19 @@ public interface IPhase4PeppolIncomingSBDHandlerSPI
                           @Nonnull StandardBusinessDocument aSBD,
                           @Nonnull PeppolSBDHDocument aPeppolSBD,
                           @Nonnull IAS4MessageState aState) throws Exception;
+
+  /**
+   * Define if an exception from
+   * {@link #handleIncomingSBD(IAS4IncomingMessageMetadata, HttpHeaderMap, Ebms3UserMessage, byte[], StandardBusinessDocument, PeppolSBDHDocument, IAS4MessageState)}
+   * results in a negative AS4 response or not. By default it is not.
+   *
+   * @return <code>true</code> to convert an Exception into an AS4 Error,
+   *         <code>false</code> if the Exception should simply be logged and
+   *         than processing should continue.
+   * @since 0.12.2
+   */
+  default boolean exceptionTranslatesToAS4Error ()
+  {
+    return false;
+  }
 }

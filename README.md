@@ -258,6 +258,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.12.2 - 2020-10-05
+    * Extended the `IPhase4PeppolIncomingSBDHandlerSPI` interface to be able to reject messages on the AS4 layer
 * v0.12.1 - 2020-09-28
     * Updated to peppol-commons 8.2.4
     * Made the value checks when reading Peppol SBDH documents customizable via `Phase4PeppolServletConfiguration.setPerformSBDHValueChecks`

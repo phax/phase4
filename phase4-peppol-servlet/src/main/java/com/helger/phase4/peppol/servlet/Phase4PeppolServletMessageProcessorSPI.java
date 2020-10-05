@@ -434,8 +434,7 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         }
         if (a.m_aPayloadBytes == null)
         {
-          final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (),
-                                                                                               aState.getMessageID ());
+          final Ebms3Error aEbmsError = EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (aState.getLocale (), aState.getMessageID ());
           aProcessingErrorMessages.add (aEbmsError);
           return AS4MessageProcessorResult.createFailure ("Processing errors occurred");
         }
@@ -533,14 +532,11 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
           {
             return AS4MessageProcessorResult.createFailure (sLogPrefix +
                                                             "Failed to resolve SMP endpoint for provided receiver ID (" +
-                                                            (aReceiverID == null ? "null"
-                                                                                 : aReceiverID.getURIEncoded ()) +
+                                                            (aReceiverID == null ? "null" : aReceiverID.getURIEncoded ()) +
                                                             ")/documentType ID (" +
-                                                            (aDocTypeID == null ? "null"
-                                                                                : aDocTypeID.getURIEncoded ()) +
+                                                            (aDocTypeID == null ? "null" : aDocTypeID.getURIEncoded ()) +
                                                             ")/process ID (" +
-                                                            (aProcessID == null ? "null"
-                                                                                : aProcessID.getURIEncoded ()) +
+                                                            (aProcessID == null ? "null" : aProcessID.getURIEncoded ()) +
                                                             ")/transport profile (" +
                                                             m_aTransportProfile.getID () +
                                                             ") - not handling incoming AS4 document");
@@ -581,6 +577,12 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         catch (final Exception ex)
         {
           LOGGER.error (sLogPrefix + "Error invoking Peppol handler " + aHandler, ex);
+          if (aHandler.exceptionTranslatesToAS4Error ())
+          {
+            return AS4MessageProcessorResult.createFailure (sLogPrefix +
+                                                            "The incoming Peppol message could not be processed: " +
+                                                            ex.getMessage ());
+          }
         }
       }
     }
