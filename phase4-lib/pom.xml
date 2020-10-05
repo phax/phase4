@@ -265,7 +265,7 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
           <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-jaxb22-plugin</artifactId>
-            <version>2.3.3.0</version>
+            <version>2.3.3.1</version>
           </dependency>
         </dependencies>
       </plugin>
