@@ -29,6 +29,7 @@ Some known users of phase4 - mostly in the context of Peppol - are (in alphabeti
 * Fitek AS (EE) - https://fitek.com/
 * GHX LLC (UK) - https://www.ghx.com/
 * Qvalia Group AB (SE) - https://qvalia.com/
+* Strands (ES) - https://strands.com/
 * Telema AS (EE) - https://telema.com/
 * TOOP4EU (EU project) - http://toop.eu/
 * unifiedpost group (BE) - https://www.unifiedpost.com/
