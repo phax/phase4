@@ -378,33 +378,34 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     final String sService = aUserMessage.getCollaborationInfo ().getServiceValue ();
     final String sAction = aUserMessage.getCollaborationInfo ().getAction ();
     final String sConversationID = aUserMessage.getCollaborationInfo ().getConversationId ();
+    final String sLogPrefix = "[" + sMessageID + "] ";
 
     // Debug log
     if (LOGGER.isDebugEnabled ())
     {
       if (aSrcPMode == null)
-        LOGGER.debug ("  No Source PMode present");
+        LOGGER.debug (sLogPrefix + "  No Source PMode present");
       else
-        LOGGER.debug ("  Source PMode = " + aSrcPMode.getID ());
-      LOGGER.debug ("  Message ID = '" + sMessageID + "'");
-      LOGGER.debug ("  Service = '" + sService + "'");
-      LOGGER.debug ("  Action = '" + sAction + "'");
-      LOGGER.debug ("  ConversationId = '" + sConversationID + "'");
+        LOGGER.debug (sLogPrefix + "  Source PMode = " + aSrcPMode.getID ());
+      LOGGER.debug (sLogPrefix + "  AS4 Message ID = '" + sMessageID + "'");
+      LOGGER.debug (sLogPrefix + "  AS4 Service = '" + sService + "'");
+      LOGGER.debug (sLogPrefix + "  AS4 Action = '" + sAction + "'");
+      LOGGER.debug (sLogPrefix + "  AS4 ConversationId = '" + sConversationID + "'");
 
       // Log source properties
-      if (aUserMessage.getMessageProperties () != null)
+      if (aUserMessage.getMessageProperties () != null && aUserMessage.getMessageProperties ().hasPropertyEntries ())
       {
-        LOGGER.debug ("  MessageProperties:");
+        LOGGER.debug (sLogPrefix + "  AS4 MessageProperties:");
         for (final Ebms3Property p : aUserMessage.getMessageProperties ().getProperty ())
-          LOGGER.debug ("    [" + p.getName () + "] = [" + p.getValue () + "]");
+          LOGGER.debug (sLogPrefix + "    [" + p.getName () + "] = [" + p.getValue () + "]");
       }
       else
-        LOGGER.debug ("  No Mesage Properties present");
+        LOGGER.debug (sLogPrefix + "  No AS4 Mesage Properties present");
 
       if (aPayload == null)
-        LOGGER.debug ("  No Payload present");
+        LOGGER.debug (sLogPrefix + "  No SOAP Body Payload present");
       else
-        LOGGER.debug ("  Payload = " + XMLWriter.getNodeAsString (aPayload));
+        LOGGER.debug (sLogPrefix + "  SOAP Body Payload = " + XMLWriter.getNodeAsString (aPayload));
     }
 
     // Read all attachments
@@ -452,7 +453,8 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
         aReadAttachments.add (a);
 
         if (LOGGER.isDebugEnabled ())
-          LOGGER.debug ("Attachment " +
+          LOGGER.debug (sLogPrefix +
+                        "AS4 Attachment " +
                         nAttachmentIndex +
                         " with ID [" +
                         a.m_sID +
@@ -487,15 +489,16 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     try
     {
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("Now evaluating the SBDH against Peppol rules");
+        LOGGER.debug (sLogPrefix + "Now evaluating the SBDH against Peppol rules");
 
-      final boolean bPerfomrValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
-      aPeppolSBD = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerfomrValueChecks)
+      final boolean bPerformValueChecks = Phase4PeppolServletConfiguration.isPerformSBDHValueChecks ();
+      aPeppolSBD = new PeppolSBDHDocumentReader (SimpleIdentifierFactory.INSTANCE).setPerformValueChecks (bPerformValueChecks)
                                                                                   .extractData (aReadAttachment.standardBusinessDocument ());
 
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("The provided SBDH is valid according to Peppol rules, with value checks being " +
-                      (bPerfomrValueChecks ? "enabled" : "disabled"));
+        LOGGER.debug (sLogPrefix +
+                      "The provided SBDH is valid according to Peppol rules, with value checks being " +
+                      (bPerformValueChecks ? "enabled" : "disabled"));
     }
     catch (final PeppolSBDHDocumentReadException ex)
     {
@@ -506,11 +509,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
     }
 
     if (m_aHandlers.isEmpty ())
-      LOGGER.warn ("No handler is present - the message is unhandled and discarded");
+      LOGGER.error (sLogPrefix + "No SPI handler is present - the message is unhandled and discarded");
     else
     {
-      final String sLogPrefix = "[" + sMessageID + "] ";
-
       // Start consistency checks?
       final Phase4PeppolReceiverCheckData aReceiverCheckData = m_aReceiverCheckData != null ? m_aReceiverCheckData
                                                                                             : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
