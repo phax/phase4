@@ -73,6 +73,7 @@ public final class AS4BidirectionalClientHelper
    *             {@link #sendAS4UserMessageAndReceiveAS4SignalMessage(IAS4CryptoFactory,IPModeResolver,IIncomingAttachmentFactory,AS4ClientUserMessage,Locale,String,IAS4ClientBuildMessageCallback,IAS4OutgoingDumper,IAS4IncomingDumper,IAS4RetryCallback,IAS4RawResponseConsumer,IAS4SignalMessageConsumer)}
    *             instead
    */
+  @SuppressWarnings ("javadoc")
   @Deprecated
   public static void sendAS4AndReceiveAS4 (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                            @Nonnull final IPModeResolver aPModeResolver,
@@ -121,11 +122,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                                                  MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 UserMessage to '" +
-                   sURL +
-                   "' with max. " +
-                   aClientUserMsg.getMaxRetries () +
-                   " retries");
+      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -167,11 +164,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                   aOutgoingDumper,
                                                                                                   aRetryCallback);
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" +
-                   aResponseEntity.getMessageID () +
-                   "' to '" +
-                   sURL +
-                   "'");
+      LOGGER.info ("Successfully transmitted AS4 UserMessage with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
@@ -217,11 +210,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                                            MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 PullRequest to '" +
-                   sURL +
-                   "' with max. " +
-                   aClientPullRequest.getMaxRetries () +
-                   " retries");
+      LOGGER.info ("Sending AS4 PullRequest to '" + sURL + "' with max. " + aClientPullRequest.getMaxRetries () + " retries");
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");
@@ -240,11 +229,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                       aOutgoingDumper,
                                                                                                       aRetryCallback);
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" +
-                   aResponseEntity.getMessageID () +
-                   "' to '" +
-                   sURL +
-                   "'");
+      LOGGER.info ("Successfully transmitted AS4 PullRequest with message ID '" + aResponseEntity.getMessageID () + "' to '" + sURL + "'");
 
     if (aResponseConsumer != null)
       aResponseConsumer.handleResponse (aResponseEntity);
