@@ -71,8 +71,8 @@ public interface IAS4CryptoFactory
   String getKeyPassword ();
 
   /**
-   * @return´The trust store to be used or <code>null</code> if none is
-   *             configured.
+   * @return The trust store to be used or <code>null</code> if none is
+   *         configured.
    * @since 0.12.0
    */
   @Nullable

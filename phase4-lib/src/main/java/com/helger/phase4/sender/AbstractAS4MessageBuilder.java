@@ -242,7 +242,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final TimeValue a)
   {
-    return retryIntervalMilliseconds (a == null ? null : a.getAsMillis ());
+    return retryIntervalMilliseconds (a == null ? -1L : a.getAsMillis ());
   }
 
   /**
@@ -256,7 +256,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final Duration a)
   {
-    return retryIntervalMilliseconds (a == null ? null : a.toMillis ());
+    return retryIntervalMilliseconds (a == null ? -1L : a.toMillis ());
   }
 
   /**
