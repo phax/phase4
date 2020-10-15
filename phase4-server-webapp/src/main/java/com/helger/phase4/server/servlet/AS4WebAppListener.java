@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 
@@ -30,10 +32,18 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
+import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.httpclient.HttpDebugger;
+import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
+import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.messaging.AS4MessagingHelper;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.server.storage.StorageHelper;
 import com.helger.phase4.servlet.AS4ServerInitializer;
+import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
+import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.photon.core.servlet.WebAppListener;
 import com.helger.photon.security.CSecurity;
 import com.helger.photon.security.mgr.PhotonSecurityManager;
@@ -121,10 +131,41 @@ public final class AS4WebAppListener extends WebAppListener
     }
   }
 
+  private static void _initAS4 ()
+  {
+    AS4ServerInitializer.initAS4Server ();
+
+    // Store the incoming file as is
+    AS4DumpManager.setIncomingDumper (new AS4IncomingDumperFileBased ( (aMessageMetadata,
+                                                                        aHttpHeaderMap) -> StorageHelper.getStorageFile (aMessageMetadata,
+                                                                                                                         ".as4in"))
+    {
+      @Override
+      public void onEndRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
+      {
+        // Save the metadata also to a file
+        final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".metadata");
+        if (SimpleFileIO.writeFile (aFile,
+                                    AS4MessagingHelper.getIncomingMetadataAsJson (aMessageMetadata)
+                                                      .getAsJsonString (JsonWriterSettings.DEFAULT_SETTINGS_FORMATTED),
+                                    StandardCharsets.UTF_8)
+                        .isFailure ())
+          LOGGER.error ("Failed to write metadata to '" + aFile.getAbsolutePath () + "'");
+        else
+          LOGGER.info ("Wrote metadata to '" + aFile.getAbsolutePath () + "'");
+      }
+    });
+
+    // Store the outgoings file as well
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                                           nTry,
+                                                                                                                           ".as4out")));
+  }
+
   @Override
   protected void initManagers ()
   {
-    AS4ServerInitializer.initAS4Server ();
+    _initAS4 ();
     DropFolderUserMessage.init (AS4CryptoFactoryProperties.getDefaultInstance ());
   }
 
