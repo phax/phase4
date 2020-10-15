@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -37,6 +38,7 @@ import com.helger.photon.app.io.WebFileIO;
  *
  * @author Philip Helger
  */
+@Immutable
 public final class StorageHelper
 {
   // In memory counter
