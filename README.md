@@ -24,11 +24,13 @@ This solution is Peppol compliant. See the test report at https://github.com/pha
 ## Known users
 
 Some known users of phase4 - mostly in the context of Peppol - are (in alphabetical order):
+
 * Bundesrechenzentrum / Federal Computing Center (AT) - https://www.brz.gv.at/
 * ecosio GmbH (AT) - https://ecosio.com/
 * Fitek AS (EE) - https://fitek.com/
 * GHX LLC (UK) - https://www.ghx.com/
 * Qvalia Group AB (SE) - https://qvalia.com/
+* Storecove (Global) - https://www.storecove.com/
 * Strands (ES) - https://strands.com/
 * T-Systems Multimedia Solutions GmbH (DE) - https://www.t-systems-mms.com
 * Telema AS (EE) - https://telema.com/
