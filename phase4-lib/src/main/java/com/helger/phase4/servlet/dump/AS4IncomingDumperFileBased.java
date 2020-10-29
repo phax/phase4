@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
@@ -50,7 +51,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    * @since 0.9.8
    */
   @FunctionalInterface
-  public static interface IFileProvider
+  public interface IFileProvider
   {
     @Nonnull
     File createFile (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull HttpHeaderMap aHttpHeaderMap);
@@ -58,7 +59,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
     @Nonnull
     static String getFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
     {
-      return PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) + ".as4in";
+      return PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) + "-" + GlobalIDFactory.getNewIntID () + ".as4in";
     }
   }
 
