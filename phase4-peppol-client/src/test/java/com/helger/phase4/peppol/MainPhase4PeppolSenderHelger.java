@@ -77,7 +77,6 @@ public final class MainPhase4PeppolSenderHelger
                             .receiverParticipantID (aReceiverID)
                             .senderPartyID ("POP000306")
                             .payload (aPayloadElement)
-                            .messageID ("TestMsgPhilip")
                             .conversationID ("")
                             // .agreementRef ("BlaaFoo")
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
