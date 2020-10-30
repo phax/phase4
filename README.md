@@ -265,6 +265,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.12.3 - work in progress
    * The `phase4-server-webapp` project now also stores all incoming messages to the dump path
    * Ensure the incoming dumper `AS4IncomingDumperFileBased` creates a unique filename by default
+   * Allow an empty AS4 Conversation ID in a UserMessage
 * v0.12.2 - 2020-10-05
     * Extended the `IPhase4PeppolIncomingSBDHandlerSPI` interface to be able to reject messages on the AS4 layer
     * Updated to ph-bdve-rules 1.0.8

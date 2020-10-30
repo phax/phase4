@@ -101,9 +101,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
-  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
-                                                                            "-" +
-                                                                            x.getToPartyID ();
+  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () + "-" + x.getToPartyID ();
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -572,8 +570,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     if (StringHelper.hasNoText (m_sServiceValue))
       throw new IllegalStateException ("ServiceValue needs to be set");
 
-    if (StringHelper.hasNoText (m_sConversationID))
-      throw new IllegalStateException ("ConversationID needs to be set");
+    if (m_sConversationID == null)
+      throw new IllegalStateException ("ConversationID needs to be set (but may be empty)");
 
     if (false)
       if (StringHelper.hasNoText (m_sAgreementRefValue))
@@ -610,8 +608,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
                                                                                             getSendingDateTimeOrNow ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
-                                                                                            m_aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,

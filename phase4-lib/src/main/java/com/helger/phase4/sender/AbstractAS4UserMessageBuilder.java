@@ -557,8 +557,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     aUserMsg.setAction (m_sAction);
     if (StringHelper.hasText (m_sMessageID))
       aUserMsg.setMessageID (m_sMessageID);
-    aUserMsg.setConversationID (StringHelper.hasText (m_sConversationID) ? m_sConversationID
-                                                                         : MessageHelperMethods.createRandomConversationID ());
+    // Empty conversation ID is okay
+    aUserMsg.setConversationID (m_sConversationID != null ? m_sConversationID : MessageHelperMethods.createRandomConversationID ());
 
     aUserMsg.setFromPartyIDType (m_sFromPartyIDType);
     aUserMsg.setFromPartyID (m_sFromPartyID);
