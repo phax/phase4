@@ -474,7 +474,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    if (m_nMaxRetries > 0)
+    if (m_nMaxRetries > 0 || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
