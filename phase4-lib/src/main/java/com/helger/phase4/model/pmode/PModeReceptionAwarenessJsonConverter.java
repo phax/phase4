@@ -64,14 +64,9 @@ public class PModeReceptionAwarenessJsonConverter
     final ETriState eRetry = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (RETRY),
                                                                           PModeReceptionAwareness.DEFAULT_RETRY);
     final int nMaxRetries = aElement.getAsInt (MAX_RETRIES, PModeReceptionAwareness.DEFAULT_MAX_RETRIES);
-    final int nRetryIntervalMS = aElement.getAsInt (RETRY_INTERVAL_MS,
-                                                    PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS);
+    final int nRetryIntervalMS = aElement.getAsInt (RETRY_INTERVAL_MS, PModeReceptionAwareness.DEFAULT_RETRY_INTERVAL_MS);
     final ETriState eDuplicateDetection = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (DUPLICATE_DETECTION),
                                                                                        PModeReceptionAwareness.DEFAULT_DUPLICATE_DETECTION);
-    return new PModeReceptionAwareness (eReceptionAwareness,
-                                        eRetry,
-                                        nMaxRetries,
-                                        nRetryIntervalMS,
-                                        eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
   }
 }

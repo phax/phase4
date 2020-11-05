@@ -47,8 +47,7 @@ public final class PModeLegJsonConverter
     if (aValue.hasProtocol ())
       ret.addJson (PROTOCOL, PModeLegProtocolJsonConverter.convertToJson (aValue.getProtocol ()));
     if (aValue.hasBusinessInfo ())
-      ret.addJson (BUSINESS_INFORMATION,
-                   PModeLegBusinessInformationJsonConverter.convertToJson (aValue.getBusinessInfo ()));
+      ret.addJson (BUSINESS_INFORMATION, PModeLegBusinessInformationJsonConverter.convertToJson (aValue.getBusinessInfo ()));
     if (aValue.hasErrorHandling ())
       ret.addJson (ERROR_HANDLING, PModeLegErrorHandlingJsonConverter.convertToJson (aValue.getErrorHandling ()));
     if (aValue.hasReliability ())
@@ -69,8 +68,7 @@ public final class PModeLegJsonConverter
                                                                          : PModeLegBusinessInformationJsonConverter.convertToNative (aBI);
 
     final IJsonObject aEH = aElement.getAsObject (ERROR_HANDLING);
-    final PModeLegErrorHandling aErrorHandling = aEH == null ? null
-                                                             : PModeLegErrorHandlingJsonConverter.convertToNative (aEH);
+    final PModeLegErrorHandling aErrorHandling = aEH == null ? null : PModeLegErrorHandlingJsonConverter.convertToNative (aEH);
 
     final IJsonObject aR = aElement.getAsObject (RELIABILITY);
     final PModeLegReliability aReliability = aR == null ? null : PModeLegReliabilityJsonConverter.convertToNative (aR);

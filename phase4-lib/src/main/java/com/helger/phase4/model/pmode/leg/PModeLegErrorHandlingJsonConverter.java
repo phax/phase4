@@ -49,11 +49,9 @@ public final class PModeLegErrorHandlingJsonConverter
   {
     final IJsonObject ret = new JsonObject ();
     if (aValue.hasReportSenderErrorsTo ())
-      ret.addJson (REPORT_SENDER_ERRORS_TO,
-                   PModeAddressListJsonConverter.convertToJson (aValue.getReportSenderErrorsTo ()));
+      ret.addJson (REPORT_SENDER_ERRORS_TO, PModeAddressListJsonConverter.convertToJson (aValue.getReportSenderErrorsTo ()));
     if (aValue.hasReportReceiverErrorsTo ())
-      ret.addJson (REPORT_RECEIVER_ERRORS_TO,
-                   PModeAddressListJsonConverter.convertToJson (aValue.getReportReceiverErrorsTo ()));
+      ret.addJson (REPORT_RECEIVER_ERRORS_TO, PModeAddressListJsonConverter.convertToJson (aValue.getReportReceiverErrorsTo ()));
     if (aValue.isReportAsResponseDefined ())
       ret.add (REPORT_AS_RESPONSE, aValue.isReportAsResponse ());
     if (aValue.isReportProcessErrorNotifyConsumerDefined ())
@@ -69,12 +67,10 @@ public final class PModeLegErrorHandlingJsonConverter
   public static PModeLegErrorHandling convertToNative (@Nonnull final IJsonObject aElement)
   {
     final IJsonArray aSender = aElement.getAsArray (REPORT_SENDER_ERRORS_TO);
-    final PModeAddressList aSenderAddresses = aSender == null ? null
-                                                              : PModeAddressListJsonConverter.convertToNative (aSender);
+    final PModeAddressList aSenderAddresses = aSender == null ? null : PModeAddressListJsonConverter.convertToNative (aSender);
 
     final IJsonArray aReceiver = aElement.getAsArray (REPORT_RECEIVER_ERRORS_TO);
-    final PModeAddressList aReceiverAddresses = aReceiver == null ? null
-                                                                  : PModeAddressListJsonConverter.convertToNative (aReceiver);
+    final PModeAddressList aReceiverAddresses = aReceiver == null ? null : PModeAddressListJsonConverter.convertToNative (aReceiver);
 
     final ETriState eReportAsResponse = AbstractPModeMicroTypeConverter.getTriState (aElement.getAsString (REPORT_AS_RESPONSE),
                                                                                      PModeLegSecurity.DEFAULT_PMODE_AUTHORIZE);

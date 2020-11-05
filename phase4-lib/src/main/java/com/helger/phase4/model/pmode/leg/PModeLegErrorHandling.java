@@ -295,19 +295,13 @@ public class PModeLegErrorHandling implements Serializable
                                        .append ("ReportAsResponse", m_eReportAsResponse)
                                        .append ("ReportProcessErrorNotifyConsumer", m_eReportProcessErrorNotifyConsumer)
                                        .append ("ReportProcessErrorNotifyProducer", m_eReportProcessErrorNotifyProducer)
-                                       .append ("ReportDeliveryFailuresNotifyProducer",
-                                                m_eReportDeliveryFailuresNotifyProducer)
+                                       .append ("ReportDeliveryFailuresNotifyProducer", m_eReportDeliveryFailuresNotifyProducer)
                                        .getToString ();
   }
 
   @Nonnull
   public static PModeLegErrorHandling createUndefined ()
   {
-    return new PModeLegErrorHandling (null,
-                                      null,
-                                      ETriState.UNDEFINED,
-                                      ETriState.UNDEFINED,
-                                      ETriState.UNDEFINED,
-                                      ETriState.UNDEFINED);
+    return new PModeLegErrorHandling (null, null, ETriState.UNDEFINED, ETriState.UNDEFINED, ETriState.UNDEFINED, ETriState.UNDEFINED);
   }
 }

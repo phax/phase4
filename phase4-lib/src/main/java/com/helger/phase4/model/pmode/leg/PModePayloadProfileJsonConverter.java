@@ -64,8 +64,7 @@ public final class PModePayloadProfileJsonConverter
     final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAsString (MIME_TYPE));
     final String sXSDFilename = aElement.getAsString (XSD_FILENAME);
     final Integer aMaxSizeKB = aElement.getAsIntObj (MAX_SIZE_KB);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY,
-                                                                             PModePayloadProfile.DEFAULT_MANDATORY));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY, PModePayloadProfile.DEFAULT_MANDATORY));
 
     return new PModePayloadProfile (sName, aMimeType, sXSDFilename, aMaxSizeKB, eMandatory);
   }

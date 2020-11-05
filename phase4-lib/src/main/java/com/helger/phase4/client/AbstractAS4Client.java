@@ -62,8 +62,7 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster
-                                        implements
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster implements
                                         IGenericImplTrait <IMPLTYPE>
 {
   public static final int DEFAULT_MAX_RETRIES = 0;
@@ -96,8 +95,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
   private long m_nRetryIntervalMS = DEFAULT_RETRY_INTERVAL_MS;
 
-  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType,
-                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType, @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (eMessageType, "MessageType");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -507,8 +505,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
-                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
   }
 }

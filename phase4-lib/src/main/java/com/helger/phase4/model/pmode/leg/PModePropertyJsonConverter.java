@@ -58,8 +58,7 @@ public final class PModePropertyJsonConverter
     final String sName = aElement.getAsString (NAME);
     final String sDescription = aElement.getAsString (DESCRIPTION);
     final String sDataType = aElement.getAsString (DATA_TYPE);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY,
-                                                                             PModeProperty.DEFAULT_MANDATORY));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY, PModeProperty.DEFAULT_MANDATORY));
 
     return new PModeProperty (sName, sDescription, sDataType, eMandatory);
   }

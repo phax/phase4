@@ -32,8 +32,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractAS4ClientSignalMessage <IMPLTYPE>>
-                                                     extends
+public abstract class AbstractAS4ClientSignalMessage <IMPLTYPE extends AbstractAS4ClientSignalMessage <IMPLTYPE>> extends
                                                      AbstractAS4Client <IMPLTYPE>
 {
   private final ICommonsList <Object> m_aAny = new CommonsArrayList <> ();

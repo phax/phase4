@@ -235,11 +235,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   @Override
   public int hashCode ()
   {
-    return new HashCodeGenerator (this).append (m_sName)
-                                       .append (m_sDescription)
-                                       .append (m_sDataType)
-                                       .append (m_eMandatory)
-                                       .getHashCode ();
+    return new HashCodeGenerator (this).append (m_sName).append (m_sDescription).append (m_sDataType).append (m_eMandatory).getHashCode ();
   }
 
   @Override

@@ -86,11 +86,9 @@ public final class PModeLegSecurityJsonConverter
       ret.add (ATTR_X509_SIGNATURE_ALGORITHM, aValue.getX509SignatureAlgorithmID ());
 
     if (aValue.x509EncryptionEncryptElements ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT,
-                   new JsonArray ().addAll (aValue.x509EncryptionEncryptElements ()));
+      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ELEMENT, new JsonArray ().addAll (aValue.x509EncryptionEncryptElements ()));
     if (aValue.x509EncryptionEncryptAttachments ().isNotEmpty ())
-      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT,
-                   new JsonArray ().addAll (aValue.x509EncryptionEncryptAttachments ()));
+      ret.addJson (ELEMENT_X509_ENCRYPTION_ENCRYPT_ATTACHMENT, new JsonArray ().addAll (aValue.x509EncryptionEncryptAttachments ()));
     if (aValue.hasX509EncryptionCertificate ())
       ret.add (ELEMENT_X509_ENCRYPTION_CERTIFICATE, aValue.getX509EncryptionCertificate ());
     ret.add (ATTR_X509_ENCRYPTION_ALGORITHM, aValue.getX509EncryptionAlgorithmID ());

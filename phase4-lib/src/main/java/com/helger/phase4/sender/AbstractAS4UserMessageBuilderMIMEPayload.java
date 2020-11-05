@@ -159,17 +159,17 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 
       // Main sending
       AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactory,
-                                                         m_aPModeResolver,
-                                                         m_aIAF,
-                                                         aUserMsg,
-                                                         m_aLocale,
-                                                         m_sEndpointURL,
-                                                         m_aBuildMessageCallback,
-                                                         m_aOutgoingDumper,
-                                                         m_aIncomingDumper,
-                                                         m_aRetryCallback,
-                                                         m_aResponseConsumer,
-                                                         m_aSignalMsgConsumer);
+                                                                                 m_aPModeResolver,
+                                                                                 m_aIAF,
+                                                                                 aUserMsg,
+                                                                                 m_aLocale,
+                                                                                 m_sEndpointURL,
+                                                                                 m_aBuildMessageCallback,
+                                                                                 m_aOutgoingDumper,
+                                                                                 m_aIncomingDumper,
+                                                                                 m_aRetryCallback,
+                                                                                 m_aResponseConsumer,
+                                                                                 m_aSignalMsgConsumer);
     }
     catch (final Phase4Exception ex)
     {

@@ -71,12 +71,7 @@ public final class MimeMessageCreator
       final MailcapCommandMap aCommandMap = (MailcapCommandMap) CommandMap.getDefaultCommandMap ();
       for (final String sMimeType : aCommandMap.getMimeTypes ())
         for (final CommandInfo aCI : aCommandMap.getAllCommands (sMimeType))
-          aSB.append (sMimeType)
-             .append ("; ")
-             .append (aCI.getCommandName ())
-             .append ("; ")
-             .append (aCI.getCommandClass ())
-             .append ('\n');
+          aSB.append (sMimeType).append ("; ").append (aCI.getCommandName ()).append ("; ").append (aCI.getCommandClass ()).append ('\n');
       LoggerFactory.getLogger ("root").info (aSB.toString ());
     }
 
