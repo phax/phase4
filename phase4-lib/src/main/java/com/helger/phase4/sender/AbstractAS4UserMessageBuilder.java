@@ -526,7 +526,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *        The user message the parameters should be applied to. May not be
    *        <code>null</code>.
    */
-  protected final void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
+  @OverridingMethodsMustInvokeSuper
+  protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
   {
     if (m_nMaxRetries >= 0)
       aUserMsg.setMaxRetries (m_nMaxRetries);
