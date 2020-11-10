@@ -111,7 +111,7 @@ public class AS4IncomingHandler
    *
    * @author Philip Helger
    */
-  public static interface IAS4ParsedMessageCallback
+  public interface IAS4ParsedMessageCallback
   {
     /**
      * Callback method
@@ -433,6 +433,8 @@ public class AS4IncomingHandler
             final InputStream aSrcIS = aOldISP.getInputStream ();
             if (aSrcIS == null)
               throw new IllegalStateException ("Failed to create InputStream from " + aOldISP);
+            if (LOGGER.isDebugEnabled ())
+              LOGGER.debug ("Decompressing attachment with ID '" + aIncomingAttachment.getId () + "' using " + eCompressionMode);
             return eCompressionMode.getDecompressStream (aSrcIS);
           }
           catch (final IOException ex)
@@ -442,6 +444,9 @@ public class AS4IncomingHandler
             throw new AS4DecompressException (ex);
           }
         }, aOldISP.isReadMultiple ()));
+
+        // Remember the compression mode
+        aIncomingAttachment.setCompressionMode (eCompressionMode);
 
         final String sAttachmentContentID = StringHelper.trimStart (aIncomingAttachment.getId (), "attachment=");
         // x.getHref() != null needed since, if a message contains a payload and
