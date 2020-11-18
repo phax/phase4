@@ -72,9 +72,9 @@
     <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
     <xmlsec.version>2.2.0</xmlsec.version>
     <wss4j.version>2.3.0</wss4j.version>
-    <log4j.version>2.13.3</log4j.version>
-    <peppol-commons.version>8.2.5</peppol-commons.version>
+    <log4j.version>2.14.0</log4j.version>
     <ph-xsds.version>2.4.1</ph-xsds.version>
+    <peppol-commons.version>8.2.6</peppol-commons.version>
   </properties>
   
   <dependencyManagement>
@@ -117,14 +117,14 @@
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.3.4</version>
+        <version>9.5.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.2.8</version>
+        <version>8.2.9</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -152,7 +152,7 @@
       <dependency>
         <groupId>com.helger.bdve.rules</groupId>
         <artifactId>ph-bdve-rules-parent-pom</artifactId>
-        <version>1.0.12</version>
+        <version>1.0.14</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

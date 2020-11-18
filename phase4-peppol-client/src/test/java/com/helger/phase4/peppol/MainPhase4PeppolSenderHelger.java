@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.peppol.PeppolValidation3_10_1;
+import com.helger.bdve.peppol.PeppolValidation3_11_1;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
@@ -80,7 +80,7 @@ public final class MainPhase4PeppolSenderHelger
                             .conversationID ("")
                             // .agreementRef ("BlaaFoo")
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
+                            .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())

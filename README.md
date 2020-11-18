@@ -262,8 +262,9 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.12.4 - work in progress
+* v0.12.4 - 2020-11-18
    * Remembering the original compression state of incoming attachments
+    * Updated to ph-bdve-rules 1.0.14 including Peppol Fall 2020 release corrigendum
 * v0.12.3 - 2020-11-06
    * The `phase4-server-webapp` project now also stores all incoming messages to the dump path
    * Ensure the incoming dumper `AS4IncomingDumperFileBased` creates a unique filename by default

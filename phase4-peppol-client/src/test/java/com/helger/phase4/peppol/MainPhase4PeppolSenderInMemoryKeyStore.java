@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.peppol.PeppolValidation3_10_1;
+import com.helger.bdve.peppol.PeppolValidation3_11_1;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.crypto.AS4CryptoFactoryInMemoryKeyStore;
@@ -78,7 +78,7 @@ public final class MainPhase4PeppolSenderInMemoryKeyStore
                             .payload (aPayloadElement)
                             .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidation3_10_1.VID_OPENPEPPOL_INVOICE_V3,
+                            .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
                                                       new Phase4PeppolValidatonResultHandler ())
                             .cryptoFactory (aInMemoryCryptoFactory)
                             .sendMessage ()
