@@ -58,11 +58,14 @@ public final class AS4Configuration
    * The boolean property to enable in-memory managers.
    */
   public static final String PROPERTY_PHASE4_MANAGER_INMEMORY = "phase4.manager.inmemory";
+  public static final boolean DEFAULT_PHASE4_MANAGER_INMEMORY = true;
+
   /**
    * The boolean property to enable synchronization of sign/verify and
    * encrypt/decrypt.
    */
   public static final String PROPERTY_PHASE4_WSS4J_SYNCSECURITY = "phase4.wss4j.syncsecurity";
+  public static final boolean DEFAULT_PHASE4_WSS4J_SYNCSECURITY = false;
 
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
 
@@ -274,12 +277,12 @@ public final class AS4Configuration
     if (false)
     {
       // This should work, but doesn't
-      return getConfig ().getAsBoolean (PROPERTY_PHASE4_MANAGER_INMEMORY, true);
+      return getConfig ().getAsBoolean (PROPERTY_PHASE4_MANAGER_INMEMORY, DEFAULT_PHASE4_MANAGER_INMEMORY);
     }
 
     // Parse manually
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_MANAGER_INMEMORY);
-    return StringParser.parseBool (sValue, true);
+    return StringParser.parseBool (sValue, DEFAULT_PHASE4_MANAGER_INMEMORY);
   }
 
   public static boolean isWSS4JSynchronizedSecurity ()
@@ -287,12 +290,12 @@ public final class AS4Configuration
     if (false)
     {
       // This should work, but doesn't in all cases
-      return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, false);
+      return getConfig ().getAsBoolean (PROPERTY_PHASE4_WSS4J_SYNCSECURITY, DEFAULT_PHASE4_WSS4J_SYNCSECURITY);
     }
 
     // Parse manually
     final String sValue = getConfig ().getAsString (PROPERTY_PHASE4_WSS4J_SYNCSECURITY);
-    return StringParser.parseBool (sValue, false);
+    return StringParser.parseBool (sValue, DEFAULT_PHASE4_WSS4J_SYNCSECURITY);
   }
 
   @Nullable
