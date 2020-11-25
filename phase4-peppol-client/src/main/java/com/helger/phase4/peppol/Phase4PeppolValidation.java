@@ -22,17 +22,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import com.helger.bdve.api.execute.ValidationExecutionManager;
-import com.helger.bdve.api.executorset.IValidationExecutorSet;
-import com.helger.bdve.api.executorset.IValidationExecutorSetRegistry;
-import com.helger.bdve.api.executorset.VESID;
-import com.helger.bdve.api.executorset.ValidationExecutorSetRegistry;
-import com.helger.bdve.api.result.ValidationResultList;
-import com.helger.bdve.engine.source.IValidationSourceXML;
-import com.helger.bdve.engine.source.ValidationSourceXML;
-import com.helger.bdve.peppol.PeppolValidation;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableCopy;
+import com.helger.phive.api.execute.ValidationExecutionManager;
+import com.helger.phive.api.executorset.IValidationExecutorSet;
+import com.helger.phive.api.executorset.IValidationExecutorSetRegistry;
+import com.helger.phive.api.executorset.VESID;
+import com.helger.phive.api.executorset.ValidationExecutorSetRegistry;
+import com.helger.phive.api.result.ValidationResultList;
+import com.helger.phive.engine.source.IValidationSourceXML;
+import com.helger.phive.engine.source.ValidationSourceXML;
+import com.helger.phive.peppol.PeppolValidation;
 
 /**
  * This class contains the client side validation required for outgoing Peppol

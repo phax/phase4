@@ -145,7 +145,7 @@ As a prerequisite, the file `phase4.properties` must be filled out correctly and
 
 See the folder https://github.com/phax/phase4/tree/master/phase4-peppol-client/src/test/java/com/helger/phase4/peppol for different examples on how to send messages via the Peppol AS4 client.
 
-The client side validation of outgoing business documents is implemented using the [Business Document Validation Engine](https://github.com/phax/ph-bdve/) (BDVE).
+The client side validation of outgoing business documents is implemented using [PHIVE](https://github.com/phax/phive) (Philip Helger Integrative Validation Engine).
 
 ## Subproject phase4-peppol-servlet
 
@@ -266,6 +266,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.12.6 - work in progress
+    * Updated from "ph-bdve*" to "phive*"
 * v0.12.5 - 2020-11-25
     * Updated to peppol-commons 8.3.0
 * v0.12.4 - 2020-11-18

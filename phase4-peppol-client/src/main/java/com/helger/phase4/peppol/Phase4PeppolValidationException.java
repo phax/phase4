@@ -18,8 +18,8 @@ package com.helger.phase4.peppol;
 
 import javax.annotation.Nonnull;
 
-import com.helger.bdve.api.result.ValidationResultList;
 import com.helger.commons.ValueEnforcer;
+import com.helger.phive.api.result.ValidationResultList;
 
 /**
  * Special {@link Phase4PeppolException} exception for validation errors.

@@ -136,23 +136,23 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>5.6.4</version>
+        <version>6.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger.bdve</groupId>
-        <artifactId>ph-bdve-parent-pom</artifactId>
-        <version>6.0.4</version>
+        <groupId>com.helger.phive</groupId>
+        <artifactId>phive-parent-pom</artifactId>
+        <version>7.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger.bdve.rules</groupId>
-        <artifactId>ph-bdve-rules-parent-pom</artifactId>
-        <version>1.0.14</version>
+        <groupId>com.helger.phive.rules</groupId>
+        <artifactId>phive-rules-parent-pom</artifactId>
+        <version>2.0.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
