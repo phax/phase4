@@ -196,7 +196,7 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                           MetaAS4Manager.getTimestampMgr ()
                                                                                                                         .getCurrentDateTime (),
                                                                                                           ETriState.FALSE,
-                                                                                                          ETriState.UNDEFINED);
+                                                                                                          null);
     if (eCheckResult.isInvalid ())
       throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " + eCheckResult);
     LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");

@@ -202,7 +202,7 @@ public final class Phase4PeppolSender
     final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                               aNow,
                                                                                                               ETriState.UNDEFINED,
-                                                                                                              ETriState.UNDEFINED);
+                                                                                                              null);
 
     // Interested in the certificate?
     if (aCertificateConsumer != null)
