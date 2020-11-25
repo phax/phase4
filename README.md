@@ -266,7 +266,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.12.6 - work in progress
+* v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*"
 * v0.12.5 - 2020-11-25
     * Updated to peppol-commons 8.3.0
