@@ -266,14 +266,16 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.12.5 - 2020-11-25
+    * Updated to peppol-commons 8.3.0
 * v0.12.4 - 2020-11-18
-   * Remembering the original compression state of incoming attachments
-   * Updated to ph-bdve-rules 1.0.14 including Peppol Fall 2020 release corrigendum
+    * Remembering the original compression state of incoming attachments
+    * Updated to ph-bdve-rules 1.0.14 including Peppol Fall 2020 release corrigendum
 * v0.12.3 - 2020-11-06
-   * The `phase4-server-webapp` project now also stores all incoming messages to the dump path
-   * Ensure the incoming dumper `AS4IncomingDumperFileBased` creates a unique filename by default
-   * Allow an empty AS4 Conversation ID in a UserMessage
-   * Ensuring that outgoing messages can be dumped, even if retries is set to 0 (see [issue #43](https://github.com/phax/phase4/issues/43))
+    * The `phase4-server-webapp` project now also stores all incoming messages to the dump path
+    * Ensure the incoming dumper `AS4IncomingDumperFileBased` creates a unique filename by default
+    * Allow an empty AS4 Conversation ID in a UserMessage
+    * Ensuring that outgoing messages can be dumped, even if retries is set to 0 (see [issue #43](https://github.com/phax/phase4/issues/43))
 * v0.12.2 - 2020-10-05
     * Extended the `IPhase4PeppolIncomingSBDHandlerSPI` interface to be able to reject messages on the AS4 layer
     * Updated to ph-bdve-rules 1.0.8
