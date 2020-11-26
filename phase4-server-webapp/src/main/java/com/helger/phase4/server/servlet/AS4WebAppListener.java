@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.activation.CommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -33,6 +34,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.commons.mime.CMimeType;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.phase4.config.AS4Configuration;
@@ -109,6 +111,12 @@ public final class AS4WebAppListener extends WebAppListener
       RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
     HttpDebugger.setEnabled (false);
+
+    // Sanity check
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+      throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
+                                       CMimeType.MULTIPART_RELATED.getAsString () +
+                                       "' is available. There seems to be a problem with the dependencies/packaging");
   }
 
   @Override

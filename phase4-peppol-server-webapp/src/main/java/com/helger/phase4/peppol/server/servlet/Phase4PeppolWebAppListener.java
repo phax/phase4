@@ -24,6 +24,7 @@ import java.security.cert.X509Certificate;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.activation.CommandMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -37,6 +38,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.commons.mime.CMimeType;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.URLHelper;
@@ -123,6 +125,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
 
     HttpDebugger.setEnabled (false);
+
+    // Sanity check
+    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+      throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
+                                       CMimeType.MULTIPART_RELATED.getAsString () +
+                                       "' is available. There seems to be a problem with the dependencies/packaging");
 
     // Enforce Peppol profile usage
     AS4ProfileSelector.setCustomAS4ProfileID (AS4PeppolProfileRegistarSPI.AS4_PROFILE_ID);
