@@ -38,6 +38,16 @@ public class Phase4Exception extends Exception
   }
 
   /**
+   * @param aCause
+   *        Optional causing exception
+   * @since 0.13.0
+   */
+  public Phase4Exception (@Nullable final Throwable aCause)
+  {
+    super (aCause);
+  }
+
+  /**
    * @param sMessage
    *        Error message
    * @param aCause

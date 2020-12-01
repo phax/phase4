@@ -266,6 +266,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v0.13.0 - work in progress
+    * Extended exception API to that constructors with only another exception are present
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

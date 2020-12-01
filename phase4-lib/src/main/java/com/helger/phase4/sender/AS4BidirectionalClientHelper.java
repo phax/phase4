@@ -152,6 +152,7 @@ public final class AS4BidirectionalClientHelper
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
     final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+      // throws an ExtendedHttpResponseException on exception
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
         return null;
@@ -217,6 +218,7 @@ public final class AS4BidirectionalClientHelper
 
     final Wrapper <HttpResponse> aWrappedResponse = new Wrapper <> ();
     final ResponseHandler <byte []> aResponseHdl = aHttpResponse -> {
+      // May throw an ExtendedHttpResponseException
       final HttpEntity aEntity = ResponseHandlerHttpEntity.INSTANCE.handleResponse (aHttpResponse);
       if (aEntity == null)
         return null;

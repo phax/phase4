@@ -38,6 +38,16 @@ public class Phase4PeppolException extends Phase4Exception
   }
 
   /**
+   * @param aCause
+   *        Optional causing exception
+   * @since 0.13.0
+   */
+  public Phase4PeppolException (@Nullable final Throwable aCause)
+  {
+    super (aCause);
+  }
+
+  /**
    * @param sMessage
    *        Error message
    * @param aCause
