@@ -1279,10 +1279,10 @@ public class AS4RequestHandler implements AutoCloseable
             // TODO make async send parameters customizable
             final int nMaxRetries = 1;
             final long nRetryIntervalMS = 12_000;
-            aAsyncResponse = aSender.sendGenericMessageWithRetries (aResponseHttpHeaders,
+            aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
+                                                                    aResponseHttpHeaders,
                                                                     aHttpEntity,
                                                                     sMessageID,
-                                                                    sAsyncResponseURL,
                                                                     nMaxRetries,
                                                                     nRetryIntervalMS,
                                                                     new ResponseHandlerXml (),
@@ -1291,7 +1291,7 @@ public class AS4RequestHandler implements AutoCloseable
           }
           else
           {
-            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL, aHttpEntity, null, new ResponseHandlerXml ());
+            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL, null, aHttpEntity, new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse, AS4HttpDebug.getDebugXMLWriterSettings ()));

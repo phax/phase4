@@ -57,7 +57,7 @@ import com.helger.phase4.util.MultiOutputStream;
  *
  * @author Philip Helger
  */
-public class BasicHttpPoster
+public class BasicHttpPoster implements IHttpPoster
 {
   /**
    * @return The default {@link HttpClientFactory} to be used.
@@ -79,9 +79,6 @@ public class BasicHttpPoster
   public BasicHttpPoster ()
   {}
 
-  /**
-   * @return The internal http client factory used for http sending.
-   */
   @Nonnull
   public final HttpClientFactory getHttpClientFactory ()
   {
@@ -106,10 +103,6 @@ public class BasicHttpPoster
     return this;
   }
 
-  /**
-   * @return The HTTP Post customizer to be used. May be <code>null</code>.
-   * @since 0.8.3
-   */
   @Nullable
   public final IConsumer <? super HttpPost> getHttpCustomizer ()
   {
@@ -131,11 +124,6 @@ public class BasicHttpPoster
     return this;
   }
 
-  /**
-   * @return <code>true</code> if HTTP header values should be quoted if they
-   *         contain forbidden characters, <code>false</code> if not.
-   * @since v0.9.1
-   */
   public final boolean isQuoteHttpHeaders ()
   {
     return m_bQuoteHttpHeaders;
@@ -168,11 +156,11 @@ public class BasicHttpPoster
    *        Response data type
    * @param sURL
    *        The URL to send to. May neither be <code>null</code> nor empty.
-   * @param aHttpEntity
-   *        The HTTP entity to be send. May not be <code>null</code>.
-   * @param aCustomHeaders
+   * @param aCustomHttpHeaders
    *        An optional http header map that should be applied. May be
    *        <code>null</code>.
+   * @param aHttpEntity
+   *        The HTTP entity to be send. May not be <code>null</code>.
    * @param aResponseHandler
    *        The Http response handler that should be used to convert the HTTP
    *        response to a domain object.
@@ -182,8 +170,8 @@ public class BasicHttpPoster
    */
   @Nullable
   public final <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
+                                         @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                          @Nonnull final HttpEntity aHttpEntity,
-                                         @Nullable final HttpHeaderMap aCustomHeaders,
                                          @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
@@ -193,11 +181,11 @@ public class BasicHttpPoster
     {
       final HttpPost aPost = new HttpPost (sURL);
 
-      if (aCustomHeaders != null)
+      if (aCustomHttpHeaders != null)
       {
         // Always unify line endings
         // By default quoting is disabled
-        aCustomHeaders.forEachSingleHeader (aPost::addHeader, true, m_bQuoteHttpHeaders);
+        aCustomHttpHeaders.forEachSingleHeader (aPost::addHeader, true, m_bQuoteHttpHeaders);
       }
 
       aPost.setEntity (aHttpEntity);
@@ -235,7 +223,7 @@ public class BasicHttpPoster
   private static HttpEntity _createDumpingHttpEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                       @Nonnull final HttpEntity aSrcEntity,
                                                       @Nonnull @Nonempty final String sMessageID,
-                                                      @Nullable final HttpHeaderMap aCustomHeaders,
+                                                      @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                                       @Nonnegative final int nTry,
                                                       @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
@@ -245,7 +233,7 @@ public class BasicHttpPoster
       return aSrcEntity;
     }
 
-    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHeaders, nTry);
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHttpHeaders, nTry);
     if (aDumpOS == null)
     {
       // No dumping needed
@@ -276,10 +264,10 @@ public class BasicHttpPoster
   }
 
   @Nonnull
-  public final <T> T sendGenericMessageWithRetries (@Nullable final HttpHeaderMap aHttpHeaders,
+  public final <T> T sendGenericMessageWithRetries (@Nonnull final String sURL,
+                                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                                     @Nonnull final HttpEntity aHttpEntity,
                                                     @Nonnull final String sMessageID,
-                                                    @Nonnull final String sURL,
                                                     final int nMaxRetries,
                                                     final long nRetryIntervalMS,
                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
@@ -309,12 +297,12 @@ public class BasicHttpPoster
             final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
                                                                         aHttpEntity,
                                                                         sMessageID,
-                                                                        aHttpHeaders,
+                                                                        aCustomHttpHeaders,
                                                                         nTry,
                                                                         aDumpOSHolder);
 
             // Dump only for the first try - the remaining tries
-            return sendGenericMessage (sURL, aDumpingEntity, aHttpHeaders, aResponseHandler);
+            return sendGenericMessage (sURL, aCustomHttpHeaders, aDumpingEntity, aResponseHandler);
           }
           catch (final IOException ex)
           {
@@ -358,7 +346,6 @@ public class BasicHttpPoster
           finally
           {
             // Flush and close the dump output stream (if any)
-            StreamHelper.flush (aDumpOSHolder.get ());
             StreamHelper.close (aDumpOSHolder.get ());
           }
         }
@@ -369,19 +356,18 @@ public class BasicHttpPoster
         final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
                                                                     aHttpEntity,
                                                                     sMessageID,
-                                                                    aHttpHeaders,
+                                                                    aCustomHttpHeaders,
                                                                     0,
                                                                     aDumpOSHolder);
 
         try
         {
           // Send without retry
-          return sendGenericMessage (sURL, aDumpingEntity, aHttpHeaders, aResponseHandler);
+          return sendGenericMessage (sURL, aCustomHttpHeaders, aDumpingEntity, aResponseHandler);
         }
         finally
         {
           // Close the dump output stream (if any)
-          StreamHelper.flush (aDumpOSHolder.get ());
           StreamHelper.close (aDumpOSHolder.get ());
         }
       }
@@ -408,6 +394,5 @@ public class BasicHttpPoster
                                        .append ("HttpCustomizer", m_aHttpCustomizer)
                                        .append ("QuoteHttpHeaders", m_bQuoteHttpHeaders)
                                        .getToString ();
-
   }
 }

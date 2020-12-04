@@ -480,10 +480,10 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
     }
 
-    final T aResponse = super.sendGenericMessageWithRetries (aBuiltHttpHeaders,
+    final T aResponse = super.sendGenericMessageWithRetries (sURL,
+                                                             aBuiltHttpHeaders,
                                                              aBuiltEntity,
                                                              sMessageID,
-                                                             sURL,
                                                              m_nMaxRetries,
                                                              m_nRetryIntervalMS,
                                                              aResponseHandler,
