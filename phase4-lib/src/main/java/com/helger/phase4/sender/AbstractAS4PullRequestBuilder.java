@@ -23,7 +23,6 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
@@ -45,9 +44,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
 
   protected String m_sMPC;
-
   protected String m_sEndpointURL;
-
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
 
   /**
@@ -147,35 +144,6 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
     aPullRequestMsg.setMPC (m_sMPC);
   }
-
-  /**
-   * Internal method that is invoked before the required field check is
-   * performed. Override to set additional dynamically created fields if
-   * necessary.<br>
-   * Don't add message properties in here, because if the required fields check
-   * fails than this method would be called again.
-   *
-   * @return {@link ESuccess} - never <code>null</code>. Returning failure here
-   *         stops sending the message.
-   * @throws Phase4Exception
-   *         if something goes wrong
-   */
-  @OverrideOnDemand
-  protected ESuccess finishFields () throws Phase4Exception
-  {
-    return ESuccess.SUCCESS;
-  }
-
-  /**
-   * Internal method that is invoked after the required fields are checked but
-   * before sending takes place. This is e.g. the perfect place to add custom
-   * message properties.
-   *
-   * @throws Phase4Exception
-   *         if something goes wrong
-   */
-  protected void customizeBeforeSending () throws Phase4Exception
-  {}
 
   @Override
   @Nonnull
