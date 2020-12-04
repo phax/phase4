@@ -271,6 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Extended exception API to that constructors with only another exception are present
     * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work
     * Updated to peppol-commons 8.3.1 that fixes the Peppol SBDH `TypeVersion` check
+    * The Peppol client builder no longer sets an invalid default `TypeVersion` in the SBDH
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

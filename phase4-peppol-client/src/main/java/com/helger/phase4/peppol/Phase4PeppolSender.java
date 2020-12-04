@@ -53,6 +53,8 @@ import com.helger.peppolid.IDocumentTypeIdentifier;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.peppolid.IProcessIdentifier;
 import com.helger.peppolid.factory.PeppolIdentifierFactory;
+import com.helger.peppolid.peppol.doctype.IPeppolDocumentTypeIdentifierParts;
+import com.helger.peppolid.peppol.doctype.PeppolDocumentTypeIdentifierParts;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.EAS4CompressionMode;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
@@ -86,6 +88,7 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
+  @Deprecated
   public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = CPeppolSBDH.TYPE_VERSION_21;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
@@ -105,20 +108,21 @@ public final class Phase4PeppolSender
    * @param sInstanceIdentifier
    *        SBDH instance identifier. May be <code>null</code> to create a
    *        random ID.
-   * @param sUBLVersion
-   *        SBDH UBL version ID. May be <code>null</code> to use the default.
+   * @param sTypeVersion
+   *        SBDH syntax version ID (e.g. "2.1" for OASIS UBL 2.1). May be
+   *        <code>null</code> to use the default.
    * @param aPayloadElement
    *        Payload element to be wrapped. May not be <code>null</code>.
-   * @return The byte array of the XML representation of the created SBDH. Never
-   *         <code>null</code>.
+   * @return The domain object representation of the created SBDH or
+   *         <code>null</code> if not all parameters are present.
    */
-  @Nonnull
+  @Nullable
   public static StandardBusinessDocument createSBDH (@Nonnull final IParticipantIdentifier aSenderID,
                                                      @Nonnull final IParticipantIdentifier aReceiverID,
                                                      @Nonnull final IDocumentTypeIdentifier aDocTypeID,
                                                      @Nonnull final IProcessIdentifier aProcID,
                                                      @Nullable final String sInstanceIdentifier,
-                                                     @Nullable final String sUBLVersion,
+                                                     @Nullable final String sTypeVersion,
                                                      @Nonnull final Element aPayloadElement)
   {
     final PeppolSBDHDocument aData = new PeppolSBDHDocument (IF);
@@ -126,10 +130,41 @@ public final class Phase4PeppolSender
     aData.setReceiver (aReceiverID.getScheme (), aReceiverID.getValue ());
     aData.setDocumentType (aDocTypeID.getScheme (), aDocTypeID.getValue ());
     aData.setProcess (aProcID.getScheme (), aProcID.getValue ());
+
+    String sRealTypeVersion = sTypeVersion;
+    if (StringHelper.hasNoText (sRealTypeVersion))
+    {
+      // Determine from document type
+      try
+      {
+        final IPeppolDocumentTypeIdentifierParts aParts = PeppolDocumentTypeIdentifierParts.extractFromIdentifier (aDocTypeID);
+        sRealTypeVersion = aParts.getVersion ();
+      }
+      catch (final IllegalArgumentException ex)
+      {
+        // failure
+      }
+    }
+    if (StringHelper.hasNoText (sRealTypeVersion))
+    {
+      LOGGER.warn ("No TypeVersion was provided and none could be deduced from the document type identifier '" +
+                   aDocTypeID.getURIEncoded () +
+                   "'");
+      return null;
+    }
+
+    String sRealInstanceIdentifier = sInstanceIdentifier;
+    if (StringHelper.hasNoText (sRealInstanceIdentifier))
+    {
+      sRealInstanceIdentifier = UUID.randomUUID ().toString ();
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
+    }
+
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
-                                     StringHelper.hasText (sUBLVersion) ? sUBLVersion : DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID,
+                                     sRealTypeVersion,
                                      aPayloadElement.getLocalName (),
-                                     StringHelper.hasText (sInstanceIdentifier) ? sInstanceIdentifier : UUID.randomUUID ().toString (),
+                                     sRealInstanceIdentifier,
                                      MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
     aData.setBusinessMessage (aPayloadElement);
     return new PeppolSBDHDocumentWriter ().createStandardBusinessDocument (aData);
@@ -572,7 +607,7 @@ public final class Phase4PeppolSender
   public static class Builder extends AbstractPeppolUserMessageBuilder <Builder>
   {
     private String m_sSBDHInstanceIdentifier;
-    private String m_sSBDHUBLVersion;
+    private String m_sSBDHTypeVersion;
     private Element m_aPayloadElement;
     private byte [] m_aPayloadBytes;
     private Consumer <? super StandardBusinessDocument> m_aSBDDocumentConsumer;
@@ -612,11 +647,29 @@ public final class Phase4PeppolSender
      *        The SBDH document identification UBL version to be used. May be
      *        <code>null</code>.
      * @return this for chaining
+     * @deprecated Since 0.13.0; Use {@link #sbdhTypeVersion(String)} instead.
      */
     @Nonnull
+    @Deprecated
     public Builder sbdhUBLVersion (@Nullable final String sSBDHUBLVersion)
     {
-      m_sSBDHUBLVersion = sSBDHUBLVersion;
+      return sbdhTypeVersion (sSBDHUBLVersion);
+    }
+
+    /**
+     * Set the SBDH document identification type version. If none is provided,
+     * the value is extracted from the document type identifier.
+     *
+     * @param sSBDHTypeVersion
+     *        The SBDH document identification type version to be used. May be
+     *        <code>null</code>.
+     * @return this for chaining
+     * @since 0.13.0
+     */
+    @Nonnull
+    public Builder sbdhTypeVersion (@Nullable final String sSBDHTypeVersion)
+    {
+      m_sSBDHTypeVersion = sSBDHTypeVersion;
       return this;
     }
 
@@ -849,8 +902,11 @@ public final class Phase4PeppolSender
                                                         m_aDocTypeID,
                                                         m_aProcessID,
                                                         m_sSBDHInstanceIdentifier,
-                                                        m_sSBDHUBLVersion,
+                                                        m_sSBDHTypeVersion,
                                                         aPayloadElement);
+      if (aSBD == null)
+        return ESuccess.FAILURE;
+
       if (m_aSBDDocumentConsumer != null)
         m_aSBDDocumentConsumer.accept (aSBD);
 
