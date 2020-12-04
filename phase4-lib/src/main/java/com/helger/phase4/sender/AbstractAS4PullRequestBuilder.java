@@ -20,10 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.helger.commons.state.ESuccess;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.IAS4UserMessageConsumer;
@@ -41,8 +37,6 @@ import com.helger.phase4.util.Phase4Exception;
 public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS4PullRequestBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4PullRequestBuilder.class);
-
   protected String m_sMPC;
   protected String m_sEndpointURL;
   protected IAS4UserMessageConsumer m_aUserMsgConsumer;
@@ -146,22 +140,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   }
 
   @Override
-  @Nonnull
-  public ESuccess sendMessage () throws Phase4Exception
+  protected final void mainSendMessage () throws Phase4Exception
   {
-    // Pre required field check
-    if (finishFields ().isFailure ())
-      return ESuccess.FAILURE;
-
-    if (!isEveryRequiredFieldSet ())
-    {
-      LOGGER.error ("At least one mandatory field is not set and therefore the AS4 PullRequest cannot be send.");
-      return ESuccess.FAILURE;
-    }
-
-    // Post required field check
-    customizeBeforeSending ();
-
     // Temporary file manager
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
@@ -171,8 +151,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
 
       // Main sending
       AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactory,
-                                                                               m_aPModeResolver,
-                                                                               m_aIAF,
+                                                                               pmodeResolver (),
+                                                                               incomingAttachmentFactory (),
                                                                                aPullRequestMsg,
                                                                                m_aLocale,
                                                                                m_sEndpointURL,
@@ -193,6 +173,5 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       // wrap
       throw new Phase4Exception ("Wrapped Phase4Exception", ex);
     }
-    return ESuccess.SUCCESS;
   }
 }

@@ -24,6 +24,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.lang.TimeValue;
 import com.helger.commons.state.ESuccess;
@@ -56,6 +59,8 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 {
   public static final Locale DEFAULT_LOCALE = Locale.US;
 
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4MessageBuilder.class);
+
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
@@ -65,8 +70,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected long m_nRetryIntervalMS = -1;
   protected Locale m_aLocale = DEFAULT_LOCALE;
 
-  protected IPModeResolver m_aPModeResolver;
-  protected IIncomingAttachmentFactory m_aIAF;
+  private IPModeResolver m_aPModeResolver;
+  private IIncomingAttachmentFactory m_aIAF;
+  private IAS4SenderInterrupt m_aSenderInterrupt;
 
   protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
   protected IAS4OutgoingDumper m_aOutgoingDumper;
@@ -340,6 +346,33 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * @return The currently set {@link IAS4SenderInterrupt}. May be
+   *         <code>null</code>.
+   * @since 0.13.0
+   */
+  @Nullable
+  public final IAS4SenderInterrupt senderInterrupt ()
+  {
+    return m_aSenderInterrupt;
+  }
+
+  /**
+   * Set the sender interrupt to be used. This is only needed in very specific
+   * cases, is <code>null</code> by default and should be handled with care.
+   *
+   * @param aSenderInterrupt
+   *        The sender interrupt to be used. May be <code>null</code>.
+   * @return this for chaining
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final IMPLTYPE senderInterrupt (@Nullable final IAS4SenderInterrupt aSenderInterrupt)
+  {
+    m_aSenderInterrupt = aSenderInterrupt;
+    return thisAsT ();
+  }
+
+  /**
    * Set a internal message callback. Usually this method is NOT needed. Use
    * only when you know what you are doing.
    *
@@ -474,9 +507,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   {}
 
   /**
-   * Synchronously send the AS4 message. Before sending,
-   * {@link #isEveryRequiredFieldSet()} is called to check that the mandatory
-   * elements are set.
+   * Synchronously send the AS4 message.
    *
    * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or
    *         if sending failed, {@link ESuccess#SUCCESS} upon success. Never
@@ -488,6 +519,56 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    *         In case of any error
    * @see #isEveryRequiredFieldSet()
    */
+  protected abstract void mainSendMessage () throws Phase4Exception;
+
+  /**
+   * Synchronously send the AS4 message. First the internal "finishFields"
+   * method is called, to ensure all dynamic fields are filled - on failure this
+   * methods exits. Afterwards {@link #isEveryRequiredFieldSet()} is called to
+   * check that all mandatory elements are set - on failure this methods exits.
+   * Afterwards "customizeBeforeSending" is called to make final adjustments to
+   * the message. As the very last step, the customizable sender interrupt is
+   * invoked which may prevent the main message sending. As the last step
+   * "mainSendMessage" is invoked and "SUCCESS" is returned.<br>
+   * Note: since 0.13.0 this common implementation is in place.
+   *
+   * @return {@link ESuccess#FAILURE} if not all mandatory parameters are set or
+   *         if sending failed, {@link ESuccess#SUCCESS} upon success. Never
+   *         <code>null</code>. This result code does not reflect the semantics
+   *         of a semantically correct message exchange or not. It just states,
+   *         if the message was sent or nor. The rest needs to be determined
+   *         separately.
+   * @throws Phase4Exception
+   *         In case of any error
+   * @see #isEveryRequiredFieldSet()
+   * @see #senderInterrupt()
+   */
   @Nonnull
-  public abstract ESuccess sendMessage () throws Phase4Exception;
+  public final ESuccess sendMessage () throws Phase4Exception
+  {
+    // Pre required field check
+    if (finishFields ().isFailure ())
+      return ESuccess.FAILURE;
+
+    if (!isEveryRequiredFieldSet ())
+    {
+      LOGGER.error ("At least one mandatory field is not set and therefore the AS4 message cannot be send.");
+      return ESuccess.FAILURE;
+    }
+
+    // Post required field check
+    customizeBeforeSending ();
+
+    if (m_aSenderInterrupt != null)
+      if (m_aSenderInterrupt.canSendDocument ().isBreak ())
+      {
+        LOGGER.warn ("The AS4 sender interrupt disabled the sending of the message.");
+        return ESuccess.FAILURE;
+      }
+
+    // Main sending
+    mainSendMessage ();
+
+    return ESuccess.SUCCESS;
+  }
 }

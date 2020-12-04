@@ -19,10 +19,6 @@ package com.helger.phase4.sender;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.helger.commons.state.ESuccess;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
@@ -42,8 +38,6 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
                                                                extends
                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilderMIMEPayload.class);
-
   private Phase4OutgoingAttachment m_aPayload;
 
   /**
@@ -94,22 +88,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
   }
 
   @Override
-  @Nonnull
-  public ESuccess sendMessage () throws Phase4Exception
+  protected final void mainSendMessage () throws Phase4Exception
   {
-    // Pre required field check
-    if (finishFields ().isFailure ())
-      return ESuccess.FAILURE;
-
-    if (!isEveryRequiredFieldSet ())
-    {
-      LOGGER.error ("At least one mandatory field is not set and therefore the AS4 UserMessage cannot be send.");
-      return ESuccess.FAILURE;
-    }
-
-    // Post required field check
-    customizeBeforeSending ();
-
     // Temporary file manager
     try (final AS4ResourceHelper aResHelper = new AS4ResourceHelper ())
     {
@@ -129,8 +109,8 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
 
       // Main sending
       AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactory,
-                                                                                 m_aPModeResolver,
-                                                                                 m_aIAF,
+                                                                                 pmodeResolver (),
+                                                                                 incomingAttachmentFactory (),
                                                                                  aUserMsg,
                                                                                  m_aLocale,
                                                                                  m_sEndpointURL,
@@ -151,6 +131,5 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       // wrap
       throw new Phase4Exception ("Wrapped Phase4Exception", ex);
     }
-    return ESuccess.SUCCESS;
   }
 }

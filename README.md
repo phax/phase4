@@ -272,6 +272,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work
     * Updated to peppol-commons 8.3.1 that fixes the Peppol SBDH `TypeVersion` check
     * The Peppol client builder no longer sets an invalid default `TypeVersion` in the SBDH
+    * Added new interface `IAS4SenderInterrupt` to allow all sender builders to interrupt sending at a late stage
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

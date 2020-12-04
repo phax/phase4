@@ -77,10 +77,11 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    */
   public AbstractAS4UserMessageBuilder ()
   {
+    super ();
     // Set default values
     try
     {
-      pmode (m_aPModeResolver.getPModeOfID (null, "s", "a", "i", "r", "a", null));
+      pmode (pmodeResolver ().getPModeOfID (null, "s", "a", "i", "r", "a", null));
     }
     catch (final Exception ex)
     {
