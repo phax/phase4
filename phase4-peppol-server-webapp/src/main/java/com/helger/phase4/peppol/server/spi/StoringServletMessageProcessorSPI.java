@@ -32,6 +32,7 @@ import com.helger.commons.annotation.IsSPIImplementation;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.SimpleFileIO;
+import com.helger.commons.io.stream.StreamHelper;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.ebms3header.Ebms3Error;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
@@ -89,6 +90,18 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
     }
   }
 
+  private static void _dumpIncomingAttachment (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                               @Nonnull final WSS4JAttachment aIncomingAttachment,
+                                               final int nIndex)
+  {
+    final File aFile = StorageHelper.getStorageFile (aMessageMetadata, ".attachment" + nIndex);
+    final byte [] aBytes = StreamHelper.getAllBytes (aIncomingAttachment.getInputStreamProvider ());
+    if (SimpleFileIO.writeFile (aFile, aBytes).isFailure ())
+      LOGGER.error ("Failed to write Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
+    else
+      LOGGER.info ("Wrote Incoming Attachment " + nIndex + " to '" + aFile.getAbsolutePath () + "'");
+  }
+
   @Nonnull
   public AS4MessageProcessorResult processAS4UserMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                           @Nonnull final HttpHeaderMap aHttpHeaders,
@@ -101,6 +114,18 @@ public class StoringServletMessageProcessorSPI implements IAS4ServletMessageProc
   {
     LOGGER.info ("Received AS4 user message");
     _dumpSoap (aMessageMetadata, aState);
+
+    // Dump all incoming attachments (but only if they are repeatable)
+    if (aIncomingAttachments != null)
+    {
+      int nAttachmentIndex = 0;
+      for (final WSS4JAttachment aIncomingAttachment : aIncomingAttachments)
+      {
+        if (aIncomingAttachment.isRepeatable ())
+          _dumpIncomingAttachment (aMessageMetadata, aIncomingAttachment, nAttachmentIndex);
+        nAttachmentIndex++;
+      }
+    }
     return AS4MessageProcessorResult.createSuccess ();
   }
 

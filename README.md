@@ -254,7 +254,8 @@ If you are importing this into your IDE and you get build errors, it maybe neces
 
 Per now the following known limitations exist:
 * phase4 is not a standalone project but a library that you need to manually integrate into your system 
-* Multi-hop does not work
+* Multi-hop is not implemented
+* Split and join is not implemented
 
 # How to help
 
@@ -268,6 +269,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v0.13.0 - work in progress
     * Extended exception API to that constructors with only another exception are present
+    * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work
+    * Updated to peppol-commons 8.3.1 that fixes the Peppol SBDH `TypeVersion` check
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25
