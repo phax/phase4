@@ -22,16 +22,23 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.client.AS4ClientUserMessage;
 import com.helger.phase4.client.IAS4SignalMessageConsumer;
 import com.helger.phase4.ebms3header.Ebms3Property;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.model.MessageProperty;
 import com.helger.phase4.model.pmode.IPMode;
+import com.helger.phase4.util.Phase4Exception;
 
 /**
  * Abstract builder base class for a user message.
@@ -44,6 +51,8 @@ import com.helger.phase4.model.pmode.IPMode;
 public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AbstractAS4UserMessageBuilder.class);
+
   protected IPMode m_aPMode;
 
   protected String m_sServiceType;
@@ -570,5 +579,92 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
     for (final MessageProperty aItem : m_aMessageProperties)
       aUserMsg.ebms3Properties ().add (aItem.getAsEbms3Property ());
+  }
+
+  /**
+   * Specific enumeration with the result error codes of the
+   * {@link AbstractAS4UserMessageBuilder#sendMessageAndCheckForReceipt()}
+   * method.
+   *
+   * @author Philip Helger
+   */
+  public enum ESimpleUserMessageSendResult implements ISuccessIndicator
+  {
+    INVALID_PARAMETERS,
+    TRANSPORT_ERROR,
+    NO_SIGNAL_MESSAGE_RECEIVED,
+    AS4_ERROR_MESSAGE_RECEIVED,
+    INVALID_SIGNAL_MESSAGE_RECEIVED,
+    SUCCESS;
+
+    public boolean isSuccess ()
+    {
+      return this == SUCCESS;
+    }
+  }
+
+  /**
+   * This is a sanity method that encapsulates all the sending checks that are
+   * necessary to determine overall sending success or error.
+   *
+   * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
+   *         are correct, HTTP transmission was successful and if a positive AS4
+   *         Receipt was returned. Never <code>null</code>.
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt ()
+  {
+    final IAS4SignalMessageConsumer aOld = m_aSignalMsgConsumer;
+    try
+    {
+      // Store the received signal message
+      final Wrapper <Ebms3SignalMessage> aSignalMsgKeeper = new Wrapper <> ();
+      m_aSignalMsgConsumer = aOld == null ? aSignalMsgKeeper::set : x -> {
+        aSignalMsgKeeper.set (x);
+        aOld.handleSignalMessage (x);
+      };
+
+      if (sendMessage ().isFailure ())
+      {
+        // Parameters are missing/incorrect
+        return ESimpleUserMessageSendResult.INVALID_PARAMETERS;
+      }
+
+      final Ebms3SignalMessage aSignalMsg = aSignalMsgKeeper.get ();
+      if (aSignalMsg == null)
+      {
+        // Unexpected response - invalid XML or at least no Ebms3 signal message
+        return ESimpleUserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED;
+      }
+
+      if (aSignalMsg.hasErrorEntries ())
+      {
+        // An error was returned from the other side
+        // Errors have precedence over receipts
+        return ESimpleUserMessageSendResult.AS4_ERROR_MESSAGE_RECEIVED;
+      }
+
+      if (aSignalMsg.getReceipt () != null)
+      {
+        // A receipt was returned - this is deemed success
+        return ESimpleUserMessageSendResult.SUCCESS;
+      }
+
+      // Neither an error nor a receipt was returned - this is weird
+      return ESimpleUserMessageSendResult.INVALID_SIGNAL_MESSAGE_RECEIVED;
+    }
+    catch (final Phase4Exception ex)
+    {
+      // This information might be crucial to determine what went wrong
+      LOGGER.error ("Exception sending AS4 user message", ex);
+      // Something went wrong - see the logs
+      return ESimpleUserMessageSendResult.TRANSPORT_ERROR;
+    }
+    finally
+    {
+      // Restore the original value
+      m_aSignalMsgConsumer = aOld;
+    }
   }
 }

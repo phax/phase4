@@ -106,7 +106,7 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
     }
     catch (final WSSecurityException ex)
     {
-      throw new IllegalStateException ("Failed to init crypto properties!", ex);
+      throw new IllegalStateException ("Failed to create Crypto instance", ex);
     }
   }
 
