@@ -531,12 +531,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
   {
     if (m_aHttpRetrySettings != null)
-      aUserMsg.retrySettings ().assignFrom (m_aHttpRetrySettings);
+      aUserMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
-    aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
-
+    aUserMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
     // Otherwise Oxalis dies
-    aUserMsg.setQuoteHttpHeaders (false);
+    aUserMsg.getHttpPoster ().setQuoteHttpHeaders (false);
+
     aUserMsg.setSoapVersion (m_eSoapVersion);
     aUserMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters

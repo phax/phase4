@@ -1,6 +1,7 @@
 package com.helger.phase4.http;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,9 +11,9 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.httpclient.HttpClientFactory;
+import com.helger.httpclient.IHttpClientProvider;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 
@@ -32,17 +33,51 @@ public interface IHttpPoster
   HttpClientFactory getHttpClientFactory ();
 
   /**
+   * Set the HTTP client provider to be used. This is e.g. necessary when a
+   * custom SSL context or a proxy server is to be used. See
+   * {@link #createDefaultHttpClientFactory()} as the default implementation of
+   * {@link IHttpClientProvider}. This factory is used for http sending.
+   *
+   * @param aHttpClientFactory
+   *        The HTTP client factory to be used. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  IHttpPoster setHttpClientFactory (@Nonnull HttpClientFactory aHttpClientFactory);
+
+  /**
    * @return The HTTP Post customizer to be used. May be <code>null</code>.
-   * @since 0.8.3
    */
   @Nullable
-  IConsumer <? super HttpPost> getHttpCustomizer ();
+  Consumer <? super HttpPost> getHttpCustomizer ();
+
+  /**
+   * Set the HTTP Post Customizer to be used.
+   *
+   * @param aHttpCustomizer
+   *        The new customizer. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  IHttpPoster setHttpCustomizer (@Nullable Consumer <? super HttpPost> aHttpCustomizer);
 
   /**
    * @return <code>true</code> if HTTP header values should be quoted if they
    *         contain forbidden characters, <code>false</code> if not.
    */
   boolean isQuoteHttpHeaders ();
+
+  /**
+   * Enable or disable, if HTTP header values should be quoted or not. For
+   * compatibility it is recommended, to not quote the values.
+   *
+   * @param bQuoteHttpHeaders
+   *        <code>true</code> to quote them, <code>false</code> to not quote
+   *        them.
+   * @return this for chaining
+   */
+  @Nonnull
+  IHttpPoster setQuoteHttpHeaders (boolean bQuoteHttpHeaders);
 
   /**
    * Send an arbitrary HTTP POST message to the provided URL, using the

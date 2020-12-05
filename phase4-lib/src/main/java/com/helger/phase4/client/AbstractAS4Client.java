@@ -46,6 +46,7 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.http.HttpRetrySettings;
+import com.helger.phase4.http.IHttpPoster;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -64,8 +65,7 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster implements
-                                        IGenericImplTrait <IMPLTYPE>
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> implements IGenericImplTrait <IMPLTYPE>
 {
   /**
    * @return The default message ID factory to be used.
@@ -84,6 +84,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private final AS4SigningParams m_aSigningParams = new AS4SigningParams ();
   private final AS4CryptParams m_aCryptParams = new AS4CryptParams ();
 
+  private IHttpPoster m_aHttpPoster = new BasicHttpPoster ();
+
   // For Message Info
   private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
@@ -91,7 +93,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
-  private final HttpRetrySettings m_aRetrySettings = new HttpRetrySettings ();
+  private final HttpRetrySettings m_aHttpRetrySettings = new HttpRetrySettings ();
 
   protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType, @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -165,6 +167,31 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public final AS4CryptParams cryptParams ()
   {
     return m_aCryptParams;
+  }
+
+  /**
+   * @return The underlying HTTP poster to use. May not be <code>null</code>.
+   */
+  @Nonnull
+  public final IHttpPoster getHttpPoster ()
+  {
+    return m_aHttpPoster;
+  }
+
+  /**
+   * Set the HTTP poster to be used. This is the instance that is responsible
+   * for the HTTP transmission of the AS4 messages.
+   *
+   * @param aHttpPoster
+   *        Instance to be used. May not be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE setHttpPoster (@Nonnull final IHttpPoster aHttpPoster)
+  {
+    ValueEnforcer.notNull (aHttpPoster, "HttpPoster");
+    m_aHttpPoster = aHttpPoster;
+    return thisAsT ();
   }
 
   /**
@@ -321,22 +348,22 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @since 0.13.0
    */
   @Nonnull
-  public final HttpRetrySettings retrySettings ()
+  public final HttpRetrySettings httpRetrySettings ()
   {
-    return m_aRetrySettings;
+    return m_aHttpRetrySettings;
   }
 
   /**
    * @return The maximum number of retries. Only values &gt; 0 imply a retry.
    *         The default value is {@link #DEFAULT_MAX_RETRIES}.
    * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */
   @Nonnegative
   @Deprecated
   public final int getMaxRetries ()
   {
-    return m_aRetrySettings.getMaxRetries ();
+    return m_aHttpRetrySettings.getMaxRetries ();
   }
 
   /**
@@ -347,13 +374,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        &ge; 0.
    * @return this for chaining
    * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */
   @Deprecated
   @Nonnull
   public final IMPLTYPE setMaxRetries (@Nonnegative final int nMaxRetries)
   {
-    m_aRetrySettings.setMaxRetries (nMaxRetries);
+    m_aHttpRetrySettings.setMaxRetries (nMaxRetries);
     return thisAsT ();
   }
 
@@ -361,13 +388,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The interval in milliseconds between retries. Must be &ge; 0. The
    *         default value is {@link #DEFAULT_RETRY_INTERVAL_MS}.
    * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */
   @Deprecated
   @Nonnegative
   public final long getRetryIntervalMS ()
   {
-    return m_aRetrySettings.getDurationBeforeRetry ().toMillis ();
+    return m_aHttpRetrySettings.getDurationBeforeRetry ().toMillis ();
   }
 
   /**
@@ -377,13 +404,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        Retry interval in milliseconds. Must be &ge; 0.
    * @return this for chaining
    * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */
   @Deprecated
   @Nonnull
   public final IMPLTYPE setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
   {
-    m_aRetrySettings.setDurationBeforeRetry (Duration.ofMillis (nRetryIntervalMS));
+    m_aHttpRetrySettings.setDurationBeforeRetry (Duration.ofMillis (nRetryIntervalMS));
     return thisAsT ();
   }
 
@@ -403,13 +430,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       final PModeReceptionAwareness aRA = aPMode.getReceptionAwareness ();
       if (aRA != null && aRA.isRetryDefined ())
       {
-        m_aRetrySettings.setMaxRetries (aRA.getMaxRetries ());
-        m_aRetrySettings.setDurationBeforeRetry (Duration.ofMillis (aRA.getRetryIntervalMS ()));
+        m_aHttpRetrySettings.setMaxRetries (aRA.getMaxRetries ());
+        m_aHttpRetrySettings.setDurationBeforeRetry (Duration.ofMillis (aRA.getRetryIntervalMS ()));
       }
       else
       {
         // 0 means "no retries"
-        m_aRetrySettings.setMaxRetries (0);
+        m_aHttpRetrySettings.setMaxRetries (0);
       }
     }
     if (aLeg != null)
@@ -489,20 +516,20 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    if (m_aRetrySettings.isRetryEnabled () || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
+    if (m_aHttpRetrySettings.isRetryEnabled () || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
     }
 
-    final T aResponse = super.sendGenericMessageWithRetries (sURL,
-                                                             aBuiltHttpHeaders,
-                                                             aBuiltEntity,
-                                                             sMessageID,
-                                                             m_aRetrySettings,
-                                                             aResponseHandler,
-                                                             aOutgoingDumper,
-                                                             aRetryCallback);
+    final T aResponse = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
+                                                                     aBuiltHttpHeaders,
+                                                                     aBuiltEntity,
+                                                                     sMessageID,
+                                                                     m_aHttpRetrySettings,
+                                                                     aResponseHandler,
+                                                                     aOutgoingDumper,
+                                                                     aRetryCallback);
     return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
   }
 

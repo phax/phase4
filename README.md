@@ -274,6 +274,7 @@ If you like the project, a star on GitHub is always appreciated.
     * The Peppol client builder no longer sets an invalid default `TypeVersion` in the SBDH
     * Added new interface `IAS4SenderInterrupt` to allow all sender builders to interrupt sending at a late stage
     * The HTTP retry settings are now assembled in the class `HttpRetrySettings`
+    * `AbstractAS4Client` is no longer derived from `BasicHttpPoster` but instead has a customizable member that is responsible for the sending. This allows for exchanging the underlying HTTP engine.
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

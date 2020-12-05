@@ -85,7 +85,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                                                  MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.retrySettings ().getMaxRetries () + " retries");
+      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.httpRetrySettings ().getMaxRetries () + " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -177,7 +177,7 @@ public final class AS4BidirectionalClientHelper
       LOGGER.info ("Sending AS4 PullRequest to '" +
                    sURL +
                    "' with max. " +
-                   aClientPullRequest.retrySettings ().getMaxRetries () +
+                   aClientPullRequest.httpRetrySettings ().getMaxRetries () +
                    " retries");
 
     if (LOGGER.isDebugEnabled ())

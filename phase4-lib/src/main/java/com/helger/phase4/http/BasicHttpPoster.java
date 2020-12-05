@@ -19,6 +19,7 @@ package com.helger.phase4.http;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Duration;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.concurrent.ThreadHelper;
-import com.helger.commons.functional.IConsumer;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
@@ -74,7 +74,7 @@ public class BasicHttpPoster implements IHttpPoster
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
-  private IConsumer <? super HttpPost> m_aHttpCustomizer;
+  private Consumer <? super HttpPost> m_aHttpCustomizer;
   private boolean m_bQuoteHttpHeaders = false;
 
   public BasicHttpPoster ()
@@ -86,16 +86,6 @@ public class BasicHttpPoster implements IHttpPoster
     return m_aHttpClientFactory;
   }
 
-  /**
-   * Set the HTTP client provider to be used. This is e.g. necessary when a
-   * custom SSL context or a proxy server is to be used. See
-   * {@link #createDefaultHttpClientFactory()} as the default implementation of
-   * {@link IHttpClientProvider}. This factory is used for http sending.
-   *
-   * @param aHttpClientFactory
-   *        The HTTP client factory to be used. May not be <code>null</code>.
-   * @return this for chaining
-   */
   @Nonnull
   public final BasicHttpPoster setHttpClientFactory (@Nonnull final HttpClientFactory aHttpClientFactory)
   {
@@ -105,21 +95,13 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   @Nullable
-  public final IConsumer <? super HttpPost> getHttpCustomizer ()
+  public final Consumer <? super HttpPost> getHttpCustomizer ()
   {
     return m_aHttpCustomizer;
   }
 
-  /**
-   * Set the HTTP Post Customizer to be used.
-   *
-   * @param aHttpCustomizer
-   *        The new customizer. May be <code>null</code>.
-   * @return this for chaining
-   * @since 0.8.3
-   */
   @Nonnull
-  public final BasicHttpPoster setHttpCustomizer (@Nullable final IConsumer <? super HttpPost> aHttpCustomizer)
+  public final BasicHttpPoster setHttpCustomizer (@Nullable final Consumer <? super HttpPost> aHttpCustomizer)
   {
     m_aHttpCustomizer = aHttpCustomizer;
     return this;
@@ -130,16 +112,6 @@ public class BasicHttpPoster implements IHttpPoster
     return m_bQuoteHttpHeaders;
   }
 
-  /**
-   * Enable or disable, if HTTP header values should be quoted or not. For
-   * compatibility it is recommended, to not quote the values.
-   *
-   * @param bQuoteHttpHeaders
-   *        <code>true</code> to quote them, <code>false</code> to not quote
-   *        them.
-   * @return this for chaining
-   * @since v0.9.1
-   */
   @Nonnull
   public final BasicHttpPoster setQuoteHttpHeaders (final boolean bQuoteHttpHeaders)
   {

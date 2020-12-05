@@ -120,12 +120,12 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
   protected final void applyToPullRequest (@Nonnull final AS4ClientPullRequestMessage aPullRequestMsg)
   {
     if (m_aHttpRetrySettings != null)
-      aPullRequestMsg.retrySettings ().assignFrom (m_aHttpRetrySettings);
+      aPullRequestMsg.httpRetrySettings ().assignFrom (m_aHttpRetrySettings);
 
-    aPullRequestMsg.setHttpClientFactory (m_aHttpClientFactory);
+    aPullRequestMsg.getHttpPoster ().setHttpClientFactory (m_aHttpClientFactory);
 
     // Otherwise Oxalis dies
-    aPullRequestMsg.setQuoteHttpHeaders (false);
+    aPullRequestMsg.getHttpPoster ().setQuoteHttpHeaders (false);
     aPullRequestMsg.setSoapVersion (m_eSoapVersion);
     aPullRequestMsg.setSendingDateTimeOrNow (m_aSendingDateTime);
     // Set the keystore/truststore parameters
