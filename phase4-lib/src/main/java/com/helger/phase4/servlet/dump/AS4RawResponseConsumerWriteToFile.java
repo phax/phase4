@@ -101,6 +101,7 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
       if (LOGGER.isInfoEnabled ())
         LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
 
+      // Write the main content
       if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isFailure ())
         LOGGER.error ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'");
     }

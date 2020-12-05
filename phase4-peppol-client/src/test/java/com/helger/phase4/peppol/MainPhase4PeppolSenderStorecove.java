@@ -25,6 +25,7 @@ import org.w3c.dom.Element;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.sender.AbstractAS4UserMessageBuilder.ESimpleUserMessageSendResult;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4OutgoingDumperFileBased;
 import com.helger.phase4.servlet.dump.AS4RawResponseConsumerWriteToFile;
@@ -60,26 +61,20 @@ public final class MainPhase4PeppolSenderStorecove
 
       // Start configuring here
       final IParticipantIdentifier aReceiverID = Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("0106:sc998899889");
-      if (Phase4PeppolSender.builder ()
-                            .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
-                            .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
-                            .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
-                            .receiverParticipantID (aReceiverID)
-                            .senderPartyID ("POP000306")
-                            .payload (aPayloadElement)
-                            .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
-                            .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
-                            .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
-                                                      new Phase4PeppolValidatonResultHandler ())
-                            .sendMessage ()
-                            .isSuccess ())
-      {
-        LOGGER.info ("Successfully sent Peppol message via AS4");
-      }
-      else
-      {
-        LOGGER.error ("Failed to send Peppol message via AS4");
-      }
+      final ESimpleUserMessageSendResult eResult;
+      eResult = Phase4PeppolSender.builder ()
+                                  .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
+                                  .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
+                                  .senderParticipantID (Phase4PeppolSender.IF.createParticipantIdentifierWithDefaultScheme ("9915:phase4-test-sender"))
+                                  .receiverParticipantID (aReceiverID)
+                                  .senderPartyID ("POP000306")
+                                  .payload (aPayloadElement)
+                                  .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
+                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                                  .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
+                                                            new Phase4PeppolValidatonResultHandler ())
+                                  .sendMessageAndCheckForReceipt ();
+      LOGGER.info ("Peppol send result: " + eResult);
     }
     catch (final Exception ex)
     {
