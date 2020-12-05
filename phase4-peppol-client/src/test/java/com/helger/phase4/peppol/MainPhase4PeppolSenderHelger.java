@@ -22,10 +22,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.dump.AS4DumpManager;
+import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
 import com.helger.phase4.messaging.domain.AbstractAS4Message;
 import com.helger.phase4.servlet.dump.AS4IncomingDumperFileBased;
@@ -70,6 +72,7 @@ public final class MainPhase4PeppolSenderHelger
                        "'");
         }
       };
+      final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
       if (Phase4PeppolSender.builder ()
                             .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
                             .processID (Phase4PeppolSender.IF.createProcessIdentifierWithDefaultScheme ("urn:fdc:peppol.eu:2017:poacc:billing:01:1.0"))
@@ -84,10 +87,22 @@ public final class MainPhase4PeppolSenderHelger
                                                       new Phase4PeppolValidatonResultHandler ())
                             .buildMessageCallback (aBuildMessageCallback)
                             .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                            .signalMsgConsumer (aSignalMsgWrapper::set)
                             .sendMessage ()
                             .isSuccess ())
       {
-        LOGGER.info ("Successfully sent Peppol message via AS4");
+        if (aSignalMsgWrapper.isSet ())
+        {
+          if (aSignalMsgWrapper.get ().getReceipt () != null)
+            LOGGER.info ("Successfully sent Peppol message via AS4 and a successful Receipt was received.");
+          else
+            if (aSignalMsgWrapper.get ().hasErrorEntries ())
+              LOGGER.error ("Successfully sent Peppol message via AS4, but errors were received back.");
+            else
+              LOGGER.error ("Successfully sent Peppol message via AS4, but neither a Receipt nor an Error was returned.");
+        }
+        else
+          LOGGER.error ("Successfully sent Peppol message via AS4, but no AS4 SignalMessage was returned.");
       }
       else
       {
