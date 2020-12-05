@@ -86,8 +86,8 @@ public interface IHttpPoster
    *        The HTTP entity to be send. May not be <code>null</code>.
    * @param sMessageID
    *        the AS4 message ID. May not be <code>null</code>.
-   * @param nMaxRetries
-   * @param nRetryIntervalMS
+   * @param aRetrySettings
+   *        The retry settings to use. May not be <code>null</code>.
    * @param aResponseHandler
    *        The HTTP response handler that should be used to convert the HTTP
    *        response to a domain object.
@@ -106,8 +106,7 @@ public interface IHttpPoster
                                        @Nullable HttpHeaderMap aCustomHttpHeaders,
                                        @Nonnull HttpEntity aHttpEntity,
                                        @Nonnull String sMessageID,
-                                       int nMaxRetries,
-                                       long nRetryIntervalMS,
+                                       @Nonnull HttpRetrySettings aRetrySettings,
                                        @Nonnull ResponseHandler <? extends T> aResponseHandler,
                                        @Nullable IAS4OutgoingDumper aOutgoingDumper,
                                        @Nullable IAS4RetryCallback aRetryCallback) throws IOException;

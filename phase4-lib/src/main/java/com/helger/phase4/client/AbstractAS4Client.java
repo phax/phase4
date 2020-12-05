@@ -17,6 +17,7 @@
 package com.helger.phase4.client;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import javax.annotation.Nonnegative;
@@ -44,6 +45,7 @@ import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
+import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.messaging.domain.EAS4MessageType;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -65,9 +67,6 @@ import com.helger.xml.microdom.serialize.MicroWriter;
 public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> extends BasicHttpPoster implements
                                         IGenericImplTrait <IMPLTYPE>
 {
-  public static final int DEFAULT_MAX_RETRIES = 0;
-  public static final long DEFAULT_RETRY_INTERVAL_MS = 12_000;
-
   /**
    * @return The default message ID factory to be used.
    * @since 0.8.3
@@ -92,8 +91,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
-  private int m_nMaxRetries = DEFAULT_MAX_RETRIES;
-  private long m_nRetryIntervalMS = DEFAULT_RETRY_INTERVAL_MS;
+  private final HttpRetrySettings m_aRetrySettings = new HttpRetrySettings ();
 
   protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType, @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -318,14 +316,27 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
+   * @return The HTTP retry settings to be used. Never <code>null</code>. Modify
+   *         the response object.
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final HttpRetrySettings retrySettings ()
+  {
+    return m_aRetrySettings;
+  }
+
+  /**
    * @return The maximum number of retries. Only values &gt; 0 imply a retry.
    *         The default value is {@link #DEFAULT_MAX_RETRIES}.
    * @since 0.9.0
+   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
    */
   @Nonnegative
+  @Deprecated
   public final int getMaxRetries ()
   {
-    return m_nMaxRetries;
+    return m_aRetrySettings.getMaxRetries ();
   }
 
   /**
@@ -336,12 +347,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        &ge; 0.
    * @return this for chaining
    * @since 0.9.0
+   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setMaxRetries (@Nonnegative final int nMaxRetries)
   {
-    ValueEnforcer.isGE0 (nMaxRetries, "MaxRetries");
-    m_nMaxRetries = nMaxRetries;
+    m_aRetrySettings.setMaxRetries (nMaxRetries);
     return thisAsT ();
   }
 
@@ -349,11 +361,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The interval in milliseconds between retries. Must be &ge; 0. The
    *         default value is {@link #DEFAULT_RETRY_INTERVAL_MS}.
    * @since 0.9.0
+   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
    */
+  @Deprecated
   @Nonnegative
   public final long getRetryIntervalMS ()
   {
-    return m_nRetryIntervalMS;
+    return m_aRetrySettings.getDurationBeforeRetry ().toMillis ();
   }
 
   /**
@@ -363,12 +377,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    *        Retry interval in milliseconds. Must be &ge; 0.
    * @return this for chaining
    * @since 0.9.0
+   * @deprecated Since 0.13.0. Use {@link #retrySettings()} instead
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
   {
-    ValueEnforcer.isGE0 (nRetryIntervalMS, "RetryIntervalMS");
-    m_nRetryIntervalMS = nRetryIntervalMS;
+    m_aRetrySettings.setDurationBeforeRetry (Duration.ofMillis (nRetryIntervalMS));
     return thisAsT ();
   }
 
@@ -388,13 +403,13 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       final PModeReceptionAwareness aRA = aPMode.getReceptionAwareness ();
       if (aRA != null && aRA.isRetryDefined ())
       {
-        setMaxRetries (aRA.getMaxRetries ());
-        setRetryIntervalMS (aRA.getRetryIntervalMS ());
+        m_aRetrySettings.setMaxRetries (aRA.getMaxRetries ());
+        m_aRetrySettings.setDurationBeforeRetry (Duration.ofMillis (aRA.getRetryIntervalMS ()));
       }
       else
       {
         // 0 means "no retries"
-        setMaxRetries (0);
+        m_aRetrySettings.setMaxRetries (0);
       }
     }
     if (aLeg != null)
@@ -474,7 +489,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    if (m_nMaxRetries > 0 || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
+    if (m_aRetrySettings.isRetryEnabled () || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
@@ -484,8 +499,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                              aBuiltHttpHeaders,
                                                              aBuiltEntity,
                                                              sMessageID,
-                                                             m_nMaxRetries,
-                                                             m_nRetryIntervalMS,
+                                                             m_aRetrySettings,
                                                              aResponseHandler,
                                                              aOutgoingDumper,
                                                              aRetryCallback);

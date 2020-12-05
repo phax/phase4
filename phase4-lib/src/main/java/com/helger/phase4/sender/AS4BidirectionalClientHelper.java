@@ -68,43 +68,6 @@ public final class AS4BidirectionalClientHelper
   private AS4BidirectionalClientHelper ()
   {}
 
-  /**
-   * @deprecated Use
-   *             {@link #sendAS4UserMessageAndReceiveAS4SignalMessage(IAS4CryptoFactory,IPModeResolver,IIncomingAttachmentFactory,AS4ClientUserMessage,Locale,String,IAS4ClientBuildMessageCallback,IAS4OutgoingDumper,IAS4IncomingDumper,IAS4RetryCallback,IAS4RawResponseConsumer,IAS4SignalMessageConsumer)}
-   *             instead
-   */
-  @SuppressWarnings ("javadoc")
-  @Deprecated
-  public static void sendAS4AndReceiveAS4 (@Nonnull final IAS4CryptoFactory aCryptoFactory,
-                                           @Nonnull final IPModeResolver aPModeResolver,
-                                           @Nonnull final IIncomingAttachmentFactory aIAF,
-                                           @Nonnull final AS4ClientUserMessage aClientUserMsg,
-                                           @Nonnull final Locale aLocale,
-                                           @Nonnull final String sURL,
-                                           @Nullable final IAS4ClientBuildMessageCallback aBuildMessageCallback,
-                                           @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                           @Nullable final IAS4IncomingDumper aIncomingDumper,
-                                           @Nullable final IAS4RetryCallback aRetryCallback,
-                                           @Nullable final IAS4RawResponseConsumer aResponseConsumer,
-                                           @Nullable final IAS4SignalMessageConsumer aSignalMsgConsumer) throws IOException,
-                                                                                                         Phase4Exception,
-                                                                                                         WSSecurityException,
-                                                                                                         MessagingException
-  {
-    sendAS4UserMessageAndReceiveAS4SignalMessage (aCryptoFactory,
-                                                  aPModeResolver,
-                                                  aIAF,
-                                                  aClientUserMsg,
-                                                  aLocale,
-                                                  sURL,
-                                                  aBuildMessageCallback,
-                                                  aOutgoingDumper,
-                                                  aIncomingDumper,
-                                                  aRetryCallback,
-                                                  aResponseConsumer,
-                                                  aSignalMsgConsumer);
-  }
-
   public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                                    @Nonnull final IPModeResolver aPModeResolver,
                                                                    @Nonnull final IIncomingAttachmentFactory aIAF,
@@ -122,7 +85,7 @@ public final class AS4BidirectionalClientHelper
                                                                                                                                  MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.getMaxRetries () + " retries");
+      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.retrySettings ().getMaxRetries () + " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -211,7 +174,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                                            MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 PullRequest to '" + sURL + "' with max. " + aClientPullRequest.getMaxRetries () + " retries");
+      LOGGER.info ("Sending AS4 PullRequest to '" +
+                   sURL +
+                   "' with max. " +
+                   aClientPullRequest.retrySettings ().getMaxRetries () +
+                   " retries");
 
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("  MPC = '" + aClientPullRequest.getMPC () + "'");

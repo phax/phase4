@@ -119,10 +119,8 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
    */
   protected final void applyToPullRequest (@Nonnull final AS4ClientPullRequestMessage aPullRequestMsg)
   {
-    if (m_nMaxRetries >= 0)
-      aPullRequestMsg.setMaxRetries (m_nMaxRetries);
-    if (m_nRetryIntervalMS >= 0)
-      aPullRequestMsg.setRetryIntervalMS (m_nRetryIntervalMS);
+    if (m_aHttpRetrySettings != null)
+      aPullRequestMsg.retrySettings ().assignFrom (m_aHttpRetrySettings);
 
     aPullRequestMsg.setHttpClientFactory (m_aHttpClientFactory);
 

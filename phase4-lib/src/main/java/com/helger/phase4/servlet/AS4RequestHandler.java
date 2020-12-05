@@ -76,6 +76,7 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.AS4HttpDebug;
 import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.http.HttpMimeMessageEntity;
+import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
@@ -1277,14 +1278,12 @@ public class AS4RequestHandler implements AutoCloseable
           {
             final HttpHeaderMap aResponseHttpHeaders = null;
             // TODO make async send parameters customizable
-            final int nMaxRetries = 1;
-            final long nRetryIntervalMS = 12_000;
+            final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
             aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
                                                                     aResponseHttpHeaders,
                                                                     aHttpEntity,
                                                                     sMessageID,
-                                                                    nMaxRetries,
-                                                                    nRetryIntervalMS,
+                                                                    aRetrySettings,
                                                                     new ResponseHandlerXml (),
                                                                     m_aOutgoingDumper,
                                                                     m_aRetryCallback);

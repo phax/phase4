@@ -18,6 +18,7 @@ package com.helger.phase4.http;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Duration;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -242,7 +243,7 @@ public class BasicHttpPoster implements IHttpPoster
 
     // Otherwise multiple calls to writeTo and getContent would crash
     if (!aSrcEntity.isRepeatable ())
-      throw new IllegalStateException ("This should only be called for repeatable entities");
+      throw new IllegalStateException ("If dumping of outgoing messages is enabled, a repeatable entity must be provided");
 
     // Remember the output stream used for dumping (to be able to close it
     // later)
@@ -268,8 +269,7 @@ public class BasicHttpPoster implements IHttpPoster
                                                     @Nullable final HttpHeaderMap aCustomHttpHeaders,
                                                     @Nonnull final HttpEntity aHttpEntity,
                                                     @Nonnull final String sMessageID,
-                                                    final int nMaxRetries,
-                                                    final long nRetryIntervalMS,
+                                                    @Nonnull final HttpRetrySettings aRetrySettings,
                                                     @Nonnull final ResponseHandler <? extends T> aResponseHandler,
                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                     @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
@@ -278,13 +278,15 @@ public class BasicHttpPoster implements IHttpPoster
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
     try
     {
-      if (nMaxRetries > 0)
+      if (aRetrySettings.isRetryEnabled ())
       {
         // Send with retry
         if (!aHttpEntity.isRepeatable ())
           throw new IllegalStateException ("If retry is enabled, a repeatable entity must be provided");
 
+        final int nMaxRetries = aRetrySettings.getMaxRetries ();
         final int nMaxTries = 1 + nMaxRetries;
+        Duration aDurationBeforeRetry = aRetrySettings.getDurationBeforeRetry ();
         for (int nTry = 0; nTry < nMaxTries; nTry++)
         {
           if (nTry > 0)
@@ -310,8 +312,12 @@ public class BasicHttpPoster implements IHttpPoster
             if (nTry == nMaxTries - 1)
               throw ex;
 
+            // After the first retry, increase the waiting time
+            if (nTry > 1)
+              aDurationBeforeRetry = HttpRetrySettings.getIncreased (aDurationBeforeRetry, aRetrySettings.getRetryIncreaseFactor ());
+
             if (aRetryCallback != null)
-              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, nRetryIntervalMS, ex).isBreak ())
+              if (aRetryCallback.onBeforeRetry (sMessageID, sURL, nTry, nMaxTries, aDurationBeforeRetry.toMillis (), ex).isBreak ())
               {
                 // Explicitly interrupt retry
                 LOGGER.warn ("Error sending message '" +
@@ -337,11 +343,11 @@ public class BasicHttpPoster implements IHttpPoster
                          " - " +
                          ex.getMessage () +
                          " - waiting " +
-                         nRetryIntervalMS +
+                         aDurationBeforeRetry.toMillis () +
                          " ms, than retrying");
 
             // Sleep and try again afterwards
-            ThreadHelper.sleep (nRetryIntervalMS);
+            ThreadHelper.sleep (aDurationBeforeRetry.toMillis ());
           }
           finally
           {

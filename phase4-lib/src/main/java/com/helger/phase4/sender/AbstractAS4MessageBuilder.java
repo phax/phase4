@@ -41,6 +41,7 @@ import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.IAS4IncomingDumper;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.soap.ESoapVersion;
@@ -66,8 +67,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected String m_sMessageID;
   protected LocalDateTime m_aSendingDateTime;
   protected ESoapVersion m_eSoapVersion;
-  protected int m_nMaxRetries = -1;
-  protected long m_nRetryIntervalMS = -1;
+  protected HttpRetrySettings m_aHttpRetrySettings;
   protected Locale m_aLocale = DEFAULT_LOCALE;
 
   private IPModeResolver m_aPModeResolver;
@@ -225,16 +225,36 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
+   * Set the HTTP retry settings to be used. If none are set, the default values
+   * are used.
+   *
+   * @param a
+   *        The HTTP retry settings to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
+  @Nonnull
+  public final IMPLTYPE httpRetrySettings (@Nullable final HttpRetrySettings a)
+  {
+    m_aHttpRetrySettings = a;
+    return thisAsT ();
+  }
+
+  /**
    * Set the maximum number of retries.
    *
    * @param n
    *        The maximum number of retries.
    * @return this for chaining
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
+   *             instead.
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE maxRetries (final int n)
   {
-    m_nMaxRetries = n;
+    if (m_aHttpRetrySettings == null)
+      m_aHttpRetrySettings = new HttpRetrySettings ();
+    m_aHttpRetrySettings.setMaxRetries (n);
     return thisAsT ();
   }
 
@@ -245,7 +265,10 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @param a
    *        The retry interval
    * @return this for chaining
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
+   *             instead.
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final TimeValue a)
   {
@@ -259,7 +282,10 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @param a
    *        The retry interval
    * @return this for chaining
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
+   *             instead.
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE retryInterval (@Nullable final Duration a)
   {
@@ -273,11 +299,16 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @param n
    *        The retry interval in milliseconds
    * @return this for chaining
+   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
+   *             instead.
    */
+  @Deprecated
   @Nonnull
   public final IMPLTYPE retryIntervalMilliseconds (final long n)
   {
-    m_nRetryIntervalMS = n;
+    if (m_aHttpRetrySettings == null)
+      m_aHttpRetrySettings = new HttpRetrySettings ();
+    m_aHttpRetrySettings.setDurationBeforeRetry (Duration.ofMillis (n));
     return thisAsT ();
   }
 

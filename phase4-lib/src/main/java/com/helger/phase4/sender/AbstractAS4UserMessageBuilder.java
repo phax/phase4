@@ -530,10 +530,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @OverridingMethodsMustInvokeSuper
   protected void applyToUserMessage (@Nonnull final AS4ClientUserMessage aUserMsg)
   {
-    if (m_nMaxRetries >= 0)
-      aUserMsg.setMaxRetries (m_nMaxRetries);
-    if (m_nRetryIntervalMS >= 0)
-      aUserMsg.setRetryIntervalMS (m_nRetryIntervalMS);
+    if (m_aHttpRetrySettings != null)
+      aUserMsg.retrySettings ().assignFrom (m_aHttpRetrySettings);
 
     aUserMsg.setHttpClientFactory (m_aHttpClientFactory);
 
