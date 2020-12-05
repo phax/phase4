@@ -27,6 +27,7 @@ import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ResponseHandler;
 import org.apache.wss4j.common.ext.WSSecurityException;
 
@@ -37,6 +38,7 @@ import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
+import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerMicroDom;
 import com.helger.phase4.crypto.AS4CryptParams;
 import com.helger.phase4.crypto.AS4SigningParams;
@@ -522,15 +524,20 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
     }
 
+    final Wrapper <StatusLine> aStatusLineKeeper = new Wrapper <> ();
+    final ResponseHandler <T> aRealResponseHandler = x -> {
+      aStatusLineKeeper.set (x.getStatusLine ());
+      return aResponseHandler.handleResponse (x);
+    };
     final T aResponse = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
                                                                      aBuiltHttpHeaders,
                                                                      aBuiltEntity,
                                                                      sMessageID,
                                                                      m_aHttpRetrySettings,
-                                                                     aResponseHandler,
+                                                                     aRealResponseHandler,
                                                                      aOutgoingDumper,
                                                                      aRetryCallback);
-    return new AS4ClientSentMessage <> (aBuiltMsg, aResponse);
+    return new AS4ClientSentMessage <> (aBuiltMsg, aStatusLineKeeper.get (), aResponse);
   }
 
   @Nullable

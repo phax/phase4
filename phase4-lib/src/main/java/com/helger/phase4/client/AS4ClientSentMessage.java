@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.Immutable;
+
+import org.apache.http.StatusLine;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -35,9 +38,11 @@ import com.helger.phase4.mgr.MetaAS4Manager;
  * @param <T>
  *        The response type
  */
+@Immutable
 public class AS4ClientSentMessage <T>
 {
   private final AS4ClientBuiltMessage m_aBuiltMsg;
+  private final StatusLine m_aResponseStatusLine;
   private final T m_aResponse;
   private final LocalDateTime m_aSentDateTime;
 
@@ -45,30 +50,38 @@ public class AS4ClientSentMessage <T>
    * @param aBuiltMsg
    *        The built message with headers, payload and message ID. May not be
    *        <code>null</code>.
+   * @param aResponseStatusLine
+   *        The HTTP response status line. May be <code>null</code>.
    * @param aResponse
    *        The response payload. May be <code>null</code>.
    */
-  public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg, @Nullable final T aResponse)
+  public AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg,
+                               @Nullable final StatusLine aResponseStatusLine,
+                               @Nullable final T aResponse)
   {
-    this (aBuiltMsg, aResponse, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    this (aBuiltMsg, aResponseStatusLine, aResponse, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
    * @param aBuiltMsg
    *        The built message with headers, payload and message ID. May not be
    *        <code>null</code>.
+   * @param aResponseStatusLine
+   *        The HTTP response status line. May be <code>null</code>.
    * @param aResponse
    *        The response payload. May be <code>null</code>.
    * @param aSentDateTime
    *        The sending date time. May not be <code>null</code>.
    */
   protected AS4ClientSentMessage (@Nonnull final AS4ClientBuiltMessage aBuiltMsg,
+                                  @Nullable final StatusLine aResponseStatusLine,
                                   @Nullable final T aResponse,
                                   @Nonnull final LocalDateTime aSentDateTime)
   {
     ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
     ValueEnforcer.notNull (aSentDateTime, "SentDateTime");
     m_aBuiltMsg = aBuiltMsg;
+    m_aResponseStatusLine = aResponseStatusLine;
     m_aResponse = aResponse;
     m_aSentDateTime = aSentDateTime;
   }
@@ -93,6 +106,28 @@ public class AS4ClientSentMessage <T>
   public final String getMessageID ()
   {
     return m_aBuiltMsg.getMessageID ();
+  }
+
+  /**
+   * @return The HTTP response status line. It contains the HTTP version, the
+   *         response code and the response reason (if present). May be
+   *         <code>null</code>.
+   * @since 0.13.0
+   */
+  @Nullable
+  public final StatusLine getResponseStatusLine ()
+  {
+    return m_aResponseStatusLine;
+  }
+
+  /**
+   * @return <code>true</code> if a response status line is present,
+   *         <code>false</code> if not.
+   * @since 0.13.0
+   */
+  public final boolean hasResponseStatusLine ()
+  {
+    return m_aResponseStatusLine != null;
   }
 
   /**
@@ -127,6 +162,7 @@ public class AS4ClientSentMessage <T>
   public String toString ()
   {
     return new ToStringGenerator (this).append ("BuiltMsg", m_aBuiltMsg)
+                                       .append ("ResponseStatusLine", m_aResponseStatusLine)
                                        .append ("Response", m_aResponse)
                                        .append ("SentDateTime", m_aSentDateTime)
                                        .getToString ();
