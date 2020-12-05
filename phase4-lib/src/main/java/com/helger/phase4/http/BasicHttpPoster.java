@@ -70,12 +70,13 @@ public class BasicHttpPoster implements IHttpPoster
     return new HttpClientFactory ();
   }
 
+  public static final boolean DEFAULT_QUOTE_HTTP_HEADERS = false;
   private static final Logger LOGGER = LoggerFactory.getLogger (BasicHttpPoster.class);
 
   // By default no special SSL context present
   private HttpClientFactory m_aHttpClientFactory = createDefaultHttpClientFactory ();
   private Consumer <? super HttpPost> m_aHttpCustomizer;
-  private boolean m_bQuoteHttpHeaders = false;
+  private boolean m_bQuoteHttpHeaders = DEFAULT_QUOTE_HTTP_HEADERS;
 
   public BasicHttpPoster ()
   {}
@@ -246,7 +247,9 @@ public class BasicHttpPoster implements IHttpPoster
                                                     @Nullable final IAS4OutgoingDumper aOutgoingDumper,
                                                     @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {
+    // Parameter or global one - may still be null
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
+
     final Wrapper <OutputStream> aDumpOSHolder = new Wrapper <> ();
     try
     {
