@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
 import javax.mail.MessagingException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ResponseHandler;
@@ -525,19 +526,24 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     }
 
     final Wrapper <StatusLine> aStatusLineKeeper = new Wrapper <> ();
+    final HttpHeaderMap aResponseHeaders = new HttpHeaderMap ();
     final ResponseHandler <T> aRealResponseHandler = x -> {
       aStatusLineKeeper.set (x.getStatusLine ());
+      final Header [] aHeaders = x.getAllHeaders ();
+      if (aHeaders != null)
+        for (final Header aHeader : aHeaders)
+          aResponseHeaders.addHeader (aHeader.getName (), aHeader.getValue ());
       return aResponseHandler.handleResponse (x);
     };
-    final T aResponse = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
-                                                                     aBuiltHttpHeaders,
-                                                                     aBuiltEntity,
-                                                                     sMessageID,
-                                                                     m_aHttpRetrySettings,
-                                                                     aRealResponseHandler,
-                                                                     aOutgoingDumper,
-                                                                     aRetryCallback);
-    return new AS4ClientSentMessage <> (aBuiltMsg, aStatusLineKeeper.get (), aResponse);
+    final T aResponseContent = m_aHttpPoster.sendGenericMessageWithRetries (sURL,
+                                                                            aBuiltHttpHeaders,
+                                                                            aBuiltEntity,
+                                                                            sMessageID,
+                                                                            m_aHttpRetrySettings,
+                                                                            aRealResponseHandler,
+                                                                            aOutgoingDumper,
+                                                                            aRetryCallback);
+    return new AS4ClientSentMessage <> (aBuiltMsg, aStatusLineKeeper.get (), aResponseHeaders, aResponseContent);
   }
 
   @Nullable
