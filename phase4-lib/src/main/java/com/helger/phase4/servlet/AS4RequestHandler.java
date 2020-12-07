@@ -120,7 +120,7 @@ import com.helger.xml.serialize.write.XMLWriter;
  */
 public class AS4RequestHandler implements AutoCloseable
 {
-  private static interface IAS4ResponseFactory
+  private interface IAS4ResponseFactory
   {
     @Nonnull
     HttpEntity getHttpEntityForSending (@Nonnull IMimeType aMimeType);
@@ -712,6 +712,7 @@ public class AS4RequestHandler implements AutoCloseable
         }
         catch (final AS4DecompressException ex)
         {
+          LOGGER.error ("Failed to decompress AS4 payload", ex);
           // Hack for invalid GZip content from WSS4JAttachment.getSourceStream
           aErrorMessagesTarget.add (EEbmsError.EBMS_DECOMPRESSION_FAILURE.getAsEbms3Error (m_aLocale, sMessageID));
           return;
