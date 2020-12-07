@@ -424,7 +424,8 @@ public interface IAS4MessageState
 
   /**
    * @return <code>true</code> if SOAP header element processing was successful,
-   *         <code>false</code> if not.
+   *         <code>false</code> if not. If not, than many other values are also
+   *         not set and at least one error is in the error list.
    * @since v0.9.7
    */
   boolean isSoapHeaderElementProcessingSuccessful ();
