@@ -551,6 +551,9 @@ public class AS4RequestHandler implements AutoCloseable
                     "': " +
                     aAllProcessors);
 
+    if (aAllProcessors.isEmpty ())
+      LOGGER.warn ("No IAS4ServletMessageProcessorSPI is available to process an incoming message");
+
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
       if (aProcessor != null)
         try
@@ -591,12 +594,15 @@ public class AS4RequestHandler implements AutoCloseable
           if (aProcessingErrorMessages.isNotEmpty ())
           {
             if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Processing errors are present after AS4 message processor " + aProcessor + " - breaking");
+              LOGGER.debug ("AS4 message processor " +
+                            aProcessor +
+                            " had processing errors - breaking. Details: " +
+                            aProcessingErrorMessages);
 
             if (aResult.isSuccess ())
-              LOGGER.warn ("Processing errors are present but success was returned by AS4 message processor " +
+              LOGGER.warn ("Processing errors are present but success was returned by a previous AS4 message processor " +
                            aProcessor +
-                           " - considering it to be failed");
+                           " - considering the whole processing to be failed");
 
             aErrorMessagesTarget.addAll (aProcessingErrorMessages);
             // Stop processing
