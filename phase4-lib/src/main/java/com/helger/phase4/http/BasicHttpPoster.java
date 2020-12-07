@@ -54,7 +54,8 @@ import com.helger.phase4.util.MultiOutputStream;
 
 /**
  * A generic HTTP POST wrapper based on {@link IHttpClientProvider} and
- * {@link HttpPost}.
+ * {@link HttpPost}. Since 0.13.0 this is a standalone class which is injected
+ * as a member into the respective AS4 clients.
  *
  * @author Philip Helger
  */
@@ -143,10 +144,10 @@ public class BasicHttpPoster implements IHttpPoster
    *         In case of IO error
    */
   @Nullable
-  public final <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
-                                         @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                         @Nonnull final HttpEntity aHttpEntity,
-                                         @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws IOException
+  public <T> T sendGenericMessage (@Nonnull @Nonempty final String sURL,
+                                   @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                   @Nonnull final HttpEntity aHttpEntity,
+                                   @Nonnull final ResponseHandler <? extends T> aResponseHandler) throws IOException
   {
     ValueEnforcer.notEmpty (sURL, "URL");
     ValueEnforcer.notNull (aHttpEntity, "HttpEntity");
@@ -194,12 +195,12 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   @Nonnull
-  private static HttpEntity _createDumpingHttpEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                      @Nonnull final HttpEntity aSrcEntity,
-                                                      @Nonnull @Nonempty final String sMessageID,
-                                                      @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                                      @Nonnegative final int nTry,
-                                                      @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
+  protected static HttpEntity createDumpingHttpEntity (@Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                                       @Nonnull final HttpEntity aSrcEntity,
+                                                       @Nonnull @Nonempty final String sMessageID,
+                                                       @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                                       @Nonnegative final int nTry,
+                                                       @Nonnull final Wrapper <OutputStream> aDumpOSHolder) throws IOException
   {
     if (aOutgoingDumper == null)
     {
@@ -238,14 +239,14 @@ public class BasicHttpPoster implements IHttpPoster
   }
 
   @Nonnull
-  public final <T> T sendGenericMessageWithRetries (@Nonnull final String sURL,
-                                                    @Nullable final HttpHeaderMap aCustomHttpHeaders,
-                                                    @Nonnull final HttpEntity aHttpEntity,
-                                                    @Nonnull final String sMessageID,
-                                                    @Nonnull final HttpRetrySettings aRetrySettings,
-                                                    @Nonnull final ResponseHandler <? extends T> aResponseHandler,
-                                                    @Nullable final IAS4OutgoingDumper aOutgoingDumper,
-                                                    @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
+  public <T> T sendGenericMessageWithRetries (@Nonnull final String sURL,
+                                              @Nullable final HttpHeaderMap aCustomHttpHeaders,
+                                              @Nonnull final HttpEntity aHttpEntity,
+                                              @Nonnull final String sMessageID,
+                                              @Nonnull final HttpRetrySettings aRetrySettings,
+                                              @Nonnull final ResponseHandler <? extends T> aResponseHandler,
+                                              @Nullable final IAS4OutgoingDumper aOutgoingDumper,
+                                              @Nullable final IAS4RetryCallback aRetryCallback) throws IOException
   {
     // Parameter or global one - may still be null
     final IAS4OutgoingDumper aRealOutgoingDumper = aOutgoingDumper != null ? aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
@@ -271,12 +272,12 @@ public class BasicHttpPoster implements IHttpPoster
           {
             // Create a new one every time (for new filename, new timestamp,
             // etc.)
-            final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
-                                                                        aHttpEntity,
-                                                                        sMessageID,
-                                                                        aCustomHttpHeaders,
-                                                                        nTry,
-                                                                        aDumpOSHolder);
+            final HttpEntity aDumpingEntity = createDumpingHttpEntity (aRealOutgoingDumper,
+                                                                       aHttpEntity,
+                                                                       sMessageID,
+                                                                       aCustomHttpHeaders,
+                                                                       nTry,
+                                                                       aDumpOSHolder);
 
             // Dump only for the first try - the remaining tries
             return sendGenericMessage (sURL, aCustomHttpHeaders, aDumpingEntity, aResponseHandler);
@@ -334,12 +335,12 @@ public class BasicHttpPoster implements IHttpPoster
       }
       // else non retry
       {
-        final HttpEntity aDumpingEntity = _createDumpingHttpEntity (aRealOutgoingDumper,
-                                                                    aHttpEntity,
-                                                                    sMessageID,
-                                                                    aCustomHttpHeaders,
-                                                                    0,
-                                                                    aDumpOSHolder);
+        final HttpEntity aDumpingEntity = createDumpingHttpEntity (aRealOutgoingDumper,
+                                                                   aHttpEntity,
+                                                                   sMessageID,
+                                                                   aCustomHttpHeaders,
+                                                                   0,
+                                                                   aDumpOSHolder);
 
         try
         {
