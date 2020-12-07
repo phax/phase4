@@ -276,7 +276,8 @@ If you like the project, a star on GitHub is always appreciated.
     * The HTTP retry settings are now assembled in the class `HttpRetrySettings`
     * `AbstractAS4Client` is no longer derived from `BasicHttpPoster` but instead has a customizable member that is responsible for the sending. This allows for exchanging the underlying HTTP engine.
     * The UserMessage builder now has a simplified `sendMessageAndCheckForReceipt` method that does all the success/error checks internally
-    * Extended the `AS4ClientSentMessage` to also contain the HTTP response status line
+    * Extended the `AS4ClientSentMessage` to also contain the HTTP response status line and the response HTTP headers
+    * Added a new interface `IAS4IncomingProfileSelector` to make profile selection customizable
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25
