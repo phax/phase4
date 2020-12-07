@@ -151,6 +151,7 @@ public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS
       AS4BidirectionalClientHelper.sendAS4PullRequestAndReceiveAS4UserMessage (m_aCryptoFactory,
                                                                                pmodeResolver (),
                                                                                incomingAttachmentFactory (),
+                                                                               incomingProfileSelector (),
                                                                                aPullRequestMsg,
                                                                                m_aLocale,
                                                                                m_sEndpointURL,

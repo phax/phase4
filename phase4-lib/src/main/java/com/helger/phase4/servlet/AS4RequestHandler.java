@@ -305,6 +305,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
   private final IIncomingAttachmentFactory m_aIAF;
+  private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
   private IAS4IncomingDumper m_aIncomingDumper;
@@ -358,6 +359,33 @@ public class AS4RequestHandler implements AutoCloseable
   {
     ValueEnforcer.notNull (aLocale, "Locale");
     m_aLocale = aLocale;
+    return this;
+  }
+
+  /**
+   * @return The current AS4 profile selector for incoming messages. Never
+   *         <code>null</code>.
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final IAS4IncomingProfileSelector getIncomingProfileSelector ()
+  {
+    return m_aIncomingProfileSelector;
+  }
+
+  /**
+   * Set the AS4 profile selector for incoming messages.
+   *
+   * @param aIncomingProfileSelector
+   *        The new profile selector to be used. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final AS4RequestHandler setIncomingProfileSelector (@Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector)
+  {
+    ValueEnforcer.notNull (aIncomingProfileSelector, "IncomingProfileSelector");
+    m_aIncomingProfileSelector = aIncomingProfileSelector;
     return this;
   }
 
@@ -1126,10 +1154,10 @@ public class AS4RequestHandler implements AutoCloseable
                                                                            aSoapDocument,
                                                                            eSoapVersion,
                                                                            aIncomingAttachments,
+                                                                           m_aIncomingProfileSelector,
                                                                            aErrorMessagesTarget);
     final IPMode aPMode = aState.getPMode ();
     final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
-    final String sProfileID = aState.getProfileID ();
     final String sMessageID = aState.getMessageID ();
     final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
                                                                                                    : aState.getOriginalAttachments ();
@@ -1139,6 +1167,8 @@ public class AS4RequestHandler implements AutoCloseable
 
     if (aState.isSoapHeaderElementProcessingSuccessful ())
     {
+      final String sProfileID = aState.getProfileID ();
+
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("No checking for duplicate message with message ID '" + sMessageID + "' and profile ID '" + sProfileID + "'");
 

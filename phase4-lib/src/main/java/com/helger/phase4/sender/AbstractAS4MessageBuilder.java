@@ -27,6 +27,7 @@ import javax.annotation.OverridingMethodsMustInvokeSuper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
 import com.helger.commons.lang.TimeValue;
 import com.helger.commons.state.ESuccess;
@@ -44,6 +45,8 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.model.pmode.resolve.DefaultPModeResolver;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
+import com.helger.phase4.servlet.AS4IncomingProfileSelectorFromGlobal;
+import com.helger.phase4.servlet.IAS4IncomingProfileSelector;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.Phase4Exception;
 
@@ -72,6 +75,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
   private IPModeResolver m_aPModeResolver;
   private IIncomingAttachmentFactory m_aIAF;
+  private IAS4IncomingProfileSelector m_aIncomingProfileSelector;
   private IAS4SenderInterrupt m_aSenderInterrupt;
 
   protected IAS4ClientBuildMessageCallback m_aBuildMessageCallback;
@@ -98,6 +102,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       soapVersion (ESoapVersion.SOAP_12);
       pmodeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
       incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+      incomingProfileSelector (AS4IncomingProfileSelectorFromGlobal.INSTANCE);
     }
     catch (final Exception ex)
     {
@@ -352,7 +357,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IIncomingAttachmentFactory}. May be
+   * @return The currently set {@link IIncomingAttachmentFactory}. Never
    *         <code>null</code>.
    */
   @Nullable
@@ -365,14 +370,42 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * Set the incoming attachment factory to be used.
    *
    * @param aIAF
-   *        The incoming attachment factory to be used. May be
+   *        The incoming attachment factory to be used. May not be
    *        <code>null</code>.
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE incomingAttachmentFactory (@Nullable final IIncomingAttachmentFactory aIAF)
+  public final IMPLTYPE incomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
   {
+    ValueEnforcer.notNull (aIAF, "IAF");
     m_aIAF = aIAF;
+    return thisAsT ();
+  }
+
+  /**
+   * @return The profile selector for incoming AS4 messages. Never
+   *         <code>null</code>.
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final IAS4IncomingProfileSelector incomingProfileSelector ()
+  {
+    return m_aIncomingProfileSelector;
+  }
+
+  /**
+   * Set the selector for the AS4 profile of incoming messages.
+   *
+   * @param aIncomingProfileSelector
+   *        The profile selector to use. May not be <code>null</code>.
+   * @return this for chaining
+   * @since 0.13.0
+   */
+  @Nonnull
+  public final IMPLTYPE incomingProfileSelector (@Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector)
+  {
+    ValueEnforcer.notNull (aIncomingProfileSelector, "IncomingProfileSelector");
+    m_aIncomingProfileSelector = aIncomingProfileSelector;
     return thisAsT ();
   }
 

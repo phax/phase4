@@ -54,6 +54,7 @@ import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.model.pmode.resolve.IPModeResolver;
 import com.helger.phase4.servlet.AS4IncomingHandler;
 import com.helger.phase4.servlet.AS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.IAS4IncomingProfileSelector;
 import com.helger.phase4.util.Phase4Exception;
 
 /**
@@ -71,6 +72,7 @@ public final class AS4BidirectionalClientHelper
   public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                                    @Nonnull final IPModeResolver aPModeResolver,
                                                                    @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                                   @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                    @Nonnull final AS4ClientUserMessage aClientUserMsg,
                                                                    @Nonnull final Locale aLocale,
                                                                    @Nonnull final String sURL,
@@ -85,7 +87,11 @@ public final class AS4BidirectionalClientHelper
                                                                                                                                  MessagingException
   {
     if (LOGGER.isInfoEnabled ())
-      LOGGER.info ("Sending AS4 UserMessage to '" + sURL + "' with max. " + aClientUserMsg.httpRetrySettings ().getMaxRetries () + " retries");
+      LOGGER.info ("Sending AS4 UserMessage to '" +
+                   sURL +
+                   "' with max. " +
+                   aClientUserMsg.httpRetrySettings ().getMaxRetries () +
+                   " retries");
 
     if (LOGGER.isDebugEnabled ())
     {
@@ -143,6 +149,7 @@ public final class AS4BidirectionalClientHelper
       final Ebms3SignalMessage aSignalMessage = AS4IncomingHandler.parseSignalMessage (aCryptoFactory,
                                                                                        aPModeResolver,
                                                                                        aIAF,
+                                                                                       aIncomingProfileSelector,
                                                                                        aClientUserMsg.getAS4ResourceHelper (),
                                                                                        aClientUserMsg.getPMode (),
                                                                                        aLocale,
@@ -160,6 +167,7 @@ public final class AS4BidirectionalClientHelper
   public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                                  @Nonnull final IPModeResolver aPModeResolver,
                                                                  @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                                 @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                  @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
                                                                  @Nonnull final Locale aLocale,
                                                                  @Nonnull final String sURL,
@@ -213,6 +221,7 @@ public final class AS4BidirectionalClientHelper
       final Ebms3UserMessage aUserMessage = AS4IncomingHandler.parseUserMessage (aCryptoFactory,
                                                                                  aPModeResolver,
                                                                                  aIAF,
+                                                                                 aIncomingProfileSelector,
                                                                                  aClientPullRequest.getAS4ResourceHelper (),
                                                                                  null,
                                                                                  aLocale,

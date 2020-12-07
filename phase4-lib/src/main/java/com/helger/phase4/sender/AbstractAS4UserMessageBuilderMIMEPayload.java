@@ -111,6 +111,7 @@ public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends
       AS4BidirectionalClientHelper.sendAS4UserMessageAndReceiveAS4SignalMessage (m_aCryptoFactory,
                                                                                  pmodeResolver (),
                                                                                  incomingAttachmentFactory (),
+                                                                                 incomingProfileSelector (),
                                                                                  aUserMsg,
                                                                                  m_aLocale,
                                                                                  m_sEndpointURL,

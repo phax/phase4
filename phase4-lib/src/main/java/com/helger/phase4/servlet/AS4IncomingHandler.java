@@ -330,7 +330,7 @@ public class AS4IncomingHandler
                                    "}" +
                                    eSoapVersion.getHeaderElementName ());
 
-      // Extract all header elements including their mustUnderstand value
+      // Extract all header elements including their "mustUnderstand" value
       for (final Element aHeaderChild : new ChildElementIterator (aHeaderNode))
       {
         final QName aQName = XMLHelper.getQName (aHeaderChild);
@@ -342,7 +342,7 @@ public class AS4IncomingHandler
 
     final ICommonsOrderedMap <QName, ISOAPHeaderElementProcessor> aAllProcessors = aRegistry.getAllElementProcessors ();
     if (aAllProcessors.isEmpty ())
-      LOGGER.warn ("No SOAP Header element processor is registered");
+      LOGGER.error ("No SOAP Header element processor is registered");
 
     // handle all headers in the order of the registered handlers!
     for (final Map.Entry <QName, ISOAPHeaderElementProcessor> aEntry : aAllProcessors.entrySet ())
@@ -363,8 +363,10 @@ public class AS4IncomingHandler
       if (LOGGER.isDebugEnabled ())
         LOGGER.debug ("Processing SOAP header element " + aQName.toString () + " with processor " + aProcessor);
 
-      // Process element
+      // Error list for this processor
       final ErrorList aErrorList = new ErrorList ();
+
+      // Process element
       if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
@@ -374,12 +376,12 @@ public class AS4IncomingHandler
       {
         // upon failure, the element stays unprocessed and sends back a signal
         // message with the errors
-        LOGGER.warn ("Failed to process SOAP header element " +
-                     aQName.toString () +
-                     " with processor " +
-                     aProcessor +
-                     "; error details: " +
-                     aErrorList);
+        LOGGER.error ("Failed to process SOAP header element " +
+                      aQName.toString () +
+                      " with processor " +
+                      aProcessor +
+                      "; error details: " +
+                      aErrorList);
 
         final String sRefToMessageID = aState.getMessageID ();
         final Locale aLocale = aState.getLocale ();
@@ -412,7 +414,7 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Error processing required SOAP header element " + aHeader.getQName ().toString ());
+          throw new Phase4Exception ("Required SOAP header element " + aHeader.getQName ().toString () + " could not be handled");
     }
   }
 
@@ -486,12 +488,16 @@ public class AS4IncomingHandler
                                                      @Nonnull final Document aSoapDocument,
                                                      @Nonnull final ESoapVersion eSoapVersion,
                                                      @Nonnull final ICommonsList <WSS4JAttachment> aIncomingAttachments,
+                                                     @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                      @Nonnull final ICommonsList <Ebms3Error> aErrorMessagesTarget) throws Phase4Exception
   {
+    ValueEnforcer.notNull (aResHelper, "ResHelper");
+    ValueEnforcer.notNull (aLocale, "Locale");
     ValueEnforcer.notNull (aHttpHeaders, "HttpHeaders");
     ValueEnforcer.notNull (aSoapDocument, "SoapDocument");
     ValueEnforcer.notNull (eSoapVersion, "SoapVersion");
     ValueEnforcer.notNull (aIncomingAttachments, "IncomingAttachments");
+    ValueEnforcer.notNull (aAS4ProfileSelector, "AS4ProfileSelector");
     ValueEnforcer.notNull (aErrorMessagesTarget, "aErrorMessagesTarget");
 
     if (LOGGER.isDebugEnabled ())
@@ -518,7 +524,6 @@ public class AS4IncomingHandler
     // Remember if header processing was successful or not
     final boolean bSoapHeaderElementProcessingSuccess = aErrorMessagesTarget.isEmpty ();
     aState.setSoapHeaderElementProcessingSuccessful (bSoapHeaderElementProcessingSuccess);
-
     if (bSoapHeaderElementProcessingSuccess)
     {
       // Every message can only contain 1 User message or 1 pull message
@@ -561,9 +566,11 @@ public class AS4IncomingHandler
         aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, sMessageID));
       }
 
-      // Ensure the decrypted attachments are used
-      final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
-                                                                                                     : aState.getOriginalAttachments ();
+      // Determine AS4 profile ID (since 0.13.0)
+      final String sProfileID = aAS4ProfileSelector.getAS4ProfileID (aState);
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("Determined AS4 profile ID '" + sProfileID + "' for current message");
+      aState.setProfileID (sProfileID);
 
       final IPMode aPMode = aState.getPMode ();
       final PModeLeg aEffectiveLeg = aState.getEffectivePModeLeg ();
@@ -579,9 +586,9 @@ public class AS4IncomingHandler
           throw new Phase4Exception ("No AS4 P-Mode leg could be determined!");
 
         // Only do profile checks if a profile is set
-        final String sProfileID = aState.getProfileID ();
         if (StringHelper.hasText (sProfileID))
         {
+          // Resolve profile ID
           final IAS4Profile aProfile = MetaAS4Manager.getProfileMgr ().getProfileOfID (sProfileID);
           if (aProfile == null)
             throw new IllegalStateException ("The configured AS4 profile '" + sProfileID + "' does not exist.");
@@ -607,6 +614,10 @@ public class AS4IncomingHandler
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("AS4 state contains no AS4 profile ID - therefore no consistency checks are performed");
         }
+
+        // Ensure the decrypted attachments are used
+        final ICommonsList <WSS4JAttachment> aDecryptedAttachments = aState.hasDecryptedAttachments () ? aState.getDecryptedAttachments ()
+                                                                                                       : aState.getOriginalAttachments ();
 
         // Decompress attachments (if compressed)
         // Result is directly in the decrypted attachments list!
@@ -643,6 +654,7 @@ public class AS4IncomingHandler
   private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                  @Nonnull final IPModeResolver aPModeResolver,
                                                  @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                 @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                  @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                  @Nullable final IPMode aSendingPMode,
                                                  @Nonnull final Locale aLocale,
@@ -672,6 +684,7 @@ public class AS4IncomingHandler
                                                           aSoapDocument,
                                                           eSoapVersion,
                                                           aIncomingAttachments,
+                                                          aAS4ProfileSelector,
                                                           aErrorMessages);
 
       if (aState.isSoapHeaderElementProcessingSuccessful ())
@@ -712,6 +725,7 @@ public class AS4IncomingHandler
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                        @Nonnull final IPModeResolver aPModeResolver,
                                                        @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                       @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nullable final IPMode aSendingPMode,
                                                        @Nonnull final Locale aLocale,
@@ -723,6 +737,7 @@ public class AS4IncomingHandler
     final IAS4MessageState aState = _parseMessage (aCryptoFactory,
                                                    aPModeResolver,
                                                    aIAF,
+                                                   aAS4ProfileSelector,
                                                    aResHelper,
                                                    aSendingPMode,
                                                    aLocale,
@@ -751,6 +766,7 @@ public class AS4IncomingHandler
   public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                    @Nonnull final IPModeResolver aPModeResolver,
                                                    @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                   @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,
                                                    @Nonnull final Locale aLocale,
@@ -762,6 +778,7 @@ public class AS4IncomingHandler
     final IAS4MessageState aState = _parseMessage (aCryptoFactory,
                                                    aPModeResolver,
                                                    aIAF,
+                                                   aAS4ProfileSelector,
                                                    aResHelper,
                                                    aSendingPMode,
                                                    aLocale,
