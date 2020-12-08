@@ -32,7 +32,7 @@ import com.helger.commons.http.CHttp;
 import com.helger.commons.http.EHttpMethod;
 import com.helger.commons.lang.GenericReflection;
 import com.helger.http.EHttpVersion;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.messaging.EAS4IncomingMessageMode;
@@ -90,7 +90,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
 
   private Supplier <? extends IAS4CryptoFactory> m_aCryptoFactorySupplier;
   private IPModeResolver m_aPModeResolver;
-  private IIncomingAttachmentFactory m_aIAF;
+  private IAS4IncomingAttachmentFactory m_aIAF;
   private IHandlerCustomizer m_aHandlerCustomizer;
 
   /**
@@ -102,7 +102,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   {
     this (AS4CryptoFactoryProperties::getDefaultInstance,
           DefaultPModeResolver.DEFAULT_PMODE_RESOLVER,
-          IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+          IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
   }
 
   /**
@@ -119,7 +119,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    */
   public AS4XServletHandler (@Nonnull final Supplier <? extends IAS4CryptoFactory> aCryptoFactorySupplier,
                              @Nonnull final IPModeResolver aPModeResolver,
-                             @Nonnull final IIncomingAttachmentFactory aIAF)
+                             @Nonnull final IAS4IncomingAttachmentFactory aIAF)
   {
     setCryptoFactorySupplier (aCryptoFactorySupplier);
     setPModeResolver (aPModeResolver);
@@ -176,12 +176,12 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   }
 
   /**
-   * @return The {@link IIncomingAttachmentFactory} to be used. Never
+   * @return The {@link IAS4IncomingAttachmentFactory} to be used. Never
    *         <code>null</code>.
    * @since 0.9.15
    */
   @Nonnull
-  public final IIncomingAttachmentFactory getIncomingAttachmentFactory ()
+  public final IAS4IncomingAttachmentFactory getIncomingAttachmentFactory ()
   {
     return m_aIAF;
   }
@@ -194,7 +194,7 @@ public class AS4XServletHandler implements IXServletSimpleHandler
    * @since 0.9.15
    */
   @Nonnull
-  public final AS4XServletHandler setIncomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
+  public final AS4XServletHandler setIncomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aIAF, "IAF");
     m_aIAF = aIAF;

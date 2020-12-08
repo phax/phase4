@@ -54,7 +54,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.httpclient.response.ResponseHandlerXml;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.attachment.AS4DecompressException;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.crypto.AS4CryptParams;
@@ -304,7 +304,7 @@ public class AS4RequestHandler implements AutoCloseable
   private final AS4ResourceHelper m_aResHelper;
   private final IAS4CryptoFactory m_aCryptoFactory;
   private final IPModeResolver m_aPModeResolver;
-  private final IIncomingAttachmentFactory m_aIAF;
+  private final IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector = AS4IncomingProfileSelectorFromGlobal.INSTANCE;
   private final IAS4IncomingMessageMetadata m_aMessageMetadata;
   private Locale m_aLocale = CGlobal.DEFAULT_LOCALE;
@@ -318,7 +318,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                             @Nonnull final IPModeResolver aPModeResolver,
-                            @Nonnull final IIncomingAttachmentFactory aIAF,
+                            @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                             @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
   {
     ValueEnforcer.notNull (aCryptoFactory, "CryptoFactory");

@@ -57,7 +57,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.phase4.attachment.AS4DecompressException;
 import com.helger.phase4.attachment.EAS4CompressionMode;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -139,7 +139,7 @@ public class AS4IncomingHandler
                                                                                Phase4Exception;
   }
 
-  public static void parseAS4Message (@Nonnull final IIncomingAttachmentFactory aIAF,
+  public static void parseAS4Message (@Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                       @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                       @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                       @Nonnull @WillClose final InputStream aPayloadIS,
@@ -653,7 +653,7 @@ public class AS4IncomingHandler
   @Nullable
   private static IAS4MessageState _parseMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                  @Nonnull final IPModeResolver aPModeResolver,
-                                                 @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                  @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                  @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                  @Nullable final IPMode aSendingPMode,
@@ -724,7 +724,7 @@ public class AS4IncomingHandler
   @Nullable
   public static Ebms3SignalMessage parseSignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                        @Nonnull final IPModeResolver aPModeResolver,
-                                                       @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                       @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                        @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                        @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                        @Nullable final IPMode aSendingPMode,
@@ -765,7 +765,7 @@ public class AS4IncomingHandler
   @Nullable
   public static Ebms3UserMessage parseUserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                    @Nonnull final IPModeResolver aPModeResolver,
-                                                   @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                    @Nonnull final IAS4IncomingProfileSelector aAS4ProfileSelector,
                                                    @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                    @Nullable final IPMode aSendingPMode,

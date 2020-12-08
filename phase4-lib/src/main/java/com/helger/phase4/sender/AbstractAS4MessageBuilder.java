@@ -34,7 +34,7 @@ import com.helger.commons.state.ESuccess;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
 import com.helger.httpclient.HttpClientSettings;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RetryCallback;
@@ -74,7 +74,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected Locale m_aLocale = DEFAULT_LOCALE;
 
   private IPModeResolver m_aPModeResolver;
-  private IIncomingAttachmentFactory m_aIAF;
+  private IAS4IncomingAttachmentFactory m_aIAF;
   private IAS4IncomingProfileSelector m_aIncomingProfileSelector;
   private IAS4SenderInterrupt m_aSenderInterrupt;
 
@@ -90,7 +90,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * {@link #cryptoFactory(IAS4CryptoFactory)}<br>
    * {@link #soapVersion(ESoapVersion)}
    * {@link #pmodeResolver(IPModeResolver)}<br>
-   * {@link #incomingAttachmentFactory(IIncomingAttachmentFactory)}<br>
+   * {@link #incomingAttachmentFactory(IAS4IncomingAttachmentFactory)}<br>
    */
   public AbstractAS4MessageBuilder ()
   {
@@ -101,7 +101,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
       cryptoFactory (AS4CryptoFactoryProperties.getDefaultInstance ());
       soapVersion (ESoapVersion.SOAP_12);
       pmodeResolver (DefaultPModeResolver.DEFAULT_PMODE_RESOLVER);
-      incomingAttachmentFactory (IIncomingAttachmentFactory.DEFAULT_INSTANCE);
+      incomingAttachmentFactory (IAS4IncomingAttachmentFactory.DEFAULT_INSTANCE);
       incomingProfileSelector (AS4IncomingProfileSelectorFromGlobal.INSTANCE);
     }
     catch (final Exception ex)
@@ -357,11 +357,11 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   }
 
   /**
-   * @return The currently set {@link IIncomingAttachmentFactory}. Never
+   * @return The currently set {@link IAS4IncomingAttachmentFactory}. Never
    *         <code>null</code>.
    */
   @Nullable
-  public final IIncomingAttachmentFactory incomingAttachmentFactory ()
+  public final IAS4IncomingAttachmentFactory incomingAttachmentFactory ()
   {
     return m_aIAF;
   }
@@ -375,7 +375,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE incomingAttachmentFactory (@Nonnull final IIncomingAttachmentFactory aIAF)
+  public final IMPLTYPE incomingAttachmentFactory (@Nonnull final IAS4IncomingAttachmentFactory aIAF)
   {
     ValueEnforcer.notNull (aIAF, "IAF");
     m_aIAF = aIAF;

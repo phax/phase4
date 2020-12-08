@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.wrapper.Wrapper;
 import com.helger.httpclient.response.ResponseHandlerHttpEntity;
-import com.helger.phase4.attachment.IIncomingAttachmentFactory;
+import com.helger.phase4.attachment.IAS4IncomingAttachmentFactory;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
 import com.helger.phase4.client.AS4ClientSentMessage;
@@ -71,7 +71,7 @@ public final class AS4BidirectionalClientHelper
 
   public static void sendAS4UserMessageAndReceiveAS4SignalMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                                    @Nonnull final IPModeResolver aPModeResolver,
-                                                                   @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                                   @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                    @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                    @Nonnull final AS4ClientUserMessage aClientUserMsg,
                                                                    @Nonnull final Locale aLocale,
@@ -166,7 +166,7 @@ public final class AS4BidirectionalClientHelper
 
   public static void sendAS4PullRequestAndReceiveAS4UserMessage (@Nonnull final IAS4CryptoFactory aCryptoFactory,
                                                                  @Nonnull final IPModeResolver aPModeResolver,
-                                                                 @Nonnull final IIncomingAttachmentFactory aIAF,
+                                                                 @Nonnull final IAS4IncomingAttachmentFactory aIAF,
                                                                  @Nonnull final IAS4IncomingProfileSelector aIncomingProfileSelector,
                                                                  @Nonnull final AS4ClientPullRequestMessage aClientPullRequest,
                                                                  @Nonnull final Locale aLocale,

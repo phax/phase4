@@ -278,6 +278,7 @@ If you like the project, a star on GitHub is always appreciated.
     * The UserMessage builder now has a simplified `sendMessageAndCheckForReceipt` method that does all the success/error checks internally
     * Extended the `AS4ClientSentMessage` to also contain the HTTP response status line and the response HTTP headers
     * Added a new interface `IAS4IncomingProfileSelector` to make profile selection customizable
+    * Renamed interface `IIncomingAttachmentFactory` to `IAS4IncomingAttachmentFactory`
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

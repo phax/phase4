@@ -17,7 +17,6 @@
 package com.helger.phase4.attachment;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.mail.MessagingException;
@@ -32,7 +31,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
  * @author Philip Helger
  */
 @FunctionalInterface
-public interface IIncomingAttachmentFactory extends Serializable
+public interface IAS4IncomingAttachmentFactory
 {
   /**
    * Create an attachment if the source message is a MIME message
@@ -52,5 +51,5 @@ public interface IIncomingAttachmentFactory extends Serializable
                                                                                                             MessagingException;
 
   @Nonnull
-  IIncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
+  IAS4IncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
 }
