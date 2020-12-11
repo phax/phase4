@@ -26,6 +26,7 @@ import com.helger.commons.wrapper.Wrapper;
 import com.helger.peppol.sml.ESML;
 import com.helger.peppolid.IParticipantIdentifier;
 import com.helger.phase4.client.IAS4ClientBuildMessageCallback;
+import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.messaging.domain.AS4UserMessage;
@@ -74,6 +75,20 @@ public final class MainPhase4PeppolSenderHelger
         }
       };
       final Wrapper <Ebms3SignalMessage> aSignalMsgWrapper = new Wrapper <> ();
+      final IAS4RawResponseConsumer aRRC = new AS4RawResponseConsumerWriteToFile ().setHandleStatusLine (true)
+                                                                                   .setHandleHttpHeaders (true)
+                                                                                   .and (x -> {
+                                                                                     LOGGER.info ("Response status line: " +
+                                                                                                  x.getResponseStatusLine ());
+                                                                                     LOGGER.info ("Response headers:");
+                                                                                     x.getResponseHeaders ()
+                                                                                      .forEachSingleHeader ( (k,
+                                                                                                              v) -> LOGGER.info ("  " +
+                                                                                                                                 k +
+                                                                                                                                 "=" +
+                                                                                                                                 v),
+                                                                                                             false);
+                                                                                   });
       final ESimpleUserMessageSendResult eResult;
       eResult = Phase4PeppolSender.builder ()
                                   .documentTypeID (Phase4PeppolSender.IF.createDocumentTypeIdentifierWithDefaultScheme ("urn:oasis:names:specification:ubl:schema:xsd:Invoice-2::Invoice##urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0::2.1"))
@@ -88,7 +103,7 @@ public final class MainPhase4PeppolSenderHelger
                                   .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
                                   .buildMessageCallback (aBuildMessageCallback)
-                                  .rawResponseConsumer (new AS4RawResponseConsumerWriteToFile ())
+                                  .rawResponseConsumer (aRRC)
                                   .signalMsgConsumer (aSignalMsgWrapper::set)
                                   .sendMessageAndCheckForReceipt ();
       LOGGER.info ("Peppol send result: " + eResult);
