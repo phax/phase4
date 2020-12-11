@@ -115,7 +115,7 @@
             <exclude>**/*.p12</exclude>
             <exclude>**/*.jks</exclude>
             <exclude>src/test/resources/examples/**</exclude>
-            <exclude>phase4-peppol-client/**</exclude>
+            <exclude>phase4-dumps/**</exclude>
           </excludes>
         </configuration>
       </plugin>
