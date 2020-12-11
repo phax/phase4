@@ -282,6 +282,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Added new abstract base class `AbstractAS4RawResponseConsumer` to customize handling of status line and http headers
     * `AS4RawResponseConsumerWriteToFile` now logs the status line and the response headers by default (backward incompatible change)
     * The default filenames created from `AS4RawResponseConsumerWriteToFile` now use the extension `.as4response` instead of `-response.xml` because they are no longer pure XML
+    * Moved method `readCryptoPropertiesFromFile` from `AS4CryptoFactoryPropertiesFile` to `AS4CryptoFactoryProperties`
 * v0.12.6 - 2020-11-25
     * Updated from "ph-bdve*" to "phive*" - see https://github.com/phax/phive and https://github.com/phax/phive-rules for details
 * v0.12.5 - 2020-11-25

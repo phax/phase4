@@ -30,6 +30,8 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.ArrayHelper;
+import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.commons.string.StringHelper;
 import com.helger.security.keystore.KeyStoreHelper;
 
 /**
@@ -195,5 +197,33 @@ public class AS4CryptoFactoryProperties implements IAS4CryptoFactory
                                           .getKeyStore ();
     }
     return ret;
+  }
+
+  /**
+   * Read crypto properties from the specified file path.
+   *
+   * @param sCryptoPropertiesPath
+   *        The class path to read the properties file from. It is
+   *        <code>null</code> or empty, than the default file
+   *        "crypto.properties" is read.
+   * @return Never <code>null</code>.
+   */
+  @Nonnull
+  public static AS4CryptoProperties readCryptoPropertiesFromFile (@Nullable final String sCryptoPropertiesPath)
+  {
+    AS4CryptoProperties aCryptoProps;
+    if (StringHelper.hasNoText (sCryptoPropertiesPath))
+    {
+      // Uses crypto.properties => needs exact name crypto.properties
+      aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("private-crypto.properties"));
+      if (!aCryptoProps.isRead ())
+        aCryptoProps = new AS4CryptoProperties (new ClassPathResource ("crypto.properties"));
+    }
+    else
+    {
+      // Use provided filename
+      aCryptoProps = new AS4CryptoProperties (new ClassPathResource (sCryptoPropertiesPath));
+    }
+    return aCryptoProps;
   }
 }
