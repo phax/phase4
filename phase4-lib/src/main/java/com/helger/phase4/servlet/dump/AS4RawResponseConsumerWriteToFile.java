@@ -64,7 +64,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
       return PDTIOHelper.getCurrentLocalDateTimeForFilename () +
              "-" +
              FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
-             "-response.xml";
+             ".as4response";
     }
   }
 
