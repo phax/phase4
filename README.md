@@ -267,7 +267,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.13.0 - work in progress
+* v0.13.0 - 2020-12-11
     * Extended exception API to that constructors with only another exception are present
     * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work
     * Updated to peppol-commons 8.3.1 that fixes the Peppol SBDH `TypeVersion` check
