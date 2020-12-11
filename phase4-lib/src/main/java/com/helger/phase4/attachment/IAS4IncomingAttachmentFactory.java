@@ -50,6 +50,10 @@ public interface IAS4IncomingAttachmentFactory
   WSS4JAttachment createAttachment (@Nonnull MimeBodyPart aBodyPart, @Nonnull AS4ResourceHelper aResHelper) throws IOException,
                                                                                                             MessagingException;
 
+  /**
+   * The default instance of {@link IAS4IncomingAttachmentFactory} that uses
+   * {@link WSS4JAttachment#createIncomingFileAttachment(MimeBodyPart, AS4ResourceHelper)}
+   */
   @Nonnull
   IAS4IncomingAttachmentFactory DEFAULT_INSTANCE = WSS4JAttachment::createIncomingFileAttachment;
 }
