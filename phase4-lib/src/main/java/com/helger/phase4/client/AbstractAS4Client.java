@@ -358,7 +358,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The maximum number of retries. Only values &gt; 0 imply a retry.
-   *         The default value is {@link #DEFAULT_MAX_RETRIES}.
    * @since 0.9.0
    * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */
@@ -388,8 +387,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   }
 
   /**
-   * @return The interval in milliseconds between retries. Must be &ge; 0. The
-   *         default value is {@link #DEFAULT_RETRY_INTERVAL_MS}.
+   * @return The interval in milliseconds between retries. Must be &ge; 0.
    * @since 0.9.0
    * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
    */

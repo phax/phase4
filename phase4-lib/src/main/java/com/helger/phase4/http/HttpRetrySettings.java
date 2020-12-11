@@ -89,8 +89,8 @@ public class HttpRetrySettings
    * @return The duration before the first retry. Never <code>null</code>. The
    *         caller needs to ensure to increase the duration with the factor
    *         provided from {@link #getRetryIncreaseFactor()}. The
-   *         {@link #getIncreased(Duration, float)} utility method may be used
-   *         to perform the necessary increase.
+   *         {@link #getIncreased(Duration, BigDecimal)} utility method may be
+   *         used to perform the necessary increase.
    * @see #getRetryIncreaseFactor()
    * @see #getIncreased(Duration, BigDecimal)
    */

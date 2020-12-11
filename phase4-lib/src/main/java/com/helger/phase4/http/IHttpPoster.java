@@ -51,8 +51,9 @@ public interface IHttpPoster
   /**
    * Set the HTTP client provider to be used. This is e.g. necessary when a
    * custom SSL context or a proxy server is to be used. See
-   * {@link #createDefaultHttpClientFactory()} as the default implementation of
-   * {@link IHttpClientProvider}. This factory is used for http sending.
+   * {@link BasicHttpPoster#createDefaultHttpClientFactory()} as the default
+   * implementation of {@link IHttpClientProvider}. This factory is used for
+   * http sending.
    *
    * @param aHttpClientFactory
    *        The HTTP client factory to be used. May not be <code>null</code>.
@@ -113,7 +114,9 @@ public interface IHttpPoster
    * @param aResponseHandler
    *        The HTTP response handler that should be used to convert the HTTP
    *        response to a domain object.
-   * @return The HTTP response. May be <code>null</code>.
+   * @return The HTTP response data as indicated by the ResponseHandler. Should
+   *         not be <code>null</code> but basically depends on the response
+   *         handler.
    * @throws IOException
    *         In case of IO error
    */
@@ -149,10 +152,13 @@ public interface IHttpPoster
    *        An optional retry callback that is invoked, before a retry happens.
    * @param <T>
    *        Response data type
-   * @return
+   * @return The HTTP response data as indicated by the ResponseHandler. Should
+   *         not be <code>null</code> but basically depends on the response
+   *         handler.
    * @throws IOException
+   *         In case of IO error
    */
-  @Nonnull
+  @Nullable
   <T> T sendGenericMessageWithRetries (@Nonnull String sURL,
                                        @Nullable HttpHeaderMap aCustomHttpHeaders,
                                        @Nonnull HttpEntity aHttpEntity,
