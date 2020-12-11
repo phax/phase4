@@ -17,6 +17,9 @@
 package com.helger.phase4.servlet.dump;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -24,10 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.http.CHttp;
+import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
-import com.helger.commons.io.file.SimpleFileIO;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
+import com.helger.phase4.client.AbstractAS4RawResponseConsumer;
 import com.helger.phase4.client.IAS4RawResponseConsumer;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.util.Phase4Exception;
@@ -37,7 +44,7 @@ import com.helger.phase4.util.Phase4Exception;
  **
  * @author Philip Helger
  */
-public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsumer
+public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
 {
   /**
    * Callback interface to create a file based on the provided metadata.
@@ -92,7 +99,11 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
 
   public void handleResponse (@Nonnull final AS4ClientSentMessage <byte []> aResponseEntity) throws Phase4Exception
   {
-    if (aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0)
+    final boolean bUseStatusLine = isHandleStatusLine () && aResponseEntity.hasResponseStatusLine ();
+    final boolean bUseHttpHeaders = isHandleHttpHeaders () && aResponseEntity.getResponseHeaders ().isNotEmpty ();
+    final boolean bUseBody = aResponseEntity.hasResponse () && aResponseEntity.getResponse ().length > 0;
+
+    if (bUseStatusLine || bUseHttpHeaders || bUseBody)
     {
       final String sMessageID = aResponseEntity.getMessageID ();
 
@@ -101,9 +112,46 @@ public class AS4RawResponseConsumerWriteToFile implements IAS4RawResponseConsume
       if (LOGGER.isInfoEnabled ())
         LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
 
-      // Write the main content
-      if (SimpleFileIO.writeFile (aResponseFile, aResponseEntity.getResponse ()).isFailure ())
-        LOGGER.error ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'");
+      try (final OutputStream aOS = FileHelper.getBufferedOutputStream (aResponseFile))
+      {
+        if (bUseStatusLine)
+        {
+          // Write the status line
+          aOS.write (aResponseEntity.getResponseStatusLine ().toString ().getBytes (CHttp.HTTP_CHARSET));
+        }
+
+        if (bUseHttpHeaders)
+        {
+          // Write the response headers
+          for (final Map.Entry <String, ICommonsList <String>> aEntry : aResponseEntity.getResponseHeaders ())
+          {
+            final String sHeader = aEntry.getKey ();
+            for (final String sValue : aEntry.getValue ())
+            {
+              // By default quoting is disabled
+              final boolean bQuoteIfNecessary = false;
+              final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
+              aOS.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+            }
+          }
+        }
+
+        if ((bUseStatusLine || bUseHttpHeaders) && bUseBody)
+        {
+          // Separator line
+          aOS.write (CHttp.EOL.getBytes (CHttp.HTTP_CHARSET));
+        }
+
+        if (bUseBody)
+        {
+          // Write the main content
+          aOS.write (aResponseEntity.getResponse ());
+        }
+      }
+      catch (final IOException ex)
+      {
+        throw new Phase4Exception ("Error writing AS4 response file to '" + aResponseFile.getAbsolutePath () + "'", ex);
+      }
     }
   }
 
