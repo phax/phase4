@@ -203,6 +203,10 @@ public class Phase4OutgoingAttachment
     @Nonnull
     public Phase4OutgoingAttachment build ()
     {
+      if (m_aData == null)
+        throw new IllegalStateException ("Phase4OutgoingAttachment has no 'data' element");
+      if (m_aMimeType == null)
+        throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
       return new Phase4OutgoingAttachment (m_aData, m_sContentID, m_sFilename, m_aMimeType, m_eCompressionMode);
     }
   }
