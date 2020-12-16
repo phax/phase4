@@ -89,6 +89,11 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.helger.phive.rules</groupId>
+      <artifactId>phive-rules-xrechnung</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
