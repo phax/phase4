@@ -45,7 +45,7 @@ public class Phase4PeppolValidationException extends Phase4PeppolException
    *         <code>null</code>.
    */
   @Nonnull
-  public ValidationResultList getValidationResult ()
+  public final ValidationResultList getValidationResult ()
   {
     return m_aValidationResult;
   }
