@@ -174,6 +174,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
 
   /**
    * @return The underlying HTTP poster to use. May not be <code>null</code>.
+   * @since 0.13.0
    */
   @Nonnull
   public final IHttpPoster getHttpPoster ()
@@ -188,6 +189,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @param aHttpPoster
    *        Instance to be used. May not be <code>null</code>.
    * @return this for chaining
+   * @since 0.13.0
    */
   @Nonnull
   public final IMPLTYPE setHttpPoster (@Nonnull final IHttpPoster aHttpPoster)
