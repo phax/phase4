@@ -32,6 +32,7 @@ Some known users of phase4 - mostly in the context of Peppol - are (in alphabeti
 * Bundesrechenzentrum / Federal Computing Center (AT) - https://www.brz.gv.at/
 * ecosio GmbH (AT) - https://ecosio.com/
 * Fitek AS (EE) - https://fitek.com/
+* Formware GmbH (DE) - https://www.formware.de/
 * GHX LLC (UK) - https://www.ghx.com/
 * Qvalia Group AB (SE) - https://qvalia.com/
 * Storecove (Global) - https://www.storecove.com/
