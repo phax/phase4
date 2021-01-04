@@ -269,6 +269,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v0.13.1 - work in progress
+    * Updated to WSS4J 2.3.1
     * Added new class `EbmsError` to implement `IEbmsError` next to `EEbmsError`
 * v0.13.0 - 2020-12-11
     * Extended exception API to that constructors with only another exception are present
