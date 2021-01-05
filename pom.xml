@@ -129,6 +129,13 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>com.helger.ubl</groupId>
+        <artifactId>ph-ubl-parent-pom</artifactId>
+        <version>6.4.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>com.helger.peppol</groupId>
         <artifactId>peppol-commons-parent-pom</artifactId>
         <version>${peppol-commons.version}</version>
