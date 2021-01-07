@@ -66,6 +66,16 @@ public final class PModeLegSecurityJsonConverter
   private PModeLegSecurityJsonConverter ()
   {}
 
+  /**
+   * Convert the provided {@link PModeLegSecurity} object to a JSON object. The
+   * conversion from JSON Object back to a domain object happens via
+   * {@link #convertToNative(IJsonObject)}.
+   *
+   * @param aValue
+   *        The value to be converted. May not be <code>null</code>.
+   * @return The non-<code>null</code> JSON object filled with the necessary
+   *         values.
+   */
   @Nonnull
   public static IJsonObject convertToJson (@Nonnull final PModeLegSecurity aValue)
   {
@@ -117,6 +127,15 @@ public final class PModeLegSecurityJsonConverter
     return ret;
   }
 
+  /**
+   * Convert the provided JSON to a {@link PModeLegSecurity} object.
+   *
+   * @param aElement
+   *        The JSON object to be converted. May not be <code>null</code>.
+   * @return A non-<code>null</code> {@link PModeLegSecurity}
+   * @throws IllegalStateException
+   *         In case of an unsupported value
+   */
   @Nonnull
   public static PModeLegSecurity convertToNative (@Nonnull final IJsonObject aElement)
   {
