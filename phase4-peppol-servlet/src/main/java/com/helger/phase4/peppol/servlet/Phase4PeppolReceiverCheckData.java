@@ -19,7 +19,7 @@ package com.helger.phase4.peppol.servlet;
 import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
@@ -32,7 +32,7 @@ import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
  * @author Philip Helger
  * @since 0.9.13
  */
-@NotThreadSafe
+@Immutable
 public class Phase4PeppolReceiverCheckData
 {
   private final ISMPServiceMetadataProvider m_aSMPClient;

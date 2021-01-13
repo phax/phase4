@@ -517,6 +517,9 @@ public class Phase4PeppolServletMessageProcessorSPI implements IAS4ServletMessag
                                                                                             : Phase4PeppolServletConfiguration.getAsReceiverCheckData ();
       if (aReceiverCheckData != null)
       {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Performing check if the provided data is registered in our SMP");
+
         try
         {
           // Get the endpoint information required from the recipient
