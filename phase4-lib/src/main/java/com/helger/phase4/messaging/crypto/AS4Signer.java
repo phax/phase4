@@ -25,6 +25,8 @@ import org.apache.wss4j.common.WSEncryptionPart;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
@@ -51,6 +53,8 @@ import com.helger.phase4.wss.WSSSynchronizer;
 @Immutable
 public final class AS4Signer
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Signer.class);
+
   private AS4Signer ()
   {}
 
@@ -70,6 +74,9 @@ public final class AS4Signer
     ValueEnforcer.notEmpty (sMessagingID, "MessagingID");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
     ValueEnforcer.notNull (aSigningParams, "SigningParams");
+
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Now signing AS4 message");
 
     // Start signing the document
     final WSSecHeader aSecHeader = new WSSecHeader (aPreSigningMessage);

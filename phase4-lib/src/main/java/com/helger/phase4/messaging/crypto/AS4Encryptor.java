@@ -31,6 +31,8 @@ import org.apache.wss4j.common.ext.WSSecurityException.ErrorCode;
 import org.apache.wss4j.common.util.KeyUtils;
 import org.apache.wss4j.dom.message.WSSecEncrypt;
 import org.apache.wss4j.dom.message.WSSecHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 
@@ -60,6 +62,8 @@ import com.helger.phase4.wss.WSSSynchronizer;
 @Immutable
 public final class AS4Encryptor
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4Encryptor.class);
+
   private AS4Encryptor ()
   {}
 
@@ -98,6 +102,9 @@ public final class AS4Encryptor
                                                    final boolean bMustUnderstand,
                                                    @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Now encrypting AS4 SOAP message");
+
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
@@ -167,6 +174,9 @@ public final class AS4Encryptor
                                                      @Nonnull @WillNotClose final AS4ResourceHelper aResHelper,
                                                      @Nonnull final AS4CryptParams aCryptParams) throws WSSecurityException
   {
+    if (LOGGER.isInfoEnabled ())
+      LOGGER.info ("Now encrypting AS4 MIME message");
+
     final WSSecHeader aSecHeader = new WSSecHeader (aDoc);
     aSecHeader.insertSecurityHeader ();
 
