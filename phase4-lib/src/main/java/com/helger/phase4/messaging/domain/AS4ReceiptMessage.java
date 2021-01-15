@@ -19,6 +19,8 @@ package com.helger.phase4.messaging.domain;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.helger.commons.ValueEnforcer;
@@ -47,6 +49,8 @@ import com.helger.xsds.xmldsig.ReferenceType;
  */
 public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4ReceiptMessage.class);
+
   private final Ebms3SignalMessage m_aSignalMessage;
 
   public AS4ReceiptMessage (@Nonnull final ESoapVersion eSoapVersion, @Nonnull final Ebms3SignalMessage aSignalMessage)
@@ -158,6 +162,11 @@ public class AS4ReceiptMessage extends AbstractAS4Message <AS4ReceiptMessage>
     }
     else
     {
+      if (aDSRefs.isEmpty ())
+        LOGGER.info ("Found no ds:Reference elements in the source message, hence returning the source UserMessage in the Receipt");
+      else
+        LOGGER.info ("Non-repudiation is disabled, hence returning the source UserMessage in the Receipt");
+
       // If the original usermessage is not signed, the receipt will contain the
       // original message part without wss4j security
       aEbms3Receipt.addAny (AS4UserMessage.create (eSoapVersion, aEbms3UserMessage).getAsSoapDocument ().getDocumentElement ());

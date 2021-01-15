@@ -132,7 +132,7 @@ public class AS4ClientReceiptMessage extends AbstractAS4ClientSignalMessage <AS4
     if (m_bNonRepudiation)
     {
       if (m_aSoapDocument == null)
-        throw new IllegalStateException ("Nonrepudiation only works in conjunction with a set SOAP document.");
+        throw new IllegalStateException ("Non-repudiation only works in conjunction with a set SOAP document.");
     }
     else
     {
