@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -249,6 +250,18 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
+  public static interface ISoapProcessingFinalizedCallback
+  {
+    /**
+     * Indicate that processing has finished.
+     *
+     * @param bWasSync
+     *        <code>true</code> if it was synchronous, <code>false</code> if it
+     *        was asynchronous.
+     */
+    void onProcessingFinalized (boolean bWasSync);
+  }
+
   private static final class SPIInvocationResult implements ISuccessIndicator
   {
     private boolean m_bSuccess = false;
@@ -311,6 +324,7 @@ public class AS4RequestHandler implements AutoCloseable
   private IAS4IncomingDumper m_aIncomingDumper;
   private IAS4OutgoingDumper m_aOutgoingDumper;
   private IAS4RetryCallback m_aRetryCallback;
+  private ISoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
   private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
@@ -518,6 +532,34 @@ public class AS4RequestHandler implements AutoCloseable
   public final AS4RequestHandler setErrorConsumer (@Nullable final IAS4RequestHandlerErrorConsumer aErrorConsumer)
   {
     m_aErrorConsumer = aErrorConsumer;
+    return this;
+  }
+
+  /**
+   * @return The internal SOAP processing finalized callback. <code>null</code>
+   *         by default.
+   * @since 0.13.1
+   */
+  @Nullable
+  public final ISoapProcessingFinalizedCallback getSoapProcessingFinalizedCallback ()
+  {
+    return m_aSoapProcessingFinalizedCB;
+  }
+
+  /**
+   * Set the internal SOAP processing finalized callback. Only use when you know
+   * what you are doing.
+   *
+   * @param aSoapProcessingFinalizedCB
+   *        The callback to be invoked. May be <code>null</code>. Only
+   *        non-<code>null</code> callbacks are invoked ;-)
+   * @return this for chaining
+   * @since 0.13.1
+   */
+  @Nonnull
+  public final AS4RequestHandler setSoapProcessingFinalizedCallback (final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
+  {
+    m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
     return this;
   }
 
@@ -1229,12 +1271,15 @@ public class AS4RequestHandler implements AutoCloseable
         else
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Successfully invoked synchronous SPIs");
+
+        if (m_aSoapProcessingFinalizedCB != null)
+          m_aSoapProcessingFinalizedCB.onProcessingFinalized (true);
       }
       else
       {
         // Call asynchronous
         // Only leg1 can be async!
-        PhotonWorkerPool.getInstance ().runThrowing ("phase4", () -> {
+        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ().runThrowing ("phase4 async processing", () -> {
           // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
@@ -1332,6 +1377,13 @@ public class AS4RequestHandler implements AutoCloseable
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
                                      XMLWriter.getNodeAsString (aAsyncResponse, AS4HttpDebug.getDebugXMLWriterSettings ()));
         });
+
+        if (m_aSoapProcessingFinalizedCB != null)
+        {
+          // Give the outside world the possibility to get notified when the
+          // processing is done
+          aFuture.thenRun ( () -> m_aSoapProcessingFinalizedCB.onProcessingFinalized (false));
+        }
       }
     }
 
