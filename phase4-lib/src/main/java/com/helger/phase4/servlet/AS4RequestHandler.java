@@ -250,6 +250,12 @@ public class AS4RequestHandler implements AutoCloseable
     }
   }
 
+  /**
+   * Callback interface to indicate finalization of async processing.
+   *
+   * @author Philip Helger
+   * @since 0.13.1
+   */
   public static interface ISoapProcessingFinalizedCallback
   {
     /**
@@ -557,7 +563,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @since 0.13.1
    */
   @Nonnull
-  public final AS4RequestHandler setSoapProcessingFinalizedCallback (final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
+  public final AS4RequestHandler setSoapProcessingFinalizedCallback (@Nullable final ISoapProcessingFinalizedCallback aSoapProcessingFinalizedCB)
   {
     m_aSoapProcessingFinalizedCB = aSoapProcessingFinalizedCB;
     return this;
