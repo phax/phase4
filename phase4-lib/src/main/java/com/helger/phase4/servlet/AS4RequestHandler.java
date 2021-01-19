@@ -554,7 +554,9 @@ public class AS4RequestHandler implements AutoCloseable
 
   /**
    * Set the internal SOAP processing finalized callback. Only use when you know
-   * what you are doing.
+   * what you are doing. This callback is invoked both in the synchronous AND
+   * the asynchronous processing. A simple way to await the finalization could
+   * e.g. be a <code>java.util.concurrent.CountDownLatch</code>.
    *
    * @param aSoapProcessingFinalizedCB
    *        The callback to be invoked. May be <code>null</code>. Only
