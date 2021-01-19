@@ -254,6 +254,16 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
+      if (aUserMessage.getMessageInfo () != null)
+      {
+        // Set this is as early as possible, so that eventually occurring error
+        // messages can use the "RefToMessageId" element properly
+        aState.setMessageID (aUserMessage.getMessageInfo ().getMessageId ());
+      }
+
+      // PartyInfo is mandatory in UserMessage
+      // From is mandatory in PartyInfo
+      // To is mandatory in PartyInfo
       final List <Ebms3PartyId> aFromPartyIdList = aUserMessage.getPartyInfo ().getFrom ().getPartyId ();
       final List <Ebms3PartyId> aToPartyIdList = aUserMessage.getPartyInfo ().getTo ().getPartyId ();
 
@@ -402,7 +412,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             // Check if there is a BodyPayload as specified in the UserMessage
             if (!bHasSoapBodyPayload)
             {
-              LOGGER.error ("Error processing the UserMessage, Expected a BodyPayload but there is none present. ");
+              LOGGER.error ("Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.");
 
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
               return ESuccess.FAILURE;
@@ -504,11 +514,11 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // This may also be an indicator for "external payloads"
         if (nSpecifiedAttachments != aAttachments.size ())
         {
-          LOGGER.error ("Error processing the UserMessage, the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
+          LOGGER.error ("Error processing the UserMessage: the amount of specified attachments does not correlate with the actual attachments in the UserMessage. Expected " +
                         aEbms3PayloadInfo.getPartInfoCount () +
                         " but having " +
                         aAttachments.size () +
-                        " attachments.");
+                        " attachments. This is an indicator, that an external attached was provided.");
 
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
@@ -517,9 +527,16 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     }
     else
     {
+      // Must be a SignalMessage
       // all vars stay null
-
       final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);
+
+      if (aSignalMessage.getMessageInfo () != null)
+      {
+        // Set this is as early as possible, so that eventually occurring error
+        // messages can use the "RefToMessageId" element properly
+        aState.setMessageID (aSignalMessage.getMessageInfo ().getMessageId ());
+      }
 
       final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();
       final Ebms3Receipt aEbms3Receipt = aSignalMessage.getReceipt ();

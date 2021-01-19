@@ -28,6 +28,8 @@ import javax.annotation.WillNotClose;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.apache.wss4j.dom.WSConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -56,6 +58,8 @@ import com.helger.phase4.util.AS4ResourceHelper;
 @NotThreadSafe
 public final class AS4MessageState extends AttributeContainerAny <String> implements IAS4MessageState
 {
+  private static final Logger LOGGER = LoggerFactory.getLogger (AS4MessageState.class);
+
   private static final String KEY_EBMS3_MESSAGING = "phase4.ebms3.messaging";
   private static final String KEY_PMODE = "phase4.pmode";
   private static final String KEY_MPC = "phase4.mpc";
@@ -323,6 +327,9 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
 
   public void setMessageID (@Nullable final String sMessageID)
   {
+    final String sOldMessageID = getMessageID ();
+    if (sOldMessageID != null && !sOldMessageID.equals (sMessageID))
+      LOGGER.warn ("Overwriting the AS4 message ID from '" + sOldMessageID + "' to '" + sMessageID + "'");
     putIn (KEY_AS4_MESSAGE_ID, sMessageID);
   }
 
