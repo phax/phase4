@@ -272,6 +272,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Updated to WSS4J 2.3.1
     * Added new class `EbmsError` to implement `IEbmsError` next to `EEbmsError`
     * The `AS4RequestHandler` received a `SoapProcessingFinalizedCallback` to be able to get notified on asynchronous processing finalization
+    * Extended `IAS4IncomingProfileSelector` to allow to disable the AS4 profile validation of PModes
 * v0.13.0 - 2020-12-11
     * Extended exception API to that constructors with only another exception are present
     * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work

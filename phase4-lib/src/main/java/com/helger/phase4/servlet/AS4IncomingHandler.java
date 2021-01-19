@@ -597,15 +597,24 @@ public class AS4IncomingHandler
           final IAS4ProfileValidator aValidator = aProfile.getValidator ();
           if (aValidator != null)
           {
-            final ErrorList aErrorList = new ErrorList ();
-            aValidator.validatePMode (aPMode, aErrorList);
-            aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
-            if (aErrorList.isNotEmpty ())
+            if (aAS4ProfileSelector.validateAgainstProfile ())
             {
-              throw new Phase4Exception ("Error validating incoming AS4 message with the profile " +
-                                         aProfile.getDisplayName () +
-                                         "\n Following errors are present: " +
-                                         aErrorList.getAllErrors ().getAllTexts (aLocale));
+              final ErrorList aErrorList = new ErrorList ();
+              aValidator.validatePMode (aPMode, aErrorList);
+              aValidator.validateUserMessage (aEbmsUserMessage, aErrorList);
+              if (aErrorList.isNotEmpty ())
+              {
+                throw new Phase4Exception ("Error validating incoming AS4 message with the profile " +
+                                           aProfile.getDisplayName () +
+                                           "\n Following errors are present: " +
+                                           aErrorList.getAllErrors ().getAllTexts (aLocale));
+              }
+            }
+            else
+            {
+              LOGGER.warn ("The AS4 profile '" +
+                           sProfileID +
+                           "' has a validation configured, but the usage was disabled using the AS4ProfileSelector");
             }
           }
         }

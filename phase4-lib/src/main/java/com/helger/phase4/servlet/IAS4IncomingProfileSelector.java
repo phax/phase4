@@ -37,4 +37,18 @@ public interface IAS4IncomingProfileSelector
    */
   @Nullable
   String getAS4ProfileID (@Nonnull IAS4MessageState aState);
+
+  /**
+   * Configure if the profile validation rules should be applied or not. Usually
+   * this is recommended, but there might be edge cases where it is good to be
+   * able to deactivate them.
+   *
+   * @return <code>true</code> if profile validation should be performed,
+   *         <code>false</code> if not. The default is <code>true</code>.
+   * @since 0.13.1
+   */
+  default boolean validateAgainstProfile ()
+  {
+    return true;
+  }
 }
