@@ -130,7 +130,7 @@ public class HttpRetrySettings
 
   /**
    * Set the retry increase factor to use. 1 means no increase. 2 means the
-   * waiting time doubles every time. Only
+   * waiting time doubles every time. Only value &gt; 0 are allowed.
    *
    * @param aRetryIncreaseFactor
    *        The retry increase factor. May not be <code>null</code> and must be
