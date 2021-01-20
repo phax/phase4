@@ -67,7 +67,7 @@ public class PModeProperty implements IHasName, IHasDescription, IMandatoryIndic
   {
     if (!DATA_TYPE_STRING.equals (sDataType))
       if (LOGGER.isWarnEnabled ())
-        LOGGER.warn ("A non-standard data type (everything besides 'string') is used: " + sDataType);
+        LOGGER.warn ("A non-standard data type (everything besides '" + DATA_TYPE_STRING + "') is used: " + sDataType);
   }
 
   public PModeProperty ()

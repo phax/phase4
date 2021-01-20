@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.state.ETriState;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.EMEP;
@@ -62,21 +61,18 @@ public final class DefaultPMode
   @Nonnull
   private static PModeLeg _generatePModeLeg (@Nullable final String sAddress)
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.TRUE,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandling = PModeLegErrorHandling.createUndefined ();
+    aErrorHandling.setReportAsResponse (true);
+
     final PModeLegReliability aReliability = null;
+
     final PModeLegSecurity aSecurity = new PModeLegSecurity ();
-    {
-      aSecurity.setSendReceipt (true);
-      aSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
-    }
+    aSecurity.setSendReceipt (true);
+    aSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
+
     return new PModeLeg (_generatePModeLegProtocol (sAddress),
                          _generatePModeLegBusinessInformation (),
-                         aErrorHandler,
+                         aErrorHandling,
                          aReliability,
                          aSecurity);
   }

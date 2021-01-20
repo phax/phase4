@@ -752,6 +752,25 @@ public class PModeLegSecurity implements Serializable
     setX509EncryptionMinimumStrength (null);
   }
 
+  /**
+   * Set all field that affect username token to "don't use".
+   *
+   * @see #setUsernameTokenUsername(String)
+   * @see #setUsernameTokenPassword(String)
+   * @see #setUsernameTokenDigest(String)
+   * @see #setUsernameTokenNonce(String)
+   * @see #setUsernameTokenCreated(Boolean)
+   * @since 0.13.1
+   */
+  public final void disableUsernameToken ()
+  {
+    setUsernameTokenUsername (null);
+    setUsernameTokenPassword (null);
+    setUsernameTokenDigest (null);
+    setUsernameTokenNonce (null);
+    setUsernameTokenCreated (ETriState.UNDEFINED);
+  }
+
   @Override
   public boolean equals (final Object o)
   {

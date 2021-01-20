@@ -312,12 +312,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportAsResponseMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -330,12 +325,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportAsResponseWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportAsResponse (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
@@ -349,12 +339,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -368,12 +353,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
@@ -388,12 +368,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -407,12 +382,7 @@ public final class PeppolCompatibilityValidatorTest
   @Test
   public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportProcessErrorNotifyProducer (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,

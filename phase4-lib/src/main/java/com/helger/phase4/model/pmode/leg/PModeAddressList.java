@@ -33,7 +33,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 
 /**
- * List of addresses
+ * List of addresses in a PMode
  *
  * @author Philip Helger
  */
@@ -60,6 +60,9 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
       addresses ().addAll (aAddresses);
   }
 
+  /**
+   * @return A mutable list of all contained addresses. Never <code>null</code>.
+   */
   @Nonnull
   @ReturnsMutableObject
   public final ICommonsList <String> addresses ()
@@ -67,6 +70,9 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
     return m_aAddresses;
   }
 
+  /**
+   * @return A copy of all contained addresses. Never <code>null</code>.
+   */
   @Nonnull
   @ReturnsMutableCopy
   public final ICommonsList <String> getAllAddresses ()
@@ -114,6 +120,13 @@ public class PModeAddressList implements Serializable, ICloneable <PModeAddressL
     return new ToStringGenerator (this).append ("Addresses", m_aAddresses).getToString ();
   }
 
+  /**
+   * Create a new {@link PModeAddressList} based on a comma separated String.
+   *
+   * @param sAddressString
+   *        The address string to be split. May be <code>null</code>.
+   * @return A non-<code>null</code> but maybe empty list.
+   */
   @Nonnull
   public static PModeAddressList createFromString (@Nullable final String sAddressString)
   {

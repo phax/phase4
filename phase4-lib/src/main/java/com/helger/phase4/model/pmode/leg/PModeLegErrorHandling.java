@@ -299,6 +299,10 @@ public class PModeLegErrorHandling implements Serializable
                                        .getToString ();
   }
 
+  /**
+   * @return A new {@link PModeLegErrorHandling} that is totally undefined.
+   *         Never <code>null</code>.
+   */
   @Nonnull
   public static PModeLegErrorHandling createUndefined ()
   {
