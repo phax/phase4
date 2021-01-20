@@ -213,7 +213,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       for (final IError aError : aCVEH.getErrorList ())
       {
         LOGGER.error ("Header error: " + aError.getAsString (aLocale));
-
         aErrorList.add (SingleError.builder (aError).setErrorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ()).build ());
       }
       return ESuccess.FAILURE;
@@ -227,7 +226,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     if (nUserMessages > 1)
     {
       LOGGER.error ("Too many UserMessage objects (" + nUserMessages + ") contained.");
-
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -237,7 +235,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     if (nSignalMessages > 1)
     {
       LOGGER.error ("Too many SignalMessage objects (" + nSignalMessages + ") contained.");
-
       aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
       return ESuccess.FAILURE;
     }
@@ -302,11 +299,10 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                                                 sAgreementRef,
                                                 sResponderAddress);
 
-        // Should be screened by the xsd conversion already
+        // Should be screened by the XSD conversion already
         if (aPMode == null)
         {
           LOGGER.error ("Failed to resolve PMode '" + sPModeID + "' using resolver " + m_aPModeResolver);
-
           aErrorList.add (EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -357,7 +353,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         if (aEffectiveMPC == null)
         {
           LOGGER.error ("Error processing the UserMessage, effective MPC ID '" + sEffectiveMPCID + "' is unknown!");
-
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -371,8 +366,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       {
         if (bHasSoapBodyPayload)
         {
-          LOGGER.error ("No PartInfo is specified, so no SOAP body payload is allowed.");
-
+          LOGGER.error ("No PayloadInfo/PartInfo is specified, so no SOAP body payload is allowed.");
           aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -381,8 +375,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
         // attachments in the message
         if (aAttachments.isNotEmpty ())
         {
-          LOGGER.error ("No PartInfo is specified, so no attachments are allowed.");
-
+          LOGGER.error ("No PayloadInfo/PartInfo is specified, so no attachments are allowed.");
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -397,7 +390,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
                         " but having " +
                         aAttachments.size () +
                         " attachments.");
-
           aErrorList.add (EEbmsError.EBMS_EXTERNAL_PAYLOAD_ERROR.getAsError (aLocale));
           return ESuccess.FAILURE;
         }
@@ -413,7 +405,6 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             if (!bHasSoapBodyPayload)
             {
               LOGGER.error ("Error processing the UserMessage. Expected a SOAPBody Payload but there is none present.");
-
               aErrorList.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsError (aLocale));
               return ESuccess.FAILURE;
             }
@@ -428,10 +419,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             final String sAttachmentID = StringHelper.trimStart (aPartInfo.getHref (), MessageHelperMethods.PREFIX_CID);
             final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (), sAttachmentID));
             if (aIncomingAttachment == null)
+            {
               LOGGER.warn ("Failed to resolve MIME attachment '" +
                            sAttachmentID +
                            "' in list of " +
                            aAttachments.getAllMapped (WSS4JAttachment::getId));
+            }
 
             boolean bMimeTypePresent = false;
             boolean bCompressionTypePresent = false;
