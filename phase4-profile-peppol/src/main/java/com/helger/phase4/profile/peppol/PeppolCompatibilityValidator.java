@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.debug.GlobalDebug;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
@@ -71,12 +72,13 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
 
   private static void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
                                           @Nonnull final ErrorList aErrorList,
-                                          @Nonnull final PModeLeg aPModeLeg)
+                                          @Nonnull final PModeLeg aPModeLeg,
+                                          @Nonnull @Nonempty final String sFieldPrefix)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
     {
-      aErrorList.add (_createError ("PMode Leg 1 is missing Protocol"));
+      aErrorList.add (_createError (sFieldPrefix + "Protocol is missing"));
     }
     else
     {
@@ -96,20 +98,20 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
           else
           {
             // Other protocol
-            aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
+            aErrorList.add (_createError (sFieldPrefix + "AddressProtocol '" + sAddressProtocol + "' is unsupported"));
           }
       }
       else
       {
         // Empty address protocol
         if (false)
-          aErrorList.add (_createError ("PMode Leg1 is missing the AddressProtocol"));
+          aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
       }
 
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));
+        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
       }
     }
 
@@ -118,50 +120,55 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     if (aPModeLegSecurity != null)
     {
       // Check Certificate
-      // TODO certificate is in Partner - therefore not here :)
+      // certificate is in Partner/SMP - therefore not here :)
       if (false)
         if (aPModeLegSecurity.getX509SignatureCertificate () == null)
         {
-          aErrorList.add (_createError ("A signature certificate is required"));
+          aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureCertificate is missing"));
         }
 
       // Check Signature Algorithm
       if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
       {
-        aErrorList.add (_createError ("No signature algorithm is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureAlgorithm is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.RSA_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.X509SignatureAlgorithm must use the value '" +
                                         ECryptoAlgorithmSign.RSA_SHA_256.getID () +
-                                        " as signing algorithm"));
+                                        "'"));
         }
 
       // Check Hash Function
       if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
       {
-        aErrorList.add (_createError ("No hash function (Digest Algorithm) is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureHashFunction is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509SignatureHashFunction ().equals (ECryptoAlgorithmSignDigest.DIGEST_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Securoty.X509SignatureHashFunction must use the value '" +
                                         ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID () +
-                                        " as hash function"));
+                                        "'"));
         }
 
       // Check Encrypt algorithm
       if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
       {
-        aErrorList.add (_createError ("No encryption algorithm is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509EncryptionAlgorithm is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Securoty.X509EncryptionAlgorithm must use the value '" +
                                         ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
-                                        " as encryption algorithm"));
+                                        "' instead of '" +
+                                        aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
+                                        "'"));
         }
 
       // Check WSS Version = 1.1.1
@@ -169,43 +176,42 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       {
         // Check for WSS - Version if there is one present
         if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_111))
-          aErrorList.add (_createError ("Wrong WSS Version " +
-                                        aPModeLegSecurity.getWSSVersion () +
-                                        " only " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.WSSVersion must use the value " +
                                         EWSSVersion.WSS_111 +
-                                        " is allowed."));
+                                        " instead of " +
+                                        aPModeLegSecurity.getWSSVersion ()));
       }
 
       // PModeAuthorize
       if (aPModeLegSecurity.isPModeAuthorizeDefined ())
       {
         if (aPModeLegSecurity.isPModeAuthorize ())
-        {
-          aErrorList.add (_createError ("PMode Authorize has to be set to false"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize must be set to 'false'"));
       }
       else
       {
-        aErrorList.add (_createError ("PMode Authorize is a mandatory parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize is missing"));
       }
 
-      // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
+      // SEND RECEIPT TRUE/FALSE when false don't send receipts anymore
       if (aPModeLegSecurity.isSendReceiptDefined ())
       {
         if (aPModeLegSecurity.isSendReceipt ())
         {
           // set response required
-
           if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
-          {
-            aErrorList.add (_createError ("Only response is allowed as pattern"));
-          }
+            aErrorList.add (_createError (sFieldPrefix +
+                                          "Security.SendReceiptReplyPattern must use the value " +
+                                          EPModeSendReceiptReplyPattern.RESPONSE +
+                                          " instead of " +
+                                          aPModeLegSecurity.getSendReceiptReplyPattern ()));
         }
       }
     }
     else
     {
-      aErrorList.add (_createError ("No Security Parameter present but they are mandatory"));
+      aErrorList.add (_createError (sFieldPrefix + "Security is missing"));
     }
 
     // Error Handling
@@ -215,40 +221,34 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportAsResponseDefined ())
       {
         if (!aErrorHandling.isReportAsResponse ())
-        {
-          aErrorList.add (_createError ("PMode ReportAsResponse has to be True"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportAsResponse must be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportAsResponse is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportAsResponse is missing"));
       }
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-        {
-          aErrorList.add (_createError ("PMode ReportProcessErrorNotifyConsumer has to be True"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportProcessErrorNotifyConsumer must be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportProcessErrorNotifyConsumer is missing"));
       }
       if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-        {
-          aErrorList.add (_createError ("PMode ReportDeliveryFailuresNotifyProducer has to be True"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportDeliveryFailuresNotifyProducer must be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportDeliveryFailuresNotifyProducer is missing"));
       }
     }
     else
     {
-      aErrorList.add (_createError ("No ErrorHandling Parameter present but they are mandatory"));
+      aErrorList.add (_createError (sFieldPrefix + "ErrorHandling is missing"));
     }
 
     // Compression application/gzip ONLY
@@ -260,7 +260,11 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       if (eCompressionMode != null)
       {
         if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
-          aErrorList.add (_createError ("Only GZIP Compression is allowed"));
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "PayloadService.CompressionMode must be " +
+                                        EAS4CompressionMode.GZIP +
+                                        " instead of " +
+                                        eCompressionMode));
       }
     }
   }
@@ -299,15 +303,15 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1 == null)
     {
-      aErrorList.add (_createError ("PMode is missing Leg 1"));
+      aErrorList.add (_createError ("PMode.Leg[1] is missing"));
     }
     else
     {
-      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1);
+      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1, "PMode.Leg[1].");
 
       if (aPMode.getLeg2 () != null)
       {
-        aErrorList.add (_createError ("PMode should never have Leg 2"));
+        aErrorList.add (_createError ("PMode.Leg[2] must not be present"));
       }
     }
   }
@@ -352,13 +356,9 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
             }
 
             if (StringHelper.hasNoText (sOriginalSenderC1))
-              aErrorList.add (_createError ("'" +
-                                            CAS4.ORIGINAL_SENDER +
-                                            "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" + CAS4.ORIGINAL_SENDER + "' property is empty or not existant but mandatory"));
             if (StringHelper.hasNoText (sFinalRecipientC4))
-              aErrorList.add (_createError ("'" +
-                                            CAS4.FINAL_RECIPIENT +
-                                            "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("'" + CAS4.FINAL_RECIPIENT + "' property is empty or not existant but mandatory"));
           }
         }
       }
@@ -380,9 +380,7 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
           {
             if (!PeppolPMode.DEFAULT_PARTY_TYPE_ID.equals (aTo.getPartyIdAtIndex (0).getType ()))
             {
-              aErrorList.add (_createError ("The PartyInfo/To - part needs to have the type '" +
-                                            PeppolPMode.DEFAULT_PARTY_TYPE_ID +
-                                            "'"));
+              aErrorList.add (_createError ("The PartyInfo/To - part needs to have the type '" + PeppolPMode.DEFAULT_PARTY_TYPE_ID + "'"));
             }
           }
       }

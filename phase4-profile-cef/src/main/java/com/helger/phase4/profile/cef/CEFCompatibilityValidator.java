@@ -125,7 +125,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     if (aPModeLegSecurity != null)
     {
       // Check Certificate
-      // TODO certificate is in Partner - therefore not here :)
+      // certificate is in Partner/SMP - therefore not here :)
       if (false)
         if (aPModeLegSecurity.getX509SignatureCertificate () == null)
         {
@@ -336,7 +336,11 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
-    if (aUserMsg.getMessageInfo () != null)
+    if (aUserMsg.getMessageInfo () == null)
+    {
+      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
+    }
+    else
     {
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
@@ -373,10 +377,6 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
           }
         }
       }
-    }
-    else
-    {
-      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
     }
 
     if (aUserMsg.getPartyInfo () == null)
