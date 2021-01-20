@@ -330,7 +330,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse is missing")));
   }
 
   @Test
@@ -349,7 +349,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse must be 'true'")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
 
   @Test
@@ -368,7 +368,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer is missing")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
 
   @Test
@@ -388,7 +388,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer must be 'true'")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
 
   @Test
@@ -407,7 +407,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer is missing")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
 
   @Test
@@ -419,7 +419,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
+    aErrorHandler.setReportProcessErrorNotifyProducer (false);
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -427,7 +427,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer must be 'true'")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }
 
   @Test

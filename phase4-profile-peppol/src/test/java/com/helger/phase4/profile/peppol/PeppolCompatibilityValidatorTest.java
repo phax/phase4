@@ -264,7 +264,8 @@ public final class PeppolCompatibilityValidatorTest
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue ("Errors: " + m_aErrorList.toString (), m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
+    assertTrue ("Errors: " + m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
   }
 
   @Test
@@ -305,8 +306,7 @@ public final class PeppolCompatibilityValidatorTest
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode.Leg[1].ErrorHandling is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
 
   @Test
@@ -324,7 +324,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse is missing")));
   }
 
   @Test
@@ -343,7 +343,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse must be 'true'")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
 
   @Test
@@ -362,7 +362,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer is missing")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
 
   @Test
@@ -382,7 +382,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer must be 'true'")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
 
   @Test
@@ -401,7 +401,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer is missing")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
 
   @Test
@@ -413,7 +413,7 @@ public final class PeppolCompatibilityValidatorTest
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED,
                                                                            ETriState.UNDEFINED);
-    aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
+    aErrorHandler.setReportProcessErrorNotifyProducer (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -421,7 +421,7 @@ public final class PeppolCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer must be 'true'")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }
 
   @Test

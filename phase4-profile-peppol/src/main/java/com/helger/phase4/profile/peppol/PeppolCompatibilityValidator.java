@@ -70,6 +70,12 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
+  @Nonnull
+  private static IError _createWarn (@Nonnull final String sMsg)
+  {
+    return SingleError.builderWarn ().setErrorText (sMsg).build ();
+  }
+
   private static void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
                                           @Nonnull final ErrorList aErrorList,
                                           @Nonnull final PModeLeg aPModeLeg,
@@ -221,29 +227,31 @@ public class PeppolCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportAsResponseDefined ())
       {
         if (!aErrorHandling.isReportAsResponse ())
-          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportAsResponse must be 'true'"));
+          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.AsResponse must be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportAsResponse is missing"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.AsResponse is missing"));
       }
+
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportProcessErrorNotifyConsumer must be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportProcessErrorNotifyConsumer is missing"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer is missing"));
       }
-      if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
+
+      if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
-        if (!aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportDeliveryFailuresNotifyProducer must be 'true'"));
+        if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
+          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.ReportDeliveryFailuresNotifyProducer is missing"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer is missing"));
       }
     }
     else
