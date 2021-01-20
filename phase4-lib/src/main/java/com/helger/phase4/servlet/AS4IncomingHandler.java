@@ -529,21 +529,9 @@ public class AS4IncomingHandler
       // Every message can only contain 1 User message or 1 pull message
       // aUserMessage can be null on incoming Pull-Message!
       final Ebms3UserMessage aEbmsUserMessage = aState.getEbmsUserMessage ();
-      final Ebms3SignalMessage aEbmsSignalMessage = aState.getEbmsSignalMessage ();
       final Ebms3Error aEbmsError = aState.getEbmsError ();
       final Ebms3PullRequest aEbmsPullRequest = aState.getEbmsPullRequest ();
       final Ebms3Receipt aEbmsReceipt = aState.getEbmsReceipt ();
-
-      // Set the MessageID as the first property
-      final String sMessageID;
-      if (aEbmsUserMessage != null && aEbmsUserMessage.getMessageInfo () != null)
-        sMessageID = aEbmsUserMessage.getMessageInfo ().getMessageId ();
-      else
-        if (aEbmsSignalMessage != null && aEbmsSignalMessage.getMessageInfo () != null)
-          sMessageID = aEbmsSignalMessage.getMessageInfo ().getMessageId ();
-        else
-          sMessageID = null;
-      aState.setMessageID (sMessageID);
 
       // Check payload consistency
       final int nCountData = (aEbmsUserMessage != null ? 1 : 0) +
@@ -563,7 +551,7 @@ public class AS4IncomingHandler
                       ")");
 
         // send EBMS:0001 error back
-        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, sMessageID));
+        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, aState.getMessageID ()));
       }
 
       // Determine AS4 profile ID (since 0.13.0)

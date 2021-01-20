@@ -325,6 +325,12 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
     return getAsString (KEY_AS4_MESSAGE_ID);
   }
 
+  /**
+   * Set the AS4 message ID of the current message.
+   *
+   * @param sMessageID
+   *        The ID to be set. May be <code>null</code>.
+   */
   public void setMessageID (@Nullable final String sMessageID)
   {
     final String sOldMessageID = getMessageID ();
