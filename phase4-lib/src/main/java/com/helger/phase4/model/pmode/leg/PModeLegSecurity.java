@@ -757,17 +757,17 @@ public class PModeLegSecurity implements Serializable
    *
    * @see #setUsernameTokenUsername(String)
    * @see #setUsernameTokenPassword(String)
-   * @see #setUsernameTokenDigest(String)
-   * @see #setUsernameTokenNonce(String)
-   * @see #setUsernameTokenCreated(Boolean)
+   * @see #setUsernameTokenDigest(ETriState)
+   * @see #setUsernameTokenNonce(ETriState)
+   * @see #setUsernameTokenCreated(ETriState)
    * @since 0.13.1
    */
   public final void disableUsernameToken ()
   {
     setUsernameTokenUsername (null);
     setUsernameTokenPassword (null);
-    setUsernameTokenDigest (null);
-    setUsernameTokenNonce (null);
+    setUsernameTokenDigest (ETriState.UNDEFINED);
+    setUsernameTokenNonce (ETriState.UNDEFINED);
     setUsernameTokenCreated (ETriState.UNDEFINED);
   }
 

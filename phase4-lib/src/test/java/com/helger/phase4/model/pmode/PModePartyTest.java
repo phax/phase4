@@ -21,6 +21,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.annotation.Nonnull;
+
 import org.junit.Test;
 
 import com.helger.commons.mock.CommonsTestHelper;
@@ -34,7 +36,7 @@ import com.helger.xml.mock.XMLTestHelper;
  */
 public final class PModePartyTest
 {
-  private static void _testJson (final PModeParty p)
+  private static void _testJson (@Nonnull final PModeParty p)
   {
     final IJsonObject o = PModePartyJsonConverter.convertToJson (p);
     final PModeParty p2 = PModePartyJsonConverter.convertToNative (o);

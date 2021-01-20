@@ -268,12 +268,13 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.13.1 - work in progress
+* v0.13.1 - 2021-01-20
     * Updated to WSS4J 2.3.1
+    * Updated to ph-web 9.5.2 updating the U-NAPTR lookup code for BDXL lookups
     * Added new class `EbmsError` to implement `IEbmsError` next to `EEbmsError`
     * The `AS4RequestHandler` received a `SoapProcessingFinalizedCallback` to be able to get notified on asynchronous processing finalization
     * Extended `IAS4IncomingProfileSelector` to allow to disable the AS4 profile validation of PModes
-    * Remembering the MessageID earlier in the process, so that error messages can always use the "RefToMessageId" properly
+    * Remembering the MessageID earlier in the process, so that error messages can always use the `RefToMessageId` properly
     * Fine-tuned the CEF and Peppol PMode checks a bit
 * v0.13.0 - 2020-12-11
     * Extended exception API to that constructors with only another exception are present
