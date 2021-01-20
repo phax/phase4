@@ -105,7 +105,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg1 (null);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1] is missing")));
   }
 
   @Test
@@ -113,7 +113,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg2 (null);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 2")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[2] is missing")));
   }
 
   @Test
@@ -121,7 +121,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg2 (new PModeLeg (null, null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol is missing")));
   }
 
   @Test
@@ -130,7 +130,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("missing the AddressProtocol")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol is missing")));
   }
 
   @Test
@@ -138,7 +138,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol 'ftp' is unsupported")));
   }
 
   @Test
@@ -146,7 +146,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.setLeg2 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
 
   @Test
@@ -161,7 +161,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature certificate")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureCertificate is missing")));
   }
 
   @Test
@@ -175,7 +175,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureAlgorithm is missing")));
   }
 
   @Test
@@ -204,7 +204,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureHashFunction is missing")));
   }
 
   @Test
@@ -232,7 +232,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509EncryptionAlgorithm is missing")));
   }
 
   @Test
@@ -261,7 +261,8 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.WSSVersion must use the value WSS_111 instead of WSS_10")));
   }
 
   @Test
@@ -269,7 +270,8 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
   {
     m_aPMode.getLeg2 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue ("Errors: " + m_aErrorList.toString (), m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
+    assertTrue ("Errors: " + m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
   }
 
   @Test
@@ -298,7 +300,8 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.SendReceiptReplyPattern must use the value RESPONSE instead of CALLBACK")));
   }
 
   // Error Handling
@@ -309,8 +312,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
     m_aPMode.setLeg2 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("No ErrorHandling Parameter present but they are mandatory")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[2].ErrorHandling is missing")));
   }
 
   @Test
@@ -328,7 +330,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ReportAsResponse is a mandatory PMode parameter")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse is missing")));
   }
 
   @Test
@@ -347,7 +349,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportAsResponse has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.ReportAsResponse must be 'true'")));
   }
 
   @Test
@@ -366,7 +368,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
+                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer is missing")));
   }
 
   @Test
@@ -385,7 +387,8 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.ReportProcessErrorNotifyConsumer must be 'true'")));
   }
 
   @Test
@@ -404,7 +407,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
+                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer is missing")));
   }
 
   @Test
@@ -424,7 +427,7 @@ public final class CEFCompatibilityValidatorTwoWayFuncTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
+                                                .contains ("ErrorHandling.ReportDeliveryFailuresNotifyProducer must be 'true'")));
   }
 
   @Test
