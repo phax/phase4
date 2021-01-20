@@ -274,6 +274,7 @@ If you like the project, a star on GitHub is always appreciated.
     * The `AS4RequestHandler` received a `SoapProcessingFinalizedCallback` to be able to get notified on asynchronous processing finalization
     * Extended `IAS4IncomingProfileSelector` to allow to disable the AS4 profile validation of PModes
     * Remembering the MessageID earlier in the process, so that error messages can always use the "RefToMessageId" properly
+    * Fine-tuned the CEF and Peppol PMode checks a bit
 * v0.13.0 - 2020-12-11
     * Extended exception API to that constructors with only another exception are present
     * Extended the Peppol demo server to store the attachments by default, even if the payload check does not work
