@@ -31,6 +31,12 @@ import com.helger.config.source.res.ConfigurationSourceProperties;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.settings.ISettings;
 
+/**
+ * Helper class to apply a certain {@link IConfig} for a certain code area. Use
+ * via the try-with-resources idiom.
+ *
+ * @author Philip Helger
+ */
 @ThreadSafe
 public final class ScopedConfig implements AutoCloseable
 {

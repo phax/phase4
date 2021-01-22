@@ -89,6 +89,20 @@ public final class AS4Configuration
   }
 
   /**
+   * The configuration value provider created in here uses the default lookup
+   * scheme defined by {@link ConfigFactory#createDefaultValueProvider()} but
+   * adds support for AS4 specific files. For a sustainable solution use one of
+   * the following files that have higher precedence than
+   * <code>applicatipn.properties</code>:
+   * <ul>
+   * <li>private-phase4.properties - priority 204</li>
+   * <li>phase4.properties - priority 203</li>
+   * </ul>
+   * Deprecated filenames that should no longer be used are:
+   * "private-crypto.properties", "crypto.properties", "private-as4.properties"
+   * and "as4.properties". The support for these filenames will be removed in
+   * version 1.0.
+   *
    * @return The configuration value provider for phase4 that contains backward
    *         compatibility support.
    */

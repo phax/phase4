@@ -155,8 +155,9 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   }
 
   /**
-   * @return the MGF algorithm to use with the RSA-OAEP key transport algorithm.
-   *         The default is {@link #DEFAULT_MGF_ALGORITHM}
+   * @return The mask generation function (MGF) algorithm to use with the
+   *         RSA-OAEP key transport algorithm. The default is
+   *         {@link #DEFAULT_MGF_ALGORITHM}
    */
   @Nonnull
   @Nonempty
@@ -165,15 +166,25 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     return m_sMGFAlgorithm;
   }
 
+  /**
+   * Set the mask generation function (MGF) algorithm to use with the RSA-OAEP
+   * key transport algorithm.
+   *
+   * @param sMGFAlgorithm
+   *        The MFG algorithm to use. May neither be <code>null</code> nor
+   *        empty.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4CryptParams setMGFAlgorithm (@Nonnull @Nonempty final String sMGFAlgorithm)
   {
+    ValueEnforcer.notEmpty (sMGFAlgorithm, "MGFAlgorithm");
     m_sMGFAlgorithm = sMGFAlgorithm;
     return this;
   }
 
   /**
-   * @return the digest algorithm to use with the RSA-OAEP key transport
+   * @return The digest algorithm to use with the RSA-OAEP key transport
    *         algorithm. The default is {@link #DEFAULT_DIGEST_ALGORITHM}
    */
   @Nonnull
@@ -183,24 +194,49 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     return m_sDigestAlgorithm;
   }
 
+  /**
+   * Set the digest algorithm to use with the RSA-OAEP key transport algorithm.
+   *
+   * @param sDigestAlgorithm
+   *        The digest algorithm to use. May neither be <code>null</code> nor
+   *        empty.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4CryptParams setDigestAlgorithm (@Nonnull @Nonempty final String sDigestAlgorithm)
   {
+    ValueEnforcer.notEmpty (sDigestAlgorithm, "DigestAlgorithm");
     m_sDigestAlgorithm = sDigestAlgorithm;
     return this;
   }
 
+  /**
+   * @return The currently set X509 certificate. May be <code>null</code>.
+   */
   @Nullable
   public final X509Certificate getCertificate ()
   {
     return m_aCert;
   }
 
+  /**
+   * @return <code>true</code> if an X509 certificate is present,
+   *         <code>false</code> if not.
+   */
   public final boolean hasCertificate ()
   {
     return m_aCert != null;
   }
 
+  /**
+   * Set the X509 certificate be used. The provided certificate is not checked
+   * for validity. If it is expired only a warning is logged but the certificate
+   * will still be used.
+   *
+   * @param aCert
+   *        The certificate to be used. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4CryptParams setCertificate (@Nullable final X509Certificate aCert)
   {
@@ -241,6 +277,15 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
     return this;
   }
 
+  /**
+   * This method calls {@link #setAlgorithmCrypt(ECryptoAlgorithmCrypt)} based
+   * on the PMode parameters. If the PMode parameter is <code>null</code> the
+   * value will be set to <code>null</code>.
+   *
+   * @param aSecurity
+   *        The PMode security stuff to use. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4CryptParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
@@ -281,6 +326,10 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
                                        .getToString ();
   }
 
+  /**
+   * @return A non-<code>null</code> default instance.
+   * @see #setAlgorithmCrypt(ECryptoAlgorithmCrypt)
+   */
   @Nonnull
   @ReturnsMutableObject
   public static AS4CryptParams createDefault ()

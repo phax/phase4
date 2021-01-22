@@ -25,6 +25,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.wss4j.dom.engine.WSSConfig;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.functional.IThrowingSupplier;
 import com.helger.phase4.config.AS4Configuration;
 
@@ -46,8 +47,16 @@ public final class WSSSynchronizer
   private WSSSynchronizer ()
   {}
 
+  /**
+   * A wrapper around {@link #call(IThrowingSupplier)} swallowing the return
+   * value
+   *
+   * @param aRunnable
+   *        The runnable to be run. May not be <code>null</code>.
+   */
   public static void run (@Nonnull final Runnable aRunnable)
   {
+    ValueEnforcer.notNull (aRunnable, "Runnable");
     call ( () -> {
       aRunnable.run ();
       return null;
@@ -57,6 +66,8 @@ public final class WSSSynchronizer
   @Nullable
   public static <T, EX extends Exception> T call (@Nonnull final IThrowingSupplier <T, EX> aSupplier) throws EX
   {
+    ValueEnforcer.notNull (aSupplier, "Supplier");
+
     // Lock
     s_aLock.lock ();
     try

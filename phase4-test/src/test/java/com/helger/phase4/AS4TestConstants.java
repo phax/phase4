@@ -25,6 +25,11 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.phase4.ebms3header.Ebms3Property;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 
+/**
+ * Reusable constants for testing.
+ *
+ * @author Philip Helger
+ */
 @Immutable
 public final class AS4TestConstants
 {

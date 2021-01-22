@@ -31,9 +31,17 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.phase4.crypto.IAS4CryptoFactory;
 
+/**
+ * Internal WSS4J callback handler to check if a certain key alias is present in
+ * the {@link IAS4CryptoFactory}, and if so return the password for accessing
+ * it.
+ *
+ * @author Philip Helger
+ */
 final class KeyStoreCallbackHandler implements CallbackHandler
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (KeyStoreCallbackHandler.class);
+
   private final IAS4CryptoFactory m_aCryptoFactory;
 
   public KeyStoreCallbackHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory)
@@ -65,7 +73,7 @@ final class KeyStoreCallbackHandler implements CallbackHandler
       case WSPasswordCallback.PASSWORD_ENCRYPTOR_PASSWORD:
         return "PASSWORD_ENCRYPTOR_PASSWORD";
     }
-    return "Unknown value" + nUsage;
+    return "Unknown usage value" + nUsage;
   }
 
   public void handle (final Callback [] aCallbacks) throws IOException, UnsupportedCallbackException
@@ -86,10 +94,12 @@ final class KeyStoreCallbackHandler implements CallbackHandler
                        _getUsage (aPasswordCallback.getUsage ()));
         }
         else
+        {
           LOGGER.warn ("Found unsupported keystore alias '" +
                        aPasswordCallback.getIdentifier () +
                        "' and usage " +
                        _getUsage (aPasswordCallback.getUsage ()));
+        }
       }
       else
       {

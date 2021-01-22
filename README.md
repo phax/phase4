@@ -268,8 +268,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.13.2 - work in progress
-    * Fixed an error that an empty `MessageProperties` element is created which would not be XSD compliant
+* v0.13.2 - 2021-01-22
+    * Fixed an error that an empty `MessageProperties` element is created which would not be XSD compliant. Thanks to Amish Regmi for pointing this out.
 * v0.13.1 - 2021-01-20
     * Updated to WSS4J 2.3.1
     * Updated to ph-web 9.5.2 updating the U-NAPTR lookup code for BDXL lookups

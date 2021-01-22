@@ -24,7 +24,6 @@ import javax.servlet.ServletContext;
 
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import com.helger.commons.debug.GlobalDebug;
 import com.helger.httpclient.HttpDebugger;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.servlet.AS4ServerInitializer;
@@ -34,6 +33,11 @@ import com.helger.photon.security.mgr.PhotonSecurityManager;
 import com.helger.photon.security.user.IUserManager;
 import com.helger.xservlet.requesttrack.RequestTracker;
 
+/**
+ * Internal web app listener to get the test requirements up and running
+ *
+ * @author Philip Helger
+ */
 public final class AS4WebAppListener extends WebAppListener
 {
   public AS4WebAppListener ()
@@ -81,9 +85,8 @@ public final class AS4WebAppListener extends WebAppListener
     SLF4JBridgeHandler.removeHandlersForRootLogger ();
     SLF4JBridgeHandler.install ();
 
-    if (GlobalDebug.isDebugMode ())
-      RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
-
+    // Disable some bloat ware ;-)
+    RequestTracker.getInstance ().getRequestTrackingMgr ().setLongRunningCheckEnabled (false);
     HttpDebugger.setEnabled (false);
   }
 
