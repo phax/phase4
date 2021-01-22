@@ -293,9 +293,12 @@ public final class MessageHelperMethods
     return aEbms3PartyInfo;
   }
 
-  @Nonnull
+  @Nullable
   public static Ebms3MessageProperties createEbms3MessageProperties (@Nullable final List <Ebms3Property> aEbms3Properties)
   {
+    // MessageProperties may not be empty!
+    if (aEbms3Properties == null || aEbms3Properties.isEmpty ())
+      return null;
     final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
     aEbms3MessageProperties.setProperty (aEbms3Properties);
     return aEbms3MessageProperties;
