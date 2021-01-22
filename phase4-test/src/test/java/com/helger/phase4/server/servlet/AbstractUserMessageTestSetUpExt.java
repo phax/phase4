@@ -66,13 +66,13 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
    * @throws Exception
    */
   @Nonnull
-  protected static Document _modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
-                                                @Nullable final String sAnotherOrWrongPartyIdInitiator,
-                                                @Nullable final String sAnotherOrWrongPartyIdResponder,
-                                                @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
-                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nullable final String sReferenceToMessageID,
-                                                @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
+  protected static final Document modifyUserMessage (@Nullable final String sAnotherOrWrongPModeID,
+                                                      @Nullable final String sAnotherOrWrongPartyIdInitiator,
+                                                      @Nullable final String sAnotherOrWrongPartyIdResponder,
+                                                      @Nullable final Ebms3MessageProperties aEbms3MessageProperties,
+                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                      @Nullable final String sReferenceToMessageID,
+                                                      @Nullable final Consumer <String> aMessagingIDConsumer) throws Exception
   {
     // If argument is set replace the default one
     final String sSetPartyIDInitiator = sAnotherOrWrongPartyIdInitiator == null ? DEFAULT_PARTY_ID : sAnotherOrWrongPartyIdInitiator;
@@ -116,11 +116,8 @@ public abstract class AbstractUserMessageTestSetUpExt extends AbstractUserMessag
   }
 
   @Nonnull
-  protected static Ebms3MessageProperties _defaultProperties ()
+  protected static final Ebms3MessageProperties createDefaultProperties ()
   {
-    // Add properties
-    final Ebms3MessageProperties aEbms3MessageProperties = new Ebms3MessageProperties ();
-    aEbms3MessageProperties.setProperty (AS4TestConstants.getEBMSProperties ());
-    return aEbms3MessageProperties;
+    return MessageHelperMethods.createEbms3MessageProperties (AS4TestConstants.getEBMSProperties ());
   }
 }

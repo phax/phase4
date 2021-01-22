@@ -99,7 +99,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
                                                                                  CAS4.DEFAULT_RESPONDER_URL,
                                                                                  DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
-    m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
+    m_aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
   }
 
@@ -304,7 +304,7 @@ public final class PModeCheckTest extends AbstractUserMessageTestSetUpExt
       aPModeMgr.createOrUpdatePMode (aPMode);
 
       final Wrapper <String> aMsgID = new Wrapper <> ();
-      final Document aDoc = _modifyUserMessage (sInvalidPModeID, null, null, _defaultProperties (), null, null, x -> aMsgID.set (x));
+      final Document aDoc = modifyUserMessage (sInvalidPModeID, null, null, createDefaultProperties (), null, null, x -> aMsgID.set (x));
       final Document aSignedDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                                  aDoc,
                                                                  SOAP_VERSION,

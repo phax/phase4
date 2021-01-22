@@ -142,7 +142,7 @@ public final class TwoWayAsyncPullPushTest extends AbstractUserMessageTestSetUpE
     // Should only be called once
     final String aPullID = nPullList.item (0).getTextContent ();
 
-    aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, aPullID, null);
+    aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, aPullID, null);
     sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     final NodeList nList = aDoc.getElementsByTagName ("eb:MessageId");

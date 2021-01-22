@@ -85,7 +85,7 @@ public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
                                                                                  CAS4.DEFAULT_RESPONDER_URL,
                                                                                  DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
-    m_aEbms3UserMessage.setMessageProperties (_defaultProperties ());
+    m_aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
     AS4ProfileSelector.setCustomAS4ProfileID (AS4CEFProfileRegistarSPI.AS4_PROFILE_ID);
   }

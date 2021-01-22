@@ -115,7 +115,7 @@ public final class TwoWayAsyncPushPullTest extends AbstractUserMessageTestSetUpE
     final IAS4DuplicateManager aIncomingDuplicateMgr = MetaAS4Manager.getIncomingDuplicateMgr ();
     aIncomingDuplicateMgr.clearCache ();
     assertTrue (aIncomingDuplicateMgr.isEmpty ());
-    Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
+    Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
     String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
     // Avoid stopping server to receive async response

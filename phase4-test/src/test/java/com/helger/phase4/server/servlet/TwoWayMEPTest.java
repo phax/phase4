@@ -91,7 +91,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   @Test
   public void testReceiveUserMessageAsResponseSuccess () throws Exception
   {
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
     final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                                                       true,
                                                       null);
@@ -115,10 +115,10 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     s_aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                               null,
                                               null,
-                                              _defaultProperties (),
+                                              createDefaultProperties (),
                                               aAttachments,
                                               null,
                                               null);
@@ -146,11 +146,11 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                     null,
                                                                     aResMgr));
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (),
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (),
                                               (String) null,
                                               // Alias for encryption
                                               "ph-as4",
-                                              _defaultProperties (),
+                                              createDefaultProperties (),
                                               aAttachments,
                                               null,
                                               null);
@@ -195,7 +195,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
                                                                                CAS4.DEFAULT_RESPONDER_URL,
                                                                                DEFAULT_PARTY_ID));
     // Default MessageProperties for testing
-    aEbms3UserMessage.setMessageProperties (_defaultProperties ());
+    aEbms3UserMessage.setMessageProperties (createDefaultProperties ());
 
     m_aPMode.getLeg2 ().getBusinessInfo ().setMPCID ("wrongmpc-id");
 
@@ -218,7 +218,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
 
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
     sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                              false,
                              EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
@@ -230,7 +230,7 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     m_aPMode.setLeg2 (null);
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
-    final Document aDoc = _modifyUserMessage (m_aPMode.getID (), null, null, _defaultProperties (), null, null, null);
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
     sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
                              false,
                              EEbmsError.EBMS_PROCESSING_MODE_MISMATCH.getErrorCode ());
