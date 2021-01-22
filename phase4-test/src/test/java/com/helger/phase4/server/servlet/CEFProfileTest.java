@@ -45,6 +45,11 @@ import com.helger.phase4.servlet.mgr.AS4ProfileSelector;
 import com.helger.phase4.soap.ESoapVersion;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * Test for the CEF PMode
+ *
+ * @author Philip Helger
+ */
 public final class CEFProfileTest extends AbstractUserMessageTestSetUpExt
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (CEFProfileTest.class);

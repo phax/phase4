@@ -21,6 +21,8 @@ import java.io.IOException;
 import com.helger.photon.jetty.JettyStopper;
 
 /**
+ * Stop the local Jetty
+ *
  * @author Philip Helger
  */
 public final class JettyStopAS4TEST

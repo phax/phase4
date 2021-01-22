@@ -47,6 +47,9 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * A set of test-cases for encrypting and decrypting SOAP requests.
+ *
+ * @author bayerlma
+ * @author Philip Helger
  */
 public final class EncryptionTest
 {

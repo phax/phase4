@@ -27,7 +27,7 @@ import org.apache.wss4j.dom.engine.WSSecurityEngineResult;
 import org.apache.wss4j.dom.handler.WSHandlerResult;
 import org.apache.wss4j.dom.message.WSSecHeader;
 import org.apache.wss4j.dom.message.WSSecSignature;
-import org.apache.wss4j.dom.str.STRParser.REFERENCE_TYPE;
+import org.apache.wss4j.dom.str.STRParser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,6 +45,9 @@ import com.helger.xml.serialize.read.DOMReader;
 
 /**
  * A set of test-cases for signing and verifying SOAP requests.
+ *
+ * @author bayerlma
+ * @author Philip Helger
  */
 public final class SignatureTest
 {
@@ -97,7 +100,7 @@ public final class SignatureTest
     final WSSecurityEngineResult actionResult = aResults.getActionResults ().get (Integer.valueOf (WSConstants.SIGN)).get (0);
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_CERTIFICATE));
     assertNotNull (actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE));
-    final REFERENCE_TYPE referenceType = (REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
-    assertSame (REFERENCE_TYPE.DIRECT_REF, referenceType);
+    final STRParser.REFERENCE_TYPE referenceType = (STRParser.REFERENCE_TYPE) actionResult.get (WSSecurityEngineResult.TAG_X509_REFERENCE_TYPE);
+    assertSame (STRParser.REFERENCE_TYPE.DIRECT_REF, referenceType);
   }
 }

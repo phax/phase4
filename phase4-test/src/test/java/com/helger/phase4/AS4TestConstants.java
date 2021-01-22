@@ -19,6 +19,7 @@ package com.helger.phase4;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -67,10 +68,11 @@ public final class AS4TestConstants
   {}
 
   @Nonnull
+  @Nonempty
   @ReturnsMutableCopy
   public static ICommonsList <Ebms3Property> getEBMSProperties ()
   {
-    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, null, "C1-test"),
-                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, null, "C4-test"));
+    return new CommonsArrayList <> (MessageHelperMethods.createEbms3Property (CAS4.ORIGINAL_SENDER, "C1-test"),
+                                    MessageHelperMethods.createEbms3Property (CAS4.FINAL_RECIPIENT, "C4-test"));
   }
 }

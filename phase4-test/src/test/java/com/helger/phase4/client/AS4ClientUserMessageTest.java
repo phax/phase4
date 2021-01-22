@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.io.resource.ClassPathResource;
 import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
@@ -181,7 +182,10 @@ public final class AS4ClientUserMessageTest extends AbstractAS4TestSetUp
     aClient.setToRole (CAS4.DEFAULT_ROLE);
     _ensureInvalidState (aClient);
     aClient.setToPartyID ("MyPartyIDforReceving");
-    _ensureInvalidState (aClient);
+    // From now on the message is valid
+    _ensureValidState (aClient);
+    aClient.ebms3Properties ().setAll (new CommonsArrayList <> ());
+    _ensureValidState (aClient);
     aClient.ebms3Properties ().setAll (AS4TestConstants.getEBMSProperties ());
     _ensureValidState (aClient);
   }
