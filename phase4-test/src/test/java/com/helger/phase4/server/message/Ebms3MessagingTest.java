@@ -19,6 +19,9 @@ package com.helger.phase4.server.message;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.apache.http.HttpEntity;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -49,13 +52,19 @@ import com.helger.phase4.soap12.Soap12Envelope;
 import com.helger.phase4.soap12.Soap12Header;
 import com.helger.xml.serialize.read.DOMReader;
 
-public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
+/**
+ * Test class for class {@link Ebms3Messaging}.
+ *
+ * @author Philip Helger
+ */
+public final class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
 {
   private static final String DEFAULT_AGREEMENT = "urn:as4:agreements:so-that-we-have-a-non-empty-value";
   private static final String SOAP_12_PARTY_ID = "APP_000000000012";
   private final ESoapVersion m_eSoapVersion = ESoapVersion.SOAP_12;
 
-  private Document _getMessagingAsDocument (final Ebms3Messaging aEbms3Messaging)
+  @Nullable
+  private Document _getMessagingAsDocument (@Nonnull final Ebms3Messaging aEbms3Messaging)
   {
     final Document aEbms3Document = Ebms3WriterBuilder.ebms3Messaging ().getAsDocument (aEbms3Messaging);
     if (aEbms3Document == null)
@@ -106,7 +115,7 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
   }
 
   @Test
-  public void testUserMessageWithTooMuchPartyIds () throws Exception
+  public void testUserMessageWithTooManyPartyIds () throws Exception
   {
     final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
     final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
@@ -156,7 +165,53 @@ public class Ebms3MessagingTest extends AbstractUserMessageTestSetUp
     sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
-  // @Ignore
+  @Test
+  public void testUserMessageNoMessageProperties () throws Exception
+  {
+    final Ebms3Messaging aEbms3Messaging = new Ebms3Messaging ();
+    final Ebms3UserMessage aEbms3UserMessage = new Ebms3UserMessage ();
+    // Message Info
+
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final String sPModeID = SOAP_12_PARTY_ID + "-" + SOAP_12_PARTY_ID;
+
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (aPayload != null, null);
+
+    final Ebms3CollaborationInfo aEbms3CollaborationInfo;
+    aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sPModeID,
+                                                                                 DEFAULT_AGREEMENT,
+                                                                                 AS4TestConstants.TEST_SERVICE_TYPE,
+                                                                                 AS4TestConstants.TEST_SERVICE,
+                                                                                 AS4TestConstants.TEST_ACTION,
+                                                                                 AS4TestConstants.TEST_CONVERSATION_ID);
+
+    final Ebms3PartyInfo aEbms3PartyInfo = new Ebms3PartyInfo ();
+
+    // From => Sender
+    final Ebms3From aEbms3From = new Ebms3From ();
+    aEbms3From.setRole (CAS4.DEFAULT_INITIATOR_URL);
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (SOAP_12_PARTY_ID));
+    aEbms3From.addPartyId (MessageHelperMethods.createEbms3PartyId (SOAP_12_PARTY_ID));
+    aEbms3PartyInfo.setFrom (aEbms3From);
+
+    // To => Receiver
+    final Ebms3To aEbms3To = new Ebms3To ();
+    aEbms3To.setRole (CAS4.DEFAULT_RESPONDER_URL);
+    aEbms3To.addPartyId (MessageHelperMethods.createEbms3PartyId (SOAP_12_PARTY_ID));
+    aEbms3PartyInfo.setTo (aEbms3To);
+
+    aEbms3UserMessage.setPartyInfo (aEbms3PartyInfo);
+    aEbms3UserMessage.setPayloadInfo (aEbms3PayloadInfo);
+    aEbms3UserMessage.setCollaborationInfo (aEbms3CollaborationInfo);
+    aEbms3UserMessage.setMessageProperties (MessageHelperMethods.createEbms3MessageProperties (null));
+    aEbms3UserMessage.setMessageInfo (MessageHelperMethods.createEbms3MessageInfo ());
+
+    aEbms3Messaging.addUserMessage (aEbms3UserMessage);
+
+    final HttpEntity aEntity = new HttpXMLEntity (_getMessagingAsDocument (aEbms3Messaging), m_eSoapVersion.getMimeType ());
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+  }
+
   @Test
   public void testSendReceipt () throws Exception
   {

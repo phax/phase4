@@ -25,6 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Node;
 
+import com.helger.commons.ValueEnforcer;
 import com.helger.commons.io.stream.NonBlockingStringWriter;
 import com.helger.phase4.marshaller.Ebms3NamespaceHandler;
 import com.helger.xml.serialize.write.EXMLSerializeIndent;
@@ -75,6 +76,7 @@ public final class AS4XMLHelper
   @Nonnull
   public static String serializeXML (@Nonnull final Node aNode)
   {
+    ValueEnforcer.notNull (aNode, "Node");
     // Use runtime serialization otherwise XMLDsig signature wont work
     if (true)
       return _serializeRT (aNode);

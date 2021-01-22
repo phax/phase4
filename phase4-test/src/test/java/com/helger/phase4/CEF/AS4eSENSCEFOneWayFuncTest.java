@@ -102,7 +102,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA01 () throws Exception
   {
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
+                                                                        createTestSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                null,
                                                                                                new AS4ResourceHelper ()),
@@ -191,7 +191,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
+                                                                        createTestSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -232,7 +232,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
+                                                                        createTestSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -281,7 +281,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     aResMgr2));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
+                                                                        createTestSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -326,7 +326,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     aResMgr2));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        testSignedUserMessage (m_eSoapVersion,
+                                                                        createTestSignedUserMessage (m_eSoapVersion,
                                                                                                m_aPayload,
                                                                                                aAttachments,
                                                                                                new AS4ResourceHelper ()),
@@ -454,7 +454,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                            createTestSignedUserMessage (m_eSoapVersion,
                                                                                                    m_aPayload,
                                                                                                    null,
                                                                                                    new AS4ResourceHelper ()),
@@ -528,7 +528,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                            createTestSignedUserMessage (m_eSoapVersion,
                                                                                                    m_aPayload,
                                                                                                    null,
                                                                                                    new AS4ResourceHelper ()),
@@ -579,7 +579,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void testEsens_TA13 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     NodeList aNL = aDoc.getElementsByTagName ("ds:SignatureMethod");
     String sAlgorithmToCheck = aNL.item (0).getAttributes ().getNamedItem ("Algorithm").getTextContent ();
@@ -612,7 +612,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void testEsens_TA14 () throws Exception
   {
-    Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
+    Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
     aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory, m_eSoapVersion, aDoc, true, m_aCryptParams);
 
     final NodeList aNL = aDoc.getElementsByTagName ("xenc:EncryptionMethod");
@@ -647,7 +647,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void testEsens_TA15 () throws Exception
   {
-    final Document aDoc = testSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, null, new AS4ResourceHelper ());
 
     final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageProperties");
     assertEquals ("originalSender", aNL.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent ());
@@ -706,7 +706,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
       {
         // send message
         final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                            testSignedUserMessage (m_eSoapVersion,
+                                                                            createTestSignedUserMessage (m_eSoapVersion,
                                                                                                    m_aPayload,
                                                                                                    null,
                                                                                                    new AS4ResourceHelper ()),
