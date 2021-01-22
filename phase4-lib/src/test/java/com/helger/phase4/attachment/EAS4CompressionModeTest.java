@@ -35,7 +35,12 @@ import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayOutputStream;
 import com.helger.commons.io.stream.StreamHelper;
 
-public final class EAS4CompressionModeFuncTest
+/**
+ * Test class for class {@link EAS4CompressionMode}.
+ *
+ * @author Philip Helger
+ */
+public final class EAS4CompressionModeTest
 {
   private static void _compressPayload (@Nonnull @WillClose final InputStream aUncompressed,
                                         @Nonnull @WillClose final OutputStream aOut) throws IOException
@@ -49,9 +54,9 @@ public final class EAS4CompressionModeFuncTest
   private static void _decompressPayload (@Nonnull @WillClose final InputStream aIn,
                                           @Nonnull @WillClose final OutputStream aOut) throws IOException
   {
-    try (final GZIPInputStream aGZIPIn = new GZIPInputStream (aIn); final OutputStream aDest = aOut)
+    try (final GZIPInputStream aGZIPIn = new GZIPInputStream (aIn))
     {
-      StreamHelper.copyInputStreamToOutputStream (aGZIPIn, aDest);
+      StreamHelper.copyInputStreamToOutputStreamAndCloseOS (aGZIPIn, aOut);
     }
   }
 
@@ -91,7 +96,7 @@ public final class EAS4CompressionModeFuncTest
       }
       final byte [] aCompressed = aCompressedOS.toByteArray ();
 
-      // DECOMPRESSION
+      // Decompression
       final NonBlockingByteArrayOutputStream aDecompressedOS = new NonBlockingByteArrayOutputStream ();
       try (final InputStream aIS = eMode.getDecompressStream (new NonBlockingByteArrayInputStream (aCompressed));
            final OutputStream aOS = aDecompressedOS)

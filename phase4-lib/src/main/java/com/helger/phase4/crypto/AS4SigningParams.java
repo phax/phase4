@@ -49,6 +49,9 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
   public AS4SigningParams ()
   {}
 
+  /**
+   * @return <code>true</code> if signing is enabled, <code>false</code> if not
+   */
   public boolean isSigningEnabled ()
   {
     return m_eAlgorithmSign != null && m_eAlgorithmSignDigest != null;
@@ -162,6 +165,16 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
     return this;
   }
 
+  /**
+   * This method calls {@link #setAlgorithmSign(ECryptoAlgorithmSign)} and
+   * {@link #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)} based on the
+   * PMode parameters. If the PMode parameter is <code>null</code> both values
+   * will be set to <code>null</code>.
+   *
+   * @param aSecurity
+   *        The PMode security stuff to use. May be <code>null</code>.
+   * @return this for chaining
+   */
   @Nonnull
   public final AS4SigningParams setFromPMode (@Nullable final PModeLegSecurity aSecurity)
   {
@@ -199,6 +212,13 @@ public class AS4SigningParams implements Serializable, ICloneable <AS4SigningPar
                                        .getToString ();
   }
 
+  /**
+   * @return A non-<code>null</code> {@link AS4SigningParams} object with
+   *         default values assigned.
+   * @see #setAlgorithmSign(ECryptoAlgorithmSign)
+   * @see #setAlgorithmSignDigest(ECryptoAlgorithmSignDigest)
+   * @see #setAlgorithmC14N(ECryptoAlgorithmC14N)
+   */
   @Nonnull
   @ReturnsMutableObject
   public static AS4SigningParams createDefault ()

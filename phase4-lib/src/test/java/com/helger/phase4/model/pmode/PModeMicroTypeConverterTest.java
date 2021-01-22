@@ -93,8 +93,8 @@ public final class PModeMicroTypeConverterTest
   @Test
   public void testNativToMicroElementConversion ()
   {
-    final PModeParty aInitiator = _generateInitiatorOrResponder (true);
-    final PModeParty aResponder = _generateInitiatorOrResponder (false);
+    final PModeParty aInitiator = _createInitiatorOrResponder (true);
+    final PModeParty aResponder = _createInitiatorOrResponder (false);
 
     _testPMode (new PMode (aInitiator.getID () + "-" + aResponder.getID (),
                            aInitiator,
@@ -102,10 +102,10 @@ public final class PModeMicroTypeConverterTest
                            "Agreement",
                            EMEP.TWO_WAY,
                            EMEPBinding.SYNC,
-                           _generatePModeLeg (),
-                           _generatePModeLeg (),
-                           _generatePayloadService (),
-                           _generatePModeReceptionAwareness ()));
+                           _createPModeLeg (),
+                           _createPModeLeg (),
+                           _createPayloadService (),
+                           _createPModeReceptionAwareness ()));
     _testPMode (new PMode (aInitiator.getID () + "-" + aResponder.getID (),
                            null,
                            null,
@@ -119,19 +119,19 @@ public final class PModeMicroTypeConverterTest
   }
 
   @Nonnull
-  private PModePayloadService _generatePayloadService ()
+  private PModePayloadService _createPayloadService ()
   {
     return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
   @Nonnull
-  private PModeReceptionAwareness _generatePModeReceptionAwareness ()
+  private PModeReceptionAwareness _createPModeReceptionAwareness ()
   {
     return PModeReceptionAwareness.createDefault ();
   }
 
   @Nonnull
-  private PModeParty _generateInitiatorOrResponder (final boolean bInitiator)
+  private PModeParty _createInitiatorOrResponder (final boolean bInitiator)
   {
     if (bInitiator)
       return new PModeParty ("initiator-type", "idvalue", CAS4.DEFAULT_INITIATOR_URL, "test", "testpw");
@@ -139,34 +139,33 @@ public final class PModeMicroTypeConverterTest
   }
 
   @Nonnull
-  private PModeLeg _generatePModeLeg ()
+  private PModeLeg _createPModeLeg ()
   {
-    return new PModeLeg (_generatePModeLegProtocol (),
-                         _generatePModeLegBusinessInformation (),
-                         _generatePModeLegErrorHandling (),
-                         _generatePModeLegReliability (),
-                         _generatePModeLegSecurity ());
+    return new PModeLeg (_createPModeLegProtocol (),
+                         _createPModeLegBusinessInformation (),
+                         _createPModeLegErrorHandling (),
+                         _createPModeLegReliability (),
+                         _createPModeLegSecurity ());
   }
 
   @Nonnull
-  private PModeLegBusinessInformation _generatePModeLegBusinessInformation ()
+  private PModeLegBusinessInformation _createPModeLegBusinessInformation ()
   {
     return new PModeLegBusinessInformation ("service",
                                             "stype",
                                             "action1",
-                                            _generatePModeProperties (),
-                                            _generatePModePayloadProfile (),
+                                            _createPModeProperties (),
+                                            _createPModePayloadProfile (),
                                             Long.valueOf (20000),
                                             "mpcexample");
   }
 
   @Nonnull
   @ReturnsMutableCopy
-  private ICommonsOrderedMap <String, PModePayloadProfile> _generatePModePayloadProfile ()
+  private ICommonsOrderedMap <String, PModePayloadProfile> _createPModePayloadProfile ()
   {
     final PModePayloadProfile aPModePayloadProfile = new PModePayloadProfile ("name",
-                                                                              new MimeType (EMimeContentType.EXAMPLE,
-                                                                                            "example"),
+                                                                              new MimeType (EMimeContentType.EXAMPLE, "example"),
                                                                               "xsdfilename",
                                                                               Integer.valueOf (20001),
                                                                               EMandatory.MANDATORY);
@@ -177,22 +176,19 @@ public final class PModeMicroTypeConverterTest
 
   @Nonnull
   @ReturnsMutableCopy
-  private ICommonsOrderedMap <String, PModeProperty> _generatePModeProperties ()
+  private ICommonsOrderedMap <String, PModeProperty> _createPModeProperties ()
   {
-    final PModeProperty aPModeProperty = new PModeProperty ("name",
-                                                            "description",
-                                                            PModeProperty.DATA_TYPE_STRING,
-                                                            EMandatory.MANDATORY);
+    final PModeProperty aPModeProperty = new PModeProperty ("name", "description", PModeProperty.DATA_TYPE_STRING, EMandatory.MANDATORY);
     final ICommonsOrderedMap <String, PModeProperty> aPModeProperties = new CommonsLinkedHashMap <> ();
     aPModeProperties.put (aPModeProperty.getName (), aPModeProperty);
     return aPModeProperties;
   }
 
   @Nonnull
-  private PModeLegErrorHandling _generatePModeLegErrorHandling ()
+  private PModeLegErrorHandling _createPModeLegErrorHandling ()
   {
-    return new PModeLegErrorHandling (_generatePModeAddressList (),
-                                      _generatePModeAddressList (),
+    return new PModeLegErrorHandling (_createPModeAddressList (),
+                                      _createPModeAddressList (),
                                       ETriState.TRUE,
                                       ETriState.TRUE,
                                       ETriState.TRUE,
@@ -200,19 +196,19 @@ public final class PModeMicroTypeConverterTest
   }
 
   @Nonnull
-  private PModeAddressList _generatePModeAddressList ()
+  private PModeAddressList _createPModeAddressList ()
   {
     return new PModeAddressList ("address1");
   }
 
   @Nonnull
-  private PModeLegProtocol _generatePModeLegProtocol ()
+  private PModeLegProtocol _createPModeLegProtocol ()
   {
     return new PModeLegProtocol ("addressProtocol", ESoapVersion.SOAP_11);
   }
 
   @Nonnull
-  private PModeLegReliability _generatePModeLegReliability ()
+  private PModeLegReliability _createPModeLegReliability ()
   {
     final ICommonsList <String> aCorrelation = new CommonsArrayList <> ("correlation", "correlation2");
     return new PModeLegReliability (ETriState.TRUE,
@@ -229,10 +225,9 @@ public final class PModeMicroTypeConverterTest
   }
 
   @Nonnull
-  private PModeLegSecurity _generatePModeLegSecurity ()
+  private PModeLegSecurity _createPModeLegSecurity ()
   {
-    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt",
-                                                                                  "X509EncryptionEncrypt2");
+    final ICommonsList <String> aX509EncryptionEncrypt = new CommonsArrayList <> ("X509EncryptionEncrypt", "X509EncryptionEncrypt2");
     final ICommonsList <String> aX509Sign = new CommonsArrayList <> ("X509Sign", "X509Sign2");
     return new PModeLegSecurity (EWSSVersion.WSS_111,
                                  aX509Sign,

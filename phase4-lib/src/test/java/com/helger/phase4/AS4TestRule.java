@@ -18,6 +18,11 @@ package com.helger.phase4;
 
 import com.helger.photon.app.mock.PhotonAppWebTestRule;
 
+/**
+ * A special JUnit "rule" for the AS4 tests.
+ *
+ * @author Philip Helger
+ */
 public class AS4TestRule extends PhotonAppWebTestRule
 {
   @Override

@@ -32,6 +32,11 @@ import com.helger.jaxb.validation.CollectingValidationEventHandler;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.soap11.Soap11Envelope;
 
+/**
+ * Test class for class {@link Ebms3ReaderBuilder}.
+ *
+ * @author Philip Helger
+ */
 public final class Ebms3ReaderBuilderTest
 {
   private static final Logger LOGGER = LoggerFactory.getLogger (Ebms3ReaderBuilderTest.class);

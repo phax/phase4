@@ -57,11 +57,11 @@ import com.helger.phase4.soap.ESoapVersion;
 import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
-public final class MainAS4Client
+public final class MainOldAS4Client
 {
-  private static final Logger LOGGER = LoggerFactory.getLogger (MainAS4Client.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger (MainOldAS4Client.class);
 
-  private MainAS4Client ()
+  private MainOldAS4Client ()
   {}
 
   public static Document getSoapEnvelope11ForTest (@Nonnull final String sPath) throws SAXException,
@@ -88,14 +88,14 @@ public final class MainAS4Client
       if (false)
         sURL = "http://msh.holodeck-b2b.org:8080/msh";
 
-      // Deactivate if not sending to localholodeck
+      // Deactivate if not sending to local holodeck
       if (false)
         sURL = "http://localhost:8080/msh/";
 
       final HttpClientSettings aHCS = new HttpClientSettings ();
       if (sURL.startsWith ("https"))
         aHCS.setSSLContextTrustAll ();
-      if (true)
+      if (false)
       {
         aHCS.setProxyHost (new HttpHost ("172.30.9.6", 8080));
         aHCS.addNonProxyHostsFromPipeString ("localhost|127.0.0.1");
@@ -110,28 +110,29 @@ public final class MainAS4Client
       final ESoapVersion eSoapVersion = ESoapVersion.SOAP_12;
       final IAS4CryptoFactory aCryptoFactory = AS4CryptoFactoryProperties.getDefaultInstance ();
 
-      // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP -
-      // Body
       if (true)
       {
+        // No Mime Message Not signed or encrypted, just SOAP + Payload in SOAP
+        // -
+        // Body
         // final Document aDoc = TestMessages.testSignedUserMessage
         // (ESOAPVersion.SOAP_11, aPayload, aAttachments);
-        final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
+        final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
         final Document aDoc = aMsg.getAsSoapDocument (aPayload);
         aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
       }
       else
-        // BodyPayload SIGNED
         if (false)
         {
-          final Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
+          // BodyPayload SIGNED
+          final Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
           aPost.setEntity (new HttpXMLEntity (aDoc, eSoapVersion.getMimeType ()));
         }
-        // BodyPayload ENCRYPTED
         else
           if (false)
           {
-            final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
+            // BodyPayload ENCRYPTED
+            final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
             Document aDoc = aMsg.getAsSoapDocument (aPayload);
             aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                         eSoapVersion,
@@ -148,7 +149,7 @@ public final class MainAS4Client
                                                                               CMimeType.APPLICATION_GZIP,
                                                                               null,
                                                                               aResHelper));
-              final AS4UserMessage aMsg = MockClientMessages.testUserMessageSoapNotSigned (eSoapVersion, null, aAttachments);
+              final AS4UserMessage aMsg = MockClientMessages.createUserMessageNotSigned (eSoapVersion, null, aAttachments);
               final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (eSoapVersion,
                                                                                       AS4Signer.createSignedMessage (aCryptoFactory,
                                                                                                                      aMsg.getAsSoapDocument (null),
@@ -167,7 +168,7 @@ public final class MainAS4Client
             else
               if (false)
               {
-                Document aDoc = MockClientMessages.testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
+                Document aDoc = MockClientMessages.createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
                 aDoc = AS4Encryptor.encryptSoapBodyPayload (aCryptoFactory,
                                                             eSoapVersion,
                                                             aDoc,

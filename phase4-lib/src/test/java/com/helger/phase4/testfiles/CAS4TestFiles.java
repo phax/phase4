@@ -22,6 +22,11 @@ import com.helger.commons.annotation.ReturnsMutableCopy;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 
+/**
+ * Constants for test files
+ *
+ * @author Philip Helger
+ */
 public final class CAS4TestFiles
 {
   public static final String TEST_FILE_PATH_SOAP_11 = "/soap11test/";

@@ -52,7 +52,7 @@ import com.helger.phase4.util.AS4ResourceHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Only used for {@link MainAS4Client} as test message constructor.
+ * Only used for {@link MainOldAS4Client} as test message constructor.
  *
  * @author bayerlma
  * @author Philip Helger
@@ -64,26 +64,27 @@ final class MockClientMessages
   private MockClientMessages ()
   {}
 
-  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                                @Nullable final Node aPayload,
-                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
+  @Nonnull
+  public static Document createUserMessageSigned (@Nonnull final ESoapVersion eSoapVersion,
+                                                  @Nullable final Node aPayload,
+                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                  @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
-    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSoapVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
-                                                               aMsg.getAsSoapDocument (aPayload),
-                                                               eSoapVersion,
-                                                               aMsg.getMessagingID (),
-                                                               aAttachments,
-                                                               aResHelper,
-                                                               false,
-                                                               AS4SigningParams.createDefault ());
-    return aSignedDoc;
+    final AS4UserMessage aMsg = createUserMessageNotSigned (eSoapVersion, aPayload, aAttachments);
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+                                          aMsg.getAsSoapDocument (aPayload),
+                                          eSoapVersion,
+                                          aMsg.getMessagingID (),
+                                          aAttachments,
+                                          aResHelper,
+                                          false,
+                                          AS4SigningParams.createDefault ());
   }
 
-  public static Document testErrorMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                           @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
+  @Nonnull
+  public static Document createErrorMessageSigned (@Nonnull final ESoapVersion eSoapVersion,
+                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                   @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
@@ -99,13 +100,14 @@ final class MockClientMessages
     return aSignedDoc;
   }
 
-  public static Document testReceiptMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                             @Nullable final Node aPayload,
-                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                             @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
-                                                                                                        DOMException
+  @Nonnull
+  public static Document createReceiptMessageSigned (@Nonnull final ESoapVersion eSoapVersion,
+                                                     @Nullable final Node aPayload,
+                                                     @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                     @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws WSSecurityException,
+                                                                                                                DOMException
   {
-    final Document aUserMessage = testSignedUserMessage (eSoapVersion, aPayload, aAttachments, aResHelper);
+    final Document aUserMessage = createUserMessageSigned (eSoapVersion, aPayload, aAttachments, aResHelper);
 
     final AS4ReceiptMessage aReceiptMsg = AS4ReceiptMessage.create (eSoapVersion,
                                                                     MessageHelperMethods.createRandomMessageID (),
@@ -115,20 +117,20 @@ final class MockClientMessages
                                                            .setMustUnderstand (true);
     final Document aDoc = aReceiptMsg.getAsSoapDocument ();
 
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
-                                                               aDoc,
-                                                               eSoapVersion,
-                                                               aReceiptMsg.getMessagingID (),
-                                                               aAttachments,
-                                                               aResHelper,
-                                                               false,
-                                                               AS4SigningParams.createDefault ());
-    return aSignedDoc;
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+                                          aDoc,
+                                          eSoapVersion,
+                                          aReceiptMsg.getMessagingID (),
+                                          aAttachments,
+                                          aResHelper,
+                                          false,
+                                          AS4SigningParams.createDefault ());
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSoapVersion,
-                                                             @Nullable final Node aPayload,
-                                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  @Nonnull
+  public static AS4UserMessage createUserMessageNotSigned (@Nonnull final ESoapVersion eSoapVersion,
+                                                           @Nullable final Node aPayload,
+                                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
@@ -161,9 +163,10 @@ final class MockClientMessages
     return aDoc;
   }
 
-  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSoapVersion,
-                                                                      @Nullable final Node aPayload,
-                                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  @Nonnull
+  public static Document createUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSoapVersion,
+                                                                        @Nullable final Node aPayload,
+                                                                        @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
@@ -194,11 +197,11 @@ final class MockClientMessages
     return aDoc.getAsSoapDocument (aPayload);
   }
 
-  @Nullable
+  @Nonnull
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
-  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSoapVersion,
-                                           @Nullable final Node aPayload,
-                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static Document createEmptyUserMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                 @Nullable final Node aPayload,
+                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
