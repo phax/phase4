@@ -55,17 +55,16 @@ public final class MockPModeGenerator
   public static PMode getTestPMode (@Nonnull final ESoapVersion eSOAPVersion)
   {
 
-    final PModeParty aInitiator = _generateInitiatorOrResponder (true, eSOAPVersion);
-    final PModeParty aResponder = _generateInitiatorOrResponder (false, eSOAPVersion);
+    final PModeParty aInitiator = _createInitiatorOrResponder (true, eSOAPVersion);
+    final PModeParty aResponder = _createInitiatorOrResponder (false, eSOAPVersion);
 
-    final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator.getID (),
-                                                                                  aResponder.getID ()),
+    final PMode aConfig = new PMode (IPModeIDProvider.DEFAULT_DYNAMIC.getPModeID (aInitiator.getID (), aResponder.getID ()),
                                      aInitiator,
                                      aResponder,
                                      DEFAULT_AGREEMENT,
                                      EMEP.ONE_WAY,
                                      EMEPBinding.PUSH,
-                                     _generatePModeLeg (eSOAPVersion),
+                                     _createPModeLeg (eSOAPVersion),
                                      null,
                                      null,
                                      null);
@@ -86,9 +85,9 @@ public final class MockPModeGenerator
     aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     aPModeLegSecurity.setSendReceiptNonRepudiation (true);
 
-    aPMode.setLeg1 (new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                                  _generatePModeLegBusinessInformation (eSOAPVersion),
-                                  _generatePModeLegErrorHandling (),
+    aPMode.setLeg1 (new PModeLeg (_createPModeLegProtocol (eSOAPVersion),
+                                  _createPModeLegBusinessInformation (eSOAPVersion),
+                                  _createPModeLegErrorHandling (),
                                   null,
                                   aPModeLegSecurity));
     // Leg 2 stays null, because we only use one-way
@@ -96,24 +95,24 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeLeg _generatePModeLeg (@Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeLeg _createPModeLeg (@Nonnull final ESoapVersion eSOAPVersion)
   {
     final PModeLegReliability aPModeLegReliability = null;
     final PModeLegSecurity aPModeLegSecurity = null;
-    return new PModeLeg (_generatePModeLegProtocol (eSOAPVersion),
-                         _generatePModeLegBusinessInformation (eSOAPVersion),
-                         _generatePModeLegErrorHandling (),
+    return new PModeLeg (_createPModeLegProtocol (eSOAPVersion),
+                         _createPModeLegBusinessInformation (eSOAPVersion),
+                         _createPModeLegErrorHandling (),
                          aPModeLegReliability,
                          aPModeLegSecurity);
   }
 
-  private static PModeLegErrorHandling _generatePModeLegErrorHandling ()
+  private static PModeLegErrorHandling _createPModeLegErrorHandling ()
   {
     return new PModeLegErrorHandling (null, null, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE, ETriState.TRUE);
   }
 
   @Nonnull
-  private static PModeLegBusinessInformation _generatePModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeLegBusinessInformation _createPModeLegBusinessInformation (@Nonnull final ESoapVersion eSOAPVersion)
   {
     if (eSOAPVersion.equals (ESoapVersion.SOAP_11))
       return PModeLegBusinessInformation.create (SOAP11_SERVICE, CAS4.DEFAULT_ACTION_URL, null, CAS4.DEFAULT_MPC_ID);
@@ -121,14 +120,13 @@ public final class MockPModeGenerator
   }
 
   @Nonnull
-  private static PModeLegProtocol _generatePModeLegProtocol (@Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeLegProtocol _createPModeLegProtocol (@Nonnull final ESoapVersion eSOAPVersion)
   {
     return new PModeLegProtocol ("http://localhost:8080", eSOAPVersion);
   }
 
   @Nonnull
-  private static PModeParty _generateInitiatorOrResponder (final boolean bInitiator,
-                                                           @Nonnull final ESoapVersion eSOAPVersion)
+  private static PModeParty _createInitiatorOrResponder (final boolean bInitiator, @Nonnull final ESoapVersion eSOAPVersion)
   {
     String sPartyID;
     if (eSOAPVersion.equals (ESoapVersion.SOAP_11))

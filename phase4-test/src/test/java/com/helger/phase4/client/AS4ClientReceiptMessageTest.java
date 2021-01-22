@@ -98,7 +98,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     _ensureInvalidState (aClient);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aClient.setSoapDocument (MockMessages.testSignedUserMessage (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
+    aClient.setSoapDocument (MockMessages.createUserMessageSigned (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
     _ensureInvalidState (aClient);
     aClient.setNonRepudiation (true);
     _ensureValidState (aClient);
@@ -111,7 +111,7 @@ public final class AS4ClientReceiptMessageTest extends AbstractAS4TestSetUp
     aClient.setSoapVersion (ESoapVersion.AS4_DEFAULT);
     // Parse EBMS3 Messaging object
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    aClient.setSoapDocument (MockMessages.testSignedUserMessage (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
+    aClient.setSoapDocument (MockMessages.createUserMessageSigned (aClient.getSoapVersion (), aPayload, null, s_aResMgr));
     aClient.setNonRepudiation (true);
     aClient.setReceiptShouldBeSigned (true);
 

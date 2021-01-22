@@ -60,7 +60,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   public void testReceiptReceivedFromUserMessageWithoutWSSecurity () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
@@ -71,7 +71,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   public void testReceiptReceivedFromUserMessageWithWSSecurity () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testSignedUserMessage (m_eSoapVersion, aPayload, null, s_aResMgr);
+    final Document aDoc = MockMessages.createUserMessageSigned (m_eSoapVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 
@@ -82,7 +82,7 @@ public final class ReceiptMessageTest extends AbstractUserMessageTestSetUp
   public void testShouldNotGetAResponse () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testSignedUserMessage (m_eSoapVersion, aPayload, null, s_aResMgr);
+    final Document aDoc = MockMessages.createUserMessageSigned (m_eSoapVersion, aPayload, null, s_aResMgr);
 
     final String sResponse = sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
 

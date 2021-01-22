@@ -74,7 +74,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     s_aResMgr));
 
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSOAPVersion,
-                                                                            MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion,
+                                                                            MockMessages.createUserMessageNotSigned (m_eSOAPVersion,
                                                                                                                        null,
                                                                                                                        aAttachments)
                                                                                         .getAsSoapDocument (),
@@ -92,7 +92,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                          aMsg.getAsSoapDocument (),
                                                          m_eSOAPVersion,
@@ -115,7 +115,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments).getAsSoapDocument ();
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments).getAsSoapDocument ();
 
     final AS4MimeMessage aMsg = AS4Encryptor.encryptMimeMessage (m_eSOAPVersion,
                                                                  aDoc,
@@ -136,7 +136,7 @@ public final class UserMessageCompressionTest extends AbstractUserMessageTestSet
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSOAPVersion, null, aAttachments);
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSOAPVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                          aMsg.getAsSoapDocument (),
                                                          m_eSOAPVersion,

@@ -609,7 +609,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     null,
                                                                     s_aResMgr));
 
-    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, null, aAttachments);
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final AS4MimeMessage aMimeMsg = AS4Encryptor.encryptMimeMessage (m_eSoapVersion,
                                                                      aMsg.getAsSoapDocument (),
                                                                      aAttachments,
@@ -637,7 +637,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
   @Test
   public void testAS4_TA20 () throws Exception
   {
-    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, m_aPayload, null);
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, m_aPayload, null);
     final Document aDoc = AS4Encryptor.encryptSoapBodyPayload (m_aCryptoFactory,
                                                                m_eSoapVersion,
                                                                aMsg.getAsSoapDocument (m_aPayload),
@@ -686,7 +686,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     EAS4CompressionMode.GZIP,
                                                                     s_aResMgr));
 
-    final AS4UserMessage aMsg = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, null, aAttachments);
+    final AS4UserMessage aMsg = MockMessages.createUserMessageNotSigned (m_eSoapVersion, null, aAttachments);
     final Document aDoc = AS4Signer.createSignedMessage (m_aCryptoFactory,
                                                          aMsg.getAsSoapDocument (null),
                                                          m_eSoapVersion,
@@ -777,7 +777,7 @@ public final class AS4CEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                     aResMgr1));
 
     final AS4MimeMessage aMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion,
-                                                                        MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion,
+                                                                        MockMessages.createUserMessageNotSigned (m_eSoapVersion,
                                                                                                                    null,
                                                                                                                    aAttachments)
                                                                                     .getAsSoapDocument (),

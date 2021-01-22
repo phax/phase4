@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.server.servlet;
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.http.HttpEntity;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,8 +33,14 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.phase4.soap.ESoapVersion;
+import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
+/**
+ * Try a duplicate detection for a UserMessage
+ *
+ * @author Philip Helger
+ */
 public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUpExt
 {
   private final ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
@@ -41,13 +49,14 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageOnlyGetOneReceipt () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
+    // Send once
     sendPlainMessageAndWait (aEntity, true, null);
 
+    // Send again
     sendPlainMessageAndWait (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 
@@ -56,8 +65,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   public void testSendDuplicateMessageTestDisposalFeature () throws Exception
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
-    final Document aDoc = MockMessages.testUserMessageSoapNotSigned (m_eSoapVersion, aPayload, null)
-                                      .getAsSoapDocument (aPayload);
+    final Document aDoc = MockMessages.createUserMessageNotSigned (m_eSoapVersion, aPayload, null).getAsSoapDocument (aPayload);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ());
 
@@ -71,5 +79,23 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
                         10 * CGlobal.MILLISECONDS_PER_SECOND);
 
     sendPlainMessageAndWait (aEntity, true, null);
+  }
+
+  @Test
+  public void testDuplicateSignedMessage () throws Exception
+  {
+    final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
+    final ESoapVersion eSOAPVersion = ESoapVersion.AS4_DEFAULT;
+    final Document aDoc = MockMessages.createUserMessageSigned (eSOAPVersion, aPayload, null, new AS4ResourceHelper ());
+
+    final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ());
+
+    // Send first
+    final String sResponse = sendPlainMessage (aEntity, true, null);
+
+    assertTrue (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
+
+    // Send second
+    sendPlainMessage (aEntity, false, EEbmsError.EBMS_OTHER.getErrorCode ());
   }
 }

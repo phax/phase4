@@ -63,52 +63,54 @@ public final class MockMessages
   private MockMessages ()
   {}
 
-  public static Document testSignedUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                                @Nullable final Node aPayload,
-                                                @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                                @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+  @Nonnull
+  public static Document createUserMessageSigned (@Nonnull final ESoapVersion eSOAPVersion,
+                                                  @Nullable final Node aPayload,
+                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                  @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
-    final AS4UserMessage aMsg = testUserMessageSoapNotSigned (eSOAPVersion, aPayload, aAttachments);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
-                                                               aMsg.getAsSoapDocument (aPayload),
-                                                               eSOAPVersion,
-                                                               aMsg.getMessagingID (),
-                                                               aAttachments,
-                                                               aResMgr,
-                                                               false,
-                                                               AS4SigningParams.createDefault ());
-    return aSignedDoc;
+    final AS4UserMessage aMsg = createUserMessageNotSigned (eSOAPVersion, aPayload, aAttachments);
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+                                          aMsg.getAsSoapDocument (aPayload),
+                                          eSOAPVersion,
+                                          aMsg.getMessagingID (),
+                                          aAttachments,
+                                          aResMgr,
+                                          false,
+                                          AS4SigningParams.createDefault ());
   }
 
-  public static Document testErrorMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
-                                           @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
+  @Nonnull
+  public static Document createErrorMessageSigned (@Nonnull final ESoapVersion eSOAPVersion,
+                                                   @Nullable final ICommonsList <WSS4JAttachment> aAttachments,
+                                                   @Nonnull final AS4ResourceHelper aResMgr) throws WSSecurityException
   {
     final ICommonsList <Ebms3Error> aEbms3ErrorList = new CommonsArrayList <> (EEbmsError.EBMS_INVALID_HEADER.getAsEbms3Error (Locale.US,
                                                                                                                                null));
     final AS4ErrorMessage aErrorMsg = AS4ErrorMessage.create (eSOAPVersion, "srcmsgid", aEbms3ErrorList).setMustUnderstand (true);
-    final Document aSignedDoc = AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
-                                                               aErrorMsg.getAsSoapDocument (),
-                                                               eSOAPVersion,
-                                                               aErrorMsg.getMessagingID (),
-                                                               aAttachments,
-                                                               aResMgr,
-                                                               false,
-                                                               AS4SigningParams.createDefault ());
-    return aSignedDoc;
+    return AS4Signer.createSignedMessage (AS4CryptoFactoryProperties.getDefaultInstance (),
+                                          aErrorMsg.getAsSoapDocument (),
+                                          eSOAPVersion,
+                                          aErrorMsg.getMessagingID (),
+                                          aAttachments,
+                                          aResMgr,
+                                          false,
+                                          AS4SigningParams.createDefault ());
   }
 
-  public static AS4ReceiptMessage testReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                                      @Nullable final Ebms3UserMessage aEbms3UserMessage,
-                                                      @Nullable final Document aUserMessage) throws DOMException
+  @Nonnull
+  public static AS4ReceiptMessage createReceiptMessage (@Nonnull final ESoapVersion eSOAPVersion,
+                                                        @Nullable final Ebms3UserMessage aEbms3UserMessage,
+                                                        @Nullable final Document aUserMessage) throws DOMException
   {
     return AS4ReceiptMessage.create (eSOAPVersion, MessageHelperMethods.createRandomMessageID (), aEbms3UserMessage, aUserMessage, true)
                             .setMustUnderstand (true);
   }
 
-  public static AS4UserMessage testUserMessageSoapNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
-                                                             @Nullable final Node aPayload,
-                                                             @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  @Nonnull
+  public static AS4UserMessage createUserMessageNotSigned (@Nonnull final ESoapVersion eSOAPVersion,
+                                                           @Nullable final Node aPayload,
+                                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
@@ -162,9 +164,10 @@ public final class MockMessages
                          .setMustUnderstand (true);
   }
 
-  public static Document testUserMessageSoapNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
-                                                                      @Nullable final Node aPayload,
-                                                                      @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  @Nonnull
+  public static Document testUserMessageNotSignedNotPModeConform (@Nonnull final ESoapVersion eSOAPVersion,
+                                                                  @Nullable final Node aPayload,
+                                                                  @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = AS4TestConstants.getEBMSProperties ();
@@ -195,11 +198,11 @@ public final class MockMessages
     return aDoc.getAsSoapDocument (aPayload);
   }
 
-  @Nullable
+  @Nonnull
   @SuppressFBWarnings ("NP_NONNULL_PARAM_VIOLATION")
-  public static Document emptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
-                                           @Nullable final Node aPayload,
-                                           @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
+  public static Document createEmptyUserMessage (@Nonnull final ESoapVersion eSOAPVersion,
+                                                 @Nullable final Node aPayload,
+                                                 @Nullable final ICommonsList <WSS4JAttachment> aAttachments)
   {
     // Add properties
     final ICommonsList <Ebms3Property> aEbms3Properties = new CommonsArrayList <> ();
