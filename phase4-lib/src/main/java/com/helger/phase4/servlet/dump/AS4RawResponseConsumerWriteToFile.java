@@ -19,6 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -28,10 +29,12 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.client.AS4ClientSentMessage;
 import com.helger.phase4.client.AbstractAS4RawResponseConsumer;
@@ -53,17 +56,34 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
    * @since 0.10.2
    */
   @FunctionalInterface
-  public static interface IFileProvider
+  public interface IFileProvider
   {
+    /**
+     * Get the {@link File} to write the raw response to. The filename must be
+     * globally unique. The resulting file should be an absolute path.
+     *
+     * @param sAS4MessageID
+     *        The AS4 message ID that was send out. Neither <code>null</code>
+     *        nor empty.
+     * @return A non-<code>null</code> {@link File}.
+     * @see AS4Configuration#getDumpBasePath()
+     */
     @Nonnull
-    File createFile (@Nonnull String sMessageID);
+    File createFile (@Nonnull String sAS4MessageID);
 
     @Nonnull
-    static String getFilename (@Nonnull final String sMessageID)
+    static String getFilename (@Nonnull final String sAS4MessageID)
     {
-      return PDTIOHelper.getCurrentLocalDateTimeForFilename () +
+      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+      return aNow.getYear () +
+             "/" +
+             StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
+             "/" +
+             StringHelper.getLeadingZero (aNow.getDayOfMonth (), 2) +
+             "/" +
+             PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
              "-" +
-             FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
+             FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
              ".as4response";
     }
   }
@@ -105,10 +125,10 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
 
     if (bUseStatusLine || bUseHttpHeaders || bUseBody)
     {
-      final String sMessageID = aResponseEntity.getMessageID ();
+      final String sSentMessageID = aResponseEntity.getMessageID ();
 
       // Use the configured data path as the base
-      final File aResponseFile = m_aFileProvider.createFile (sMessageID);
+      final File aResponseFile = m_aFileProvider.createFile (sSentMessageID);
       if (LOGGER.isInfoEnabled ())
         LOGGER.info ("Logging AS4 response to '" + aResponseFile.getAbsolutePath () + "'");
 
