@@ -19,6 +19,7 @@ package com.helger.phase4.sender;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.client.AS4ClientPullRequestMessage;
@@ -34,6 +35,7 @@ import com.helger.phase4.util.Phase4Exception;
  *        The implementation type
  * @since 0.12.0
  */
+@NotThreadSafe
 public abstract class AbstractAS4PullRequestBuilder <IMPLTYPE extends AbstractAS4PullRequestBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {

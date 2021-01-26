@@ -18,6 +18,7 @@ package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -34,6 +35,7 @@ import com.helger.phase4.util.Phase4Exception;
  *        The implementation type
  * @since 0.10.0
  */
+@NotThreadSafe
 public abstract class AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE extends AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>>
                                                                extends
                                                                AbstractAS4UserMessageBuilder <IMPLTYPE>
