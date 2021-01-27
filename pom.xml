@@ -281,16 +281,6 @@
       </dependency>
       <dependency>
         <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-peppol-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
-        <artifactId>phase4-peppol-servlet</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.helger.phase4</groupId>
         <artifactId>phase4-cef-client</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -299,22 +289,32 @@
         <artifactId>phase4-entsog-client</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-peppol-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.helger.phase4</groupId>
+        <artifactId>phase4-peppol-servlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   
   <modules>
     <module>phase4-lib</module>
-    <module>phase4-profile-entsog</module>
     <module>phase4-profile-cef</module>
+    <module>phase4-profile-entsog</module>
     <module>phase4-profile-peppol</module>
     <module>phase4-test</module>
     <module>phase4-server-webapp</module>
     <module>phase4-dynamic-discovery</module>
+    <module>phase4-cef-client</module>
+    <module>phase4-entsog-client</module>
     <module>phase4-peppol-client</module>
     <module>phase4-peppol-servlet</module>
     <module>phase4-peppol-server-webapp</module>
-    <module>phase4-cef-client</module>
-    <module>phase4-entsog-client</module>
   </modules>
   
   <build>
