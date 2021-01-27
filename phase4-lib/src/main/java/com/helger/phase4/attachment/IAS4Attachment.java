@@ -137,8 +137,8 @@ public interface IAS4Attachment
   boolean hasCharset ();
 
   /**
-   * @return A non-<code>null</code> but maybe empty map of custom part
-   *         properties for the UserMessage.
+   * @return A non-<code>null</code> but maybe empty map of custom
+   *         PartInfo/PartProperties for the UserMessage.
    * @since 0.12.0
    */
   @Nonnull
