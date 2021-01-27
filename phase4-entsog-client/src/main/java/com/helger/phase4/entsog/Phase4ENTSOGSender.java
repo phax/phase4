@@ -45,7 +45,6 @@ import com.helger.phase4.util.Phase4Exception;
  */
 @Immutable
 public final class Phase4ENTSOGSender {
-	private static final Logger LOGGER = LoggerFactory.getLogger(Phase4ENTSOGSender.class);
 
 	private Phase4ENTSOGSender() {
 	}
@@ -152,7 +151,6 @@ public final class Phase4ENTSOGSender {
 						aResHelper);
 
 				if (m_aPayloadParams != null) {
-					payloadAttachment.setCharset(m_aPayloadParams.getCharset());
 					if (m_aPayloadParams.getDocumentType() != null) {
 						payloadAttachment.customPartProperties().put("EDIGASDocumentType",
 								m_aPayloadParams.getDocumentType());
@@ -200,27 +198,7 @@ public final class Phase4ENTSOGSender {
 	public static class ENTSOGPayloadParams {
 
 		@Nullable
-		private Charset m_aCharset;
-		@Nullable
 		private String m_sDocumentType;
-
-		/**
-		 * Payload charset, usually UTF-8.
-		 * 
-		 * @return
-		 */
-		public Charset getCharset() {
-			return m_aCharset;
-		}
-
-		/**
-		 * Payload charset
-		 * 
-		 * @param aCharset
-		 */
-		public void setCharset(Charset aCharset) {
-			this.m_aCharset = aCharset;
-		}
 
 		/**
 		 * ENTSOG payload document type accoding to EDIG@S. Eg. "01G" for EDIG@S
