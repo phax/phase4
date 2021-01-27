@@ -396,7 +396,7 @@ public final class CEFCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
   }
 
   @Test
@@ -419,7 +419,7 @@ public final class CEFCompatibilityValidatorTest
     aUserMessage.setPartyInfo (aPartyInfo);
 
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only 1 PartyID is allowed")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("must contain no more than one PartyID")));
   }
 
   @Test

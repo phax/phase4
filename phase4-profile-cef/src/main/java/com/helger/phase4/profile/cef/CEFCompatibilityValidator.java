@@ -20,9 +20,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.debug.GlobalDebug;
@@ -63,9 +60,6 @@ import com.helger.phase4.wss.EWSSVersion;
  */
 public class CEFCompatibilityValidator implements IAS4ProfileValidator
 {
-  @SuppressWarnings ("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger (CEFCompatibilityValidator.class);
-
   public CEFCompatibilityValidator ()
   {}
 
@@ -81,8 +75,7 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderWarn ().setErrorText (sMsg).build ();
   }
 
-  private static void _checkIfLegIsValid (@Nonnull final IPMode aPMode,
-                                          @Nonnull final ErrorList aErrorList,
+  private static void _checkIfLegIsValid (@Nonnull final ErrorList aErrorList,
                                           @Nonnull final PModeLeg aPModeLeg,
                                           @Nonnull @Nonempty final String sFieldPrefix)
   {
@@ -263,26 +256,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     {
       aErrorList.add (_createError (sFieldPrefix + "ErrorHandling is missing"));
     }
-
-    // Compression application/gzip ONLY
-    // other possible states are absent or "" (No input)
-    final PModePayloadService aPayloadService = aPMode.getPayloadService ();
-    if (aPayloadService != null)
-    {
-      final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
-      if (eCompressionMode != null)
-      {
-        if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
-          aErrorList.add (_createError (sFieldPrefix +
-                                        "PayloadService.CompressionMode must be " +
-                                        EAS4CompressionMode.GZIP +
-                                        " instead of " +
-                                        eCompressionMode));
-      }
-    }
   }
 
-  @Override
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList.toString ());
@@ -320,48 +295,63 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     }
     else
     {
-      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1, "PMode.Leg[1].");
+      _checkIfLegIsValid (aErrorList, aPModeLeg1, "PMode.Leg[1].");
+    }
 
-      if (eMEP.isTwoWay ())
+    if (eMEP.isTwoWay ())
+    {
+      final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
+      if (aPModeLeg2 == null)
       {
-        final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
-        if (aPModeLeg2 == null)
-        {
-          aErrorList.add (_createError ("PMode.Leg[2] is missing as it specified as TWO-WAY"));
-        }
-        else
-        {
-          _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg2, "PMode.Leg[2].");
-        }
+        aErrorList.add (_createError ("PMode.Leg[2] is missing as it specified as TWO-WAY"));
+      }
+      else
+      {
+        _checkIfLegIsValid (aErrorList, aPModeLeg2, "PMode.Leg[2].");
+      }
+    }
+
+    // Compression application/gzip ONLY
+    // other possible states are absent or "" (No input)
+    final PModePayloadService aPayloadService = aPMode.getPayloadService ();
+    if (aPayloadService != null)
+    {
+      final EAS4CompressionMode eCompressionMode = aPayloadService.getCompressionMode ();
+      if (eCompressionMode != null)
+      {
+        if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
+          aErrorList.add (_createError ("PMode.PayloadService.CompressionMode must be " +
+                                        EAS4CompressionMode.GZIP +
+                                        " instead of " +
+                                        eCompressionMode));
       }
     }
   }
 
-  @Override
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
     if (aUserMsg.getMessageInfo () == null)
     {
-      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
+      aErrorList.add (_createError ("MessageInfo is missing"));
     }
     else
     {
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
-        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+        aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
       {
         // Check if originalSender and finalRecipient are present
         // Since these two properties are mandatory
         final Ebms3MessageProperties aMessageProperties = aUserMsg.getMessageProperties ();
         if (aMessageProperties == null)
-          aErrorList.add (_createError ("No Message Properties present but originalSender and finalRecipient have to be present"));
+          aErrorList.add (_createError ("MessageProperties is missing but 'originalSender' and 'finalRecipient' properties are required"));
         else
         {
           final List <Ebms3Property> aProps = aMessageProperties.getProperty ();
           if (aProps.isEmpty ())
-            aErrorList.add (_createError ("Message Property element present but no properties found"));
+            aErrorList.add (_createError ("MessageProperties/Property must not be empty"));
           else
           {
             String sOriginalSenderC1 = null;
@@ -377,9 +367,13 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
             }
 
             if (StringHelper.hasNoText (sOriginalSenderC1))
-              aErrorList.add (_createError ("'" + CAS4.ORIGINAL_SENDER + "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("MessageProperties/Property '" +
+                                            CAS4.ORIGINAL_SENDER +
+                                            "' property is empty or not existant but mandatory"));
             if (StringHelper.hasNoText (sFinalRecipientC4))
-              aErrorList.add (_createError ("'" + CAS4.FINAL_RECIPIENT + "' property is empty or not existant but mandatory"));
+              aErrorList.add (_createError ("MessageProperties/Property '" +
+                                            CAS4.FINAL_RECIPIENT +
+                                            "' property is empty or not existant but mandatory"));
           }
         }
       }
@@ -387,32 +381,35 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
 
     if (aUserMsg.getPartyInfo () == null)
     {
-      aErrorList.add (_createError ("At least one PartyInfo element has to be present"));
+      aErrorList.add (_createError ("PartyInfo is missing"));
     }
     else
     {
-      final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
-      if (aTo != null)
-      {
-        if (aTo.getPartyIdCount () > 1)
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/To - part"));
-      }
-
       final Ebms3From aFrom = aUserMsg.getPartyInfo ().getFrom ();
       if (aFrom != null)
       {
         if (aFrom.getPartyIdCount () > 1)
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/From - part"));
+          aErrorList.add (_createError ("PartyInfo/From must contain no more than one PartyID"));
+      }
+
+      final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
+      if (aTo != null)
+      {
+        if (aTo.getPartyIdCount () > 1)
+          aErrorList.add (_createError ("PartyInfo/To must contain no more than one PartyID"));
       }
     }
   }
 
-  @Override
   public void validateSignalMessage (@Nonnull final Ebms3SignalMessage aSignalMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 
-    if (aSignalMsg.getMessageInfo () != null)
+    if (aSignalMsg.getMessageInfo () == null)
+    {
+      aErrorList.add (_createError ("MessageInfo is missing"));
+    }
+    else
     {
       if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
         aErrorList.add (_createError ("MessageID is missing but is mandatory!"));

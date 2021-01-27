@@ -22,6 +22,7 @@ package com.helger.phase4.profile.entsog;
 import javax.annotation.Nonnull;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.error.IError;
 import com.helger.commons.error.SingleError;
 import com.helger.commons.error.list.ErrorList;
@@ -66,27 +67,48 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     return SingleError.builderError ().setErrorText (sMsg).build ();
   }
 
-  private void _checkIfLegIsValid (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList, @Nonnull final PModeLeg aPModeLeg)
+  @Nonnull
+  private static IError _createWarn (@Nonnull final String sMsg)
+  {
+    return SingleError.builderWarn ().setErrorText (sMsg).build ();
+  }
+
+  private void _checkIfLegIsValid (@Nonnull final ErrorList aErrorList,
+                                   @Nonnull final PModeLeg aPModeLeg,
+                                   @Nonnull @Nonempty final String sFieldPrefix)
   {
     final PModeLegProtocol aLegProtocol = aPModeLeg.getProtocol ();
     if (aLegProtocol == null)
     {
-      aErrorList.add (_createError ("PMode Leg 1 is missing Protocol"));
+      aErrorList.add (_createError (sFieldPrefix + "Protocol is missing"));
     }
     else
     {
       // PROTOCOL Address only https allowed
       final String sAddressProtocol = aLegProtocol.getAddressProtocol ();
 
-      // FIXME only https allowed http only for development mode!!!!
-      if (sAddressProtocol == null || !(sAddressProtocol.equalsIgnoreCase ("https") || sAddressProtocol.equalsIgnoreCase ("http")))
+      if (StringHelper.hasText (sAddressProtocol))
       {
-        aErrorList.add (_createError ("PMode Leg1 uses a non-standard AddressProtocol: " + sAddressProtocol));
+        if (sAddressProtocol.equalsIgnoreCase ("http") || sAddressProtocol.equalsIgnoreCase ("https"))
+        {
+          // Always okay
+        }
+        else
+        {
+          // Other protocol
+          aErrorList.add (_createError (sFieldPrefix + "AddressProtocol '" + sAddressProtocol + "' is unsupported"));
+        }
       }
+      else
+      {
+        // Empty address protocol
+        aErrorList.add (_createError (sFieldPrefix + "AddressProtocol is missing"));
+      }
+
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError ("PMode Leg1 uses a non-standard SOAP version: " + eSOAPVersion.getVersion ()));
+        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
       }
     }
 
@@ -94,46 +116,54 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     final PModeLegSecurity aPModeLegSecurity = aPModeLeg.getSecurity ();
     if (aPModeLegSecurity != null)
     {
+      // Check Certificate
       if (aPModeLegSecurity.getX509SignatureCertificate () == null)
       {
-        aErrorList.add (_createError ("A signature certificate is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureCertificate is missing"));
       }
 
       // Check Signature Algorithm
       if (aPModeLegSecurity.getX509SignatureAlgorithm () == null)
       {
-        aErrorList.add (_createError ("No signature algorithm is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureAlgorithm is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509SignatureAlgorithm ().equals (ECryptoAlgorithmSign.RSA_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " + ECryptoAlgorithmSign.RSA_SHA_256.getID () + " as signing algorithm"));
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.X509SignatureAlgorithm must use the value '" +
+                                        ECryptoAlgorithmSign.RSA_SHA_256.getID () +
+                                        "'"));
         }
 
       // Check Hash Function
       if (aPModeLegSecurity.getX509SignatureHashFunction () == null)
       {
-        aErrorList.add (_createError ("No hash function (Digest Algorithm) is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509SignatureHashFunction is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509SignatureHashFunction ().equals (ECryptoAlgorithmSignDigest.DIGEST_SHA_256))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Securoty.X509SignatureHashFunction must use the value '" +
                                         ECryptoAlgorithmSignDigest.DIGEST_SHA_256.getID () +
-                                        " as hash function"));
+                                        "'"));
         }
 
       // Check Encrypt algorithm
       if (aPModeLegSecurity.getX509EncryptionAlgorithm () == null)
       {
-        aErrorList.add (_createError ("No encryption algorithm is specified but is required"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.X509EncryptionAlgorithm is missing"));
       }
       else
         if (!aPModeLegSecurity.getX509EncryptionAlgorithm ().equals (ECryptoAlgorithmCrypt.AES_128_GCM))
         {
-          aErrorList.add (_createError ("AS4 Profile only allows " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Securoty.X509EncryptionAlgorithm must use the value '" +
                                         ECryptoAlgorithmCrypt.AES_128_GCM.getID () +
-                                        " as encryption algorithm"));
+                                        "' instead of '" +
+                                        aPModeLegSecurity.getX509EncryptionAlgorithm ().getID () +
+                                        "'"));
         }
 
       // Check WSS Version = 1.1.1
@@ -141,11 +171,11 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       {
         // Check for WSS - Version if there is one present
         if (!aPModeLegSecurity.getWSSVersion ().equals (EWSSVersion.WSS_111))
-          aErrorList.add (_createError ("Wrong WSS Version " +
-                                        aPModeLegSecurity.getWSSVersion () +
-                                        " only " +
+          aErrorList.add (_createError (sFieldPrefix +
+                                        "Security.WSSVersion must use the value " +
                                         EWSSVersion.WSS_111 +
-                                        " is allowed."));
+                                        " instead of " +
+                                        aPModeLegSecurity.getWSSVersion ()));
       }
 
       if (aPModeLegSecurity.isUsernameTokenCreatedDefined () ||
@@ -154,41 +184,41 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
           aPModeLegSecurity.hasUsernameTokenPassword () ||
           aPModeLegSecurity.hasUsernameTokenUsername ())
       {
-        aErrorList.add (_createError ("Username nor it's part MUST NOT be set"));
+        aErrorList.add (_createError (sFieldPrefix + "Username nor it's part MUST NOT be set"));
       }
 
       // PModeAuthorize
       if (aPModeLegSecurity.isPModeAuthorizeDefined ())
       {
         if (aPModeLegSecurity.isPModeAuthorize ())
-        {
-          aErrorList.add (_createError ("PMode Authorize has to be set to false"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize must be set to 'false'"));
       }
       else
       {
-        aErrorList.add (_createError ("PMode Authorize is a mandatory parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "Security.PModeAuthorize is missing"));
       }
 
-      // SEND RECEIPT TRUE/FALSE when false dont send receipts anymore
+      // SEND RECEIPT TRUE/FALSE when false don't send receipts anymore
       if (aPModeLegSecurity.isSendReceiptDefined ())
       {
         if (aPModeLegSecurity.isSendReceipt ())
         {
           // set response required
-
           if (!aPModeLegSecurity.isSendReceiptNonRepudiation ())
-          {
-            aErrorList.add (_createError ("Receipt non repudation has to be true"));
-          }
+            aErrorList.add (_createError (sFieldPrefix + "SendReceiptNonRepudiation must be set to 'true'"));
 
           if (aPModeLegSecurity.getSendReceiptReplyPattern () != EPModeSendReceiptReplyPattern.RESPONSE)
-          {
-            aErrorList.add (_createError ("Only response is allowed as pattern"));
-          }
+            aErrorList.add (_createError (sFieldPrefix +
+                                          "Security.SendReceiptReplyPattern must use the value " +
+                                          EPModeSendReceiptReplyPattern.RESPONSE +
+                                          " instead of " +
+                                          aPModeLegSecurity.getSendReceiptReplyPattern ()));
         }
       }
-
+    }
+    else
+    {
+      aErrorList.add (_createError (sFieldPrefix + "Security is missing"));
     }
 
     // Error Handling
@@ -198,55 +228,48 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportAsResponseDefined ())
       {
         if (!aErrorHandling.isReportAsResponse ())
-        {
-          aErrorList.add (_createError ("PMode ReportAsResponse has to be True"));
-        }
+          aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.AsResponse must be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportAsResponse is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.AsResponse is missing"));
       }
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-        {
-          aErrorList.add (_createError ("PMode ReportProcessErrorNotifyConsumer has to be True"));
-        }
+          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer is missing"));
       }
-      if (aErrorHandling.isReportDeliveryFailuresNotifyProducerDefined ())
+
+      if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
-        if (!aErrorHandling.isReportDeliveryFailuresNotifyProducer ())
-        {
-          aErrorList.add (_createError ("PMode ReportDeliveryFailuresNotifyProducer has to be True"));
-        }
+        if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
+          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
-        aErrorList.add (_createError ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter"));
+        aErrorList.add (_createError (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer is missing"));
       }
 
       if (aErrorHandling.getReportSenderErrorsTo () != null &&
           aErrorHandling.getReportSenderErrorsTo ().addresses () != null &&
           aErrorHandling.getReportSenderErrorsTo ().addresses ().isNotEmpty ())
       {
-        aErrorList.add (_createError ("ReportSenderErrorsTo has not to be set"));
+        aErrorList.add (_createError (sFieldPrefix + "ReportSenderErrorsTo must not be set"));
       }
-
     }
     else
     {
-      aErrorList.add (_createError ("No ErrorHandling Parameter present but they are mandatory"));
+      aErrorList.add (_createError (sFieldPrefix + "ErrorHandling is missing"));
     }
-
   }
 
   public void validatePMode (@Nonnull final IPMode aPMode, @Nonnull final ErrorList aErrorList)
   {
-    assert aErrorList.isEmpty () : "Errors in global PMode validation: " + aErrorList.toString ();
+    ValueEnforcer.isTrue (aErrorList.isEmpty (), () -> "Errors in global PMode validation: " + aErrorList.toString ());
 
     try
     {
@@ -277,33 +300,18 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
     final PModeLeg aPModeLeg1 = aPMode.getLeg1 ();
     if (aPModeLeg1 == null)
     {
-      aErrorList.add (_createError ("PMode is missing Leg 1"));
+      aErrorList.add (_createError ("PMode.Leg[1] is missing"));
     }
     else
     {
-      _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg1);
-
-      if (eMEP.isTwoWay ())
-      {
-        final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
-        if (aPModeLeg2 == null)
-        {
-          aErrorList.add (_createError ("PMode is missing Leg 2 and is specified as TWO-WAY"));
-        }
-        else
-        {
-          _checkIfLegIsValid (aPMode, aErrorList, aPModeLeg2);
-        }
-      }
+      _checkIfLegIsValid (aErrorList, aPModeLeg1, "PMode.Leg[1].");
     }
 
-    final PModeLeg aPModeLeg2 = aPMode.getLeg2 ();
-    if (aPModeLeg2 != null)
+    if (aPMode.getLeg2 () != null)
     {
-      aErrorList.add (_createError ("PMode can contain only leg 1"));
+      aErrorList.add (_createError ("PMode.Leg[2] must not be present"));
     }
 
-    // OK
     final PModePayloadService aPayloadService = aPMode.getPayloadService ();
     if (aPayloadService != null)
     {
@@ -311,74 +319,72 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
       if (eCompressionMode != null)
       {
         if (!eCompressionMode.equals (EAS4CompressionMode.GZIP))
-          aErrorList.add (_createError ("Only GZIP Compression is allowed"));
+          aErrorList.add (_createError ("PMode.PayloadService.CompressionMode must be " +
+                                        EAS4CompressionMode.GZIP +
+                                        " instead of " +
+                                        eCompressionMode));
       }
       else
       {
-        aErrorList.add (_createError ("GZIP Compression is invalid"));
+        aErrorList.add (_createError ("PMode.PayloadService.CompressionMode is missing"));
       }
     }
     else
     {
-      aErrorList.add (_createError ("Payload service is required"));
+      aErrorList.add (_createError ("PMode.PayloadService is missing"));
     }
-
   }
 
   public void validateUserMessage (@Nonnull final Ebms3UserMessage aUserMsg, @Nonnull final ErrorList aErrorList)
   {
     ValueEnforcer.notNull (aUserMsg, "UserMsg");
 
-    if (aUserMsg.getCollaborationInfo () != null)
+    if (aUserMsg.getMessageInfo () == null)
     {
-      final Ebms3AgreementRef agreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
-      if (StringHelper.hasNoText (agreementRef.getValue ()))
-      {
-        aErrorList.add (_createError ("AgreementRef value is missing but is mandatory!"));
-      }
-      if (agreementRef.getPmode () != null)
-      {
-        aErrorList.add (_createError ("PMode has not to be set!"));
-      }
+      aErrorList.add (_createError ("MessageInfo is missing"));
     }
     else
-    {
-      aErrorList.add (_createError ("No CollaborationInfo found!"));
-    }
-
-    if (aUserMsg.getMessageInfo () != null)
     {
       if (StringHelper.hasNoText (aUserMsg.getMessageInfo ().getMessageId ()))
-        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+        aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
 
       if (StringHelper.hasText (aUserMsg.getMessageInfo ().getRefToMessageId ()))
-        aErrorList.add (_createError ("RefToMessageID MUST NOT be present!"));
+        aErrorList.add (_createError ("MessageInfo/RefToMessageId must not be set"));
 
-    }
-    else
-    {
-      aErrorList.add (_createError ("MessageInfo is missing but is mandatory!"));
     }
 
     if (aUserMsg.getPartyInfo () == null)
     {
-      aErrorList.add (_createError ("At least one PartyInfo element has to be present"));
+      aErrorList.add (_createError ("PartyInfo is missing"));
     }
     else
     {
-      final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
-      if (aTo != null)
-      {
-        if (aTo.getPartyIdCount () > 1)
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/To - part"));
-      }
-
       final Ebms3From aFrom = aUserMsg.getPartyInfo ().getFrom ();
       if (aFrom != null)
       {
         if (aFrom.getPartyIdCount () > 1)
-          aErrorList.add (_createError ("Only 1 PartyID is allowed in PartyInfo/From - part"));
+          aErrorList.add (_createError ("PartyInfo/From must contain no more than one PartyID"));
       }
+
+      final Ebms3To aTo = aUserMsg.getPartyInfo ().getTo ();
+      if (aTo != null)
+      {
+        if (aTo.getPartyIdCount () > 1)
+          aErrorList.add (_createError ("PartyInfo/To must contain no more than one PartyID"));
+      }
+    }
+
+    if (aUserMsg.getCollaborationInfo () == null)
+    {
+      aErrorList.add (_createError ("CollaborationInfo is missing"));
+    }
+    else
+    {
+      final Ebms3AgreementRef aAgreementRef = aUserMsg.getCollaborationInfo ().getAgreementRef ();
+      if (StringHelper.hasNoText (aAgreementRef.getValue ()))
+        aErrorList.add (_createError ("CollaborationInfo/AgreementRef value is missing"));
+      if (aAgreementRef.getPmode () != null)
+        aErrorList.add (_createError ("CollaborationInfo/PMode has not to be set!"));
     }
   }
 
@@ -386,10 +392,14 @@ public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator
   {
     ValueEnforcer.notNull (aSignalMsg, "SignalMsg");
 
-    if (aSignalMsg.getMessageInfo () != null)
+    if (aSignalMsg.getMessageInfo () == null)
+    {
+      aErrorList.add (_createError ("MessageInfo is missing"));
+    }
+    else
     {
       if (StringHelper.hasNoText (aSignalMsg.getMessageInfo ().getMessageId ()))
-        aErrorList.add (_createError ("MessageID is missing but is mandatory!"));
+        aErrorList.add (_createError ("MessageInfo/MessageId is missing"));
     }
   }
 }

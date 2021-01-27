@@ -110,7 +110,7 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (null);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode is missing Leg 1")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1] is missing")));
   }
 
   @Test
@@ -118,7 +118,7 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (new PModeLeg (null, null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Protocol is missing")));
   }
 
   @Test
@@ -127,7 +127,7 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion (null), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("missing the AddressProtocol")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol is missing")));
   }
 
   @Test
@@ -135,7 +135,7 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("ftp://test.com"), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("non-standard AddressProtocol: ftp")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("AddressProtocol 'ftp' is unsupported")));
   }
 
   @Test
@@ -143,7 +143,7 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.setLeg1 (new PModeLeg (new PModeLegProtocol ("https://test.com", ESoapVersion.SOAP_11), null, null, null, null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("1.1")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("SoapVersion '1.1' is unsupported")));
   }
 
   @Test
@@ -157,7 +157,7 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("signature algorithm")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureAlgorithm is missing")));
   }
 
   @Test
@@ -186,7 +186,7 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("hash function")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509SignatureHashFunction is missing")));
   }
 
   @Test
@@ -214,7 +214,7 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("encryption algorithm")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("X509EncryptionAlgorithm is missing")));
   }
 
   @Test
@@ -243,7 +243,8 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Wrong WSS Version")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.WSSVersion must use the value WSS_111 instead of WSS_10")));
   }
 
   @Test
@@ -251,7 +252,8 @@ public final class ENTSOGCompatibilityValidatorTest
   {
     m_aPMode.getLeg1 ().getSecurity ().setPModeAuthorize (ETriState.UNDEFINED);
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue ("Errors: " + m_aErrorList.toString (), m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("mandatory")));
+    assertTrue ("Errors: " + m_aErrorList.toString (),
+                m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Security.PModeAuthorize is missing")));
   }
 
   @Test
@@ -280,7 +282,8 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     aSecurityLeg));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only response is allowed as pattern")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("Security.SendReceiptReplyPattern must use the value RESPONSE instead of CALLBACK")));
   }
 
   // Error Handling
@@ -291,37 +294,26 @@ public final class ENTSOGCompatibilityValidatorTest
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"), null, null, null, null));
 
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("No ErrorHandling Parameter present but they are mandatory")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode.Leg[1].ErrorHandling is missing")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportAsResponseMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ReportAsResponse is a mandatory PMode parameter")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse is missing")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportAsResponseWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportAsResponse (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
@@ -329,18 +321,13 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportAsResponse has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("ErrorHandling.Report.AsResponse must be 'true'")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -348,18 +335,13 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ReportProcessErrorNotifyConsumer is a mandatory PMode parameter")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer is missing")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportProcessErrorNotifyConsumerWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     aErrorHandler.setReportProcessErrorNotifyConsumer (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
@@ -367,18 +349,14 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null,
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("PMode ReportProcessErrorNotifyConsumer has to be True")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerMandatory ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -386,19 +364,14 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("ReportDeliveryFailuresNotifyProducer is a mandatory PMode parameter")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer is missing")));
   }
 
   @Test
   public void testValidatePModeErrorHandlingReportDeliveryFailuresNotifyProducerWrongValue ()
   {
-    final PModeLegErrorHandling aErrorHandler = new PModeLegErrorHandling (null,
-                                                                           null,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED,
-                                                                           ETriState.UNDEFINED);
-    aErrorHandler.setReportDeliveryFailuresNotifyProducer (false);
+    final PModeLegErrorHandling aErrorHandler = PModeLegErrorHandling.createUndefined ();
+    aErrorHandler.setReportProcessErrorNotifyProducer (false);
     m_aPMode.setLeg1 (new PModeLeg (PModeLegProtocol.createForDefaultSoapVersion ("http://test.example.org"),
                                     null,
                                     aErrorHandler,
@@ -406,7 +379,7 @@ public final class ENTSOGCompatibilityValidatorTest
                                     null));
     VALIDATOR.validatePMode (m_aPMode, m_aErrorList);
     assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE)
-                                                .contains ("PMode ReportDeliveryFailuresNotifyProducer has to be True")));
+                                                .contains ("ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'")));
   }
 
   @Test
@@ -415,7 +388,7 @@ public final class ENTSOGCompatibilityValidatorTest
     final Ebms3UserMessage aUserMessage = new Ebms3UserMessage ();
     aUserMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
   }
 
   @Test
@@ -438,7 +411,7 @@ public final class ENTSOGCompatibilityValidatorTest
     aUserMessage.setPartyInfo (aPartyInfo);
 
     VALIDATOR.validateUserMessage (aUserMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("Only 1 PartyID is allowed")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("must contain no more than one PartyID")));
   }
 
   @Test
@@ -447,7 +420,7 @@ public final class ENTSOGCompatibilityValidatorTest
     final Ebms3SignalMessage aSignalMessage = new Ebms3SignalMessage ();
     aSignalMessage.setMessageInfo (new Ebms3MessageInfo ());
     VALIDATOR.validateSignalMessage (aSignalMessage, m_aErrorList);
-    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageID is missing")));
+    assertTrue (m_aErrorList.containsAny (x -> x.getErrorText (LOCALE).contains ("MessageInfo/MessageId is missing")));
   }
 
 }
