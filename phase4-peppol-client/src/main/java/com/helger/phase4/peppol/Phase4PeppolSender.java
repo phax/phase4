@@ -41,7 +41,6 @@ import com.helger.commons.mime.IMimeType;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.state.ETriState;
 import com.helger.commons.string.StringHelper;
-import com.helger.peppol.sbdh.CPeppolSBDH;
 import com.helger.peppol.sbdh.PeppolSBDHDocument;
 import com.helger.peppol.sbdh.payload.PeppolSBDHPayloadWriter;
 import com.helger.peppol.sbdh.spec12.BinaryContentType;
@@ -89,8 +88,6 @@ public final class Phase4PeppolSender
 {
   public static final PeppolIdentifierFactory IF = PeppolIdentifierFactory.INSTANCE;
   public static final IPeppolURLProvider URL_PROVIDER = PeppolURLProvider.INSTANCE;
-  @Deprecated
-  public static final String DEFAULT_SBDH_DOCUMENT_IDENTIFICATION_UBL_VERSION_ID = CPeppolSBDH.TYPE_VERSION_21;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (Phase4PeppolSender.class);
 

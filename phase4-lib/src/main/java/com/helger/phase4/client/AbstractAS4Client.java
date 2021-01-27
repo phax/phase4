@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.WillNotClose;
@@ -356,65 +355,6 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   public final HttpRetrySettings httpRetrySettings ()
   {
     return m_aHttpRetrySettings;
-  }
-
-  /**
-   * @return The maximum number of retries. Only values &gt; 0 imply a retry.
-   * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
-   */
-  @Nonnegative
-  @Deprecated
-  public final int getMaxRetries ()
-  {
-    return m_aHttpRetrySettings.getMaxRetries ();
-  }
-
-  /**
-   * Set the maximum number of retries to be used.
-   *
-   * @param nMaxRetries
-   *        Retry count. A value of <code>0</code> means "no retries". Must be
-   *        &ge; 0.
-   * @return this for chaining
-   * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setMaxRetries (@Nonnegative final int nMaxRetries)
-  {
-    m_aHttpRetrySettings.setMaxRetries (nMaxRetries);
-    return thisAsT ();
-  }
-
-  /**
-   * @return The interval in milliseconds between retries. Must be &ge; 0.
-   * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
-   */
-  @Deprecated
-  @Nonnegative
-  public final long getRetryIntervalMS ()
-  {
-    return m_aHttpRetrySettings.getDurationBeforeRetry ().toMillis ();
-  }
-
-  /**
-   * Set the interval in milliseconds between retries.
-   *
-   * @param nRetryIntervalMS
-   *        Retry interval in milliseconds. Must be &ge; 0.
-   * @return this for chaining
-   * @since 0.9.0
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings()} instead
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE setRetryIntervalMS (@Nonnegative final long nRetryIntervalMS)
-  {
-    m_aHttpRetrySettings.setDurationBeforeRetry (Duration.ofMillis (nRetryIntervalMS));
-    return thisAsT ();
   }
 
   @Nonnull

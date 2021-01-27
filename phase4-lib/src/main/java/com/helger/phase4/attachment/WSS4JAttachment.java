@@ -112,6 +112,9 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     setId (MessageHelperMethods.createRandomAttachmentID ());
   }
 
+  /**
+   * @deprecated To indicate that it shouldn't be used.
+   */
   @Override
   @Deprecated
   @UnsupportedOperation
@@ -329,6 +332,21 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     aAttachment.addHeader (CHttpHeader.CONTENT_TYPE, aAttachment.getMimeType ());
   }
 
+  /**
+   * @param aSrcFile
+   *        File
+   * @param aMimeType
+   *        Mime type
+   * @param eCompressionMode
+   *        compression mode
+   * @param aResHelper
+   *        Resource helper
+   * @return Attachment
+   * @throws IOException
+   *         on error
+   * @deprecated Since 0.14.0; Use the version with
+   *             {@link Phase4OutgoingAttachment} instead
+   */
   @Nonnull
   @Deprecated
   @Phase4V1Tasks
@@ -338,36 +356,26 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
     final String sContentID = null;
-    final Charset aCharset = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aResHelper);
   }
 
-  @Nonnull
-  @Deprecated
-  @Phase4V1Tasks
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
-                                                              @Nonnull final IMimeType aMimeType,
-                                                              @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nullable final Charset aCharset,
-                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
-  {
-    final String sContentID = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
-  }
-
-  @Nonnull
-  @Deprecated
-  @Phase4V1Tasks
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
-                                                              @Nullable final String sContentID,
-                                                              @Nonnull final IMimeType aMimeType,
-                                                              @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
-  {
-    final Charset aCharset = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
-  }
-
+  /**
+   * @param aSrcFile
+   *        File
+   * @param sContentID
+   *        Content ID
+   * @param aMimeType
+   *        Mime type
+   * @param eCompressionMode
+   *        compression mode
+   * @param aResHelper
+   *        Resource helper
+   * @return Attachment
+   * @throws IOException
+   *         on error
+   * @deprecated Since 0.14.0; Use the version with
+   *             {@link Phase4OutgoingAttachment} instead
+   */
   @Nonnull
   @Deprecated
   @Phase4V1Tasks
@@ -375,10 +383,10 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nullable final String sContentID,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nullable final Charset aCharset,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     final String sFilename = FilenameHelper.getWithoutPath (aSrcFile);
+    final Charset aCharset = null;
     return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 

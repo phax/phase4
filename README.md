@@ -273,6 +273,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Extended `Phase4OutgoingAttachment` to also have a `Charset` parameter. Thanks to [@pavelrotek](https://github.com/pavelrotek) for pointing this out.
     * `Phase4OutgoingAttachment` can now work on `byte[]` and `File`.
     * Added support for the ENTSOG AS4 profile (see [issue #46](https://github.com/phax/phase4/pull/46)). Thanks to [@pavelrotek](https://github.com/pavelrotek) for providing it.
+    * Removed all elements deprecated in 0.13.x or earlier
 * v0.13.2 - 2021-01-22
     * Fixed an error that an empty `MessageProperties` element is created which would not be XSD compliant. Thanks to Amish Regmi for pointing this out.
 * v0.13.1 - 2021-01-20

@@ -26,7 +26,6 @@ import com.helger.commons.annotation.UsedViaReflection;
 import com.helger.commons.exception.InitializationException;
 import com.helger.commons.lang.ClassHelper;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.phase4.config.Phase4V1Tasks;
 import com.helger.phase4.duplicate.IAS4DuplicateManager;
 import com.helger.phase4.model.mpc.IMPCManager;
 import com.helger.phase4.model.pmode.IPModeManager;
@@ -41,16 +40,6 @@ import com.helger.scope.singleton.AbstractGlobalSingleton;
  */
 public final class MetaAS4Manager extends AbstractGlobalSingleton
 {
-  /**
-   * The boolean System property to enable in-memory managers.
-   *
-   * @deprecated Since 0.11.0 - Use the {@link AS4Configuration} resolution
-   *             rules to access this property.
-   */
-  @Deprecated
-  @Phase4V1Tasks
-  public static final String SYSTEM_PROPERTY_PHASE4_MANAGER_INMEMORY = "phase4.manager.inmemory";
-
   private static final Logger LOGGER = LoggerFactory.getLogger (MetaAS4Manager.class);
 
   private static IManagerFactory s_aFactory;

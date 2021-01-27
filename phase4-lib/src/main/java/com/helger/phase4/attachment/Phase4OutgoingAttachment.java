@@ -67,10 +67,13 @@ public class Phase4OutgoingAttachment
     m_aCharset = aCharset;
   }
 
+  /**
+   * @return Same as {@link #getDataBytes()}
+   * @deprecated Since 0.14.0; Use {@link #getDataBytes()} instead
+   */
   @Deprecated
   public final ByteArrayWrapper getData ()
   {
-
     return getDataBytes ();
   }
 

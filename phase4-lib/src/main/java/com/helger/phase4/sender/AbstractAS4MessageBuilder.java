@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.sender;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
 
@@ -30,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.OverrideOnDemand;
-import com.helger.commons.lang.TimeValue;
 import com.helger.commons.state.ESuccess;
 import com.helger.commons.traits.IGenericImplTrait;
 import com.helger.httpclient.HttpClientFactory;
@@ -243,79 +241,6 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   public final IMPLTYPE httpRetrySettings (@Nullable final HttpRetrySettings a)
   {
     m_aHttpRetrySettings = a;
-    return thisAsT ();
-  }
-
-  /**
-   * Set the maximum number of retries.
-   *
-   * @param n
-   *        The maximum number of retries.
-   * @return this for chaining
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
-   *             instead.
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE maxRetries (final int n)
-  {
-    if (m_aHttpRetrySettings == null)
-      m_aHttpRetrySettings = new HttpRetrySettings ();
-    m_aHttpRetrySettings.setMaxRetries (n);
-    return thisAsT ();
-  }
-
-  /**
-   * Set the retry interval for retries. This is only relevant if at least 1
-   * retry happens.
-   *
-   * @param a
-   *        The retry interval
-   * @return this for chaining
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
-   *             instead.
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE retryInterval (@Nullable final TimeValue a)
-  {
-    return retryIntervalMilliseconds (a == null ? -1L : a.getAsMillis ());
-  }
-
-  /**
-   * Set the retry interval for retries. This is only relevant if at least 1
-   * retry happens.
-   *
-   * @param a
-   *        The retry interval
-   * @return this for chaining
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
-   *             instead.
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE retryInterval (@Nullable final Duration a)
-  {
-    return retryIntervalMilliseconds (a == null ? -1L : a.toMillis ());
-  }
-
-  /**
-   * Set the retry interval for retries. This is only relevant if at least 1
-   * retry happens.
-   *
-   * @param n
-   *        The retry interval in milliseconds
-   * @return this for chaining
-   * @deprecated Since 0.13.0. Use {@link #httpRetrySettings(HttpRetrySettings)}
-   *             instead.
-   */
-  @Deprecated
-  @Nonnull
-  public final IMPLTYPE retryIntervalMilliseconds (final long n)
-  {
-    if (m_aHttpRetrySettings == null)
-      m_aHttpRetrySettings = new HttpRetrySettings ();
-    m_aHttpRetrySettings.setDurationBeforeRetry (Duration.ofMillis (n));
     return thisAsT ();
   }
 
