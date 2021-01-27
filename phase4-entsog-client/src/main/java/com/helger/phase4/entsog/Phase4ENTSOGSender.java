@@ -70,11 +70,10 @@ public final class Phase4ENTSOGSender {
 
 		private ECryptoKeyIdentifierType m_signingKeyIdentifierType = ECryptoKeyIdentifierType.ISSUER_SERIAL;
 		private ECryptoKeyIdentifierType m_encryptionKeyIdentifierType = ECryptoKeyIdentifierType.ISSUER_SERIAL;
-		
+
 		private Phase4OutgoingAttachment m_aPayload;
-		private Charset m_aPayloadCharset;
-		private String m_sPayloadDocumentType;
-		
+		private ENTSOGPayloadParams m_aPayloadParams;
+
 		protected AbstractENTSOGUserMessageBuilder() {
 			// Override default values
 			try {
@@ -104,8 +103,8 @@ public final class Phase4ENTSOGSender {
 		public final IMPLTYPE setSigningKeyIdentifierType(ECryptoKeyIdentifierType signingKeyIdentifierType) {
 			m_signingKeyIdentifierType = signingKeyIdentifierType;
 			return thisAsT();
-		}		
-		
+		}
+
 		/**
 		 * Set the payload to be send out.
 		 *
@@ -113,27 +112,26 @@ public final class Phase4ENTSOGSender {
 		 * @return this for chaining
 		 */
 		@Nonnull
-		public final IMPLTYPE payload(@Nullable final Phase4OutgoingAttachment.Builder aBuilder, Charset aPayloadCharset, String sPayloadDocumentType) {
+		public final IMPLTYPE payload(@Nullable final Phase4OutgoingAttachment.Builder aBuilder,
+				@Nullable ENTSOGPayloadParams aPayloadParams) {
 			m_aPayload = aBuilder.compressionGZIP().build();
-			m_aPayloadCharset = aPayloadCharset;
-			m_sPayloadDocumentType = sPayloadDocumentType;
+			m_aPayloadParams = aPayloadParams;
 			return thisAsT();
 		}
 
-	    @Override
-	    @OverridingMethodsMustInvokeSuper
-	    public boolean isEveryRequiredFieldSet ()
-	    {
-	      if (!super.isEveryRequiredFieldSet ())
-	        return false;
+		@Override
+		@OverridingMethodsMustInvokeSuper
+		public boolean isEveryRequiredFieldSet() {
+			if (!super.isEveryRequiredFieldSet())
+				return false;
 
-	      if (m_aPayload==null) {
-	    	  return false;
-	      }
+			if (m_aPayload == null) {
+				return false;
+			}
 
-	      return true;
-	    }
-		
+			return true;
+		}
+
 		@Override
 		protected final void mainSendMessage() throws Phase4Exception {
 			// Temporary file manager
@@ -145,15 +143,20 @@ public final class Phase4ENTSOGSender {
 				aUserMsg.cryptParams().setKeyIdentifierType(m_encryptionKeyIdentifierType);
 				aUserMsg.signingParams().setKeyIdentifierType(m_signingKeyIdentifierType);
 				aUserMsg.setConversationID("");
-				
+
 				// No payload - only one attachment
 				aUserMsg.setPayload(null);
 
 				// Add main attachment
-				WSS4JAttachment payloadAttachment = WSS4JAttachment.createOutgoingFileAttachment(m_aPayload, aResHelper);
-				payloadAttachment.setCharset(m_aPayloadCharset);
-				if (m_sPayloadDocumentType != null) {
-					payloadAttachment.customPartProperties().put("EDIGASDocumentType", m_sPayloadDocumentType);
+				WSS4JAttachment payloadAttachment = WSS4JAttachment.createOutgoingFileAttachment(m_aPayload,
+						aResHelper);
+
+				if (m_aPayloadParams != null) {
+					payloadAttachment.setCharset(m_aPayloadParams.getCharset());
+					if (m_aPayloadParams.getDocumentType() != null) {
+						payloadAttachment.customPartProperties().put("EDIGASDocumentType",
+								m_aPayloadParams.getDocumentType());
+					}
 				}
 				aUserMsg.addAttachment(payloadAttachment);
 
@@ -185,6 +188,57 @@ public final class Phase4ENTSOGSender {
 	 */
 	public static class ENTSOGUserMessageBuilder extends AbstractENTSOGUserMessageBuilder<ENTSOGUserMessageBuilder> {
 		public ENTSOGUserMessageBuilder() {
+		}
+	}
+
+	/**
+	 * Additional parameters to add in the PayloadInfo part of AS4 UserMessage
+	 * 
+	 * @author Pavel Rotek
+	 *
+	 */
+	public static class ENTSOGPayloadParams {
+
+		@Nullable
+		private Charset m_aCharset;
+		@Nullable
+		private String m_sDocumentType;
+
+		/**
+		 * Payload charset, usually UTF-8.
+		 * 
+		 * @return
+		 */
+		public Charset getCharset() {
+			return m_aCharset;
+		}
+
+		/**
+		 * Payload charset
+		 * 
+		 * @param aCharset
+		 */
+		public void setCharset(Charset aCharset) {
+			this.m_aCharset = aCharset;
+		}
+
+		/**
+		 * ENTSOG payload document type accoding to EDIG@S. Eg. "01G" for EDIG@S
+		 * Nomination document.
+		 * 
+		 * @return
+		 */
+		public String getDocumentType() {
+			return m_sDocumentType;
+		}
+
+		/**
+		 * ENTSOG payload document type
+		 * 
+		 * @param sDocumentType
+		 */
+		public void setDocumentType(String sDocumentType) {
+			this.m_sDocumentType = sDocumentType;
 		}
 	}
 
