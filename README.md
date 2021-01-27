@@ -270,7 +270,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v0.14.0 - work in progress
+* v0.14.0 - 2021-01-27
     * Changed the default directory structure of the incoming and outgoing dumper as well as the raw response consumer to have subdirectories for year, month and day of month
     * Extended `Phase4OutgoingAttachment` to also have a `Charset` parameter. Thanks to [@pavelrotek](https://github.com/pavelrotek) for pointing this out.
     * `Phase4OutgoingAttachment` can now work on `byte[]` and `File`.
