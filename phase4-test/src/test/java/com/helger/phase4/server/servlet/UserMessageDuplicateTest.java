@@ -33,7 +33,6 @@ import com.helger.phase4.error.EEbmsError;
 import com.helger.phase4.http.HttpXMLEntity;
 import com.helger.phase4.server.message.MockMessages;
 import com.helger.phase4.soap.ESoapVersion;
-import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 /**
@@ -86,7 +85,7 @@ public final class UserMessageDuplicateTest extends AbstractUserMessageTestSetUp
   {
     final Node aPayload = DOMReader.readXMLDOM (new ClassPathResource (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML));
     final ESoapVersion eSOAPVersion = ESoapVersion.AS4_DEFAULT;
-    final Document aDoc = MockMessages.createUserMessageSigned (eSOAPVersion, aPayload, null, new AS4ResourceHelper ());
+    final Document aDoc = MockMessages.createUserMessageSigned (eSOAPVersion, aPayload, null, s_aResMgr);
 
     final HttpEntity aEntity = new HttpXMLEntity (aDoc, eSOAPVersion.getMimeType ());
 

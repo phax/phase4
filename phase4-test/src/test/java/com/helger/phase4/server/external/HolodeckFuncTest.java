@@ -25,11 +25,11 @@ import org.w3c.dom.Document;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
 import com.helger.phase4.ScopedConfig;
 import com.helger.phase4.CEF.AbstractCEFTestSetUp;
+import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.crypto.AS4SigningParams;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
@@ -46,7 +46,6 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.settings.Settings;
 
 @Ignore ("Axis2 bug in Holodeck! Requires external proxy and PEPPOL pilot certificate!")
@@ -82,9 +81,10 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
   public void testSendToHolodeck () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
-                                                                    CMimeType.APPLICATION_XML,
-                                                                    null,
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                            .mimeTypeXML ()
+                                                                                            .build (),
                                                                     s_aResMgr));
 
     // New message ID
@@ -127,7 +127,7 @@ public final class HolodeckFuncTest extends AbstractCEFTestSetUp
                                                                m_eSoapVersion,
                                                                aUserMsg.getMessagingID (),
                                                                aAttachments,
-                                                               new AS4ResourceHelper (),
+                                                               s_aResMgr,
                                                                false,
                                                                AS4SigningParams.createDefault ());
 

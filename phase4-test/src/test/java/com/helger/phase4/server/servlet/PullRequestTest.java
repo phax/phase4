@@ -36,7 +36,6 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.model.mpc.MPC;
 import com.helger.phase4.server.spi.MockMessageProcessorSPI;
 import com.helger.phase4.soap.ESoapVersion;
-import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
@@ -58,7 +57,7 @@ public final class PullRequestTest extends AbstractUserMessageTestSetUpExt
                                           m_eSoapVersion,
                                           aPullReqMsg.getMessagingID (),
                                           null,
-                                          new AS4ResourceHelper (),
+                                          s_aResMgr,
                                           bMustUnderstand,
                                           AS4SigningParams.createDefault ());
 

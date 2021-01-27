@@ -27,9 +27,9 @@ import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.resource.ClassPathResource;
-import com.helger.commons.mime.CMimeType;
 import com.helger.phase4.AS4TestConstants;
 import com.helger.phase4.CAS4;
+import com.helger.phase4.attachment.Phase4OutgoingAttachment;
 import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
@@ -50,7 +50,6 @@ import com.helger.phase4.model.pmode.leg.PModeLeg;
 import com.helger.phase4.profile.cef.CEFPMode;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.soap.ESoapVersion;
-import com.helger.phase4.util.AS4ResourceHelper;
 import com.helger.xml.serialize.read.DOMReader;
 
 public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
@@ -92,15 +91,10 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void testReceiveUserMessageAsResponseSuccess () throws Exception
   {
     final Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), null, null, null);
-    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
-                                                      true,
-                                                      null);
+    final String sResponse = sendPlainMessageAndWait (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
   }
 
   @Test
@@ -110,26 +104,18 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
     MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (m_aPMode);
 
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML),
-                                                                    CMimeType.APPLICATION_XML,
-                                                                    null,
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.ATTACHMENT_SHORTXML_XML))
+                                                                                            .mimeTypeXML ()
+                                                                                            .build (),
                                                                     s_aResMgr));
 
-    final Document aDoc = modifyUserMessage (m_aPMode.getID (),
-                                              null,
-                                              null,
-                                              createDefaultProperties (),
-                                              aAttachments,
-                                              null,
-                                              null);
+    final Document aDoc = modifyUserMessage (m_aPMode.getID (), null, null, createDefaultProperties (), aAttachments, null, null);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
@@ -140,35 +126,29 @@ public final class TwoWayMEPTest extends AbstractUserMessageTestSetUpExt
   public void testReceiveUserMessageWithMimeAsResponseSuccess () throws Exception
   {
     final ICommonsList <WSS4JAttachment> aAttachments = new CommonsArrayList <> ();
-    final AS4ResourceHelper aResMgr = s_aResMgr;
-    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML),
-                                                                    CMimeType.APPLICATION_XML,
-                                                                    null,
-                                                                    aResMgr));
+    aAttachments.add (WSS4JAttachment.createOutgoingFileAttachment (Phase4OutgoingAttachment.builder ()
+                                                                                            .data (ClassPathResource.getAsFile (AS4TestConstants.TEST_SOAP_BODY_PAYLOAD_XML))
+                                                                                            .mimeTypeXML ()
+                                                                                            .build (),
+                                                                    s_aResMgr));
 
     final Document aDoc = modifyUserMessage (m_aPMode.getID (),
-                                              (String) null,
-                                              // Alias for encryption
-                                              "ph-as4",
-                                              createDefaultProperties (),
-                                              aAttachments,
-                                              null,
-                                              null);
+                                             (String) null,
+                                             // Alias for encryption
+                                             "ph-as4",
+                                             createDefaultProperties (),
+                                             aAttachments,
+                                             null,
+                                             null);
     final AS4MimeMessage aMimeMsg = MimeMessageCreator.generateMimeMessage (m_eSoapVersion, aDoc, aAttachments);
     final String sResponse = sendMimeMessage (new HttpMimeMessageEntity (aMimeMsg), true, null);
     assertTrue (sResponse.contains (AS4TestConstants.USERMESSAGE_ASSERTCHECK));
     assertFalse (sResponse.contains (AS4TestConstants.RECEIPT_ASSERTCHECK));
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509SignatureAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509SignatureAlgorithm ().getAlgorithmURI ()));
     // Checking if he adds the attachment to the response message, the mock spi
     // just adds the xml that gets sent in the original message and adds it to
     // the response
-    assertTrue (sResponse.contains (m_aPMode.getLeg2 ()
-                                            .getSecurity ()
-                                            .getX509EncryptionAlgorithm ()
-                                            .getAlgorithmURI ()));
+    assertTrue (sResponse.contains (m_aPMode.getLeg2 ().getSecurity ().getX509EncryptionAlgorithm ().getAlgorithmURI ()));
   }
 
   @Test
