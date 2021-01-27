@@ -62,9 +62,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
      * @param aMessageMetadata
      *        The message metadata of the incoming message. Never
      *        <code>null</code>.
-     * @param nTry
-     *        The number of the try to send the message. The initial try has
-     *        value 0, the first retry has value 1 etc.
+     * @param aHttpHeaderMap
+     *        The HTTP headers of the incoming message. Never <code>null</code>.
      * @return A non-<code>null</code> {@link File}.
      * @see AS4Configuration#getDumpBasePath()
      */
