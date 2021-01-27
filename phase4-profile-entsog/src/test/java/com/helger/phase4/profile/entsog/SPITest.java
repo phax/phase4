@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2015-2020 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
+ * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * pavel[dot]rotek[at]gmail[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

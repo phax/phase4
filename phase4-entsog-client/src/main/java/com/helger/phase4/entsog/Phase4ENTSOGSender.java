@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2020-2021 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
+ * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * pavel[dot]rotek[at]gmail[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public final class Phase4ENTSOGSender {
 		
 		private Phase4OutgoingAttachment m_aPayload;
 		private Charset m_aPayloadCharset;
-		private String m_aPayloadDocumentType;
+		private String m_sPayloadDocumentType;
 		
 		protected AbstractENTSOGUserMessageBuilder() {
 			// Override default values
@@ -113,10 +113,10 @@ public final class Phase4ENTSOGSender {
 		 * @return this for chaining
 		 */
 		@Nonnull
-		public final IMPLTYPE payload(@Nullable final Phase4OutgoingAttachment.Builder aBuilder, Charset aPayloadCharset, String aPayloadDocumentType) {
+		public final IMPLTYPE payload(@Nullable final Phase4OutgoingAttachment.Builder aBuilder, Charset aPayloadCharset, String sPayloadDocumentType) {
 			m_aPayload = aBuilder.compressionGZIP().build();
 			m_aPayloadCharset = aPayloadCharset;
-			m_aPayloadDocumentType = aPayloadDocumentType;
+			m_sPayloadDocumentType = sPayloadDocumentType;
 			return thisAsT();
 		}
 
@@ -152,8 +152,8 @@ public final class Phase4ENTSOGSender {
 				// Add main attachment
 				WSS4JAttachment payloadAttachment = WSS4JAttachment.createOutgoingFileAttachment(m_aPayload, aResHelper);
 				payloadAttachment.setCharset(m_aPayloadCharset);
-				if (m_aPayloadDocumentType != null) {
-					payloadAttachment.customPartProperties().put("EDIGASDocumentType", m_aPayloadDocumentType);
+				if (m_sPayloadDocumentType != null) {
+					payloadAttachment.customPartProperties().put("EDIGASDocumentType", m_sPayloadDocumentType);
 				}
 				aUserMsg.addAttachment(payloadAttachment);
 

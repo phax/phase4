@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2015-2020 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
+ * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * pavel[dot]rotek[at]gmail[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@
 package com.helger.phase4.profile.entsog;
 
 import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.error.IError;
@@ -56,8 +53,6 @@ import com.helger.phase4.wss.EWSSVersion;
  * @author Pavel Rotek
  */
 public class ENTSOGCompatibilityValidator implements IAS4ProfileValidator {
-  @SuppressWarnings("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger(ENTSOGCompatibilityValidator.class);
 
   public ENTSOGCompatibilityValidator() {
   }

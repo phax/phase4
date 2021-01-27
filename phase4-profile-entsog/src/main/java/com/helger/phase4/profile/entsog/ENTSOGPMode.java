@@ -1,6 +1,6 @@
 /**
- * Copyright (C) 2015-2020 Philip Helger (www.helger.com)
- * philip[at]helger[dot]com
+ * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * pavel[dot]rotek[at]gmail[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,8 @@ import com.helger.phase4.wss.EWSSVersion;
 @Immutable
 public final class ENTSOGPMode {
   public static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
-
+  public static final String ENTSOG_PARTY_ID_TYPE = "http://www.entsog.eu/eic-codes/eic-party-codes-x";
+  
   private ENTSOGPMode() {
   }
 
@@ -138,9 +139,9 @@ public final class ENTSOGPMode {
                                         @Nullable final String sResponderAddress,
                                         @Nonnull final IPModeIDProvider aPModeIDProvider,
                                         final boolean bPersist) {
-    final PModeParty aInitiator = new PModeParty("http://www.entsog.eu/eic-codes/eic-party-codes-x", sInitiatorID,
+    final PModeParty aInitiator = new PModeParty(ENTSOG_PARTY_ID_TYPE, sInitiatorID,
         CAS4.DEFAULT_INITIATOR_URL, null, null);
-    final PModeParty aResponder = new PModeParty("http://www.entsog.eu/eic-codes/eic-party-codes-x", sResponderID,
+    final PModeParty aResponder = new PModeParty(ENTSOG_PARTY_ID_TYPE, sResponderID,
         CAS4.DEFAULT_RESPONDER_URL, null, null);
 
     final PMode aPMode = new PMode(aPModeIDProvider.getPModeID(sInitiatorID, sResponderID), aInitiator, aResponder,

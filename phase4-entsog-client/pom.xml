@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2020-2021 Philip Helger (www.helger.com)
-    philip[at]helger[dot]com
+    Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+    pavel[dot]rotek[at]gmail[dot]com
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -36,9 +36,17 @@
       <name>Apache 2</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0</url>
       <distribution>repo</distribution>
-    </license>
+    </license>    
   </licenses>
 
+  <developers>
+    <developer>
+      <id>pavelrotek</id>
+      <name>Pavel Rotek</name>
+      <email>pavel.rotek@gmail.com</email>
+    </developer>
+  </developers>  
+  
   <dependencies>
     <dependency>
       <groupId>com.helger.phase4</groupId>
@@ -87,7 +95,7 @@
           <excludes>
             <exclude>**/NOTICE</exclude>
             <exclude>**/LICENSE</exclude>
-            <exclude>phase4-entsog-client/**</exclude>
+			<exclude>**/*.txt</exclude>
           </excludes>
         </configuration>
       </plugin>
