@@ -19,6 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -29,9 +30,11 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
@@ -45,17 +48,37 @@ import com.helger.phase4.dump.IAS4OutgoingDumper;
  */
 public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHeaders
 {
-  public static interface IFileProvider
+  public interface IFileProvider
   {
+    /**
+     * Get the {@link File} to write the dump to. The filename must be globally
+     * unique. The resulting file should be an absolute path.
+     *
+     * @param sAS4MessageID
+     *        The AS4 message ID that was send out. Neither <code>null</code>
+     *        nor empty.
+     * @param nTry
+     *        The number of the try to send the message. The initial try has
+     *        value 0, the first retry has value 1 etc.
+     * @return A non-<code>null</code> {@link File}.
+     * @see AS4Configuration#getDumpBasePath()
+     */
     @Nonnull
-    File getFile (@Nonnull @Nonempty String sMessageID, @Nonnegative int nTry);
+    File getFile (@Nonnull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
 
     @Nonnull
-    static String getFilename (@Nonnull @Nonempty final String sMessageID, @Nonnegative final int nTry)
+    static String getFilename (@Nonnull @Nonempty final String sAS4MessageID, @Nonnegative final int nTry)
     {
-      return PDTIOHelper.getCurrentLocalDateTimeForFilename () +
+      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+      return aNow.getYear () +
+             "/" +
+             StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
+             "/" +
+             StringHelper.getLeadingZero (aNow.getDayOfMonth (), 2) +
+             "/" +
+             PDTIOHelper.getTimeForFilename (aNow.toLocalTime ()) +
              "-" +
-             FilenameHelper.getAsSecureValidASCIIFilename (sMessageID) +
+             FilenameHelper.getAsSecureValidASCIIFilename (sAS4MessageID) +
              "-" +
              nTry +
              ".as4out";

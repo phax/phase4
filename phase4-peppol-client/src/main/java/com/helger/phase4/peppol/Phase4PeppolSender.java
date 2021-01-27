@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -282,6 +283,7 @@ public final class Phase4PeppolSender
    *        The implementation type
    * @since 0.9.6
    */
+  @NotThreadSafe
   public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
@@ -597,13 +599,15 @@ public final class Phase4PeppolSender
 
   /**
    * The builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.<br>
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
+   * trigger the main transmission.<br>
    * This builder class assumes, that only the payload (e.g. the Invoice) is
    * present, and that both validation and SBDH creation happens inside.
    *
    * @author Philip Helger
    * @since 0.9.4
    */
+  @NotThreadSafe
   public static class Builder extends AbstractPeppolUserMessageBuilder <Builder>
   {
     private String m_sSBDHInstanceIdentifier;
@@ -926,13 +930,15 @@ public final class Phase4PeppolSender
 
   /**
    * A builder class for sending AS4 messages using Peppol specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.<br>
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
+   * trigger the main transmission.<br>
    * This builder class assumes, that the SBDH was created outside, therefore no
    * validation can occur.
    *
    * @author Philip Helger
    * @since 0.9.6
    */
+  @NotThreadSafe
   public static class SBDHBuilder extends AbstractPeppolUserMessageBuilder <SBDHBuilder>
   {
     private byte [] m_aPayloadBytes;

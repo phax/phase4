@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,7 @@ public final class Phase4CEFSender
    * @param <IMPLTYPE>
    *        The implementation type
    */
+  @NotThreadSafe
   public abstract static class AbstractCEFUserMessageBuilder <IMPLTYPE extends AbstractCEFUserMessageBuilder <IMPLTYPE>> extends
                                                              AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
@@ -390,10 +392,12 @@ public final class Phase4CEFSender
 
   /**
    * The builder class for sending AS4 messages using CEF profile specifics. Use
-   * {@link #sendMessage()} to trigger the main transmission.
+   * {@link #sendMessage()} or {@link #sendMessageAndCheckForReceipt()} to
+   * trigger the main transmission.
    *
    * @author Philip Helger
    */
+  @NotThreadSafe
   public static class CEFUserMessageBuilder extends AbstractCEFUserMessageBuilder <CEFUserMessageBuilder>
   {
     public CEFUserMessageBuilder ()

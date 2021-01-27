@@ -21,6 +21,7 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.OverridingMethodsMustInvokeSuper;
+import javax.annotation.concurrent.NotThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ import com.helger.phase4.util.Phase4Exception;
  *        The implementation type
  * @since 0.10.0
  */
+@NotThreadSafe
 public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS4UserMessageBuilder <IMPLTYPE>> extends
                                                     AbstractAS4MessageBuilder <IMPLTYPE>
 {
@@ -605,7 +607,9 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
 
   /**
    * This is a sanity method that encapsulates all the sending checks that are
-   * necessary to determine overall sending success or error.
+   * necessary to determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message
+   * consumer internally.
    *
    * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
    *         are correct, HTTP transmission was successful and if a positive AS4

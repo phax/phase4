@@ -19,6 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,8 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.commons.id.factory.GlobalIDFactory;
 import com.helger.commons.io.file.FileHelper;
+import com.helger.commons.io.file.FilenameHelper;
+import com.helger.commons.string.StringHelper;
 import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4IncomingDumperWithHeaders;
@@ -53,13 +55,36 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   @FunctionalInterface
   public interface IFileProvider
   {
+    /**
+     * Get the {@link File} to write the dump to. The filename must be globally
+     * unique. The resulting file should be an absolute path.
+     *
+     * @param aMessageMetadata
+     *        The message metadata of the incoming message. Never
+     *        <code>null</code>.
+     * @param nTry
+     *        The number of the try to send the message. The initial try has
+     *        value 0, the first retry has value 1 etc.
+     * @return A non-<code>null</code> {@link File}.
+     * @see AS4Configuration#getDumpBasePath()
+     */
     @Nonnull
     File createFile (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull HttpHeaderMap aHttpHeaderMap);
 
     @Nonnull
     static String getFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
     {
-      return PDTIOHelper.getLocalDateTimeForFilename (aMessageMetadata.getIncomingDT ()) + "-" + GlobalIDFactory.getNewIntID () + ".as4in";
+      final LocalDateTime aLDT = aMessageMetadata.getIncomingDT ();
+      return aLDT.getYear () +
+             "/" +
+             StringHelper.getLeadingZero (aLDT.getMonthValue (), 2) +
+             "/" +
+             StringHelper.getLeadingZero (aLDT.getDayOfMonth (), 2) +
+             "/" +
+             PDTIOHelper.getTimeForFilename (aLDT.toLocalTime ()) +
+             "-" +
+             FilenameHelper.getAsSecureValidASCIIFilename (aMessageMetadata.getIncomingUniqueID ()) +
+             ".as4in";
     }
   }
 

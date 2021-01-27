@@ -18,6 +18,7 @@ package com.helger.phase4.sender;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * This class contains all the settings necessary to send AS4 messages using the
@@ -60,6 +61,7 @@ public final class Phase4Sender
    *
    * @author Philip Helger
    */
+  @NotThreadSafe
   public static class BuilderUserMessage extends AbstractAS4UserMessageBuilderMIMEPayload <BuilderUserMessage>
   {
     /**
@@ -76,6 +78,7 @@ public final class Phase4Sender
    * @author Philip Helger
    * @since 0.12.0
    */
+  @NotThreadSafe
   public static class BuilderPullRequest extends AbstractAS4PullRequestBuilder <BuilderPullRequest>
   {
     /**
