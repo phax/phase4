@@ -58,6 +58,7 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
+import com.helger.phase4.config.Phase4V1Tasks;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -329,15 +330,21 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   @Nonnull
+  @Deprecated
+  @Phase4V1Tasks
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
-    return createOutgoingFileAttachment (aSrcFile, aMimeType, eCompressionMode, null, aResHelper);
+    final String sContentID = null;
+    final Charset aCharset = null;
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 
   @Nonnull
+  @Deprecated
+  @Phase4V1Tasks
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
@@ -349,16 +356,21 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   @Nonnull
+  @Deprecated
+  @Phase4V1Tasks
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nullable final String sContentID,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, null, aResHelper);
+    final Charset aCharset = null;
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 
   @Nonnull
+  @Deprecated
+  @Phase4V1Tasks
   public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
                                                               @Nullable final String sContentID,
                                                               @Nonnull final IMimeType aMimeType,
@@ -368,6 +380,33 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   {
     final String sFilename = FilenameHelper.getWithoutPath (aSrcFile);
     return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aCharset, aResHelper);
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final Phase4OutgoingAttachment aAttachment,
+                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+  {
+    if (aAttachment.hasDataBytes ())
+    {
+      // Byte array
+      return createOutgoingFileAttachment (aAttachment.getDataBytes ().bytes (),
+                                           aAttachment.getContentID (),
+                                           aAttachment.getFilename (),
+                                           aAttachment.getMimeType (),
+                                           aAttachment.getCompressionMode (),
+                                           aAttachment.getCharset (),
+                                           aResHelper);
+    }
+
+    // File based
+    assert aAttachment.hasDataFile ();
+    return createOutgoingFileAttachment (aAttachment.getDataFile (),
+                                         aAttachment.getContentID (),
+                                         aAttachment.getFilename (),
+                                         aAttachment.getMimeType (),
+                                         aAttachment.getCompressionMode (),
+                                         aAttachment.getCharset (),
+                                         aResHelper);
   }
 
   /**
@@ -435,19 +474,6 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     // FileInputStream internally)
     ret.setSourceStreamProvider (HasInputStream.multiple ( () -> FileHelper.getBufferedInputStream (aRealFile)));
     return ret;
-  }
-
-  @Nonnull
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final Phase4OutgoingAttachment aAttachment,
-                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
-  {
-    return createOutgoingFileAttachment (aAttachment.getData ().bytes (),
-                                         aAttachment.getContentID (),
-                                         aAttachment.getFilename (),
-                                         aAttachment.getMimeType (),
-                                         aAttachment.getCompressionMode (),
-                                         aAttachment.getCharset (),
-                                         aResHelper);
   }
 
   /**

@@ -16,6 +16,7 @@
  */
 package com.helger.phase4.attachment;
 
+import java.io.File;
 import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
@@ -38,23 +39,27 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 @Immutable
 public class Phase4OutgoingAttachment
 {
-  private final ByteArrayWrapper m_aData;
+  private final ByteArrayWrapper m_aDataBytes;
+  private final File m_aDataFile;
   private final String m_sContentID;
   private final String m_sFilename;
   private final IMimeType m_aMimeType;
   private final EAS4CompressionMode m_eCompressionMode;
   private final Charset m_aCharset;
 
-  public Phase4OutgoingAttachment (@Nonnull final ByteArrayWrapper aSrcData,
-                                   @Nullable final String sContentID,
-                                   @Nullable final String sFilename,
-                                   @Nonnull final IMimeType aMimeType,
-                                   @Nullable final EAS4CompressionMode eCompressionMode,
-                                   @Nullable final Charset aCharset)
+  protected Phase4OutgoingAttachment (@Nullable final ByteArrayWrapper aDataBytes,
+                                      @Nullable final File aDataFile,
+                                      @Nullable final String sContentID,
+                                      @Nullable final String sFilename,
+                                      @Nonnull final IMimeType aMimeType,
+                                      @Nullable final EAS4CompressionMode eCompressionMode,
+                                      @Nullable final Charset aCharset)
   {
-    ValueEnforcer.notNull (aSrcData, "SrcData");
+    ValueEnforcer.isTrue (aDataBytes != null || aDataFile != null, "SrcData or SrcFile must be present");
+    ValueEnforcer.isFalse (aDataBytes != null && aDataFile != null, "Either SrcData or SrcFile must be present but not both");
     ValueEnforcer.notNull (aMimeType, "MimeType");
-    m_aData = aSrcData;
+    m_aDataBytes = aDataBytes;
+    m_aDataFile = aDataFile;
     m_sContentID = sContentID;
     m_sFilename = sFilename;
     m_aMimeType = aMimeType;
@@ -62,20 +67,60 @@ public class Phase4OutgoingAttachment
     m_aCharset = aCharset;
   }
 
-  /**
-   * @return The data to be send. Never <code>null</code>.
-   */
-  @Nonnull
-  public ByteArrayWrapper getData ()
+  @Deprecated
+  public final ByteArrayWrapper getData ()
   {
-    return m_aData;
+
+    return getDataBytes ();
+  }
+
+  /**
+   * @return The data to be send as a byte array. May be <code>null</code> in
+   *         which case {@link #getDataFile()} has the content.
+   * @since 0.14.0
+   * @see #getDataFile()
+   */
+  @Nullable
+  public final ByteArrayWrapper getDataBytes ()
+  {
+    return m_aDataBytes;
+  }
+
+  /**
+   * @return <code>true</code> if the data is available as a byte array,
+   *         <code>false</code> if it is a file.
+   */
+  public final boolean hasDataBytes ()
+  {
+    return m_aDataBytes != null;
+  }
+
+  /**
+   * @return The data to be send as a File. May be <code>null</code> in which
+   *         case {@link #getDataBytes()} has the content.
+   * @since 0.14.0
+   * @see #getDataBytes()
+   */
+  @Nullable
+  public final File getDataFile ()
+  {
+    return m_aDataFile;
+  }
+
+  /**
+   * @return <code>true</code> if the data is available as a File,
+   *         <code>false</code> if it is a byte array.
+   */
+  public final boolean hasDataFile ()
+  {
+    return m_aDataFile != null;
   }
 
   /**
    * @return The Content-ID to be used. May be <code>null</code>.
    */
   @Nullable
-  public String getContentID ()
+  public final String getContentID ()
   {
     return m_sContentID;
   }
@@ -84,7 +129,7 @@ public class Phase4OutgoingAttachment
    * @return The filename to be used. May be <code>null</code>.
    */
   @Nullable
-  public String getFilename ()
+  public final String getFilename ()
   {
     return m_sFilename;
   }
@@ -93,7 +138,7 @@ public class Phase4OutgoingAttachment
    * @return The MIME type to be used. May not be <code>null</code>.
    */
   @Nonnull
-  public IMimeType getMimeType ()
+  public final IMimeType getMimeType ()
   {
     return m_aMimeType;
   }
@@ -102,7 +147,7 @@ public class Phase4OutgoingAttachment
    * @return The compression mode to be used. May be <code>null</code>.
    */
   @Nullable
-  public EAS4CompressionMode getCompressionMode ()
+  public final EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;
   }
@@ -112,7 +157,7 @@ public class Phase4OutgoingAttachment
    * @since 0.14.0
    */
   @Nullable
-  public Charset getCharset ()
+  public final Charset getCharset ()
   {
     return m_aCharset;
   }
@@ -120,7 +165,8 @@ public class Phase4OutgoingAttachment
   @Override
   public String toString ()
   {
-    return new ToStringGenerator (this).append ("Data", m_aData)
+    return new ToStringGenerator (this).append ("DataBytes", m_aDataBytes)
+                                       .append ("DataFile", m_aDataFile)
                                        .append ("ContentID", m_sContentID)
                                        .append ("Filename", m_sFilename)
                                        .append ("MimeType", m_aMimeType)
@@ -148,7 +194,8 @@ public class Phase4OutgoingAttachment
    */
   public static class Builder
   {
-    private ByteArrayWrapper m_aData;
+    private ByteArrayWrapper m_aDataBytes;
+    private File m_aDataFile;
     private String m_sContentID;
     private String m_sFilename;
     private IMimeType m_aMimeType;
@@ -167,7 +214,16 @@ public class Phase4OutgoingAttachment
     @Nonnull
     public Builder data (@Nullable final ByteArrayWrapper a)
     {
-      m_aData = a;
+      m_aDataBytes = a;
+      m_aDataFile = null;
+      return this;
+    }
+
+    @Nonnull
+    public Builder data (@Nullable final File a)
+    {
+      m_aDataBytes = null;
+      m_aDataFile = a;
       return this;
     }
 
@@ -191,6 +247,11 @@ public class Phase4OutgoingAttachment
       return this;
     }
 
+    /**
+     * Shortcut for <code>mimeType (CMimeType.APPLICATION_XML)</code>
+     *
+     * @return this for chaining
+     */
     @Nonnull
     public Builder mimeTypeXML ()
     {
@@ -204,6 +265,11 @@ public class Phase4OutgoingAttachment
       return this;
     }
 
+    /**
+     * Shortcut for <code>compression (EAS4CompressionMode.GZIP)</code>
+     *
+     * @return this for chaining
+     */
     @Nonnull
     public Builder compressionGZIP ()
     {
@@ -235,11 +301,17 @@ public class Phase4OutgoingAttachment
     @Nonnull
     public Phase4OutgoingAttachment build ()
     {
-      if (m_aData == null)
+      if (m_aDataBytes == null && m_aDataFile == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'data' element");
       if (m_aMimeType == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
-      return new Phase4OutgoingAttachment (m_aData, m_sContentID, m_sFilename, m_aMimeType, m_eCompressionMode, m_aCharset);
+      return new Phase4OutgoingAttachment (m_aDataBytes,
+                                           m_aDataFile,
+                                           m_sContentID,
+                                           m_sFilename,
+                                           m_aMimeType,
+                                           m_eCompressionMode,
+                                           m_aCharset);
     }
   }
 }

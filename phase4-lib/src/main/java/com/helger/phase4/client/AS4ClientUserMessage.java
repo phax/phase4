@@ -18,6 +18,7 @@ package com.helger.phase4.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +38,7 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.functional.IFunction;
+import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.CAS4;
@@ -156,9 +158,11 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
                                                    @Nullable final EAS4CompressionMode eAS4CompressionMode) throws IOException
   {
     return addAttachment (WSS4JAttachment.createOutgoingFileAttachment (aAttachment,
-                                                                        null,
+                                                                        FilenameHelper.getWithoutPath (aAttachment),
+                                                                        (String) null,
                                                                         aMimeType,
                                                                         eAS4CompressionMode,
+                                                                        (Charset) null,
                                                                         getAS4ResourceHelper ()));
   }
 

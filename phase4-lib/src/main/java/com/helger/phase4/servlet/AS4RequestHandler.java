@@ -355,6 +355,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   public void close ()
   {
+    // Delete all the temporay files etc.
     m_aResHelper.close ();
   }
 

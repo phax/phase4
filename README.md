@@ -271,6 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
 * v0.13.3 - work in progress
     * Changed the default directory structure of the incoming and outgoing dumper as well as the raw response consumer to have subdirectories for year, month and day of month
     * Extended `Phase4OutgoingAttachment` to also have a `Charset` parameter. Thanks to [@pavelrotek](https://github.com/pavelrotek) for pointing this out.
+    * `Phase4OutgoingAttachment` can now work on `byte[]` and `File`.
 * v0.13.2 - 2021-01-22
     * Fixed an error that an empty `MessageProperties` element is created which would not be XSD compliant. Thanks to Amish Regmi for pointing this out.
 * v0.13.1 - 2021-01-20
