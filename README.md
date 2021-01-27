@@ -12,14 +12,16 @@ Licensed under the Apache 2 License!
 It consists of the following sub-projects:
   * **phase4-lib** - basic data structures for AS4 handling, sending and receiving
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
+  * **phase4-profile-entsog** - AS4 profile for ENTSOG as well as the PMode and the respective validation (since v0.14.0)
   * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation (since v0.9.1)
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
   * **phase4-dynamic-discovery** - a shared library that contains common stuff for dynamic discovery using SML and SMP (since 0.10.6)
+  * **phase4-cef-client** - a specific client to send messages using the CEF profile (since v0.9.15)
+  * **phase4-entsog-client** - a specific client to send messages using the ENTSOG profile (since v0.14.0)
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
   * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
   * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9) 
-  * **phase4-cef-client** - a specific client to send messages using the CEF profile (since v0.9.15)
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -272,7 +274,7 @@ If you like the project, a star on GitHub is always appreciated.
     * Changed the default directory structure of the incoming and outgoing dumper as well as the raw response consumer to have subdirectories for year, month and day of month
     * Extended `Phase4OutgoingAttachment` to also have a `Charset` parameter. Thanks to [@pavelrotek](https://github.com/pavelrotek) for pointing this out.
     * `Phase4OutgoingAttachment` can now work on `byte[]` and `File`.
-    * Added support for the ENTSOG AS4 profile (see [issue #46](https://github.com/phax/phase4/pull/46)). Thanks to [@pavelrotek](https://github.com/pavelrotek) for providing it.
+    * Added support for the ENTSOG AS4 profile (see [issue #46](https://github.com/phax/phase4/pull/46)). Therefore the new submodules `phase4-profile-entsog` as well as `phase4-entsog-client` were added. Thanks to [@pavelrotek](https://github.com/pavelrotek) for providing it.
     * Removed all elements deprecated in 0.13.x or earlier
 * v0.13.2 - 2021-01-22
     * Fixed an error that an empty `MessageProperties` element is created which would not be XSD compliant. Thanks to Amish Regmi for pointing this out.
