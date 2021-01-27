@@ -1288,7 +1288,7 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // Call asynchronous
         // Only leg1 can be async!
-        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ().runThrowing ("phase4 async processing", () -> {
+        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ().runThrowing (CAS4.LIB_NAME + " async processing", () -> {
           // Start async
           final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
           final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();

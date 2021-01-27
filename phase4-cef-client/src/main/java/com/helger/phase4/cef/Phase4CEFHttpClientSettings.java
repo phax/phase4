@@ -23,6 +23,7 @@ import javax.net.ssl.TrustManager;
 
 import com.helger.commons.ws.TrustManagerTrustAll;
 import com.helger.httpclient.HttpClientSettings;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.CAS4Version;
 
 /**
@@ -47,6 +48,6 @@ public class Phase4CEFHttpClientSettings extends HttpClientSettings
     setSocketTimeoutMS (100_000);
 
     // Set an explicit user agent
-    setUserAgent ("phase4/" + CAS4Version.BUILD_VERSION + " https://github.com/phax/phase4");
+    setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
   }
 }

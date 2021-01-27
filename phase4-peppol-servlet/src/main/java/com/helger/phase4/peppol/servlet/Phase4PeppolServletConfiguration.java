@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.string.StringHelper;
 import com.helger.peppol.sbdh.read.PeppolSBDHDocumentReader;
+import com.helger.phase4.CAS4;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 
 /**
@@ -192,9 +193,9 @@ public final class Phase4PeppolServletConfiguration
     if (bChange)
     {
       if (bPerformSBDHValueChecks)
-        LOGGER.info ("phase4 Peppol SBDH value checks are now enabled");
+        LOGGER.info (CAS4.LIB_NAME + " Peppol SBDH value checks are now enabled");
       else
-        LOGGER.warn ("phase4 Peppol SBDH value checks are now disabled");
+        LOGGER.warn (CAS4.LIB_NAME + " Peppol SBDH value checks are now disabled");
     }
   }
 }

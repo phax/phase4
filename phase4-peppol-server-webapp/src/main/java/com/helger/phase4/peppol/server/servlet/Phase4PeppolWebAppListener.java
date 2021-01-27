@@ -46,6 +46,7 @@ import com.helger.httpclient.HttpDebugger;
 import com.helger.json.serialize.JsonWriterSettings;
 import com.helger.peppol.utils.EPeppolCertificateCheckResult;
 import com.helger.peppol.utils.PeppolCertificateChecker;
+import com.helger.phase4.CAS4;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.crypto.AS4CryptoFactoryProperties;
 import com.helger.phase4.dump.AS4DumpManager;
@@ -217,12 +218,12 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
       Phase4PeppolServletConfiguration.setSMPClient (new SMPClientReadOnly (URLHelper.getAsURI (sSMPURL)));
       Phase4PeppolServletConfiguration.setAS4EndpointURL (sAPURL);
       Phase4PeppolServletConfiguration.setAPCertificate (aAPCert);
-      LOGGER.info ("phase4 Peppol receiver checks are enabled");
+      LOGGER.info (CAS4.LIB_NAME + " Peppol receiver checks are enabled");
     }
     else
     {
       Phase4PeppolServletConfiguration.setReceiverCheckEnabled (false);
-      LOGGER.warn ("phase4 Peppol receiver checks are disabled");
+      LOGGER.warn (CAS4.LIB_NAME + " Peppol receiver checks are disabled");
     }
   }
 
