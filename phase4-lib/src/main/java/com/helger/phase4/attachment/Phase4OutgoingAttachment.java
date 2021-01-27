@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.attachment;
 
+import java.nio.charset.Charset;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
@@ -41,12 +43,14 @@ public class Phase4OutgoingAttachment
   private final String m_sFilename;
   private final IMimeType m_aMimeType;
   private final EAS4CompressionMode m_eCompressionMode;
+  private final Charset m_aCharset;
 
   public Phase4OutgoingAttachment (@Nonnull final ByteArrayWrapper aSrcData,
                                    @Nullable final String sContentID,
                                    @Nullable final String sFilename,
                                    @Nonnull final IMimeType aMimeType,
-                                   @Nullable final EAS4CompressionMode eCompressionMode)
+                                   @Nullable final EAS4CompressionMode eCompressionMode,
+                                   @Nullable final Charset aCharset)
   {
     ValueEnforcer.notNull (aSrcData, "SrcData");
     ValueEnforcer.notNull (aMimeType, "MimeType");
@@ -55,6 +59,7 @@ public class Phase4OutgoingAttachment
     m_sFilename = sFilename;
     m_aMimeType = aMimeType;
     m_eCompressionMode = eCompressionMode;
+    m_aCharset = aCharset;
   }
 
   /**
@@ -94,12 +99,22 @@ public class Phase4OutgoingAttachment
   }
 
   /**
-   * @return The compression mode to be used. May not be <code>null</code>.
+   * @return The compression mode to be used. May be <code>null</code>.
    */
   @Nullable
   public EAS4CompressionMode getCompressionMode ()
   {
     return m_eCompressionMode;
+  }
+
+  /**
+   * @return The character set to use. May be <code>null</code>.
+   * @since 0.14.0
+   */
+  @Nullable
+  public Charset getCharset ()
+  {
+    return m_aCharset;
   }
 
   @Override
@@ -110,6 +125,7 @@ public class Phase4OutgoingAttachment
                                        .append ("Filename", m_sFilename)
                                        .append ("MimeType", m_aMimeType)
                                        .append ("CompressionMode", m_eCompressionMode)
+                                       .append ("Charset", m_aCharset)
                                        .getToString ();
   }
 
@@ -137,6 +153,7 @@ public class Phase4OutgoingAttachment
     private String m_sFilename;
     private IMimeType m_aMimeType;
     private EAS4CompressionMode m_eCompressionMode;
+    private Charset m_aCharset;
 
     public Builder ()
     {}
@@ -200,6 +217,21 @@ public class Phase4OutgoingAttachment
       return this;
     }
 
+    /**
+     * Define the charset of the outgoing attachment.
+     *
+     * @param a
+     *        The Charset to use. May be <code>null</code>.
+     * @return this for chaining
+     * @since 0.14.0
+     */
+    @Nonnull
+    public Builder charset (@Nullable final Charset a)
+    {
+      m_aCharset = a;
+      return this;
+    }
+
     @Nonnull
     public Phase4OutgoingAttachment build ()
     {
@@ -207,7 +239,7 @@ public class Phase4OutgoingAttachment
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'data' element");
       if (m_aMimeType == null)
         throw new IllegalStateException ("Phase4OutgoingAttachment has no 'mimeType' element");
-      return new Phase4OutgoingAttachment (m_aData, m_sContentID, m_sFilename, m_aMimeType, m_eCompressionMode);
+      return new Phase4OutgoingAttachment (m_aData, m_sContentID, m_sFilename, m_aMimeType, m_eCompressionMode, m_aCharset);
     }
   }
 }

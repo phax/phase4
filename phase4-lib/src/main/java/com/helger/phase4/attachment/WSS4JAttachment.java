@@ -334,8 +334,18 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
+    return createOutgoingFileAttachment (aSrcFile, aMimeType, eCompressionMode, null, aResHelper);
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nullable final Charset aCharset,
+                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
+  {
     final String sContentID = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aResHelper);
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 
   @Nonnull
@@ -345,8 +355,19 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
+    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, null, aResHelper);
+  }
+
+  @Nonnull
+  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
+                                                              @Nullable final String sContentID,
+                                                              @Nonnull final IMimeType aMimeType,
+                                                              @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nullable final Charset aCharset,
+                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
+  {
     final String sFilename = FilenameHelper.getWithoutPath (aSrcFile);
-    return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aResHelper);
+    return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 
   /**
@@ -364,6 +385,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *        Original mime type of the file.
    * @param eCompressionMode
    *        Optional compression mode to use. May be <code>null</code>.
+   * @param aCharset
+   *        The character set to use. May be <code>null</code> (since 0.14.0)
    * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The newly created attachment instance. Never <code>null</code>.
@@ -376,6 +399,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nullable final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nullable final Charset aCharset,
                                                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcFile, "File");
@@ -383,6 +407,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     ret.setId (sContentID);
+    ret.setCharset (aCharset);
     _addOutgoingHeaders (ret, sFilename);
 
     // If the attachment has an compressionMode do it directly, so that
@@ -421,6 +446,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                          aAttachment.getFilename (),
                                          aAttachment.getMimeType (),
                                          aAttachment.getCompressionMode (),
+                                         aAttachment.getCharset (),
                                          aResHelper);
   }
 
@@ -440,6 +466,8 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
    *        Original mime type of the file. May not be <code>null</code>.
    * @param eCompressionMode
    *        Optional compression mode to use. May be <code>null</code>.
+   * @param aCharset
+   *        The character set to use. May be <code>null</code> (since 0.14.0)
    * @param aResHelper
    *        The resource manager to use. May not be <code>null</code>.
    * @return The newly created attachment instance. Never <code>null</code>.
@@ -452,6 +480,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
                                                               @Nullable final String sFilename,
                                                               @Nonnull final IMimeType aMimeType,
                                                               @Nullable final EAS4CompressionMode eCompressionMode,
+                                                              @Nullable final Charset aCharset,
                                                               @Nonnull final AS4ResourceHelper aResHelper) throws IOException
   {
     ValueEnforcer.notNull (aSrcData, "Data");
@@ -459,6 +488,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
 
     final WSS4JAttachment ret = new WSS4JAttachment (aResHelper, aMimeType.getAsString ());
     ret.setId (sContentID);
+    ret.setCharset (aCharset);
     _addOutgoingHeaders (ret, sFilename);
 
     // If the attachment has an compressionMode do it directly, so that
