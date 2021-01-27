@@ -1,6 +1,9 @@
 /**
- * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * Copyright (C) 2015-2021 Pavel Rotek
  * pavel[dot]rotek[at]gmail[dot]com
+ *
+ * Copyright (C) 2021 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +77,11 @@ public final class ENTSOGCompatibilityValidatorTest
   public void before ()
   {
     m_aErrorList = new ErrorList ();
-    m_aPMode = ENTSOGPMode.createENTSOGPMode ("TestInitiator", "TestResponder", "http://localhost:8080", IPModeIDProvider.DEFAULT_DYNAMIC, true);
+    m_aPMode = ENTSOGPMode.createENTSOGPMode ("TestInitiator",
+                                              "TestResponder",
+                                              "http://localhost:8080",
+                                              IPModeIDProvider.DEFAULT_DYNAMIC,
+                                              true);
   }
 
   @Test

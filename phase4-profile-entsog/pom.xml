@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+    Copyright (C) 2015-2021 Pavel Rotek
     pavel[dot]rotek[at]gmail[dot]com
+
+    Copyright (C) 2021 Philip Helger (www.helger.com)
+    philip[at]helger[dot]com
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,13 +44,13 @@
 		</license>
 	</licenses>
 
-    <developers>
-      <developer>
-        <id>pavelrotek</id>
-        <name>Pavel Rotek</name>
-        <email>pavel.rotek@gmail.com</email>
-      </developer>
-    </developers>  
+  <developers>
+    <developer>
+      <id>pavelrotek</id>
+      <name>Pavel Rotek</name>
+      <email>pavel.rotek@gmail.com</email>
+    </developer>
+  </developers>  
 
 	<dependencies>
 		<dependency>
@@ -81,17 +84,11 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Automatic-Module-Name>com.helger.phase4.profile.entsog
-						</Automatic-Module-Name>
-						<Export-Package>com.helger.phase4.profile.entsog.*
-						</Export-Package>
+						<Automatic-Module-Name>com.helger.phase4.profile.entsog</Automatic-Module-Name>
+						<Export-Package>com.helger.phase4.profile.entsog.*</Export-Package>
 						<Import-Package>!javax.annotation.*,*</Import-Package>
-						<Require-Capability>osgi.extender;
-							filter:="(osgi.extender=osgi.serviceloader.registrar)"
-						</Require-Capability>
-						<Provide-Capability>osgi.serviceloader;
-							osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI
-						</Provide-Capability>
+						<Require-Capability>osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"</Require-Capability>
+						<Provide-Capability>osgi.serviceloader; osgi.serviceloader=com.helger.phase4.profile.IAS4ProfileRegistrarSPI</Provide-Capability>
 					</instructions>
 				</configuration>
 			</plugin>

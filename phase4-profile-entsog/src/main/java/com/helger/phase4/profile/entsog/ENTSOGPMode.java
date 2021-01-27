@@ -1,6 +1,9 @@
 /**
- * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * Copyright (C) 2015-2021 Pavel Rotek
  * pavel[dot]rotek[at]gmail[dot]com
+ *
+ * Copyright (C) 2021 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,108 +54,134 @@ import com.helger.phase4.wss.EWSSVersion;
  * @author Philip Helger
  */
 @Immutable
-public final class ENTSOGPMode {
+public final class ENTSOGPMode
+{
   public static final String DEFAULT_AGREEMENT_ID = "urn:as4:agreement";
   public static final String ENTSOG_PARTY_ID_TYPE = "http://www.entsog.eu/eic-codes/eic-party-codes-x";
-  
-  private ENTSOGPMode() {
-  }
+
+  private ENTSOGPMode ()
+  {}
 
   @Nonnull
-  public static PModeLegProtocol generatePModeLegProtocol(@Nullable final String sAddress) {
+  public static PModeLegProtocol generatePModeLegProtocol (@Nullable final String sAddress)
+  {
     // Set the endpoint URL
-    return PModeLegProtocol.createForDefaultSoapVersion(sAddress);
+    return PModeLegProtocol.createForDefaultSoapVersion (sAddress);
   }
 
   @Nonnull
-  public static PModeLegBusinessInformation generatePModeLegBusinessInformation() {
+  public static PModeLegBusinessInformation generatePModeLegBusinessInformation ()
+  {
     final String sService = null;
     final String sAction = CAS4.DEFAULT_ACTION_URL;
     final Long nPayloadProfileMaxKB = null;
     final String sMPCID = CAS4.DEFAULT_MPC_ID;
-    return PModeLegBusinessInformation.create(sService, sAction, nPayloadProfileMaxKB, sMPCID);
+    return PModeLegBusinessInformation.create (sService, sAction, nPayloadProfileMaxKB, sMPCID);
   }
 
   @Nonnull
-  public static PModeLegErrorHandling generatePModeLegErrorHandling() {
+  public static PModeLegErrorHandling generatePModeLegErrorHandling ()
+  {
     final PModeAddressList aReportSenderErrorsTo = null;
     final PModeAddressList aReportReceiverErrorsTo = null;
     final ETriState eReportAsResponse = ETriState.TRUE;
     final ETriState eReportProcessErrorNotifyConsumer = ETriState.TRUE;
     final ETriState eReportProcessErrorNotifyProducer = ETriState.TRUE;
     final ETriState eReportDeliveryFailuresNotifyProducer = ETriState.TRUE;
-    return new PModeLegErrorHandling(aReportSenderErrorsTo, aReportReceiverErrorsTo, eReportAsResponse,
-        eReportProcessErrorNotifyConsumer, eReportProcessErrorNotifyProducer, eReportDeliveryFailuresNotifyProducer);
+    return new PModeLegErrorHandling (aReportSenderErrorsTo,
+                                      aReportReceiverErrorsTo,
+                                      eReportAsResponse,
+                                      eReportProcessErrorNotifyConsumer,
+                                      eReportProcessErrorNotifyProducer,
+                                      eReportDeliveryFailuresNotifyProducer);
   }
 
   @Nonnull
-  public static PModeLegSecurity generatePModeLegSecurity() {
-    final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity();
-    aPModeLegSecurity.setWSSVersion(EWSSVersion.WSS_111);
-    aPModeLegSecurity.setX509SignatureAlgorithm(ECryptoAlgorithmSign.RSA_SHA_256);
-    aPModeLegSecurity.setX509SignatureHashFunction(ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
-    aPModeLegSecurity.setX509EncryptionAlgorithm(ECryptoAlgorithmCrypt.AES_128_GCM);
-    aPModeLegSecurity.setX509EncryptionMinimumStrength(Integer.valueOf(128));
-    aPModeLegSecurity.setPModeAuthorize(false);
-    aPModeLegSecurity.setSendReceipt(true);
-    aPModeLegSecurity.setSendReceiptNonRepudiation(true);
-    aPModeLegSecurity.setSendReceiptReplyPattern(EPModeSendReceiptReplyPattern.RESPONSE);
+  public static PModeLegSecurity generatePModeLegSecurity ()
+  {
+    final PModeLegSecurity aPModeLegSecurity = new PModeLegSecurity ();
+    aPModeLegSecurity.setWSSVersion (EWSSVersion.WSS_111);
+    aPModeLegSecurity.setX509SignatureAlgorithm (ECryptoAlgorithmSign.RSA_SHA_256);
+    aPModeLegSecurity.setX509SignatureHashFunction (ECryptoAlgorithmSignDigest.DIGEST_SHA_256);
+    aPModeLegSecurity.setX509EncryptionAlgorithm (ECryptoAlgorithmCrypt.AES_128_GCM);
+    aPModeLegSecurity.setX509EncryptionMinimumStrength (Integer.valueOf (128));
+    aPModeLegSecurity.setPModeAuthorize (false);
+    aPModeLegSecurity.setSendReceipt (true);
+    aPModeLegSecurity.setSendReceiptNonRepudiation (true);
+    aPModeLegSecurity.setSendReceiptReplyPattern (EPModeSendReceiptReplyPattern.RESPONSE);
     return aPModeLegSecurity;
   }
 
   @Nonnull
-  public static PModeLeg generatePModeLeg(@Nullable final String sResponderAddress) {
-    return new PModeLeg(generatePModeLegProtocol(sResponderAddress), generatePModeLegBusinessInformation(),
-        generatePModeLegErrorHandling(), (PModeLegReliability) null, generatePModeLegSecurity());
+  public static PModeLeg generatePModeLeg (@Nullable final String sResponderAddress)
+  {
+    return new PModeLeg (generatePModeLegProtocol (sResponderAddress),
+                         generatePModeLegBusinessInformation (),
+                         generatePModeLegErrorHandling (),
+                         (PModeLegReliability) null,
+                         generatePModeLegSecurity ());
   }
 
   @Nonnull
-  public static PModePayloadService generatePModePayloadSevice() {
-    return new PModePayloadService(EAS4CompressionMode.GZIP);
+  public static PModePayloadService generatePModePayloadSevice ()
+  {
+    return new PModePayloadService (EAS4CompressionMode.GZIP);
   }
 
   @Nonnull
-  public static PModeReceptionAwareness generatePModeReceptionAwareness() {
+  public static PModeReceptionAwareness generatePModeReceptionAwareness ()
+  {
     final ETriState eReceptionAwareness = ETriState.TRUE;
     final ETriState eRetry = ETriState.TRUE;
     final int nMaxRetries = 1;
     final int nRetryIntervalMS = 10_000;
     final ETriState eDuplicateDetection = ETriState.TRUE;
-    return new PModeReceptionAwareness(eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
+    return new PModeReceptionAwareness (eReceptionAwareness, eRetry, nMaxRetries, nRetryIntervalMS, eDuplicateDetection);
   }
 
   /**
    * One-Way Version of the CEF pmode uses one-way push
    *
-   * @param sInitiatorID      Initiator ID
-   * @param sResponderID      Responder ID
-   * @param sResponderAddress Responder URL
-   * @param aPModeIDProvider  PMode ID provider
-   * @param bPersist          <code>true</code> to persist the PMode in the
-   *                          PModeManager, <code>false</code> to have it only in
-   *                          memory.
+   * @param sInitiatorID
+   *        Initiator ID
+   * @param sResponderID
+   *        Responder ID
+   * @param sResponderAddress
+   *        Responder URL
+   * @param aPModeIDProvider
+   *        PMode ID provider
+   * @param bPersist
+   *        <code>true</code> to persist the PMode in the PModeManager,
+   *        <code>false</code> to have it only in memory.
    * @return New PMode
    */
   @Nonnull
-  public static PMode createENTSOGPMode(@Nonnull @Nonempty final String sInitiatorID,
-                                        @Nonnull @Nonempty final String sResponderID,
-                                        @Nullable final String sResponderAddress,
-                                        @Nonnull final IPModeIDProvider aPModeIDProvider,
-                                        final boolean bPersist) {
-    final PModeParty aInitiator = new PModeParty(ENTSOG_PARTY_ID_TYPE, sInitiatorID,
-        CAS4.DEFAULT_INITIATOR_URL, null, null);
-    final PModeParty aResponder = new PModeParty(ENTSOG_PARTY_ID_TYPE, sResponderID,
-        CAS4.DEFAULT_RESPONDER_URL, null, null);
+  public static PMode createENTSOGPMode (@Nonnull @Nonempty final String sInitiatorID,
+                                         @Nonnull @Nonempty final String sResponderID,
+                                         @Nullable final String sResponderAddress,
+                                         @Nonnull final IPModeIDProvider aPModeIDProvider,
+                                         final boolean bPersist)
+  {
+    final PModeParty aInitiator = new PModeParty (ENTSOG_PARTY_ID_TYPE, sInitiatorID, CAS4.DEFAULT_INITIATOR_URL, null, null);
+    final PModeParty aResponder = new PModeParty (ENTSOG_PARTY_ID_TYPE, sResponderID, CAS4.DEFAULT_RESPONDER_URL, null, null);
 
-    final PMode aPMode = new PMode(aPModeIDProvider.getPModeID(sInitiatorID, sResponderID), aInitiator, aResponder,
-        DEFAULT_AGREEMENT_ID, EMEP.ONE_WAY, EMEPBinding.PUSH, generatePModeLeg(sResponderAddress), (PModeLeg) null,
-        generatePModePayloadSevice(), generatePModeReceptionAwareness());
+    final PMode aPMode = new PMode (aPModeIDProvider.getPModeID (sInitiatorID, sResponderID),
+                                    aInitiator,
+                                    aResponder,
+                                    DEFAULT_AGREEMENT_ID,
+                                    EMEP.ONE_WAY,
+                                    EMEPBinding.PUSH,
+                                    generatePModeLeg (sResponderAddress),
+                                    (PModeLeg) null,
+                                    generatePModePayloadSevice (),
+                                    generatePModeReceptionAwareness ());
 
     // Leg 2 stays null, because we only use one-way
 
-    if (bPersist) {
+    if (bPersist)
+    {
       // Ensure it is stored
-      MetaAS4Manager.getPModeMgr().createOrUpdatePMode(aPMode);
+      MetaAS4Manager.getPModeMgr ().createOrUpdatePMode (aPMode);
     }
     return aPMode;
   }

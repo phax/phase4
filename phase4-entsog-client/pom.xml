@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+    Copyright (C) 2015-2021 Pavel Rotek
     pavel[dot]rotek[at]gmail[dot]com
+
+    Copyright (C) 2021 Philip Helger (www.helger.com)
+    philip[at]helger[dot]com
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +31,7 @@
   <packaging>bundle</packaging>
   <name>phase4-entsog-client</name>
   <description>ENTSOG AS4 client for outgoing transmissions</description>
-  <url>https://github.com/phax/phase4/phase4-cef-client</url>
+  <url>https://github.com/phax/phase4/phase4-entsog-client</url>
   <inceptionYear>2020</inceptionYear>
 
   <licenses>
@@ -56,6 +59,7 @@
       <groupId>com.helger.phase4</groupId>
       <artifactId>phase4-profile-entsog</artifactId>
     </dependency>
+    
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -95,7 +99,7 @@
           <excludes>
             <exclude>**/NOTICE</exclude>
             <exclude>**/LICENSE</exclude>
-			<exclude>**/*.txt</exclude>
+			      <exclude>**/*.txt</exclude>
           </excludes>
         </configuration>
       </plugin>

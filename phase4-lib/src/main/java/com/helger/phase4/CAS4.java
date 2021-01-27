@@ -55,6 +55,7 @@ public final class CAS4
 
   // Must start with a letter and must be a valid XML ID and token
   public static final String LIB_NAME = "phase4";
+  public static final String LIB_URL = "https://github.com/phax/phase4";
 
   // Constant Names
   public static final String ORIGINAL_SENDER = "originalSender";

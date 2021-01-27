@@ -1,6 +1,9 @@
 /**
- * Copyright (C) 2015-2021 Pavel Rotek (www.helger.com)
+ * Copyright (C) 2015-2021 Pavel Rotek
  * pavel[dot]rotek[at]gmail[dot]com
+ *
+ * Copyright (C) 2021 Philip Helger (www.helger.com)
+ * philip[at]helger[dot]com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,19 +38,14 @@ import com.helger.phase4.profile.IAS4ProfileValidator;
 @IsSPIImplementation
 public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSPI
 {
-		
   public static final String AS4_PROFILE_ID = "entsog";
   public static final String AS4_PROFILE_NAME = "ENTSOG";
   public static final IPModeIDProvider PMODE_ID_PROVIDER = IPModeIDProvider.DEFAULT_DYNAMIC;
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-	final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = ENTSOGCompatibilityValidator::new;
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i,
-                                                                                                 r,
-                                                                                                 a,
-                                                                                                 PMODE_ID_PROVIDER,
-                                                                                                 true);
+    final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = ENTSOGCompatibilityValidator::new;
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i, r, a, PMODE_ID_PROVIDER, true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,
