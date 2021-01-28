@@ -641,23 +641,6 @@ public final class Phase4PeppolSender
     }
 
     /**
-     * Set the SBDH document identification UBL version. If none is provided,
-     * the constant "2.1" is used.
-     *
-     * @param sSBDHUBLVersion
-     *        The SBDH document identification UBL version to be used. May be
-     *        <code>null</code>.
-     * @return this for chaining
-     * @deprecated Since 0.13.0; Use {@link #sbdhTypeVersion(String)} instead.
-     */
-    @Nonnull
-    @Deprecated
-    public Builder sbdhUBLVersion (@Nullable final String sSBDHUBLVersion)
-    {
-      return sbdhTypeVersion (sSBDHUBLVersion);
-    }
-
-    /**
      * Set the SBDH document identification type version. If none is provided,
      * the value is extracted from the document type identifier.
      *

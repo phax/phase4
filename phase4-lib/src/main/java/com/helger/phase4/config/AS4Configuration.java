@@ -51,7 +51,6 @@ import com.helger.config.source.res.ConfigurationSourceProperties;
  * @author Philip Helger
  * @since 0.11.0
  */
-@Phase4V1Tasks
 public final class AS4Configuration
 {
   /**
@@ -98,15 +97,11 @@ public final class AS4Configuration
    * <li>private-phase4.properties - priority 204</li>
    * <li>phase4.properties - priority 203</li>
    * </ul>
-   * Deprecated filenames that should no longer be used are:
-   * "private-crypto.properties", "crypto.properties", "private-as4.properties"
-   * and "as4.properties". The support for these filenames will be removed in
-   * version 1.0.
    *
    * @return The configuration value provider for phase4 that contains backward
    *         compatibility support.
    */
-  @Phase4V1Tasks
+  @Nonnull
   public static MultiConfigurationValueProvider createPhase4ValueProvider ()
   {
     // Start with default setup
@@ -118,22 +113,6 @@ public final class AS4Configuration
 
     IReadableResource aRes;
 
-    // Remove for 1.0
-    aRes = aResourceProvider.getReadableResourceIf ("private-crypto.properties", IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("The support for the properties file 'private-crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 6);
-    }
-
-    // Remove for 1.0
-    aRes = aResourceProvider.getReadableResourceIf ("crypto.properties", IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("The support for the properties file 'crypto.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 5);
-    }
-
     // Phase 4 files
     aRes = aResourceProvider.getReadableResourceIf ("private-phase4.properties", IReadableResource::exists);
     if (aRes != null)
@@ -142,22 +121,6 @@ public final class AS4Configuration
     aRes = aResourceProvider.getReadableResourceIf ("phase4.properties", IReadableResource::exists);
     if (aRes != null)
       ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 3);
-
-    // Remove for 1.0
-    aRes = aResourceProvider.getReadableResourceIf ("private-as4.properties", IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("The support for the properties file 'private-as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 2);
-    }
-
-    // Remove for 1.0
-    aRes = aResourceProvider.getReadableResourceIf ("as4.properties", IReadableResource::exists);
-    if (aRes != null)
-    {
-      LOGGER.warn ("The support for the properties file 'as4.properties' is deprecated and will be removed for the 1.0 release. Place the properties in 'phase4.properties' or 'application.properties' instead.");
-      ret.addConfigurationSource (new ConfigurationSourceProperties (aRes, StandardCharsets.UTF_8), nResourceDefaultPrio + 1);
-    }
 
     return ret;
   }
@@ -216,69 +179,33 @@ public final class AS4Configuration
     return ret;
   }
 
-  private static void _logRenamedConfig (@Nonnull final String sOld, @Nonnull final String sNew)
-  {
-    LOGGER.warn ("Please rename the configuration property '" +
-                 sOld +
-                 "' to '" +
-                 sNew +
-                 "'. Support for the old property name will be removed in v1.0.");
-  }
-
   /**
    * @return <code>true</code> to enable the global debugging mode.
    */
-  @Phase4V1Tasks
   public static boolean isGlobalDebug ()
   {
-    final Boolean ret = getConfig ().getAsBooleanObj ("server.debug");
-    if (ret != null)
-    {
-      _logRenamedConfig ("server.debug", "global.debug");
-      return ret.booleanValue ();
-    }
     return getConfig ().getAsBoolean ("global.debug", false);
   }
 
   /**
    * @return <code>true</code> to enable the global production mode.
    */
-  @Phase4V1Tasks
   public static boolean isGlobalProduction ()
   {
-    final Boolean ret = getConfig ().getAsBooleanObj ("server.production");
-    if (ret != null)
-    {
-      _logRenamedConfig ("server.production", "global.production");
-      return ret.booleanValue ();
-    }
     return getConfig ().getAsBoolean ("global.production", false);
   }
 
   /**
    * @return <code>true</code> if no startup info should be logged.
    */
-  @Phase4V1Tasks
   public static boolean isNoStartupInfo ()
   {
-    final Boolean ret = getConfig ().getAsBooleanObj ("server.nostartupinfo");
-    if (ret != null)
-    {
-      _logRenamedConfig ("server.nostartupinfo", "global.nostartupinfo");
-      return ret.booleanValue ();
-    }
     return getConfig ().getAsBoolean ("global.nostartupinfo", true);
   }
 
   @Nonnull
   public static String getDataPath ()
   {
-    final String ret = getConfig ().getAsString ("server.datapath");
-    if (StringHelper.hasText (ret))
-    {
-      _logRenamedConfig ("server.datapath", "global.datapath");
-      return ret;
-    }
     // "phase4-data" relative to application startup directory
     return getConfig ().getAsString ("global.datapath", "phase4-data");
   }
@@ -313,15 +240,8 @@ public final class AS4Configuration
   }
 
   @Nullable
-  @Phase4V1Tasks
   public static String getAS4ProfileID ()
   {
-    final String ret = getConfig ().getAsString ("server.profile");
-    if (StringHelper.hasText (ret))
-    {
-      _logRenamedConfig ("server.profile", "phase4.profile");
-      return ret;
-    }
     return getConfig ().getAsString ("phase4.profile");
   }
 
@@ -331,35 +251,16 @@ public final class AS4Configuration
    *         {@value #DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES}
    *         minutes.
    */
-  @Phase4V1Tasks
   public static long getIncomingDuplicateDisposalMinutes ()
   {
-    final Long ret = getConfig ().getAsLongObj ("server.incoming.duplicatedisposal.minutes");
-    if (ret != null)
-    {
-      _logRenamedConfig ("server.incoming.duplicatedisposal.minutes", "phase4.incoming.duplicatedisposal.minutes");
-      return ret.longValue ();
-    }
     return getConfig ().getAsLong ("phase4.incoming.duplicatedisposal.minutes", DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES);
   }
 
   @Nonnull
-  @Phase4V1Tasks
   public static String getDumpBasePath ()
   {
-    String ret = getConfig ().getAsString ("phase4.dump.path");
-    if (StringHelper.hasNoText (ret))
-    {
-      // Check without default here
-      ret = getConfig ().getAsString ("server.datapath");
-      if (StringHelper.hasText (ret))
-        LOGGER.warn ("Since 0.11.0 the base path to dump files can be configured globally via the property 'phase4.dump.path'." +
-                     " For backwards compatibility this value is currently taken from the property 'server.datapath'." +
-                     " This fallback mechanism will be removed for the 1.0 release.");
-    }
-    if (StringHelper.hasNoText (ret))
-      ret = "phase4-dumps";
-    return ret;
+    // "phase4-dumpy" relative to application startup directory
+    return getConfig ().getAsString ("phase4.dump.path", "phase4-dumps");
   }
 
   @Nonnull
@@ -369,15 +270,8 @@ public final class AS4Configuration
   }
 
   @Nullable
-  @Phase4V1Tasks
   public static String getThisEndpointAddress ()
   {
-    final String ret = getConfig ().getAsString ("server.address");
-    if (StringHelper.hasText (ret))
-    {
-      _logRenamedConfig ("server.address", "phase4.endpoint.address");
-      return ret;
-    }
     return getConfig ().getAsString ("phase4.endpoint.address");
   }
 }

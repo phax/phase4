@@ -49,7 +49,6 @@ import com.helger.commons.collection.impl.ICommonsOrderedMap;
 import com.helger.commons.http.CHttpHeader;
 import com.helger.commons.io.IHasInputStream;
 import com.helger.commons.io.file.FileHelper;
-import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.io.stream.HasInputStream;
 import com.helger.commons.io.stream.NonBlockingByteArrayInputStream;
 import com.helger.commons.io.stream.StreamHelper;
@@ -58,7 +57,6 @@ import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.mail.cte.EContentTransferEncoding;
 import com.helger.mail.datasource.InputStreamProviderDataSource;
-import com.helger.phase4.config.Phase4V1Tasks;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.util.AS4ResourceHelper;
 
@@ -113,7 +111,7 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
   }
 
   /**
-   * @deprecated To indicate that it shouldn't be used.
+   * @deprecated Do not use this.
    */
   @Override
   @Deprecated
@@ -330,64 +328,6 @@ public class WSS4JAttachment extends Attachment implements IAS4Attachment
     }
     aAttachment.addHeader (CHttpHeader.CONTENT_ID, CONTENT_ID_PREFIX + aAttachment.getId () + CONTENT_ID_SUFFIX);
     aAttachment.addHeader (CHttpHeader.CONTENT_TYPE, aAttachment.getMimeType ());
-  }
-
-  /**
-   * @param aSrcFile
-   *        File
-   * @param aMimeType
-   *        Mime type
-   * @param eCompressionMode
-   *        compression mode
-   * @param aResHelper
-   *        Resource helper
-   * @return Attachment
-   * @throws IOException
-   *         on error
-   * @deprecated Since 0.14.0; Use the version with
-   *             {@link Phase4OutgoingAttachment} instead
-   */
-  @Nonnull
-  @Deprecated
-  @Phase4V1Tasks
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
-                                                              @Nonnull final IMimeType aMimeType,
-                                                              @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull final AS4ResourceHelper aResHelper) throws IOException
-  {
-    final String sContentID = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, aMimeType, eCompressionMode, aResHelper);
-  }
-
-  /**
-   * @param aSrcFile
-   *        File
-   * @param sContentID
-   *        Content ID
-   * @param aMimeType
-   *        Mime type
-   * @param eCompressionMode
-   *        compression mode
-   * @param aResHelper
-   *        Resource helper
-   * @return Attachment
-   * @throws IOException
-   *         on error
-   * @deprecated Since 0.14.0; Use the version with
-   *             {@link Phase4OutgoingAttachment} instead
-   */
-  @Nonnull
-  @Deprecated
-  @Phase4V1Tasks
-  public static WSS4JAttachment createOutgoingFileAttachment (@Nonnull final File aSrcFile,
-                                                              @Nullable final String sContentID,
-                                                              @Nonnull final IMimeType aMimeType,
-                                                              @Nullable final EAS4CompressionMode eCompressionMode,
-                                                              @Nonnull @WillNotClose final AS4ResourceHelper aResHelper) throws IOException
-  {
-    final String sFilename = FilenameHelper.getWithoutPath (aSrcFile);
-    final Charset aCharset = null;
-    return createOutgoingFileAttachment (aSrcFile, sContentID, sFilename, aMimeType, eCompressionMode, aCharset, aResHelper);
   }
 
   @Nonnull

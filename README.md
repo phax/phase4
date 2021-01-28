@@ -270,6 +270,10 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v1.0.0 - work in progress
+    * The configuration files `private-crypto.properties`, `crypto.properties`, `private-as4.properties` and `as4.properties` are no longer read
+    * The configuration properties `server.debug`, `server.production`, `server.nostartupinfo`, `server.datapath`, `server.profile`, `server.incoming.duplicatedisposal.minutes` and `server.address` are no longer supported
+    * Removed all deprecated elements
 * v0.14.0 - 2021-01-27
     * Changed the default directory structure of the incoming and outgoing dumper as well as the raw response consumer to have subdirectories for year, month and day of month
     * Extended `Phase4OutgoingAttachment` to also have a `Charset` parameter. Thanks to [@pavelrotek](https://github.com/pavelrotek) for pointing this out.

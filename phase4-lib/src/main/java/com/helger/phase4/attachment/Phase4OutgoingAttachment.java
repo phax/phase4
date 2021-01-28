@@ -68,16 +68,6 @@ public class Phase4OutgoingAttachment
   }
 
   /**
-   * @return Same as {@link #getDataBytes()}
-   * @deprecated Since 0.14.0; Use {@link #getDataBytes()} instead
-   */
-  @Deprecated
-  public final ByteArrayWrapper getData ()
-  {
-    return getDataBytes ();
-  }
-
-  /**
    * @return The data to be send as a byte array. May be <code>null</code> in
    *         which case {@link #getDataFile()} has the content.
    * @since 0.14.0
