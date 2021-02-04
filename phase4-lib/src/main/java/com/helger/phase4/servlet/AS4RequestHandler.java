@@ -256,7 +256,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @author Philip Helger
    * @since 0.13.1
    */
-  public static interface ISoapProcessingFinalizedCallback
+  public interface ISoapProcessingFinalizedCallback
   {
     /**
      * Indicate that processing has finished.
@@ -1334,7 +1334,7 @@ public class AS4RequestHandler implements AutoCloseable
             // SPI processing failed
 
             // Send ErrorMessage
-            // Undefined - see https://github.com/phax/ph-as4/issues/4
+            // Undefined - see https://github.com/phax/phase4/issues/4
             final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion, aState.getMessageID (), aLocalErrorMessages);
 
             // Pass error messages to the outside

@@ -28,14 +28,11 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.exception.InitializationException;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resourceprovider.ClassPathResourceProvider;
 import com.helger.commons.io.resourceprovider.FileSystemResourceProvider;
 import com.helger.commons.io.resourceprovider.ReadableResourceProviderChain;
-import com.helger.commons.string.StringHelper;
 import com.helger.commons.string.StringParser;
-import com.helger.commons.system.SystemProperties;
 import com.helger.config.Config;
 import com.helger.config.ConfigFactory;
 import com.helger.config.IConfig;
@@ -69,23 +66,6 @@ public final class AS4Configuration
   public static final long DEFAULT_PHASE4_INCOMING_DUPLICATEDISPOSAL_MINUTES = 10;
 
   private static final Logger LOGGER = LoggerFactory.getLogger (AS4Configuration.class);
-
-  static
-  {
-    // Since 0.11.0 - remove in 1.0
-    if (StringHelper.hasText (SystemProperties.getPropertyValueOrNull ("phase4.server.configfile")))
-      throw new InitializationException ("The system property 'phase4.server.configfile' is no longer supported." +
-                                         " See https://github.com/phax/ph-commons#ph-config for alternatives." +
-                                         " Consider using the system property 'config.file' instead.");
-    if (StringHelper.hasText (SystemProperties.getPropertyValueOrNull ("as4.server.configfile")))
-      throw new InitializationException ("The system property 'as4.server.configfile' is no longer supported." +
-                                         " See https://github.com/phax/ph-commons#ph-config for alternatives." +
-                                         " Consider using the system property 'config.file' instead.");
-    if (StringHelper.hasText (System.getenv ().get ("PHASE4_SERVER_CONFIG")))
-      throw new InitializationException ("The environment variable 'PHASE4_SERVER_CONFIG' is no longer supported." +
-                                         " See https://github.com/phax/ph-commons#ph-config for alternatives." +
-                                         " Consider using the environment variable 'CONFIG_FILE' instead.");
-  }
 
   /**
    * The configuration value provider created in here uses the default lookup
