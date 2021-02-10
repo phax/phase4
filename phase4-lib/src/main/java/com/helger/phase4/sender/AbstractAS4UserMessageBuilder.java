@@ -26,8 +26,11 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
+import com.helger.commons.id.IHasID;
+import com.helger.commons.lang.EnumHelper;
 import com.helger.commons.state.ISuccessIndicator;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.wrapper.Wrapper;
@@ -590,18 +593,52 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    *
    * @author Philip Helger
    */
-  public enum ESimpleUserMessageSendResult implements ISuccessIndicator
+  public enum ESimpleUserMessageSendResult implements IHasID <String>, ISuccessIndicator
   {
-    INVALID_PARAMETERS,
-    TRANSPORT_ERROR,
-    NO_SIGNAL_MESSAGE_RECEIVED,
-    AS4_ERROR_MESSAGE_RECEIVED,
-    INVALID_SIGNAL_MESSAGE_RECEIVED,
-    SUCCESS;
+    INVALID_PARAMETERS ("invalid-parameters"),
+    TRANSPORT_ERROR ("transport-error"),
+    NO_SIGNAL_MESSAGE_RECEIVED ("no-signal-msg-received"),
+    AS4_ERROR_MESSAGE_RECEIVED ("as4-error-msg-received"),
+    INVALID_SIGNAL_MESSAGE_RECEIVED ("invalid-signal-message-received"),
+    SUCCESS ("success");
+
+    private final String m_sID;
+
+    ESimpleUserMessageSendResult (@Nonnull @Nonempty final String sID)
+    {
+      m_sID = sID;
+    }
+
+    /**
+     * @return The ID of the of the error message.
+     * @since 1.0.0-rc1
+     */
+    @Nonnull
+    @Nonempty
+    public String getID ()
+    {
+      return m_sID;
+    }
 
     public boolean isSuccess ()
     {
       return this == SUCCESS;
+    }
+
+    /**
+     * @return A recommendation whether a retry might be feasible in case the
+     *         internal retries were disabled.
+     * @since 1.0.0-rc1
+     */
+    public boolean isRetryFeasible ()
+    {
+      return this == TRANSPORT_ERROR || this == NO_SIGNAL_MESSAGE_RECEIVED || this == INVALID_SIGNAL_MESSAGE_RECEIVED;
+    }
+
+    @Nullable
+    public static ESimpleUserMessageSendResult getFromIDOrNull (@Nullable final String sID)
+    {
+      return EnumHelper.getFromIDOrNull (ESimpleUserMessageSendResult.class, sID);
     }
   }
 
