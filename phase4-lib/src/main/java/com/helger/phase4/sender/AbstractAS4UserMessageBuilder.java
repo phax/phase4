@@ -651,10 +651,12 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
    * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
    *         are correct, HTTP transmission was successful and if a positive AS4
    *         Receipt was returned. Never <code>null</code>.
+   * @throws Phase4Exception
+   *         if something goes wrong
    * @since 0.13.0
    */
   @Nonnull
-  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt ()
+  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt () throws Phase4Exception
   {
     final IAS4SignalMessageConsumer aOld = m_aSignalMsgConsumer;
     try
@@ -700,7 +702,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       // This information might be crucial to determine what went wrong
       LOGGER.error ("Exception sending AS4 user message", ex);
       // Something went wrong - see the logs
-      return ESimpleUserMessageSendResult.TRANSPORT_ERROR;
+      throw ex;
     }
     finally
     {
