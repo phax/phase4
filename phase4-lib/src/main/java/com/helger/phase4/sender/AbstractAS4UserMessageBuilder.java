@@ -17,6 +17,7 @@
 package com.helger.phase4.sender;
 
 import java.security.cert.X509Certificate;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -656,6 +657,27 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
   @Nonnull
   public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt ()
   {
+    // This information might be crucial to determine what went wrong
+    return sendMessageAndCheckForReceipt (ex -> LOGGER.error ("Exception sending AS4 user message", ex));
+  }
+
+  /**
+   * This is a sanity method that encapsulates all the sending checks that are
+   * necessary to determine overall sending success or error.<br>
+   * Note: this method is not thread-safe, because it changes the signal message
+   * consumer internally.
+   *
+   * @param aExceptionConsumer
+   *        An optional Consumer that takes an eventually thrown
+   *        {@link Phase4Exception}. May be <code>null</code>.
+   * @return {@link ESimpleUserMessageSendResult#SUCCESS} only if all parameters
+   *         are correct, HTTP transmission was successful and if a positive AS4
+   *         Receipt was returned. Never <code>null</code>.
+   * @since 1.0.0-rc1
+   */
+  @Nonnull
+  public final ESimpleUserMessageSendResult sendMessageAndCheckForReceipt (@Nullable final Consumer <? super Phase4Exception> aExceptionConsumer)
+  {
     final IAS4SignalMessageConsumer aOld = m_aSignalMsgConsumer;
     try
     {
@@ -697,8 +719,8 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
     }
     catch (final Phase4Exception ex)
     {
-      // This information might be crucial to determine what went wrong
-      LOGGER.error ("Exception sending AS4 user message", ex);
+      if (aExceptionConsumer != null)
+        aExceptionConsumer.accept (ex);
       // Something went wrong - see the logs
       return ESimpleUserMessageSendResult.TRANSPORT_ERROR;
     }
