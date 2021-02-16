@@ -271,6 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.0.0 - work in progress
+    * Updated to peppol-commons 8.4.0
     * The configuration files `private-crypto.properties`, `crypto.properties`, `private-as4.properties` and `as4.properties` are no longer read
     * The configuration properties `server.debug`, `server.production`, `server.nostartupinfo`, `server.datapath`, `server.profile`, `server.incoming.duplicatedisposal.minutes` and `server.address` are no longer supported
     * Removed all deprecated elements

@@ -73,8 +73,8 @@ import com.helger.sbdh.builder.SBDHReader;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
-import com.helger.smpclient.peppol.jaxb.EndpointType;
 import com.helger.xml.serialize.write.XMLWriter;
+import com.helger.xsds.peppol.smp1.EndpointType;
 
 /**
  * This is the SPI implementation to handle incoming AS4 requests from

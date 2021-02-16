@@ -66,10 +66,10 @@ import com.helger.sbdh.builder.SBDHWriter;
 import com.helger.security.certificate.CertificateHelper;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClient;
-import com.helger.smpclient.peppol.jaxb.EndpointType;
 import com.helger.smpclient.peppol.utils.W3CEndpointReferenceHelper;
 import com.helger.smpclient.url.IPeppolURLProvider;
 import com.helger.smpclient.url.PeppolURLProvider;
+import com.helger.xsds.peppol.smp1.EndpointType;
 
 public final class DropFolderUserMessage
 {
@@ -98,7 +98,7 @@ public final class DropFolderUserMessage
       }
       else
       {
-        // Extract PEPPOL specific data
+        // Extract Peppol specific data
         final PeppolSBDHDocument aSBDH = new PeppolSBDHDocumentReader (IF).extractData (aSBD);
         final ISMPServiceMetadataProvider aSMPClient = new SMPClient (UP, aSBDH.getReceiverAsIdentifier (), ESML.DIGIT_TEST);
         final EndpointType aEndpoint = aSMPClient.getEndpoint (aSBDH.getReceiverAsIdentifier (),

@@ -37,7 +37,7 @@ import com.helger.phase4.util.Phase4Exception;
 import com.helger.smpclient.exception.SMPClientException;
 import com.helger.smpclient.peppol.ISMPServiceMetadataProvider;
 import com.helger.smpclient.peppol.SMPClientReadOnly;
-import com.helger.smpclient.peppol.jaxb.EndpointType;
+import com.helger.xsds.peppol.smp1.EndpointType;
 
 /**
  * Implementation of {@link IAS4EndpointDetailProvider} using a Peppol SMP
