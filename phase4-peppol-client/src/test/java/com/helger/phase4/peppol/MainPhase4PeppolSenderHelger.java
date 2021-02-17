@@ -97,8 +97,6 @@ public final class MainPhase4PeppolSenderHelger
                                   .receiverParticipantID (aReceiverID)
                                   .senderPartyID ("POP000306")
                                   .payload (aPayloadElement)
-                                  .conversationID ("")
-                                  // .agreementRef ("BlaaFoo")
                                   .smpClient (new SMPClientReadOnly (Phase4PeppolSender.URL_PROVIDER, aReceiverID, ESML.DIGIT_TEST))
                                   .validationConfiguration (PeppolValidation3_11_1.VID_OPENPEPPOL_INVOICE_V3,
                                                             new Phase4PeppolValidatonResultHandler ())
