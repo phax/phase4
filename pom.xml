@@ -74,7 +74,7 @@
     <wss4j.version>2.3.1</wss4j.version>
     <log4j.version>2.14.0</log4j.version>
     <ph-xsds.version>2.4.2</ph-xsds.version>
-    <peppol-commons.version>8.4.0</peppol-commons.version>
+    <peppol-commons.version>8.4.1</peppol-commons.version>
   </properties>
   
   <dependencyManagement>
