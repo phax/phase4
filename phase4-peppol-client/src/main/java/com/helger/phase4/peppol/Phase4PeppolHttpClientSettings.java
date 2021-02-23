@@ -43,9 +43,10 @@ public class Phase4PeppolHttpClientSettings extends HttpClientSettings
     aSSLContext.init (null, new TrustManager [] { new TrustManagerTrustAll (false) }, null);
     setSSLContext (aSSLContext);
 
-    setConnectionRequestTimeoutMS (100_000);
+    // 5 minutes according to the TIA
+    setConnectionRequestTimeoutMS (300_000);
     setConnectionTimeoutMS (5_000);
-    setSocketTimeoutMS (100_000);
+    setSocketTimeoutMS (300_000);
 
     // Set an explicit user agent
     setUserAgent (CAS4.LIB_NAME + "/" + CAS4Version.BUILD_VERSION + " " + CAS4.LIB_URL);
