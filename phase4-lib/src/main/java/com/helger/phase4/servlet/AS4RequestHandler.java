@@ -333,7 +333,7 @@ public class AS4RequestHandler implements AutoCloseable
   private ISoapProcessingFinalizedCallback m_aSoapProcessingFinalizedCB;
 
   /** By default get all message processors from the global SPI registry */
-  private ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
+  private ISupplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> m_aProcessorSupplier = AS4ServletMessageProcessorManager::getAllProcessors;
   private IAS4RequestHandlerErrorConsumer m_aErrorConsumer;
 
   public AS4RequestHandler (@Nonnull final IAS4CryptoFactory aCryptoFactory,
@@ -495,7 +495,7 @@ public class AS4RequestHandler implements AutoCloseable
    *         {@link AS4ServletMessageProcessorManager#getAllProcessors()}.
    */
   @Nonnull
-  public final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()
+  public final ISupplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> getProcessorSupplier ()
   {
     return m_aProcessorSupplier;
   }
@@ -508,7 +508,7 @@ public class AS4RequestHandler implements AutoCloseable
    * @return this for chaining
    */
   @Nonnull
-  public final AS4RequestHandler setProcessorSupplier (@Nonnull final ISupplier <ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
+  public final AS4RequestHandler setProcessorSupplier (@Nonnull final ISupplier <? extends ICommonsList <IAS4ServletMessageProcessorSPI>> aProcessorSupplier)
   {
     ValueEnforcer.notNull (aProcessorSupplier, "ProcessorSupplier");
     m_aProcessorSupplier = aProcessorSupplier;
