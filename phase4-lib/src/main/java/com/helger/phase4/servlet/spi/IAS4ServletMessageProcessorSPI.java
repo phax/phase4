@@ -124,8 +124,11 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        The response bytes to be written. May be <code>null</code> for
    *        several reasons.
    * @param bResponsePayloadIsAvailable
-   *        if this is <code>true</code> and response bytes is <code>null</code>
-   *        than most likely the response entity is not repeatable.
+   *        This indicates if a response payload is available at all. If this is
+   *        <code>false</code> than the response bytes are <code>null</code>.
+   *        Special case: if this is <code>true</code> and response bytes is
+   *        <code>null</code> than most likely the response entity is not
+   *        repeatable and cannot be handled more than once.
    * @since v0.9.8
    */
   default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
