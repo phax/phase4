@@ -21,7 +21,8 @@ It consists of the following sub-projects:
   * **phase4-entsog-client** - a specific client to send messages using the ENTSOG profile (since v0.14.0)
   * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
   * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
-  * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9) 
+  * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9)
+  * **phase4-spring-boot-demo** - an example how to integrate phase4 with Spring Boot (since v1.0.0)
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -272,6 +273,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 * v1.0.0 - work in progress
     * Changed the default timeout of the Peppol HTTP settings from 100 seconds to 300 seconds (5 minutes) to comply with the TIA requirements
+    * Added new submodule `phase4-spring-boot-demo` kindly provided by [@jmrleal](https://github.com/jmrleal) from [Opensoft](https://www.opensoft.pt)
 * v1.0.0-rc1 - 2021-02-17
     * Updated to peppol-commons 8.4.0
     * The configuration files `private-crypto.properties`, `crypto.properties`, `private-as4.properties` and `as4.properties` are no longer read
