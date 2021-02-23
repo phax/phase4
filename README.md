@@ -271,6 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.0.0 - work in progress
+    * Changed the default timeout of the Peppol HTTP settings from 100 seconds to 300 seconds (5 minutes) to comply with the TIA requirements
 * v1.0.0-rc1 - 2021-02-17
     * Updated to peppol-commons 8.4.0
     * The configuration files `private-crypto.properties`, `crypto.properties`, `private-as4.properties` and `as4.properties` are no longer read
