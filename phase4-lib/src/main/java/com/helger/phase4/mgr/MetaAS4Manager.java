@@ -99,6 +99,8 @@ public final class MetaAS4Manager extends AbstractGlobalSingleton
   {
     try
     {
+      LOGGER.info ("Creating AS4 managers using factory class " + s_aFactory.getClass ().getName ());
+
       // MPC manager before PMode manager
       m_aMPCMgr = s_aFactory.createMPCManager ();
       m_aPModeMgr = s_aFactory.createPModeManager ();
