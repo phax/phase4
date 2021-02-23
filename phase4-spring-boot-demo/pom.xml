@@ -30,6 +30,14 @@
   <description>phase4 Spring Boot demo application</description>
   <url>https://github.com/phax/phase4/phase4-spring-boot-demo</url>
   <inceptionYear>2021</inceptionYear>
+  
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <dependencies>
     <dependency>
