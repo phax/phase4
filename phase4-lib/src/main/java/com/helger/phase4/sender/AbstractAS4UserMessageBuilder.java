@@ -688,6 +688,7 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
         aOld.handleSignalMessage (x);
       };
 
+      // Main sending
       if (sendMessage ().isFailure ())
       {
         // Parameters are missing/incorrect
@@ -697,12 +698,18 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
       final Ebms3SignalMessage aSignalMsg = aSignalMsgKeeper.get ();
       if (aSignalMsg == null)
       {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("Failed to get a SignalMessage as the response");
+
         // Unexpected response - invalid XML or at least no Ebms3 signal message
         return ESimpleUserMessageSendResult.NO_SIGNAL_MESSAGE_RECEIVED;
       }
 
       if (aSignalMsg.hasErrorEntries ())
       {
+        if (LOGGER.isDebugEnabled ())
+          LOGGER.debug ("The received SignalMessage contains at lease one error");
+
         // An error was returned from the other side
         // Errors have precedence over receipts
         return ESimpleUserMessageSendResult.AS4_ERROR_MESSAGE_RECEIVED;
@@ -714,11 +721,17 @@ public abstract class AbstractAS4UserMessageBuilder <IMPLTYPE extends AbstractAS
         return ESimpleUserMessageSendResult.SUCCESS;
       }
 
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("The SignalMessage contains neither Errors nor a Receipt - unexpected SignalMessage layout.");
+
       // Neither an error nor a receipt was returned - this is weird
       return ESimpleUserMessageSendResult.INVALID_SIGNAL_MESSAGE_RECEIVED;
     }
     catch (final Phase4Exception ex)
     {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("An exception occurred sending out the AS4 message", ex);
+
       if (aExceptionConsumer != null)
         aExceptionConsumer.accept (ex);
       // Something went wrong - see the logs
