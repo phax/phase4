@@ -224,6 +224,20 @@ public class SOAPHeaderElementProcessorWSS4J implements ISOAPHeaderElementProces
       at com.helger.commons.io.stream.StreamHelper.copyInputStreamToOutputStreamAndCloseOS(StreamHelper.java:429) ~[ph-commons-9.4.7.jar:9.4.7]
       at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:187) ~[classes/:?]
        * </pre>
+       *
+       * Error processing the WSSSecurity Header
+       *
+       * <pre>
+      org.apache.wss4j.common.ext.WSSecurityException: Error during certificate path validation: No trusted certs found
+      at org.apache.wss4j.common.crypto.Merlin.verifyTrust(Merlin.java:816) ~[task/:?]
+      at org.apache.wss4j.common.crypto.Merlin.verifyTrust(Merlin.java:906) ~[task/:?]
+      at org.apache.wss4j.dom.validate.SignatureTrustValidator.verifyTrustInCerts(SignatureTrustValidator.java:109) ~[task/:?]
+      at org.apache.wss4j.dom.validate.SignatureTrustValidator.validate(SignatureTrustValidator.java:64) ~[task/:?]
+      at org.apache.wss4j.dom.processor.SignatureProcessor.handleToken(SignatureProcessor.java:189) ~[task/:?]
+      at org.apache.wss4j.dom.engine.WSSecurityEngine.processSecurityHeader(WSSecurityEngine.java:340) ~[task/:?]
+      at org.apache.wss4j.dom.engine.WSSecurityEngine.processSecurityHeader(WSSecurityEngine.java:251) ~[task/:?]
+      at com.helger.phase4.servlet.soap.SOAPHeaderElementProcessorWSS4J._verifyAndDecrypt(SOAPHeaderElementProcessorWSS4J.java:128) ~[task/:?]
+       * </pre>
        */
 
       // TODO we need a way to distinct
