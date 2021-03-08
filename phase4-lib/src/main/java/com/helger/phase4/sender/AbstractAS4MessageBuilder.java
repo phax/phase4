@@ -531,9 +531,17 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   @Nonnull
   public final ESuccess sendMessage () throws Phase4Exception
   {
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("About to send the AS4 message");
+
     // Pre required field check
     if (finishFields ().isFailure ())
+    {
+      if (LOGGER.isDebugEnabled ())
+        LOGGER.debug ("finishFields() prevented the AS4 message to be send");
+
       return ESuccess.FAILURE;
+    }
 
     if (!isEveryRequiredFieldSet ())
     {
@@ -553,6 +561,9 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
 
     // Main sending
     mainSendMessage ();
+
+    if (LOGGER.isDebugEnabled ())
+      LOGGER.debug ("Finished main AS4 message sending without exception");
 
     return ESuccess.SUCCESS;
   }
