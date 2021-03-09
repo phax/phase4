@@ -272,6 +272,7 @@ If you like the project, a star on GitHub is always appreciated.
 # News and noteworthy
 
 * v1.0.0 - work in progress
+    * Updated to phive-rules 2.0.5 with the more lightweight Peppol validation
     * Changed the default timeout of the Peppol HTTP settings from 100 seconds to 300 seconds (5 minutes) to comply with the TIA requirements
     * Added new submodule `phase4-spring-boot-demo` kindly provided by [@jmrleal](https://github.com/jmrleal) from [Opensoft](https://www.opensoft.pt)
 * v1.0.0-rc1 - 2021-02-17

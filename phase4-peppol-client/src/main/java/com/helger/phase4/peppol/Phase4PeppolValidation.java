@@ -62,7 +62,6 @@ public final class Phase4PeppolValidation
   {
     final ValidationExecutorSetRegistry <IValidationSourceXML> ret = new ValidationExecutorSetRegistry <> ();
     PeppolValidation.initStandard (ret);
-    PeppolValidation.initThirdParty (ret);
     return ret;
   }
 
