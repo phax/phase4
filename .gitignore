@@ -1,33 +1,17 @@
-*.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# Word backup files
-~*
-
-.settings/ 
-target/
-phase4-data/
-phase4-dumps/
-phase4-test-data/
-
 .classpath
 .pmd
 .project 
-zz
-
 *.b64
 *.iml
 *.cer
 *.jks
 *.p12
 private-*.properties*
+release.properties
+zz
+
+.settings/ 
+target/
+phase4-data/
+phase4-dumps/
+phase4-test-data/
