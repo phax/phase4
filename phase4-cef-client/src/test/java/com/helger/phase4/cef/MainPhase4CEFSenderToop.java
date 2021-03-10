@@ -40,7 +40,7 @@ import com.helger.web.scope.mgr.WebScopeManager;
 import com.helger.web.scope.mgr.WebScoped;
 
 /**
- * Example for sending something to the Basware test endpoint.
+ * Example for sending something to the TOOP test endpoint.
  *
  * @author Philip Helger
  */
