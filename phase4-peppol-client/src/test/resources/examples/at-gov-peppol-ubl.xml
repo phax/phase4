@@ -34,7 +34,7 @@ THE SOFTWARE.
   <!-- Die Rechnungsnummer: -->
   <!-- The invoice number: -->
   <cbc:ID>ERB_UBL_INVOICE_001</cbc:ID>
-  <cbc:IssueDate>2020-01-01</cbc:IssueDate>
+  <cbc:IssueDate>2021-01-01</cbc:IssueDate>
   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
   <cbc:Note>Das ist ein globaler Kommentar zur Rechnung.</cbc:Note>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
@@ -75,7 +75,7 @@ THE SOFTWARE.
         <cbc:Telephone>1234 567890</cbc:Telephone>
         <!-- An die folgende E-Mail-Adresse(n) werden die E-Mails gesendet: -->
         <!-- The following email address(es) is/are used to send automated emails to: -->
-        <cbc:ElectronicMail>test@example.org</cbc:ElectronicMail>
+        <cbc:ElectronicMail>philip@helger.com</cbc:ElectronicMail>
       </cac:Contact>
       <cac:Person>
         <cbc:FirstName>Max</cbc:FirstName>
@@ -142,7 +142,7 @@ THE SOFTWARE.
     <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
     <!-- Fälligkeitsdatum: -->
     <!-- Expected payment date without discount: -->
-    <cbc:PaymentDueDate>2020-12-31</cbc:PaymentDueDate>
+    <cbc:PaymentDueDate>2021-12-31</cbc:PaymentDueDate>
     <cbc:PaymentChannelCode>IBAN</cbc:PaymentChannelCode>
     <cbc:InstructionNote>Sofort fällig</cbc:InstructionNote>
     <cac:PayeeFinancialAccount>
@@ -161,8 +161,8 @@ THE SOFTWARE.
     <cbc:Note>3% Skonto bei Zahlung in 5 Tagen/3% discount when paid in 5 days</cbc:Note>
     <cbc:SettlementDiscountPercent>3.00</cbc:SettlementDiscountPercent>
     <cac:SettlementPeriod>
-      <cbc:StartDate>2020-01-01</cbc:StartDate>
-      <cbc:EndDate>2020-12-30</cbc:EndDate>
+      <cbc:StartDate>2021-01-01</cbc:StartDate>
+      <cbc:EndDate>2021-12-30</cbc:EndDate>
     </cac:SettlementPeriod>
   </cac:PaymentTerms>
   <cac:AllowanceCharge>
