@@ -19,7 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -69,7 +69,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     @Nonnull
     static String getFilename (@Nonnull @Nonempty final String sAS4MessageID, @Nonnegative final int nTry)
     {
-      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+      final OffsetDateTime aNow = PDTFactory.getCurrentOffsetDateTime ();
       return aNow.getYear () +
              "/" +
              StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
@@ -141,6 +141,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID, nTry)));
+    return new AS4OutgoingDumperFileBased ( (sMessageID,
+                                             nTry) -> new File (aBaseDirectory,
+                                                                IFileProvider.getFilename (sMessageID, nTry)));
   }
 }

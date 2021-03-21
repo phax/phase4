@@ -19,7 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -47,7 +47,8 @@ import com.helger.phase4.util.Phase4Exception;
  **
  * @author Philip Helger
  */
-public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
+public class AS4RawResponseConsumerWriteToFile extends
+                                               AbstractAS4RawResponseConsumer <AS4RawResponseConsumerWriteToFile>
 {
   /**
    * Callback interface to create a file based on the provided metadata.
@@ -74,7 +75,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
     @Nonnull
     static String getFilename (@Nonnull final String sAS4MessageID)
     {
-      final LocalDateTime aNow = PDTFactory.getCurrentLocalDateTime ();
+      final OffsetDateTime aNow = PDTFactory.getCurrentOffsetDateTime ();
       return aNow.getYear () +
              "/" +
              StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
@@ -101,7 +102,8 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   public AS4RawResponseConsumerWriteToFile ()
   {
     this (sMessageID -> new File (AS4Configuration.getDumpBasePathFile (),
-                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID)));
+                                  AS4OutgoingDumperFileBased.DEFAULT_BASE_PATH +
+                                                                           IFileProvider.getFilename (sMessageID)));
   }
 
   /**
@@ -151,7 +153,10 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
               // By default quoting is disabled
               final boolean bQuoteIfNecessary = false;
               final String sUnifiedValue = HttpHeaderMap.getUnifiedValue (sValue, bQuoteIfNecessary);
-              aOS.write ((sHeader + HttpHeaderMap.SEPARATOR_KEY_VALUE + sUnifiedValue + CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
+              aOS.write ((sHeader +
+                          HttpHeaderMap.SEPARATOR_KEY_VALUE +
+                          sUnifiedValue +
+                          CHttp.EOL).getBytes (CHttp.HTTP_CHARSET));
             }
           }
         }
@@ -187,6 +192,7 @@ public class AS4RawResponseConsumerWriteToFile extends AbstractAS4RawResponseCon
   public static AS4RawResponseConsumerWriteToFile createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory, IFileProvider.getFilename (sMessageID)));
+    return new AS4RawResponseConsumerWriteToFile (sMessageID -> new File (aBaseDirectory,
+                                                                          IFileProvider.getFilename (sMessageID)));
   }
 }

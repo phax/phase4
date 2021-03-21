@@ -19,7 +19,7 @@ package com.helger.phase4.servlet.dump;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,7 +73,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
     @Nonnull
     static String getFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
     {
-      final LocalDateTime aLDT = aMessageMetadata.getIncomingDT ().toLocalDateTime ();
+      final OffsetDateTime aLDT = aMessageMetadata.getIncomingDT ();
       return aLDT.getYear () +
              "/" +
              StringHelper.getLeadingZero (aLDT.getMonthValue (), 2) +
