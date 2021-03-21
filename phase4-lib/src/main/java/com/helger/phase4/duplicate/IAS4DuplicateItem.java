@@ -17,7 +17,7 @@
 package com.helger.phase4.duplicate;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public interface IAS4DuplicateItem extends IHasID <String>, Serializable
    * @return The date time when the entry was created. Never <code>null</code>.
    */
   @Nonnull
-  LocalDateTime getDateTime ();
+  OffsetDateTime getDateTime ();
 
   /**
    * @return The message ID. Neither <code>null</code> nor empty.

@@ -17,10 +17,13 @@
 package com.helger.phase4.duplicate;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.helger.commons.annotation.ContainsSoftMigration;
 import com.helger.xml.microdom.IMicroElement;
 import com.helger.xml.microdom.MicroElement;
 import com.helger.xml.microdom.convert.IMicroTypeConverter;
@@ -51,12 +54,20 @@ public final class AS4DuplicateItemMicroTypeConverter implements IMicroTypeConve
   }
 
   @Nonnull
+  @ContainsSoftMigration
   public AS4DuplicateItem convertToNative (@Nonnull final IMicroElement aElement)
   {
-    final LocalDateTime aLDT = aElement.getAttributeValueWithConversion (ATTR_DT, LocalDateTime.class);
+    OffsetDateTime aODT = aElement.getAttributeValueWithConversion (ATTR_DT, OffsetDateTime.class);
+    if (aODT == null)
+    {
+      // Soft migration
+      final LocalDateTime aLDT = aElement.getAttributeValueWithConversion (ATTR_DT, LocalDateTime.class);
+      if (aLDT != null)
+        aODT = OffsetDateTime.of (aLDT, ZoneOffset.UTC);
+    }
     final String sMsgID = aElement.getAttributeValue (ATTR_MESSAGE_ID);
     final String sProfileID = aElement.getAttributeValue (ATTR_PROFILE_ID);
     final String sPModeID = aElement.getAttributeValue (ATTR_PMODE_ID);
-    return new AS4DuplicateItem (aLDT, sMsgID, sProfileID, sPModeID);
+    return new AS4DuplicateItem (aODT, sMsgID, sProfileID, sPModeID);
   }
 }

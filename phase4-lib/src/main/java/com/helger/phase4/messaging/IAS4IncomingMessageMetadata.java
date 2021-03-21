@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.messaging;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.CheckForSigned;
 import javax.annotation.Nonnull;
@@ -51,7 +51,7 @@ public interface IAS4IncomingMessageMetadata
    *         <code>null</code>.
    */
   @Nonnull
-  LocalDateTime getIncomingDT ();
+  OffsetDateTime getIncomingDT ();
 
   /**
    * @return The message mode. May be <code>null</code>.

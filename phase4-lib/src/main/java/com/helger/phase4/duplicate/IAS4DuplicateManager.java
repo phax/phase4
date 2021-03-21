@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.duplicate;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -97,5 +97,5 @@ public interface IAS4DuplicateManager
    */
   @Nonnull
   @ReturnsMutableCopy
-  ICommonsList <String> evictAllItemsBefore (@Nonnull LocalDateTime aRefDT);
+  ICommonsList <String> evictAllItemsBefore (@Nonnull OffsetDateTime aRefDT);
 }

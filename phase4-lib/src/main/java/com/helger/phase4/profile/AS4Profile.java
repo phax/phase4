@@ -16,13 +16,14 @@
  */
 package com.helger.phase4.profile;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.functional.ISupplier;
 import com.helger.commons.hashcode.HashCodeGenerator;
 import com.helger.commons.string.ToStringGenerator;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
@@ -38,7 +39,7 @@ public class AS4Profile implements IAS4Profile
 {
   private final String m_sID;
   private final String m_sDisplayName;
-  private final ISupplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
+  private final Supplier <? extends IAS4ProfileValidator> m_aProfileValidatorProvider;
   private final IAS4ProfilePModeProvider m_aDefaultPModeProvider;
   private final IPModeIDProvider m_aPModeIDProvider;
   private final boolean m_bDeprecated;
@@ -63,7 +64,7 @@ public class AS4Profile implements IAS4Profile
    */
   public AS4Profile (@Nonnull @Nonempty final String sID,
                      @Nonnull @Nonempty final String sDisplayName,
-                     @Nonnull final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
+                     @Nonnull final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider,
                      @Nonnull final IAS4ProfilePModeProvider aDefaultPModeProvider,
                      @Nonnull final IPModeIDProvider aPModeIDProvider,
                      final boolean bDeprecated)

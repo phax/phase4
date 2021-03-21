@@ -18,7 +18,8 @@ package com.helger.phase4.client;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +35,6 @@ import org.apache.wss4j.common.ext.WSSecurityException;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
-import com.helger.commons.functional.ISupplier;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.traits.IGenericImplTrait;
@@ -67,14 +67,15 @@ import com.helger.xml.microdom.serialize.MicroWriter;
  * @param <IMPLTYPE>
  *        Implementation type
  */
-public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> implements IGenericImplTrait <IMPLTYPE>
+public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMPLTYPE>> implements
+                                        IGenericImplTrait <IMPLTYPE>
 {
   /**
    * @return The default message ID factory to be used.
    * @since 0.8.3
    */
   @Nonnull
-  public static ISupplier <String> createDefaultMessageIDFactory ()
+  public static Supplier <String> createDefaultMessageIDFactory ()
   {
     return MessageHelperMethods::createRandomMessageID;
   }
@@ -89,15 +90,16 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
   private IHttpPoster m_aHttpPoster = new BasicHttpPoster ();
 
   // For Message Info
-  private ISupplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
+  private Supplier <String> m_aMessageIDFactory = createDefaultMessageIDFactory ();
   private String m_sRefToMessageID;
-  private LocalDateTime m_aSendingDateTime;
+  private OffsetDateTime m_aSendingDateTime;
   private ESoapVersion m_eSoapVersion = ESoapVersion.AS4_DEFAULT;
 
   // Retry handling
   private final HttpRetrySettings m_aHttpRetrySettings = new HttpRetrySettings ();
 
-  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType, @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
+  protected AbstractAS4Client (@Nonnull final EAS4MessageType eMessageType,
+                               @Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
     ValueEnforcer.notNull (eMessageType, "MessageType");
     ValueEnforcer.notNull (aResHelper, "ResHelper");
@@ -202,7 +204,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return The Message ID factory to be used. May not be <code>null</code>.
    */
   @Nonnull
-  public final ISupplier <String> getMessageIDFactory ()
+  public final Supplier <String> getMessageIDFactory ()
   {
     return m_aMessageIDFactory;
   }
@@ -229,7 +231,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setMessageIDFactory (@Nonnull final ISupplier <String> aMessageIDFactory)
+  public final IMPLTYPE setMessageIDFactory (@Nonnull final Supplier <String> aMessageIDFactory)
   {
     ValueEnforcer.notNull (aMessageIDFactory, "MessageIDFactory");
     m_aMessageIDFactory = aMessageIDFactory;
@@ -289,7 +291,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @since 0.12.0
    */
   @Nullable
-  public final LocalDateTime getSendingDateTime ()
+  public final OffsetDateTime getSendingDateTime ()
   {
     return m_aSendingDateTime;
   }
@@ -300,7 +302,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @since 0.12.0
    */
   @Nonnull
-  public final LocalDateTime getSendingDateTimeOrNow ()
+  public final OffsetDateTime getSendingDateTimeOrNow ()
   {
     return m_aSendingDateTime != null ? m_aSendingDateTime : MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
   }
@@ -314,7 +316,7 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
    * @return this for chaining
    */
   @Nonnull
-  public final IMPLTYPE setSendingDateTimeOrNow (@Nullable final LocalDateTime aSendingDateTime)
+  public final IMPLTYPE setSendingDateTimeOrNow (@Nullable final OffsetDateTime aSendingDateTime)
   {
     m_aSendingDateTime = aSendingDateTime;
     return thisAsT ();
@@ -459,7 +461,9 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
     HttpEntity aBuiltEntity = aBuiltMsg.getHttpEntity ();
     final HttpHeaderMap aBuiltHttpHeaders = aBuiltMsg.getCustomHeaders ();
 
-    if (m_aHttpRetrySettings.isRetryEnabled () || aOutgoingDumper != null || AS4DumpManager.getOutgoingDumper () != null)
+    if (m_aHttpRetrySettings.isRetryEnabled () ||
+        aOutgoingDumper != null ||
+        AS4DumpManager.getOutgoingDumper () != null)
     {
       // Ensure a repeatable entity is provided
       aBuiltEntity = m_aResHelper.createRepeatableHttpEntity (aBuiltEntity);
@@ -504,7 +508,8 @@ public abstract class AbstractAS4Client <IMPLTYPE extends AbstractAS4Client <IMP
                                                        aCallback,
                                                        aOutgoingDumper,
                                                        aRetryCallback).getResponse ();
-    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " + MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
+    AS4HttpDebug.debug ( () -> "SEND-RESPONSE received: " +
+                               MicroWriter.getNodeAsString (ret, AS4HttpDebug.getDebugXMLWriterSettings ()));
     return ret;
   }
 }

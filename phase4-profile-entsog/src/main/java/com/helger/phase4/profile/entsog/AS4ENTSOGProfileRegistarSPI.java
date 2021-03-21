@@ -19,10 +19,11 @@
  */
 package com.helger.phase4.profile.entsog;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.functional.ISupplier;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
@@ -44,8 +45,14 @@ public final class AS4ENTSOGProfileRegistarSPI implements IAS4ProfileRegistrarSP
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = ENTSOGCompatibilityValidator::new;
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> ENTSOGPMode.createENTSOGPMode (i, r, a, PMODE_ID_PROVIDER, true);
+    final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = ENTSOGCompatibilityValidator::new;
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
+                                                            r,
+                                                            a) -> ENTSOGPMode.createENTSOGPMode (i,
+                                                                                                 r,
+                                                                                                 a,
+                                                                                                 PMODE_ID_PROVIDER,
+                                                                                                 true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,

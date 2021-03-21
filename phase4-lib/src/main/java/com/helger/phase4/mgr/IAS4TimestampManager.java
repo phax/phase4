@@ -17,8 +17,8 @@
 package com.helger.phase4.mgr;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 
 import javax.annotation.Nonnull;
 
@@ -33,13 +33,14 @@ import com.helger.commons.datetime.PDTFactory;
 public interface IAS4TimestampManager
 {
   /**
-   * @return The current date in time in the current time zone.
+   * @return The current date in time in the current time zone. Never
+   *         <code>null</code>.
    */
   @Nonnull
-  LocalDateTime getCurrentDateTime ();
+  OffsetDateTime getCurrentDateTime ();
 
   /**
-   * @return The current date in the current time zone.
+   * @return The current date in the current time zone. Never <code>null</code>.
    * @since 0.10.4
    */
   @Nonnull
@@ -49,18 +50,18 @@ public interface IAS4TimestampManager
   }
 
   /**
-   * @return The current time in the current time zone.
+   * @return The current time in the current time zone. Never <code>null</code>.
    * @since 0.10.4
    */
   @Nonnull
-  default LocalTime getCurrentTime ()
+  default OffsetTime getCurrentTime ()
   {
-    return getCurrentDateTime ().toLocalTime ();
+    return getCurrentDateTime ().toOffsetTime ();
   }
 
   @Nonnull
   static IAS4TimestampManager createDefaultInstance ()
   {
-    return PDTFactory::getCurrentLocalDateTime;
+    return PDTFactory::getCurrentOffsetDateTime;
   }
 }

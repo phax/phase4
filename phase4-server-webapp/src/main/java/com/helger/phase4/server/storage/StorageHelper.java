@@ -17,7 +17,7 @@
 package com.helger.phase4.server.storage;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnegative;
@@ -48,7 +48,7 @@ public final class StorageHelper
   {}
 
   @Nonnull
-  private static File _getStorageFile (@Nonnull final LocalDateTime aLDT, @Nonnull final String sExt)
+  private static File _getStorageFile (@Nonnull final OffsetDateTime aLDT, @Nonnull final String sExt)
   {
     final String sYear = StringHelper.getLeadingZero (aLDT.getYear (), 4);
     final String sMonth = StringHelper.getLeadingZero (aLDT.getMonthValue (), 2);
@@ -62,7 +62,8 @@ public final class StorageHelper
   }
 
   @Nonnull
-  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata, @Nonnull final String sExt)
+  public static File getStorageFile (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+                                     @Nonnull final String sExt)
   {
     ValueEnforcer.notNull (aMessageMetadata, "MessageMetadata");
     ValueEnforcer.notEmpty (sExt, "Ext");
@@ -72,7 +73,9 @@ public final class StorageHelper
   }
 
   @Nonnull
-  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID, @Nonnegative final int nTry, @Nonnull final String sExt)
+  public static File getStorageFile (@Nonnull @Nonempty final String sMessageID,
+                                     @Nonnegative final int nTry,
+                                     @Nonnull final String sExt)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     ValueEnforcer.notEmpty (sExt, "Ext");

@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.duplicate;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnegative;
@@ -52,7 +52,9 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
   {}
 
   @Nonnull
-  public EContinue registerAndCheck (@Nullable final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
+  public EContinue registerAndCheck (@Nullable final String sMessageID,
+                                     @Nullable final String sProfileID,
+                                     @Nullable final String sPModeID)
   {
     if (StringHelper.hasNoText (sMessageID))
     {
@@ -87,11 +89,12 @@ public class AS4DuplicateManagerInMemory implements IAS4DuplicateManager
 
   @Nonnull
   @ReturnsMutableCopy
-  public ICommonsList <String> evictAllItemsBefore (@Nonnull final LocalDateTime aRefDT)
+  public ICommonsList <String> evictAllItemsBefore (@Nonnull final OffsetDateTime aRefDT)
   {
     // Get all message IDs to be removed
     final ICommonsList <String> aEvictItems = new CommonsArrayList <> ();
-    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT), x -> aEvictItems.add (x.getMessageID ())));
+    m_aRWLock.readLocked ( () -> m_aMap.forEachValue (x -> x.getDateTime ().isBefore (aRefDT),
+                                                      x -> aEvictItems.add (x.getMessageID ())));
     if (aEvictItems.isNotEmpty ())
     {
       // Bulk erase all

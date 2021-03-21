@@ -17,7 +17,7 @@
 package com.helger.phase4.servlet;
 
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import javax.annotation.CheckForSigned;
@@ -82,7 +82,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_SOAP_BODY_PAYLOAD_NODE = "phase4.soap.body.first.child";
   private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
 
-  private final LocalDateTime m_aReceiptDT;
+  private final OffsetDateTime m_aReceiptDT;
   private final ESoapVersion m_eSoapVersion;
   private final AS4ResourceHelper m_aResHelper;
   private final Locale m_aLocale;
@@ -98,7 +98,7 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   }
 
   @Nonnull
-  public LocalDateTime getReceiptDT ()
+  public OffsetDateTime getReceiptDT ()
   {
     return m_aReceiptDT;
   }

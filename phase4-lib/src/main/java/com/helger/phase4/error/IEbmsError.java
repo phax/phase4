@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.error;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -35,7 +34,7 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
  *
  * @author Philip Helger
  */
-public interface IEbmsError extends Serializable
+public interface IEbmsError
 {
   /**
    * Gets the value of the errorCode property.
@@ -81,12 +80,13 @@ public interface IEbmsError extends Serializable
   default IError getAsError (@Nonnull final Locale aContentLocale)
   {
     return SingleError.builder ()
-                      .setErrorLevel (getSeverity ().getErrorLevel ())
-                      .setErrorID (getErrorCode ())
-                      .setErrorText ("[" +
-                                     getCategory ().getDisplayName () +
-                                     "] " +
-                                     StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale), getShortDescription ()))
+                      .errorLevel (getSeverity ().getErrorLevel ())
+                      .errorID (getErrorCode ())
+                      .errorText ("[" +
+                                  getCategory ().getDisplayName () +
+                                  "] " +
+                                  StringHelper.getNotNull (getErrorDetail ().getDisplayText (aContentLocale),
+                                                           getShortDescription ()))
                       .build ();
   }
 
@@ -114,7 +114,8 @@ public interface IEbmsError extends Serializable
                             sRefToMessageInError,
                             sOrigin,
                             sErrorDescription == null ? null
-                                                      : MessageHelperMethods.createEbms3Description (aContentLocale, sErrorDescription));
+                                                      : MessageHelperMethods.createEbms3Description (aContentLocale,
+                                                                                                     sErrorDescription));
   }
 
   @Nonnull

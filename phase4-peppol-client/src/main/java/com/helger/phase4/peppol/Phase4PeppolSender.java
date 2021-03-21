@@ -18,7 +18,7 @@ package com.helger.phase4.peppol;
 
 import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -156,7 +156,9 @@ public final class Phase4PeppolSender
     {
       sRealInstanceIdentifier = UUID.randomUUID ().toString ();
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" + sRealInstanceIdentifier + "'");
+        LOGGER.debug ("As no SBDH InstanceIdentifier was provided, a random one was created: '" +
+                      sRealInstanceIdentifier +
+                      "'");
     }
 
     aData.setDocumentIdentification (aPayloadElement.getNamespaceURI (),
@@ -199,7 +201,10 @@ public final class Phase4PeppolSender
         else
         {
           // Custom registry
-          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement, aRegistry, aVESID, aValidationResultHandler);
+          Phase4PeppolValidation.validateOutgoingBusinessDocument (aPayloadElement,
+                                                                   aRegistry,
+                                                                   aVESID,
+                                                                   aValidationResultHandler);
         }
       }
       else
@@ -231,7 +236,7 @@ public final class Phase4PeppolSender
     if (LOGGER.isDebugEnabled ())
       LOGGER.debug ("Using the following receiver AP certificate from the SMP: " + aReceiverCert);
 
-    final LocalDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
+    final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
     final EPeppolCertificateCheckResult eCertCheckResult = PeppolCertificateChecker.checkPeppolAPCertificate (aReceiverCert,
                                                                                                               aNow,
                                                                                                               ETriState.UNDEFINED,
@@ -281,7 +286,8 @@ public final class Phase4PeppolSender
    * @since 0.9.6
    */
   @NotThreadSafe
-  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>> extends
+  public abstract static class AbstractPeppolUserMessageBuilder <IMPLTYPE extends AbstractPeppolUserMessageBuilder <IMPLTYPE>>
+                                                                extends
                                                                 AbstractAS4UserMessageBuilderMIMEPayload <IMPLTYPE>
   {
     protected IParticipantIdentifier m_aSenderID;
@@ -469,7 +475,8 @@ public final class Phase4PeppolSender
     }
 
     @Nonnull
-    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert, @Nonnull @Nonempty final String sDestURL)
+    public final IMPLTYPE receiverEndpointDetails (@Nonnull final X509Certificate aCert,
+                                                   @Nonnull @Nonempty final String sDestURL)
     {
       return endpointDetailProvider (new AS4EndpointDetailProviderConstant (aCert, sDestURL));
     }
@@ -821,7 +828,8 @@ public final class Phase4PeppolSender
     @Nonnull
     public Builder validationConfiguration (@Nullable final VESID aVESID)
     {
-      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null : new Phase4PeppolValidatonResultHandler ();
+      final IPhase4PeppolValidatonResultHandler aHdl = aVESID == null ? null
+                                                                      : new Phase4PeppolValidatonResultHandler ();
       return validationConfiguration (aVESID, aHdl);
     }
 

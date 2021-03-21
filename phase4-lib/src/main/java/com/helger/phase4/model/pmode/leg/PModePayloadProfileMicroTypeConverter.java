@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
+import com.helger.commons.mime.MimeTypeParserException;
 import com.helger.commons.state.EMandatory;
 import com.helger.phase4.model.pmode.AbstractPModeMicroTypeConverter;
 import com.helger.xml.microdom.IMicroElement;
@@ -61,7 +62,16 @@ public class PModePayloadProfileMicroTypeConverter extends AbstractPModeMicroTyp
   public PModePayloadProfile convertToNative (final IMicroElement aElement)
   {
     final String sName = aElement.getAttributeValue (ATTR_NAME);
-    final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAttributeValue (ATTR_MIME_TYPE));
+    final String sMimeType = aElement.getAttributeValue (ATTR_MIME_TYPE);
+    final IMimeType aMimeType;
+    try
+    {
+      aMimeType = MimeTypeParser.parseMimeType (sMimeType);
+    }
+    catch (final MimeTypeParserException ex)
+    {
+      throw new IllegalArgumentException ("Failed to parse MIME Type '" + sMimeType + "'", ex);
+    }
     final String sXSDFilename = aElement.getAttributeValue (ATTR_XSD_FILENAME);
     final Integer aMaxSizeKB = aElement.getAttributeValueWithConversion (ATTR_MAX_SIZE_KB, Integer.class);
     final EMandatory eMandatory = EMandatory.valueOf (aElement.getAttributeValueAsBool (ATTR_MANDATORY,

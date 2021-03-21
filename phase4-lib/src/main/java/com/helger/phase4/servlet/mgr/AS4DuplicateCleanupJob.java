@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.servlet.mgr;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Nonnull;
@@ -57,7 +57,7 @@ public final class AS4DuplicateCleanupJob extends AbstractScopeAwareJob
                             @Nonnull final IJobExecutionContext aContext) throws JobExecutionException
   {
     final long nMins = aJobDataMap.getAsLong (KEY_MINUTES);
-    final LocalDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minusMinutes (nMins);
+    final OffsetDateTime aOldDT = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ().minusMinutes (nMins);
 
     final ICommonsList <String> aEvicted = MetaAS4Manager.getIncomingDuplicateMgr ().evictAllItemsBefore (aOldDT);
     if (aEvicted.isNotEmpty ())

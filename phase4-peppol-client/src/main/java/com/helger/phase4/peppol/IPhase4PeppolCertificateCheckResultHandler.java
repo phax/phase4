@@ -18,7 +18,7 @@ package com.helger.phase4.peppol;
 
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +46,6 @@ public interface IPhase4PeppolCertificateCheckResultHandler extends Serializable
    *         Implementation dependent
    */
   void onCertificateCheckResult (@Nonnull X509Certificate aAPCertificate,
-                                 @Nonnull LocalDateTime aCheckDT,
+                                 @Nonnull OffsetDateTime aCheckDT,
                                  @Nonnull EPeppolCertificateCheckResult eCertCheckResult) throws Phase4PeppolException;
 }

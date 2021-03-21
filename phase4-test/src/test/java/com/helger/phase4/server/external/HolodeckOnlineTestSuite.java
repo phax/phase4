@@ -24,12 +24,13 @@ import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.helger.commons.collection.attr.IStringMap;
+import com.helger.commons.collection.attr.StringMap;
 import com.helger.phase4.ScopedConfig;
 import com.helger.phase4.server.MockJettySetup;
 import com.helger.phase4.server.message.ReceiptMessageTest;
 import com.helger.phase4.server.message.UserMessageOneAttachmentTest;
 import com.helger.phase4.server.message.UserMessageSoapBodyPayloadTest;
-import com.helger.settings.Settings;
 
 @RunWith (Categories.class)
 @IncludeCategory (IHolodeckTests.class)
@@ -46,7 +47,7 @@ public final class HolodeckOnlineTestSuite
   @BeforeClass
   public static void init ()
   {
-    final Settings aSettings = new Settings ("dummy");
+    final IStringMap aSettings = new StringMap ();
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_HOLODECK_URI);
     s_aSC = ScopedConfig.create (aSettings);

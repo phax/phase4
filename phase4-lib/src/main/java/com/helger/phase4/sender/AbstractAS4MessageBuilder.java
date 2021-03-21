@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.sender;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
@@ -68,7 +68,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
   protected HttpClientFactory m_aHttpClientFactory;
   protected IAS4CryptoFactory m_aCryptoFactory;
   protected String m_sMessageID;
-  protected LocalDateTime m_aSendingDateTime;
+  protected OffsetDateTime m_aSendingDateTime;
   protected ESoapVersion m_eSoapVersion;
   protected HttpRetrySettings m_aHttpRetrySettings;
   protected Locale m_aLocale = DEFAULT_LOCALE;
@@ -200,7 +200,7 @@ public abstract class AbstractAS4MessageBuilder <IMPLTYPE extends AbstractAS4Mes
    * @since 0.12.0
    */
   @Nonnull
-  public final IMPLTYPE sendingDateTime (@Nullable final LocalDateTime aSendingDateTime)
+  public final IMPLTYPE sendingDateTime (@Nullable final OffsetDateTime aSendingDateTime)
   {
     m_aSendingDateTime = aSendingDateTime;
     return thisAsT ();

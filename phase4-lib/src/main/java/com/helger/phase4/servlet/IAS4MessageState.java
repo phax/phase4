@@ -17,7 +17,7 @@
 package com.helger.phase4.servlet;
 
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 import javax.annotation.CheckForSigned;
@@ -57,7 +57,7 @@ public interface IAS4MessageState
    *         implementation and never <code>null</code>.
    */
   @Nonnull
-  LocalDateTime getReceiptDT ();
+  OffsetDateTime getReceiptDT ();
 
   /**
    * @return The SOAP version of the current request as specified in the
@@ -117,7 +117,8 @@ public interface IAS4MessageState
   default Ebms3Error getEbmsError ()
   {
     final Ebms3SignalMessage aEbmsSignalMessage = getEbmsSignalMessage ();
-    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0) : null;
+    return aEbmsSignalMessage != null && aEbmsSignalMessage.hasErrorEntries () ? aEbmsSignalMessage.getErrorAtIndex (0)
+                                                                               : null;
   }
 
   /**

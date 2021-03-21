@@ -49,35 +49,35 @@
       <artifactId>wss4j-ws-security-dom</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-commons</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-xml</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
-      <artifactId>ph-settings</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-jaxb</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
+      <artifactId>ph-jaxb-adapter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-datetime</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-bc</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-scopes</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-json</artifactId>
     </dependency>
     <dependency>
@@ -105,7 +105,7 @@
       <artifactId>ph-tenancy</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.commons</groupId>
       <artifactId>ph-config</artifactId>
     </dependency>
     <dependency>
@@ -121,7 +121,7 @@
       <artifactId>ph-oton-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.schedule</groupId>
       <artifactId>ph-schedule</artifactId>
     </dependency>
     <dependency>
@@ -244,6 +244,7 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
             <arg>-Xph-csu</arg>
             <arg>-Xph-cloneable2</arg>
             <arg>-Xph-value-extender</arg>
+            <arg>-Xph-offset-dt-extension</arg>
           </args>
           <episodes>
             <episode>
@@ -265,7 +266,7 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
           <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-jaxb22-plugin</artifactId>
-            <version>2.3.3.1</version>
+            <version>2.3.3.2-SNAPSHOT</version>
           </dependency>
         </dependencies>
       </plugin>

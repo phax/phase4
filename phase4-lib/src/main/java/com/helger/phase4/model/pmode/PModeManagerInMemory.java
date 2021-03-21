@@ -37,7 +37,6 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsMap;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.concurrent.SimpleReadWriteLock;
-import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.photon.security.object.BusinessObjectHelper;
@@ -137,7 +136,9 @@ public class PModeManagerInMemory implements IPModeManager
     _validatePMode (aPMode);
 
     // Try in read-lock
-    final IPredicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
+    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (),
+                                                                     aPMode.getInitiatorID (),
+                                                                     aPMode.getResponderID ());
     IPMode aExisting = findFirst (aFilter);
     if (aExisting == null)
     {

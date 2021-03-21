@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.helger.commons.collection.attr.IStringMap;
+import com.helger.commons.collection.attr.StringMap;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.concurrent.ThreadHelper;
@@ -68,7 +70,6 @@ import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockPModeGenerator;
 import com.helger.phase4.soap.ESoapVersion;
-import com.helger.settings.Settings;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -161,7 +162,9 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     aUserMessage.setMessageInfo (aEbms3MessageInfo);
 
     final Document aDoc = new AS4UserMessage (ESoapVersion.AS4_DEFAULT, aUserMessage).getAsSoapDocument (m_aPayload);
-    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()), false, EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
+    sendPlainMessage (new HttpXMLEntity (aDoc, m_eSoapVersion.getMimeType ()),
+                      false,
+                      EEbmsError.EBMS_VALUE_INCONSISTENT.getErrorCode ());
   }
 
   /**
@@ -420,11 +423,13 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                        final int nIndex = m_nFilterCount++;
                                                                        if (nIndex < nResponsesToIntercept)
                                                                        {
-                                                                         LOGGER.error ("Proxy purposely intercepted call " + nIndex);
+                                                                         LOGGER.error ("Proxy purposely intercepted call " +
+                                                                                       nIndex);
                                                                          return null;
                                                                        }
 
-                                                                       LOGGER.info ("Proxy purposely passes on call " + nIndex);
+                                                                       LOGGER.info ("Proxy purposely passes on call " +
+                                                                                    nIndex);
                                                                        return httpObject;
                                                                      }
                                                                    };
@@ -451,7 +456,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA10 () throws Exception
   {
     final int nProxyPort = 8001;
-    final Settings aSettings = new Settings ("dummy");
+    final IStringMap aSettings = new StringMap ();
     aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
@@ -496,7 +501,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA11 () throws Exception
   {
     final int nProxyPort = 8001;
-    final Settings aSettings = new Settings ("dummy");
+    final IStringMap aSettings = new StringMap ();
     aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
@@ -658,8 +663,10 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
     final Document aDoc = createTestSignedUserMessage (m_eSoapVersion, m_aPayload, null, s_aResMgr);
 
     final NodeList aNL = aDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals ("originalSender", aNL.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent ());
-    assertEquals ("finalRecipient", aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("originalSender",
+                  aNL.item (0).getFirstChild ().getAttributes ().getNamedItem ("name").getTextContent ());
+    assertEquals ("finalRecipient",
+                  aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent ());
   }
 
   /**
@@ -676,7 +683,7 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
   public void testEsens_TA17 () throws Exception
   {
     final int nProxyPort = 8001;
-    final Settings aSettings = new Settings ("dummy");
+    final IStringMap aSettings = new StringMap ();
     aSettings.putIn (SETTINGS_SERVER_PROXY_ENABLED, true);
     aSettings.putIn (SETTINGS_SERVER_PROXY_ADDRESS, "localhost");
     aSettings.putIn (SETTINGS_SERVER_PROXY_PORT, nProxyPort);
@@ -819,9 +826,12 @@ public final class AS4eSENSCEFOneWayFuncTest extends AbstractCEFTestSetUp
                                                                AS4SigningParams.createDefault ());
 
     final NodeList aNL = aSignedDoc.getElementsByTagName ("eb:MessageProperties");
-    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (), sTrackerIdentifier);
+    assertEquals (aNL.item (0).getLastChild ().getAttributes ().getNamedItem ("name").getTextContent (),
+                  sTrackerIdentifier);
 
-    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()), true, null);
+    final String sResponse = sendPlainMessage (new HttpXMLEntity (aSignedDoc, m_eSoapVersion.getMimeType ()),
+                                               true,
+                                               null);
 
     assertTrue (sResponse.contains (AS4TestConstants.NON_REPUDIATION_INFORMATION));
   }

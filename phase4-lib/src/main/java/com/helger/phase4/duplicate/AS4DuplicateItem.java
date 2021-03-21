@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.duplicate;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,17 +37,19 @@ import com.helger.phase4.mgr.MetaAS4Manager;
  */
 public class AS4DuplicateItem implements IAS4DuplicateItem
 {
-  private final LocalDateTime m_aDT;
+  private final OffsetDateTime m_aDT;
   private final String m_sMessageID;
   private final String m_sProfileID;
   private final String m_sPModeID;
 
-  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID, @Nullable final String sProfileID, @Nullable final String sPModeID)
+  public AS4DuplicateItem (@Nonnull @Nonempty final String sMessageID,
+                           @Nullable final String sProfileID,
+                           @Nullable final String sPModeID)
   {
     this (MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), sMessageID, sProfileID, sPModeID);
   }
 
-  protected AS4DuplicateItem (@Nonnull final LocalDateTime aDT,
+  protected AS4DuplicateItem (@Nonnull final OffsetDateTime aDT,
                               @Nonnull @Nonempty final String sMessageID,
                               @Nullable final String sProfileID,
                               @Nullable final String sPModeID)
@@ -59,7 +61,7 @@ public class AS4DuplicateItem implements IAS4DuplicateItem
   }
 
   @Nonnull
-  public final LocalDateTime getDateTime ()
+  public final OffsetDateTime getDateTime ()
   {
     return m_aDT;
   }

@@ -66,13 +66,13 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
   @Nonnull
   private static IError _createError (@Nonnull final String sMsg)
   {
-    return SingleError.builderError ().setErrorText (sMsg).build ();
+    return SingleError.builderError ().errorText (sMsg).build ();
   }
 
   @Nonnull
   private static IError _createWarn (@Nonnull final String sMsg)
   {
-    return SingleError.builderWarn ().setErrorText (sMsg).build ();
+    return SingleError.builderWarn ().errorText (sMsg).build ();
   }
 
   private static void _checkIfLegIsValid (@Nonnull final ErrorList aErrorList,
@@ -115,7 +115,10 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       final ESoapVersion eSOAPVersion = aLegProtocol.getSoapVersion ();
       if (!eSOAPVersion.isAS4Default ())
       {
-        aErrorList.add (_createError (sFieldPrefix + "SoapVersion '" + eSOAPVersion.getVersion () + "' is unsupported"));
+        aErrorList.add (_createError (sFieldPrefix +
+                                      "SoapVersion '" +
+                                      eSOAPVersion.getVersion () +
+                                      "' is unsupported"));
       }
     }
 
@@ -235,7 +238,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyConsumerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyConsumer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyConsumer should be 'true'"));
       }
       else
       {
@@ -245,7 +249,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
       if (aErrorHandling.isReportProcessErrorNotifyProducerDefined ())
       {
         if (!aErrorHandling.isReportProcessErrorNotifyProducer ())
-          aErrorList.add (_createWarn (sFieldPrefix + "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
+          aErrorList.add (_createWarn (sFieldPrefix +
+                                       "ErrorHandling.Report.ProcessErrorNotifyProducer should be 'true'"));
       }
       else
       {
@@ -274,7 +279,8 @@ public class CEFCompatibilityValidator implements IAS4ProfileValidator
     final EMEP eMEP = aPMode.getMEP ();
     final EMEPBinding eMEPBinding = aPMode.getMEPBinding ();
 
-    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) || (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
+    if ((eMEP == EMEP.ONE_WAY && eMEPBinding == EMEPBinding.PUSH) ||
+        (eMEP == EMEP.TWO_WAY && eMEPBinding == EMEPBinding.PUSH_PUSH))
     {
       // Valid
     }

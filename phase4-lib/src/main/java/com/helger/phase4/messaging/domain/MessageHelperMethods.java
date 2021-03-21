@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.messaging.domain;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -158,9 +158,12 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
+                                                         @Nullable final String sRefToMessageID)
   {
-    return createEbms3MessageInfo (sMessageID, sRefToMessageID, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    return createEbms3MessageInfo (sMessageID,
+                                   sRefToMessageID,
+                                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
@@ -179,7 +182,7 @@ public final class MessageHelperMethods
   @Nonnull
   public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
                                                          @Nullable final String sRefToMessageID,
-                                                         @Nonnull final LocalDateTime aDateTime)
+                                                         @Nonnull final OffsetDateTime aDateTime)
   {
     ValueEnforcer.notEmpty (sMessageID, "MessageID");
     ValueEnforcer.notNull (aDateTime, "DateTime");
@@ -345,12 +348,14 @@ public final class MessageHelperMethods
     final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
+                                                           aAttachment.getUncompressedMimeType ()));
     aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
 
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
+                                                             aAttachment.getCharset ().name ()));
       aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
@@ -415,7 +420,8 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (),
+                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message

@@ -73,7 +73,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
     @Nonnull
     static String getFilename (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
     {
-      final LocalDateTime aLDT = aMessageMetadata.getIncomingDT ();
+      final LocalDateTime aLDT = aMessageMetadata.getIncomingDT ().toLocalDateTime ();
       return aLDT.getYear () +
              "/" +
              StringHelper.getLeadingZero (aLDT.getMonthValue (), 2) +
@@ -103,8 +103,9 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
    */
   public AS4IncomingDumperFileBased ()
   {
-    this ( (aMessageMetadata, aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                                           DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
+    this ( (aMessageMetadata,
+            aHttpHeaderMap) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                         DEFAULT_BASE_PATH + IFileProvider.getFilename (aMessageMetadata)));
   }
 
   /**
@@ -143,7 +144,8 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
   public static AS4IncomingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4IncomingDumperFileBased ( (aMessageMetadata, aHttpHeaderMap) -> new File (aBaseDirectory,
-                                                                                            IFileProvider.getFilename (aMessageMetadata)));
+    return new AS4IncomingDumperFileBased ( (aMessageMetadata,
+                                             aHttpHeaderMap) -> new File (aBaseDirectory,
+                                                                          IFileProvider.getFilename (aMessageMetadata)));
   }
 }

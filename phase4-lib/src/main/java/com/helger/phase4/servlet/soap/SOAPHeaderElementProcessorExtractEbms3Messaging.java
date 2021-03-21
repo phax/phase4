@@ -79,7 +79,8 @@ import com.helger.xml.XMLHelper;
 public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHeaderElementProcessor
 {
   /** The QName for which this processor should be invoked */
-  public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/", "Messaging");
+  public static final QName QNAME_MESSAGING = new QName ("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/",
+                                                         "Messaging");
 
   private static final Logger LOGGER = LoggerFactory.getLogger (SOAPHeaderElementProcessorExtractEbms3Messaging.class);
 
@@ -122,7 +123,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
    * @return the MPCID
    */
   @Nullable
-  private static String _getMPCIDOfUserMsg (@Nonnull final Ebms3UserMessage aUserMessage, @Nonnull final PModeLeg aPModeLeg)
+  private static String _getMPCIDOfUserMsg (@Nonnull final Ebms3UserMessage aUserMessage,
+                                            @Nonnull final PModeLeg aPModeLeg)
   {
     String sEffectiveMPCID = aUserMessage.getMpc ();
     if (sEffectiveMPCID == null)
@@ -180,7 +182,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
   {
     // Check if a SOAPBodyPayload exists
     final Element aBody = XMLHelper.getFirstChildElementOfName (aSOAPDoc.getFirstChild (),
-                                                                aPModeLeg.getProtocol ().getSoapVersion ().getBodyElementName ());
+                                                                aPModeLeg.getProtocol ()
+                                                                         .getSoapVersion ()
+                                                                         .getBodyElementName ());
     return aBody != null && aBody.hasChildNodes ();
   }
 
@@ -201,7 +205,9 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
 
     // Parse EBMS3 Messaging object
     final CollectingValidationEventHandler aCVEH = new CollectingValidationEventHandler ();
-    final Ebms3Messaging aMessaging = Ebms3ReaderBuilder.ebms3Messaging ().setValidationEventHandler (aCVEH).read (aElement);
+    final Ebms3Messaging aMessaging = Ebms3ReaderBuilder.ebms3Messaging ()
+                                                        .setValidationEventHandler (aCVEH)
+                                                        .read (aElement);
 
     // If the ebms3reader above fails aMessageing will be null => invalid/not
     // wellformed
@@ -213,7 +219,7 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       for (final IError aError : aCVEH.getErrorList ())
       {
         LOGGER.error ("Header error: " + aError.getAsString (aLocale));
-        aErrorList.add (SingleError.builder (aError).setErrorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ()).build ());
+        aErrorList.add (SingleError.builder (aError).errorID (EEbmsError.EBMS_INVALID_HEADER.getErrorCode ()).build ());
       }
       return ESuccess.FAILURE;
     }
@@ -417,7 +423,8 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
             nSpecifiedAttachments++;
 
             final String sAttachmentID = StringHelper.trimStart (aPartInfo.getHref (), MessageHelperMethods.PREFIX_CID);
-            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (), sAttachmentID));
+            final WSS4JAttachment aIncomingAttachment = aAttachments.findFirst (x -> EqualsHelper.equals (x.getId (),
+                                                                                                          sAttachmentID));
             if (aIncomingAttachment == null)
             {
               LOGGER.warn ("Failed to resolve MIME attachment '" +
@@ -552,7 +559,12 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
           aPMode = aProcessor.findPMode (aSignalMessage);
           if (aPMode != null)
           {
-            LOGGER.info ("Found PMode '" + aPMode.getID () + "' for MPC '" + sMPC + "' in SignalMessage " + aSignalMessage);
+            LOGGER.info ("Found PMode '" +
+                         aPMode.getID () +
+                         "' for MPC '" +
+                         sMPC +
+                         "' in SignalMessage " +
+                         aSignalMessage);
             break;
           }
         }

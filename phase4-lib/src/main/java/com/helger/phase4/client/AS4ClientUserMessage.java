@@ -19,6 +19,7 @@ package com.helger.phase4.client;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +38,6 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.functional.IFunction;
 import com.helger.commons.io.file.FilenameHelper;
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.string.StringHelper;
@@ -103,7 +103,9 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
 
   private boolean m_bUseLeg1 = true;
   private IPMode m_aPMode;
-  private IFunction <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () + "-" + x.getToPartyID ();
+  private Function <AS4ClientUserMessage, String> m_aPModeIDFactory = x -> x.getFromPartyID () +
+                                                                           "-" +
+                                                                           x.getToPartyID ();
 
   public AS4ClientUserMessage (@Nonnull @WillNotClose final AS4ResourceHelper aResHelper)
   {
@@ -542,7 +544,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   @Nonnull
-  public final IFunction <AS4ClientUserMessage, String> getPModeIDFactory ()
+  public final Function <AS4ClientUserMessage, String> getPModeIDFactory ()
   {
     return m_aPModeIDFactory;
   }
@@ -555,7 +557,7 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
   }
 
   @Nonnull
-  public final AS4ClientUserMessage setPModeIDFactory (@Nonnull final IFunction <AS4ClientUserMessage, String> aPModeIDFactory)
+  public final AS4ClientUserMessage setPModeIDFactory (@Nonnull final Function <AS4ClientUserMessage, String> aPModeIDFactory)
   {
     ValueEnforcer.notNull (aPModeIDFactory, "PModeIDFactory");
     m_aPModeIDFactory = aPModeIDFactory;
@@ -612,7 +614,8 @@ public class AS4ClientUserMessage extends AbstractAS4Client <AS4ClientUserMessag
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sMessageID,
                                                                                             getRefToMessageID (),
                                                                                             getSendingDateTimeOrNow ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null, m_aAttachments);
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (m_aPayload != null,
+                                                                                            m_aAttachments);
     final Ebms3CollaborationInfo aEbms3CollaborationInfo = MessageHelperMethods.createEbms3CollaborationInfo (sAgreementRefPMode,
                                                                                                               m_sAgreementRefValue,
                                                                                                               m_sServiceType,

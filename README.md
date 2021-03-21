@@ -271,6 +271,9 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v1.1.0 - work in progress
+    * Updated to ph-commons 10
+    * Changed from `LocalDateTime` to `OffsetDateTime` where the message is affected
 * v1.0.0 - 2021-03-10
     * Updated to phive-rules 2.0.5 with the more lightweight Peppol validation
     * Changed the default timeout of the Peppol HTTP settings from 100 seconds to 300 seconds (5 minutes) to comply with the TIA requirements

@@ -25,7 +25,6 @@ import com.helger.commons.ValueEnforcer;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.equals.EqualsHelper;
-import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.commons.string.StringHelper;
 import com.helger.phase4.model.pmode.leg.PModeLeg;
@@ -133,9 +132,9 @@ public interface IPModeManager
    * @return Never <code>null</code>.
    */
   @Nonnull
-  static IPredicate <IPMode> getPModeFilter (@Nonnull final String sID,
-                                             @Nullable final String sInitiatorID,
-                                             @Nullable final String sResponderID)
+  static Predicate <IPMode> getPModeFilter (@Nonnull final String sID,
+                                            @Nullable final String sInitiatorID,
+                                            @Nullable final String sResponderID)
   {
     return x -> x.getID ().equals (sID) && x.hasInitiatorID (sInitiatorID) && x.hasResponderID (sResponderID);
   }

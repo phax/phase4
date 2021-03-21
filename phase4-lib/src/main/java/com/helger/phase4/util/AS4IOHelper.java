@@ -49,6 +49,6 @@ public final class AS4IOHelper
   @Nonnull
   public static SingleError createError (@Nonnull final String sErrorText)
   {
-    return SingleError.builderError ().setErrorText (sErrorText).build ();
+    return SingleError.builderError ().errorText (sErrorText).build ();
   }
 }

@@ -21,6 +21,7 @@ import javax.annotation.concurrent.Immutable;
 
 import com.helger.commons.mime.IMimeType;
 import com.helger.commons.mime.MimeTypeParser;
+import com.helger.commons.mime.MimeTypeParserException;
 import com.helger.commons.state.EMandatory;
 import com.helger.json.IJsonObject;
 import com.helger.json.JsonObject;
@@ -61,10 +62,20 @@ public final class PModePayloadProfileJsonConverter
   public static PModePayloadProfile convertToNative (final IJsonObject aElement)
   {
     final String sName = aElement.getAsString (NAME);
-    final IMimeType aMimeType = MimeTypeParser.parseMimeType (aElement.getAsString (MIME_TYPE));
+    final String sMimeType = aElement.getAsString (MIME_TYPE);
+    final IMimeType aMimeType;
+    try
+    {
+      aMimeType = MimeTypeParser.parseMimeType (sMimeType);
+    }
+    catch (final MimeTypeParserException ex)
+    {
+      throw new IllegalArgumentException ("Failed to parse MIME Type '" + sMimeType + "'", ex);
+    }
     final String sXSDFilename = aElement.getAsString (XSD_FILENAME);
     final Integer aMaxSizeKB = aElement.getAsIntObj (MAX_SIZE_KB);
-    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY, PModePayloadProfile.DEFAULT_MANDATORY));
+    final EMandatory eMandatory = EMandatory.valueOf (aElement.getAsBoolean (MANDATORY,
+                                                                             PModePayloadProfile.DEFAULT_MANDATORY));
 
     return new PModePayloadProfile (sName, aMimeType, sXSDFilename, aMaxSizeKB, eMandatory);
   }

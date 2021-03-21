@@ -72,18 +72,18 @@
     <!-- wss4j 2.3.0 requires xmlsec 2.2.0 -->
     <xmlsec.version>2.2.1</xmlsec.version>
     <wss4j.version>2.3.1</wss4j.version>
-    <log4j.version>2.14.0</log4j.version>
-    <ph-xsds.version>2.4.2</ph-xsds.version>
-    <peppol-commons.version>8.4.1</peppol-commons.version>
-    <spring-boot.version>2.4.3</spring-boot.version>
+    <log4j.version>2.14.1</log4j.version>
+    <ph-xsds.version>2.4.4-SNAPSHOT</ph-xsds.version>
+    <peppol-commons.version>8.4.2-SNAPSHOT</peppol-commons.version>
+    <spring-boot.version>2.4.4</spring-boot.version>
   </properties>
   
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.commons</groupId>
         <artifactId>ph-commons-parent-pom</artifactId>
-        <version>9.5.5</version>
+        <version>10.0.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -95,44 +95,44 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.helger</groupId>
+        <groupId>com.helger.schedule</groupId>
         <artifactId>ph-schedule-parent-pom</artifactId>
-        <version>4.1.1</version>
+        <version>4.2.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-masterdata-parent-pom</artifactId>
-        <version>6.1.10</version>
+        <version>6.2.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger</groupId>
         <artifactId>ph-css-parent-pom</artifactId>
-        <version>6.2.4</version>
+        <version>6.3.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.web</groupId>
         <artifactId>ph-web-parent-pom</artifactId>
-        <version>9.5.3</version>
+        <version>9.6.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.photon</groupId>
         <artifactId>ph-oton-parent-pom</artifactId>
-        <version>8.2.9</version>
+        <version>8.3.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.ubl</groupId>
         <artifactId>ph-ubl-parent-pom</artifactId>
-        <version>6.4.3</version>
+        <version>6.4.4-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -146,21 +146,21 @@
       <dependency>
         <groupId>com.helger.schematron</groupId>
         <artifactId>ph-schematron-parent-pom</artifactId>
-        <version>6.0.3</version>
+        <version>6.0.4-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.phive</groupId>
         <artifactId>phive-parent-pom</artifactId>
-        <version>7.1.1</version>
+        <version>7.1.2-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.helger.phive.rules</groupId>
         <artifactId>phive-rules-parent-pom</artifactId>
-        <version>2.0.5</version>
+        <version>2.0.6-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

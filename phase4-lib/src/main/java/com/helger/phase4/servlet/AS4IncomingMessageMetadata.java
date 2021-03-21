@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.servlet;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import javax.annotation.CheckForSigned;
@@ -44,7 +44,7 @@ import com.helger.phase4.mgr.MetaAS4Manager;
 public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 {
   private final String m_sIncomingUniqueID;
-  private final LocalDateTime m_aIncomingDT;
+  private final OffsetDateTime m_aIncomingDT;
   private final EAS4IncomingMessageMode m_eMode;
   private String m_sRemoteAddr;
   private String m_sRemoteHost;
@@ -76,7 +76,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    *        The messaging mode. May not be <code>null</code>.
    */
   protected AS4IncomingMessageMetadata (@Nonnull @Nonempty final String sIncomingUniqueID,
-                                        @Nonnull final LocalDateTime aIncomingDT,
+                                        @Nonnull final OffsetDateTime aIncomingDT,
                                         @Nonnull final EAS4IncomingMessageMode eMode)
   {
     ValueEnforcer.notEmpty (sIncomingUniqueID, "sIncomingUniqueID");
@@ -96,7 +96,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   @Nonnull
-  public final LocalDateTime getIncomingDT ()
+  public final OffsetDateTime getIncomingDT ()
   {
     return m_aIncomingDT;
   }

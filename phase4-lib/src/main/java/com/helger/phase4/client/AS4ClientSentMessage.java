@@ -16,7 +16,7 @@
  */
 package com.helger.phase4.client;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ public class AS4ClientSentMessage <T>
   private final StatusLine m_aResponseStatusLine;
   private HttpHeaderMap m_aResponseHeaders;
   private final T m_aResponseContent;
-  private final LocalDateTime m_aSentDateTime;
+  private final OffsetDateTime m_aSentDateTime;
 
   /**
    * @param aBuiltMsg
@@ -64,7 +64,11 @@ public class AS4ClientSentMessage <T>
                                @Nonnull final HttpHeaderMap aResponseHeaders,
                                @Nullable final T aResponseContent)
   {
-    this (aBuiltMsg, aResponseStatusLine, aResponseHeaders, aResponseContent, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    this (aBuiltMsg,
+          aResponseStatusLine,
+          aResponseHeaders,
+          aResponseContent,
+          MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
@@ -84,7 +88,7 @@ public class AS4ClientSentMessage <T>
                                   @Nullable final StatusLine aResponseStatusLine,
                                   @Nonnull final HttpHeaderMap aResponseHeaders,
                                   @Nullable final T aResponseContent,
-                                  @Nonnull final LocalDateTime aSentDateTime)
+                                  @Nonnull final OffsetDateTime aSentDateTime)
   {
     ValueEnforcer.notNull (aBuiltMsg, "BuiltMsg");
     ValueEnforcer.notNull (aResponseHeaders, "ResponseHeaders");
@@ -174,7 +178,7 @@ public class AS4ClientSentMessage <T>
    * @since 0.10.0
    */
   @Nonnull
-  public final LocalDateTime getSentDateTime ()
+  public final OffsetDateTime getSentDateTime ()
   {
     return m_aSentDateTime;
   }

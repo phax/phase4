@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.helger.commons.ValueEnforcer;
+import com.helger.commons.collection.attr.IStringMap;
 import com.helger.commons.io.resource.FileSystemResource;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.config.Config;
@@ -29,7 +30,6 @@ import com.helger.config.source.MultiConfigurationValueProvider;
 import com.helger.config.source.appl.ConfigurationSourceFunction;
 import com.helger.config.source.res.ConfigurationSourceProperties;
 import com.helger.phase4.config.AS4Configuration;
-import com.helger.settings.ISettings;
 
 /**
  * Helper class to apply a certain {@link IConfig} for a certain code area. Use
@@ -56,10 +56,11 @@ public final class ScopedConfig implements AutoCloseable
   }
 
   @Nonnull
-  public static ScopedConfig create (@Nonnull final ISettings aMap)
+  public static ScopedConfig create (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
-    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
+    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     return new ScopedConfig (new Config (aVP));
   }
 
@@ -71,7 +72,8 @@ public final class ScopedConfig implements AutoCloseable
 
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
     // By default priority must be higher than the default
-    aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes), EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
+    aVP.addConfigurationSource (new ConfigurationSourceProperties (aRes),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
     return new ScopedConfig (new Config (aVP));
   }
 
@@ -82,10 +84,11 @@ public final class ScopedConfig implements AutoCloseable
   }
 
   @Nonnull
-  public static ScopedConfig createTestConfig (@Nonnull final ISettings aMap)
+  public static ScopedConfig createTestConfig (@Nonnull final IStringMap aMap)
   {
     final MultiConfigurationValueProvider aVP = AS4Configuration.createPhase4ValueProvider ();
-    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString), EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
+    aVP.addConfigurationSource (new ConfigurationSourceFunction (aMap::getAsString),
+                                EConfigSourceType.RESOURCE.getDefaultPriority () + 20);
     aVP.addConfigurationSource (new ConfigurationSourceProperties (new FileSystemResource (TEST_CONFIG_FILE)),
                                 EConfigSourceType.RESOURCE.getDefaultPriority () + 10);
     return new ScopedConfig (new Config (aVP));

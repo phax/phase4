@@ -16,10 +16,11 @@
  */
 package com.helger.phase4.profile.peppol;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nonnull;
 
 import com.helger.commons.annotation.IsSPIImplementation;
-import com.helger.commons.functional.ISupplier;
 import com.helger.phase4.model.pmode.IPModeIDProvider;
 import com.helger.phase4.profile.AS4Profile;
 import com.helger.phase4.profile.IAS4ProfilePModeProvider;
@@ -41,8 +42,14 @@ public final class AS4PeppolProfileRegistarSPI implements IAS4ProfileRegistrarSP
 
   public void registerAS4Profile (@Nonnull final IAS4ProfileRegistrar aRegistrar)
   {
-    final ISupplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = PeppolCompatibilityValidator::new;
-    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i, r, a) -> PeppolPMode.createPeppolPMode (i, r, a, PMODE_ID_PROVIDER, true);
+    final Supplier <? extends IAS4ProfileValidator> aProfileValidatorProvider = PeppolCompatibilityValidator::new;
+    final IAS4ProfilePModeProvider aDefaultPModeProvider = (i,
+                                                            r,
+                                                            a) -> PeppolPMode.createPeppolPMode (i,
+                                                                                                 r,
+                                                                                                 a,
+                                                                                                 PMODE_ID_PROVIDER,
+                                                                                                 true);
     final AS4Profile aProfile = new AS4Profile (AS4_PROFILE_ID,
                                                 AS4_PROFILE_NAME,
                                                 aProfileValidatorProvider,

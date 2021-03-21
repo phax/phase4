@@ -16,6 +16,8 @@
  */
 package com.helger.phase4.model.pmode;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -26,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.ELockType;
 import com.helger.commons.annotation.MustBeLocked;
-import com.helger.commons.functional.IPredicate;
 import com.helger.commons.state.EChange;
 import com.helger.dao.DAOException;
 import com.helger.photon.app.dao.AbstractPhotonMapBasedWALDAO;
@@ -134,7 +135,9 @@ public class PModeManager extends AbstractPhotonMapBasedWALDAO <IPMode, PMode> i
     _validatePMode (aPMode);
 
     // Try in read-lock
-    final IPredicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (), aPMode.getInitiatorID (), aPMode.getResponderID ());
+    final Predicate <IPMode> aFilter = IPModeManager.getPModeFilter (aPMode.getID (),
+                                                                     aPMode.getInitiatorID (),
+                                                                     aPMode.getResponderID ());
     IPMode aExisting = findFirst (aFilter);
     if (aExisting == null)
     {

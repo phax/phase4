@@ -22,6 +22,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
+import com.helger.commons.collection.attr.IStringMap;
+import com.helger.commons.collection.attr.StringMap;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.io.resource.ClassPathResource;
@@ -46,7 +48,6 @@ import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.messaging.mime.AS4MimeMessage;
 import com.helger.phase4.messaging.mime.MimeMessageCreator;
 import com.helger.phase4.server.MockJettySetup;
-import com.helger.settings.Settings;
 
 @Ignore ("Working! Requires external proxy and Peppol pilot certificate!")
 public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
@@ -63,7 +64,7 @@ public final class AS4_NETFuncTest extends AbstractCEFTestSetUp
   @BeforeClass
   public static void noJetty ()
   {
-    final Settings aSettings = new Settings ("dummy");
+    final IStringMap aSettings = new StringMap ();
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_JETTY_ENABLED, false);
     aSettings.putIn (MockJettySetup.SETTINGS_SERVER_ADDRESS, DEFAULT_AS4_NET_URI);
     s_aSC = ScopedConfig.create (aSettings);
