@@ -128,7 +128,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     HttpDebugger.setEnabled (false);
 
     // Sanity check
-    if (CommandMap.getDefaultCommandMap ().createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
+    if (CommandMap.getDefaultCommandMap ()
+                  .createDataContentHandler (CMimeType.MULTIPART_RELATED.getAsString ()) == null)
       throw new IllegalStateException ("No DataContentHandler for MIME Type '" +
                                        CMimeType.MULTIPART_RELATED.getAsString () +
                                        "' is available. There seems to be a problem with the dependencies/packaging");
@@ -183,9 +184,10 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                                           nTry,
-                                                                                                                           ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID,
+                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                               nTry,
+                                                                                                               ".as4out")));
   }
 
   private static void _initPeppolAS4 ()
@@ -207,7 +209,8 @@ public final class Phase4PeppolWebAppListener extends WebAppListener
                                                                                                           ETriState.FALSE,
                                                                                                           null);
     if (eCheckResult.isInvalid ())
-      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " + eCheckResult);
+      throw new InitializationException ("The provided certificate is not a Peppol certificate. Check result: " +
+                                         eCheckResult);
     LOGGER.info ("Sucessfully checked that the provided Peppol AP certificate is valid.");
 
     final String sSMPURL = AS4Configuration.getConfig ().getAsString ("smp.url");

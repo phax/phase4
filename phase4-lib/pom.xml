@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.helger.phase4</groupId>
     <artifactId>phase4-parent-pom</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>phase4-lib</artifactId>
   <packaging>bundle</packaging>
@@ -101,7 +101,7 @@
       <artifactId>ph-xsds-xlink</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.helger</groupId>
+      <groupId>com.helger.masterdata</groupId>
       <artifactId>ph-tenancy</artifactId>
     </dependency>
     <dependency>
@@ -266,7 +266,7 @@ osgi.serviceloader; osgi.serviceloader=com.helger.xml.microdom.convert.IMicroTyp
           <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-jaxb22-plugin</artifactId>
-            <version>2.3.3.2-SNAPSHOT</version>
+            <version>2.3.3.2</version>
           </dependency>
         </dependencies>
       </plugin>
