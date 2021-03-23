@@ -30,7 +30,9 @@ import com.helger.commons.string.StringHelper;
 
 /**
  * This interface lets you access optional metadata for a single incoming
- * message.
+ * message.<br>
+ * See {@link AS4MessagingHelper} for a transformation method of this object to
+ * a JSON representation.
  *
  * @author Philip Helger
  * @since 0.9.8

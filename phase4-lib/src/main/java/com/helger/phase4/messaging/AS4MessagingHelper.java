@@ -40,6 +40,14 @@ public final class AS4MessagingHelper
   private AS4MessagingHelper ()
   {}
 
+  /**
+   * Convert an {@link IAS4IncomingMessageMetadata} structure to a JSON
+   * representation.
+   *
+   * @param aMessageMetadata
+   *        The message metadata to convert. May not be <code>null</code>.
+   * @return A non-<code>null</code> JSON object.
+   */
   @Nonnull
   @Nonempty
   public static IJsonObject getIncomingMetadataAsJson (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata)
