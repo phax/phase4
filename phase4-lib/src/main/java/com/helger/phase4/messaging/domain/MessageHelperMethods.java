@@ -76,6 +76,12 @@ public final class MessageHelperMethods
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = EURLProtocol.CID.getProtocol ();
 
+  /**
+   * The regular expression that any custom message ID suffix must follow.
+   */
+  @RegEx
+  public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
+
   private static String s_sCustomMessageIDSuffix = null;
 
   private MessageHelperMethods ()
@@ -87,12 +93,6 @@ public final class MessageHelperMethods
   {
     return CAS4.LIB_NAME + "@Conv" + ThreadLocalRandom.current ().nextLong ();
   }
-
-  /**
-   * The regular expression that any custom message ID suffix must follow.
-   */
-  @RegEx
-  public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
 
   /**
    * @return The custom message ID suffix to be used. May be <code>null</code>.
@@ -107,7 +107,7 @@ public final class MessageHelperMethods
   /**
    * Set a custom message ID suffix to be used in
    * {@link #createRandomMessageID()}. If a string is provided, any eventually
-   * present leading dot is cut.
+   * present leading dot is cut. This
    *
    * @param sSuffix
    *        The suffix to be used. May be <code>null</code>. If present it must
