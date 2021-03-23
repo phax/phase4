@@ -70,6 +70,12 @@ public class AS4CryptParams implements Serializable, ICloneable <AS4CryptParams>
   // The alias into the WSS4J crypto config
   private String m_sAlias;
 
+  /**
+   * Default constructor using default
+   * {@link #setKeyIdentifierType(ECryptoKeyIdentifierType)},
+   * {@link #setKeyEncAlgorithm(String)}, {@link #setMGFAlgorithm(String)} and
+   * {@link #setDigestAlgorithm(String)}
+   */
   public AS4CryptParams ()
   {}
 
