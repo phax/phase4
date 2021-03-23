@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 import com.helger.commons.CGlobal;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
+import com.helger.commons.callback.IThrowingRunnable;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
@@ -153,8 +154,7 @@ public class AS4RequestHandler implements AutoCloseable
       return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
-                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse, @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
@@ -212,8 +212,7 @@ public class AS4RequestHandler implements AutoCloseable
       return new HttpMimeMessageEntity (m_aMimeMsg);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
-                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse, @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final IHasInputStream aContent = HasInputStream.multiple ( () -> {
         try
@@ -614,10 +613,8 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
   {
-    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
-                          "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null,
-                           "Only one of User OR Signal Message may be present");
+    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null, "User OR Signal Message must be present");
+    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null, "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
     final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
@@ -721,18 +718,12 @@ public class AS4RequestHandler implements AutoCloseable
                                          sMessageID +
                                          "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
                 LOGGER.error (sErrorMsg);
-                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                              sMessageID,
-                                                                                              sErrorMsg));
+                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
                 // Stop processing
                 return;
               }
               aSPIResult.setAsyncResponseURL (sAsyncResultURL);
-              LOGGER.info ("Using asynchronous response URL '" +
-                           sAsyncResultURL +
-                           "' for message ID '" +
-                           sMessageID +
-                           "'");
+              LOGGER.info ("Using asynchronous response URL '" + sAsyncResultURL + "' for message ID '" + sMessageID + "'");
             }
           }
 
@@ -764,9 +755,7 @@ public class AS4RequestHandler implements AutoCloseable
                                            sMessageID +
                                            "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
                   LOGGER.warn (sErrorMsg);
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
-                                                                                                sMessageID,
-                                                                                                sErrorMsg));
+                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
                   // Stop processing
                   return;
                 }
@@ -831,15 +820,15 @@ public class AS4RequestHandler implements AutoCloseable
   private void _invokeSPIsForResponse (@Nonnull final IAS4MessageState aState,
                                        @Nullable final IAS4ResponseFactory aResponseFactory,
                                        @Nullable final HttpEntity aHttpEntity,
-                                       @Nonnull final IMimeType aMimeType)
+                                       @Nonnull final IMimeType aMimeType,
+                                       @Nonnull @Nonempty final String sResponseMessageID)
   {
-    // Get response payload
+    // Get response payload as byte array for multiple processing by the SPIs
     final boolean bResponsePayloadIsAvailable = aResponseFactory != null;
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
-                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -870,7 +859,9 @@ public class AS4RequestHandler implements AutoCloseable
                     aAllProcessors.size () +
                     " SPIs on message ID '" +
                     aState.getMessageID () +
-                    "': " +
+                    "' and response message ID '" +
+                    sResponseMessageID +
+                    ": " +
                     aAllProcessors);
 
     for (final IAS4ServletMessageProcessorSPI aProcessor : aAllProcessors)
@@ -880,10 +871,7 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for response");
 
-          aProcessor.processAS4ResponseMessage (m_aMessageMetadata,
-                                                aState,
-                                                aResponsePayload,
-                                                bResponsePayloadIsAvailable);
+          aProcessor.processAS4ResponseMessage (m_aMessageMetadata, aState, aResponsePayload, bResponsePayloadIsAvailable);
 
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Finished invoking AS4 message processor " + aProcessor + " for response");
@@ -906,6 +894,8 @@ public class AS4RequestHandler implements AutoCloseable
    *
    * @param eSoapVersion
    *        of the message
+   * @param sResponseMessageID
+   *        The AS4 message ID of the response
    * @param aUserMessage
    *        the message that should be reversed
    * @param aResponseAttachments
@@ -914,15 +904,14 @@ public class AS4RequestHandler implements AutoCloseable
    */
   @Nonnull
   private static AS4UserMessage _createReversedUserMessage (@Nonnull final ESoapVersion eSoapVersion,
+                                                            @Nonnull @Nonempty final String sResponseMessageID,
                                                             @Nonnull final Ebms3UserMessage aUserMessage,
                                                             @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachments)
   {
     // Use current time
-    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (MessageHelperMethods.createRandomMessageID (),
-                                                                                            aUserMessage.getMessageInfo ()
-                                                                                                        .getMessageId ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false,
-                                                                                            aResponseAttachments);
+    final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sResponseMessageID,
+                                                                                            aUserMessage.getMessageInfo ().getMessageId ());
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aResponseAttachments);
 
     // Invert from and to role from original user message
     final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
@@ -1086,11 +1075,11 @@ public class AS4RequestHandler implements AutoCloseable
   @Nonnull
   private IAS4ResponseFactory _createResponseReceiptMessage (@Nullable final Document aSoapDocument,
                                                              @Nonnull final ESoapVersion eSoapVersion,
+                                                             @Nonnull @Nonempty final String sResponseMessageID,
                                                              @Nonnull final PModeLeg aEffectiveLeg,
                                                              @Nullable final Ebms3UserMessage aUserMessage,
                                                              @Nullable final ICommonsList <WSS4JAttachment> aResponseAttachments) throws WSSecurityException
   {
-    final String sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
     final AS4ReceiptMessage aReceiptMessage = AS4ReceiptMessage.create (eSoapVersion,
                                                                         sResponseMessageID,
                                                                         aUserMessage,
@@ -1198,10 +1187,7 @@ public class AS4RequestHandler implements AutoCloseable
     else
     {
       // Create (maybe encrypted) MIME message
-      final AS4MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc,
-                                                                     aResponseAttachments,
-                                                                     eSoapVersion,
-                                                                     aCryptParams);
+      final AS4MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc, aResponseAttachments, eSoapVersion, aCryptParams);
       ret = new AS4ResponseFactoryMIME (sResponseMessageID, aMimeMsg);
     }
     return ret;
@@ -1242,16 +1228,10 @@ public class AS4RequestHandler implements AutoCloseable
       final String sProfileID = aState.getProfileID ();
 
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("No checking for duplicate message with message ID '" +
-                      sMessageID +
-                      "' and profile ID '" +
-                      sProfileID +
-                      "'");
+        LOGGER.debug ("No checking for duplicate message with message ID '" + sMessageID + "' and profile ID '" + sProfileID + "'");
 
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
-                                                 .registerAndCheck (sMessageID,
-                                                                    sProfileID,
-                                                                    aPMode == null ? null : aPMode.getID ())
+                                                 .registerAndCheck (sMessageID, sProfileID, aPMode == null ? null : aPMode.getID ())
                                                  .isBreak ();
       if (bIsDuplicate)
       {
@@ -1315,200 +1295,110 @@ public class AS4RequestHandler implements AutoCloseable
       {
         // Call asynchronous
         // Only leg1 can be async!
-        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
-                                                                 .runThrowing (CAS4.LIB_NAME + " async processing",
-                                                                               () -> {
-                                                                                 // Start
-                                                                                 // async
-                                                                                 final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
-                                                                                 final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
+        final IThrowingRunnable <Exception> r = () -> {
+          // Start async
+          final ICommonsList <Ebms3Error> aLocalErrorMessages = new CommonsArrayList <> ();
+          final ICommonsList <WSS4JAttachment> aLocalResponseAttachments = new CommonsArrayList <> ();
 
-                                                                                 final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
-                                                                                 _invokeSPIsForIncoming (aHttpHeaders,
-                                                                                                         aEbmsUserMessage,
-                                                                                                         aEbmsSignalMessage,
-                                                                                                         aPayloadNode,
-                                                                                                         aDecryptedAttachments,
-                                                                                                         aPMode,
-                                                                                                         aState,
-                                                                                                         aLocalErrorMessages,
-                                                                                                         aLocalResponseAttachments,
-                                                                                                         aAsyncSPIResult);
+          final SPIInvocationResult aAsyncSPIResult = new SPIInvocationResult ();
+          _invokeSPIsForIncoming (aHttpHeaders,
+                                  aEbmsUserMessage,
+                                  aEbmsSignalMessage,
+                                  aPayloadNode,
+                                  aDecryptedAttachments,
+                                  aPMode,
+                                  aState,
+                                  aLocalErrorMessages,
+                                  aLocalResponseAttachments,
+                                  aAsyncSPIResult);
 
-                                                                                 final IAS4ResponseFactory aAsyncResponseFactory;
-                                                                                 if (aAsyncSPIResult.isSuccess ())
-                                                                                 {
-                                                                                   // SPI
-                                                                                   // processing
-                                                                                   // succeeded
-                                                                                   assert aLocalErrorMessages.isEmpty ();
+          final IAS4ResponseFactory aAsyncResponseFactory;
+          final String sResponseMessageID;
+          if (aAsyncSPIResult.isSuccess ())
+          {
+            // SPI processing succeeded
+            assert aLocalErrorMessages.isEmpty ();
 
-                                                                                   // The
-                                                                                   // response
-                                                                                   // user
-                                                                                   // message
-                                                                                   // has
-                                                                                   // no
-                                                                                   // explicit
-                                                                                   // payload.
-                                                                                   // All
-                                                                                   // data
-                                                                                   // of
-                                                                                   // the
-                                                                                   // response
-                                                                                   // user
-                                                                                   // message
-                                                                                   // is
-                                                                                   // in
-                                                                                   // the
-                                                                                   // local
-                                                                                   // attachments
-                                                                                   final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
-                                                                                                                                                       aEbmsUserMessage,
-                                                                                                                                                       aLocalResponseAttachments);
+            // The response user message has no explicit payload. All data of
+            // the response user message is in the local attachments
+            sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
+            final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
+                                                                                sResponseMessageID,
+                                                                                aEbmsUserMessage,
+                                                                                aLocalResponseAttachments);
 
-                                                                                   // Send
-                                                                                   // UserMessage
-                                                                                   final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
-                                                                                   // Use
-                                                                                   // the
-                                                                                   // original
-                                                                                   // receiver
-                                                                                   // ID
-                                                                                   // as
-                                                                                   // the
-                                                                                   // alias
-                                                                                   // into
-                                                                                   // the
-                                                                                   // keystore
-                                                                                   // for
-                                                                                   // encrypting
-                                                                                   // the
-                                                                                   // response
-                                                                                   // message
-                                                                                   final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
-                                                                                                                                   .getTo ()
-                                                                                                                                   .getPartyIdAtIndex (0)
-                                                                                                                                   .getValue ();
-                                                                                   final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
-                                                                                                                                            .setAlias (sEncryptionAlias);
+            // Send UserMessage
+            final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aEffectiveLeg.getSecurity ());
+            // Use the original receiver ID as the alias into the keystore for
+            // encrypting the response message
+            final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
+            final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aEffectiveLeg.getSecurity ())
+                                                                     .setAlias (sEncryptionAlias);
 
-                                                                                   aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ()
-                                                                                                                                                    .getSoapVersion (),
-                                                                                                                                       aResponseUserMsg,
-                                                                                                                                       aResponseAttachments,
-                                                                                                                                       aSigningParams,
-                                                                                                                                       aCryptParams);
-                                                                                 }
-                                                                                 else
-                                                                                 {
-                                                                                   // SPI
-                                                                                   // processing
-                                                                                   // failed
+            aAsyncResponseFactory = _createResponseUserMessage (aEffectiveLeg.getProtocol ().getSoapVersion (),
+                                                                aResponseUserMsg,
+                                                                aResponseAttachments,
+                                                                aSigningParams,
+                                                                aCryptParams);
+          }
+          else
+          {
+            // SPI processing failed
 
-                                                                                   // Send
-                                                                                   // ErrorMessage
-                                                                                   // Undefined
-                                                                                   // -
-                                                                                   // see
-                                                                                   // https://github.com/phax/phase4/issues/4
-                                                                                   final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                                                                                                     aState.getMessageID (),
-                                                                                                                                                     aLocalErrorMessages);
+            // Send ErrorMessage Undefined - see
+            // https://github.com/phax/phase4/issues/4
+            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion, aState.getMessageID (), aLocalErrorMessages);
+            sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
 
-                                                                                   // Pass
-                                                                                   // error
-                                                                                   // messages
-                                                                                   // to
-                                                                                   // the
-                                                                                   // outside
-                                                                                   if (m_aErrorConsumer != null &&
-                                                                                       aLocalErrorMessages.isNotEmpty ())
-                                                                                     m_aErrorConsumer.onAS4ErrorMessage (aState,
-                                                                                                                         aLocalErrorMessages,
-                                                                                                                         aResponseErrorMsg);
+            // Pass error messages to the outside
+            if (m_aErrorConsumer != null && aLocalErrorMessages.isNotEmpty ())
+              m_aErrorConsumer.onAS4ErrorMessage (aState, aLocalErrorMessages, aResponseErrorMsg);
 
-                                                                                   final String sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ()
-                                                                                                                                      .getMessageInfo ()
-                                                                                                                                      .getMessageId ();
-                                                                                   aAsyncResponseFactory = new AS4ResponseFactoryXML (sResponseMessageID,
-                                                                                                                                      aResponseErrorMsg.getAsSoapDocument (),
-                                                                                                                                      eSoapVersion.getMimeType ());
-                                                                                 }
+            aAsyncResponseFactory = new AS4ResponseFactoryXML (sResponseMessageID,
+                                                               aResponseErrorMsg.getAsSoapDocument (),
+                                                               eSoapVersion.getMimeType ());
+          }
 
-                                                                                 // where
-                                                                                 // to
-                                                                                 // send
-                                                                                 // it
-                                                                                 // back
-                                                                                 // (must
-                                                                                 // be
-                                                                                 // determined
-                                                                                 // by
-                                                                                 // SPI!)
-                                                                                 final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
-                                                                                 if (StringHelper.hasNoText (sAsyncResponseURL))
-                                                                                   throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
+          // where to send it back (must be determined by SPI!)
+          final String sAsyncResponseURL = aAsyncSPIResult.getAsyncResponseURL ();
+          if (StringHelper.hasNoText (sAsyncResponseURL))
+            throw new IllegalStateException ("No asynchronous response URL present - please check your SPI implementation");
 
-                                                                                 if (LOGGER.isDebugEnabled ())
-                                                                                   LOGGER.debug ("Responding asynchronous to: " +
-                                                                                                 sAsyncResponseURL);
+          if (LOGGER.isDebugEnabled ())
+            LOGGER.debug ("Responding asynchronous to: " + sAsyncResponseURL);
 
-                                                                                 // Ensure
-                                                                                 // HttpEntity
-                                                                                 // is
-                                                                                 // repeatable
-                                                                                 HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntityForSending (eSoapVersion.getMimeType ());
-                                                                                 aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
+          // Ensure HttpEntity is repeatable
+          HttpEntity aHttpEntity = aAsyncResponseFactory.getHttpEntityForSending (eSoapVersion.getMimeType ());
+          aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
 
-                                                                                 // Use
-                                                                                 // the
-                                                                                 // prebuilt
-                                                                                 // entity
-                                                                                 // for
-                                                                                 // dumping
-                                                                                 _invokeSPIsForResponse (aState,
-                                                                                                         aAsyncResponseFactory,
-                                                                                                         aHttpEntity,
-                                                                                                         eSoapVersion.getMimeType ());
+          // Use the prebuilt entity for dumping
+          _invokeSPIsForResponse (aState, aAsyncResponseFactory, aHttpEntity, eSoapVersion.getMimeType (), sResponseMessageID);
 
-                                                                                 // invoke
-                                                                                 // client
-                                                                                 // with
-                                                                                 // new
-                                                                                 // document
-                                                                                 final BasicHttpPoster aSender = new BasicHttpPoster ();
-                                                                                 final Document aAsyncResponse;
-                                                                                 if (true)
-                                                                                 {
-                                                                                   final HttpHeaderMap aResponseHttpHeaders = null;
-                                                                                   // TODO
-                                                                                   // make
-                                                                                   // async
-                                                                                   // send
-                                                                                   // parameters
-                                                                                   // customizable
-                                                                                   final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
-                                                                                   aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
-                                                                                                                                           aResponseHttpHeaders,
-                                                                                                                                           aHttpEntity,
-                                                                                                                                           sMessageID,
-                                                                                                                                           aRetrySettings,
-                                                                                                                                           new ResponseHandlerXml (),
-                                                                                                                                           m_aOutgoingDumper,
-                                                                                                                                           m_aRetryCallback);
-                                                                                 }
-                                                                                 else
-                                                                                 {
-                                                                                   aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
-                                                                                                                                null,
-                                                                                                                                aHttpEntity,
-                                                                                                                                new ResponseHandlerXml ());
-                                                                                 }
-                                                                                 AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                                                                                            XMLWriter.getNodeAsString (aAsyncResponse,
-                                                                                                                                       AS4HttpDebug.getDebugXMLWriterSettings ()));
-                                                                               });
+          // invoke client with new document
+          final BasicHttpPoster aSender = new BasicHttpPoster ();
+          final Document aAsyncResponse;
+          if (true)
+          {
+            final HttpHeaderMap aResponseHttpHeaders = null;
+            // TODO make async send parameters customizable
+            final HttpRetrySettings aRetrySettings = new HttpRetrySettings ();
+            aAsyncResponse = aSender.sendGenericMessageWithRetries (sAsyncResponseURL,
+                                                                    aResponseHttpHeaders,
+                                                                    aHttpEntity,
+                                                                    sMessageID,
+                                                                    aRetrySettings,
+                                                                    new ResponseHandlerXml (),
+                                                                    m_aOutgoingDumper,
+                                                                    m_aRetryCallback);
+          }
+          else
+          {
+            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL, null, aHttpEntity, new ResponseHandlerXml ());
+          }
+          AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
+                                     XMLWriter.getNodeAsString (aAsyncResponse, AS4HttpDebug.getDebugXMLWriterSettings ()));
+        };
+        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ().runThrowing (CAS4.LIB_NAME + " async processing", r);
 
         if (m_aSoapProcessingFinalizedCB != null)
         {
@@ -1520,6 +1410,7 @@ public class AS4RequestHandler implements AutoCloseable
     }
 
     // Try building error message
+    final String sResponseMessageID;
     final IAS4ResponseFactory ret;
     if (!aState.isSoapHeaderElementProcessingSuccessful () || aState.getEbmsError () == null)
     {
@@ -1527,9 +1418,7 @@ public class AS4RequestHandler implements AutoCloseable
       // Not an incoming Ebms Error Message
       if (aErrorMessagesTarget.isNotEmpty ())
       {
-        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
-                                                                          aState.getMessageID (),
-                                                                          aErrorMessagesTarget);
+        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion, aState.getMessageID (), aErrorMessagesTarget);
 
         // Call optional consumer
         if (m_aErrorConsumer != null)
@@ -1540,16 +1429,13 @@ public class AS4RequestHandler implements AutoCloseable
         // When aLeg == null, the response is true
         if (_isSendErrorAsResponse (aEffectiveLeg))
         {
-          final String sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ()
-                                                             .getMessageInfo ()
-                                                             .getMessageId ();
-          ret = new AS4ResponseFactoryXML (sResponseMessageID,
-                                           aResponseErrorMsg.getAsSoapDocument (),
-                                           eSoapVersion.getMimeType ());
+          sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
+          ret = new AS4ResponseFactoryXML (sResponseMessageID, aResponseErrorMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
         }
         else
         {
           LOGGER.warn ("Not sending back the error, because sending error response is prohibited in PMode");
+          sResponseMessageID = null;
           ret = null;
         }
       }
@@ -1574,15 +1460,10 @@ public class AS4RequestHandler implements AutoCloseable
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
               // TODO would be nice to have attachments here I guess
-              final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
-                                                                          aSPIResult.getPullReturnUserMsg ());
+              final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion, aSPIResult.getPullReturnUserMsg ());
 
-              final String sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ()
-                                                                .getMessageInfo ()
-                                                                .getMessageId ();
-              ret = new AS4ResponseFactoryXML (sResponseMessageID,
-                                               aResponseUserMsg.getAsSoapDocument (),
-                                               eSoapVersion.getMimeType ());
+              sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
+              ret = new AS4ResponseFactoryXML (sResponseMessageID, aResponseUserMsg.getAsSoapDocument (), eSoapVersion.getMimeType ());
             }
             else
               if (aEbmsUserMessage != null)
@@ -1592,8 +1473,10 @@ public class AS4RequestHandler implements AutoCloseable
 
                 if (bSendReceiptAsResponse)
                 {
+                  sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
                   ret = _createResponseReceiptMessage (aSoapDocument,
                                                        eSoapVersion,
+                                                       sResponseMessageID,
                                                        aEffectiveLeg,
                                                        aEbmsUserMessage,
                                                        aResponseAttachments);
@@ -1602,11 +1485,15 @@ public class AS4RequestHandler implements AutoCloseable
                 {
                   // TODO what shall we send back here?
                   LOGGER.info ("Not sending back the Receipt response, because sending Receipt response is prohibited in PMode");
+                  sResponseMessageID = null;
                   ret = null;
                 }
               }
               else
+              {
+                sResponseMessageID = null;
                 ret = null;
+              }
           }
           else
           {
@@ -1615,21 +1502,17 @@ public class AS4RequestHandler implements AutoCloseable
             if (aLeg2 == null)
               throw new Phase4Exception ("PMode has no leg2!");
 
-            if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
-                                                   aPMode.getMEPBinding (),
-                                                   EAS4MessageType.USER_MESSAGE))
+            if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
             {
+              sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
               final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
+                                                                                  sResponseMessageID,
                                                                                   aEbmsUserMessage,
                                                                                   aResponseAttachments);
 
               final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ());
-              final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
-                                                              .getTo ()
-                                                              .getPartyIdAtIndex (0)
-                                                              .getValue ();
-              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
-                                                                       .setAlias (sEncryptionAlias);
+              final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
+              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ()).setAlias (sEncryptionAlias);
               ret = _createResponseUserMessage (aLeg2.getProtocol ().getSoapVersion (),
                                                 aResponseUserMsg,
                                                 aResponseAttachments,
@@ -1637,18 +1520,27 @@ public class AS4RequestHandler implements AutoCloseable
                                                 aCryptParams);
             }
             else
+            {
+              sResponseMessageID = null;
               ret = null;
+            }
           }
         }
         else
+        {
+          sResponseMessageID = null;
           ret = null;
+        }
       }
     }
     else
+    {
+      sResponseMessageID = null;
       ret = null;
+    }
 
     // Create the HttpEntity on demand
-    _invokeSPIsForResponse (aState, ret, null, eSoapVersion.getMimeType ());
+    _invokeSPIsForResponse (aState, ret, null, eSoapVersion.getMimeType (), sResponseMessageID);
 
     return ret;
   }
@@ -1694,8 +1586,7 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
-                                                                                 : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
