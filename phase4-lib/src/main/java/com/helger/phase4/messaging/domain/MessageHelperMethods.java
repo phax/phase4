@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.RegEx;
 import javax.annotation.concurrent.Immutable;
 import javax.mail.Header;
 import javax.mail.MessagingException;
@@ -39,6 +40,7 @@ import com.helger.commons.collection.impl.CommonsHashSet;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.collection.impl.ICommonsSet;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.commons.regex.RegExHelper;
 import com.helger.commons.string.StringHelper;
 import com.helger.commons.url.EURLProtocol;
 import com.helger.phase4.CAS4;
@@ -74,6 +76,8 @@ public final class MessageHelperMethods
   public static final String PART_PROPERTY_COMPRESSION_TYPE = "CompressionType";
   public static final String PREFIX_CID = EURLProtocol.CID.getProtocol ();
 
+  private static String s_sCustomMessageIDSuffix = null;
+
   private MessageHelperMethods ()
   {}
 
@@ -84,11 +88,61 @@ public final class MessageHelperMethods
     return CAS4.LIB_NAME + "@Conv" + ThreadLocalRandom.current ().nextLong ();
   }
 
+  /**
+   * The regular expression that any custom message ID suffix must follow.
+   */
+  @RegEx
+  public static final String MESSAGE_ID_SUFFIX_REGEX = "^[a-zA-Z0-9\\._\\-]+$";
+
+  /**
+   * @return The custom message ID suffix to be used. May be <code>null</code>.
+   * @since 1.1.1
+   */
+  @Nullable
+  public static String getCustomMessageIDSuffix ()
+  {
+    return s_sCustomMessageIDSuffix;
+  }
+
+  /**
+   * Set a custom message ID suffix to be used in
+   * {@link #createRandomMessageID()}. If a string is provided, any eventually
+   * present leading dot is cut.
+   *
+   * @param sSuffix
+   *        The suffix to be used. May be <code>null</code>. If present it must
+   *        match the {@link #MESSAGE_ID_SUFFIX_REGEX} regular expression.
+   * @since 1.1.1
+   */
+  public static void setCustomMessageIDSuffix (@Nullable final String sSuffix)
+  {
+    if (StringHelper.hasText (sSuffix))
+    {
+      if (!RegExHelper.stringMatchesPattern (MESSAGE_ID_SUFFIX_REGEX, sSuffix))
+        throw new IllegalArgumentException ("The provided message ID suffix '" +
+                                            sSuffix +
+                                            "'does not matche the required regular expression " +
+                                            MESSAGE_ID_SUFFIX_REGEX);
+    }
+    // Remove any leading dot, as this will be added in the message ID handler
+    s_sCustomMessageIDSuffix = StringHelper.trimStart (sSuffix, '.');
+  }
+
+  /**
+   * Create a new random AS4 Message ID. Every call results in a new unique
+   * message ID. The layout of a created message ID is like this:
+   * <code>UUID@phase4[.customSuffix]</code> where <code>UUID</code> is a random
+   * UID, "@phase4" is a constant, non-changeable value and
+   * <code>customSuffix</code> is the optional suffix to be set via
+   * {@link #setCustomMessageIDSuffix(String)}.
+   *
+   * @return A new random AS4 Message ID. Neither <code>null</code> nor empty.
+   */
   @Nonnull
   @Nonempty
   public static String createRandomMessageID ()
   {
-    return UUID.randomUUID ().toString () + "@" + CAS4.LIB_NAME;
+    return UUID.randomUUID ().toString () + "@" + StringHelper.getConcatenatedOnDemand (CAS4.LIB_NAME, '.', s_sCustomMessageIDSuffix);
   }
 
   @Nonnull
@@ -158,12 +212,9 @@ public final class MessageHelperMethods
    * @return Never <code>null</code>.
    */
   @Nonnull
-  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID,
-                                                         @Nullable final String sRefToMessageID)
+  public static Ebms3MessageInfo createEbms3MessageInfo (@Nonnull @Nonempty final String sMessageID, @Nullable final String sRefToMessageID)
   {
-    return createEbms3MessageInfo (sMessageID,
-                                   sRefToMessageID,
-                                   MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
+    return createEbms3MessageInfo (sMessageID, sRefToMessageID, MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ());
   }
 
   /**
@@ -348,14 +399,12 @@ public final class MessageHelperMethods
     final ICommonsSet <String> aUsedPropertyNames = new CommonsHashSet <> ();
 
     final Ebms3PartProperties aEbms3PartProperties = new Ebms3PartProperties ();
-    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE,
-                                                           aAttachment.getUncompressedMimeType ()));
+    aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_MIME_TYPE, aAttachment.getUncompressedMimeType ()));
     aUsedPropertyNames.add (PART_PROPERTY_MIME_TYPE);
 
     if (aAttachment.hasCharset ())
     {
-      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET,
-                                                             aAttachment.getCharset ().name ()));
+      aEbms3PartProperties.addProperty (createEbms3Property (PART_PROPERTY_CHARACTER_SET, aAttachment.getCharset ().name ()));
       aUsedPropertyNames.add (PART_PROPERTY_CHARACTER_SET);
     }
     if (aAttachment.hasCompressionMode ())
@@ -420,8 +469,7 @@ public final class MessageHelperMethods
     for (final Header aHeader : aHeaders)
     {
       // Make a single-line HTTP header value!
-      aConsumer.accept (aHeader.getName (),
-                        bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
+      aConsumer.accept (aHeader.getName (), bUnifyValues ? HttpHeaderMap.getUnifiedValue (aHeader.getValue ()) : aHeader.getValue ());
     }
 
     // Remove all headers from MIME message

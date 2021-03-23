@@ -25,7 +25,10 @@ import javax.annotation.Nonnull;
 import com.helger.commons.datetime.PDTFactory;
 
 /**
- * Interface for providing time stamps.
+ * Interface for providing time stamps.<br>
+ * Since version 1.1.0 the return types of the methods changed from
+ * <code>Local(Date|Time|DateTime)</code> to
+ * <code>Offset(Date|Time|DateTime)</code>
  *
  * @author Philip Helger
  * @since 0.10.0
