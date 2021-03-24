@@ -333,8 +333,24 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>docs/**/*</exclude>
+            <exclude>**/LICENSE</exclude>
+            <exclude>**/NOTICE</exclude>
+            <exclude>**/zz</exclude>
+            <exclude>**/.git*</exclude>
+            <exclude>**/*.b64</exclude>
+            <exclude>**/*.cer</exclude>
+            <exclude>**/*.jks</exclude>
+            <exclude>**/*.mime</exclude>
+            <exclude>**/*.mmd</exclude>
+            <exclude>**/*.p12</exclude>
             <exclude>**/*.txt</exclude>
+            <exclude>docs/**</exclude>
+            <exclude>phase4-cef-client/**</exclude>
+            <exclude>phase4-data/**</exclude>
+            <exclude>phase4-dumps/**</exclude>
+            <exclude>phase4-test-data/**</exclude>
+            <exclude>src/main/resources/schemas/*</exclude>
+            <exclude>src/test/resources/examples/**</exclude>
           </excludes>
         </configuration>
       </plugin>

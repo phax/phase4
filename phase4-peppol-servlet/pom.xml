@@ -101,19 +101,6 @@ osgi.serviceloader; filter:="(osgi.serviceloader=com.helger.phase4.peppol.servle
           </instructions>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/NOTICE</exclude>
-            <exclude>**/LICENSE</exclude>
-            <exclude>**/*.p12</exclude>
-            <exclude>**/*.jks</exclude>
-            <exclude>src/test/resources/examples/**</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
