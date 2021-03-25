@@ -209,7 +209,8 @@ public class BasicHttpPoster implements IHttpPoster
       return aSrcEntity;
     }
 
-    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.REQUEST, sMessageID, aCustomHttpHeaders, nTry);
+    // We don't have a message processing state
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.REQUEST, null, null, sMessageID, aCustomHttpHeaders, nTry);
     if (aDumpOS == null)
     {
       // No dumping needed

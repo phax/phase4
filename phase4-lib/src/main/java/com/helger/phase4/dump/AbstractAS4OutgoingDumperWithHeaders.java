@@ -29,6 +29,8 @@ import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the
@@ -45,6 +47,14 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.
    *        Added in v1.2.0.
+   * @param aMessageMetadata
+   *        The incoming message metadata. This is always <code>null</code> for
+   *        requests. This is always non-<code>null</code> for responses. Added
+   *        in v1.2.0.
+   * @param aState
+   *        The incoming message processing state. This is always
+   *        <code>null</code> for requests. This is always non-<code>null</code>
+   *        for responses. Added in v1.2.0.
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
@@ -60,17 +70,21 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    */
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
+                                                    @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
+                                                    @Nullable IAS4MessageState aState,
                                                     @Nonnull @Nonempty String sMessageID,
                                                     @Nullable HttpHeaderMap aCustomHeaders,
                                                     @Nonnegative int nTry) throws IOException;
 
   @Nullable
   public OutputStream onBeginRequest (@Nonnull final EAS4MessageMode eMsgMode,
+                                      @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
+                                      @Nullable final IAS4MessageState aState,
                                       @Nonnull @Nonempty final String sMessageID,
                                       @Nullable final HttpHeaderMap aCustomHeaders,
                                       @Nonnegative final int nTry) throws IOException
   {
-    final OutputStream ret = openOutputStream (eMsgMode, sMessageID, aCustomHeaders, nTry);
+    final OutputStream ret = openOutputStream (eMsgMode, aMessageMetadata, aState, sMessageID, aCustomHeaders, nTry);
     if (ret != null && aCustomHeaders != null && aCustomHeaders.isNotEmpty ())
     {
       // At least one custom header is present

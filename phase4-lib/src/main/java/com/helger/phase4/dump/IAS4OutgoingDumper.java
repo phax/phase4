@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * Interface for dumping outgoing requests
@@ -42,6 +44,14 @@ public interface IAS4OutgoingDumper
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.
    *        Added in v1.2.0.
+   * @param aMessageMetadata
+   *        The incoming message metadata. This is always <code>null</code> for
+   *        requests. This is always non-<code>null</code> for responses. Added
+   *        in v1.2.0.
+   * @param aState
+   *        The incoming message processing state. This is always
+   *        <code>null</code> for requests. This is always non-<code>null</code>
+   *        for responses. Added in v1.2.0.
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
@@ -58,6 +68,8 @@ public interface IAS4OutgoingDumper
    */
   @Nullable
   OutputStream onBeginRequest (@Nonnull EAS4MessageMode eMsgMode,
+                               @Nullable IAS4IncomingMessageMetadata aMessageMetadata,
+                               @Nullable IAS4MessageState aState,
                                @Nonnull @Nonempty String sMessageID,
                                @Nullable HttpHeaderMap aCustomHeaders,
                                @Nonnegative int nTry) throws IOException;

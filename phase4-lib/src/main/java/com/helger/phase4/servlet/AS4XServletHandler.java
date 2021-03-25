@@ -52,7 +52,7 @@ import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  public static interface IHandlerCustomizer extends Serializable
+  public interface IHandlerCustomizer extends Serializable
   {
     /**
      * Called before the message is handled. <br>
@@ -249,10 +249,10 @@ public class AS4XServletHandler implements IXServletSimpleHandler
   protected AS4IncomingMessageMetadata createIncomingMessageMetadata (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope)
   {
     return new AS4IncomingMessageMetadata (EAS4MessageMode.REQUEST).setRemoteAddr (aRequestScope.getRemoteAddr ())
-                                                                           .setRemoteHost (aRequestScope.getRemoteHost ())
-                                                                           .setRemotePort (aRequestScope.getRemotePort ())
-                                                                           .setRemoteUser (aRequestScope.getRemoteUser ())
-                                                                           .setCookies (aRequestScope.getCookies ());
+                                                                   .setRemoteHost (aRequestScope.getRemoteHost ())
+                                                                   .setRemotePort (aRequestScope.getRemotePort ())
+                                                                   .setRemoteUser (aRequestScope.getRemoteUser ())
+                                                                   .setCookies (aRequestScope.getCookies ());
   }
 
   public void handleRequest (@Nonnull final IRequestWebScopeWithoutResponse aRequestScope,

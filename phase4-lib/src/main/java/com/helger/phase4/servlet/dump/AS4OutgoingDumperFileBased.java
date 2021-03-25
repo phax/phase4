@@ -40,6 +40,8 @@ import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.messaging.EAS4MessageMode;
+import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}
@@ -124,6 +126,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
 
   @Override
   protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+                                           @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
+                                           @Nullable final IAS4MessageState aState,
                                            @Nonnull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
