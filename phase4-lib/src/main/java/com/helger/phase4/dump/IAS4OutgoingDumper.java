@@ -78,9 +78,24 @@ public interface IAS4OutgoingDumper
    * Called after the request is finished. Can e.g. be used to cleanup resources
    * belonging to the message. This method may not throw an exception.
    *
+   * @param eMsgMode
+   *        Are we dumping a request or a response? Never <code>null</code>.
+   *        Added in v1.2.0.
+   * @param aMessageMetadata
+   *        The incoming message metadata. This is always <code>null</code> for
+   *        requests. This is always non-<code>null</code> for responses. Added
+   *        in v1.2.0.
+   * @param aState
+   *        The incoming message processing state. This is always
+   *        <code>null</code> for requests. This is always non-<code>null</code>
+   *        for responses. Added in v1.2.0.
    * @param sMessageID
-   *        The message ID for which something happens
+   *        The AS4 message ID of the outgoing message. Neither
+   *        <code>null</code> nor empty.
    */
-  default void onEndRequest (@Nonnull @Nonempty final String sMessageID)
+  default void onEndRequest (@Nonnull final EAS4MessageMode eMsgMode,
+                             @Nullable final IAS4IncomingMessageMetadata aMessageMetadata,
+                             @Nullable final IAS4MessageState aState,
+                             @Nonnull @Nonempty final String sMessageID)
   {}
 }

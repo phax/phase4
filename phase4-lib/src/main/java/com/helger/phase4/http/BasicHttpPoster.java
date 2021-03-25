@@ -362,7 +362,7 @@ public class BasicHttpPoster implements IHttpPoster
       if (aRealOutgoingDumper != null)
         try
         {
-          aRealOutgoingDumper.onEndRequest (sMessageID);
+          aRealOutgoingDumper.onEndRequest (EAS4MessageMode.REQUEST, null, null, sMessageID);
         }
         catch (final Exception ex)
         {

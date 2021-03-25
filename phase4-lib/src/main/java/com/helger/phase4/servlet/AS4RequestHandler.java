@@ -190,7 +190,7 @@ public class AS4RequestHandler implements AutoCloseable
             finally
             {
               StreamHelper.close (aDumpOS);
-              aOutgoingDumper.onEndRequest (m_sResponseMessageID);
+              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE, m_aIncomingMessageMetadata, m_aState, m_sResponseMessageID);
             }
         }
         catch (final IOException ex)
@@ -267,7 +267,7 @@ public class AS4RequestHandler implements AutoCloseable
             finally
             {
               StreamHelper.close (aDumpOS);
-              aOutgoingDumper.onEndRequest (m_sResponseMessageID);
+              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE, m_aIncomingMessageMetadata, m_aState, m_sResponseMessageID);
             }
         }
         catch (final IOException ex)
