@@ -271,6 +271,8 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
+* v1.2.0 - work in progress
+    * Added the response AS4 Message ID as parameter to `IAS4ServletMessageProcessorSPI.processAS4ResponseMessage`
 * v1.1.1 - 2021-03-23
     * Made the AS4 message ID suffix customizable (see [issue #50](https://github.com/phax/phase4/pull/50))
 * v1.1.0 - 2021-03-22

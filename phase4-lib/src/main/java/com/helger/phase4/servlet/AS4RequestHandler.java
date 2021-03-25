@@ -871,7 +871,11 @@ public class AS4RequestHandler implements AutoCloseable
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Invoking AS4 message processor " + aProcessor + " for response");
 
-          aProcessor.processAS4ResponseMessage (m_aMessageMetadata, aState, aResponsePayload, bResponsePayloadIsAvailable);
+          aProcessor.processAS4ResponseMessage (m_aMessageMetadata,
+                                                aState,
+                                                sResponseMessageID,
+                                                aResponsePayload,
+                                                bResponsePayloadIsAvailable);
 
           if (LOGGER.isDebugEnabled ())
             LOGGER.debug ("Finished invoking AS4 message processor " + aProcessor + " for response");

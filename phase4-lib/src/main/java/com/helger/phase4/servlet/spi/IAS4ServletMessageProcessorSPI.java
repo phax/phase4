@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.w3c.dom.Node;
 
 import com.helger.commons.annotation.IsSPIInterface;
+import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.phase4.attachment.WSS4JAttachment;
@@ -120,6 +121,9 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    *        The current message state. Can be used to determine all other things
    *        potentially necessary for processing the incoming message. Never
    *        <code>null</code>.
+   * @param sResponseMessageID
+   *        The AS4 message ID of the response. Neither <code>null</code> nor
+   *        empty. Since v1.2.0.
    * @param aResponseBytes
    *        The response bytes to be written. May be <code>null</code> for
    *        several reasons.
@@ -133,6 +137,7 @@ public interface IAS4ServletMessageProcessorSPI extends Serializable
    */
   default void processAS4ResponseMessage (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                           @Nonnull final IAS4MessageState aState,
+                                          @Nonnull @Nonempty final String sResponseMessageID,
                                           @Nullable final byte [] aResponseBytes,
                                           final boolean bResponsePayloadIsAvailable)
   {
