@@ -76,7 +76,9 @@ public interface IAS4OutgoingDumper
 
   /**
    * Called after the request is finished. Can e.g. be used to cleanup resources
-   * belonging to the message. This method may not throw an exception.
+   * belonging to the message. This method may not throw an exception. This
+   * method is only called if the onBeginRequest method delivered a
+   * non-<code>null</code> {@link OutputStream}.
    *
    * @param eMsgMode
    *        Are we dumping a request or a response? Never <code>null</code>.

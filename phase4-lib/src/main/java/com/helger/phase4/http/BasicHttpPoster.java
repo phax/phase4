@@ -359,7 +359,7 @@ public class BasicHttpPoster implements IHttpPoster
     finally
     {
       // Add the possibility to close open resources
-      if (aRealOutgoingDumper != null)
+      if (aRealOutgoingDumper != null && aDumpOSHolder.isSet ())
         try
         {
           aRealOutgoingDumper.onEndRequest (EAS4MessageMode.REQUEST, null, null, sMessageID);
