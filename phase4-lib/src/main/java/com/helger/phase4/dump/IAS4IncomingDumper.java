@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -37,6 +38,9 @@ public interface IAS4IncomingDumper
    * Called for new requests. It's the responsibility of the caller to close the
    * created output stream.
    *
+   * @param eMsgMode
+   *        Are we dumping a request or a response? Never <code>null</code>.
+   *        Added in v1.2.0.
    * @param aMessageMetadata
    *        Message metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
@@ -49,7 +53,8 @@ public interface IAS4IncomingDumper
    *        {@link HttpHeaderMap}
    */
   @Nullable
-  OutputStream onNewRequest (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  OutputStream onNewRequest (@Nonnull EAS4MessageMode eMsgMode,
+                             @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                              @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   /**

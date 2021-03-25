@@ -165,9 +165,11 @@ public final class AS4WebAppListener extends WebAppListener
     });
 
     // Store the outgoings file as well
-    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (sMessageID, nTry) -> StorageHelper.getStorageFile (sMessageID,
-                                                                                                                           nTry,
-                                                                                                                           ".as4out")));
+    AS4DumpManager.setOutgoingDumper (new AS4OutgoingDumperFileBased ( (eMsgMode,
+                                                                        sMessageID,
+                                                                        nTry) -> StorageHelper.getStorageFile (sMessageID,
+                                                                                                               nTry,
+                                                                                                               ".as4out")));
   }
 
   @Override

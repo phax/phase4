@@ -28,6 +28,7 @@ import javax.annotation.WillNotClose;
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.EAS4MessageMode;
 
 /**
  * A simple {@link IAS4OutgoingDumper} that can be used for a single
@@ -56,7 +57,8 @@ public class AS4OutgoingDumperSingleUse extends AbstractAS4OutgoingDumperWithHea
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull @Nonempty final String sMessageID,
+  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+                                           @Nonnull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
   {

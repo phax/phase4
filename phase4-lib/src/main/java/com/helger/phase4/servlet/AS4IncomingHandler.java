@@ -70,6 +70,7 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -165,8 +166,7 @@ public class AS4IncomingHandler
     final IMimeType aPlainContentType = aContentType.getCopyWithoutParameters ();
 
     // Fallback to global dumper if none is provided
-    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper
-                                                                           : AS4DumpManager.getIncomingDumper ();
+    final IAS4IncomingDumper aRealIncomingDumper = aIncomingDumper != null ? aIncomingDumper : AS4DumpManager.getIncomingDumper ();
 
     Document aSoapDocument = null;
     ESoapVersion eSoapVersion = null;
@@ -187,6 +187,7 @@ public class AS4IncomingHandler
       // Ensure the stream gets closed correctly
       try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                           aPayloadIS,
+                                                                                          EAS4MessageMode.REQUEST,
                                                                                           aMessageMetadata,
                                                                                           aHttpHeaders))
       {
@@ -261,6 +262,7 @@ public class AS4IncomingHandler
       // Note: this may require a huge amount of memory for large requests
       aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
+                                                                                            EAS4MessageMode.REQUEST,
                                                                                             aMessageMetadata,
                                                                                             aHttpHeaders));
 
@@ -295,20 +297,14 @@ public class AS4IncomingHandler
       }
       catch (final Exception ex)
       {
-        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" +
-                      aRealIncomingDumper +
-                      "; MessageMetadata=" +
-                      aMessageMetadata,
-                      ex);
+        LOGGER.error ("IncomingDumper.onEndRequest failed. Dumper=" + aRealIncomingDumper + "; MessageMetadata=" + aMessageMetadata, ex);
       }
 
     if (aSoapDocument == null)
     {
       // We don't have a SOAP document
       throw new Phase4Exception (eSoapVersion == null ? "Failed to parse incoming message!"
-                                                      : "Failed to parse incoming SOAP " +
-                                                        eSoapVersion.getVersion () +
-                                                        " document!");
+                                                      : "Failed to parse incoming SOAP " + eSoapVersion.getVersion () + " document!");
     }
 
     if (eSoapVersion == null)
@@ -376,8 +372,7 @@ public class AS4IncomingHandler
       final ErrorList aErrorList = new ErrorList ();
 
       // Process element
-      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList)
-                    .isSuccess ())
+      if (aProcessor.processHeaderElement (aSoapDocument, aHeader.getNode (), aIncomingAttachments, aState, aErrorList).isSuccess ())
       {
         // Mark header as processed (for mustUnderstand check)
         aHeader.setProcessed (true);
@@ -424,9 +419,7 @@ public class AS4IncomingHandler
       // Are all must-understand headers processed?
       for (final AS4SingleSOAPHeader aHeader : aHeaders)
         if (aHeader.isMustUnderstand () && !aHeader.isProcessed ())
-          throw new Phase4Exception ("Required SOAP header element " +
-                                     aHeader.getQName ().toString () +
-                                     " could not be handled");
+          throw new Phase4Exception ("Required SOAP header element " + aHeader.getQName ().toString () + " could not be handled");
     }
   }
 
@@ -448,10 +441,7 @@ public class AS4IncomingHandler
             if (aSrcIS == null)
               throw new IllegalStateException ("Failed to create InputStream from " + aOldISP);
             if (LOGGER.isDebugEnabled ())
-              LOGGER.debug ("Decompressing attachment with ID '" +
-                            aIncomingAttachment.getId () +
-                            "' using " +
-                            eCompressionMode);
+              LOGGER.debug ("Decompressing attachment with ID '" + aIncomingAttachment.getId () + "' using " + eCompressionMode);
             return eCompressionMode.getDecompressStream (aSrcIS);
           }
           catch (final IOException ex)
@@ -566,8 +556,7 @@ public class AS4IncomingHandler
                       ")");
 
         // send EBMS:0001 error back
-        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale,
-                                                                                        aState.getMessageID ()));
+        aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_NOT_RECOGNIZED.getAsEbms3Error (aLocale, aState.getMessageID ()));
       }
 
       // Determine AS4 profile ID (since 0.13.0)
@@ -654,8 +643,7 @@ public class AS4IncomingHandler
                                                                    eSoapVersion.getNamespaceURI (),
                                                                    eSoapVersion.getBodyElementName ());
       if (aBodyNode == null)
-        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") +
-                                   " SOAP document is missing a Body element");
+        throw new Phase4Exception ((bUseDecryptedSOAP ? "Decrypted" : "Original") + " SOAP document is missing a Body element");
       aState.setSoapBodyPayloadNode (aBodyNode.getFirstChild ());
 
       aState.setPingMessage (AS4Helper.isPingMessage (aPMode));

@@ -39,6 +39,7 @@ import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.messaging.EAS4MessageMode;
 
 /**
  * File based implementation of {@link IAS4OutgoingDumper}
@@ -54,6 +55,9 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
      * Get the {@link File} to write the dump to. The filename must be globally
      * unique. The resulting file should be an absolute path.
      *
+     * @param eMsgMode
+     *        Are we dumping a request or a response? Never <code>null</code>.
+     *        Added in v1.2.0.
      * @param sAS4MessageID
      *        The AS4 message ID that was send out. Neither <code>null</code>
      *        nor empty.
@@ -64,7 +68,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
      * @see AS4Configuration#getDumpBasePath()
      */
     @Nonnull
-    File getFile (@Nonnull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
+    File getFile (@Nonnull EAS4MessageMode eMsgMode, @Nonnull @Nonempty String sAS4MessageID, @Nonnegative int nTry);
 
     @Nonnull
     static String getFilename (@Nonnull @Nonempty final String sAS4MessageID, @Nonnegative final int nTry)
@@ -101,8 +105,8 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
    */
   public AS4OutgoingDumperFileBased ()
   {
-    this ( (sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePathFile (),
-                                           DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID, nTry)));
+    this ( (eMsgMode, sMessageID, nTry) -> new File (AS4Configuration.getDumpBasePathFile (),
+                                                     DEFAULT_BASE_PATH + IFileProvider.getFilename (sMessageID, nTry)));
   }
 
   /**
@@ -119,11 +123,12 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull @Nonempty final String sMessageID,
+  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
+                                           @Nonnull @Nonempty final String sMessageID,
                                            @Nullable final HttpHeaderMap aCustomHeaders,
                                            @Nonnegative final int nTry) throws IOException
   {
-    final File aResponseFile = m_aFileProvider.getFile (sMessageID, nTry);
+    final File aResponseFile = m_aFileProvider.getFile (eMsgMode, sMessageID, nTry);
     if (LOGGER.isInfoEnabled ())
       LOGGER.info ("Logging outgoing AS4 message to '" + aResponseFile.getAbsolutePath () + "'");
     return FileHelper.getBufferedOutputStream (aResponseFile);
@@ -141,8 +146,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
   public static AS4OutgoingDumperFileBased createForDirectory (@Nonnull final File aBaseDirectory)
   {
     ValueEnforcer.notNull (aBaseDirectory, "BaseDirectory");
-    return new AS4OutgoingDumperFileBased ( (sMessageID,
-                                             nTry) -> new File (aBaseDirectory,
-                                                                IFileProvider.getFilename (sMessageID, nTry)));
+    return new AS4OutgoingDumperFileBased ( (eMsgMode, sMessageID, nTry) -> new File (aBaseDirectory,
+                                                                                      IFileProvider.getFilename (sMessageID, nTry)));
   }
 }

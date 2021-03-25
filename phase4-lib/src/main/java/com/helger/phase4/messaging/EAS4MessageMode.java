@@ -24,19 +24,22 @@ import com.helger.commons.id.IHasID;
 import com.helger.commons.lang.EnumHelper;
 
 /**
- * Incoming message mode
+ * Message mode.<br>
+ * Was originally called <code>EAS4IncomingMessageMode</code> until v1.2.0.
  *
  * @author Philip Helger
  * @since 0.9.8
  */
-public enum EAS4IncomingMessageMode implements IHasID <String>
+public enum EAS4MessageMode implements IHasID <String>
 {
+  /** A request is a message that initiated an interaction */
   REQUEST ("request"),
+  /** A response can only exist in relation to a previous request */
   RESPONSE ("response");
 
   private final String m_sID;
 
-  EAS4IncomingMessageMode (@Nonnull @Nonempty final String sID)
+  EAS4MessageMode (@Nonnull @Nonempty final String sID)
   {
     m_sID = sID;
   }
@@ -49,8 +52,8 @@ public enum EAS4IncomingMessageMode implements IHasID <String>
   }
 
   @Nullable
-  public static EAS4IncomingMessageMode getFromIDOrNull (@Nullable final String sID)
+  public static EAS4MessageMode getFromIDOrNull (@Nullable final String sID)
   {
-    return EnumHelper.getFromIDOrNull (EAS4IncomingMessageMode.class, sID);
+    return EnumHelper.getFromIDOrNull (EAS4MessageMode.class, sID);
   }
 }

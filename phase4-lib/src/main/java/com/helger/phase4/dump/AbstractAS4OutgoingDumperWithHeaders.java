@@ -28,6 +28,7 @@ import com.helger.commons.annotation.Nonempty;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
+import com.helger.phase4.messaging.EAS4MessageMode;
 
 /**
  * Abstract implementation of {@link IAS4OutgoingDumper} that always adds the
@@ -41,6 +42,9 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
   /**
    * Create the output stream to which the data should be dumped.
    *
+   * @param eMsgMode
+   *        Are we dumping a request or a response? Never <code>null</code>.
+   *        Added in v1.2.0.
    * @param sMessageID
    *        The AS4 message ID of the outgoing message. Neither
    *        <code>null</code> nor empty.
@@ -55,16 +59,18 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull @Nonempty String sMessageID,
+  protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
+                                                    @Nonnull @Nonempty String sMessageID,
                                                     @Nullable HttpHeaderMap aCustomHeaders,
                                                     @Nonnegative int nTry) throws IOException;
 
   @Nullable
-  public OutputStream onBeginRequest (@Nonnull @Nonempty final String sMessageID,
+  public OutputStream onBeginRequest (@Nonnull final EAS4MessageMode eMsgMode,
+                                      @Nonnull @Nonempty final String sMessageID,
                                       @Nullable final HttpHeaderMap aCustomHeaders,
                                       @Nonnegative final int nTry) throws IOException
   {
-    final OutputStream ret = openOutputStream (sMessageID, aCustomHeaders, nTry);
+    final OutputStream ret = openOutputStream (eMsgMode, sMessageID, aCustomHeaders, nTry);
     if (ret != null && aCustomHeaders != null && aCustomHeaders.isNotEmpty ())
     {
       // At least one custom header is present

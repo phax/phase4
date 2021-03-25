@@ -59,7 +59,7 @@ public interface IAS4IncomingMessageMetadata
    * @return The message mode. May be <code>null</code>.
    */
   @Nonnull
-  EAS4IncomingMessageMode getMode ();
+  EAS4MessageMode getMode ();
 
   /**
    * Returns the Internet Protocol (IP) address of the client or last proxy that

@@ -50,6 +50,7 @@ import com.helger.httpclient.IHttpClientProvider;
 import com.helger.phase4.client.IAS4RetryCallback;
 import com.helger.phase4.dump.AS4DumpManager;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.util.MultiOutputStream;
 
 /**
@@ -208,7 +209,7 @@ public class BasicHttpPoster implements IHttpPoster
       return aSrcEntity;
     }
 
-    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (sMessageID, aCustomHttpHeaders, nTry);
+    final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.REQUEST, sMessageID, aCustomHttpHeaders, nTry);
     if (aDumpOS == null)
     {
       // No dumping needed

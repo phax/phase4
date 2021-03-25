@@ -30,7 +30,7 @@ import com.helger.commons.annotation.ReturnsMutableObject;
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.string.ToStringGenerator;
-import com.helger.phase4.messaging.EAS4IncomingMessageMode;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.mgr.MetaAS4Manager;
 
@@ -45,7 +45,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
 {
   private final String m_sIncomingUniqueID;
   private final OffsetDateTime m_aIncomingDT;
-  private final EAS4IncomingMessageMode m_eMode;
+  private final EAS4MessageMode m_eMode;
   private String m_sRemoteAddr;
   private String m_sRemoteHost;
   private int m_nRemotePort = -1;
@@ -59,7 +59,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    * @param eMode
    *        The messaging mode. May not be <code>null</code>.
    */
-  public AS4IncomingMessageMetadata (@Nonnull final EAS4IncomingMessageMode eMode)
+  public AS4IncomingMessageMetadata (@Nonnull final EAS4MessageMode eMode)
   {
     this (UUID.randomUUID ().toString (), MetaAS4Manager.getTimestampMgr ().getCurrentDateTime (), eMode);
   }
@@ -77,7 +77,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
    */
   protected AS4IncomingMessageMetadata (@Nonnull @Nonempty final String sIncomingUniqueID,
                                         @Nonnull final OffsetDateTime aIncomingDT,
-                                        @Nonnull final EAS4IncomingMessageMode eMode)
+                                        @Nonnull final EAS4MessageMode eMode)
   {
     ValueEnforcer.notEmpty (sIncomingUniqueID, "sIncomingUniqueID");
     ValueEnforcer.notNull (aIncomingDT, "IncomingDT");
@@ -102,7 +102,7 @@ public class AS4IncomingMessageMetadata implements IAS4IncomingMessageMetadata
   }
 
   @Nonnull
-  public final EAS4IncomingMessageMode getMode ()
+  public final EAS4MessageMode getMode ()
   {
     return m_eMode;
   }

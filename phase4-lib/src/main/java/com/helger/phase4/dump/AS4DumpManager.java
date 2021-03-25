@@ -30,6 +30,7 @@ import com.helger.commons.concurrent.SimpleReadWriteLock;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.stream.StreamHelper;
 import com.helger.commons.io.stream.WrappedInputStream;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -98,6 +99,9 @@ public final class AS4DumpManager
    * @param aRequestInputStream
    *        The InputStream to read the request payload from. Will not be closed
    *        internally. Never <code>null</code>.
+   * @param eMsgMode
+   *        Are we dumping a request or a response? Never <code>null</code>.
+   *        Added in v1.2.0.
    * @param aMessageMetadata
    *        Request metadata. Never <code>null</code>.
    * @param aHttpHeaders
@@ -110,6 +114,7 @@ public final class AS4DumpManager
   @Nonnull
   public static InputStream getIncomingDumpAwareInputStream (@Nullable final IAS4IncomingDumper aIncomingDumper,
                                                              @Nonnull @WillNotClose final InputStream aRequestInputStream,
+                                                             @Nonnull final EAS4MessageMode eMsgMode,
                                                              @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                                              @Nonnull final HttpHeaderMap aHttpHeaders) throws IOException
   {
@@ -120,7 +125,7 @@ public final class AS4DumpManager
     }
 
     // Dump worthy?
-    final OutputStream aOS = aIncomingDumper.onNewRequest (aMessageMetadata, aHttpHeaders);
+    final OutputStream aOS = aIncomingDumper.onNewRequest (eMsgMode, aMessageMetadata, aHttpHeaders);
     if (aOS == null)
     {
       // No wrapping needed

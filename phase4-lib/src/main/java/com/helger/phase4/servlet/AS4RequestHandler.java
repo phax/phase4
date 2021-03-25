@@ -80,6 +80,7 @@ import com.helger.phase4.http.BasicHttpPoster;
 import com.helger.phase4.http.HttpMimeMessageEntity;
 import com.helger.phase4.http.HttpRetrySettings;
 import com.helger.phase4.http.HttpXMLEntity;
+import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.crypto.AS4Encryptor;
 import com.helger.phase4.messaging.crypto.AS4Signer;
@@ -167,7 +168,7 @@ public class AS4RequestHandler implements AutoCloseable
         try
         {
           // No custom headers
-          final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (m_sMessageID, null, 0);
+          final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.RESPONSE, m_sMessageID, null, 0);
           if (aDumpOS != null)
             try
             {
@@ -231,7 +232,7 @@ public class AS4RequestHandler implements AutoCloseable
       {
         try
         {
-          final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (m_sMessageID, m_aHttpHeaders, 0);
+          final OutputStream aDumpOS = aOutgoingDumper.onBeginRequest (EAS4MessageMode.RESPONSE, m_sMessageID, m_aHttpHeaders, 0);
           if (aDumpOS != null)
             try
             {
