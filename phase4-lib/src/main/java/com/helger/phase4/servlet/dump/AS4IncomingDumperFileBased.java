@@ -36,7 +36,6 @@ import com.helger.datetime.util.PDTIOHelper;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.dump.AbstractAS4IncomingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4IncomingDumper;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -123,8 +122,7 @@ public class AS4IncomingDumperFileBased extends AbstractAS4IncomingDumperWithHea
 
   @Override
   @Nullable
-  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
-                                           @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     final File aResponseFile = m_aFileProvider.createFile (aMessageMetadata, aHttpHeaderMap);

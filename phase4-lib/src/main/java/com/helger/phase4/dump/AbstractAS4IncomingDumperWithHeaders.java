@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import com.helger.commons.collection.impl.ICommonsList;
 import com.helger.commons.http.CHttp;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -41,9 +40,6 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
   /**
    * Create the output stream to which the data should be dumped.
    *
-   * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
    * @param aMessageMetadata
    *        Request metadata. Never <code>null</code>. Since v0.9.8.
    * @param aHttpHeaderMap
@@ -54,16 +50,14 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull EAS4MessageMode eMsgMode,
-                                                    @Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
+  protected abstract OutputStream openOutputStream (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
                                                     @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   @Nullable
-  public OutputStream onNewRequest (@Nonnull final EAS4MessageMode eMsgMode,
-                                    @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+  public OutputStream onNewRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                     @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
-    final OutputStream ret = openOutputStream (eMsgMode, aMessageMetadata, aHttpHeaderMap);
+    final OutputStream ret = openOutputStream (aMessageMetadata, aHttpHeaderMap);
     if (ret != null && aHttpHeaderMap.isNotEmpty ())
     {
       // At least one header is contained

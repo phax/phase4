@@ -25,7 +25,6 @@ import javax.annotation.WillNotClose;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.http.HttpHeaderMap;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 
 /**
@@ -55,8 +54,7 @@ public class AS4IncomingDumperSingleUse extends AbstractAS4IncomingDumperWithHea
   }
 
   @Override
-  protected OutputStream openOutputStream (@Nonnull final EAS4MessageMode eMsgMode,
-                                           @Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
+  protected OutputStream openOutputStream (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
                                            @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException
   {
     if (!m_aUsedOS.compareAndSet (false, true))

@@ -70,7 +70,6 @@ import com.helger.phase4.ebms3header.Ebms3Receipt;
 import com.helger.phase4.ebms3header.Ebms3SignalMessage;
 import com.helger.phase4.ebms3header.Ebms3UserMessage;
 import com.helger.phase4.error.EEbmsError;
-import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
 import com.helger.phase4.messaging.domain.MessageHelperMethods;
 import com.helger.phase4.mgr.MetaAS4Manager;
@@ -187,7 +186,6 @@ public class AS4IncomingHandler
       // Ensure the stream gets closed correctly
       try (final InputStream aRequestIS = AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                           aPayloadIS,
-                                                                                          EAS4MessageMode.REQUEST,
                                                                                           aMessageMetadata,
                                                                                           aHttpHeaders))
       {
@@ -262,7 +260,6 @@ public class AS4IncomingHandler
       // Note: this may require a huge amount of memory for large requests
       aSoapDocument = DOMReader.readXMLDOM (AS4DumpManager.getIncomingDumpAwareInputStream (aRealIncomingDumper,
                                                                                             aPayloadIS,
-                                                                                            EAS4MessageMode.REQUEST,
                                                                                             aMessageMetadata,
                                                                                             aHttpHeaders));
 
