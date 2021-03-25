@@ -55,9 +55,9 @@ public abstract class AbstractAS4OutgoingDumperWithHeaders implements IAS4Outgoi
    *         On IO error
    */
   @Nullable
-  protected abstract OutputStream openOutputStream (@Nonnull @Nonempty final String sMessageID,
-                                                    @Nullable final HttpHeaderMap aCustomHeaders,
-                                                    @Nonnegative final int nTry) throws IOException;
+  protected abstract OutputStream openOutputStream (@Nonnull @Nonempty String sMessageID,
+                                                    @Nullable HttpHeaderMap aCustomHeaders,
+                                                    @Nonnegative int nTry) throws IOException;
 
   @Nullable
   public OutputStream onBeginRequest (@Nonnull @Nonempty final String sMessageID,

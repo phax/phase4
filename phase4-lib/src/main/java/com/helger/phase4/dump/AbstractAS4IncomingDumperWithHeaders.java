@@ -51,7 +51,7 @@ public abstract class AbstractAS4IncomingDumperWithHeaders implements IAS4Incomi
    */
   @Nullable
   protected abstract OutputStream openOutputStream (@Nonnull IAS4IncomingMessageMetadata aMessageMetadata,
-                                                    @Nonnull final HttpHeaderMap aHttpHeaderMap) throws IOException;
+                                                    @Nonnull HttpHeaderMap aHttpHeaderMap) throws IOException;
 
   @Nullable
   public OutputStream onNewRequest (@Nonnull final IAS4IncomingMessageMetadata aMessageMetadata,
