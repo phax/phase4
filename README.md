@@ -271,7 +271,7 @@ If you like the project, a star on GitHub is always appreciated.
 
 # News and noteworthy
 
-* v1.2.0 - work in progress
+* v1.2.0 - 2021-03-28
     * Added the response AS4 Message ID as parameter to `IAS4ServletMessageProcessorSPI.processAS4ResponseMessage`
     * Renamed class `EAS4IncomingMessageMode` to `EAS4MessageMode`
     * Extended `IAS4OutgoingDumper` API with an `EAS4MessageMode` param
