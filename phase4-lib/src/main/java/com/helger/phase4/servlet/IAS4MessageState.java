@@ -402,11 +402,29 @@ public interface IAS4MessageState
   String getProfileID ();
 
   /**
-   * @return The AS4 message ID. May be <code>null</code>.
+   * @return The AS4 message ID. Source is the <code>MessageInfo</code> element.
+   *         May be <code>null</code>.
    * @since v0.9.7
    */
   @Nullable
   String getMessageID ();
+
+  /**
+   * @return The AS4 "reference to message ID". This value is optional in the
+   *         headers. Source is the <code>MessageInfo</code> element. May be
+   *         <code>null</code>.
+   * @since v1.2.0
+   */
+  @Nullable
+  String getRefToMessageID ();
+
+  /**
+   * @return The AS4 provided message timestamp. This value is mandatory in the
+   *         source <code>MessageInfo</code> element. May be <code>null</code>.
+   * @since v1.2.0
+   */
+  @Nullable
+  OffsetDateTime getMessageTimestamp ();
 
   /**
    * @return <code>true</code> if the incoming message is an AS4 ping message,

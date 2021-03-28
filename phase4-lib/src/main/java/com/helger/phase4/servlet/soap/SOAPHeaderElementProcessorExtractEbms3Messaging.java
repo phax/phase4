@@ -47,6 +47,7 @@ import com.helger.phase4.attachment.WSS4JAttachment;
 import com.helger.phase4.config.AS4Configuration;
 import com.helger.phase4.ebms3header.Ebms3CollaborationInfo;
 import com.helger.phase4.ebms3header.Ebms3Error;
+import com.helger.phase4.ebms3header.Ebms3MessageInfo;
 import com.helger.phase4.ebms3header.Ebms3Messaging;
 import com.helger.phase4.ebms3header.Ebms3PartInfo;
 import com.helger.phase4.ebms3header.Ebms3PartyId;
@@ -257,11 +258,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
     final Ebms3UserMessage aUserMessage = CollectionHelper.getAtIndex (aMessaging.getUserMessage (), 0);
     if (aUserMessage != null)
     {
-      if (aUserMessage.getMessageInfo () != null)
+      final Ebms3MessageInfo aMsgInfo = aUserMessage.getMessageInfo ();
+      if (aMsgInfo != null)
       {
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
-        aState.setMessageID (aUserMessage.getMessageInfo ().getMessageId ());
+        aState.setMessageID (aMsgInfo.getMessageId ());
+        aState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
+        aState.setMessageTimestamp (aMsgInfo.getTimestamp ());
       }
 
       // PartyInfo is mandatory in UserMessage
@@ -531,11 +535,14 @@ public class SOAPHeaderElementProcessorExtractEbms3Messaging implements ISOAPHea
       // all vars stay null
       final Ebms3SignalMessage aSignalMessage = aMessaging.getSignalMessageAtIndex (0);
 
-      if (aSignalMessage.getMessageInfo () != null)
+      final Ebms3MessageInfo aMsgInfo = aSignalMessage.getMessageInfo ();
+      if (aMsgInfo != null)
       {
         // Set this is as early as possible, so that eventually occurring error
         // messages can use the "RefToMessageId" element properly
-        aState.setMessageID (aSignalMessage.getMessageInfo ().getMessageId ());
+        aState.setMessageID (aMsgInfo.getMessageId ());
+        aState.setRefToMessageID (aMsgInfo.getRefToMessageId ());
+        aState.setMessageTimestamp (aMsgInfo.getTimestamp ());
       }
 
       final Ebms3PullRequest aEbms3PullRequest = aSignalMessage.getPullRequest ();

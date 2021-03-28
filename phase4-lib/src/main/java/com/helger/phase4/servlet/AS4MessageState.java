@@ -78,6 +78,8 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
   private static final String KEY_WSS4J_EXCEPTION = "phase4.soap.wss4j-exception";
   private static final String KEY_PHASE4_PROFILE_ID = "phase4.profile.id";
   private static final String KEY_AS4_MESSAGE_ID = "phase4.message.id";
+  private static final String KEY_AS4_REF_TO_MESSAGE_ID = "phase4.ref.to.message.id";
+  private static final String KEY_AS4_MESSAGE_TIMESTAMP = "phase4.message.timestamp";
   private static final String KEY_IS_PING_MESSAGE = "phase4.is.ping.message";
   private static final String KEY_SOAP_BODY_PAYLOAD_NODE = "phase4.soap.body.first.child";
   private static final String KEY_SOEAP_HEADER_ELEMENT_PROCESSING_SUCCESSFUL = "phase4.soap.header.element.processing.successful";
@@ -337,6 +339,42 @@ public final class AS4MessageState extends AttributeContainerAny <String> implem
     if (sOldMessageID != null && !sOldMessageID.equals (sMessageID))
       LOGGER.warn ("Overwriting the AS4 message ID from '" + sOldMessageID + "' to '" + sMessageID + "'");
     putIn (KEY_AS4_MESSAGE_ID, sMessageID);
+  }
+
+  @Nullable
+  public String getRefToMessageID ()
+  {
+    return getAsString (KEY_AS4_REF_TO_MESSAGE_ID);
+  }
+
+  /**
+   * Set the AS4 "reference to message ID" from the current message.
+   *
+   * @param sRefMessageID
+   *        The ID to be set. May be <code>null</code>.
+   * @since 1.2.0
+   */
+  public void setRefToMessageID (@Nullable final String sRefMessageID)
+  {
+    putIn (KEY_AS4_REF_TO_MESSAGE_ID, sRefMessageID);
+  }
+
+  @Nullable
+  public OffsetDateTime getMessageTimestamp ()
+  {
+    return getCastedValue (KEY_AS4_MESSAGE_TIMESTAMP);
+  }
+
+  /**
+   * Set the AS4 message timestamp of the current message.
+   *
+   * @param aMessageTimestamp
+   *        The timestamp to be set. May be <code>null</code>.
+   * @since 1.2.0
+   */
+  public void setMessageTimestamp (@Nullable final OffsetDateTime aMessageTimestamp)
+  {
+    putIn (KEY_AS4_MESSAGE_TIMESTAMP, aMessageTimestamp);
   }
 
   public boolean isPingMessage ()
