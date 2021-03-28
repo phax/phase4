@@ -163,7 +163,8 @@ public class AS4RequestHandler implements AutoCloseable
       return new HttpXMLEntity (m_aDoc, m_aMimeType);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse, @Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
+                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final String sXML = AS4XMLHelper.serializeXML (m_aDoc);
       final Charset aCharset = AS4XMLHelper.XWS.getCharset ();
@@ -190,7 +191,10 @@ public class AS4RequestHandler implements AutoCloseable
             finally
             {
               StreamHelper.close (aDumpOS);
-              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE, m_aIncomingMessageMetadata, m_aState, m_sResponseMessageID);
+              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE,
+                                            m_aIncomingMessageMetadata,
+                                            m_aState,
+                                            m_sResponseMessageID);
             }
         }
         catch (final IOException ex)
@@ -234,7 +238,8 @@ public class AS4RequestHandler implements AutoCloseable
       return new HttpMimeMessageEntity (m_aMimeMsg);
     }
 
-    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse, @Nullable final IAS4OutgoingDumper aOutgoingDumper)
+    public void applyToResponse (@Nonnull final IAS4ResponseAbstraction aHttpResponse,
+                                 @Nullable final IAS4OutgoingDumper aOutgoingDumper)
     {
       final IHasInputStream aContent = HasInputStream.multiple ( () -> {
         try
@@ -267,7 +272,10 @@ public class AS4RequestHandler implements AutoCloseable
             finally
             {
               StreamHelper.close (aDumpOS);
-              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE, m_aIncomingMessageMetadata, m_aState, m_sResponseMessageID);
+              aOutgoingDumper.onEndRequest (EAS4MessageMode.RESPONSE,
+                                            m_aIncomingMessageMetadata,
+                                            m_aState,
+                                            m_sResponseMessageID);
             }
         }
         catch (final IOException ex)
@@ -383,7 +391,7 @@ public class AS4RequestHandler implements AutoCloseable
 
   public void close ()
   {
-    // Delete all the temporay files etc.
+    // Delete all the temporary files etc.
     m_aResHelper.close ();
   }
 
@@ -640,8 +648,10 @@ public class AS4RequestHandler implements AutoCloseable
                                        @Nonnull final ICommonsList <WSS4JAttachment> aResponseAttachmentsTarget,
                                        @Nonnull final SPIInvocationResult aSPIResult)
   {
-    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null, "User OR Signal Message must be present");
-    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null, "Only one of User OR Signal Message may be present");
+    ValueEnforcer.isTrue (aEbmsUserMessage != null || aEbmsSignalMessage != null,
+                          "User OR Signal Message must be present");
+    ValueEnforcer.isFalse (aEbmsUserMessage != null && aEbmsSignalMessage != null,
+                           "Only one of User OR Signal Message may be present");
 
     final boolean bIsUserMessage = aEbmsUserMessage != null;
     final String sMessageID = bIsUserMessage ? aEbmsUserMessage.getMessageInfo ().getMessageId ()
@@ -745,12 +755,18 @@ public class AS4RequestHandler implements AutoCloseable
                                          sMessageID +
                                          "' failed: the previous processor already returned an async response URL; it is not possible to handle two URLs. Please check your SPI implementations.";
                 LOGGER.error (sErrorMsg);
-                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
+                aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                              sMessageID,
+                                                                                              sErrorMsg));
                 // Stop processing
                 return;
               }
               aSPIResult.setAsyncResponseURL (sAsyncResultURL);
-              LOGGER.info ("Using asynchronous response URL '" + sAsyncResultURL + "' for message ID '" + sMessageID + "'");
+              LOGGER.info ("Using asynchronous response URL '" +
+                           sAsyncResultURL +
+                           "' for message ID '" +
+                           sMessageID +
+                           "'");
             }
           }
 
@@ -782,7 +798,9 @@ public class AS4RequestHandler implements AutoCloseable
                                            sMessageID +
                                            "' failed: the previous processor already returned a usermessage; it is not possible to return two usermessage. Please check your SPI implementations.";
                   LOGGER.warn (sErrorMsg);
-                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale, sMessageID, sErrorMsg));
+                  aErrorMessagesTarget.add (EEbmsError.EBMS_VALUE_INCONSISTENT.getAsEbms3Error (m_aLocale,
+                                                                                                sMessageID,
+                                                                                                sErrorMsg));
                   // Stop processing
                   return;
                 }
@@ -855,7 +873,8 @@ public class AS4RequestHandler implements AutoCloseable
     byte [] aResponsePayload = null;
     if (aResponseFactory != null)
     {
-      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity : aResponseFactory.getHttpEntityForSending (aMimeType);
+      final HttpEntity aRealHttpEntity = aHttpEntity != null ? aHttpEntity
+                                                             : aResponseFactory.getHttpEntityForSending (aMimeType);
       if (aRealHttpEntity.isRepeatable ())
       {
         int nContentLength = (int) aRealHttpEntity.getContentLength ();
@@ -941,8 +960,10 @@ public class AS4RequestHandler implements AutoCloseable
   {
     // Use current time
     final Ebms3MessageInfo aEbms3MessageInfo = MessageHelperMethods.createEbms3MessageInfo (sResponseMessageID,
-                                                                                            aUserMessage.getMessageInfo ().getMessageId ());
-    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false, aResponseAttachments);
+                                                                                            aUserMessage.getMessageInfo ()
+                                                                                                        .getMessageId ());
+    final Ebms3PayloadInfo aEbms3PayloadInfo = MessageHelperMethods.createEbms3PayloadInfo (false,
+                                                                                            aResponseAttachments);
 
     // Invert from and to role from original user message
     final Ebms3PartyInfo aEbms3PartyInfo = MessageHelperMethods.createEbms3ReversePartyInfo (aUserMessage.getPartyInfo ());
@@ -1130,7 +1151,11 @@ public class AS4RequestHandler implements AutoCloseable
                                                        aResponseDoc,
                                                        aEffectiveLeg.getProtocol ().getSoapVersion (),
                                                        aReceiptMessage.getMessagingID ());
-    return new AS4ResponseFactoryXML (m_aMessageMetadata, aState, sResponseMessageID, aSignedDoc, eSoapVersion.getMimeType ());
+    return new AS4ResponseFactoryXML (m_aMessageMetadata,
+                                      aState,
+                                      sResponseMessageID,
+                                      aSignedDoc,
+                                      eSoapVersion.getMimeType ());
   }
 
   /**
@@ -1220,12 +1245,19 @@ public class AS4RequestHandler implements AutoCloseable
     if (aResponseAttachments.isEmpty ())
     {
       // FIXME encryption of SOAP body is missing here
-      ret = new AS4ResponseFactoryXML (m_aMessageMetadata, aState, sResponseMessageID, aSignedDoc, eSoapVersion.getMimeType ());
+      ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
+                                       aState,
+                                       sResponseMessageID,
+                                       aSignedDoc,
+                                       eSoapVersion.getMimeType ());
     }
     else
     {
       // Create (maybe encrypted) MIME message
-      final AS4MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc, aResponseAttachments, eSoapVersion, aCryptParams);
+      final AS4MimeMessage aMimeMsg = _createMimeMessageForResponse (aSignedDoc,
+                                                                     aResponseAttachments,
+                                                                     eSoapVersion,
+                                                                     aCryptParams);
       ret = new AS4ResponseFactoryMIME (m_aMessageMetadata, aState, sResponseMessageID, aMimeMsg);
     }
     return ret;
@@ -1266,10 +1298,16 @@ public class AS4RequestHandler implements AutoCloseable
       final String sProfileID = aState.getProfileID ();
 
       if (LOGGER.isDebugEnabled ())
-        LOGGER.debug ("No checking for duplicate message with message ID '" + sMessageID + "' and profile ID '" + sProfileID + "'");
+        LOGGER.debug ("No checking for duplicate message with message ID '" +
+                      sMessageID +
+                      "' and profile ID '" +
+                      sProfileID +
+                      "'");
 
       final boolean bIsDuplicate = MetaAS4Manager.getIncomingDuplicateMgr ()
-                                                 .registerAndCheck (sMessageID, sProfileID, aPMode == null ? null : aPMode.getID ())
+                                                 .registerAndCheck (sMessageID,
+                                                                    sProfileID,
+                                                                    aPMode == null ? null : aPMode.getID ())
                                                  .isBreak ();
       if (bIsDuplicate)
       {
@@ -1386,7 +1424,9 @@ public class AS4RequestHandler implements AutoCloseable
 
             // Send ErrorMessage Undefined - see
             // https://github.com/phax/phase4/issues/4
-            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion, aState.getMessageID (), aLocalErrorMessages);
+            final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
+                                                                              aState.getMessageID (),
+                                                                              aLocalErrorMessages);
             sResponseMessageID = aResponseErrorMsg.getEbms3SignalMessage ().getMessageInfo ().getMessageId ();
 
             // Pass error messages to the outside
@@ -1413,7 +1453,11 @@ public class AS4RequestHandler implements AutoCloseable
           aHttpEntity = m_aResHelper.createRepeatableHttpEntity (aHttpEntity);
 
           // Use the prebuilt entity for dumping
-          _invokeSPIsForResponse (aState, aAsyncResponseFactory, aHttpEntity, eSoapVersion.getMimeType (), sResponseMessageID);
+          _invokeSPIsForResponse (aState,
+                                  aAsyncResponseFactory,
+                                  aHttpEntity,
+                                  eSoapVersion.getMimeType (),
+                                  sResponseMessageID);
 
           // invoke client with new document
           final BasicHttpPoster aSender = new BasicHttpPoster ();
@@ -1434,12 +1478,17 @@ public class AS4RequestHandler implements AutoCloseable
           }
           else
           {
-            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL, null, aHttpEntity, new ResponseHandlerXml ());
+            aAsyncResponse = aSender.sendGenericMessage (sAsyncResponseURL,
+                                                         null,
+                                                         aHttpEntity,
+                                                         new ResponseHandlerXml ());
           }
           AS4HttpDebug.debug ( () -> "SEND-RESPONSE [async sent] received: " +
-                                     XMLWriter.getNodeAsString (aAsyncResponse, AS4HttpDebug.getDebugXMLWriterSettings ()));
+                                     XMLWriter.getNodeAsString (aAsyncResponse,
+                                                                AS4HttpDebug.getDebugXMLWriterSettings ()));
         };
-        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ().runThrowing (CAS4.LIB_NAME + " async processing", r);
+        final CompletableFuture <Void> aFuture = PhotonWorkerPool.getInstance ()
+                                                                 .runThrowing (CAS4.LIB_NAME + " async processing", r);
 
         if (m_aSoapProcessingFinalizedCB != null)
         {
@@ -1459,7 +1508,9 @@ public class AS4RequestHandler implements AutoCloseable
       // Not an incoming Ebms Error Message
       if (aErrorMessagesTarget.isNotEmpty ())
       {
-        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion, aState.getMessageID (), aErrorMessagesTarget);
+        final AS4ErrorMessage aResponseErrorMsg = AS4ErrorMessage.create (eSoapVersion,
+                                                                          aState.getMessageID (),
+                                                                          aErrorMessagesTarget);
 
         // Call optional consumer
         if (m_aErrorConsumer != null)
@@ -1505,7 +1556,8 @@ public class AS4RequestHandler implements AutoCloseable
                 (aPMode.getMEPBinding ().equals (EMEPBinding.PUSH_PULL) && aSPIResult.hasPullReturnUserMsg ()))
             {
               // TODO would be nice to have attachments here I guess
-              final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion, aSPIResult.getPullReturnUserMsg ());
+              final AS4UserMessage aResponseUserMsg = new AS4UserMessage (eSoapVersion,
+                                                                          aSPIResult.getPullReturnUserMsg ());
 
               sResponseMessageID = aResponseUserMsg.getEbms3UserMessage ().getMessageInfo ().getMessageId ();
               ret = new AS4ResponseFactoryXML (m_aMessageMetadata,
@@ -1552,7 +1604,9 @@ public class AS4RequestHandler implements AutoCloseable
             if (aLeg2 == null)
               throw new Phase4Exception ("PMode has no leg2!");
 
-            if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (), aPMode.getMEPBinding (), EAS4MessageType.USER_MESSAGE))
+            if (MEPHelper.isValidResponseTypeLeg2 (aPMode.getMEP (),
+                                                   aPMode.getMEPBinding (),
+                                                   EAS4MessageType.USER_MESSAGE))
             {
               sResponseMessageID = MessageHelperMethods.createRandomMessageID ();
               final AS4UserMessage aResponseUserMsg = _createReversedUserMessage (eSoapVersion,
@@ -1561,8 +1615,12 @@ public class AS4RequestHandler implements AutoCloseable
                                                                                   aResponseAttachments);
 
               final AS4SigningParams aSigningParams = new AS4SigningParams ().setFromPMode (aLeg2.getSecurity ());
-              final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ().getTo ().getPartyIdAtIndex (0).getValue ();
-              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ()).setAlias (sEncryptionAlias);
+              final String sEncryptionAlias = aEbmsUserMessage.getPartyInfo ()
+                                                              .getTo ()
+                                                              .getPartyIdAtIndex (0)
+                                                              .getValue ();
+              final AS4CryptParams aCryptParams = new AS4CryptParams ().setFromPMode (aLeg2.getSecurity ())
+                                                                       .setAlias (sEncryptionAlias);
               ret = _createResponseUserMessage (aState,
                                                 aLeg2.getProtocol ().getSoapVersion (),
                                                 aResponseUserMsg,
@@ -1637,7 +1695,8 @@ public class AS4RequestHandler implements AutoCloseable
       if (aResponder != null)
       {
         // Response present -> send back
-        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper : AS4DumpManager.getOutgoingDumper ();
+        final IAS4OutgoingDumper aRealOutgoingDumper = m_aOutgoingDumper != null ? m_aOutgoingDumper
+                                                                                 : AS4DumpManager.getOutgoingDumper ();
         aResponder.applyToResponse (aHttpResponse, aRealOutgoingDumper);
       }
       else
