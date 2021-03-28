@@ -98,9 +98,6 @@ public final class AS4DumpManager
    * @param aRequestInputStream
    *        The InputStream to read the request payload from. Will not be closed
    *        internally. Never <code>null</code>.
-   * @param eMsgMode
-   *        Are we dumping a request or a response? Never <code>null</code>.
-   *        Added in v1.2.0.
    * @param aMessageMetadata
    *        Request metadata. Never <code>null</code>.
    * @param aHttpHeaders
