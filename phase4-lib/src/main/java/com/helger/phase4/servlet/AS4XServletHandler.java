@@ -16,7 +16,6 @@
  */
 package com.helger.phase4.servlet;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
@@ -52,7 +51,7 @@ import com.helger.xservlet.handler.simple.IXServletSimpleHandler;
  */
 public class AS4XServletHandler implements IXServletSimpleHandler
 {
-  public interface IHandlerCustomizer extends Serializable
+  public interface IHandlerCustomizer
   {
     /**
      * Called before the message is handled. <br>
