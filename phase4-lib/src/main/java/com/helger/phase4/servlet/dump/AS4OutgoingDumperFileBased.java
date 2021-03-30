@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.helger.commons.ValueEnforcer;
 import com.helger.commons.annotation.Nonempty;
-import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.http.HttpHeaderMap;
 import com.helger.commons.io.file.FileHelper;
 import com.helger.commons.io.file.FilenameHelper;
@@ -41,6 +40,7 @@ import com.helger.phase4.dump.AbstractAS4OutgoingDumperWithHeaders;
 import com.helger.phase4.dump.IAS4OutgoingDumper;
 import com.helger.phase4.messaging.EAS4MessageMode;
 import com.helger.phase4.messaging.IAS4IncomingMessageMetadata;
+import com.helger.phase4.mgr.MetaAS4Manager;
 import com.helger.phase4.servlet.IAS4MessageState;
 
 /**
@@ -75,7 +75,7 @@ public class AS4OutgoingDumperFileBased extends AbstractAS4OutgoingDumperWithHea
     @Nonnull
     static String getFilename (@Nonnull @Nonempty final String sAS4MessageID, @Nonnegative final int nTry)
     {
-      final OffsetDateTime aNow = PDTFactory.getCurrentOffsetDateTime ();
+      final OffsetDateTime aNow = MetaAS4Manager.getTimestampMgr ().getCurrentDateTime ();
       return aNow.getYear () +
              "/" +
              StringHelper.getLeadingZero (aNow.getMonthValue (), 2) +
