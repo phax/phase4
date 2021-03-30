@@ -12,17 +12,19 @@ Licensed under the Apache 2 License!
 It consists of the following sub-projects:
   * **phase4-lib** - basic data structures for AS4 handling, sending and receiving
   * **phase4-profile-cef** - AS4 profile for CEF/eSENS as well as the PMode and the respective validation
-  * **phase4-profile-entsog** - AS4 profile for ENTSOG as well as the PMode and the respective validation (since v0.14.0)
-  * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation (since v0.9.1)
+  * **phase4-profile-entsog** - AS4 profile for ENTSOG as well as the PMode and the respective validation
+  * **phase4-profile-peppol** - AS4 profile for Peppol as well as the PMode and the respective validation
   * **phase4-test** - integration test project
   * **phase4-server-webapp** - Standalone AS4 server for **demo** purposes
-  * **phase4-dynamic-discovery** - a shared library that contains common stuff for dynamic discovery using SML and SMP (since 0.10.6)
-  * **phase4-cef-client** - a specific client to send messages using the CEF profile (since v0.9.15)
-  * **phase4-entsog-client** - a specific client to send messages using the ENTSOG profile (since v0.14.0)
-  * **phase4-peppol-client** - a specific client to send messages to Peppol (since v0.9.3)
-  * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol (since v0.9.7)
-  * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes (since v0.9.9)
-  * **phase4-spring-boot-demo** - an example how to integrate phase4 with Spring Boot (since v1.0.0)
+  * **phase4-dynamic-discovery** - a shared library that contains common stuff for dynamic discovery using SML and SMP
+  * **phase4-cef-client** - a specific client to send messages using the CEF profile
+  * **phase4-entsog-client** - a specific client to send messages using the ENTSOG profile
+  * **phase4-peppol-client** - a specific client to send messages to Peppol
+  * **phase4-peppol-servlet** - a specific servlet that can be used to receive messages from Peppol
+  * **phase4-peppol-server-webapp** - a simple standalone Peppol AS4 server for **demo** purposes
+  * **phase4-spring-boot-demo** - an example how to integrate phase4 with Spring Boot
+
+Note: to the reader the documentation you are reading refers to version 1.x. For previous version documentation, please refer to the [appropriate tag](https://github.com/phax/phase4/tags)
   
 This solution is CEF compliant. See the test report at https://ec.europa.eu/cefdigital/wiki/download/attachments/82773297/phase4%20AS4%20test%20runs.zip?version=1&modificationDate=1565683321725&api=v2
 
@@ -49,14 +51,10 @@ If you are a phase4 user and want to be listed here, write me an email to phase4
     
 # Configuration
 
-The configuration part was reworked for 0.11.0 version.
-
 The primary configuration file for phase4 is called `phase4.properties`.
 It contains both the phase4 specific configuration items as well as the WSS4J ones (see https://ws.apache.org/wss4j/config.html).
 The resolution of the configuration properties is not bound to the configuration file - system properties and environment variables can also be used. See https://github.com/phax/ph-commons#ph-config for details.
 Upon resolution of configuration values, Java system properties have the highest priority (400), before environment variables (300), the file `phase4.properties` (203), the file `private-application.json` (195), the file `private-application.properties` (190), the file `application.json` (185), the file `application.properties` (180) and finally the file `reference.properties` (1).
-
-Note: prior to v0.11.0 a file called `crypto.properties` may have contained the keystore and truststore parameters used by phase4. Since v0.11.0 all these parameters are now exclusively read from `phase4.properties`.
 
 Note: programmatic access to the configuration is solely achieved via class `com.helger.phase4.config.AS4Configuration`.
 
@@ -82,31 +80,52 @@ Note: for Peppol users the key store must contain the AccessPoint private key an
 ## phase4 properties
 
 The properties have the following meaning
-* **`global.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.debug`).
-* **`global.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.production`).
-* **`global.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false` (prior 0.11.0 this property was called `server.nostartupinfo`).
-* **`global.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf` (prior 0.11.0 this property was called `server.datapath`).
+* **`global.debug`**: enable or disable the global debugging mode in the system. It is recommended to have this always set to `false` except you are developing with the components. Valid values are `true` and `false`.
+* **`global.production`**: enable or disable the global production mode in the system. It is recommended to have this set to `true` when running an instance in a production like environment to improve performance and limit internal checks. Valid values are `true` and `false`.
+* **`global.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
+* **`global.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
 
-* **`phase4.manager.inmemory`** (since 0.11.0): if this property is set to `true` than phase4 will not create persistent data for PModes ands other domain objects. Since 0.11.0 the default value is `true` (prior versions used `false` as the default)
-* **`phase4.wss4j.syncsecurity`** (since 0.11.0): if this property is set to `true` all signing, encryption, signature verification and decryption is linearized in an artificial lock. This should help working around the https://issues.apache.org/jira/browse/WSS-660 bug if one Java runtime needs to contain multiple instances of phase4. Note: this flag is still experimental. Note: this is only a work-around if only phase4 based applications run in the same Java runtime - if other WSS4J applications (like e.g. Oxalis) are also run, this switch does not solve the issue. Defaults to `false`.
-* **`phase4.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default (prior 0.11.0 this property was called `server.profile`).
-* **`phase4.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10` (prior 0.11.0 this property was called `server.incoming.duplicatedisposal.minutes`).
-* **`phase4.dump.path`** (since 0.11.0): the base path where dumps of incoming and outgoing files should be created, if the respective dumpers are activated. The default value is `phase4-dumps` relative to the current working directory.
-* **`phase4.endpoint.address`**: the public URL of this AS4 server to send responses to. This value is optional. (prior 0.11.0 this property was called `server.address`).
+* **`phase4.manager.inmemory`**: if this property is set to `true` than phase4 will not create persistent data for PModes ands other domain objects. Since 0.11.0 the default value is `true`.
+* **`phase4.wss4j.syncsecurity`**: if this property is set to `true` all signing, encryption, signature verification and decryption is linearized in an artificial lock. This should help working around the https://issues.apache.org/jira/browse/WSS-660 bug if one Java runtime needs to contain multiple instances of phase4. Note: this flag is still experimental. Note: this is only a work-around if only phase4 based applications run in the same Java runtime - if other WSS4J applications (like e.g. Oxalis) are also run, this switch does not solve the issue. Defaults to `false`.
+* **`phase4.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
+* **`phase4.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`.
+* **`phase4.dump.path`**: the base path where dumps of incoming and outgoing files should be created, if the respective dumpers are activated. The default value is `phase4-dumps` relative to the current working directory.
+* **`phase4.endpoint.address`**: the public URL of this AS4 server to send responses to. This value is optional.
 
 # Profiles vs. PModes
 
-To handle common parts of AS4 PModes this project uses so called "profiles". Currently two default profiles are available:
+To handle common parts of AS4 PModes this project uses so called "profiles". Currently the following profiles are provided out of the box:
 
 * CEF with ID `cef` in submodule `phase4-profile-cef` - see https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery+AS4+-+1.14 for the full specification
 * Peppol with ID `peppol` in submodule `phase4-profile-peppol` - see https://docs.peppol.eu/edelivery/as4/specification/ for the full specification
+* ENTSOG with ID `entsog` in submodule `phase4-profile-entsog` - see https://www.entsog.eu/interoperability-and-data-exchange-nc for the full specification
 
 To use one of these profiles, the respective Maven artifacts must be added as dependencies to your project as in
 
 ```xml
     <dependency>
       <groupId>com.helger</groupId>
+      <artifactId>phase4-profile-cef</artifactId>
+      <version>x.y.z</version>
+    </dependency>
+```
+
+or
+
+```xml
+    <dependency>
+      <groupId>com.helger</groupId>
       <artifactId>phase4-profile-peppol</artifactId>
+      <version>x.y.z</version>
+    </dependency>
+```
+
+or
+
+```xml
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>phase4-profile-entsog</artifactId>
       <version>x.y.z</version>
     </dependency>
 ```
@@ -153,11 +172,10 @@ The client side validation of outgoing business documents is implemented using [
 
 ## Subproject phase4-peppol-servlet
 
-This subproject is your entry point for **receiving** messages from the Peppol eDelivery network.
+This subproject is your entry point for **receiving** messages from the Peppol eDelivery network using the well known Servlet technology.
 
-It assumes you are running an Application server like [Apache Tomcat](https://tomcat.apache.org/) or [Eclipse Jetty](https://www.eclipse.org/jetty/) to handle incoming connections.
+It assumes you are running an Application server like [Apache Tomcat](https://tomcat.apache.org/) or [Eclipse Jetty](https://www.eclipse.org/jetty/) to handle incoming connections. Integrations into other application servers like vertx or even the deployment as an AWS Lambda is possible but needs a bit more handcrafting.
 
-Available from v0.9.7 onwards.
 Register the Servlet `com.helger.phase4.peppol.servlet.Phase4PeppolServlet` in your application.
 Then implement the SPI interface `com.helger.phase4.peppol.servlet.IPhase4PeppolIncomingSBDHandlerSPI` to handle incoming Peppol messages. See [Introduction to the Service Providers Interface](https://docs.oracle.com/javase/tutorial/sound/SPI-intro.html) if you are not familiar with the Java concept of SPI.
 
@@ -174,11 +192,9 @@ Sample setup for `WEB-INF/web.xml`:
 </servlet-mapping>
 ```
 
-By default the "receiver checks" are enabled. They are checking if the incoming message is targeted for the correct Access Point. That is done by performing an SMP lookup on the receiver/document type/process ID and check if the resulting values match the preconfigured values. That of course requires that the preconfigured values need to be set, before a message can be received. That needs to be done via the static methods in class `Phase4PeppolServletConfiguration`. Alternatively you can disable the receiver checks using the `setReceiverCheckEnabled` method in said class.
+By default the "receiver checks" are enabled. They are checking if an incoming message is targeted for the correct Access Point and if not will reject the message. That is done by performing an SMP lookup on the receiver/document type/process ID and check if the resulting values match the preconfigured values. That of course requires that the preconfigured values need to be set, before a message can be received. That needs to be done via the static methods in class `Phase4PeppolServletConfiguration`. Alternatively you can disable the receiver checks using the `setReceiverCheckEnabled` method in said class.
 
-Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implementation of this interface provides the keystore as well as the private key for doing signing and/or encryption services in phase4. Default implementations shipping with phase4 are `AS4CryptoFactoryPropertiesFile` and `AS4CryptoFactoryInMemoryKeyStore`. To change that configuration use the extended constructor of `AS4XServletHandler` that itself is instantiated in the `Phase4PeppolServlet` - therefore a custom Servlet class is required, where `Phase4PeppolServlet` should be used as the "copy-paste template" (and don't forget to reference the new servlet class from the `WEB-INF/web.xml` mentioned above). 
-
-**Note:** in v0.9.8 the receiving SPI method was heavily extended to be able to retrieve more information elements directly, without needing to dive deeper into the code.
+Additionally before you can start, an `IAS4CryptoFactory` MUST be set. An implementation of this interface provides the keystore as well as the private key for doing signing and/or encryption services in phase4. Default implementations shipping with phase4 are `AS4CryptoFactoryProperties` and `AS4CryptoFactoryInMemoryKeyStore`. To change that configuration use the extended constructor of `AS4XServletHandler` that itself is instantiated in the `Phase4PeppolServlet` - therefore a custom Servlet class is required, where `Phase4PeppolServlet` should be used as the "copy-paste template" (and don't forget to reference the new servlet class from the `WEB-INF/web.xml` mentioned above). 
 
 ## Subproject phase4-peppol-server-webapp
 
@@ -243,8 +259,6 @@ If you want to use phase4 with Maven I suggest the following way:
 ...
 </project>
 ```
-
-Note: prior to v0.9.17 the Maven groupId was `com.helger`.
 
 # Building from source
 
