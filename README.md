@@ -85,7 +85,7 @@ The properties have the following meaning
 * **`global.nostartupinfo`**: disable the logging of certain internals upon server startup when set to `true`. Valid values are `true` and `false`.
 * **`global.datapath`**: the writable directory where the server stores data. It is recommended to be an absolute path (starting with `/`). The default value is the relative directory `conf`.
 
-* **`phase4.manager.inmemory`**: if this property is set to `true` than phase4 will not create persistent data for PModes ands other domain objects. Since 0.11.0 the default value is `true`.
+* **`phase4.manager.inmemory`**: if this property is set to `true` than phase4 will not create persistent data for PModes ands other domain objects. The default value is `true`.
 * **`phase4.wss4j.syncsecurity`**: if this property is set to `true` all signing, encryption, signature verification and decryption is linearized in an artificial lock. This should help working around the https://issues.apache.org/jira/browse/WSS-660 bug if one Java runtime needs to contain multiple instances of phase4. Note: this flag is still experimental. Note: this is only a work-around if only phase4 based applications run in the same Java runtime - if other WSS4J applications (like e.g. Oxalis) are also run, this switch does not solve the issue. Defaults to `false`.
 * **`phase4.profile`**: a specific AS4 profile ID that can be used to validate incoming messages. Only needed in specific circumstances. Not present by default.
 * **`phase4.incoming.duplicatedisposal.minutes`**: the number of minutes a message is kept for duplication check. After that time, the same message can be retrieved again. Valid values are integer numbers &ge; 0. The default value is `10`.
